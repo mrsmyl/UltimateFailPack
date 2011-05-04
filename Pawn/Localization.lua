@@ -302,7 +302,7 @@ PawnUIFrame_ResetUpgradesButton_Text = "Re-scan gear"
 PawnUIFrame_ResetUpgradesButton_Tooltip = "Pawn will forget what it knows about the best items you've ever equipped and re-scan your gear in order to provide more up-to-date upgrade information in the future.\n\nUse this feature if you find that Pawn is making poor upgrade suggestions as a result of items that you've vendored, destroyed, or otherwise do not use anymore.  This will affect all of your characters that use Pawn."
 PawnUIFrame_ColorTooltipBorderCheck_Text = "Color tooltip border of upgrades"
 PawnUIFrame_ColorTooltipBorderCheck_Tooltip = "Enable this option to change the color of the tooltip border of items that are upgrades to green.  Disable this option if it interferes with other mods that change tooltip borders."
-PawnUIFrame_EnchantedValuesCheck_Text = "Show both current and base values" .. PawnNewFeatureTexture
+PawnUIFrame_EnchantedValuesCheck_Text = "Show both current and base values"
 PawnUIFrame_EnchantedValuesCheck_Tooltip = "Enable this option to have Pawn show two values for items: the current value, which reflects the current state of an item with the actual gems, enchantments, and reforging that the item has at the moment, with empty sockets providing no benefit, as well as the base value, which is what Pawn normally displays.  The current value will be displayed before the base value.\n\nYou should still use the base value for determining between two items at endgame, but the current value can be helpful when leveling and to make it easier to decide whether it's worth immediately equipping a new item before it has gems or enchantments."
 
 PawnUIFrame_AdvisorOptionsHeaderLabel_Text = "Advisor options"
@@ -637,7 +637,10 @@ PawnRegexes =
 	{PawnGameConstant(ITEM_BIND_ON_EQUIP)}, -- Binds when equipped
 	{PawnGameConstant(ITEM_BIND_ON_PICKUP)}, -- Binds when picked up
 	{PawnGameConstant(ITEM_BIND_ON_USE)}, -- Binds when used
-	{PawnGameConstant(ITEM_BIND_TO_ACCOUNT)}, -- Binds to account (Polished Spaulders of Valor)
+	{PawnGameConstant(ITEM_BIND_TO_ACCOUNT)}, -- Binds to account
+	{PawnGameConstant(ITEM_ACCOUNTBOUND)}, -- Account Bound
+	{PawnGameConstant(ITEM_BIND_TO_BNETACCOUNT)}, -- Binds to Battle.net account (Polished Spaulders of Valor)
+	{PawnGameConstant(ITEM_BNETACCOUNTBOUND)}, -- Battle.net Account Bound (Polished Spaulders of Valor)
 	{"^" .. PawnGameConstantUnwrapped(ITEM_UNIQUE)}, -- Unique; leave off the $ for Unique(20)
 	{"^" .. PawnGameConstantUnwrapped(ITEM_BIND_QUEST)}, -- Leave off the $ for MonkeyQuest mod compatibility
 	{PawnGameConstant(ITEM_STARTS_QUEST)}, -- This Item Begins a Quest

@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.7: bug fix for the heirloom item upgrade features
+-- Version 1.5.10: bug fix for one-handed caster weapons
 ------------------------------------------------------------
 
 
-PawnVersion = 1.507
+PawnVersion = 1.510
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -2619,7 +2619,10 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 				-- Check one-handed weapons against both the main hand and off hand, and report the best upgrade.
 				-- (One-handed weapons aren't stored past the initial scan, so we don't need to check those.)
 				InvType = "INVTYPE_WEAPONMAINHAND"
-				InvType2 = "INVTYPE_WEAPONOFFHAND"
+				if Scale.Values.IsOffHand == nil or Scale.Values.IsOffHand > PawnIgnoreStatValue then
+					-- Only try putting off-hand weapons in the off hand if they fit there!
+					InvType2 = "INVTYPE_WEAPONOFFHAND"
+				end
 			elseif InvType == "INVTYPE_ROBE" then
 				-- Robes are chest armor.
 				InvType = "INVTYPE_CHEST"
