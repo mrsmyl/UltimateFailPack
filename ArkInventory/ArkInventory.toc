@@ -1,0 +1,69 @@
+## Interface: 40100
+## X-Curse-Packaged-Version: 3.02.78
+## X-Curse-Project-Name: ArkInventory
+## X-Curse-Project-ID: ark-inventory
+## X-Curse-Repository-ID: wow/ark-inventory/mainline
+
+## Title: ArkInventory
+## Title-zhCN: [背包]ArkInventory 整合背包银行
+## Author: Arkayenro
+## Email: arkayenro at gmail dot com
+## Version: 3.02
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: ARKINVDB
+
+## Notes: Allows viewing of your (and all your toons on that realm) Bags, Keyring, Bank, Guild Bank, Inventory, Mail, Pet, Mount, Currency and Auction items when-ever and where-ever you want.
+## Notes-deDE: Ermöglicht das Anzeigen der Taschen, des Bankfachs, des Schlüsselbundes und des Gildentresors aller Charaktere zu jedem beliebigen Zeitpunkt.
+## Notes-zhCN: 整合并分类显示你的背包、钥匙链、银行、工会银行，支持离线查看
+## Notes-zhTW: 以分類方式顯示你的背包。
+
+## RequiredDeps: Blizzard_GuildBankUI
+## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
+## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
+
+## X-Category: Inventory
+## X-Website: http://arkinventory.googlecode.com
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always:delayed
+
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler\CallbackHandler-1.0.lua
+Libs\LibDataBroker\LibDataBroker-1.1.lua
+Libs\ArkDewdrop\ArkDewdrop-3.0.lua
+Libs\ArkCRC32\ArkCRC32-1.0.lua
+
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+Locale\locale.xml
+
+ArkInventoryExternals.lua
+
+
+ArkInventory.lua
+ArkInventoryCompanion.lua
+
+ArkInventoryStorage.lua
+ArkInventoryRestack.lua
+ArkInventoryUpgrades.lua
+ArkInventoryMenu.lua
+ArkInventoryRules.lua
+ArkInventorySearch.lua
+ArkInventorySync.lua
+
+ArkInventoryTooltip.lua
+ArkInventoryMoney.lua
+ArkInventoryMedia.lua
+
+ArkInventory.xml
+ArkInventorySearch.xml
+
+ArkInventoryConfig.lua
+ArkInventoryLDB.lua
+
+ArkInventoryTranslate.lua

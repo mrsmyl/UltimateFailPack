@@ -1,0 +1,19 @@
+------------------------------------------------------------------------
+r328 | xinhuan | 2011-04-27 00:42:34 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   A /tags/v3.4.6 (from /trunk:327)
+
+Tag release v3.4.6.
+------------------------------------------------------------------------
+r327 | xinhuan | 2011-04-27 00:41:56 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/Postal.toc
+
+Bump TOC to 40100, update version to 3.4.6.
+------------------------------------------------------------------------
+r326 | xinhuan | 2010-11-24 01:55:00 +0000 (Wed, 24 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+
+CheckInbox() behavior changed slightly. It now fires MAIL_INBOX_UPDATE immediately (synchronous) if called within 60 seconds of the last inbox update, but doesn't do it immediately otherwise (asynchronous). Change code in OpenAll module to take this into account to speed up continuing OpenAll by not waiting an extra 10 seconds while doing mailbox refreshes.
+------------------------------------------------------------------------

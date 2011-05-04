@@ -1,0 +1,47 @@
+﻿## Interface: 40100
+## Title: DHUD|cff7fff7f 4|r
+## Author: Horacio (Arcanefoam)
+## X-eMail: arcanefoam AT gmail DOT com
+## X-Website: http://www.wowace.com/projects/dhud3/
+## Original Code: Markus Inger (Drathal/Silberklinge) 
+## Version: 1.15
+## Notes: Heads Up Display with Player and Target Info
+## Notes-esES: Heads Up Display con informacion del Jugador y el Blanco
+## Notes-ruRU: �?дд-он отображает �?тату�?ную информацию игрока и его цели �? помощью �?лемента по �?ередине �?крана.
+## OptionalDeps: myAddOns
+## SavedVariables: DHUD4DB
+## X-Embeds: Ace3
+## X-Category: Combat
+## X-Curse-Packaged-Version: 1.5
+## X-Curse-Project-Name: DHUD4
+## X-Curse-Project-ID: dhud4
+## X-Curse-Repository-ID: wow/dhud4/mainline
+
+## Ace Libraries
+embeds.xml
+
+## Locales
+Locale\locale.xml
+
+## DHUD4
+DHUD4.lua
+Layout.lua
+Minimap.lua
+Bars\DHUD4_Bar.lua
+Bars\DHUD4_StatusBar.lua
+Bars\DHUD4_CastBar.lua
+
+## DHUD4 Modules
+Modules\DHUD4_Player.lua
+Modules\DHUD4_Target.lua
+Modules\DHUD4_Pet.lua
+Modules\DHUD4_Auras.lua
+Modules\DHUD4_Outer.lua
+
+## DHUD4 Abilities
+Abilities\DHUD4_Abilities.lua
+Abilities\DHUD4_Druid.lua
+Abilities\DHUD4_Rogue.lua
+Abilities\DHUD4_Warrior.lua
+Abilities\DHUD4_DeathKnight.lua
+Abilities\DHUD4_Paladin.lua

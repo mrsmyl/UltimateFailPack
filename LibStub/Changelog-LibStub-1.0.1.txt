@@ -1,0 +1,22 @@
+------------------------------------------------------------------------
+r94 | kaelten | 2011-01-14 15:23:26 +0000 (Fri, 14 Jan 2011) | 1 line
+Changed paths:
+   A /tags/1.0.1 (from /trunk:93)
+
+Tagging as 1.0.1
+------------------------------------------------------------------------
+r93 | kaelten | 2011-01-14 15:23:01 +0000 (Fri, 14 Jan 2011) | 1 line
+Changed paths:
+   M /trunk/LibStub.toc
+
+Updating Toc #
+------------------------------------------------------------------------
+r92 | nevcairiel | 2008-10-09 21:54:11 +0000 (Thu, 09 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/tests/test.lua
+   M /trunk/tests/test2.lua
+   M /trunk/tests/test3.lua
+   M /trunk/tests/test4.lua
+
+WoWAce Post-Processing: Virtually inflate Library Revision numbers for proper upgrade path
+------------------------------------------------------------------------

@@ -1,0 +1,19 @@
+## Interface: 40000
+## Title: Broker: |cffffffffXP|rBar
+## Notes: Lightweight XP Bar for Broker Bars
+## Version: 1.2 r017
+## Author: tritium
+## X-Credits: Wobin (For the original Fubar - XPFu)
+## X-Category: Interface Enhancements
+## Dependencies:
+## OptionalDeps: Ace3, Jostle-3.0, Crayon-3.0
+## SavedVariables: BrokerXPBar_DB
+
+## X-Embeds: Ace3
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+Locales\locales.xml
+
+Broker_XPBar.lua

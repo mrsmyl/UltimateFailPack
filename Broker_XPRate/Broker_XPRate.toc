@@ -1,0 +1,30 @@
+## Interface: 40000
+## Title: Broker_XPRate
+## Version: 1.67
+## Revision: 20110407044031
+## Author: rhyddereh
+## X-Date: 2011-04-07T04:40:31Z
+## Notes: LDB Plugin showing time to level and kills to level
+## X-Category: 
+## X-License: GPL v2 or later
+## X-Curse-Packaged-Version: 1.67
+## X-Curse-Project-Name: Broker_XPRate
+## X-Curse-Project-ID: broker_xprate
+## X-Curse-Repository-ID: wow/broker_xprate/mainline
+
+## DefaultState: enabled
+## LoadOnDemand: 0
+## SavedVariables: Broker_XPRateDB
+## SavedVariablesPerCharacter: Broker_XPRateDBPC
+## OptionalDeps: Ace3
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: delayed
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+locales\locales.xml
+
+Core.lua

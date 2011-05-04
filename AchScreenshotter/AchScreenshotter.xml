@@ -1,0 +1,272 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Blam_AS_constants.lua" />
+	<Script file="Blam_AS_options.lua" />
+	<Script file="AchScreenshotter.lua" />
+	<Frame name="AS_Options_Panel">
+		<Frames>
+			<CheckButton name="AS_check_Achs" inherits="UICheckButtonTemplate" text="CheckButton1">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_Options_Panel" relativePoint="TOPLEFT">
+						<Offset x="15" y="-115" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_Achs" inherits="GameFontNormal" text="Screenshot Achievements" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_Achs" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+			</CheckButton>
+			<CheckButton name="AS_check_Levels" inherits="UICheckButtonTemplate" text="CheckButton2">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_Achs" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-10" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_Levels" inherits="GameFontNormal" text="Screenshot Level Ups" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_Levels" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+			</CheckButton>
+			<CheckButton name="AS_check_Reps" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_Levels" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-15" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_Reps" inherits="GameFontNormal" text="Screenshot Reputation Milestones" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_Reps" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>AS_auto_uncheck_exalted_only();</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="AS_check_exalted_only" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_Reps" relativePoint="BOTTOMRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_exalted_only" inherits="GameFontNormal" text="Screenshot Exalted Milestones Only" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_exalted_only" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>AS_auto_check_reps();</OnClick>
+				</Scripts>
+			</CheckButton>
+			<!--<CheckButton name="AS_check_boss_kills" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_Reps" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-15" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_boss_kills" inherits="GameFontNormal" text="Screenshot Raid Boss Kills" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_boss_kills" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+			</CheckButton>-->
+			<CheckButton name="AS_check_hideUI" inherits="UICheckButtonTemplate" text="CheckButton2">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_Options_Panel" relativePoint="TOPLEFT">
+						<Offset x="15" y="-55" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_hideUI" inherits="GameFontNormal" text="Hide UI for Screenshots (not for Achievements)" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="295" y="20" />
+							</Size>
+							<Anchors>
+								- <Anchor point="TOPLEFT" relativeTo="AS_check_hideUI" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+			</CheckButton>
+			<CheckButton name="AS_check_bgs" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_Reps" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-20" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_bgs" inherits="GameFontNormal" text="Screenshot Battleground Endings" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_bgs" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>AS_auto_uncheck_bg_wins_only();</OnClick>
+				</Scripts>
+			</CheckButton>
+			<!-- <CheckButton name="AS_check_arenas" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_bgs" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-40" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_arenas" inherits="GameFontNormal" text="Screenshot Arena Endings" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_arenas" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>AS_auto_uncheck_arena_wins_only();</OnClick>
+				</Scripts>
+			</CheckButton>
+  -->
+			<CheckButton name="AS_check_bgs_wins_only" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_bgs" relativePoint="BOTTOMRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_bgs_wins_only" inherits="GameFontNormal" text="Screenshot Wins Only" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_bgs_wins_only" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>AS_auto_check_bgs();</OnClick>
+				</Scripts>
+			</CheckButton>
+			- <!--  <CheckButton name="AS_check_arenas_wins_only" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="AS_check_arenas" relativePoint="BOTTOMRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="AS_fs_arenas_wins_only" inherits="GameFontNormal" text="Screenshot Wins Only" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="265" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="AS_check_arenas_wins_only" relativePoint="TOPRIGHT">
+									<Offset x="0" y="-7" />
+								</Anchor>
+							</Anchors>
+							<Color r="0.75" g="0.75" b="0.75" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>AS_auto_check_arenas();</OnClick>
+				</Scripts>
+			</CheckButton> 
+  -->
+		</Frames>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="AS_fs_title" inherits="GameFontNormal" text="">
+					<Size>
+						<AbsDimension x="270" y="20" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativeTo="AS_Options_Panel" relativePoint="TOP">
+							<Offset x="0" y="-5" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="AS_option_fs_myName" inherits="GameFontNormal" text="by Blamdarot" justifyV="BOTTOM" justifyH="RIGHT">
+					<Size>
+						<AbsDimension x="90" y="20" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" relativeTo="AS_Options_Panel" relativePoint="BOTTOMRIGHT">
+							<Offset x="-7" y="5" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>AchScreens_OnLoad(self);</OnLoad>
+			<OnEvent>AchScreens_OnEvent(self,event,...);</OnEvent>
+			<OnShow>AS_Open_Options();</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>

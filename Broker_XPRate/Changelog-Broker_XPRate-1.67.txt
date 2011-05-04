@@ -1,0 +1,12 @@
+tag 1.67
+48475b803dab87a93ceeca6f1f4b93a6bc58150d
+rhyddereh <rhyddereh@requiemtech.com>
+2011-04-06 21:42:00 -0700
+
+Added support for frFR localization
+
+
+--------------------
+
+rhyddereh:
+	- Added support for frFR locales

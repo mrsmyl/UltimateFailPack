@@ -1,0 +1,62 @@
+------------------------------------------------------------------------
+r284 | azethoth | 2010-04-10 11:26:48 +0000 (Sat, 10 Apr 2010) | 1 line
+Changed paths:
+   A /tags/283 release (from /trunk:283)
+
+Tagging as 283 release
+------------------------------------------------------------------------
+r283 | AZETHOTH | 2010-04-10 11:24:56 +0000 (Sat, 10 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-ClassSpell/LibPeriodicTable-3.1-ClassSpell.lua
+   M /trunk/data.lua
+
+Mining run.
+Ignoring all tradeskill results.  These are broken and need to be fixed by authors of mods using them.
+------------------------------------------------------------------------
+r282 | AZETHOTH | 2010-04-10 10:52:07 +0000 (Sat, 10 Apr 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+   M /trunk/LibPeriodicTable-3.1-InstanceLootHeroic/LibPeriodicTable-3.1-InstanceLootHeroic.lua
+
+Undo ignorant changes.  For the love of god, stay out of here if you dont want to even bother finding out how to edit PT3.  This means YOU "s80953241".  Try reading the project page or forums or something.
+------------------------------------------------------------------------
+r281 | s80953241 | 2010-03-17 17:04:22 +0000 (Wed, 17 Mar 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+
+Update Data
+------------------------------------------------------------------------
+r280 | s8095324 | 2010-03-10 19:10:56 +0000 (Wed, 10 Mar 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+
+Fix Bugs.
+------------------------------------------------------------------------
+r279 | s8095324 | 2010-03-10 18:46:17 +0000 (Wed, 10 Mar 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+   M /trunk/LibPeriodicTable-3.1-InstanceLootHeroic/LibPeriodicTable-3.1-InstanceLootHeroic.lua
+
+Update Trial of the Crusader Information
+------------------------------------------------------------------------
+r278 | s8095324 | 2010-03-10 18:21:46 +0000 (Wed, 10 Mar 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+   M /trunk/LibPeriodicTable-3.1-InstanceLootHeroic/LibPeriodicTable-3.1-InstanceLootHeroic.lua
+
+Update Trial of the Crusader Information
+------------------------------------------------------------------------
+r277 | s8095324 | 2010-03-10 17:36:47 +0000 (Wed, 10 Mar 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+   M /trunk/LibPeriodicTable-3.1-InstanceLootHeroic/LibPeriodicTable-3.1-InstanceLootHeroic.lua
+
+Add Trial of the Grand Crusader and Onyxia's Lair (Level 80)
+------------------------------------------------------------------------
+r276 | s8095324 | 2010-03-08 11:16:47 +0000 (Mon, 08 Mar 2010) | 1 line
+Changed paths:
+   M /trunk/LibPeriodicTable-3.1-InstanceLoot/LibPeriodicTable-3.1-InstanceLoot.lua
+   M /trunk/LibPeriodicTable-3.1-InstanceLootHeroic/LibPeriodicTable-3.1-InstanceLootHeroic.lua
+
+Update The Lower Spire of Icecrown Citadel Items
+------------------------------------------------------------------------

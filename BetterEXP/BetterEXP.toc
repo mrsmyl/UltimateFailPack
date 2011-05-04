@@ -1,0 +1,8 @@
+## Interface: 40000
+## Title: BetterEXP V4.0
+## Notes: Advanced EXP bar - Was Maintained by Ture of Sister's of Elune, Updated for Cataclysm  by Joelan of Terokkar
+## SavedVariablesPerCharacter: BAR_LOCKED, BEXP_restedColorR, BEXP_restedColorG, BEXP_restedColorB, BEXP_normalColorR, BEXP_normalColorG, BEXP_normalColorB, BEXP_bubbleColorR, BEXP_bubbleColorG, BEXP_bubbleColorB, BEXP_frameWidth, BEXP_textureWidth, BEXP_textBarWidth, BEXP_frameHeight, BEXP_textureHeight, BEXP_textBarHeight, BEXP_toLevel, BEXP_avgXP, BEXP_gainedXP, BEXP_kills, BEXP_currentXP, BEXP_maxXP, BEXP_leftXP, BEXP_restedXP, BEXP_maxBubbleXP, BEXP_currentBubbleXP,BEXP_options
+## OptionalDeps:
+## Dependencies:
+BetterEXP.lua
+BetterEXP.xml

@@ -1,0 +1,177 @@
+------------------------------------------------------------------------
+r48 | ckknight | 2008-12-16 23:07:06 +0000 (Tue, 16 Dec 2008) | 1 line
+Changed paths:
+   A /tags/WoW-3.0-release (from /trunk:47)
+
+Tagging as WoW-3.0-release
+------------------------------------------------------------------------
+r47 | nevcairiel | 2008-10-12 11:40:23 +0000 (Sun, 12 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/LibAbacus-3.0.toc
+
+Patch 3.0 prep: Remove LoD from Libraries that have no load manager (LoD+OptDep Bug)
+------------------------------------------------------------------------
+r46 | nevcairiel | 2008-10-09 21:51:42 +0000 (Thu, 09 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/LibAbacus-3.0.lua
+
+WoWAce Post-Processing: Virtually inflate Library Revision numbers for proper upgrade path
+------------------------------------------------------------------------
+r45 | root | 2008-09-29 21:54:54 +0000 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   A /trunk/.pkgmeta
+
+Facilitate WowAce-on-CurseForge transition
+------------------------------------------------------------------------
+r43 | root | 2008-09-29 20:58:16 +0000 (Mon, 29 Sep 2008) | 1 line
+Changed paths:
+   D /tmp/trunk/LibAbacus-3.0
+   A /trunk (from /tmp/trunk/LibAbacus-3.0:42)
+
+Importing old repo data under /trunk
+------------------------------------------------------------------------
+r40 | StingerSoft | 2008-08-07 07:06:38 +0000 (Thu, 07 Aug 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0: added ruRU
+------------------------------------------------------------------------
+r39 | ckknight | 2008-07-17 12:14:34 +0000 (Thu, 17 Jul 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - fix durations
+------------------------------------------------------------------------
+r38 | durcyn | 2008-05-13 19:57:24 +0000 (Tue, 13 May 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0: 2.4.2 fix for time _ABBR(_P1) strings
+------------------------------------------------------------------------
+r37 | kemayo | 2008-05-13 19:50:15 +0000 (Tue, 13 May 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0: Okay, okay, pre-2.4.2 people can have it work, too.
+------------------------------------------------------------------------
+r36 | kemayo | 2008-05-13 19:36:53 +0000 (Tue, 13 May 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0: GOLD, SILVER, COPPER. This might even work.
+------------------------------------------------------------------------
+r35 | durcyn | 2008-05-13 17:04:26 +0000 (Tue, 13 May 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0: Hackish workaround for COPPER/SILVER/GOLD global string changes in 2.4.2.  string.subs probably only work in enUS - other locales please verify.
+------------------------------------------------------------------------
+r33 | nemes | 2008-04-13 03:36:44 +0000 (Sun, 13 Apr 2008) | 3 lines
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+
+LibAbacus-3.0:
+- TOC->2.4
+
+------------------------------------------------------------------------
+r32 | arrowmaster | 2008-04-01 07:16:23 +0000 (Tue, 01 Apr 2008) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+
+.You are not a special or unique snowflake. Get back in line and use the 'Lib: ...' title format like everybody else to save the sanity of those of us looking through an alpha sorted addon list
+------------------------------------------------------------------------
+r30 | kemayo | 2007-11-22 05:00:38 +0000 (Thu, 22 Nov 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0: Fix compat layer.
+------------------------------------------------------------------------
+r29 | kemayo | 2007-11-22 04:35:25 +0000 (Thu, 22 Nov 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+
+LibAbacus-3.0: Forgot the dep.
+------------------------------------------------------------------------
+r28 | kemayo | 2007-11-22 04:33:55 +0000 (Thu, 22 Nov 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+   A /tmp/trunk/LibAbacus-3.0/LibStub
+   A /tmp/trunk/LibAbacus-3.0/LibStub/LibStub.lua
+
+LibAbacus-3.0: LibStub
+------------------------------------------------------------------------
+r27 | silviu | 2007-11-15 10:03:11 +0000 (Thu, 15 Nov 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+
+LibAbacus-3.0 : Bump toc to 20300
+------------------------------------------------------------------------
+r26 | ckknight | 2007-09-25 18:47:54 +0000 (Tue, 25 Sep 2007) | 2 lines
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+
+.Lib* - upgrade TOC to 20200
+
+------------------------------------------------------------------------
+r25 | ckknight | 2007-09-22 02:18:06 +0000 (Sat, 22 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - fix compat layer
+------------------------------------------------------------------------
+r24 | ckknight | 2007-09-21 08:17:24 +0000 (Fri, 21 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+
+LibAbacus-3.0 - add X-AceLibrary-Abacus-2.0 to toc.
+------------------------------------------------------------------------
+r23 | ckknight | 2007-09-20 21:25:21 +0000 (Thu, 20 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - add compat layer for Abacus-2.0
+------------------------------------------------------------------------
+r22 | xionglingfeng | 2007-09-19 18:11:09 +0000 (Wed, 19 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - Add Chinese Simplify translation.
+------------------------------------------------------------------------
+r21 | ckknight | 2007-09-13 06:02:14 +0000 (Thu, 13 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - typo. value -> duration
+------------------------------------------------------------------------
+r20 | ckknight | 2007-09-13 06:00:19 +0000 (Thu, 13 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - fix typo with getting contract functions
+------------------------------------------------------------------------
+r19 | ckknight | 2007-09-13 05:39:09 +0000 (Thu, 13 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - fix typo
+------------------------------------------------------------------------
+r18 | ckknight | 2007-09-03 01:26:43 +0000 (Mon, 03 Sep 2007) | 1 line
+Changed paths:
+   M /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+
+LibAbacus-3.0 - remove a few old :argCheck calls
+------------------------------------------------------------------------
+r17 | ckknight | 2007-09-03 01:24:22 +0000 (Mon, 03 Sep 2007) | 4 lines
+Changed paths:
+   A /tmp/trunk/LibAbacus-3.0
+   A /tmp/trunk/LibAbacus-3.0/LICENSE.txt
+   A /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.lua
+   A /tmp/trunk/LibAbacus-3.0/LibAbacus-3.0.toc
+   A /tmp/trunk/LibAbacus-3.0/lib.xml
+
+LibAbacus-3.0 - initial commit.
+- same API as Abacus-2.0, only uses Rock instead.
+- use contracts instead of manual typechecking. (should make things faster)
+
+------------------------------------------------------------------------

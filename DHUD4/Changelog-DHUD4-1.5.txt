@@ -1,0 +1,102 @@
+------------------------------------------------------------------------
+r80 | arcanefoam | 2011-05-01 21:51:09 +0000 (Sun, 01 May 2011) | 3 lines
+Changed paths:
+   A /tags/1.5 (from /trunk:79)
+
+- Removed pet happines related stuff
+- Added a frame isvisible test when rune type changes (fixing bug happening at load when no runes where visible yet)
+
+------------------------------------------------------------------------
+r79 | arcanefoam | 2011-05-01 21:50:43 +0000 (Sun, 01 May 2011) | 3 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Abilities/DHUD4_DeathKnight.lua
+   M /trunk/DHUD4.toc
+   M /trunk/Modules/DHUD4_Pet.lua
+
+- Removed pet happines related stuff
+- Added a frame isvisible test when rune type changes (fixing bug happening at load when no runes where visible yet)
+
+------------------------------------------------------------------------
+r77 | arcanefoam | 2011-04-30 19:11:24 +0000 (Sat, 30 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/DHUD4.toc
+
+- Updated game version to 4.1
+------------------------------------------------------------------------
+r76 | arcanefoam | 2011-04-30 19:11:02 +0000 (Sat, 30 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/DHUD4.lua
+
+- Removed bliz cast form menu, it should be in cast module
+- Changed frame horizontal spacing so bars can be closer, initial spacing value is now 30
+------------------------------------------------------------------------
+r75 | arcanefoam | 2011-04-30 19:09:08 +0000 (Sat, 30 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/Textures/Renaitre/Bars/1.tga
+   M /trunk/Textures/Renaitre/Bars/1b.tga
+   M /trunk/Textures/Renaitre/Bars/2.tga
+   M /trunk/Textures/Renaitre/Bars/2b.tga
+   M /trunk/Textures/Renaitre/Bars/3.tga
+   M /trunk/Textures/Renaitre/Bars/3b.tga
+   M /trunk/Textures/Renaitre/Bars/3c.tga
+   M /trunk/Textures/Renaitre/Bars/3f.tga
+   M /trunk/Textures/Renaitre/Bars/4.tga
+   M /trunk/Textures/Renaitre/Bars/4b.tga
+   M /trunk/Textures/Renaitre/Bars/4c.tga
+   M /trunk/Textures/Renaitre/Bars/4f.tga
+   M /trunk/Textures/Renaitre/Bars/5.tga
+   M /trunk/Textures/Renaitre/Bars/5b.tga
+   M /trunk/Textures/Renaitre/Bars/cb.tga
+   M /trunk/Textures/Renaitre/Bars/cbh.tga
+   M /trunk/Textures/Renaitre/auraborder.tga
+   M /trunk/Textures/Renaitre/overlayred.tga
+
+- New Raintre textures
+------------------------------------------------------------------------
+r74 | arcanefoam | 2011-04-30 19:08:44 +0000 (Sat, 30 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/Modules/DHUD4_Auras.lua
+   M /trunk/Modules/DHUD4_Outer.lua
+   M /trunk/Modules/DHUD4_Pet.lua
+   M /trunk/Modules/DHUD4_Player.lua
+   M /trunk/Modules/DHUD4_Target.lua
+
+- Changed all menus, no they are not tabbed
+- Removed the auras check option in the target menu, and now the auras submenu is always displayed.
+------------------------------------------------------------------------
+r73 | arcanefoam | 2011-04-30 19:07:34 +0000 (Sat, 30 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/Locale/enUS.lua
+
+- Minos changes to menus
+------------------------------------------------------------------------
+r72 | arcanefoam | 2011-04-30 19:07:14 +0000 (Sat, 30 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/Bars/DHUD4_Bar.lua
+
+- Changed the bar's frames level to correct bug.
+- Changed what happens when target is out of range to play nicely with "do not show borders" option.
+------------------------------------------------------------------------
+r71 | arcanefoam | 2011-04-30 19:05:50 +0000 (Sat, 30 Apr 2011) | 3 lines
+Changed paths:
+   M /trunk/Bars/DHUD4_StatusBar.lua
+
+- Consolidated agro tracking in one function
+- Fixed bug preventing for the option "show when empty" to work correctly
+- Moved the 5th bar text a bit
+------------------------------------------------------------------------
+r70 | arcanefoam | 2011-04-30 19:03:08 +0000 (Sat, 30 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/Bars/DHUD4_CastBar.lua
+
+- Made separate texts for each displayed value
+
+------------------------------------------------------------------------
+r69 | arcanefoam | 2011-04-30 19:01:34 +0000 (Sat, 30 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+
+- Fixed the way Paladin power is updated
+- Changed menus not to be tabed
+------------------------------------------------------------------------

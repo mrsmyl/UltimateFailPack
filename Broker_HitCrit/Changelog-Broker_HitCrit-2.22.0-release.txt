@@ -1,0 +1,26 @@
+------------------------------------------------------------------------
+r120 | zhinjio | 2011-04-28 05:01:21 +0000 (Thu, 28 Apr 2011) | 1 line
+Changed paths:
+   A /tags/2.22.0-release (from /trunk:119)
+
+Tagging as 2.22.0-release
+------------------------------------------------------------------------
+r119 | zhinjio | 2011-04-28 04:58:33 +0000 (Thu, 28 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/Broker_HitCrit.lua
+
+HitCrit :
+ - toc bump
+------------------------------------------------------------------------
+r118 | zhinjio | 2011-04-28 04:25:40 +0000 (Thu, 28 Apr 2011) | 4 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/Broker_HitCrit.lua
+   M /trunk/Broker_HitCrit.toc
+   M /trunk/embeds.xml
+
+HitCrit :
+ - CLEU changes
+ - libdbicon added
+ - options ordering fixes
+------------------------------------------------------------------------

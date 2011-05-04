@@ -1,0 +1,15 @@
+tag v40100-1.3.3
+78c744bfdb88b6463e548f9e1f17791e3fb5727f
+James Whitehead II <jnwhiteh@gmail.com>
+2011-05-01 19:12:41 +0100
+
+Tagging v40100-1.3.3
+
+
+--------------------
+
+James Whitehead II:
+	- Fix fuzzy zone matching
+	This ensures that 'Icecrown' will match 'Icecrown', whereas 'Icec' will
+	match both 'Icecrown' and 'Icecrown Citadel'. In short, an exact match
+	will automatically be accepted.

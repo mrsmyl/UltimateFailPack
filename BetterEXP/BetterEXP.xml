@@ -1,0 +1,486 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xsi:schemaLocation="http://www.blizzard.com/wow/ui/"> 
+	<Script file="localization.lua"/>   
+	<Script file="BetterEXP.lua"/> 
+
+   <!-- Frame to handle all core events --> 
+   <Frame name="BetterEXP_core"> 
+      <Scripts> 
+         <OnLoad> 
+	    BetterEXP_OnLoad(self);	
+	    			
+         </OnLoad> 
+         <OnEvent> 
+            if (event == "VARIABLES_LOADED") then 
+               DEFAULT_CHAT_FRAME:AddMessage(START_MSG);
+               BetterEXP_initialize();
+		 
+		 
+            end 
+	    BetterEXP_OnEvent(self, event, ...);
+         </OnEvent> 
+      </Scripts>
+	
+
+   </Frame> 
+   <Frame name="BetterEXPFrame" parent="UIParent" resizable="true" hidden="false" movable="true" toplevel="true" frameStrata="LOW" framelayer="1">
+		<Size>
+			<AbsDimension x="512" y="64"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="BetterEXPTexture" file="Interface\AddOns\BetterEXP\Images\xpframe">
+					<Size>
+						<AbsDimension x="488" y="22"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOP"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame>
+			<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="BetterEXPBubbleText" font="Fonts\FRIZQT__.TTF" virtual="true">
+					<Size>
+						<AbsDimension x="480" y="8"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOM" relativeTo="BetterEXPFrame">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Shadow>
+						<Offset>
+							<AbsDimension x="1" y="-1"/>
+						</Offset>
+						<Color r="0" g="0" b="0"/>
+					</Shadow>
+					<FontHeight>
+						<AbsValue val="11"/>
+					</FontHeight>
+				</FontString>
+			</Layer>
+			</Layers>
+			</Frame>
+			<StatusBar name="BetterEXPLevelBar" frameStrata="BACKGROUND" framelevel="3">
+				<Size>
+					<AbsDimension x="480" y="8"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BetterEXPFrame" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="3" y="-3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0.85" g="0.85" b="0.85"/>
+			</StatusBar>
+			<StatusBar name="BetterEXPRestedBar" frameStrata="BACKGROUND" framelevel="2">
+				<Size>
+					<AbsDimension x="480" y="8"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BetterEXPFrame" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="3" y="-3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0.45" g="0.45" b="0.95"/>
+			</StatusBar>
+			<StatusBar name="BetterEXPBubbleBar" frameStrata="BACKGROUND" framelevel="2">
+				<Size>
+					<AbsDimension x="480" y="8"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="BetterEXPFrame" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="3" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0.45" g="0.95" b="0.95"/>
+			</StatusBar>
+			<Frame name="BEXP_DropDown" inherits="UIDropDownMenuTemplate" hidden="true">
+				<Size>
+					<AbsDimension x="200" y="300"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BetterEXPLevelBar" relativePoint="TOP">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						BEXP_DropDown_OnLoad(self);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+
+			<Frame name="BEXPSliderBox" hidden="true">
+				<Size>
+					<AbsDimension	x="200"	y="115"/>
+				</Size>
+				<Anchors>
+					<Anchor	point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
+						<Offset>
+							<AbsDimension	x="0"	y="15" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop	bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border"	tile="true">
+					<BackgroundInsets>
+						<AbsInset	left="11"	right="12" top="12"	bottom="11"/>
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue	val="32"/>
+					</TileSize>
+					<EdgeSize>
+						<AbsValue	val="32"/>
+					</EdgeSize>
+				</Backdrop>
+				<Frames>
+			<Slider	name="BEXPHeightSlider"	inherits="OptionsSliderTemplate">
+				<Size>
+					<AbsDimension	x="160"	y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor	point="TOP"	relativeTo="$parent" relativePoint="TOP">
+						<Offset>
+							<AbsDimension	x="0"	y="-25"	/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[self:GetName().."Text"]:SetText("Height");
+						_G[self:GetName().."High"]:SetText("30");
+						_G[self:GetName().."Low"]:SetText("15");
+						BEXPHeightSlider:SetMinMaxValues(15,30);
+						BEXPHeightSlider:SetValue(22);
+						BEXPHeightSlider:SetValueStep(1);
+					</OnLoad>
+					<OnValueChanged>
+						BEXPHeightChange(self);
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+			<Slider	name="BEXPWidthSlider"	inherits="OptionsSliderTemplate">
+				<Size>
+					<AbsDimension	x="160"	y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor	point="TOP"	relativeTo="$parent" relativePoint="TOP">
+						<Offset>
+							<AbsDimension	x="0"	y="-50"	/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[self:GetName().."Text"]:SetText("Width");
+						_G[self:GetName().."High"]:SetText("1600");
+						_G[self:GetName().."Low"]:SetText("200");
+						BEXPWidthSlider:SetMinMaxValues(200,1600);
+						BEXPWidthSlider:SetValue(488);
+						BEXPWidthSlider:SetValueStep(5);
+					</OnLoad>
+					<OnValueChanged>
+						BEXPWidthChange(self);
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+			 <Button	name="BEXPSliderCancel" inherits="UIPanelButtonTemplate2" text="BEXP_CLOSE">
+				<Size>
+					<AbsDimension	x="100"	y="20"/>
+				</Size>
+				<Anchors>
+						<Anchor	point="CENTER" relativeTo="$parent" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension	x="0"	y="30"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				 <Scripts>
+					<OnClick>
+						BEXPSliderBox:Hide();
+					</OnClick>
+				</Scripts>
+			</Button> 
+
+				</Frames>
+			</Frame>
+
+
+
+		</Frames>
+		<Scripts>
+ 			<OnMouseDown>
+ 				
+ 				if button == "LeftButton" then
+					if (BAR_LOCKED == 0) then
+ 						self:StartMoving();
+					end
+ 				end
+ 			</OnMouseDown>
+ 			<OnMouseUp>
+ 				
+ 				if button == "LeftButton" then
+					if (BAR_LOCKED == 0) then
+ 						self:StopMovingOrSizing();
+					end
+				elseif button == "RightButton" then
+					ToggleDropDownMenu(1, nil, BEXP_DropDown);
+ 				end
+ 			</OnMouseUp>
+			<OnEnter>
+				ShowBarText();
+			</OnEnter>
+			<OnLeave>
+				RevertBarText();
+				GameTooltip:Hide();
+			</OnLeave>
+
+		</Scripts>
+   </Frame>
+   <ColorSelect name="BetterEXPColorSelect" toplevel="true" parent="UIParent" movable="true" enableKeyboard="true" enableMouse="true" hidden="true">
+	<Size>
+		<AbsDimension x="285" y="200"/>
+	</Size>
+	<Anchors>
+		<Anchor point="CENTER"/>
+	</Anchors>
+	<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+		<BackgroundInsets>
+			<AbsInset left="11" right="12" top="12" bottom="11"/>
+		</BackgroundInsets>
+		<TileSize>
+			<AbsValue val="32"/>
+		</TileSize>
+		<EdgeSize>
+			<AbsValue val="32"/>
+		</EdgeSize>
+	</Backdrop>
+	<Layers>
+		<Layer level="ARTWORK">
+			<Texture name="BEXPColorSwatch">
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="225" y="-120"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+			</Texture>
+			<Texture name="BEXPCurrentColorSwatch">
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="225" y="-60"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+			</Texture>
+			<Texture name="BEXP_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
+				<Size>
+					<AbsDimension x="256" y="64"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="12"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Texture>
+			<FontString inherits="GameFontNormal" text="Color Select">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="BEXP_Header">
+						<Offset>
+							<AbsDimension x="0" y="-14"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</FontString>
+			<FontString inherits="GameFontNormal" text="Old Color">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="BEXPCurrentColorSwatch">
+						<Offset>
+							<AbsDimension x="0" y="15"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</FontString>
+			<FontString inherits="GameFontNormal" text="New Color">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="BEXPColorSwatch">
+						<Offset>
+							<AbsDimension x="0" y="15"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</FontString>
+		</Layer>
+	</Layers>
+	<Frames>
+		<Button name="BEXP_Confirm" inherits="GameMenuButtonTemplate" text="Confirm">
+			<Anchors>
+				<Anchor point="BOTTOM">
+					<Offset>
+						<AbsDimension x="-70" y="10"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Size>
+				<AbsDimension x="100" y="18"/>
+			</Size>
+			<Scripts>
+				<OnClick>
+					if (BEXP_selection == 0) then
+						BEXP_normalColorR, BEXP_normalColorG, BEXP_normalColorB = BetterEXPColorSelect:GetColorRGB();	
+					elseif (BEXP_selection == 1) then
+						BEXP_restedColorR, BEXP_restedColorG, BEXP_restedColorB = BetterEXPColorSelect:GetColorRGB();	
+					else
+						BEXP_bubbleColorR, BEXP_bubbleColorG, BEXP_bubbleColorB = BetterEXPColorSelect:GetColorRGB();	
+					end
+					BetterEXPColorSelect:Hide();
+					BetterEXPUpdateColor();
+				</OnClick>
+			</Scripts>
+		</Button>
+		<Button name="BEXP_Cancel" inherits="GameMenuButtonTemplate" text="Cancel">
+			<Anchors>
+				<Anchor point="BOTTOM">
+					<Offset>
+						<AbsDimension x="70" y="10"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Size>
+				<AbsDimension x="100" y="18"/>
+			</Size>
+			<Scripts>
+				<OnClick>
+					if (BEXP_selection == 0) then
+						BEXP_normalColorR = oldNColorR;
+						BEXP_normalColorG = oldNColorG;
+						BEXP_normalColorB = oldNColorB;
+					elseif (BEXP_selection == 1) then
+						BEXP_restedColorR = oldRColorR;
+						BEXP_restedColorG = oldRColorG;
+						BEXP_restedColorB = oldRColorB;
+					else
+						BEXP_bubbleColorR = oldBColorR;
+						BEXP_bubbleColorG = oldBColorG;
+						BEXP_bubbleColorB = oldBColorB;
+					end
+					BetterEXPColorSelect:Hide();
+					BetterEXPUpdateColor();
+					if ( BetterEXPColorSelect.cancelFunc ) then
+						BetterEXPColorSelect.cancelFunc(BetterEXPColorSelect.previousValues);
+					end
+				</OnClick>
+			</Scripts>
+		</Button>
+	</Frames>
+	<Scripts>
+		<OnColorSelect>
+			BEXPColorSwatch:SetTexture(arg1, arg2, arg3);
+			if (BEXP_selection == 0) then
+				BEXP_normalColorR, BEXP_normalColorG, BEXP_normalColorB = BetterEXPColorSelect:GetColorRGB();	
+			elseif (BEXP_selection == 1) then
+				BEXP_restedColorR, BEXP_restedColorG, BEXP_restedColorB = BetterEXPColorSelect:GetColorRGB();	
+			else
+				BEXP_bubbleColorR, BEXP_bubbleColorG, BEXP_bubbleColorB = BetterEXPColorSelect:GetColorRGB();	
+			end
+			BetterEXPUpdateColor();
+			if ( self.func ) then
+				self.func();
+			end
+		</OnColorSelect>
+		<OnKeyDown>
+			if (arg1 == "ESCAPE") then
+				if (BEXP_selection == 0) then
+					BEXP_normalColorR = oldNColorR;
+					BEXP_normalColorG = oldNColorG;
+					BEXP_normalColorB = oldNColorB;
+				elseif (BEXP_selection == 1) then
+					BEXP_restedColorR = oldRColorR;
+					BEXP_restedColorG = oldRColorG;
+					BEXP_restedColorB = oldRColorB;
+				else
+					BEXP_bubbleColorR = oldBColorR;
+					BEXP_bubbleColorG = oldBColorG;
+					BEXP_bubbleColorB = oldBColorB;
+				end
+				BetterEXPColorSelect:Hide();
+				BetterEXPUpdateColor();
+				if ( BetterEXPColorSelect.cancelFunc ) then
+					BetterEXPColorSelect.cancelFunc(BetterEXPColorSelect.previousValues);
+				end
+			end
+		</OnKeyDown>
+	</Scripts>
+	<ColorWheelTexture name="BEXP_ColorWheel">
+		<Size>
+			<AbsDimension x="128" y="128"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="16" y="-32"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</ColorWheelTexture>
+	<ColorWheelThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+		<Size>
+			<AbsDimension x="10" y="10"/>
+		</Size>
+		<TexCoords left="0" right="0.15625" top="0" bottom="0.625"/>
+	</ColorWheelThumbTexture>
+	<ColorValueTexture>
+		<Size>
+			<AbsDimension x="32" y="128"/>
+		</Size>
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="BEXP_ColorWheel" relativePoint="RIGHT">
+				<Offset>
+					<AbsDimension x="24" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</ColorValueTexture>
+	<ColorValueThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+		<Size>
+			<AbsDimension x="48" y="14"/>
+		</Size>
+		<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
+	</ColorValueThumbTexture>
+    </ColorSelect>
+</Ui>

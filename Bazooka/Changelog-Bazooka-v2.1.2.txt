@@ -1,0 +1,30 @@
+------------------------------------------------------------------------
+r208 | mitch0 | 2011-04-27 18:00:44 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   A /tags/v2.1.2 (from /trunk:207)
+
+Tagging as v2.1.2
+------------------------------------------------------------------------
+r207 | mitch0 | 2011-04-27 17:54:24 +0000 (Wed, 27 Apr 2011) | 3 lines
+Changed paths:
+   M /trunk/Bazooka.lua
+   M /trunk/Bazooka.toc
+   M /trunk/Bazooka_Options/Options.lua
+
+- Added BACKGROUND Strata
+- Removed "trickery" for running Bazooka_Options inside Bazooka. Use a symlink or copy Bazooka_Options to the addon folder if you update from repo.
+
+------------------------------------------------------------------------
+r205 | mitch0 | 2011-04-27 17:29:12 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/Bazooka.toc
+   M /trunk/Bazooka_Options/Bazooka_Options.toc
+
+toc bump
+------------------------------------------------------------------------
+r204 | mitch0 | 2011-01-10 15:33:24 +0000 (Mon, 10 Jan 2011) | 1 line
+Changed paths:
+   M /trunk/Bazooka_Options/Options.lua
+
+disable the 'Adjust Frames' option if LibJostle is not loaded
+------------------------------------------------------------------------

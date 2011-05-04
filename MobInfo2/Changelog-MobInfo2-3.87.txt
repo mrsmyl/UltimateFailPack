@@ -1,0 +1,20 @@
+------------------------------------------------------------------------
+r51 | speedwaystar | 2011-04-27 05:23:35 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   A /tags/3.87 (from /trunk:50)
+
+Add tag 3.87
+------------------------------------------------------------------------
+r50 | speedwaystar | 2011-04-27 05:22:49 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/MobInfo2.toc
+
+* update for WoW patch 4.1: bumped TOC to 40100
+------------------------------------------------------------------------
+r32 | speedwaystar | 2011-03-25 14:53:37 +0000 (Fri, 25 Mar 2011) | 1 line
+Changed paths:
+   M /trunk/Localization/localization.ru.lua
+   M /trunk/MobInfo2.lua
+
+* added first draft of Russian localization by StingerSoft aka Эритнулл (thanks also to NikPower)
+------------------------------------------------------------------------

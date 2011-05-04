@@ -1,0 +1,66 @@
+------------------------------------------------------------------------
+r523 | mysticalos | 2011-04-27 06:40:57 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   A /tags/3.1.3 (from /trunk:522)
+
+Tagging as 3.1.3
+------------------------------------------------------------------------
+r522 | mysticalos | 2011-04-27 06:00:43 +0000 (Wed, 27 Apr 2011) | 1 line
+Changed paths:
+   M /trunk/localization.lua
+
+Update version to 3.1.3
+------------------------------------------------------------------------
+r521 | mysticalos | 2011-04-26 13:16:22 +0000 (Tue, 26 Apr 2011) | 2 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.toc
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.lua
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.toc
+   M /trunk/XPerl_Highlight.lua
+   M /trunk/XPerl_Options/XPerl_Options.toc
+   M /trunk/XPerl_Party/XPerl_Party.toc
+   M /trunk/XPerl_PartyPet/XPerl_PartyPet.toc
+   M /trunk/XPerl_Player/XPerl_Player.toc
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.toc
+   M /trunk/XPerl_PlayerPet/XPerl_PlayerPet.toc
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.toc
+   M /trunk/XPerl_RaidFrames/XPerl_RaidFrames.toc
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.toc
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.toc
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.toc
+   M /trunk/XPerl_Target/XPerl_Target.lua
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.toc
+
+Updated CLEU events for 4.1
+Updated custom highlights.
+------------------------------------------------------------------------
+r520 | Zeksie | 2011-03-28 19:47:06 +0000 (Mon, 28 Mar 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+
+#1101 - Custom Highlight config will now scan for all spells without upper limit. Stopping when end detected properly.
+------------------------------------------------------------------------
+r519 | Zeksie | 2011-03-28 19:21:29 +0000 (Mon, 28 Mar 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.lua
+
+#1105 - Use correct return from GetNetStats() for cast lag display.
+------------------------------------------------------------------------
+r518 | Zeksie | 2011-03-28 19:10:42 +0000 (Mon, 28 Mar 2011) | 2 lines
+Changed paths:
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
+   M /trunk/XPerl_Usage.lua
+
+Added RegisterAddonMessagePrefix calls.
+
+------------------------------------------------------------------------
+r517 | playerlin | 2011-03-17 11:32:34 +0000 (Thu, 17 Mar 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Try to fix Male Worgen characters' 3D Portrait displays its fullbody when it's NOT a player. Silly Zeksie, UnitIsPlayer is NOT enough. :p But this fix may not proper... 
+------------------------------------------------------------------------
