@@ -20,11 +20,11 @@ HealBot Continued		4.0.6.5
 LibAbacus-3.0			WoW-3.0-release
 LibPeriodicTable-3.1		283 release
 LibStub				1.0.1
-LibWindow-1.1			r3
+LibWindow-1.1			r6-40100
 Minimalist			r115
 MobInfo2			3.87
 Outfitter			5.2.2
-Overachiever			v0.62
+Overachiever			v0.63
 Pawn				1.5.10
 Postal				v3.4.6
 QuestHelper			QuestHelper-4.0.6.161r
@@ -33,3 +33,8 @@ Skillet				2.18-nolib
 TomTom				v40100-1.3.3
 VendorBait			3.3.0.5-Release
 X-Perl UnitFrames		3.1.3
+
+20100505
+
+Updated LibWindow-1.1 to r6-40100
+Updated Overachiever to v0.63

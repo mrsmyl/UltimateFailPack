@@ -60,7 +60,7 @@ function Overachiever.CreateOptions(THIS_TITLE, BuildCriteriaLookupTab_check, Au
 	{ variable = "UI_RequiredForMetaTooltip", text = L.OPT_UI_REQUIREDFORMETATIP,
 	  tooltip = L.OPT_UI_REQUIREDFORMETATIP_TIP, OnChange = BuildCriteriaLookupTab_check },
 	{ variable = "Draggable_AchFrame", text = L.OPT_DRAGGABLE, OnChange = CheckDraggable_AchFrame },
-	{ variable = "DragSave_AchFrame", text = L.OPT_DRAGSAVE, xOffset = 10, OnChange = CheckDraggable_AchFrame },
+	{ variable = "DragSave_AchFrame", text = L.OPT_DRAGSAVE, xOffset = 15, OnChange = CheckDraggable_AchFrame },
 
 	{ type = "labelwrap", text = L.OPT_LABEL_TRADESKILLUI, topBuffer = 4, xOffset = 0 },
 	{ variable = "Tradeskill_ShowCompletedAch_Cooking", text = L.OPT_TRADESKILL_SHOWCOMPLETEDACH_COOKING, tooltip = L.OPT_TRADESKILL_SHOWCOMPLETEDACH_COOKING_TIP },
@@ -69,49 +69,49 @@ function Overachiever.CreateOptions(THIS_TITLE, BuildCriteriaLookupTab_check, Au
 	  tooltip = L.OPT_SELECTSOUND_TIP, tooltip2 = L.OPT_SELECTSOUND_TIP2,
 	  xOffset = 0, topBuffer = 10, OnChange = SoundSelected },
 	{ variable = "SoundAchIncomplete_AnglerCheckPole", text = L.OPT_SELECTSOUND_ANGLERCHECKPOLE,
-	  tooltip = L.OPT_SELECTSOUND_ANGLERCHECKPOLE_TIP, xOffset = 10 },
+	  tooltip = L.OPT_SELECTSOUND_ANGLERCHECKPOLE_TIP, xOffset = 15 },
   }
 
   local items_reminders = {
 	{ type = "Oa_AchLabel", text = L.OPT_LABEL_NEEDTOKILL, topBuffer = 4, id1 = IDs.MediumRare, id2 = IDs.NorthernExposure },
 	{ variable = "CreatureTip_killed", text = L.OPT_KILLCREATURETIPS, tooltip = L.OPT_KILLCREATURETIPS_TIP,
-	  tooltip2 = L.OPT_KILLCREATURETIPS_TIP2, OnChange = BuildCriteriaLookupTab_check },
+	  tooltip2 = L.OPT_KILLCREATURETIPS_TIP2, OnChange = BuildCriteriaLookupTab_check, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTHREE, topBuffer = 4, id1 = IDs.LoveCritters, id2 = IDs.LoveCritters2, id3 = IDs.LoveCritters3 },
-	{ variable = "CritterTip_loved", text = L.OPT_CRITTERTIPS, tooltip = L.OPT_CRITTERTIPS_TIP },
+	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTHREE, topBuffer = 4, id1 = IDs.LoveCritters, id2 = IDs.LoveCritters2, id3 = IDs.LoveCritters3, xOffset = 0 },
+	{ variable = "CritterTip_loved", text = L.OPT_CRITTERTIPS, tooltip = L.OPT_CRITTERTIPS_TIP, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.PestControl },
-	{ variable = "CritterTip_killed", text = L.OPT_PESTCONTROLTIPS, tooltip = L.OPT_PESTCONTROLTIPS_TIP },
+	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.PestControl, xOffset = 0 },
+	{ variable = "CritterTip_killed", text = L.OPT_PESTCONTROLTIPS, tooltip = L.OPT_PESTCONTROLTIPS_TIP, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTWO, topBuffer = 4, id1 = IDs.WellRead, id2 = IDs.HigherLearning },
-	{ variable = "WellReadTip_read", text = L.OPT_WELLREADTIPS, tooltip = L.OPT_WELLREADTIPS_TIP },
+	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTWO, topBuffer = 4, id1 = IDs.WellRead, id2 = IDs.HigherLearning, xOffset = 0 },
+	{ variable = "WellReadTip_read", text = L.OPT_WELLREADTIPS, tooltip = L.OPT_WELLREADTIPS_TIP, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTHREE, topBuffer = 4, id1 = IDs.Scavenger, id2 = IDs.OutlandAngler, id3 = IDs.NorthrendAngler },
-	{ variable = "AnglerTip_fished", text = L.OPT_ANGLERTIPS, tooltip = L.OPT_ANGLERTIPS_TIP },
-	
-	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTWO, topBuffer = 4, id1 = IDs.Limnologist, id2 = IDs.Oceanographer },
-	{ variable = "SchoolTip_fished", text = L.OPT_ANGLERTIPS, tooltip = L.OPT_ANGLERTIPS_TIP },
+	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTHREE, topBuffer = 4, id1 = IDs.Scavenger, id2 = IDs.OutlandAngler, id3 = IDs.NorthrendAngler, xOffset = 0 },
+	{ variable = "AnglerTip_fished", text = L.OPT_ANGLERTIPS, tooltip = L.OPT_ANGLERTIPS_TIP, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTWO, topBuffer = 4, id1 = IDs.HappyHour, id2 = IDs.TastesLikeChicken },
-	{ variable = "Item_consumed", text = L.OPT_CONSUMEITEMTIPS, tooltip = L.OPT_CONSUMEITEMTIPS_TIP, tooltip2 = L.OPT_CONSUMEITEMTIPS_TIP2 },
-	{ variable = "Item_consumed_whencomplete", text = L.OPT_CONSUMEITEMTIPS_WHENCOMPLETE, xOffset = 10 },
+	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHTWO, topBuffer = 4, id1 = IDs.Limnologist, id2 = IDs.Oceanographer, xOffset = 0 },
+	{ variable = "SchoolTip_fished", text = L.OPT_ANGLERTIPS, tooltip = L.OPT_ANGLERTIPS_TIP, xOffset = 28 },
 
-	{ type = "labelwrap", text = L.OPT_LABEL_SEASONALACHS, justifyH = "CENTER", topBuffer = 16 },
+	{ type = "Oa_AchLabel", text = L.OPT_LABEL_ACHFOUR, topBuffer = 4, id1 = IDs.TastesLikeChicken, id2 = IDs.HappyHour, id3 = IDs.CataclysmicallyDelicious, id4 = IDs.DrownYourSorrows, xOffset = 0 },
+	{ variable = "Item_consumed", text = L.OPT_CONSUMEITEMTIPS, tooltip = L.OPT_CONSUMEITEMTIPS_TIP, tooltip2 = L.OPT_CONSUMEITEMTIPS_TIP2, xOffset = 28 },
+	{ variable = "Item_consumed_whencomplete", text = L.OPT_CONSUMEITEMTIPS_WHENCOMPLETE, xOffset = 39 },
 
-	{ type = "Oa_AchLabel", topBuffer = 4, xOffset = 0, id1 = IDs.FistfulOfLove },
-	{ variable = "FistfulOfLove_petals", text = L.OPT_FISTFULOFLOVETIPS, tooltip = L.OPT_FISTFULOFLOVETIPS_TIP },
+	{ type = "labelwrap", text = L.OPT_LABEL_SEASONALACHS, justifyH = "CENTER", topBuffer = 16, xOffset = 0 },
 
-	{ type = "Oa_AchLabel", topBuffer = 4, xOffset = 0, id1 = IDs.BunnyMaker },
-	{ variable = "BunnyMaker_eared", text = L.OPT_BUNNYMAKERTIPS, tooltip = L.OPT_BUNNYMAKERTIPS_TIP },
+	{ type = "Oa_AchLabel", topBuffer = 4, xOffset = 0, id1 = IDs.FistfulOfLove, xOffset = 0 },
+	{ variable = "FistfulOfLove_petals", text = L.OPT_FISTFULOFLOVETIPS, tooltip = L.OPT_FISTFULOFLOVETIPS_TIP, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.CheckYourHead },
-	{ variable = "CheckYourHead_pumpkin", text = L.OPT_CHECKYOURHEADTIPS, tooltip = L.OPT_CHECKYOURHEADTIPS_TIP },
+	{ type = "Oa_AchLabel", topBuffer = 4, xOffset = 0, id1 = IDs.BunnyMaker, xOffset = 0 },
+	{ variable = "BunnyMaker_eared", text = L.OPT_BUNNYMAKERTIPS, tooltip = L.OPT_BUNNYMAKERTIPS_TIP, xOffset = 28 },
 
-	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.TurkeyLurkey },
-	{ variable = "TurkeyLurkey_feathered", text = L.OPT_TURKEYLURKEYTIPS, tooltip = L.OPT_TURKEYLURKEYTIPS_TIP },
-	
-	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.LetItSnow },
-	{ variable = "LetItSnow_flaked", text = L.OPT_LETITSNOWTIPS, tooltip = L.OPT_LETITSNOWTIPS_TIP },
+	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.CheckYourHead, xOffset = 0 },
+	{ variable = "CheckYourHead_pumpkin", text = L.OPT_CHECKYOURHEADTIPS, tooltip = L.OPT_CHECKYOURHEADTIPS_TIP, xOffset = 28 },
+
+	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.TurkeyLurkey, xOffset = 0 },
+	{ variable = "TurkeyLurkey_feathered", text = L.OPT_TURKEYLURKEYTIPS, tooltip = L.OPT_TURKEYLURKEYTIPS_TIP, xOffset = 28 },
+
+	{ type = "Oa_AchLabel", topBuffer = 4, id1 = IDs.LetItSnow, xOffset = 0 },
+	{ variable = "LetItSnow_flaked", text = L.OPT_LETITSNOWTIPS, tooltip = L.OPT_LETITSNOWTIPS_TIP, xOffset = 28 },
   }
 
   local title = THIS_TITLE.." v"..THIS_VERSION
@@ -203,18 +203,34 @@ do
 
     function CreateAchLabel_pre(name, parent, data, arg)
       local first = createicon(name, 1, parent, data.id1)
-      data.icon1 = first
-      local i, v, last, w, iconframe = 2, data.id2, first, 28
-      while (v) do
-        iconframe = createicon(name, i, parent, v)
-        iconframe:SetPoint("LEFT", last, "RIGHT", 2, 0)
-        last = iconframe
-        w, i = w + 23, i + 1
-        v = data["id"..i]
+      local w = 28
+      local yOffset = 0
+      if (data.id2) then
+        data.iconTopRight = createicon(name, 2, parent, data.id2)
+        data.iconTopRight:SetPoint("LEFT", first, "RIGHT", 2, 0)
+        w = w + 23
+        local i, v, last, iconframe = 3, data.id3, first
+        while (v) do
+          iconframe = createicon(name, i, parent, v)
+          if (i % 2 == 0) then
+            iconframe:SetPoint("LEFT", last, "RIGHT", 2, 0)
+          else
+            if (not data["id"..i+1]) then  iconframe:SetPoint("TOP", last, "BOTTOM", 12, -2);
+            else  iconframe:SetPoint("TOP", last, "BOTTOM", 0, -2);  end
+            last = iconframe
+            yOffset = yOffset + 23
+          end
+          i = i + 1
+          v = data["id"..i]
+        end
+      else
+        data.iconTopRight = first
       end
-      data.iconN = last
+
+      data.icon1 = first
       data.justifyH = data.justifyH or "LEFT"
       data.width = data.width or (369 - w)
+      data.lbl_yOffset = yOffset
 
       local text = data.text
       if (not text) then
@@ -230,10 +246,11 @@ do
   end
 
   local function CreateAchLabel_post(frame, handletip, xOffset, yOffset, btmBuffer, name, parent, data, arg)
-    frame:SetPoint("LEFT", data.iconN, "RIGHT", 4, 1)
-    local icon1 = data.icon1
-    data.icon1, data.iconN = nil, nil
-    return true, icon1, handletip, xOffset + 4, yOffset - 6, btmBuffer
+    local lbl_yOffset = data.lbl_yOffset or 0
+    frame:SetPoint("LEFT", data.iconTopRight, "RIGHT", 4, 1 - (lbl_yOffset / 2))
+    local iconBL = data.icon1
+    data.icon1, data.iconTopRight, data.lbl_yOffset = nil, nil, nil
+    return true, iconBL, handletip, xOffset + 4, yOffset - 6, btmBuffer + lbl_yOffset
   end
 
   TjOptions.RegisterItemType("Oa_AchLabel", tonumber(THIS_VERSION) or 0, "labelwrap",

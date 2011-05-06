@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Zone-3.0
-Revision: $Rev: 317 $
+Revision: $Rev: 321 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-zone-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Zone-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 317 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 321 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -1826,7 +1826,7 @@ elseif GAME_LOCALE == "ruRU" then
 	["Darkmoon Faire"] = "Ярмарка Новолуния",
 	Darkshore = "Темные берега",
 	Darnassus = "Дарнас",
-	Deadmines = "Deadmines", -- Needs review
+	Deadmines = "Мертвые копи",
 	["Deadwind Pass"] = "Перевал Мертвого Ветра",
 	Deepholm = "Подземье",
 	["Deeprun Tram"] = "Подземный поезд",

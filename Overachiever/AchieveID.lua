@@ -7,8 +7,11 @@ OVERACHIEVER_ACHID = {
 	PestControl = 2556,		-- "Pest Control"
 	WellRead = 1244,		-- "Well Read"
 	HigherLearning = 1956,		-- "Higher Learning"
+
 	TastesLikeChicken = 1832,	-- "Takes Like Chicken"
 	HappyHour = 1833,		-- "It's Happy Hour Somewhere"
+	CataclysmicallyDelicious = 5753,-- "Cataclysmically Delicious"
+	DrownYourSorrows = 5754,	-- "Drown Your Sorrows"
 
 	Scavenger = 1257,		-- "The Scavenger"
 	OutlandAngler = 1225,		-- "Outland Angler"
@@ -104,8 +107,8 @@ OVERACHIEVER_EXPLOREZONEID = {
 	["Ghostlands"] = 858,
 	["Isle of Quel'Danas"] = 868,
    -- Cataclysm:
-	["Tol Barad"] = 4867,
-	["Tol Barad Peninsula"] = 4867,
+	--["Tol Barad"] = 4867,           -- This achievement ("Explore Tol Barad") was removed from the game
+	--["Tol Barad Peninsula"] = 4867, -- due to it being buggy. Note that it may return in a future patch.
 	["Twilight Highlands"] = 4866,
 	-- Vashj'ir:
 	["Vashj'ir"] = 4825,

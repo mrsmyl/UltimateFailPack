@@ -385,6 +385,7 @@ local ACHID_INSTANCES = {
 }
 -- Battlegrounds
 ACHID_INSTANCES["Eye of the Storm"] = { 1171, 587, 1258, 211 }
+ACHID_INSTANCES["The Battle for Gilneas"] = 5258
 if (IsAlliance) then
 	ACHID_INSTANCES["Alterac Valley"] = { 1167, 907 }
 	ACHID_INSTANCES["Arathi Basin"] = { 1169, 907 }

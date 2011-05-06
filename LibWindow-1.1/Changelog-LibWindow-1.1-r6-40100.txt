@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+r7 | mikk | 2011-05-05 19:17:51 +0000 (Thu, 05 May 2011) | 1 line
+Changed paths:
+   A /tags/r6-40100 (from /trunk:6)
+
+Tagging as r6-40100
+------------------------------------------------------------------------
+r6 | mikk | 2011-05-05 19:04:47 +0000 (Thu, 05 May 2011) | 1 line
+Changed paths:
+   M /trunk/LibWindow-1.1.toc
+
+TOC 40100
+------------------------------------------------------------------------
+r5 | mikk | 2009-12-15 16:35:44 +0000 (Tue, 15 Dec 2009) | 2 lines
+Changed paths:
+   M /trunk/LibWindow-1.1/LibWindow-1.1.lua
+   M /trunk/LibWindow-1.1.toc
+
+- TOC 30300
+- Use GetObjectType rather than GetFrameType (removed as of 3.3)
+------------------------------------------------------------------------

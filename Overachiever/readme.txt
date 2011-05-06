@@ -1,5 +1,5 @@
 
-Overachiever v0.62
+Overachiever v0.63
 ==============================
 
 Author: Tuhljin
@@ -106,6 +106,12 @@ Change log
 ==========
 
 The change log lists changes of particular note to users, not every change made.
+
+v0.63
+- Updated for WoW patch 4.1.
+- "Cataclysmically Delicious" and "Drown Your Sorrows" added to the consumed item tracking system.
+- Suggestions Tab: Added suggestion for The Battle for Gilneas.
+- Minor update to options layout.
 
 v0.62
 - Suggestions Tab: Updated suggestions to include Cataclysm dungeons. (Thanks Ackis!)

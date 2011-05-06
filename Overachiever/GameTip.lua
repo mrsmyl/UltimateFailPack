@@ -402,29 +402,40 @@ end
 -- ITEM TOOLTIP HOOK
 -----------------------
 
-local FoodCriteria, DrinkCriteria = {}, {}
+local FoodCriteria, DrinkCriteria, FoodCriteria2, DrinkCriteria2 = {}, {}, {}, {}
 local numDrinksConsumed, numFoodConsumed
 
 local ConsumeItemAch = {
   TastesLikeChicken = { "Item_consumed", L.ACH_CONSUME_COMPLETE, L.ACH_CONSUME_INCOMPLETE, L.ACH_CONSUME_INCOMPLETE_EXTRA, FoodCriteria },
   HappyHour = { "Item_consumed", L.ACH_CONSUME_COMPLETE, L.ACH_CONSUME_INCOMPLETE, L.ACH_CONSUME_INCOMPLETE_EXTRA, DrinkCriteria },
+  CataclysmicallyDelicious = { "Item_consumed", L.ACH_CONSUME_COMPLETE, L.ACH_CONSUME_INCOMPLETE, L.ACH_CONSUME_INCOMPLETE_EXTRA, FoodCriteria2 },
+  DrownYourSorrows = { "Item_consumed", L.ACH_CONSUME_COMPLETE, L.ACH_CONSUME_INCOMPLETE, L.ACH_CONSUME_INCOMPLETE_EXTRA, DrinkCriteria2 },
 };
 
 --local lastitemTime, lastitemLink = 0
 
-function Overachiever.BuildItemLookupTab(THIS_VERSION, id, savedtab, tab)
+function Overachiever.BuildItemLookupTab(THIS_VERSION, id, savedtab, tab, duptab)
   if (id) then  -- Build lookup tables (since examining the criteria each time is time-consuming):
 -- This is separate from the BuildCriteriaLookupTab function because while that gave some good achievements
 -- involving consumable items, it also gave some that didn't fit well. This function instead uses hardcoded IDs
 -- taken from OVERACHIEVER_ACHID.
+-- When duptab is used, it specifies that: 1) The achievement ID given provides reliable data on whether a
+-- criteria is completed, so it is good to use that data instead of relying on saved data. 2) Some asset data
+-- in duptab overlaps with the assets in this achievement, but since duptab didn't get its criteria info
+-- reliably, we should update duptab data to match where applicable.
     tab = tab or {}
     local GetAchievementCriteriaInfo = GetAchievementCriteriaInfo
-    local i, _, asset = 1
-    _, _, _, _, _, _, _, asset = GetAchievementCriteriaInfo(id, i)
+    local i, _, completed, asset = 1
+    _, _, completed, _, _, _, _, asset = GetAchievementCriteriaInfo(id, i)
     while (asset) do -- while loop used because these are "hidden" criteria: GetAchievementNumCriteria returns only 1.
-      tab[asset] = savedtab[asset] or 0
+      if (duptab) then
+        tab[asset] = completed or 0
+        if (duptab[asset]) then  duptab[asset] = completed or 0;  end
+      else
+        tab[asset] = savedtab[asset] or 0
+      end
       i = i + 1
-      _, _, _, _, _, _, _, asset = GetAchievementCriteriaInfo(id, i)
+      _, _, completed, _, _, _, _, asset = GetAchievementCriteriaInfo(id, i)
     end
     return tab
   end
@@ -450,24 +461,30 @@ function Overachiever.BuildItemLookupTab(THIS_VERSION, id, savedtab, tab)
   local needBuild
   local _, gamebuild = GetBuildInfo()
   if (not Overachiever_CharVars_Consumed or not Overachiever_CharVars_Consumed.LastBuilt or
-      not Overachiever_CharVars_Consumed.Food or not Overachiever_CharVars_Consumed.Drink) then
+      not Overachiever_CharVars_Consumed.Food or not Overachiever_CharVars_Consumed.Drink or
+      not Overachiever_CharVars_Consumed.Food2 or not Overachiever_CharVars_Consumed.Drink2) then
     Overachiever_CharVars_Consumed = Overachiever_CharVars_Consumed or {}
     Overachiever_CharVars_Consumed.Food = Overachiever_CharVars_Consumed.Food or {}
     Overachiever_CharVars_Consumed.Drink = Overachiever_CharVars_Consumed.Drink or {}
+    Overachiever_CharVars_Consumed.Food2 = Overachiever_CharVars_Consumed.Food2 or {}
+    Overachiever_CharVars_Consumed.Drink2 = Overachiever_CharVars_Consumed.Drink2 or {}
     needBuild = true
   else
     local oldver, oldbuild = strsplit("|", Overachiever_CharVars_Consumed.LastBuilt, 2)
     if (oldver ~= THIS_VERSION or gamebuild ~= oldbuild) then  needBuild = true;  end
   end
-
+  
   if (needBuild) then
     Overachiever_CharVars_Consumed.Food = Overachiever.BuildItemLookupTab(nil, OVERACHIEVER_ACHID.TastesLikeChicken, Overachiever_CharVars_Consumed.Food, FoodCriteria)
     Overachiever_CharVars_Consumed.Drink = Overachiever.BuildItemLookupTab(nil, OVERACHIEVER_ACHID.HappyHour, Overachiever_CharVars_Consumed.Drink, DrinkCriteria)
+    Overachiever_CharVars_Consumed.Food2 = Overachiever.BuildItemLookupTab(nil, OVERACHIEVER_ACHID.CataclysmicallyDelicious, Overachiever_CharVars_Consumed.Food2, FoodCriteria2, FoodCriteria)
+    Overachiever_CharVars_Consumed.Drink2 = Overachiever.BuildItemLookupTab(nil, OVERACHIEVER_ACHID.DrownYourSorrows, Overachiever_CharVars_Consumed.Drink2, DrinkCriteria2, DrinkCriteria)
     Overachiever_CharVars_Consumed.LastBuilt = THIS_VERSION.."|"..gamebuild
   else
     FoodCriteria, DrinkCriteria = Overachiever_CharVars_Consumed.Food, Overachiever_CharVars_Consumed.Drink
-    ConsumeItemAch.TastesLikeChicken[5] = FoodCriteria
-    ConsumeItemAch.HappyHour[5] = DrinkCriteria
+    FoodCriteria2, DrinkCriteria2 = Overachiever_CharVars_Consumed.Food2, Overachiever_CharVars_Consumed.Drink2
+    ConsumeItemAch.TastesLikeChicken[5], ConsumeItemAch.HappyHour[5] = FoodCriteria, DrinkCriteria
+    ConsumeItemAch.CataclysmicallyDelicious[5], ConsumeItemAch.DrownYourSorrows[5] = FoodCriteria2, DrinkCriteria2
     if (Overachiever_Debug) then  Overachiever.chatprint("Skipped food/drink lookup table rebuild: Retrieved from saved variables.");  end
   end
 end
@@ -540,17 +557,33 @@ local function BagUpdate(...)
     for i=1,select("#", ...),3 do
       itemID, old, new = select(i, ...)
       --if (old > new) then
-      if (changeF and FoodCriteria[itemID]) then
-        --local _, link = GetItemInfo(itemID)
-        --print("You ate:",link)
-        FoodCriteria[itemID] = true
-        Overachiever_CharVars_Consumed.Food[itemID] = true
+      if (changeF) then
+        if (FoodCriteria[itemID]) then
+          --local _, link = GetItemInfo(itemID)
+          --print("You ate:",link)
+          FoodCriteria[itemID] = true
+          Overachiever_CharVars_Consumed.Food[itemID] = true
+        end
+        if (FoodCriteria2[itemID]) then
+          --local _, link = GetItemInfo(itemID)
+          --print("You ate:",link)
+          FoodCriteria2[itemID] = true
+          Overachiever_CharVars_Consumed.Food2[itemID] = true
+        end
       end
-      if (changeD and DrinkCriteria[itemID]) then
-        --local _, link = GetItemInfo(itemID)
-        --print("You drank:",link)
-        DrinkCriteria[itemID] = true
-        Overachiever_CharVars_Consumed.Drink[itemID] = true
+      if (changeD) then
+        if (DrinkCriteria[itemID]) then
+          --local _, link = GetItemInfo(itemID)
+          --print("You drank:",link)
+          DrinkCriteria[itemID] = true
+          Overachiever_CharVars_Consumed.Drink[itemID] = true
+        end
+        if (DrinkCriteria2[itemID]) then
+          --local _, link = GetItemInfo(itemID)
+          --print("You drank:",link)
+          DrinkCriteria2[itemID] = true
+          Overachiever_CharVars_Consumed.Drink2[itemID] = true
+        end
       end
       --end
     end

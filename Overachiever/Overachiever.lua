@@ -1120,6 +1120,9 @@ local function slashHandler(msg, self, silent, func_nomsg)
   if (msg == "") then
     func_nomsg = func_nomsg or ToggleAchievementFrame
     func_nomsg();
+  elseif (msg == "!!rebuild") then
+    Overachiever_CharVars_Consumed.LastBuilt = nil
+    chatprint("Food/drink lookup table will be rebuilt the next time Overachiever loads. Use the /reload command to do so now.")
   else
     if (strsub(msg, 1,1) == "#") then
       local id = tonumber(strsub(msg, 2))

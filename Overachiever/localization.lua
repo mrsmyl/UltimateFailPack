@@ -59,6 +59,7 @@ OVERACHIEVER_STRINGS = {
 
 	OPT_LABEL_ACHTWO = '"%s" and "%s"';
 	OPT_LABEL_ACHTHREE = '"%s," "%s," and|n"%s"';
+	OPT_LABEL_ACHFOUR = '"%s,"|n"%s,"|n"%s,"|n"%s"';
 
 	OPT_ACHUNKNOWN = "<Unknown>";
 
@@ -810,7 +811,7 @@ L["ACH_WELLREAD_COMPLETE"] = "독서 완료"
 L["ACH_WELLREAD_INCOMPLETE"] = "독서 필요"
 L["BINDING_NAME_OVERACHIEVER_TAB_SEARCH"] = "검색 탭"
 L["BINDING_NAME_OVERACHIEVER_TAB_SUGGESTIONS"] = "추천 탭"
-L["BINDING_NAME_OVERACHIEVER_TAB_WATCH"] = "주시 탭 열기"
+L["BINDING_NAME_OVERACHIEVER_TAB_WATCH"] = "추적 탭"
 L["COMPLETEDATE"] = "업적 획득 - %3$02d/%02$d/%1$02d"
 L["CRITTER"] = "동물"
 L["INCOMPLETE"] = "업적 진행 중"
@@ -822,7 +823,7 @@ L["MSG_NAMENOTFOUND"] = "\"|cffffffff%s|r\"을 포함하는 업적을 찾을 수
 L["MSG_NUMFOUNDLIST"] = "%s개의 다른 업적을 찾았습니다:"
 L["MSG_ONEFOUND"] = "1개의 다른 업적을 찾았습니다: "
 L["MSG_OPENINGTO"] = "열기: "
-L["OPTPANEL_REMINDERTOOLTIPS"] = "툴팁 표시"
+L["OPTPANEL_REMINDERTOOLTIPS"] = "툴팁 설정"
 L["OPT_ACHUNKNOWN"] = "<무엇인가>"
 L["OPT_ANGLERTIPS"] = "물고기 떼 낚시 표시"
 L["OPT_ANGLERTIPS_TIP"] = "업적을 완료하지 않은 경우 해당 물고기 떼에 마우스를 가져가면 툴팁에 낚시가 필요한 지 표시해줍니다."
@@ -859,7 +860,7 @@ L["OPT_LABEL_NEEDTOKILL"] = "처치 업적 (\"%s,\" \"%s,\" 등.)"
 L["OPT_LABEL_SEASONALACHS"] = "계절 이벤트 업적"
 L["OPT_LABEL_TOOLTIPS"] = "업적 툴팁과 링크"
 L["OPT_LABEL_TRACKING"] = "업적 추적"
-L["OPT_LABEL_TRADESKILLUI"] = "전문 기술 UI에 표시"
+L["OPT_LABEL_TRADESKILLUI"] = "전문 기술 창에 표시"
 L["OPT_LETITSNOWTIPS"] = "눈송이 한 줌 사용 표시"
 L["OPT_LETITSNOWTIPS_TIP"] = "업적을 완료하지 않은 경우 해당하는 종족/직업의 플레이어 툴팁에 눈송이 한 줌을 사용할 필요가 있는지 표시합니다."
 L["OPT_PESTCONTROLTIPS"] = "처치 상태 표시"
