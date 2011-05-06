@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 514 $")
+		end, "$Revision: 525 $")
 
 local XPerl_Player_Pet_HighlightCallback
 
@@ -246,7 +246,7 @@ end
 ---------------
 local lastHappy
 function XPerl_Player_Pet_SetHappiness(self)
-	local happiness, damagePercentage = GetPetHappiness()
+	local happiness, damagePercentage = 3, 125
 	if (not happiness) then
 		happiness = 3
 	end
@@ -340,7 +340,7 @@ end
 function XPerl_Player_Pet_Events:VARIABLES_LOADED()
 	if (select(2, UnitClass("player")) == "HUNTER") then
 		-- added UNIT_POWER event check for 4.0 by PlayerLin, thanks Brounks.
-		XPerl_UnitEvents(self, XPerl_Player_Pet_Events, {"UNIT_FOCUS", "UNIT_MAXFOCUS", "UNIT_PET_EXPERIENCE", "UNIT_HAPPINESS", "UNIT_POWER"})
+		XPerl_UnitEvents(self, XPerl_Player_Pet_Events, {"UNIT_FOCUS", "UNIT_MAXFOCUS", "UNIT_PET_EXPERIENCE", "UNIT_POWER"})
 	else
 		-- the UNIT_POWER shit must 'nil'ed when Player Pet isn't exist.
 		XPerl_Player_Pet_Events.UNIT_HAPPINESS = nil
