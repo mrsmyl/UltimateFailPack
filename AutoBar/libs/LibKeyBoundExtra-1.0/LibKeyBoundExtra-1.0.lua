@@ -1,6 +1,6 @@
 --[[
 Name: LibKeyBoundExtra-1.0
-Revision: $Rev: 35 $
+Revision: $Rev: 36 $
 Author(s): Toadkiller, Tuller
 Website: http://www.wowace.com/wiki/LibKeyBoundExtra-1.0
 Documentation: http://www.wowace.com/wiki/LibKeyBoundExtra-1.0
@@ -10,7 +10,7 @@ Dependencies: LibKeyBound-1.0
 --]]
 
 local MAJOR = "LibKeyBoundExtra-1.0"
-local MINOR = 90000 + tonumber(("$Revision: 35 $"):match("(%d+)"))
+local MINOR = 90000 + tonumber(("$Revision: 36 $"):match("(%d+)"))
 
 --[[
 	LibKeyBoundExtra-1.0
@@ -28,8 +28,6 @@ local _G = _G
 
 LibKeyBoundExtra.MacroButton = LibKeyBoundExtra.MacroButton or CreateFrame("Frame")
 LibKeyBoundExtra.CastButton = LibKeyBoundExtra.CastButton or CreateFrame("Frame")
-
-local cc = select(4, GetBuildInfo()) == 4e4
 
 function LibKeyBoundExtra.MacroButton:Load()
 	local i = 1
@@ -120,12 +118,10 @@ end
 
 function LibKeyBoundExtra.CastButton:OnEnter()
 	local id = nil
-	if cc then
-		id = SpellBook_GetSpellBookSlot(self)
-		if id > MAX_SPELLS then return end
-	else
-		id = SpellBook_GetSpellID(self:GetID())
-	end
+
+	id = SpellBook_GetSpellBookSlot(self)
+	if id > MAX_SPELLS then return end
+
 	if not id then return end
 	local bookType = SpellBookFrame.bookType
 	if not(bookType == BOOKTYPE_PET or IsPassiveSpell(id, bookType)) then
@@ -135,13 +131,11 @@ end
 
 function LibKeyBoundExtra.CastButton:GetActionName()
 	local name, subName = nil
-	if cc then
-		local id = SpellBook_GetSpellBookSlot(self)
-		if id > MAX_SPELLS then return end
-		name, subName = GetSpellBookItemName(id, SpellBookFrame.bookType)
-	else
-		name, subName = GetSpellBookItemName(SpellBook_GetSpellID(self:GetID()), SpellBookFrame.bookType)
-	end
+	local id = SpellBook_GetSpellBookSlot(self)
+
+	if id > MAX_SPELLS then return end
+	name, subName = GetSpellBookItemName(id, SpellBookFrame.bookType)
+
 	if subName and subName ~= '' then
 		return format('%s(%s)', name, subName)
 	end
