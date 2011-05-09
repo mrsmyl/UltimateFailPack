@@ -7937,6 +7937,7 @@ function HealBot_Options_idleInit()
         else
             DoneInitTab[0]=9999
         end
+        HealBot_Options_UpdateMedia(3)
     elseif DoneInitTab[0]>0 then
         DoneInitTab[0]=DoneInitTab[0]+1
         if DoneInitTab[0]>102 and DoneInitTab[0]<199 then

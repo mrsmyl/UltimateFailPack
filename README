@@ -16,7 +16,7 @@ Broker_XPRate			1.67
 CallbackHander-1.0		1.0.7
 DHUD4				1.5
 GatherMate2			1.14
-HealBot Continued		4.0.6.5
+HealBot Continued		4.1.0.0
 LibAbacus-3.0			WoW-3.0-release
 LibPeriodicTable-3.1		283 release
 LibStub				1.0.1
@@ -34,14 +34,16 @@ TomTom				v40100-1.3.3
 VendorBait			3.3.0.5-Release
 X-Perl UnitFrames		3.1.3b
 
-20100507
+20110508
+
+20110507
 Updated AutoBar to AutoBar 4.1.0.00
 Updated Postal to v3.4.7
 
-20100506
+20110506
 Updated X-Perl Unit Frames to 3.1.3b
 
-20100505
+20110505
 
 Updated LibWindow-1.1 to r6-40100
 Updated Overachiever to v0.63

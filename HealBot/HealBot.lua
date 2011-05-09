@@ -3309,7 +3309,7 @@ function HealBot_HasMyBuffs(hbGUID)
                         end    
                         if bName==HEALBOT_POWER_WORD_SHIELD then
                             HoTActive=HEALBOT_POWER_WORD_SHIELD
-                            if (HealBot_TrackWS[hbGUID] or "-")=="-" and expirationTime>GetTime()+20 then
+                            if (HealBot_TrackWS[hbGUID] or "-")=="-" and expirationTime>GetTime()+12 then
                                 HealBot_TrackWS[hbGUID]="+"
                                 HealBot_Player_HoT[hbGUID][hbHoTcaster..bName]=expirationTime+1
                             elseif HealBot_TrackWS[hbGUID] and not HealBot_HasDebuff(HEALBOT_DEBUFF_WEAKENED_SOUL, xUnit) then
@@ -5903,8 +5903,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["CtrlRight"] =  HEALBOT_REMOVE_CORRUPTION,
           ["Middle"] = HEALBOT_REJUVENATION,
           ["ShiftMiddle"] = bandage,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Alt-ShiftLeft"] = HEALBOT_DISABLED_TARGET,
           ["Alt-ShiftRight"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
@@ -5916,8 +5914,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Right"] = HEALBOT_ASSIST,
           ["AltRight"] = HEALBOT_THORNS,
           ["Middle"] = HEALBOT_REJUVENATION,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
                                          }
@@ -5930,8 +5926,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Right"] = HEALBOT_HOLY_LIGHT,
           ["Middle"] =  HEALBOT_WORD_OF_GLORY,
           ["ShiftMiddle"] = HEALBOT_HOLY_RADIANCE,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Alt-ShiftLeft"] = HEALBOT_DISABLED_TARGET,
           ["Alt-ShiftRight"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
@@ -5941,8 +5935,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Left"] = HEALBOT_DISABLED_TARGET,
           ["Middle"] =  HEALBOT_HAND_OF_SALVATION,
           ["Right"] = HEALBOT_ASSIST,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
                                          }
@@ -5958,8 +5950,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["ShiftMiddle"] = HEALBOT_PRAYER_OF_MENDING,
           ["AltMiddle"] = HEALBOT_PRAYER_OF_HEALING,
           ["CtrlMiddle"] = HEALBOT_DIVINE_HYMN,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Alt-ShiftLeft"] = HEALBOT_DISABLED_TARGET,
           ["Alt-ShiftRight"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_FLASH_HEAL,
@@ -5971,8 +5961,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["AltLeft"] = HEALBOT_RESURRECTION,
           ["ShiftRight"] = HEALBOT_POWER_WORD_SHIELD,
           ["Middle"] = HEALBOT_RENEW,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_FLASH_HEAL,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
                                          }
@@ -5985,8 +5973,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["ShiftLeft"] = HEALBOT_CHAIN_HEAL,
 		  ["Middle"] = HEALBOT_HEALING_RAIN,
           ["ShiftMiddle"] = HEALBOT_HEALING_SURGE,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Alt-ShiftLeft"] = HEALBOT_DISABLED_TARGET,
           ["Alt-ShiftRight"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
@@ -5995,8 +5981,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
         HealBot_Config.DisabledKeyCombo = {
           ["Left"] = HEALBOT_DISABLED_TARGET,
           ["Right"] = HEALBOT_ASSIST,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
                                          }
@@ -6008,8 +5992,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Alt-ShiftRight"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
                                          }
         HealBot_Config.DisabledKeyCombo = {
           ["Left"] = HEALBOT_DISABLED_TARGET,
@@ -6017,8 +5999,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Right"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
                                          }
     else
         HealBot_Config.EnabledKeyCombo = {
@@ -6027,8 +6007,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Alt-ShiftRight"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
                                          }
         HealBot_Config.DisabledKeyCombo = {
           ["Left"] = HEALBOT_DISABLED_TARGET,
@@ -6036,8 +6014,6 @@ function HealBot_DoReset_Spells(PlayerClassEN)
           ["Right"] = HEALBOT_ASSIST,
           ["Ctrl-ShiftLeft"] = HEALBOT_MENU,
           ["Ctrl-ShiftRight"] = HEALBOT_HBMENU,
-          ["Button4"] = HEALBOT_MAINTANK,
-          ["Button5"] = HEALBOT_MAINASSIST,
                                          }
     end
 end

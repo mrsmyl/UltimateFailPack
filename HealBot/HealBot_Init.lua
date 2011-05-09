@@ -252,7 +252,7 @@ function HealBot_Init_Spells_Defaults(class)
 --    HealBot_Spells = {
 
         [HEALBOT_REJUVENATION] = { 
-            CastTime = 0, Mana =  25, Level =  8, HoT=HEALBOT_REJUVENATION},
+            CastTime = 0, Mana =  25, Level =  3, HoT=HEALBOT_REJUVENATION},
 
         [HEALBOT_HEALING_TOUCH] = {
             CastTime = 1.5, Mana =  25, Level  = 78 },
