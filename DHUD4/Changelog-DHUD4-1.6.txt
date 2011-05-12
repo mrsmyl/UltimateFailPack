@@ -1,11 +1,21 @@
 ------------------------------------------------------------------------
-r80 | arcanefoam | 2011-05-01 21:51:09 +0000 (Sun, 01 May 2011) | 3 lines
+r82 | arcanefoam | 2011-05-11 02:07:17 +0000 (Wed, 11 May 2011) | 2 lines
 Changed paths:
-   A /tags/1.5 (from /trunk:79)
+   A /tags/1.6 (from /trunk:81)
 
-- Removed pet happines related stuff
-- Added a frame isvisible test when rune type changes (fixing bug happening at load when no runes where visible yet)
+- Removed Debug info from DK module
+- Fixed cast bars not showing spell name
+------------------------------------------------------------------------
+r81 | arcanefoam | 2011-05-11 02:06:18 +0000 (Wed, 11 May 2011) | 2 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Abilities/DHUD4_DeathKnight.lua
+   M /trunk/Bars/DHUD4_Bar.lua
+   M /trunk/Bars/DHUD4_CastBar.lua
+   M /trunk/DHUD4.toc
 
+- Removed Debug info from DK module
+- Fixed cast bars not showing spell name
 ------------------------------------------------------------------------
 r79 | arcanefoam | 2011-05-01 21:50:43 +0000 (Sun, 01 May 2011) | 3 lines
 Changed paths:

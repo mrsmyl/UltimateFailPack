@@ -156,7 +156,7 @@ end
 
 function DHUD4_DeathKnight:OnEnable()
 
-    DHUD4:Debug(MODNAME..":OnEnable", self:IsEnabled())
+    --DHUD4:Debug(MODNAME..":OnEnable", self:IsEnabled())
     if not self:IsEnabled() then return end
     if ( DHUD4:GetModuleEnabled("DHUD4_Auras") ) then
         local auras = DHUD4:GetModule("DHUD4_Auras")
@@ -169,7 +169,7 @@ end
 
 function DHUD4_DeathKnight:OnDisable()
 
-    DHUD4:Debug(MODNAME..":OnDisable")
+    --DHUD4:Debug(MODNAME..":OnDisable")
 	self:UnregisterAllEvents()
     self:HideAll()
 end

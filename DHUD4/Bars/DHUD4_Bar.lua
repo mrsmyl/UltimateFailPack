@@ -235,7 +235,9 @@ function barPrototype:Colorize()
     if (b > 1) then b = 1; end
     --hex = self:Rgb2hex(r, g, b)
     self.background:SetVertexColor(r, g, b)
-    self.text.text:SetTextColor(r, g, b)
+    if(self.text) then
+        self.text.text:SetTextColor(r, g, b)
+    end
 end
 
 

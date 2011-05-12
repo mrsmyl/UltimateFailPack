@@ -1,5 +1,5 @@
 --[[
-DHUD4_Abilities.lua $Rev: 79 $
+DHUD4_Abilities.lua $Rev: 81 $
 Copyright (c) 2006 by Markus Inger, 2006 by Caeryn Dryad, 2007-2010 by Horacio Hoyos
 
 This file is part of DHUD4.
@@ -231,7 +231,7 @@ end
 function Abilities:PlaceAbilitiesFrame()
 
     local b3, b4, b5 = "f"..self.side.."3", "f"..self.side.."4", "f"..self.side.."5"
-    local dis = 186 + math.max((visibleBars[b3] and 15 or 0), (visibleBars[b4] and 30 or 0),  (visibleBars[b5] and 45 or 0)) + DHUD4:GetFrameSpacing()
+    local dis = 156 + math.max((visibleBars[b3] and 15 or 0), (visibleBars[b4] and 30 or 0),  (visibleBars[b5] and 45 or 0)) + DHUD4:GetFrameSpacing()
     --dis = dis/self.scale + 25*self.scale
     local anchorPoint = "RIGHT"
     if (self.side == "l") then

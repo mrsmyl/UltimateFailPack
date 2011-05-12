@@ -149,7 +149,7 @@ end
 ]]
 function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor, delayColor)
 
-    --DHUD4:Debug("statusBar:InitStatusBarText", bar, savedPosition)
+    --DHUD4:Debug("castBar:InitCastBarText", bar, showTimer, showName, showDelay)
     local name, timer, delay, justify = unpack(BARTEXT[bar])
     local x, y
     if (showName) then
@@ -164,7 +164,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             --DHUD4:Debug("SetPosition", x, y)
         end
         -- Test if the name frame has allready been created
-        if((not self.nameText) or (self.nameText ~= _G["DHUD4_"..bar.."NameText"])) then
+        if((not self.nameText) or (self.nameText:GetName() ~= "DHUD4_"..bar.."NameText")) then
             local frame = CreateFrame("Frame", "DHUD4_"..bar.."NameText", self.frame)
             frame:SetWidth(100)
             frame:SetHeight(14)
@@ -184,12 +184,11 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             self.nameText.text = font
             frame:RegisterForDrag("LeftButton")
             frame:Hide()
-        else
+        elseif (self.nameText) then
             self.nameText:ClearAllPoints()
             self.nameText:SetPoint("CENTER", self.frame, "CENTER", x, y)
             self.nameText.text:SetJustifyH(justify)
         end
-        self.text = self.nameText
     end
     if (showTimer) then
         x, y = unpack(timer)
@@ -203,7 +202,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             --DHUD4:Debug("SetPosition", x, y)
         end
         -- Test if the cast time frame has allready been created
-        if((not self.text) or (self.text ~= _G["DHUD4_"..bar.."Text"])) then
+        if((not self.text) or (self.text:GetName() ~= "DHUD4_"..bar.."Text")) then
             local frame = CreateFrame("Frame", "DHUD4_"..bar.."Text", self.frame)
             frame:SetWidth(100)
             frame:SetHeight(14)
@@ -217,12 +216,12 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             font:SetWidth(100)
             font:SetJustifyH(justify)
             font:Show()
-            self.Timertext = frame
-            self.Timertext.owner = self
-            self.Timertext.text = font
+            self.text = frame
+            self.text.owner = self
+            self.text.text = font
             frame:RegisterForDrag("LeftButton")
             frame:Hide()
-        else
+        elseif(self.text) then
             self.text:ClearAllPoints()
             self.text:SetPoint("CENTER", self.frame, "CENTER", x, y)
             self.text.text:SetJustifyH(justify)
@@ -240,7 +239,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             --DHUD4:Debug("SetPosition", x, y)
         end
         -- Test if the frame has allready been created
-        if((not self.delayText) or (self.delayText ~= _G["DHUD4_"..bar.."DelayText"])) then
+        if((not self.delayText) or (self.delayText:GetName() ~= "DHUD4_"..bar.."DelayText")) then
             local frame = CreateFrame("Frame", "DHUD4_"..bar.."DelayText", self.frame)
             frame:SetWidth(100)
             frame:SetHeight(14)
@@ -260,7 +259,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             self.delayText.text = font
             frame:RegisterForDrag("LeftButton")
             frame:Hide()
-        else
+        elseif(self.delayText) then
             self.delayText:ClearAllPoints()
             self.delayText:SetPoint("CENTER", self.frame, "CENTER", x, y)
             self.delayText.text:SetJustifyH(justify)
@@ -270,6 +269,8 @@ end
 
 
 function castBar:startCast()
+
+    --DHUD4:Debug("castBar:startCast()")
     local spell, _, _, _, startTime, endTime = UnitCastingInfo(self.unit)
     self.val = -1
     if ( not spell ) then
@@ -277,6 +278,7 @@ function castBar:startCast()
         self.channel = true
     end
     if ( startTime ) then
+        --DHUD4:Debug("show")
         self.startTime = startTime / 1000
         self.finishTime = endTime / 1000
         self.maxVal = self.finishTime - self.startTime
@@ -295,6 +297,7 @@ function castBar:startCast()
             self.nameText:Show()
         end
         self.frame:SetAlpha(1)
+        self.frame:Show()
         self.frame:SetScript("OnUpdate", function (self, elapsed)
                 local currentTime = GetTime()
                 local startTime = self.owner.startTime
@@ -344,25 +347,28 @@ end
 ]]
 function castBar:SetVal(val)
 
-    if ( self.val ~= val ) then
-        --DHUD4:Debug("castBar:SetVal", val)
-        self.val = val
-        if (self.text) then
-            self.text.text:SetText(string_format("%.1f", val))
-            self.text:Show()
+    if (self.text) then
+        if ( self.val ~= val ) then
+            --DHUD4:Debug("castBar:SetVal", val)
+            self.val = val
+            if (self.text) then
+                self.text.text:SetText(string_format("%.1f", val))
+                self.text:Show()
+            end
+            self:Colorize()
+            self:Fill()
         end
-        self:Colorize()
-        self:Fill()
     end
 end
 
 function castBar:SetDelay(val)
-
-    if ( self.delay ~= val ) then
-        self.delay = val
-        if (self.delayText) then
-            self.delayText.text:SetText(string_format("%.1f", val))
-            self.delayText:Show()
+    if (self.delayTex) then
+        if ( self.delay ~= val ) then
+            self.delay = val
+            if (self.delayText) then
+                self.delayText.text:SetText(string_format("%.1f", val))
+                self.delayText:Show()
+            end
         end
     end
 end
@@ -460,6 +466,9 @@ function castBar:TrackUnitCast(who, colors)
                                     self:Hide()
                                 end
                             end)
+                    end
+                    if self.owner.unit == "player" then
+                        DHUD4:UpdateAlpha(3, false)
                     end
                 elseif ( event == "UNIT_SPELLCAST_DELAYED" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" ) then
                     --DHUD4:Debug("UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_UPDATE")
@@ -574,6 +583,6 @@ function castBar:ConfigBarText(font, size)
 
     --DHUD4:Debug("castBar:ConfigBarText")
     self.nameText.text:SetFont(font, size)
-    self.Timertext.text:SetFont(font, size)
+    self.text.text:SetFont(font, size)
     self.delayText.text:SetFont(font, size)
 end
