@@ -1,7 +1,7 @@
 --[[ *******************************************************************
 Project                 : Broker_Cashflow
 Author                  : Aledara (wowi AT jocosoft DOT com)
-Revision                : $Rev: 132 $
+Revision                : $Rev: 138 $
 ********************************************************************* ]]
 
 local MODNAME = "Cashflow"
@@ -118,41 +118,54 @@ function Cashflow:FormatGold( amount, colorize )
 
 	-- Determine text color
 	local color = COLOR_WHITE
-	local result = ""
+	local sign = ""
 	if colorize and self.db.profile.cashFormat ~= 1 then
-		-- With format 1, the text color itself is in gold/silver/copper, so colorize has no effect, and we always show "-" on negative
+		-- With format 1, the text color itself is in gold/silver/copper,
+		-- so colorize has no effect, and we always show "-" on negative
 		if amount < 0 then color = COLOR_RED else color = COLOR_GREEN end
 	elseif amount < 0 then
-		result = "-"
+		sign = "-"
 	end
 
 	-- Determine unit display
 	if self.db.profile.cashFormat == 1 then
 		-- Abacus "Condensed"
-		if abs(amount) >= 10000 then result = result..format("|cff%s%d|r ", COLOR_GOLD, gold) end
-		if abs(amount) >= 100 then result = result..format("|cff%s%d|r ", COLOR_SILVER, silver) end
-		result = result..format("|cff%s%d|r", COLOR_COPPER, copper)
+		if gold > 0 then
+			return sign..format("|cff%s%d|r |cff%s%02d|r |cff%s%02d|r", COLOR_GOLD, gold, COLOR_SILVER, silver, COLOR_COPPER, copper)
+		elseif silver > 0 then
+			return sign..format("|cff%s%d|r |cff%s%02d|r", COLOR_SILVER, silver, COLOR_COPPER, copper)
+		else
+			return sign..format("|cff%s%d|r", COLOR_COPPER, copper)
+		end
 	elseif self.db.profile.cashFormat == 2 then
 		-- Abacus "Short"
-		if abs(amount) >= 10000 then
-			result = result..format("|cff%s%.1f|r|cff%sg|r ", color, abs(amount/10000), COLOR_GOLD)
-		elseif abs(amount) >= 100 then
-			result = result..format("|cff%s%.1f|r|cff%ss|r", color, abs(amount/100), COLOR_SILVER)
+		if gold > 0 then
+			return sign..format("|cff%s%.1f|r|cff%sg|r ", color, gold, COLOR_GOLD)
+		elseif silver > 0 then
+			return sign..format("|cff%s%.1f|r|cff%ss|r", color, silver, COLOR_SILVER)
 		else
-			result = result..format("|cff%s%d|r|cff%sc|r", color, abs(amount), COLOR_COPPER)
+			return sign..format("|cff%s%d|r|cff%sc|r", color, copper, COLOR_COPPER)
 		end
 	elseif self.db.profile.cashFormat == 3 then
 		-- Abacus "Full"
-		if abs(amount) >= 10000 then result = result..format("|cff%s%d|r|cff%sg|r ", color, gold, COLOR_GOLD) end
-		if abs(amount) >= 100 then result = result..format("|cff%s%d|r|cff%ss|r ", color, silver, COLOR_SILVER) end
-		result = result..format("|cff%s%d|r|cff%sc|r", color, copper, COLOR_COPPER)
+		if gold > 0 then
+			return sign..format("|cff%s%d|r|cff%sg|r |cff%s%02d|r|cff%ss|r |cff%s%02d|r|cff%sc|r", color, gold, COLOR_GOLD, color, silver, COLOR_SILVER, color, copper, COLOR_COPPER)
+		elseif silver > 0 then
+			return sign..format("|cff%s%d|r|cff%ss|r |cff%s%02d|r|cff%sc|r", color, silver, COLOR_SILVER, color, copper, COLOR_COPPER)
+		else
+			return sign..format("|cff%s%d|r|cff%sc|r", color, copper, COLOR_COPPER)
+		end
 	elseif self.db.profile.cashFormat == 4 then
 		-- With coin icons
-		if abs(amount) >= 10000 then result = result..format("|cff%s%d|r%s ", color, gold, ICON_GOLD) end
-		if abs(amount) >= 100 then result = result..format("|cff%s%d|r%s ", color, silver, ICON_SILVER) end
-		result = result..format("|cff%s%d|r%s", color, copper, ICON_COPPER)
+		if gold > 0 then
+			return sign..format("|cff%s%d|r%s |cff%s%02d|r%s |cff%s%02d|r%s", color, gold, ICON_GOLD, color, silver, ICON_SILVER, color, copper, ICON_COPPER)
+		elseif silver > 0 then
+			return sign..format("|cff%s%d|r%s |cff%s%02d|r%s", color, silver, ICON_SILVER, color, copper, ICON_COPPER)
+		else
+			return sign..format("|cff%s%d|r%s", color, copper, ICON_COPPER)
+		end
 	end
-	return result
+	return "<error>"
 end
 
 --[[

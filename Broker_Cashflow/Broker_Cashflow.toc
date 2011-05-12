@@ -1,5 +1,5 @@
-## Interface: 40000
-## Revision: $Rev: 98 $
+## Interface: 40100
+## Revision: $Rev: 137 $
 ## Title: Broker_Cashflow
 ## Notes: LDB data source for cash flow
 ## Author: Aledara (wowi AT jocosoft DOT com)
