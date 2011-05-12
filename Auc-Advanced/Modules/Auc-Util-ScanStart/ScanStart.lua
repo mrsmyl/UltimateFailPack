@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Start module
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: ScanStart.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: ScanStart.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a few event functionalities
@@ -214,4 +214,4 @@ function private.ConfigChanged()
 	if AucAdvanced.Settings.GetSetting("util.scanstart.debug") then blnDebug = true end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-ScanStart/ScanStart.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-ScanStart/ScanStart.lua $", "$Rev: 4828 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Basic Auction Posting
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: AucSimple.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: AucSimple.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a simple dialog for
@@ -286,4 +286,4 @@ function private.SetupConfigGui(gui)
 	gui:AddControl(id, "Checkbox",     0, 2, "util.simpleauc.scanbutton.disable.wowecon", "Except if WowEcon is loaded")
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SimpleAuction/AucSimple.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SimpleAuction/AucSimple.lua $", "$Rev: 4828 $")

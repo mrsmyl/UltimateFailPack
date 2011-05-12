@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: CoreConst.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: CoreConst.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -121,6 +121,9 @@ AucAdvanced.Const = {
 	SEED = 27,
 	LASTENTRY = 27, -- Used to determine how many entries the table has when copying (some entries can be nil so # won't work)
 
+	ScanPosLabels = {"LINK", "ILEVEL", "ITYPE", "ISUB", "IEQUIP", "PRICE", "TLEFT", "TIME", "NAME", "TEXTURE", "COUNT", "QUALITY", "CANUSE", "ULEVEL", "MINBID", "MININC",
+		"BUYOUT", "CURBID", "AMHIGH", "SELLER", "FLAG", "ID", "ITEMID", "SUFFIX", "FACTOR", "ENCHANT", "SEED" },
+	
 	FLAG_DIRTY = 1,
 	FLAG_UNSEEN = 2,
 	FLAG_FILTER = 4,
@@ -175,4 +178,4 @@ AucAdvanced.Defaults = {
 	Scanner = "Simple",
 }
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Advanced/CoreConst.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreConst.lua $", "$Rev: 5141 $")

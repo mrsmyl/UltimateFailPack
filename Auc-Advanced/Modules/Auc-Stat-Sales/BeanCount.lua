@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Stat-Sales module
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: BeanCount.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BeanCount.lua 4838 2010-08-03 07:41:13Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This Auctioneer statistic module calculates a price statistics for items
@@ -465,4 +465,4 @@ private.scriptframe = CreateFrame("Frame")
 private.scriptframe:SetScript("OnEvent", private.onEvent)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Stat-Sales/BeanCount.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-Sales/BeanCount.lua $", "$Rev: 4838 $")

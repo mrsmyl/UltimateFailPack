@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - iLevel Standard Deviation Statistics module
 	Version: 5.7.4568 (KillerKoala)
-	Revision: $Id: iLevel.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Revision: $Id: iLevel.lua 4991 2010-11-01 09:40:49Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -44,7 +44,7 @@ local floor,abs,max = floor,abs,max
 local concat = table.concat
 local strmatch = strmatch
 
-local iTypes = AucAdvanced.Const.InvTypes
+local EquipEncode = AucAdvanced.Const.EquipEncode
 local GetFaction = AucAdvanced.GetFaction
 
 local KEEP_NUM_POINTS = 250
@@ -218,7 +218,7 @@ function lib.GetPrice(hyperlink, serverKey)
 	local deviation = 1.5 * stdev
 	total = 0	-- recomputing with only data within deviation
 	number = 0
-	
+
 	for i = 1, count do
 		local price,stack = datapoints_price[i], datapoints_stack[i]
 		if abs((price/stack) - mean) < deviation then
@@ -278,7 +278,7 @@ function private.SetupConfigGui(gui)
 	gui:AddHelp(id, "filtered ilevel",
 		_TRANS('ILVL_Help_WhatFiltered') ,--What do you mean filtered?
 		_TRANS('ILVL_Help_WhatFilteredAnswer') )--Items outside a (1.5*Standard) variance are ignored and assumed to be wrongly priced when calculating the deviation.
-	
+
 	--all options in here will be duplicated in the tooltip frame
 	function private.addTooltipControls(id)
 		gui:AddHelp(id, "what standard deviation",
@@ -296,13 +296,13 @@ function private.SetupConfigGui(gui)
 		gui:AddHelp(id, "why multiply stack size ilevel",
 			_TRANS('ILVL_Help_WhyStackSize') ,--Why have the option to multiply by stack size?
 			_TRANS('ILVL_Help_WhyStackSizeAnswer') )--The original Stat-ilevel multiplied by the stack size of the item, but some like dealing on a per-item basis.
-			
+
 		gui:AddControl(id, "Header",     0,   _TRANS('ILVL_Interface_IlevelOptions') )--ilevel options
 		gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
 		gui:AddControl(id, "Checkbox",   0, 1, "stat.ilevel.enable", _TRANS('ILVL_Interface_EnableILevelStats') )--Enable iLevel Stats
 		gui:AddTip(id, _TRANS('ILVL_HelpTooltip_EnableILevelStats') )--Allow iLevel to gather and return price data
 		gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
-			
+
 		gui:AddControl(id, "Checkbox",   0, 4, "stat.ilevel.tooltip", _TRANS('ILVL_Interface_ShowiLevel') )--Show iLevel stats in the tooltips?
 		gui:AddTip(id, _TRANS('ILVL_HelpTooltip_ShowiLevel') )--Toggle display of stats from the iLevel module on or off
 		gui:AddControl(id, "Checkbox",   0, 6, "stat.ilevel.mean", _TRANS('ILVL_Interface_DisplayMean') )--Display Mean
@@ -320,7 +320,7 @@ function private.SetupConfigGui(gui)
 	end
 	--This is the Tooltip tab provided by Auctioneer so all tooltip configuration is in one place
 	local tooltipID = AucAdvanced.Settings.Gui.tooltipID
-	
+
 	--now we create a duplicate of these in the tooltip frame
 	private.addTooltipControls(id)
 	if tooltipID then private.addTooltipControls(tooltipID) end
@@ -431,8 +431,8 @@ function private.GetItemDetail(hyperlink)
 
 	local _,_, quality, iLevel, _,_,_,_, equipPos = GetItemInfo(hyperlink)
 	if not quality or quality < 1 then return end
-	equipPos = tonumber(iTypes[equipPos])
-	if not equipPos or equipPos < 1 then return end
+	equipPos = EquipEncode[equipPos]
+	if not equipPos then return end
 	local itemSig = ("%d:%d"):format(equipPos, quality)
 
 	return itemSig, iLevel, equipPos, quality
@@ -530,4 +530,4 @@ function private.PackStats(data)
 	return concat(tmp, ",", 1, ntmp)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Stat-iLevel/iLevel.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-iLevel/iLevel.lua $", "$Rev: 4991 $")

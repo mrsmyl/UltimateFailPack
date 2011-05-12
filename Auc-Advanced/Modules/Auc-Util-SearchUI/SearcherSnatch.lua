@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Snatch
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherSnatch.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherSnatch.lua 5054 2010-12-28 05:17:38Z kandoko $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -164,6 +164,8 @@ function lib:MakeGuiConfig(gui)
 		{ "%", "NUMBER", 25 },
 		{ "Buy each", "COIN", 70},
 		{ "Valuation", "COIN", 70 },
+		--{ "Amount", "NUMBER", 70 },
+		--{ "Reason", "TEXT", 70 },
 		})
 
 	--Processor function for all scrollframe events for this frame
@@ -236,7 +238,16 @@ function lib:MakeGuiConfig(gui)
 			frame.money:SetAlpha(1)
 		end
 	end)
-
+	--enter key when typing in teh % box should actually do something:
+	frame.pctBox:SetScript("OnEnterPressed", function(self) 
+								local text = self:GetText()
+								if text ~= "" and tonumber(text) > 0 then 
+									lib.AddSnatch(private.workingItemLink, nil, text) 
+								end	
+								EditBox_ClearFocus(self) 								
+							end)
+	
+	
 	frame.pctBox.help = frame.pctBox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	frame.pctBox.help:SetPoint("LEFT", frame.pctBox, "RIGHT", 0, 0)
 	frame.pctBox.help:SetWidth(130)
@@ -279,12 +290,12 @@ function lib:MakeGuiConfig(gui)
 							end)
 	frame.resetList:SetScript("OnEnter", function() lib.buttonTooltips( frame.resetList, "Shift+Ctrl+Alt Click to remove all items from the snatch list") end)
 	frame.resetList:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
+	
 	-- Normal GUI controls
 	-- Anchored to the hidden "Note" control we added earlier
 	gui:AddControl(id, "Subhead",0, "Snatch search settings:")
 	gui:AddControl(id, "Note", 0, 1, nil, nil, " ")
-	last = gui:GetLast(id)
+	local last = gui:GetLast(id)
 	gui:AddControl(id, "Checkbox", 0, 1, "snatch.allow.bid", "Allow Bids")
 	gui:AddTip(id, "Allow Snatch searcher to suggest bids")
 	gui:SetLast(id, last)
@@ -411,6 +422,11 @@ end
 
 function private.OnClickSnatch(button, row, index)
 	local link = frame.snatchlist.sheet.rows[row][index]:GetText()
+	--Is shift pressed insert link into chat
+	if IsShiftKeyDown() then
+		ChatEdit_InsertLink(link)
+		return
+	end
 	--lib.SetWorkingItem(link) handles the job of checking that link is valid
 	lib.SetWorkingItem(link)
 end
@@ -487,6 +503,16 @@ function lib.Search(item)
 		end
 	end
 	return false, "Not in snatch list"
+end
+--Rescan is an optional method a searcher can implement that allows it to queue a rescan of teh ah
+--Just pass any itemlinks you want rescaned
+function lib.Rescan()
+	for itemsig, iteminfo in pairs(private.snatchList) do
+		local link = iteminfo.link
+		if link then
+			AucSearchUI.RescanAuctionHouse(link)
+		end
+	end
 end
 
 --[[Snatch GUI functinality code]]
@@ -615,4 +641,4 @@ function private.refreshDisplay()
 	frame.pctBox.help:SetText(format("Buy as percent of %s value", get("snatch.price.model") or "market") )
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherSnatch.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherSnatch.lua $", "$Rev: 5054 $")

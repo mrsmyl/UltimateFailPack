@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - BasicFilter
-	Version: 5.7.4568 (KillerKoala)
-	Revision: $Id: BasicFilter.lua 4901 2010-10-05 16:44:24Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BasicFilter.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -36,55 +36,241 @@ if not AucAdvanced then return end
 local libType, libName = "Filter", "Basic"
 local lib,parent,private = AucAdvanced.NewModule(libType, libName)
 if not lib then return end
-local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill, _TRANS = AucAdvanced.GetModuleLocals()
+local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill, _TRANS = AucAdvanced.GetModuleLocals()
 
-if not AucAdvancedFilterBasic then AucAdvancedFilterBasic = {} end
-if not AucAdvancedFilterBasic_IgnoreList then AucAdvancedFilterBasic_IgnoreList = {} end
+local IgnoreList, IgnoreLookup = {}, {}
+local SelectedIgnore = 0
+local GUILoaded = false
 
-local IgnoreList = {}
+local NUM_IGNORE_BUTTONS = 18
+local PLAYER_NAME = AucAdvanced.Const.PlayerName
 
-lib.Processors = {}
-function lib.Processors.config(callbackType, ...)
-	private.SetupConfigGui(...)
-end
-
+--[[ Exported Library Functions ]]--
 
 function lib.AuctionFilter(operation, itemData)
-	local active = get("filter.basic.activated")
-	if not active or active ~= true then return end
-	local retval = false
-	-- Get the signature of this item and find it's stats.
-	local quality = AucAdvanced.GetLinkQuality(itemData.link)
-	local level = tonumber(itemData.itemLevel) or 0
-	local seller = itemData.sellerName
-	local ignoreself = get("filter.basic.ignoreself")
-	local minquality = tonumber(get("filter.basic.min.quality")) or 1
-	local minlevel = tonumber(get("filter.basic.min.level")) or 0
-	if (quality < minquality) then retval = true end
-	if (level < minlevel) then retval = true end
-	if (ignoreself and seller == UnitName("player")) then retval = true end
-	if lib.IsPlayerIgnored(seller) then retval = true end
+	if not get("filter.basic.activated") then return end
 
-	if nLog and retval then
-		nLog.AddMessage("auc-"..libType.."-"..libName, "AuctionFilter", N_INFO, "Filtered Data", "Auction Filter Removed Data for ",
-			itemData.itemName, " from ", (itemData.sellerName or "UNKNOWN"), ", quality ", tostring(quality or 0), ", item level ", tostring(itemData.itemLevel or 0))
+	if itemData.quality < get("filter.basic.minquality") then
+		return true
 	end
-	return retval
+	if itemData.itemLevel < get("filter.basic.minlevel") then
+		return true
+	end
+	local seller = itemData.sellerName
+	if get("filter.basic.ignoreself") and seller == PLAYER_NAME then
+		return true
+	end
+	if lib.IsPlayerIgnored(seller) then
+		return true
+	end
 end
 
+function lib.IsPlayerIgnored(name)
+	if IgnoreLookup[name] then
+		return true
+	end
+end
+lib.IgnoreList_IsPlayerIgnored = lib.IsPlayerIgnored -- Deprecated - backward compatibility only
+
+function lib.AddPlayerIgnore(name)
+	name = private.ValidateName(name)
+	if not name then return end
+
+	if not IgnoreLookup[name] then
+		tinsert(IgnoreList, name)
+		table.sort(IgnoreList)
+		for i, n in ipairs(IgnoreList) do
+			IgnoreLookup[n] = i
+		end
+	end
+	SelectedIgnore = IgnoreLookup[name]
+	private.IgnoreListUpdate()
+end
+
+function lib.RemovePlayerIgnore(name)
+	local index = IgnoreLookup[name]
+	if not index then return end
+
+	IgnoreLookup[name] = nil
+	tremove(IgnoreList, index)
+	if SelectedIgnore == index then
+		SelectedIgnore = 0
+	elseif SelectedIgnore > index then
+		SelectedIgnore = SelectedIgnore - 1
+	end
+	for i, n in ipairs(IgnoreList) do
+		IgnoreLookup[n] = i
+	end
+	private.IgnoreListUpdate()
+end
+
+function lib.PromptSellerIgnore(name, parent, point, relativeFrame, relativePoint, ofsx, ofsy)
+	name = private.ValidateName(name)
+	if not name then return end
+	if not (parent and point and relativeFrame and relativePoint) then return end -- todo: implement a default anchor of some sort
+
+	local isPromptRemove = lib.IsPlayerIgnored(name)
+	if isPromptRemove then
+		private.IgnorePrompt.text:SetText(_TRANS("BASC_Interface_RemovePlayerIgnore"))--Remove player from Ignore List
+	else
+		private.IgnorePrompt.text:SetText(_TRANS("BASC_Interface_AddPlayerIgnore"))--Add player to Ignore List
+	end
+	private.IgnorePrompt.name:SetText(name)
+	private.curPromptName = name
+	private.isPromptRemove = isPromptRemove
+	private.IgnorePrompt:ClearAllPoints()
+	private.IgnorePrompt:SetParent(parent)
+	private.IgnorePrompt:SetPoint(point, relativeFrame, relativePoint, ofsx, ofsy)
+	private.IgnorePrompt:SetFrameStrata("TOOLTIP")
+	private.IgnorePrompt:Show()
+end
+
+--[[ Support Functions ]]--
+
+function private.ValidateName(name)
+	if type(name) ~= "string" or #name < 2 then return end
+	-- Name is stored in the SV with the first letter capitalized and the rest lowercased
+	-- This is how it should appear in the ScanData image, and how we want it displayed in our GUI
+	-- We must allow for UTF-8 encoding of first character
+	local firstbyte, split = name:byte(1), 1
+	if firstbyte >= 240 then -- quad
+		split = 4
+	elseif firstbyte >= 224 then -- triple
+		split = 3
+	elseif firstbyte >= 192 then -- double
+		split = 2
+	end
+	name = name:sub(1,split):upper()..name:sub(split+1):lower()
+
+	return name
+end
+
+function private.IgnoreListUpdate()
+	if not GUILoaded then return end
+	local numIgnores = #IgnoreList
+	if SelectedIgnore > 0  then
+		private.UnignoreButton:Enable()
+	else
+		private.UnignoreButton:Disable()
+	end
+
+	local ignoreOffset = FauxScrollFrame_GetOffset(AucFilterBasicScrollFrame)
+	for ind = 1, NUM_IGNORE_BUTTONS do
+		local ignoreIndex = ind + ignoreOffset
+		local ignoreButton = private.ListButtons[ind]
+		ignoreButton:SetText(IgnoreList[ignoreIndex] or "")
+		-- Update the highlight
+		if ( ignoreIndex == SelectedIgnore ) then
+			ignoreButton:LockHighlight()
+		else
+			ignoreButton:UnlockHighlight()
+		end
+
+		if ( ignoreIndex > numIgnores ) then
+			ignoreButton:Hide()
+		else
+			ignoreButton:Show()
+		end
+	end
+
+	-- ScrollFrame stuff
+	FauxScrollFrame_Update(AucFilterBasicScrollFrame, numIgnores, NUM_IGNORE_BUTTONS, 16)
+end
+
+function private.IgnoreListButtonOnClick(button)
+	local index = button:GetID() + FauxScrollFrame_GetOffset(AucFilterBasicScrollFrame)
+	if index == SelectedIgnore then
+		SelectedIgnore = 0
+	else
+		SelectedIgnore = index
+	end
+	private.IgnoreListUpdate()
+end
+
+function private.OnPromptYes()
+	local name = private.curPromptName
+	private.curPromptName = nil
+	private.IgnorePrompt:Hide()
+	if private.isPromptRemove then
+		lib.RemovePlayerIgnore(name)
+	else
+		lib.AddPlayerIgnore(name)
+	end
+end
+
+function private.OnPromptNo()
+	private.curPromptName = nil
+	private.IgnorePrompt:Hide()
+end
+
+function private.OnPromptHide()
+	private.curPromptName = nil
+	if private.IgnorePrompt:IsShown() then
+		-- prompt has been implicitly hidden by hiding parent
+		-- explicitly hide prompt, so it won't reappear when parent is shown again
+		private.IgnorePrompt:Hide()
+	end
+end
+
+--[[ Initialization and Event Handlers ]]--
+
+local function OnLoadRunOnce()
+	OnLoadRunOnce = nil
+	default("filter.basic.activated", true)
+	default("filter.basic.minquality", 1)
+	default("filter.basic.minlevel", 0)
+	default("filter.basic.ignoreself", false)
+
+	-- convert old settings, if any exist, to correct 'triplet' style
+	local temp = get("filter.basic.min.quality")
+	if temp then
+		set("filter.basic.min.quality", nil)
+		set("filter.basic.minquality", temp)
+	end
+	temp = get("filter.basic.min.level")
+	if temp then
+		set("filter.basic.min.level", nil)
+		set("filter.basic.minlevel", temp)
+	end
+
+	local realm = AucAdvanced.Const.PlayerRealm
+	local faction = AucAdvanced.Const.PlayerFaction
+
+	if not AucAdvancedFilterBasic_IgnoreList then
+		_G["AucAdvancedFilterBasic_IgnoreList"] = {}
+	end
+
+	local realmtable = AucAdvancedFilterBasic_IgnoreList[realm]
+	if not realmtable then
+		realmtable = {}
+		AucAdvancedFilterBasic_IgnoreList[realm] = realmtable
+	end
+
+	local factiontable = realmtable[faction]
+
+	-- This section of code cleans up the saved table, removing unwanted entries from previous versions
+	wipe(IgnoreList)
+	if factiontable then
+		for _, name in ipairs(factiontable) do
+			tinsert(IgnoreList, name)
+		end
+	end
+	realmtable[faction] = IgnoreList
+
+	wipe(IgnoreLookup)
+	for i, name in ipairs(IgnoreList) do
+		IgnoreLookup[name] = i
+	end
+	private.IgnoreListUpdate()
+end
 function lib.OnLoad(addon)
-	AucAdvanced.Settings.SetDefault("filter.basic.activated", true)
-	AucAdvanced.Settings.SetDefault("filter.basic.min.quality", 1)
-	AucAdvanced.Settings.SetDefault("filter.basic.min.level", 0)
-	AucAdvanced.Settings.SetDefault("filter.basic.ignoreself", false)
-	BF_IgnoreList_Load()
-	private.DataLoaded()
-	BasicFilter_IgnoreListFrame:RegisterEvent("PLAYER_LOGOUT")
+	if OnLoadRunOnce then OnLoadRunOnce() end
 end
 
-function private.SetupConfigGui(gui)
+local function SetupConfigGui(gui)
 	-- The defaults for the following settings are set in the lib.OnLoad function
 	local id, last
+	SetupConfigGui = nil
 
 	id = gui:AddTab(libName, libType.." Modules")
 	gui:AddHelp(id, "what basic filter",
@@ -103,176 +289,101 @@ function private.SetupConfigGui(gui)
 	gui:AddTip(id, _TRANS('BASC_Help_IgnoreOwnAuctionsAnswer') )--Ticking this box will disable adding auctions that you posted yourself to the snapshot.
 
 	gui:AddControl(id, "Subhead",	0, _TRANS('BASC_Interface_FilterQuality') )--Filter by Quality
-	gui:AddControl(id, "Slider",	0, 1, "filter.basic.min.quality", 0, 4, 1, _TRANS('BASC_Interface_MinimumQuality') )--Minimum Quality: %d
+	gui:AddControl(id, "Slider",	0, 1, "filter.basic.minquality", 0, 4, 1, _TRANS('BASC_Interface_MinimumQuality') )--Minimum Quality: %d
 	gui:AddTip(id, _TRANS('BASC_HelpTooltip_MinimumQuality').."\n"..--Use this slider to choose the minimum quality to go into storage.
 		"\n"..
-		"0 = (|cff9d9d9d ".._TRANS('BASC_HelpTooltip_MinimumQualityJunk').."|r),\n"..--Junk
-		"1 = (|cffffffff ".._TRANS('BASC_HelpTooltip_MinimumQualityCommon').."|r),\n"..--Common
-		"2 = (|cff1eff00 ".._TRANS('BASC_HelpTooltip_MinimumQualityUncommon').."|r),\n"..--Uncommon
-		"3 = (|cff0070dd".._TRANS('BASC_HelpTooltip_MinimumQualityRare').."|r),\n"..--Rare
-		"4 = (|cffa335ee ".._TRANS('BASC_HelpTooltip_MinimumQualityEpic').."|r)")--Epic
+		"0 = |cff9d9d9d".._TRANS('BASC_HelpTooltip_MinimumQualityJunk').."|r,\n"..--Junk
+		"1 = |cffffffff".._TRANS('BASC_HelpTooltip_MinimumQualityCommon').."|r,\n"..--Common
+		"2 = |cff1eff00".._TRANS('BASC_HelpTooltip_MinimumQualityUncommon').."|r,\n"..--Uncommon
+		"3 = |cff0070dd".._TRANS('BASC_HelpTooltip_MinimumQualityRare').."|r,\n"..--Rare
+		"4 = |cffa335ee".._TRANS('BASC_HelpTooltip_MinimumQualityEpic').."|r")--Epic
 
 	gui:AddControl(id, "Subhead",	0, _TRANS('BASC_Interface_FilterItemLevel') )--Filter by Item Level
-	gui:AddControl(id, "NumberBox",	0, 1, "filter.basic.min.level", 0, 9, _TRANS('BASC_Interface_MinimumItemLevel') )--Minimum item level
+	gui:AddControl(id, "NumberBox",	0, 1, "filter.basic.minlevel", 0, 400, _TRANS('BASC_Interface_MinimumItemLevel') )--Minimum item level
 	gui:AddTip(id, _TRANS('BASC_HelpTooltip_MinimumItemLevel') )--Enter the minimum item level to go into storage.
 
+
 	gui:SetLast(id, last)
-	gui:AddControl(id, "Subhead",	0.55,    _TRANS('BASC_Interface_IgnoreList') )--Ignore List
-	gui:AddControl(id, "Custom", 	0.55, 0, BasicFilter_IgnoreListFrame); BasicFilter_IgnoreListFrame:SetParent(gui.tabs[id][3])
-
-end
-
---[[ Local functions ]]--
-function private.DataLoaded()
-	-- This function gets called when the data is first loaded. You may do any required maintenence
-	-- here before the data gets used.
-end
-
---**************************************
--- Ignore List Frame Functionality
---**************************************
-
-local numIgnoreButtons = 18
-SelectedIgnore = 1
-LastIgnoredPlayer = nil
-
-function lib.IsPlayerIgnored(name)
-	if IgnoreList[name] then
-		return true
-	end
-end
-lib.IgnoreList_IsPlayerIgnored = lib.IsPlayerIgnored -- Deprecated - backward compatibility only
-
-function BF_IgnoreList_Update()
-	local numIgnores = #IgnoreList
-	local nameText;
-	local name;
-	local ignoreButton;
-	if ( numIgnores > 0 ) then
-		if ( SelectedIgnore == 0 ) then
-			SelectedIgnore = 1
-		end
-		BasicFilter_IgnoreList_StopIgnoreButton:Enable();
-	else
-		BasicFilter_IgnoreList_StopIgnoreButton:Disable();
-	end
-
-	local ignoreOffset = FauxScrollFrame_GetOffset(BasicFilter_IgnoreList_ScrollFrame);
-	local ignoreIndex;
-	for i=1, numIgnoreButtons, 1 do
-		ignoreIndex = i + ignoreOffset;
-		ignoreButton = _G["BasicFilter_IgnoreList_IgnoreButton"..i];
-		ignoreButton:SetText(IgnoreList[ignoreIndex] or "");
-		ignoreButton:SetID(ignoreIndex);
-		-- Update the highlight
-		if ( ignoreIndex == SelectedIgnore ) then
-			ignoreButton:LockHighlight();
+	gui:AddControl(id, "Subhead", 0.55, _TRANS('BASC_Interface_IgnoreList'))--Ignore List
+	local listframe = CreateFrame("Frame", nil, gui.tabs[id].content)
+	listframe:SetHeight(288)
+	listframe:SetWidth(200)
+	private.ListButtons = {}
+	local lastbutton
+	for index = 1, NUM_IGNORE_BUTTONS do
+		local button = CreateFrame("Button", nil, listframe, "AucFilterBasicListLineTemplate")
+		button:SetID(index)
+		if lastbutton then
+			button:SetPoint("TOP", lastbutton, "BOTTOM")
 		else
-			ignoreButton:UnlockHighlight();
+			button:SetPoint("TOPLEFT", listframe, "TOPLEFT")
 		end
-
-		if ( ignoreIndex > numIgnores ) then
-			ignoreButton:Hide();
-		else
-			ignoreButton:Show();
-		end
+		button:SetScript("OnClick", private.IgnoreListButtonOnClick)
+		lastbutton = button
+		tinsert(private.ListButtons, button)
 	end
+	local ignoreplayerbutton = CreateFrame("Button", nil, listframe, "AucFilterBasicWideButtonTemplate")
+	ignoreplayerbutton:SetPoint("TOPRIGHT", listframe, "BOTTOM", 0, -5)
+	ignoreplayerbutton:SetScript("OnClick", function() StaticPopup_Show("BASICFILTER_ADD_IGNORE") end)
+	ignoreplayerbutton:SetText(IGNORE_PLAYER)
+	local stopignorebutton = CreateFrame("Button", nil, listframe, "AucFilterBasicWideButtonTemplate")
+	stopignorebutton:SetPoint("TOPLEFT", listframe, "BOTTOM", 0, -5)
+	stopignorebutton:SetScript("OnClick", function() lib.RemovePlayerIgnore(IgnoreList[SelectedIgnore]) end)
+	stopignorebutton:SetText(STOP_IGNORE)
+	private.UnignoreButton = stopignorebutton
+	AucFilterBasicScrollFrame:SetParent(listframe) -- AucFilterBasicScrollFrame was created by BasicFilter.xml
+	AucFilterBasicScrollFrame:SetPoint("TOPRIGHT", listframe, "TOPRIGHT", -30, 0)
+	AucFilterBasicScrollFrame:SetScript("OnVerticalScroll", function(self, offset)
+		FauxScrollFrame_OnVerticalScroll(self, offset, 16, private.IgnoreListUpdate)
+	end)
+	ScrollFrame_OnLoad(AucFilterBasicScrollFrame)
+	gui:AddControl(id, "Custom", 0.55, 0, listframe)
 
-	-- ScrollFrame stuff
-	FauxScrollFrame_Update(BasicFilter_IgnoreList_ScrollFrame, numIgnores, numIgnoreButtons, 16);
-
+	GUILoaded = true
+	private.IgnoreListUpdate()
 end
-
-function BF_IgnoreList_IgnoreButton_OnClick( button )
-	SelectedIgnore = button:GetID()
-	BF_IgnoreList_Update()
-end
-
-function BF_IgnoreList_UnignoreButton_OnClick( button )
-	local name = IgnoreList[SelectedIgnore]
-	BF_IgnoreList_Remove(name)
-end
-
-function BF_IgnoreList_Load()
-	local realm = GetRealmName()
-	local faction = UnitFactionGroup("player")
-
-	--If the realm doesn't exist in the SV, create it
-	if not AucAdvancedFilterBasic_IgnoreList[realm] then
-		AucAdvancedFilterBasic_IgnoreList[realm] = {}
+lib.Processors = {
+	config = function(callbackType, gui)
+		if SetupConfigGui then SetupConfigGui(gui) end
 	end
+}
 
-	--If the faction doesn't exist in the SV, create it under the realm
-	if not AucAdvancedFilterBasic_IgnoreList[realm][faction] then
-		AucAdvancedFilterBasic_IgnoreList[realm][faction] = {}
-	end
+--[[ Prompt and Dialog Setup ]]--
 
-	--Get the ignore list for the current realm and faction
-	IgnoreList = AucAdvancedFilterBasic_IgnoreList[realm][faction]
-	lib.IgnoreList = IgnoreList --make current ignore list global for other addons *** Deprecated ***
+private.IgnorePrompt = CreateFrame("Frame", nil, UIParent)
+private.IgnorePrompt:Hide()
+private.IgnorePrompt:SetBackdrop({
+	  bgFile = "Interface/Tooltips/ChatBubble-Background",
+	  edgeFile = "Interface/Minimap/TooltipBackdrop",
+	  tile = true, tileSize = 32, edgeSize = 10,
+	  insets = { left = 2, right = 2, top = 2, bottom = 2 }
+})
+private.IgnorePrompt:SetBackdropColor(0,0,0, 1)
+private.IgnorePrompt:SetWidth(100)
+private.IgnorePrompt:SetHeight(76)
+private.IgnorePrompt:SetPoint("CENTER", UIParent, "CENTER")
+private.IgnorePrompt:SetClampedToScreen(true)
+private.IgnorePrompt:SetScript("OnHide", private.OnPromptHide)
+-- todo: can we hide on ESC too?
 
-	for i, name in ipairs(IgnoreList) do
-		IgnoreList[name] = i
-	end
-	BF_IgnoreList_Update()
-end
+private.IgnorePrompt.text = private.IgnorePrompt:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall" )
+private.IgnorePrompt.text:SetPoint("TOP", private.IgnorePrompt, "TOP", 0, -8)
+private.IgnorePrompt.text:SetWidth(94)
+private.IgnorePrompt.text:SetNonSpaceWrap(true)
 
-function BF_IgnoreList_OnEvent(self, event)
-	if event == "PLAYER_LOGOUT" then
-		for key in pairs(IgnoreList) do
-			if type(key) == "number" then
-				AucAdvancedFilterBasic_IgnoreList[realm][faction][key] = IgnoreList[key]
-			end
-		end
-	end
-end
+private.IgnorePrompt.name = private.IgnorePrompt:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall" )
+private.IgnorePrompt.name:SetPoint("TOP", private.IgnorePrompt.text, "BOTTOM", 0, -4)
+private.IgnorePrompt.name:SetTextColor(1, 1, 1)
 
-function BF_IgnoreList_Add(name)
-	-- name validity checks
-	if type(name) ~= "string" or #name < 2 then return end
-	-- This is stored in the SV with the first letter capitalized and the rest lowercased
-	-- This is how it should appear in the ScanData image, and how we want it displayed in our GUI
-	-- We must allow for UTF-8 encoding of first character
-	local firstbyte, split = name:byte(1), 1
-	if firstbyte >= 240 then -- quad
-		split = 4
-	elseif firstbyte >= 224 then -- triple
-		split = 3
-	elseif firstbyte >= 192 then -- double
-		split = 2
-	end
-	name = name:sub(1,split):upper()..name:sub(split+1):lower()
+private.IgnorePrompt.yes = CreateFrame("Button", nil, private.IgnorePrompt, "AucPromptSmallButtonTemplate")
+private.IgnorePrompt.yes:SetPoint("BOTTOMLEFT", private.IgnorePrompt, "BOTTOMLEFT", 10, 8)
+private.IgnorePrompt.yes:SetScript("OnClick", private.OnPromptYes)
+private.IgnorePrompt.yes:SetText(YES)
 
-	local currentSelection = IgnoreList[SelectedIgnore]
-
-	if not ( IgnoreList[name] ) then
-		table.insert(IgnoreList, name)
-		LastIgnoredPlayer = name
-	end
-	table.sort(IgnoreList)
-	for i, name in ipairs(IgnoreList) do
-		IgnoreList[name] = i
-	end
-	SelectedIgnore = IgnoreList[currentSelection] or 1
-	BF_IgnoreList_Update()
-end
-
-function BF_IgnoreList_Remove( name )
-	if ( IgnoreList[name] ) then
-		IgnoreList[name] = nil
-		for i, ignoreName in ipairs(IgnoreList) do
-			if ( ignoreName == name ) then
-				table.remove(IgnoreList, i)
-			end
-		end
-		SelectedIgnore = 1
-	end
-	table.sort(IgnoreList)
-	for i, name in ipairs(IgnoreList) do
-		IgnoreList[name] = i
-	end
-	BF_IgnoreList_Update()
-end
+private.IgnorePrompt.no = CreateFrame("Button", nil, private.IgnorePrompt, "AucPromptSmallButtonTemplate")
+private.IgnorePrompt.no:SetPoint("BOTTOMRIGHT", private.IgnorePrompt, "BOTTOMRIGHT", -10, 8)
+private.IgnorePrompt.no:SetScript("OnClick", private.OnPromptNo)
+private.IgnorePrompt.no:SetText(NO)
 
 StaticPopupDialogs["BASICFILTER_ADD_IGNORE"] = {
 	text = ADD_IGNORE_LABEL,
@@ -282,7 +393,7 @@ StaticPopupDialogs["BASICFILTER_ADD_IGNORE"] = {
 	maxLetters = 12,
 
 	OnAccept = function(self)
-		BF_IgnoreList_Add(self.editBox:GetText())
+		lib.AddPlayerIgnore(self.editBox:GetText())
 	end,
 	OnShow = function(self)
 		self.editBox:SetFocus()
@@ -293,7 +404,7 @@ StaticPopupDialogs["BASICFILTER_ADD_IGNORE"] = {
 	end,
 	EditBoxOnEnterPressed = function(self)
 		local parent = self:GetParent()
-		BF_IgnoreList_Add(parent.editBox:GetText())
+		lib.AddPlayerIgnore(parent.editBox:GetText())
 		parent:Hide()
 	end,
 	EditBoxOnEscapePressed = function(self)
@@ -306,4 +417,4 @@ StaticPopupDialogs["BASICFILTER_ADD_IGNORE"] = {
 	hideOnEscape = 1
 }
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Filter-Basic/BasicFilter.lua $", "$Rev: 4901 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Filter-Basic/BasicFilter.lua $", "$Rev: 5141 $")

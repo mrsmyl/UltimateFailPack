@@ -1,8 +1,8 @@
 ﻿--[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: InfMain.lua 4880 2010-09-15 20:02:11Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: InfMain.lua 5011 2010-11-13 02:33:09Z Hirsute $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	License:
@@ -27,9 +27,9 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Informant/InfMain.lua $","$Rev: 4880 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Informant/InfMain.lua $","$Rev: 5011 $")
 
-INFORMANT_VERSION = "5.9.4960"
+INFORMANT_VERSION = "5.11.5146"
 if (INFORMANT_VERSION == "<".."%version%>") then
 	INFORMANT_VERSION = "5.2.DEV"
 end
@@ -121,6 +121,8 @@ CLASS_TO_CATEGORY_MAP = {
 	[12] = 12, --Quest
 } 
 
+local soulbindtypes = {_TRANS("INF_Tooltip_SoulBindUse"),_TRANS("INF_Tooltip_SoulBindEquip"),_TRANS("INF_Tooltip_SoulBindPickup")}
+local specialbindtypes = {_TRANS("INF_Tooltip_SpecialBindAccount"),_TRANS("INF_Tooltip_SpecialBindGuild")}
 
 -- FUNCTION DEFINITIONS
 
@@ -165,11 +167,11 @@ function getItem(itemID, static)
 	if cache[itemID] then return cache[itemID] end
 	
 	local baseData = self.database[itemID]
-	local buy, class, quality, stack, additional, usedby, quantity, limited, merchantlist
+	local buy, class, quality, stack, additional, usedby, quantity, limited, merchantlist,soulbind,specialbind
 	local itemName, itemLink, itemQuality, itemLevel, itemUseLevel, itemType, itemSubType, itemStackSize, itemEquipLoc, itemTexture = GetItemInfo(tonumber(itemID))
 
 	if (baseData) then
-		buy, class, quality, stack, additional, usedby, quantity, limited, merchantlist = strsplit(":", baseData)
+		buy, class, quality, stack, additional, usedby, quantity, limited, merchantlist, soulbind, specialbind = strsplit(":", baseData)
 		buy = tonumber(buy)
 	end
 	
@@ -205,6 +207,8 @@ function getItem(itemID, static)
 	quality = tonumber(quality) or itemQuality
 	stack = tonumber(itemStackSize) or tonumber(stack)
 	local cat = CLASS_TO_CATEGORY_MAP[class]
+	soulbind = tonumber(soulbind)
+	specialbind = tonumber(specialbind)
 
 	sell = select(11,GetItemInfo(itemID))
 	local dataItem = (static and staticDataItem or {})
@@ -222,6 +226,10 @@ function getItem(itemID, static)
 	dataItem.texture = itemTexture
 	dataItem.itemLevel = itemLevel
 	dataItem.reqLevel = itemUseLevel
+	dataItem.soulBind = soulbind
+	dataItem.specialBind = specialbind
+	if soulbind and soulbind > 0 then dataItem.soulBindText = soulbindtypes[soulbind] else dataItem.soulBindText = nil end
+	if specialbind and specialbind > 0 then dataItem.specialBindText = specialbindtypes[specialbind] else dataItem.specialBindText = nil end
 
 	local addition = ""
 	if (additional and additional ~= "") then

@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnchantrixBarker.lua 4956 2010-10-19 01:10:04Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnchantrixBarker.lua 4955 2010-10-18 18:53:24Z ccox $
 	URL: http://enchantrix.org/
 
 	This is an addon for World of Warcraft that adds the ability to advertise
@@ -30,7 +30,7 @@
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 
 ]]
-EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix-Barker/EnchantrixBarker.lua $", "$Rev: 4956 $")
+EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix-Barker/EnchantrixBarker.lua $", "$Rev: 4955 $")
 
 -- ccox - WoW 3.0 API change
 local GetCraftInfoFunc = GetCraftInfo or GetTradeSkillInfo;

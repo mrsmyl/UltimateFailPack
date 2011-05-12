@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Filter IgnoreItemQuality
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: FilterItemQuality.lua 4432 2009-08-29 14:55:35Z dinesh $
 	URL: http://auctioneeraddon.com/
 
@@ -118,4 +118,4 @@ function lib.Filter(item, searcher)
 	return false
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/FilterItemQuality.lua $", "$Rev: 4432 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/FilterItemQuality.lua $", "$Rev: 4432 $")

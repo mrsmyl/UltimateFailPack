@@ -1,4 +1,34 @@
+--[[
+	Auctioneer Addon for World of Warcraft(tm).
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: Glypher.lua 5062 2011-01-07 00:18:05Z Mascondante $
+	URL: http://auctioneeraddon.com/
+	
+	Glypher - Inscriptionist's 'Swiss Army Knife'
+	Tools for managing mass sales and production of glyphs
 
+	License:
+		This program is free software; you can redistribute it and/or
+		modify it under the terms of the GNU General Public License
+		as published by the Free Software Foundation; either version 2
+		of the License, or (at your option) any later version.
+
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+
+		You should have received a copy of the GNU General Public License
+		along with this program(see GPL.txt); if not, write to the Free Software
+		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+	Note:
+		This AddOn's source code is specifically designed to work with
+		World of Warcraft's interpreted AddOn system.
+		You have an implicit license to use this AddOn with these facilities
+		since that is it's designated purpose as per:
+		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
+]]
 if not AucAdvanced then return end
 
 local libType, libName = "Util", "Glypher"
@@ -129,10 +159,10 @@ function lib.OnLoad()
 	default("util.glypher.makefornew", 2)
 	default("util.glypher.herbprice", 8000)
 	default("util.glypher.profitAppraiser", 100)
+        default("util.glypher.profitAppraiser.forceGlypher", false)
 	default("util.glypher.profitBeancounter", 100)
 	default("util.glypher.profitMarket", 50)
-	default("util.glypher.pricemodel.min1", get("util.glypher.pricemodel.min") or 32500)
-	default("util.glypher.pricemodel.min2", get("util.glypher.pricemodel.min") or 35000)
+	default("util.glypher.pricemodel.min1", get("util.glypher.pricemodel.min") or 35000)
 	default("util.glypher.pricemodel.max", 999999)
 	default("util.glypher.pricemodel.underpct", 1)
 	default("util.glypher.pricemodel.useundercut", true)
@@ -301,6 +331,11 @@ function private.makefornewFormat()
 	if makefornew > maxstock then fmt = WARN end -- We'd never make the total amount because maxstock is less than makefornew
 	return fmt
 end
+function private.round(num,idp)
+	local mult = 10^(idp or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
+	
 
 local frame
 function private.SetupConfigGui(gui)
@@ -400,8 +435,8 @@ function private.SetupConfigGui(gui)
 	--gui:AddControl(id, "NumeriSlider", 0, 1, "util.glypher.overstock", 0, 60, 1, "Overstock")
 	--gui:AddTip(id, "Maximimum stock to allow when Glypher wants to make at least min overstock more than max stock")
 
-	gui:AddControl(id, "MoneyFrame", 0, 1, "util.glypher.herbprice", "Price of single Northrend herb")
-	gui:AddTip(id, "Used to calculate the price of Ink of the Sea which can be traded for most other inks.")
+	gui:AddControl(id, "MoneyFrame", 0, 1, "util.glypher.herbprice", "Price of single Cataclysm herb")
+	gui:AddTip(id, "Used to calculate the price of Blackfallow Ink which can be traded for most other inks.")
 
 	gui:AddControl(id, "Subhead", 0, "New glyph configuration")
 
@@ -415,6 +450,8 @@ function private.SetupConfigGui(gui)
 	if AucAdvanced.Modules.Util.Appraiser then
 		gui:AddControl(id, "NumeriSlider", 0, 1, "util.glypher.profitAppraiser", 1, 100, 1, "Current model")
 		gui:AddTip(id, "Relative weight for the current pricing model set " .. weightWords)
+                gui:AddControl(id, "Checkbox",   0, 1, "util.glypher.profitAppraiser.forceGlypher", "Force Glypher Pricing Model")
+		gui:AddTip(id, "Force the Glypher pricing model instead of using the default Appraiser pricing model (Recommended)")
 	else
 		gui:AddControl(id, "NumeriSlider", 0, 1, "util.glypher.profitAppraiser", 1, 100, 1, "|caaaaaaaaCurrent model")
 		gui:AddTip(id, "Auc-Util-Appraiser is not enabled, so the current model weighting is disabled")
@@ -428,14 +465,10 @@ function private.SetupConfigGui(gui)
 
 	gui:AddControl(id, "Subhead", 0, "Glypher pricing model")
 
-	--gui:AddControl(id, "Subhead", 0, "Minimum Sale Price - 1-Ink Glyphs")
-	gui:AddControl(id, "Note", 0, 1, nil, nil, "Minimum Sale Price - 1-Ink Glyphs")
+	--gui:AddControl(id, "Subhead", 0, "Minimum Sale Price")
+	gui:AddControl(id, "Note", 0, 1, nil, nil, "Minimum Sale Price")
 	gui:AddControl(id, "MoneyFrame", 0, 1, "util.glypher.pricemodel.min1")
 	gui:AddTip(id, "The price that Glypher will never go below on 1-ink glyphs in order to undercut others")
-
-	gui:AddControl(id, "Note", 0, 1, nil, nil, "Minimum Sale Price - 2-Ink Glyphs")
-	gui:AddControl(id, "MoneyFrame", 0, 1, "util.glypher.pricemodel.min2")
-	gui:AddTip(id, "The price that Glypher will never go below on 2-ink glyphs in order to undercut others")
 
 	--gui:AddControl(id, "Subhead", 0, "Maximum Sale Price")
 	gui:AddControl(id, "Note", 0, 1, nil, nil, "Maximum Sale Price")
@@ -457,7 +490,7 @@ function private.SetupConfigGui(gui)
 	--gui:AddControl(id, "Subhead", 0, "Whitelist")
 	gui:AddControl(id, "Note", 0, 1, nil, nil, "Whitelist")
 	gui:AddControl(id, "Text", 0, 1, "util.glypher.pricemodel.whitelist")
-	gui:AddTip(id, "The players to whitelist on undercuts (blank for no whitelist, separarate whitelisted users with a ':')") --eventually have a list to edit
+	gui:AddTip(id, "The players to whitelist on undercuts (blank for no whitelist, separarate whitelisted users with a ':') \r \rNOTE: This item is case sensitive.  Please capitalize the first letter. \rEx: Playername") --eventually have a list to edit
 
 	gui:AddControl(id, "Note", 0, 1, nil, nil, "Ignore Time Left")
 	gui:AddControl(id, "Selectbox", 0, 1, {
@@ -483,11 +516,11 @@ function private.SetupConfigGui(gui)
 
 		gui:AddControl(id, "Note", 0, 1, nil, nil, "Alt list")
 		gui:AddControl(id, "Text", 0, 1, "util.glypher.altlist")
-		gui:AddTip(id, "List of alts which you use for your glyph business, separate alts with a ':'. Leave blank to disable.")
+		gui:AddTip(id, "List of alts which you use for your glyph business, separate alts with a ':'. Leave blank to disable. \r \rNOTE: This item is case sensitive.  Please capitalize the first letter. \rEx: Playername")
 
 		gui:AddControl(id, "Note", 0, 1, nil, nil, "Guild")
 		gui:AddControl(id, "Text", 0, 1, "util.glypher.gvault")
-		gui:AddTip(id, "Guild name for the vault which you use for your glyph business. Leave blank to disable.")
+		gui:AddTip(id, "Guild name for the vault which you use for your glyph business. Leave blank to disable. \r \rNOTE: This item is case sensitive.  Please capitalize all applicable letters. \rEx: Silent Force")
 	end
 
 	frame.refreshButton = CreateFrame("Button", nil, frame, "OptionsButtonTemplate")
@@ -604,7 +637,7 @@ function private.ProcessTooltip(frame, name, link, quality, quantity, cost, addi
 	frame:AddLine("bcSold: " .. bcSold)
 	local currentAuctions = stock
 	local stockdays = get("util.glypher.stockdays")
-	local make = floor(bcSold/history * stockdays + .5) - currentAuctions -- using .9 for rounding because it's best not to miss a sale
+	local make = ceil(bcSold/history * stockdays) - currentAuctions -- *must* use ceiling so that small numbers don't round to zero & bypass our minimum stock setting
 
 	frame:AddLine("Wanting to make " .. make .. " (" .. bcSold .. "/" .. history .. "*" .. stockdays .. " + .5)")
 end
@@ -707,7 +740,7 @@ function private.cofindGlyphs()
 
 	local inkCost
 	local resProb = 2.5
-	inkCost = ((herbprice * 5) / resProb) * 2 -- 5 herbs divided by the average pigments you get, 2 to make ink of the sea
+	inkCost = ((herbprice * 5) / resProb) * 2 -- 5 herbs divided by the average pigments you get, 2 to make Blackfallow Ink
 
 	if not inkCost then
 		print("Error in inkCost - returned nill!!!!!!!")
@@ -762,15 +795,16 @@ function private.cofindGlyphs()
 					--local inkPrice = AucAdvanced.API.GetMarketValue(link) or 0
 					local _, Id  = decode(link)
 					local isVendored,isLimited,itemCost,toSell,buyStack,maxStack = Informant.getItemVendorInfo(Id)
-					if string.find(":43126:43120:43124:37101:43118:43116:39774:39469:43122:", ":" .. Id .. ":") then
+					if string.find(":61978:43126:43120:43124:37101:43118:43116:39774:39469:43122:", ":" .. Id .. ":") then
 						reagentCost = (reagentCost + (inkCost * count) )
 						addInk = addInk + count
-						set("util.glypher.inks."..itemId..".ink", 43126)
+						set("util.glypher.inks."..itemId..".ink", 61978)
 						set("util.glypher.inks."..itemId..".count", count)
-					elseif Id == 43127 then
+					--In case blizzard decides to use snowfall or inferno ink to make glyphs
+					elseif string.find(":61981:43127:", ":" .. Id .. ":") then
 						reagentCost = (reagentCost + (inkCost * count * 10) )
 						addInk = addInk + (count * 10)
-						set("util.glypher.inks."..itemId..".ink", 43127)
+						set("util.glypher.inks."..itemId..".ink", 61981)
 						set("util.glypher.inks."..itemId..".count", count)
 					elseif isVendored then
 						reagentCost = (reagentCost + (itemCost * count) )
@@ -793,13 +827,18 @@ function private.cofindGlyphs()
 
 				--We want these local to the loop (at least) because we're zeroing them if there is no price
 				local profitAppraiser = get("util.glypher.profitAppraiser")
+				local forceGlypher = get("util.glypher.profitAppraiser.forceGlypher")
 				local profitMarket = get("util.glypher.profitMarket")
 				local profitBeancounter = get("util.glypher.profitBeancounter")
 
 				--local price = AucAdvanced.API.GetMarketValue(link)
 				local priceAppraiser = 0
 				if AucAdvanced.Modules.Util.Appraiser then
-					priceAppraiser = AucAdvanced.Modules.Util.Appraiser.GetPrice(link, AucAdvanced.GetFaction()) or 0
+					if forceGlypher then
+						priceAppraiser = AucAdvanced.Modules.Util.Glypher.GetPrice(link, AucAdvanced.GetFaction()) or 0 
+					else
+						priceAppraiser = AucAdvanced.Modules.Util.Appraiser.GetPrice(link, AucAdvanced.GetFaction()) or 0
+					end
 				end
 
 				if priceAppraiser == 0 then profitAppraiser = 0 end
@@ -861,7 +900,7 @@ function private.cofindGlyphs()
 				if worthPrice and (worthPrice - reagentCost) >= MinimumProfit and inkMatch then
 					local currentAuctions = private.GetStock(itemId)
 
-					local make = floor(bcSold/history * stockdays + .5) - currentAuctions -- using .9 for rounding because it's best not to miss a sale
+					local make = ceil(bcSold/history * stockdays) - currentAuctions -- *must* use ceiling so that small numbers don't round to zero & bypass our minimum stock setting
 					local failed = 0
 					if DataStore and DataStore:IsModuleEnabled("DataStore_Auctions") then -- Auctions & Bids
 						for characterName, character in pairs(DataStore:GetCharacters(realm, account)) do
@@ -905,7 +944,7 @@ function private.cofindGlyphs()
 						if (bcSold > 0) then failedratio = failed/bcSold else failedratio = failed end
 						--if (bcSold > 0 and failedratio < failratio) or failed == 0 or failratio == 0 then
 						if failedratio < failratio or failed == 0 or failratio == 0 then
-							table.insert(private.data, { ["link"] = link, ["ID"] = ID, ["count"] = make, ["name"] = itemName} )
+							table.insert(private.data, { ["link"] = link, ["ID"] = ID, ["count"] = make, ["name"] = itemName, ["profit"] = worthPrice - reagentCost } )
 							table.insert(private.Display, {link, make, worthPrice - reagentCost} )
 							qtyInk = qtyInk + (addInk * make)
 						else
@@ -919,9 +958,21 @@ function private.cofindGlyphs()
 	end
 
 	if get("util.glypher.misc.inktrader") then
-		local _, link = GetItemInfo(43126)
-		local mess = "You need " .. link .. "x" .. qtyInk .. " to process this queue."
-		DEFAULT_CHAT_FRAME:AddMessage(mess,1.0,0.0,0.0)
+		local _, link = GetItemInfo(61978)
+		local stock, a = private.GetStock(61978)
+		--Rounds the percentage to definded decimal places (num,ipv)
+		local availstockratio = private.round((stock / qtyInk) * 100,2)
+		local messneed = "|cFF83BAFE Glypher: |r" .. link .. "x" .. qtyInk .. " needed to process this queue."
+		local messavail = "|cFF83BAFE Glypher: |r" .. link .. "x" .. stock .. " available"
+		local messstock = "|cFF83BAFE Glypher: |r" .. availstockratio .. "% Stocked"
+		local messnostock = "|cFF83BAFE Glypher:|r" .. " No profitable glyphs found."
+			if qtyInk == 0 then
+				DEFAULT_CHAT_FRAME:AddMessage(messnostock,0.8,0.33,0.33)
+			else
+				DEFAULT_CHAT_FRAME:AddMessage(messneed,0.8,0.33,0.33)
+				DEFAULT_CHAT_FRAME:AddMessage(messavail,0.8,0.33,0.33)
+				DEFAULT_CHAT_FRAME:AddMessage(messstock,0.8,0.33,0.33)
+		end 
 	end
 	private.frame.glypher.sheet:SetData(private.Display, Style)
 	private.frame.searchButton:Enable()
@@ -1009,7 +1060,12 @@ end
 function private.addToGnomeworks()
 	local player = UnitName("player")
 	local inscription = 45357 --static spell ID
-	for i, glyph in ipairs(private.data) do
+	local sorted = {}
+	for k, v in pairs(private.data) do
+		sorted[k] = v
+	end
+	table.sort(sorted, function (a,b) return a.profit > b.profit end)
+	for i, glyph in ipairs(sorted) do
 		local recipieLink = GetTradeSkillRecipeLink(glyph.ID)
 		local recipeID = recipieLink:match("^|c.-|H.-:(%d-)|h")
 		recipeID  = tonumber(recipeID)
@@ -1050,7 +1106,6 @@ function lib.GetPrice(link, faction, realm)
 	local playerName = UnitName("player")
 	local linkType, itemId, property, factor = decode(link)
 	local glypherMin1 = get("util.glypher.pricemodel.min1")
-	local glypherMin2 = get("util.glypher.pricemodel.min2")
 	local glypherMax = get("util.glypher.pricemodel.max")
 	local glypherUnderpct = get("util.glypher.pricemodel.underpct")
 	local glypherUseundercut = get("util.glypher.pricemodel.useundercut")
@@ -1074,21 +1129,15 @@ function lib.GetPrice(link, faction, realm)
 		local auction = AucAdvanced.API.UnpackImageItem(data[j])
 		auction.buyoutPrice = (auction.buyoutPrice/auction.stackSize)
 		itemId = auction.itemId
-		local ink = get("util.glypher.inks."..itemId..".ink") or 43126
-		local count = get("util.glypher.inks."..itemId..".count") or 2
-		if ink == 43126 then
-			if count == 1 then
-				glypherMin = glypherMin1
-			elseif count == 2 then
-				glypherMin = glypherMin2
-			else
-				glypherMin = glypherMin2
+		local ink = get("util.glypher.inks."..itemId..".ink") or 61978
+		local count = get("util.glypher.inks."..itemId..".count") or 3
+		if ink == 61978 then
+			glypherMin = glypherMin1
 				--print("Warning: Item " .. itemId .. " has not been scanned by Glypher:Get Profitable Glyphs, assuming for now that 2 inks are required to make.")
 				--set("util.glypher.inks."..itemId..".count", 2)
-			end
 		else
 			--print("Cannot find ink type " .. ink .. " for glyph " .. itemId .. " for pricing - check http://forums.norganna.org/8/ for information on an update to Auc-Util-Glypher")
-			glypherMin = glypherMin2 -- fallback
+			glypherMin = glypherMin1 -- fallback
 		end
 		if auction.stackSize == 1 then
 			if auction.sellerName == playerName then

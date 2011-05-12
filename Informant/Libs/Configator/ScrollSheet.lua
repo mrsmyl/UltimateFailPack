@@ -1,7 +1,7 @@
 --[[
 	ScrollSheet
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: ScrollSheet.lua 271 2010-09-04 15:49:38Z kandoko $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: ScrollSheet.lua 299 2011-02-16 23:56:36Z kandoko $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -26,7 +26,7 @@
 --]]
 
 local LIBRARY_VERSION_MAJOR = "ScrollSheet"
-local LIBRARY_VERSION_MINOR = 18
+local LIBRARY_VERSION_MINOR = 19
 
 --[[-----------------------------------------------------------------
 
@@ -72,7 +72,7 @@ end
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/ScrollSheet.lua $","$Rev: 271 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/ScrollSheet.lua $","$Rev: 299 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local GSC_GOLD="ffd100"
 local GSC_SILVER="e6e6e6"
@@ -243,25 +243,32 @@ function kit:EnableSelect(enable)
 		self.enableselect = false
 	end
 end
-
-function kit:GetSelection()
+--Generic function for getting data from any row. Will always return values in default column order
+function kit:GetRowData(row)
 	local selection = {}
-	if self.selected then
-		if not self.order then
-			for i = 1, self.hSize do
-				local pos = i + ((self.selected-1)*self.hSize)
-				selection[i] = self.data[pos]
-			end
-		else--reorginize data so the calling module gets them back in expected order
-			for i = 1, self.hSize do
-				local pos = i + ((self.selected-1)*self.hSize)
-				local name = self.order[i]
-				local index = self.order[name][3]
-				selection[index] = self.data[pos]
-			end
+	if not self.order then
+		for i = 1, self.hSize do
+			local pos = i + ((row-1)*self.hSize)
+			selection[i] = self.data[pos]
+		end
+	else--reorginize data so the calling module gets them back in expected order
+		for i = 1, self.hSize do
+			local pos = i + ((row-1)*self.hSize)
+			local name = self.order[i]
+			local index = self.order[name][3]
+			selection[index] = self.data[pos]
 		end
 	end
 	return selection
+end
+
+--Used to get the user selected row. Use GetRowData for generic querys
+function kit:GetSelection()
+	local selection
+	if self.selected then
+		selection = self:GetRowData(self.selected)
+	end
+	return selection or {}
 end
 
 function kit:RowSelect(row, mouseButton)
@@ -584,8 +591,9 @@ function lib:Create(frame, layout, onEnter, onLeave, onClick, onResize, onSelect
 		
 		--small button in the gap between lables allows resizing the button its anchored too
 		--we use very small columns to store extra data thats not used in rendering. We dont want the player to be able to resize em
+		local nub
 		if colWidth > 1 then
-			local nub = CreateFrame("Button", nil, content)
+			nub = CreateFrame("Button", nil, content)
 			nub:SetPoint("TOPLEFT", button, "TOPRIGHT", 0,0)
 			nub:SetHighlightTexture("Interface\\BUTTONS\\YELLOWORANGE64")
 			nub:SetAlpha(0.5)

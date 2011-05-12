@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnxTooltip.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxTooltip.lua 5007 2010-11-10 07:25:24Z Hirsute $
 	URL: http://enchantrix.org/
 
 	Tooltip functions.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxTooltip.lua $", "$Rev: 4933 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxTooltip.lua $", "$Rev: 5007 $")
 
 -- Global functions
 local addonLoaded	-- Enchantrix.Tooltip.AddonLoaded()
@@ -149,7 +149,7 @@ local function prospectTooltip(prospect, tooltip, name, link, quality, count)
 		table.sort(lines, function(a, b) return a.sort > b.sort end)
 		for n, line in ipairs(lines) do
 			tooltip:AddLine(line.str, nil, embed)
-			if n >= 13 then break end -- Don't add more than 13 lines (1 Powder + 6 Uncommon + 6 Rare)
+--			if n >= 13 then break end -- Don't add more than 13 lines (1 Powder + 6 Uncommon + 6 Rare)
 		end
 	end
 
@@ -242,7 +242,7 @@ local function millingTooltip(prospect, tooltip, name, link, quality, count)
 		table.sort(lines, function(a, b) return a.sort > b.sort end)
 		for n, line in ipairs(lines) do
 			tooltip:AddLine(line.str, nil, embed)
-			if n >= 13 then break end -- Don't add more than 13 lines (1 Powder + 6 Uncommon + 6 Rare)
+--			if n >= 13 then break end -- Don't add more than 13 lines (1 Powder + 6 Uncommon + 6 Rare)
 		end
 	end
 
@@ -277,8 +277,24 @@ end
 
 
 function itemTooltip(tooltip, name, link, itemType, itemId, quality, count)
-	if Enchantrix.Settings.GetSetting('ModTTShow') and not IsAltKeyDown() then
-		return
+	if Enchantrix.Settings.GetSetting("ModTTShow") then
+		if Enchantrix.Settings.GetSetting("ModTTShow") == "never" then
+			return
+		elseif Enchantrix.Settings.GetSetting("ModTTShow") == "noalt" and IsAltKeyDown() then
+			return
+		elseif Enchantrix.Settings.GetSetting("ModTTShow") == "alt" and not IsAltKeyDown() then
+			return
+		elseif Enchantrix.Settings.GetSetting("ModTTShow") == "noshift" and IsShiftKeyDown() then
+			return
+		elseif Enchantrix.Settings.GetSetting("ModTTShow") == "shift" and not IsShiftKeyDown() then
+			return
+		elseif Enchantrix.Settings.GetSetting("ModTTShow") == "noctrl" and IsControlKeyDown() then
+			return
+		elseif Enchantrix.Settings.GetSetting("ModTTShow") == "ctrl" and not IsControlKeyDown() then
+			return
+		end
+	else 
+		Enchantrix.Settings.SetSetting("ModTTShow", "always")
 	end
 	
 	-- see if this is a simple reagent produced from disenchanting, prospecting or milling
@@ -414,7 +430,7 @@ function itemTooltip(tooltip, name, link, itemType, itemId, quality, count)
 		table.sort(lines, function(a, b) return a.sort > b.sort end)
 		for n, line in ipairs(lines) do
 			tooltip:AddLine(line.str, nil, embed)
-			if n >= 5 then break end -- Don't add more than 5 lines
+--			if n >= 5 then break end -- Don't add more than 5 lines
 		end
 	end
 
@@ -714,7 +730,7 @@ function hookSpellTooltip(tipFrame, link, name, rank)
 end
 
 Enchantrix.Tooltip = {
-	Revision		= "$Revision: 4933 $",
+	Revision		= "$Revision: 5007 $",
 
 	AddonLoaded		= addonLoaded,
 	Format			= tooltipFormat,

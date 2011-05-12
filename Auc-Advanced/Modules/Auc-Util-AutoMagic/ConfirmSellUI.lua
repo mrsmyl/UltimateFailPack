@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: ConfirmSellUI.lua 4901 2010-10-05 16:44:24Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: ConfirmSellUI.lua 4895 2010-10-03 21:29:04Z kandoko $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -314,4 +314,4 @@ function lib.makeconfirmsellui()
 end
 
 lib.makeconfirmsellui()
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-AutoMagic/ConfirmSellUI.lua $", "$Rev: 4901 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-AutoMagic/ConfirmSellUI.lua $", "$Rev: 4895 $")

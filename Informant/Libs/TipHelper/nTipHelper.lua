@@ -1,7 +1,7 @@
 --[[
 	Norganna's Tooltip Helper class
 	Version: 1.0
-	Revision: $Id$
+	Revision: $Id: nTipHelper.lua 285 2010-11-02 09:38:55Z brykrys $
 	URL: http://norganna.org/tthelp
 
 	This is a slide-in helper class for the Norganna's AddOns family of AddOns
@@ -382,8 +382,3 @@ do -- tooltip class definition
 	end
 
 end -- tooltip class definition
-
-function _debug(link)
-	print(gsub(link, "|", "||"))
-	print(gsub(AucAdvanced.SanitizeLink(link), "|", "||"))
-end

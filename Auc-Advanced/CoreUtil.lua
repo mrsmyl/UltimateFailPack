@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: CoreUtil.lua 4880 2010-09-15 20:02:11Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: CoreUtil.lua 5064 2011-01-09 17:21:51Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -130,7 +130,7 @@ function lib.setFrame(frame)
 		frame = 0
 	--Compatibility, for those who had set this previously.
 	elseif (type(frame) == "number" and frame > 0 and frame < 10) then
-		frame,_,_,_,_,_,_,_,_=GetChatWindowInfo(frame)
+		frame = GetChatWindowInfo(frame)
 	--If the frame argument is a string, set that as the frameNumber
 	elseif (type(frame) == "string") then
 		set("printwindow", frame)
@@ -296,7 +296,7 @@ do -- Faction and ServerKey related functions
 			if not factionGroup then
 				SetMapToCurrentZone()
 				local map = GetMapInfo()
-				if ((map == "Tanaris") or (map == "Winterspring") or (map == "Stranglethorn")) then
+				if ((map == "Tanaris") or (map == "Winterspring") or (map == "Stranglethorn") or (map == "TheCapeOfStranglethorn")) then
 					factionGroup = "Neutral"
 				else
 					factionGroup = Const.PlayerFaction
@@ -379,7 +379,7 @@ function lib.AddTab(tabButton, tabFrame)
 
 	-- If we inserted a tab in the middle, adjust the layout of the next tab button.
 	if (tabIndex < tabCount) then
-		nextTabButton = _G["AuctionFrameTab"..(tabIndex + 1)];
+		local nextTabButton = _G["AuctionFrameTab"..(tabIndex + 1)];
 		nextTabButton:SetPoint("TOPLEFT", tabButton:GetName(), "TOPRIGHT", -8, 0);
 	end
 
@@ -409,7 +409,7 @@ function lib.RemoveTab(tabButton, tabFrame)
 
 	-- If we inserted a tab in the middle, adjust the layout of the next tab button after removal.
 	if tabFound and (tabFound < tabCount) then
-		nextTabButton = _G["AuctionFrameTab"..(tabFound + 1)]
+		local nextTabButton = _G["AuctionFrameTab"..(tabFound + 1)]
 		nextTabButton:SetPoint("TOPLEFT", _G["AuctionFrameTab"..(tabFound - 1)]:GetName(), "TOPRIGHT", -8, 0)
 	end
 
@@ -615,7 +615,7 @@ function lib.SendProcessorMessage(spmMsg, ...)
 			local f = x.Func
 --if (nLog) then nLog.AddMessage("Auctioneer", "Coreutil", N_INFO, ("SendProcessorMessage Called %s For %s"):format(x.Name, spmMsg), ("SendProcessorMessage Called %s For %s"):format(x.Name, spmMsg)) end
 
-			good,msg=pcall(f, spmMsg, ...)
+			local good,msg=pcall(f, spmMsg, ...)
 			if not good then
 				lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..(x.Name or "??"), 0, "Debug")
 			end
@@ -689,4 +689,4 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Advanced/CoreUtil.lua $", "$Rev: 4880 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreUtil.lua $", "$Rev: 5064 $")

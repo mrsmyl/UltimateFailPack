@@ -1,8 +1,8 @@
 --[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: InfSettings.lua 4533 2009-11-21 03:43:55Z Hirsute $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: InfSettings.lua 5008 2010-11-10 07:27:46Z Hirsute $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	Command handler. Assumes responsibility for allowing the user to set the
@@ -63,7 +63,7 @@ Usage:
 
 
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Informant/InfSettings.lua $", "$Rev: 4533 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Informant/InfSettings.lua $", "$Rev: 5008 $")
 
 local lib = {}
 Informant.Settings = lib
@@ -129,7 +129,8 @@ local settingDefaults = {
 	['show-ilevel'] = true,
 	['show-link'] = false,
 	['auto-update'] = false,
-	['ModTTShow'] = false,
+	['ModTTShow'] = "always",
+	['show-binding'] = false,
 
 -- leave this option off until we have real data to test with
 -- enable only for dev testing
@@ -379,13 +380,16 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Checkbox",   0, 1, "show-ilevel", _TRANS('INF_Interface_ShowIlevel'))
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ShowIlevel'))
 
+	gui:AddControl(id, "Checkbox",   0, 1, "show-binding", _TRANS('INF_Interface_ShowBindinginTT'))
+	gui:AddTip(id, _TRANS('INF_HelpToolTip_ShowBindingitTT'))
+
 	gui:AddControl(id, "Checkbox",   0, 1, "show-link", _TRANS('INF_Interface_ShowLink'))
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ShowLink'))
 	gui:AddControl(id, "Checkbox",   0, 1, "show-crafted", _TRANS('INF_Interface_ShowCrafted'))
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ShowCrafted'))
-	gui:AddControl(id, "Checkbox", 0, 1, "ModTTShow", _TRANS('INF_Interface_ModTTShow'))--Only show tooltip if Alt is pressed.
-	gui:AddTip(id, _TRANS('INF_HelpTooltip_ModTTShow'))--This will prevent the display of Informant's extra tooltip unless Alt is pressed.
-
+	gui:AddControl(id, "Subhead",     0,	_TRANS('INF_Interface_ModTTShow')) --"Show Tooltip:"
+	gui:AddControl(id, "Selectbox", 0, 1, { { "always", _TRANS('INF_Interface_MTS_Always') }, {"alt", _TRANS('INF_Interface_MTS_Alt') }, { "noalt", _TRANS('INF_Interface_MTS_NoAlt') }, {"shift", _TRANS('INF_Interface_MTS_Shift') }, {"noshift", _TRANS('INF_Interface_MTS_NoShift')}, {"ctrl", _TRANS('INF_Interface_MTS_Ctrl')},{"noctrl", _TRANS('INF_Interface_MTS_NoCtrl')}, { "never", _TRANS('INF_Interface_MTS_Never')} }, "ModTTShow")
+	gui:AddTip(id, _TRANS('INF_HelpTooltip_ModTTShow')) --"Determines Tooltip behavior. Always: Show Informant's Tooltip every time. When <mod> is pressed: Only show Informant's tooltip if the specified modifier is pressed. When <mod> is not pressed: Only show Informant's tooltip if the specified modifier is not pressed. Never: Never show Informant's tooltip."
 	-- TODO - localize me!
 	gui:AddControl(id, "Checkbox",   0, 1, "auto-update", _TRANS('INF_Interface_AutoUpdate')) --"Automatically update item information at merchants"
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_AutoUpdate')) --"Allow Informant to scan your bags and merchant inventory for updates"

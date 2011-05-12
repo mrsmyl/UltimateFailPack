@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: Swatter.lua 274 2010-09-24 21:57:26Z kandoko $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: Swatter.lua 303 2011-04-06 18:55:54Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -33,8 +33,6 @@ for addon, name in pairs({
 end
 
 Swatter = {
-	origHandler = geterrorhandler(),
-	origItemRef = SetItemRef,
 	nilFrame = {
 		GetName = function() return "Global" end
 	},
@@ -42,11 +40,10 @@ Swatter = {
 	moduleDetail = {},
 	HISTORY_SIZE = 100,
 }
-local origItemRef = Swatter.origItemRef
 
-Swatter.Version="5.9.4960"
+Swatter.Version="5.11.5146"
 if (Swatter.Version == "<%".."version%>") then
-	Swatter.Version = "4.1.DEV"
+	Swatter.Version = "5.1.DEV"
 end
 SWATTER_VERSION = Swatter.Version
 
@@ -76,7 +73,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 274 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 303 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -95,7 +92,7 @@ local function addSlideIcon()
 					icon = "Interface\\AddOns\\!Swatter\\Textures\\SwatterIcon",
 					OnClick = function(self, button) toggle(self, button) end,
 					})
-		
+
 		function LDBButton:OnTooltipShow()
 			self:AddLine("Swatter",  1,1,0.5, 1)
 			self:AddLine("Swatter is a bug catcher that performs additional backtracing to allow AddOn authors to easily trace errors when you send them error reports. You may disable this AddOn if you never get bugs, don't care about them, or never report them when you do get them.",  1,1,0.5, 1)
@@ -124,19 +121,48 @@ function Swatter.IsEnabled()
 	return SwatterData.enabled
 end
 
--- Test:  /run Swatter.OnError("Test")
-function Swatter.OnError(msg, frame, stack, etype, ...)
-	if (not SwatterData.enabled) then
-		if (not etype) then
-			return Swatter.origHandler(msg, frame)
-		else
-			return UIParent_OnEvent(etype, ...)
+local function HookChatLinkCatcher()
+	-- only run once, we don't want to install duplicate hooks
+	HookChatLinkCatcher = nil
+
+	-- hook to display our error frame when user clicks on a swatter link in chat
+	local orig = SetItemRef
+	_G["SetItemRef"] = function(...)
+		local link = ...
+		local id = link:match("^swatter:(%d+)")
+		if id then -- it's a swatter link
+			id = tonumber(id)
+			for pos, errid in ipairs(Swatter.errorOrder) do
+				if (errid == id) then
+					Swatter.ErrorShow(pos)
+					return
+				end
+			end
+		else -- some other type of link
+			return orig(...)
 		end
 	end
+end
+local function SwatterLink(id, context, hex)
+	if HookChatLinkCatcher then HookChatLinkCatcher() end
+	return format("|Hswatter:%d|h|c%s[%s]|r|h", id, hex or "ffff3311", context)
+	-- Note the colour escape code is _inside_ the hyperlink escape codes
+	-- If the user inadvertantly manages to relink it, this will trigger an error
+	-- Otherwise it would cause a disconnect {SWAT-12}
+end
 
-	msg = msg or ""
-	frame = frame or Swatter.nilFrame
-	stack = stack or debugstack(2, 20, 20)
+local function OnError(msg, frame, stack, etype, ...)
+	if type(msg) ~= "string" or msg == "" then
+		msg = "Unknown Error"
+	end
+	if type(frame) == "string" then
+		frame = Swatter.NamedFrame(name) or Swatter.nilFrame
+	elseif type(frame) ~= "table" or type(frame.GetName) ~= "function" then
+		frame = Swatter.nilFrame
+	end
+	if type(stack) ~= "string" or stack == "" then
+		stack = debugstack(3, 20, 20)
+	end
 
 	local context
 	if (not frame.Swatter) then frame.Swatter = {} end
@@ -144,14 +170,9 @@ function Swatter.OnError(msg, frame, stack, etype, ...)
 
 	-- id might still exist if we've done a clear, because we don't cycle through the frames killing frame.Swatter data
 	-- So we have to check for both here
-	if (not ( id and #(SwatterData.errors) ~= 0)) then
-		context = "Anonymous"
-		if (frame) then
-			context = "Unnamed"
-			if (frame:GetName()) then
-				context = frame:GetName()
-			end
-		end
+	if not (id and SwatterData.errors[id]) then
+		context = frame:GetName()
+		if type(context) ~= "string" or context == "" then context = "Unknown" end -- paranoia
 		local timestamp = date("%Y-%m-%d %H:%M:%S");
 		local addons = Swatter.GetAddOns()
 		tinsert(SwatterData.errors, {
@@ -162,7 +183,7 @@ function Swatter.OnError(msg, frame, stack, etype, ...)
 			stack = stack,
 			count = 0,
 		})
-		id = table.getn(SwatterData.errors)
+		id = #(SwatterData.errors)
 		frame.Swatter[msg] = id
 	else
 		context = SwatterData.errors[id].context
@@ -178,10 +199,10 @@ function Swatter.OnError(msg, frame, stack, etype, ...)
 	local err = SwatterData.errors[id]
 	local count = err.count or 0
 	if (count < 1000) then err.count = count + 1 end
-	if (count == 0) then
+	if count == 0 and SwatterData.enabled then
 		if (etype == "ADDON_ACTION_BLOCKED") then
 			if (not Swatter.blockWarn) then
-				chat("|cffffaa11Warning only: Swatter found blocked actions:|r |Hswatter:"..id.."|h|cffff3311["..context.."]|r|h")
+				chat("|cffffaa11Warning only: Swatter found blocked actions:|r "..SwatterLink(id, context))
 				chat("|cffffaa11Note: Swatter will continue to catch blocked actions but this is the last time this session that we'll tell you about it.|r")
 				Swatter.blockWarn = true
 			end
@@ -189,12 +210,28 @@ function Swatter.OnError(msg, frame, stack, etype, ...)
 			Swatter.ErrorUpdate()
 			Swatter.Error:Show()
 		else
-			chat("|cffffaa11Swatter caught error:|r |Hswatter:"..id.."|h|cffff3311["..context.."]|r|h")
+			chat("|cffffaa11Swatter caught error:|r "..SwatterLink(id, context))
 		end
 	end
 end
 
+-- Wrappers around OnError to control which parameters get passed through
+local origHandler = geterrorhandler()
+local function OnErrorHandler(msg)
+	if SwatterData.enabled then
+		OnError(msg)
+	else
+		return origHandler(msg) -- trying tailcall here, to see if it removes this stub from the stack
+	end
+end
+seterrorhandler(OnErrorHandler)
+function Swatter.OnError(msg, frame, stack)
+	OnError(msg, frame, stack)
+end
+-- Test:  /run Swatter.OnError("Test")
+
 function Swatter.NamedFrame(name)
+	if type(name) ~= "string" or name == "" then return end
 	if (not Swatter.named) then Swatter.named = {} end
 	if (not Swatter.named[name]) then
 		Swatter.named[name] = {
@@ -217,7 +254,6 @@ local function keyPairs(t,f)
 	return iter
 end
 
-
 function Swatter.GetConfig()
 	local locale = GetLocale()
 	local realmList = GetCVar("realmList") or "none"
@@ -227,7 +263,6 @@ function Swatter.GetConfig()
 					locale, version, tocversion, trimmedRealmList )
 	return configString
 end
-
 
 function Swatter.GetAddOns()
 	local addlist = ""
@@ -260,7 +295,7 @@ function Swatter.GetAddOns()
 	for addon, reg in keyPairs(addons) do
 		local version
 		local addition = ""
-	
+
 		local name = reg.name
 		version = reg.version
 		if (reg["x-swatter-extra"]) then
@@ -303,9 +338,9 @@ function Swatter.GetAddOns()
 			addlist = addlist.."  "..name.."\n"
 		end
 	end
-	
+
 	addlist = addlist..Swatter.GetConfig()
-	
+
 	addlist = addlist..string.format("  (ck=%x)\n", addlist:len())
 	return addlist
 end
@@ -324,23 +359,12 @@ end
 -- Interface\FrameXML\ChatFrame.lua:3008: in function `ChatEdit_ParseText'
 -- Interface\FrameXML\ChatFrame.lua:2734: in function `ChatEdit_SendText'
 -- Interface\FrameXML\ChatFrame.lua:2756: in function `ChatEdit_OnEnterPressed'
--- [string "ChatFrameEditBox:OnEnterPressed"]:2: in function <[string "ChatFrameEditBox:OnEnterPressed"]:1>
+-- [string "ChatFrame1EditBox:OnEnterPressed"]:2: in function <[string "ChatFrame1EditBox:OnEnterPressed"]:1>
 
 function Swatter.OnEvent(frame, event, ...)
 	if (event == "ADDON_LOADED") then
 		local addon = ...
 		if (addon:lower() == "!swatter") then
-
-			-- Check to see if we still exist
-			if (not SwatterData) then
-				if (BugGrabber) then
-					-- We've been buggrabber-nabbed. Give up.
-					DEFAULT_CHAT_FRAME:AddMessage("|cffffaa11Warning: Swatter has been disabled by BugGrabber. If you want to run Swatter instead of BugGrabber/BugSack, disable those two addons in you addon list and re-enable Swatter. Otherwise, enjoy BugGrabber!|r");
-				end
-				SetItemRef = origItemRef
-				return
-			end
-
 			-- We need to cleanup our error history
 			if (not SwatterData.errors) then SwatterData.errors = {} end
 			local ec = table.getn(SwatterData.errors) or 0
@@ -358,15 +382,23 @@ function Swatter.OnEvent(frame, event, ...)
 			return
 		end
 	elseif (event == "ADDON_ACTION_BLOCKED" and SwatterData.warning) then
-		local addon, func = ...
-		if (InCombatLockdown()) then
-			Swatter.OnError(string.format("Note: AddOn %s attempted to call a protected function (%s) during combat lockdown.", addon, func), Swatter.NamedFrame("AddOn: "..addon), debugstack(2, 20, 20), event, ...)
+		if SwatterData.enabled then
+			local addon, func = ...
+			if (InCombatLockdown()) then
+				OnError(string.format("Note: AddOn %s attempted to call a protected function (%s) during combat lockdown.", addon, func), Swatter.NamedFrame("AddOn: "..addon), debugstack(2, 20, 20), event, ...)
+			else
+				OnError(string.format("Warning: AddOn %s attempted to call a protected function (%s) which may require interaction.", addon, func), Swatter.NamedFrame("AddOn: "..addon), debugstack(2, 20, 20), event, ...)
+			end
 		else
-			Swatter.OnError(string.format("Warning: AddOn %s attempted to call a protected function (%s) which may require interaction.", addon, func), Swatter.NamedFrame("AddOn: "..addon), debugstack(2, 20, 20), event, ...)
+			UIParent_OnEvent(frame, event, ...)
 		end
 	elseif (event == "ADDON_ACTION_FORBIDDEN") then
-		local addon, func = ...
-		Swatter.OnError(string.format("Error: AddOn %s attempted to call a forbidden function (%s) from a tainted execution path.", addon, func), Swatter.NamedFrame("AddOn: "..addon), debugstack(2, 20, 20), event, ...)
+		if SwatterData.enabled then
+			local addon, func = ...
+			OnError(string.format("Error: AddOn %s attempted to call a forbidden function (%s) from a tainted execution path.", addon, func), Swatter.NamedFrame("AddOn: "..addon), debugstack(2, 20, 20), event, ...)
+		else
+			UIParent_OnEvent(frame, event, ...)
+		end
 	elseif (event == "PLAYER_LOGIN") then
 		addSlideIcon() --create ldb launcher button
 		-- Check to see if any events have happened since we loaded and the player is ready to view them
@@ -381,28 +413,6 @@ function Swatter.OnEvent(frame, event, ...)
 	end
 end
 
-function Swatter.SetItemRef(...)
-	local msg = ...
-	local id = select(3, msg:find("^swatter:(%d+)"))
-	id = tonumber(id)
-	if (id) then
-		if (Swatter) then
-			for pos, errid in ipairs(Swatter.errorOrder) do
-				if (errid == id) then
-					Swatter.ErrorShow(pos)
-					return
-				end
-			end
-		end
-	else
-		if (not Swatter) then
-			SetItemRef = origItemRef
-			return origItemRef(...)
-		end
-		return Swatter.origItemRef(...)
-	end
-end
-
 function Swatter.ErrorShow(pos)
 	local maxError = #SwatterData.errors
 	local curError = tonumber(pos)
@@ -414,7 +424,7 @@ function Swatter.ErrorShow(pos)
 			curError = maxError
 		end
 	end
-		
+
 	Swatter.Error.pos = curError or -1
 	if (Swatter.Error.pos == 0) then
 		Swatter.Error.pos = -1
@@ -450,6 +460,8 @@ function Swatter.ErrorDisplay(id)
 	local context = err.context or "Anonymous"
 
 	local message = err.message:gsub("(.-):(%d+): ", "%1 line %2:\n   "):gsub("Interface(\\%w+\\)", "..%1"):gsub(": in function `(.-)`", ": %1"):gsub("|", "||"):gsub("{{{", "|cffff8855"):gsub("}}}", "|r")
+	--Hide users account name if it is a saved variable related error
+	message = message:gsub("(.-Account\\)(.-)(\\SavedVariables.*)", "%1BLANK%3")
 	local trace = "   "..err.stack:gsub("Interface\\AddOns\\", ""):gsub("Interface(\\%w+\\)", "..%1"):gsub(": in function `(.-)'", ": %1()"):gsub(": in function <(.-)>", ":\n   %1"):gsub(": in main chunk ", ": "):gsub("\n$",""):gsub("\n", "\n   ")
 	local count = err.count
 	if (count > 999) then count = "\226\136\158" --[[Infinity]] end
@@ -614,7 +626,6 @@ Swatter.Error.Box:SetScript("OnEditFocusGained", Swatter.ErrorClicked)
 
 Swatter.Error.Scroll:SetScrollChild(Swatter.Error.Box)
 
-seterrorhandler(Swatter.OnError)
 Swatter.Frame = CreateFrame("Frame")
 Swatter.Frame:Show()
 Swatter.Frame:SetScript("OnEvent", Swatter.OnEvent)
@@ -637,7 +648,6 @@ Swatter.Frame:SetScript("OnUpdate", function(self, elapsed)
 		end
 	end
 end)
-SetItemRef = Swatter.SetItemRef
 
 UIParent:UnregisterEvent("ADDON_ACTION_FORBIDDEN")
 UIParent:UnregisterEvent("ADDON_ACTION_BLOCKED")
@@ -688,4 +698,3 @@ SlashCmdList["SWATTER"] = function(msg)
 end
 
 addSlideIcon()
-

@@ -3,8 +3,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 <!--
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnchantrixBarker.xml 4956 2010-10-19 01:10:04Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnchantrixBarker.xml 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://enchantrix.org/
 
 	License:
@@ -30,21 +30,13 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 -->
 	<Script>
-		EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix-Barker/EnchantrixBarker.xml $", "$Rev: 4956 $")
+		EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix-Barker/EnchantrixBarker.xml $", "$Rev: 5141 $")
 	</Script>
 
 	<Button name="Enchantrix_BarkerDisplayButton" inherits="UIPanelButtonTemplate" hidden="true" text="Trade Barker">
 		<Size>
 			<AbsDimension x="125" y="22"/>
 		</Size>
-		<Scripts>
-			<OnClick>
-				Enchantrix_BarkerOptions_OnClick(self);
-			</OnClick>
-		</Scripts>
-	</Button>
-
-	<Button name="Enchantrix_BarkerOptions_TradeTab" inherits="CharacterFrameTabButtonTemplate" id="1" text="Trade Barker">
 		<Scripts>
 			<OnClick>
 				Enchantrix_BarkerOptions_OnClick(self);
@@ -419,5 +411,13 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 			</OnEvent>
 		</Scripts>
 	</Frame>
+	<!--Changes to the "CharacterFrameTabButtonTemplate" in 4.1 require a parent frame be specified  self:GetParent().maxTabWidth errors otherwise-->
+	<Button name="Enchantrix_BarkerOptions_TradeTab" inherits="CharacterFrameTabButtonTemplate" id="1" text="Trade Barker" parent="Enchantrix_BarkerOptions_Frame">
+		<Scripts>
+			<OnClick>
+				Enchantrix_BarkerOptions_OnClick(self);
+			</OnClick>
+		</Scripts>
+	</Button>
 </Ui>
 

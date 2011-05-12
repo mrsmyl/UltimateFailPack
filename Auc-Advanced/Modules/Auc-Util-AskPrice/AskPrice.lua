@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: AskPrice.lua 4901 2010-10-05 16:44:24Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: AskPrice.lua 5113 2011-03-14 23:11:33Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	Auctioneer AskPrice created by Mikezter and merged into
@@ -69,8 +69,16 @@ function lib.OnLoad(addon)
 	private.frame:RegisterEvent("CHAT_MSG_PARTY")
 	private.frame:RegisterEvent("CHAT_MSG_GUILD")
 	private.frame:RegisterEvent("CHAT_MSG_RAID")
+	private.frame:RegisterEvent("CHAT_MSG_BN_WHISPER")
 
+	--Do our addon message event registration
 	private.frame:RegisterEvent("CHAT_MSG_ADDON")
+	if (RegisterAddonMessagePrefix and (type(RegisterAddonMessagePrefix) == 'function')) then
+		if (not RegisterAddonMessagePrefix("AucAdvAskPrice")) then
+			print("Too many addons have registered for an addon communication prefix via RegisterAddonMessagePrefix(), disable some of the others so that {{AskPrice}} can work.")
+		end
+	end
+
 
 	private.frame:SetScript("OnEvent", private.onEvent)
 	private.frame:SetScript("OnUpdate", private.onUpdate)
@@ -78,12 +86,17 @@ function lib.OnLoad(addon)
 	AucAdvanced.Const.PLAYERLANGUAGE = GetDefaultLanguage("player")
 
 	Stubby.RegisterFunctionHook("ChatFrame_OnEvent", -200, private.onEventHook)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self,event,message,...)
-		if (AskPriceSentMessages[message] and not private.getOption('util.askprice.whispers')) then
-			AskPriceSentMessages[message] = nil
-			return true
+
+	do
+		local function filter(self, event, message, ...)
+			if (AskPriceSentMessages[message] and not private.getOption('util.askprice.whispers')) then
+				AskPriceSentMessages[message] = nil
+				return true
+			end
 		end
-	end)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", filter); 
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", filter);
+	end
 
 	--Setup Configator defaults
 	for config, value in pairs(private.defaults) do
@@ -118,18 +131,23 @@ function private.onEvent(frame, event, ...)
 		return
 	end
 
+	local msg = ...;
+
 	if (event == "CHAT_MSG_ADDON") then
 		return private.addOnEvent(...)
 
 	elseif (event == "CHAT_MSG_IGNORED") then
 		return private.beingIgnored(...)
 
-	else
-		return private.chatEvent(event, ...)
+	elseif (event == "CHAT_MSG_BN_WHISPER") then
+		-- TODO later
 	end
+
+	return private.chatEvent(event, msg, select(2, ...))
 end
 
-function private.chatEvent(event, text, player)
+-- PresenceID is only for battlenet whispers
+function private.chatEvent(event, text, player, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, presenceID)
 	local channel
 	if (event == "CHAT_MSG_RAID") or (event == "CHAT_MSG_PARTY") or (event == "CHAT_MSG_RAID_LEADER") then
 		channel = "RAID"
@@ -142,6 +160,13 @@ function private.chatEvent(event, text, player)
 	if (event == "CHAT_MSG_WHISPER") then
 		channel = "WHISPER"
 	end
+
+	if (event == "CHAT_MSG_BN_WHISPER") then
+		channel = "BN";
+	end
+
+	-- Trim out spaces at the beginning
+	text = text:match("^%s*(.+)$") or "";
 
 	if (not (
 		text:find("|Hitem:", 1, true)
@@ -164,12 +189,12 @@ function private.chatEvent(event, text, player)
 			private.sendAddOnMessage(channel, "QUERY", link, count, player, channel)
 		end
 
-	elseif (channel == "WHISPER") then
+	elseif (channel == "WHISPER" or channel == "BN") then
 		for i = 1, #items, 2 do
 			local count = items[i]
 			local link = items[i+1]
 
-			private.sendResponse(link, count, player, 1, private.getData(link))
+			private.sendResponse(link, count, channel == "WHISPER" and player or presenceID, 1, private.getData(link))
 		end
 	end
 end
@@ -279,7 +304,7 @@ function private.sendResponse(link, count, player, answerCount, totalSeenCount, 
 end
 
 function private.onEventHook(_, _, self, event, arg1, ...)
-	if (event == "CHAT_MSG_WHISPER_INFORM") then
+	if (event == "CHAT_MSG_WHISPER_INFORM" or event == "CHAT_MSG_BN_WHISPER_INFORM") then
 		if (private.whisperList[arg1]) then
 			private.whisperList[arg1] = nil
 		end
@@ -300,9 +325,12 @@ function private.getItems(str)
 		itemList[i] = nil
 	end
 
-	for number, color, item, name in str:gmatch("(%d*)%s*|c(%x+)|Hitem:([^|]+)|h%[(.-)%]|h|r") do
+	-- Color is optional because Battle net doesn't use colors
+	for number, link, color, item, name in str:gmatch("(%d*)%s*(|?c?(%x*)|Hitem:([^|]+)|h%[(.-)%]|h|?r?)") do
 		table.insert(itemList, tonumber(number) or 1)
-		table.insert(itemList, "|c"..color.."|Hitem:"..item.."|h["..name.."]|h|r")
+
+		-- Use GetItemInfo to rebuild the link with color
+		table.insert(itemList, link)
 	end
 	return itemList
 end
@@ -312,7 +340,12 @@ function private.sendWhisper(message, player)
 	if not private.getOption('util.askprice.whispers') then
 		AskPriceSentMessages[message] = true
 	end
-	ChatThrottleLib:SendChatMessage("ALERT", "AucAdvAskPrice", message, "WHISPER", AucAdvanced.Const.PLAYERLANGUAGE, player)
+
+	if type(player) == "number" then		-- Must be a presence ID. Use a BattleNet whisper instead.
+		BNSendWhisper(player, message)
+	else
+		ChatThrottleLib:SendChatMessage("ALERT", "AucAdvAskPrice", message, "WHISPER", AucAdvanced.Const.PLAYERLANGUAGE, player)
+	end
 end
 
 function private.sendAddOnMessage(channel, ...)
@@ -443,7 +476,7 @@ end
 
 --This function changed after AskPrice revision 2825 to include AucAdvanced's revision number in adition to AskPrice's
 function private.GetVersion()
-	return tonumber(("$Revision: 4901 $"):match("(%d+)")), (AucAdvanced.GetCurrentRevision()) --We just want the first return from GetCurrentRevision()
+	return tonumber(("$Revision: 5113 $"):match("(%d+)")), (AucAdvanced.GetCurrentRevision()) --We just want the first return from GetCurrentRevision()
 end
 
 --This function is used to check if the received request (which should be lowercased before the function is called) is a valid SmartWords request
@@ -467,7 +500,6 @@ function private.SlashHandler.send(queryString)
 	local parseError = false
 	if queryString then
 		local player, itemLinks = strsplit(" ", queryString, 2)
-		print(player, itemLinks)
 
 		--Error out if we have a target, but no potential itemLinks
 		if itemLinks then
@@ -572,4 +604,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 4901 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5113 $")

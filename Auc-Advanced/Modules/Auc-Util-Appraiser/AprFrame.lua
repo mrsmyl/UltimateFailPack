@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: AprFrame.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: AprFrame.lua 5015 2010-11-13 13:04:30Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -881,8 +881,8 @@ function private.CreateFrames()
 		end
 
 		frame.refresh:Enable()
-		local matchers = get("matcherlist")
-		if not matchers or #matchers == 0 then
+		local matchers = AucAdvanced.API.GetNumMatchers()
+		if matchers == 0 then
 			frame.salebox.matcher:Disable()
 			frame.salebox.matcher.label:SetTextColor(.5, .5, .5)
 		else
@@ -1364,6 +1364,40 @@ function private.CreateFrames()
 		end
 	end
 
+	local function helperPostRequest(sig, stack, bidVal, buyVal, duration, numstacks, dryRun, singleclick)
+		-- called from multiple places in PostBySig
+		-- lifted out as a separate function, as it was getting increasingly unwieldy
+		if dryRun then
+			aucPrint(" - ".._TRANS('APPR_Help_PretendingPostStacks'):format(numstacks, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
+		elseif singleclick then
+			local success, reason = AucAdvanced.Post.PostAuctionClick(sig, stack, bidVal, buyVal, duration, numstacks)
+			if success then
+				if stack > 1 then
+					aucPrint(" - ".._TRANS('APPR_Help_PostingLots'):format(numstacks, stack))--Posting {{%d}} lots of {{%d}}
+				else
+					aucPrint(" - ".._TRANS('APPR_Help_PostingItems'):format(numstacks))--Posting {{%d}} items
+				end
+			else
+				reason = AucAdvanced.Post.GetErrorText(reason)
+				aucPrint(" * ".._TRANS('APPR_Help_CouldNotPost')..": "..reason)--Could not post item
+			end
+			return success, reason
+		else
+			local success, reason = AucAdvanced.Post.PostAuction(sig, stack, bidVal, buyVal, duration, numstacks)
+			if success then
+				if stack > 1 then
+					aucPrint(" - ".._TRANS('APPR_Help_QueueingLots'):format(numstacks, stack))--Queueing {{%d}} lots of {{%d}}
+				else
+					aucPrint(" - ".._TRANS('APPR_Help_QueueingItems'):format(numstacks))--Queueing {{%d}} items
+				end
+			else
+				reason = AucAdvanced.Post.GetErrorText(reason)
+				aucPrint(" * ".._TRANS('APPR_Help_CouldNotQueue')..": "..reason)--Could not queue item
+			end
+			return success, reason
+		end
+	end
+
 	function frame.PostBySig(sig, dryRun, singleclick)
 		local link, itemName = AucAdvanced.Modules.Util.Appraiser.GetLinkFromSig(sig)
 		local total, _, unpostable = AucAdvanced.Post.CountAvailableItems(sig)
@@ -1433,7 +1467,7 @@ function private.CreateFrames()
 
 		aucPrint(_TRANS('APPR_Help_PostingBatch'):format(link))--Posting batch of: %s
 
-		aucPrint("  ".._TRANS('APPR_Help_Duration'):format(duration/60))--- Duration: {{%d hours}}
+		aucPrint(" - ".._TRANS('APPR_Help_Duration'):format(AucAdvanced.Post.AuctionDurationHours(duration)))--Duration: {{%d hours}}
 
 		local bidVal, buyVal
 		local totalBid, totalBuy, totalNum = 0,0,0
@@ -1448,87 +1482,53 @@ function private.CreateFrames()
 					bidVal = lib.RoundBid(itemBid * stack)
 					buyVal = lib.RoundBuy(itemBuy * stack)
 					if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
-					if dryRun then
-						aucPrint(" ".._TRANS('APPR_Help_PretendingPostStacks'):format(fullStacks, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
-					else
-						aucPrint(" ".._TRANS('APPR_Help_QueueingLots'):format(fullStacks, stack))--- Queueing {{%d}} lots of {{%d}}
-						if singleclick then
-							singleclick = nil
-							AucAdvanced.Post.PostAuctionClick(sig, stack, bidVal, buyVal, duration, fullStacks)
-						else
-							AucAdvanced.Post.PostAuction(sig, stack, bidVal, buyVal, duration, fullStacks)
-						end
-					end
 
-					totalBid = totalBid + (bidVal * fullStacks)
-					totalBuy = totalBuy + (buyVal * fullStacks)
-					totalNum = totalNum + (stack * fullStacks)
+					if helperPostRequest(sig, stack, bidVal, buyVal, duration, fullStacks, dryRun, singleclick) then
+						totalBid = totalBid + (bidVal * fullStacks)
+						totalBuy = totalBuy + (buyVal * fullStacks)
+						totalNum = totalNum + (stack * fullStacks)
+					end
 				end
 				if (number == -1 and remain > 0) then
 					bidVal = lib.RoundBid(itemBid * remain)
 					buyVal = lib.RoundBuy(itemBuy * remain)
 					if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
-					if dryRun then
-						aucPrint(" ".._TRANS('APPR_Help_PretendingPostStacks'):format(1, remain, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
-					else
-						aucPrint(" ".._TRANS('APPR_Help_QueueingLots'):format(1, remain))--- Queueing {{%d}} lots of {{%d}}
-						if singleclick then
-							singleclick = nil
-							AucAdvanced.Post.PostAuctionClick(sig, remain, bidVal, buyVal, duration)
-						else
-							AucAdvanced.Post.PostAuction(sig, remain, bidVal, buyVal, duration)
-						end
-					end
 
-					totalBid = totalBid + bidVal
-					totalBuy = totalBuy + buyVal
-					totalNum = totalNum + remain
+					if helperPostRequest(sig, remain, bidVal, buyVal, duration, 1, dryRun, singleclick) then
+						totalBid = totalBid + bidVal
+						totalBuy = totalBuy + buyVal
+						totalNum = totalNum + remain
+					end
 				end
 			else
 				bidVal = lib.RoundBid(itemBid * stack)
 				buyVal = lib.RoundBuy(itemBuy * stack)
 				if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
-				if dryRun then
-					aucPrint(" ".._TRANS('APPR_Help_PretendingPostStacks'):format(number, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
-				else
-					aucPrint(" ".._TRANS('APPR_Help_QueueingLots'):format(number, stack))--- Queueing {{%d}} lots of {{%d}}
-					if singleclick then
-						singleclick = nil
-						AucAdvanced.Post.PostAuctionClick(sig, stack, bidVal, buyVal, duration, number)
-					else
-						AucAdvanced.Post.PostAuction(sig, stack, bidVal, buyVal, duration, number)
-					end
-				end
 
-				totalBid = totalBid + (bidVal * number)
-				totalBuy = totalBuy + (buyVal * number)
-				totalNum = totalNum + (stack * number)
+				if helperPostRequest(sig, stack, bidVal, buyVal, duration, number, dryRun, singleclick) then
+					totalBid = totalBid + (bidVal * number)
+					totalBuy = totalBuy + (buyVal * number)
+					totalNum = totalNum + (stack * number)
+				end
 			end
 		else
 			if number < 0 then number = total end
 			bidVal = lib.RoundBid(itemBid)
 			buyVal = lib.RoundBuy(itemBuy)
 			if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
-			if dryRun then
-				aucPrint(_TRANS('APPR_Help_PretendingPostStacks'):format(number, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
-			else
-				aucPrint(_TRANS('APPR_Help_QueueingItems'):format(number))--- Queueing {{%d}} items
-				if singleclick then
-					singleclick = nil
-					AucAdvanced.Post.PostAuctionClick(sig, 1, bidVal, buyVal, duration, number)
-				else
-					AucAdvanced.Post.PostAuction(sig, 1, bidVal, buyVal, duration, number)
-				end
-			end
 
-			totalBid = totalBid + (bidVal * number)
-			totalBuy = totalBuy + (buyVal * number)
-			totalNum = totalNum + number
+			if helperPostRequest(sig, 1, bidVal, buyVal, duration, number, dryRun, singleclick) then
+				totalBid = totalBid + (bidVal * number)
+				totalBuy = totalBuy + (buyVal * number)
+				totalNum = totalNum + number
+			end
 		end
 
 		aucPrint("-----------------------------------")
 		if dryRun then
 			aucPrint(_TRANS('APPR_Help_PretendedItems'):format(totalNum))--Pretended {{%d}} items
+		elseif singleclick then
+			aucPrint(_TRANS('APPR_Help_PostedItems'):format(totalNum))--Posted {{%d}} items
 		else
 			aucPrint(_TRANS('APPR_Help_QueuedUpItems'):format(totalNum))--Queued up {{%d}} items
 		end
@@ -2540,64 +2540,11 @@ function private.CreateFrames()
 	function private.onClick(button, row, index)
 		if (IsAltKeyDown()) and frame.imageview.sheet.labels[index]:GetText() == "Seller" then
 			local seller = frame.imageview.sheet.rows[row][index]:GetText()
-			if not seller or not AucAdvanced.Modules.Filter.Basic or not AucAdvanced.Modules.Filter.Basic.IsPlayerIgnored then frame.sellerIgnore:Hide() return end
-
-			frame.sellerIgnore:SetParent(frame.imageview.sheet.panel)
-			frame.sellerIgnore:SetFrameStrata("TOOLTIP")
-			frame.sellerIgnore:ClearAllPoints()
-			frame.sellerIgnore:SetPoint("TOPLEFT", button, "BOTTOM")
-			frame.sellerIgnore:Show()
-			--if toon not ignored the ignore
-			if not AucAdvanced.Modules.Filter.Basic.IsPlayerIgnored(seller) then
-				frame.sellerIgnore.yes:SetScript("OnClick", function() BF_IgnoreList_Add( seller ) frame.sellerIgnore:Hide() end)
-				frame.sellerIgnore.help:SetText(_TRANS('APPR_Interface_AddPlayerIgnore'):format("|CFFFFFFFF", seller))--Add player to ignore list %s%s
-			else
-				frame.sellerIgnore.yes:SetScript("OnClick", function() BF_IgnoreList_Remove( seller ) frame.sellerIgnore:Hide() end)
-				frame.sellerIgnore.help:SetText(_TRANS('APPR_Interface_RemovePlayerIgnore'):format("|CFFFFFFFF", seller))--Remove player from ignore list %s%s
+			if AucAdvanced.Modules.Filter.Basic then
+				AucAdvanced.Modules.Filter.Basic.PromptSellerIgnore(seller, frame.imageview.sheet.panel, "TOPLEFT", button, "BOTTOM")
 			end
 		end
 	end
-	--ignore/unignore seller GUI
-	frame.sellerIgnore = CreateFrame("Frame", nil, UiParent)
-	frame.sellerIgnore:Hide()
-	frame.sellerIgnore:SetBackdrop({
-	      bgFile = "Interface/Tooltips/ChatBubble-Background",
-	      edgeFile = "Interface/Minimap/TooltipBackdrop",
-	      tile = true, tileSize = 32, edgeSize = 10,
-	      insets = { left = 2, right = 2, top = 2, bottom = 2 }
-	})
-	frame.sellerIgnore:SetBackdropColor(0,0,0, 1)
-	frame.sellerIgnore:SetWidth(100)
-	frame.sellerIgnore:SetHeight(70)
-	frame.sellerIgnore:SetPoint("CENTER", UIParent, "CENTER")
-	frame.sellerIgnore:SetFrameStrata("TOOLTIP")
-
-	frame.sellerIgnore.help = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall" )
-	frame.sellerIgnore.help:SetParent(frame.sellerIgnore)
-	frame.sellerIgnore.help:SetPoint("CENTER", frame.sellerIgnore, "TOP", 0, -25)
-	frame.sellerIgnore.help:SetWidth(100)
-
-	frame.sellerIgnore.yes = CreateFrame("Button", nil, frame.sellerIgnore, "UIPanelButtonTemplate")
-	frame.sellerIgnore.yes:SetNormalFontObject(GameFontNormalSmall)
-	frame.sellerIgnore.yes:SetPoint("BOTTOMLEFT", frame.sellerIgnore, "BOTTOMLEFT", 5, 10)
-	frame.sellerIgnore.yes:SetScript("OnClick", function() BF_IgnoreList_Add( name ) end)
-	frame.sellerIgnore.yes:SetText(_TRANS('APPR_Interface_Yes') )--Yes
-	frame.sellerIgnore.yes:SetWidth(30)
-	frame.sellerIgnore.yes:SetHeight(10)
-	local font = frame.sellerIgnore.yes:GetFontString()
-	font:SetFontObject("GameFontNormalSmall" )
-	font:SetTextHeight(10)
-
-	frame.sellerIgnore.no = CreateFrame("Button", nil, frame.sellerIgnore, "UIPanelButtonTemplate")
-	frame.sellerIgnore.no:SetNormalFontObject(GameFontNormalSmall)
-	frame.sellerIgnore.no:SetPoint("BOTTOMRIGHT", frame.sellerIgnore, "BOTTOMRIGHT", -5, 10)
-	frame.sellerIgnore.no:SetScript("OnClick", function()  frame.sellerIgnore:Hide() end)
-	frame.sellerIgnore.no:SetText(_TRANS("APPR_Interface_No"))--No
-	frame.sellerIgnore.no:SetWidth(30)
-	frame.sellerIgnore.no:SetHeight(10)
-	local font = frame.sellerIgnore.no:GetFontString()
-	font:SetFontObject("GameFontNormalSmall" )
-	font:SetTextHeight(10)
 
 	frame.imageview.sheet = ScrollSheet:Create(frame.imageview, {
 		--{ "Item",   "TEXT", get("util.appraiser.columnwidth.Item")}, -- Default width 105
@@ -2662,7 +2609,7 @@ function private.CreateFrames()
 
 	function frame.ScanTab.OnClick(self)
 		local index = self:GetID()
-		local tab = getglobal("AuctionFrameTab"..index)
+		local tab = _G["AuctionFrameTab"..index]
 		if (tab and tab:GetName() == "AuctionFrameTabUtilAppraiser") then
 			AuctionFrameTopLeft:SetTexture("Interface\\AuctionFrame\\UI-AuctionFrame-Bid-TopLeft")
 			AuctionFrameTop:SetTexture("Interface\\AuctionFrame\\UI-AuctionFrame-Bid-Top")
@@ -2748,7 +2695,7 @@ function private.CreateFrames()
 	hooksecurefunc("AuctionFrameTab_OnClick", frame.ScanTab.OnClick)
 
 	hooksecurefunc("HandleModifiedItemClick", function (link)
-		if GetMouseButtonClicked() == "LeftButton" and IsAltKeyDown() and frame:IsVisible() and get("util.appraiser.clickhookany") then
+		if GetMouseButtonClicked() == "LeftButton" and IsAltKeyDown() and get("util.appraiser.clickhookany") then
 			if link then
 				frame.SelectItem(nil, nil, link)
 			end
@@ -2796,4 +2743,4 @@ function private.CreateFrames()
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 4933 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5015 $")

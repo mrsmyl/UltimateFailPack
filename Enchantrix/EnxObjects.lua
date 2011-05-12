@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: EnxObjects.lua 3576 2008-10-10 03:07:13Z aesir $
 	URL: http://enchantrix.org/
 
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxObjects.lua $", "$Rev: 3576 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxObjects.lua $", "$Rev: 3576 $")
 
 -- Enchantrix namespace
 Enchantrix = {

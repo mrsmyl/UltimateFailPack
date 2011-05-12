@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Prospect
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherProspect.lua 4880 2010-09-15 20:02:11Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherProspect.lua 5037 2010-12-11 20:41:29Z ccox $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -40,7 +40,7 @@ default("prospect.profit.min", 1)
 default("prospect.profit.pct", 50)
 default("prospect.level.custom", false)
 default("prospect.level.min", 0)
-default("prospect.level.max", 450)
+default("prospect.level.max", 525)
 default("prospect.adjust.brokerage", true)
 default("prospect.adjust.deposit", true)
 default("prospect.adjust.deplength", 48)
@@ -96,8 +96,8 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "MoneyFramePinned",  0, 1, "prospect.profit.min", 1, 99999999, "Minimum Profit")
 	gui:AddControl(id, "Slider",            0, 1, "prospect.profit.pct", 1, 100, .5, "Min Discount: %0.01f%%")
 	gui:AddControl(id, "Checkbox",          0, 1, "prospect.level.custom", "Use custom levels")
-	gui:AddControl(id, "Slider",            0, 2, "prospect.level.min", 0, 450, 25, "Minimum skill: %s")
-	gui:AddControl(id, "Slider",            0, 2, "prospect.level.max", 25, 450, 25, "Maximum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "prospect.level.min", 0, 525, 25, "Minimum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "prospect.level.max", 25, 525, 25, "Maximum skill: %s")
 	gui:AddControl(id, "Subhead",           0, "Note:")
 	gui:AddControl(id, "Note",              0, 1, 290, 30, "The \"Pct\" Column is \% of Prospect Value")
 
@@ -110,7 +110,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "MoneyFramePinned",  0.42, 2, "prospect.maxprice", 1, 99999999, "Maximum Price for Prospect")
 
 	gui:AddControl(id, "Subhead",           0.42,    "Price Valuation Method:")
-	gui:AddControl(id, "Selectbox",         0.42, 1, resources.selectorPriceModelsEnx, "milling.model")
+	gui:AddControl(id, "Selectbox",         0.42, 1, resources.selectorPriceModelsEnx, "prospect.model")
 	gui:AddTip(id, "The pricing model that is used to work out the calculated value of items at the Auction House.")
 
 	gui:AddControl(id, "Subhead",           0.42,    "Fees Adjustment")
@@ -203,4 +203,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherProspect.lua $", "$Rev: 4880 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherProspect.lua $", "$Rev: 5037 $")

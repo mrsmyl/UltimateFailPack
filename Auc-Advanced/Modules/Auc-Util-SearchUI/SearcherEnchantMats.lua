@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher EnchantMats
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherEnchantMats.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherEnchantMats.lua 5039 2010-12-11 21:12:17Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -74,6 +74,13 @@ local GCOSMIC = 34055
 local LCOSMIC = 34056
 local ABYSS = 34057
 
+local HEAVENLY_SHARD = 52721
+local SHEAVENLY_SHARD = 52720
+local HYPNOTIC = 52555
+local GCELESTIAL = 52719
+local LCELESTIAL = 52718
+local MAELSTROM = 52722
+
 -- a table we can check for item ids
 local validReagents =
 	{
@@ -113,12 +120,18 @@ local validReagents =
 	[GCOSMIC] = true,
 	[LCOSMIC] = true,
 	[ABYSS] = true,
+	[MAELSTROM] = true,
+	[HEAVENLY_SHARD] = true,
+	[SHEAVENLY_SHARD] = true,
+	[GCELESTIAL] = true,
+	[LCELESTIAL] = true,
+	[HYPNOTIC] = true,
 	}
 
 -- Set our defaults
 default("enchantmats.level.custom", false)
 default("enchantmats.level.min", 0)
-default("enchantmats.level.max", 450)
+default("enchantmats.level.max", 525)
 default("enchantmats.allow.bid", true)
 default("enchantmats.allow.buy", true)
 default("enchantmats.maxprice", 10000000)
@@ -162,6 +175,12 @@ default("enchantmats.PriceAdjust."..INFINITE, 100)
 default("enchantmats.PriceAdjust."..GCOSMIC, 100)
 default("enchantmats.PriceAdjust."..LCOSMIC, 100)
 default("enchantmats.PriceAdjust."..ABYSS, 100)
+default("enchantmats.PriceAdjust."..HEAVENLY_SHARD, 100)
+default("enchantmats.PriceAdjust."..SHEAVENLY_SHARD, 100)
+default("enchantmats.PriceAdjust."..HYPNOTIC, 100)
+default("enchantmats.PriceAdjust."..GCELESTIAL, 100)
+default("enchantmats.PriceAdjust."..LCELESTIAL, 100)
+default("enchantmats.PriceAdjust."..MAELSTROM, 100)
 
 function private.doValidation()
 	if not resources.isEnchantrixLoaded then
@@ -218,8 +237,8 @@ function lib:MakeGuiConfig(gui)
 
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",          0, 1, "enchantmats.level.custom", "Use custom enchanting skill levels")
-	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.min", 0, 450, 25, "Minimum skill: %s")
-	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.max", 25, 450, 25, "Maximum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.min", 0, 525, 25, "Minimum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.max", 25, 525, 25, "Maximum skill: %s")
 
 	-- spacer to allow for all the controls on the right hand side
 	gui:AddControl(id, "Note",              0, 0, nil, 40, "")
@@ -227,6 +246,7 @@ function lib:MakeGuiConfig(gui)
 	-- aka "what percentage of estimated value am I willing to pay for this reagent"?
 	gui:AddControl(id, "Subhead",          0,    "Reageant Price Modification")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GCELESTIAL, 0, 200, 1, "Greater Celestial Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GCOSMIC, 0, 200, 1, "Greater Cosmic Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GPLANAR, 0, 200, 1, "Greater Planar Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GETERNAL, 0, 200, 1, "Greater Eternal Essence %s%%")
@@ -235,6 +255,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GASTRAL, 0, 200, 1, "Greater Astral Essence %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GMAGIC, 0, 200, 1, "Greater Magic Essence %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LCELESTIAL, 0, 200, 1, "Lesser Celestial Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LCOSMIC, 0, 200, 1, "Lesser Cosmic Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LPLANAR, 0, 200, 1, "Lesser Planar Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LETERNAL, 0, 200, 1, "Lesser Eternal Essence %s%%")
@@ -243,6 +264,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LASTRAL, 0, 200, 1, "Lesser Astral Essence %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LMAGIC, 0, 200, 1, "Lesser Magic Essence %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..HYPNOTIC, 0, 200, 1, "Hypnotic Dust %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..INFINITE, 0, 200, 1, "Infinite Dust %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..ARCANE, 0, 200, 1, "Arcane Dust %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..ILLUSION, 0, 200, 1, "Illusion Dust %s%%")
@@ -251,6 +273,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SOUL, 0, 200, 1, "Soul Dust %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..STRANGE, 0, 200, 1, "Strange Dust %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..HEAVENLY_SHARD, 0, 200, 1, "Heavenly Shard %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..DREAM_SHARD, 0, 200, 1, "Dream Shard %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LPRISMATIC, 0, 200, 1, "Large Prismatic Shard %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LBRILLIANT, 0, 200, 1, "Large Brilliant Shard %s%%")
@@ -258,6 +281,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LGLOWING, 0, 200, 1, "Large Glowing Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LGLIMMERING, 0, 200, 1, "Large Glimmering Shard %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SHEAVENLY_SHARD, 0, 200, 1, "Small Heavenly Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SDREAM_SHARD, 0, 200, 1, "Small Dream Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SPRISMATIC, 0, 200, 1, "Small Prismatic Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SBRILLIANT, 0, 200, 1, "Small Brilliant Shard %s%%")
@@ -265,6 +289,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SGLOWING, 0, 200, 1, "Small Glowing Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SGLIMMERING, 0, 200, 1, "Small Glimmering Shard %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..MAELSTROM, 0, 200, 1, "Maelstrom Crystal %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..ABYSS, 0, 200, 1, "Abyss Crystal %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..VOID, 0, 200, 1, "Void Crystal %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..NEXUS, 0, 200, 1, "Nexus Crystal %s%%")
@@ -361,4 +386,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherEnchantMats.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherEnchantMats.lua $", "$Rev: 5039 $")

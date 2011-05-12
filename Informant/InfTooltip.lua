@@ -1,8 +1,8 @@
 --[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: InfTooltip.lua 4576 2009-12-12 21:11:20Z ccox $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: InfTooltip.lua 5010 2010-11-10 07:33:41Z Hirsute $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	Tooltip handler. Assumes the responsibility of filling the tooltip
@@ -23,11 +23,12 @@
 		along with this program(see GPL.txt); if not, write to the Free Software
 		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Informant/InfTooltip.lua $", "$Rev: 4576 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Informant/InfTooltip.lua $", "$Rev: 5010 $")
 
 local nilSafeString			-- nilSafeString(String)
 local whitespace			-- whitespace(length)
 local getFilter = Informant.Settings.GetSetting
+local setFilter = Informant.Settings.SetSetting
 local debugPrint
 
 local tooltip = LibStub("nTipHelper:1")
@@ -90,8 +91,24 @@ function Informant.TooltipHandler(frame, item, count, name, link, quality)
 	itemInfo.itemSell = sell
 	itemInfo.itemQuant = quant
 
-	if getFilter('ModTTShow') and not IsAltKeyDown() then
-		return
+	if getFilter("ModTTShow") then
+		if getFilter("ModTTShow") == "never" then
+			return
+		elseif getFilter("ModTTShow") == "noalt" and IsAltKeyDown() then
+			return
+		elseif getFilter("ModTTShow") == "alt" and not IsAltKeyDown() then
+			return
+		elseif getFilter("ModTTShow") == "noshift" and IsShiftKeyDown() then
+			return
+		elseif getFilter("ModTTShow") == "shift" and not IsShiftKeyDown() then
+			return
+		elseif getFilter("ModTTShow") == "noctrl" and IsControlKeyDown() then
+			return
+		elseif getFilter("ModTTShow") == "ctrl" and not IsControlKeyDown() then
+			return
+		end
+	else 
+		setFilter("ModTTShow", "always")
 	end
 
 	local embedded = getFilter('embed')
@@ -101,6 +118,13 @@ function Informant.TooltipHandler(frame, item, count, name, link, quality)
 		if (itemInfo.itemLevel) then
 			tooltip:AddLine(_TRANS('INF_Tooltip_ItemLevel'):format(itemInfo.itemLevel), embedded)
 		end
+	end
+
+	if (getFilter('show-binding')) and itemInfo.soulBindText then
+		tooltip:AddLine(itemInfo.soulBindText,embedded)
+	end
+	if (getFilter('show-binding')) and itemInfo.specialBindText then
+		tooltip:AddLine(itemInfo.specialBindText,embedded)
 	end
 
 	if (getFilter('show-link')) then

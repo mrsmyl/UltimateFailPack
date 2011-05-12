@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: Core.lua 4666 2010-02-15 15:31:28Z Kandoko $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: Core.lua 5034 2010-12-08 23:36:20Z kandoko $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -81,11 +81,36 @@ local isGem =
 	[36928] = true,--DREADSTONE
 	[36931] = true,--AMETRINE
 	[36934] = true,--EYE OF ZUL
+	--Cataclysm RARE
+	[52195] = true,--Amberjewel
+	[52196] = true,--Chimera's Eye
+	[52194] = true,--Demonseye
+	[52192] = true,--Dream Emerald
+	[52193] = true,--Ember Topaz
+	[52190] = true,--Inferno Ruby
+	[52191] = true,--Ocean Sapphire
+	[52303] = true,--Shadowspirit Diamond
+	[52339] = true,--Flawless Pearl
+	--Cataclysm COMMON
+	[52179] = true,--Alicite
+	[52177] = true,--Carnelian
+	[52181] = true,--Hessonite
+	[52182] = true,--Jasper
+	[52180] = true,--Nightstone
+	[52178] = true,--Zephyrite
 }
 
 -- This table is validating that each ID within it is a mat from disenchanting.
 local isDEMats =
 	{
+	--Cataclysm
+	[52722] = true, --Maelstrom Crystal
+	[52721] = true, --Heavenly Shard
+	[52720] = true, --Small Heavenly Shard
+	[52719] = true, --Greater Celestial Essence
+	[52718] = true, --Lesser Celestial Essence
+	[52555] = true, --Hypnotic Dust
+
 	[34057] = true,--Abyss Crystal
 	[22450] = true,--Void Crystal
 	[20725] = true,--Nexus Crystal
@@ -127,21 +152,24 @@ local isDEMats =
 -- This table is validating that each ID within it is a mat from Milling (table from enchantrix)
 local isPigmentMats =
 	{
-	[39151] = true,	-- ALABASTER_PIGMENT
-	[39334] = true,	-- DUSKY_PIGMENT
-	[39338] = true,	-- GOLDEN_PIGMENT
-	[39339] = true,	-- EMERALD_PIGMENT
-	[39340] = true,	-- VIOLET_PIGMENT
-	[39341] = true, 	-- SILVERY_PIGMENT
-	[43103] = true,	-- VERDANT_PIGMENT
-	[43104] = true,	-- BURNT_PIGMENT
-	[43105] = true,	-- INDIGO_PIGMENT
-	[43106] = true,	-- RUBY_PIGMENT
-	[43107] = true, 	-- SAPPHIRE_PIGMENT
-	[39342] = true, 	-- NETHER_PIGMENT
-	[43108] = true, 	-- EBON_PIGMENT
-	[39343] = true, 	-- AZURE_PIGMENT
-	[43109] = true, 	-- ICY_PIGMENT
+	[39151] = true,-- ALABASTER_PIGMENT
+	[39334] = true,-- DUSKY_PIGMENT
+	[39338] = true,-- GOLDEN_PIGMENT
+	[39339] = true,-- EMERALD_PIGMENT
+	[39340] = true,-- VIOLET_PIGMENT
+	[39341] = true,-- SILVERY_PIGMENT
+	[43103] = true,-- VERDANT_PIGMENT
+	[43104] = true,-- BURNT_PIGMENT
+	[43105] = true,-- INDIGO_PIGMENT
+	[43106] = true,-- RUBY_PIGMENT
+	[43107] = true,-- SAPPHIRE_PIGMENT
+	[39342] = true,-- NETHER_PIGMENT
+	[43108] = true,-- EBON_PIGMENT
+	[39343] = true,-- AZURE_PIGMENT
+	[43109] = true,-- ICY_PIGMENT
+	--Cataclysm
+	[61979] = true,-- ASHEN_PIGMENT
+	[61981] = true,-- BURNING_EMBERS	
 }
 -- This table is validating that each ID within it is a herb. Data from informant. This allows locale independent herbs
 local isHerb =
@@ -200,6 +228,14 @@ local isHerb =
 	[36908] = true, --  Frost Lotus
 	[37921] = true, --  Deadnettle
 	[39970] = true, -- Fire Leaf
+	
+	--Cataclysm
+	[52983] = true,--CINDERBLOOM
+	[52984] = true,-- STORMVINE
+	[52985] = true,-- AZSHARAS VEIL
+	[52986] = true,-- HEART BLOSSOM
+	[52987] = true,-- TWILIGHT JASMINE
+	[52988] = true,-- WHIPTAIL
 	}
 
 --this set of tables allows us to match the locale dependet itemtype to the gear a player class can use
@@ -520,4 +556,4 @@ function lib.getReason(itemLink, itemName, itemCount, text)
 	return
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-AutoMagic/Core.lua $", "$Rev: 4666 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5034 $")

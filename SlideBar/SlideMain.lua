@@ -1,6 +1,6 @@
 --[[
 	Slidebar AddOn for World of Warcraft (tm)
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: SlideMain.lua 272 2010-09-19 03:14:25Z kandoko $
 	URL: http://auctioneeraddon.com/dl/
 

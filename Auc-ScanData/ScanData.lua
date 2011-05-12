@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - ScanData
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: ScanData.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: ScanData.lua 4835 2010-07-31 12:02:44Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -542,4 +542,4 @@ function lib.OnUnload()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-ScanData/ScanData.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-ScanData/ScanData.lua $", "$Rev: 4835 $")

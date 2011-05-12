@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: CoreConst.lua 4598 2010-01-07 20:40:09Z brykrys $
 	URL: http://auctioneeraddon.com/
 

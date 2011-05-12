@@ -1,7 +1,7 @@
 --[[
 	SelectBox
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SelectBox.lua 268 2010-09-02 23:31:55Z kandoko $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SelectBox.lua 286 2010-11-02 21:44:55Z kandoko $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -84,7 +84,7 @@ end -- LibStub
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/SelectBox.lua $","$Rev: 268 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/SelectBox.lua $","$Rev: 286 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local NUM_MENU_ITEMS = 15
 
@@ -197,7 +197,6 @@ end
 function buttonKit:Open()
 	local box = self
 	if not box.items then box = self:GetParent() end
-	if not box.items then box = this:GetParent() end
 	if not box.items then error("Unable to open menu") end
 
 	PlaySound("igMainMenuOptionCheckBoxOn")
@@ -384,5 +383,5 @@ if not lib.menu then
 		l:Show()
 	end
 
-	cmenu = lib.menu
+-- 	cmenu = lib.menu --no refrence anywhere to cmenu  its appears to be a leftover global
 end

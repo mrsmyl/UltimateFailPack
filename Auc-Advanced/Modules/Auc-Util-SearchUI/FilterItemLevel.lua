@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Filter IgnoreItemQuality
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: FilterItemLevel.lua 4432 2009-08-29 14:55:35Z dinesh $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: FilterItemLevel.lua 5042 2010-12-12 20:00:38Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined parameters
@@ -31,7 +31,7 @@
 -- Create a new instance of our lib with our parent
 local lib, parent, private = AucSearchUI.NewFilter("ItemLevel")
 if not lib then return end
-local print,decode,_,_,replicate,empty,_,_,_,debugPrint,fill = AucAdvanced.GetModuleLocals()
+--local print,decode,_,_,replicate,empty,_,_,_,debugPrint,fill = AucAdvanced.GetModuleLocals()
 local get,set,default,Const = AucSearchUI.GetSearchLocals()
 lib.tabname = "ItemLevel"
 -- Set our defaults
@@ -72,7 +72,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "Subhead",     0,  "Minimum itemLevels by Type")
 	for i = 1, #typename do
 		default("ignoreitemlevel.minlevel."..typename[i], 61)
-		gui:AddControl(id, "WideSlider",   0, 1, "ignoreitemlevel.minlevel."..typename[i], 0, 300, 1, "Min iLevel for "..typename[i]..": %s")
+		gui:AddControl(id, "WideSlider",   0, 1, "ignoreitemlevel.minlevel."..typename[i], 0, 400, 1, "Min iLevel for "..typename[i]..": %s")
 	end
 end
 
@@ -102,4 +102,4 @@ function lib.Filter(item, searcher)
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/FilterItemLevel.lua $", "$Rev: 4432 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/FilterItemLevel.lua $", "$Rev: 5042 $")

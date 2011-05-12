@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Advanced
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: CoreAPI.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: CoreAPI.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -33,13 +33,15 @@
 ]]
 if not AucAdvanced then return end
 local AucAdvanced = AucAdvanced
-local coremodule = AucAdvanced.GetCoreModule("CoreAPI")
-if not coremodule then return end -- Someone has explicitely broken us
+local coremodule, internal = AucAdvanced.GetCoreModule("CoreAPI")
+if not (coremodule and internal) then return end -- Someone has explicitely broken us
 
 
 AucAdvanced.API = {}
 local lib = AucAdvanced.API
 local private = {}
+internal.API = {}
+local libinternal = internal.API
 
 lib.Print = AucAdvanced.Print
 local Const = AucAdvanced.Const
@@ -47,6 +49,7 @@ local GetFaction = AucAdvanced.GetFaction
 local GetSetting = AucAdvanced.Settings.GetSetting
 local DecodeLink = AucAdvanced.DecodeLink
 local SanitizeLink = AucAdvanced.SanitizeLink
+local debugPrint = AucAdvanced.Debug.DebugPrint
 
 local tinsert = table.insert
 local tremove = table.remove
@@ -56,6 +59,7 @@ local ceil,floor,max,abs = ceil,floor,max,abs
 local tostring,tonumber,strjoin,strsplit,format = tostring,tonumber,strjoin,strsplit,format
 local GetItemInfo = GetItemInfo
 local time = time
+local bitand = bit.band
 -- GLOBALS: nLog, N_NOTICE, N_WARNING, N_ERROR
 
 
@@ -63,12 +67,14 @@ coremodule.Processors = {}
 function coremodule.Processors.scanstats()
 	lib.ClearMarketCache()
 end
-function coremodule.Processors.configchanged()
+function coremodule.Processors.configchanged(...)
 	lib.ClearMarketCache()
+	private.ResetMatchers(...)
 end
 function coremodule.Processors.newmodule()
 	private.ClearEngineCache()
 	lib.ClearMarketCache()
+	private.ResetMatchers()
 end
 
 do
@@ -112,7 +118,7 @@ do
             return cacheEntry[1], cacheEntry[2], cacheEntry[3] -- explicit indexing faster than 'unpack' for 3 values
         end
 
-        ERROR = GetSetting("marketvalue.accuracy");
+        ERROR = GetSetting("core.marketvalue.tolerance");
         local saneLink = SanitizeLink(itemLink)
 
         local upperLimit, lowerLimit, seen = 0, 1e11, 0;
@@ -419,7 +425,7 @@ function lib.GetAlgorithmValue(algorithm, itemLink, serverKey, reserved)
 			and not engineLib.IsValidAlgorithm(saneLink) then
 				return
 			end
-			
+
 			local price, seen, array
 			if (engineLib.GetPriceArray) then
 				array = engineLib.GetPriceArray(saneLink, serverKey)
@@ -486,6 +492,8 @@ end
 function lib.IsBlocked()
 	return private.isBlocked == true
 end
+
+
 --[[Progress bars that are usable by any addon.
 name = string - unique bar name
 value =  0-100   the % the bar should be filled
@@ -494,12 +502,12 @@ text =  string - the text to display on the bar
 options = table containing formatting commands.
 	options.barColor = { R,G,B, A}   red, green, blue, alpha values.
 	options.textColor = { R,G,B, A}   red, green, blue, alpha values.
-	
+
 value, text, color, and options are all optional variables
 ]]
-local availableBars = {}
-local NumGenericBars = 0
---generate new bars as needed
+local ProgressBarFrames = {}
+local ActiveProgressBars = {}
+-- generate new bars as needed
 local function newBar()
 	local bar = CreateFrame("STATUSBAR", nil, UIParent, "TextStatusBar")
 	bar:SetWidth(300)
@@ -523,23 +531,23 @@ local function newBar()
 	bar.text:SetJustifyV("CENTER")
 	bar.text:SetTextColor(1,1,1)
 
-	if NumGenericBars < 1 then
-		bar:SetPoint("CENTER", UIParent, "CENTER", -5,5)
-	else--attach to previous bar
-		bar:SetPoint("BOTTOM", lib["GenericProgressBar"..NumGenericBars], "TOP", 0, 0)
+	tinsert(ProgressBarFrames, bar)
+	local newID = #ProgressBarFrames
+
+	if newID > 1 then
+		-- attach to previous bar
+		bar:SetPoint("BOTTOM", ProgressBarFrames[newID-1], "TOP", 0, 0)
 	end
-	NumGenericBars = NumGenericBars + 1
-	lib["GenericProgressBar"..(NumGenericBars)] = bar
-	return NumGenericBars
+	return newID
 end
---create 1 bar to start for anchoring
+-- create 1 bar to start for anchoring
 newBar()
 -- handles the rendering
 local function renderBars(ID, name, value, text, options)
-	local self = lib["GenericProgressBar"..ID]
+	local self = ProgressBarFrames[ID]
 	if not self then assert("No bar found available for ID", ID, name, text) end
-	
-	--reset all generated bars that are not inuse to defaults
+
+	-- reset bars that are not in use to defaults
 	if self and not name then
 		self:Hide()
 		self.text:SetText("")
@@ -547,7 +555,7 @@ local function renderBars(ID, name, value, text, options)
 		self.text:SetTextColor(1, 1, 1, 1)
 		return
 	end
-	
+
 	self:Show()
 	--update progress
 	if value then
@@ -559,7 +567,7 @@ local function renderBars(ID, name, value, text, options)
 	end
 	--[[options is a table that contains, "tweaks" ie text or bar color changes
 	Nothing below this line will be processed unless an options table is passed]]
-	if not options or type(options) ~= "table" then return end
+	if not options then return end
 
 	--change bars color
 	local barColor = options.barColor
@@ -582,46 +590,49 @@ local function renderBars(ID, name, value, text, options)
 end
 --main entry point. Handles which bar will be assigned and recycling bars
 function lib.ProgressBars(name, value, show, text, options)
-	--setup parent so we can display even if AH is closed
+	-- reanchor first bar so we can display even if AH is closed
 	if AuctionFrame and AuctionFrame:IsShown() then
-		lib.GenericProgressBar1:SetParent(AuctionFrame)
-		lib.GenericProgressBar1:SetPoint("TOPRIGHT", AuctionFrame, "TOPRIGHT", -5, 5)
+		ProgressBarFrames[1]:SetPoint("TOPRIGHT", AuctionFrame, "TOPRIGHT", -5, 5)
 	else
-		lib.GenericProgressBar1:SetParent(UIParent)
+		ProgressBarFrames[1]:SetPoint("CENTER", UIParent, "CENTER", -5,5)
 	end
-	if not name then return end
-	
-	--find a generic bar available for use
-	local ID = availableBars[name]
-	if show and not ID then --find a bar
-		for i = 1, NumGenericBars do
-			if not availableBars[i] then
-				availableBars[i] = {name, value, text, options}
-				availableBars[name] = i
-				ID = i
-				break
-			end
-		end
-		--no bar available make a new one
-		if not ID then
-			ID = newBar()
-			availableBars[ID] = {name, value, text, options}
-			availableBars[name] = ID
-		end
-	end
-	--Render Bars
+
+	if type(name) ~= "string" then return end
+	if value and type(value) ~= "number" then return end
+	if options and type(options) ~= "table" then options = nil end
+
+	local ID = ActiveProgressBars[name]
 	if show then
+		if ID then -- this is a live bar; update the data table
+			local barData = ActiveProgressBars[ID]
+			assert(barData[1] == name) -- ### debug
+			if value then barData[2] = value end
+			if text then barData[3] = text end
+			if options then barData[4] = options end
+		else -- initialize data table for new bar
+			-- get an available bar
+			local test = #ActiveProgressBars + 1
+			if ProgressBarFrames[test] then
+				ID = test
+			else
+				ID = newBar()
+			end
+			ActiveProgressBars[ID] = {name, value, text, options}
+			ActiveProgressBars[name] = ID
+		end
 		renderBars(ID, name, value, text, options)
-	else
-		table.remove(availableBars, ID)
-		availableBars[name] = nil
-		--ReRender bars
-		for ID = 1, NumGenericBars do
-			if availableBars[ID] then
-				barData = availableBars[ID]
-				renderBars(ID, barData[1], barData[2], barData[3], barData[4])			
-			else--blank bars
-				renderBars(ID)	
+	elseif ID then
+		tremove(ActiveProgressBars, ID)
+		ActiveProgressBars[name] = nil
+		-- move down and re-render higher bars
+		for renderID = 1, #ActiveProgressBars + 1 do
+			-- first reset/hide every bar
+			renderBars(renderID)
+			-- then if it is in use re-render from the data table
+			local barData = ActiveProgressBars[renderID]
+			if barData then
+				ActiveProgressBars[barData[1]] = renderID -- update 'name' lookup entry
+				renderBars(renderID, barData[1], barData[2], barData[3], barData[4])
 			end
 		end
 	end
@@ -629,137 +640,237 @@ end
 
 --[[ Market matcher APIs ]]--
 
-function lib.GetBestMatch(itemLink, algorithm, serverKey, reserved)
-	local saneLink = SanitizeLink(itemLink)
+local matcherCurList
+local matcherNameLookup
+local matcherOrderedEngines
+local matcherDropdown
+local matcherSelected = 1
+function private.ResetMatchers(event, setting)
+	if not setting or setting:sub(1, 7) == "profile" then
+		matcherCurList = nil
+		matcherNameLookup = nil
+		matcherOrderedEngines = nil
+		matcherDropdown = nil
+	end
+end
 
-    if reserved then
-        lib.ShowDeprecationAlert("AucAdvanced.API.GetBestMatch(itemLink, algorithm, serverKey)",
-            "The 'realm' and 'faction' parameters have been removed in favor of a single "..
-            "variable 'serverKey' which should be used in the future."
-        );
+local function RebuildMatcherListLookup()
+	matcherCurList = GetSetting("core.matcher.matcherlist")
+	if not matcherCurList then
+		matcherCurList = {}
 
-        serverKey = reserved.."-"..serverKey;
-    end
+		-- Caution: may trigger a call to GetMatcherDropdownList. todo: handle any resulting function re-entry better
+		AucAdvanced.Settings.SetSetting("core.matcher.matcherlist", matcherCurList)
+	end
+	local modules = AucAdvanced.GetAllModules(nil, "Match")
+	matcherNameLookup = {}
+	for index, engine in ipairs(modules) do
+		local name = engine.GetName()
+		if type(engine.GetMatchArray) == "function" then
+			matcherNameLookup[name] = engine
+			local insert = true
+			for _, listName in ipairs(matcherCurList) do
+				if listName == name then
+					insert = false
+					break
+				end
+			end
+			if insert then
+				AucAdvanced.Print("Auctioneer: New matcher found: "..name)
+				tinsert(matcherCurList, 1, name)
+			end
+		else
+			debugPrint("Auctioneer engine '"..name.."' does not have a GetMatchArray() function.", "CoreAPI", "Missing GetMatchArray", "Warning")
+		end
+	end
+end
 
-	-- TODO: Make a configurable algorithm.
-	-- This algorithm is currently less than adequate.
+local function GetMatcherList()
+	if not matcherCurList then
+		RebuildMatcherListLookup()
+	end
+	return matcherCurList
+end
 
+local function GetMatcherLookup()
+	if not matcherNameLookup then
+		RebuildMatcherListLookup()
+	end
+	return matcherNameLookup
+end
+
+local function GetMatcherEngines()
+	if not matcherOrderedEngines then
+		local lookup = GetMatcherLookup()
+		local matcherlist = GetMatcherList()
+		matcherOrderedEngines = {}
+		for index, name in ipairs(matcherlist) do
+			local engine = lookup[name]
+			if engine then
+				tinsert(matcherOrderedEngines, engine)
+			end
+		end
+	end
+	return matcherOrderedEngines
+end
+
+-- Matcher functions used by CoreSettings for Matcher dropdown list
+
+function libinternal.GetMatcherDropdownList()
+	if not matcherDropdown then
+		local matcherlist = GetMatcherList()
+		matcherDropdown = {}
+		for index, name in ipairs(matcherlist) do
+			tinsert(matcherDropdown, {index, index..": "..name})
+		end
+	end
+	return matcherDropdown
+end
+
+function libinternal.MatcherSetter(setting, value)
+	local matcherlist = GetSetting("core.matcher.matcherlist") -- work from the actual saved setting, not matcherCurList (which has probably been reset)
+	if not matcherlist then return end
+	if setting == "matcher.select" then
+		if type(value) == "number" and value >= 1 and value <= #matcherlist then
+			matcherSelected = value
+			return true
+		end
+	end
+	if not matcherlist[matcherSelected] then
+		matcherSelected = 1
+		return
+	end
+	private.ResetMatchers()
+	if setting == "matcher.up" then
+		local newpos = matcherSelected - 1
+		if newpos >= 1 then
+			matcherlist[newpos], matcherlist[matcherSelected] = matcherlist[matcherSelected], matcherlist[newpos]
+			matcherSelected = newpos
+			return true
+		end
+	elseif setting == "matcher.down" then
+		local newpos = matcherSelected + 1
+		if newpos <= #matcherlist then
+			matcherlist[newpos], matcherlist[matcherSelected] = matcherlist[matcherSelected], matcherlist[newpos]
+			matcherSelected = newpos
+			return true
+		end
+	elseif setting == "matcher.delete" then
+		tremove(matcherlist, matcherSelected)
+		local n = #matcherlist
+		if n > 0 and matcherSelected > n then
+			matcherSelected = n
+		end
+		return true
+	end
+end
+
+function libinternal.MatcherGetter(setting)
+	if setting == "matcher.select" then
+		return matcherSelected
+	end
+end
+
+--[[ GetBestMatch(link, algorithm, serverKey)
+	Determine base price from algorithm, then pass through all matchers to get the matched price
+	Parameters:
+		link: full (hyperlink-style) itemLink
+		algorithm: "market" or price<number> or algorithm<string, as used by GetAlgorithmVale>
+		serverKey: optional serverKey
+	Returns:
+		price: final price after all matching
+		nil: (obsolete)
+		count: number of matchers contributing an adjustment to the price
+		diff: averaged difference from original price. todo: is performing an average here appropriate?
+		matchString: formatted string (including '\n' characters) describing what the matchers have done
+--]]
+function lib.GetBestMatch(itemLink, algorithm, serverKey)
 	local price
+	local saneLink = SanitizeLink(itemLink)
 	if algorithm == "market" then
 		price = lib.GetMarketValue(saneLink, serverKey)
-	elseif type(algorithm) == "string" then
-		price = lib.GetAlgorithmValue(algorithm, saneLink, serverKey)
-	else
+	elseif type(algorithm) == "number" then
 		price = algorithm
+	else
+		price = lib.GetAlgorithmValue(algorithm, saneLink, serverKey)
 	end
 	if not price then return end
 
-	local matchers = lib.GetMatchers(saneLink)
-	local total, count, diff = 0, 0, 0
-	local infoString = ""
+	local matchers = GetMatcherEngines()
+	local originalPrice = price
+	local count, infoString = 0, ""
 
-	for index, matcher in ipairs(matchers) do
-		if lib.IsValidMatcher(matcher, saneLink) then -- todo: shoudn't this already be valid from calling lib.GetMatchers(saneLink) ?
-			local value, MatchpriceArray = lib.GetMatcherValue(matcher, saneLink, price, serverKey)
-			price = value
+	for index = 1, #matchers do
+		local matcher = matchers[index]
+		local matchArray = matcher.GetMatchArray(saneLink, price, serverKey, originalPrice)
+		if matchArray then
+			price = matchArray.value
 			count = count + 1
-			diff = diff + MatchpriceArray.diff
-			if MatchpriceArray.returnstring then
-				infoString = infoString.."\n"..MatchpriceArray.returnstring -- using two .. is faster than calling strjoin
+			if matchArray.returnstring then
+				infoString = infoString.."\n"..matchArray.returnstring -- using two .. is faster than calling strjoin
 			end
 		end
-	end
-	if count > 1 then
-		diff = diff / count
 	end
 
 	if price > 0 then
-		return price, total, count, diff, infoString
+		return price, nil, count, price - originalPrice, infoString
 	end
 end
 
-function lib.GetMatcherDropdownList()
-	private.matcherlist = GetSetting("matcherlist")
-	if not private.matcherlist or #private.matcherlist == 0 then
-		lib.GetMatchers()
-	end
-	if not private.matcherlist or #private.matcherlist == 0 then
-		return
-	end
-	local dropdownlist = {}
-	for index, value in ipairs(private.matcherlist) do
-		dropdownlist[index] = tostring(index)..": "..tostring(private.matcherlist[index])
-	end
-	return dropdownlist
+-- Returns the number of installed matchers
+-- Normally only used to check if number of matchers is > 0
+-- Note: count will include matchers that are installed but disabled
+function lib.GetNumMatchers()
+	return #(GetMatcherEngines())
 end
 
+-- Additional Matcher functions for compatibility
+
+-- Returns an ordered list of matcher names
+-- Matchers are installed, and if itemLink was provided, are valid for that item
+-- Note: matchers may not be enabled, or may not actually have data for that item
 function lib.GetMatchers(itemLink)
 	local saneLink = SanitizeLink(itemLink)
-	private.matcherlist = GetSetting("matcherlist")
-	local engines = {}
-	local modules = AucAdvanced.GetAllModules()
-	for pos, engineLib in ipairs(modules) do
-		if engineLib.GetMatchArray then
-			if not engineLib.IsValidMatcher
-			or engineLib.IsValidMatcher(saneLink) then
-				local engine = engineLib.GetName()
-				tinsert(engines, engine)
-			end
+	local matchers = GetMatcherEngines()
+	local retlist = {}
+	for index, matcher in ipairs(matchers) do
+		if not saneLink or not matcher.IsValidMatcher or matcher.IsValidMatcher(saneLink) then
+			tinsert(retlist, matcher.GetName())
 		end
 	end
-	local insetting = false
-	local stillactive = false
-	--check to see if there are any new matchers.  If so, add them to the end of the running order.
-	--There is no check to see if matchers are missing, as this would destroy the saved order.  Instead, invalid matchers can be called without errors.
-	if private.matcherlist then
-		for index, matcher in ipairs(engines) do
-			for i, j in ipairs(private.matcherlist) do
-				if matcher == j then insetting = true
-				end
-			end
-			if not insetting then
-				AucAdvanced.Print("AucAdvanced: New matcher found: "..tostring(matcher))
-				tinsert(private.matcherlist, matcher)
-			end
-			insetting = false
-		end
-	else
-		private.matcherlist = engines
-	end
-	AucAdvanced.Settings.SetSetting("matcherlist", private.matcherlist)
-	return private.matcherlist
+	return retlist
 end
 
+-- Checks that the itemLink is valid for the specified matcher
+-- Obsolete, as all matchers should return nil from GetMatchArray if they cannot handle the item
+-- However may still be useful for external modules to obtain a matcher lib from the name
 function lib.IsValidMatcher(matcher, itemLink)
-	local saneLink = SanitizeLink(itemLink)
-	local engines = {}
-	local modules = AucAdvanced.GetAllModules()
-	for pos, engineLib in ipairs(modules) do
-		local engine = engineLib.GetName()
-		if engine == matcher and engineLib.GetMatchArray then
-			if engineLib.IsValidMatcher then
-				return engineLib.IsValidMatcher(saneLink)
-			end
-			return engineLib
-		end
+	if type(matcher) == "table" then -- if provided with a table, get the name
+		matcher = matcher.GetName and matcher.GetName()
 	end
-	return false
+	matcher = GetMatcherLookup()[matcher] -- validate name and get the matcher lib
+	if not matcher then return end
+	local saneLink = SanitizeLink(itemLink)
+	if not saneLink or not matcher.IsValidMatcher or matcher.IsValidMatcher(saneLink) then
+		return matcher
+	end
 end
 
-function lib.GetMatcherValue(matcher, itemLink, price, serverKey)
-	local saneLink = SanitizeLink(itemLink)
-	if (type(matcher) == "string") then
-		matcher = lib.IsValidMatcher(matcher, saneLink)
+-- Allows external modules to request individual matcher values using matcher's name
+function lib.GetMatcherValue(matcher, itemLink, price, serverKey, originalPrice)
+	if type(matcher) == "table" then
+		matcher = matcher.GetName and matcher.GetName()
 	end
+	matcher = GetMatcherLookup()[matcher]
 	if not matcher then return end
-	--If matcher is not a table at this point, the following code will throw an "attempt to index a <something> value" type error
-	local matchArray = matcher.GetMatchArray(saneLink, price, serverKey)
+	local saneLink = SanitizeLink(itemLink)
+	local matchArray = matcher.GetMatchArray(saneLink, price, serverKey, originalPrice)
 	if not matchArray then
-		matchArray = {}
-		matchArray.value = price
-		matchArray.diff = 0
+		matchArray = {
+			value = price,
+			diff = 0,
+		}
 	end
-
 	return matchArray.value, matchArray
 end
 
@@ -768,20 +879,40 @@ end
 
 -- Creates an AucAdvanced signature from an item link
 function lib.GetSigFromLink(link)
-	local sig
-	local itype, id, suffix, factor, enchant = DecodeLink(link)
-	if itype == "item" then
-		if enchant ~= 0 then
-			sig = ("%d:%d:%d:%d"):format(id, suffix, factor, enchant)
-		elseif factor ~= 0 then
-			sig = ("%d:%d:%d"):format(id, suffix, factor)
-		elseif suffix ~= 0 then
-			sig = ("%d:%d"):format(id, suffix)
+	local ptype = type(link)
+	if ptype == "number" then
+		return ("%d"):format(link)
+	elseif ptype ~= "string" then
+		return
+	end
+	local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed = strsplit(":", link)
+	if not id or lType:sub(-4) ~= "item" then
+		return
+	end
+
+	if suffix and suffix ~= "0" then
+		local factor = "0"
+		if suffix and suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
+			local nseed = tonumber(seed)
+			if nseed then
+				factor = ("%d"):format(bitand(nseed, 65535)) -- here format is faster than tostring
+			end
+		end
+		if enchant and enchant ~= "0" then
+			-- concat is slightly faster than using strjoin with this many parameters, and far faster than format
+			return id..":"..suffix..":"..factor..":"..enchant
+		elseif factor ~= "0" then
+			return id..":"..suffix..":"..factor
 		else
-			sig = tostring(id)
+			return id..":"..suffix
+		end
+	else
+		if enchant and enchant ~= "0" then
+			return id..":0:0:"..enchant
+		else
+			return id
 		end
 	end
-	return sig
 end
 
 -- Creates an item link from an AucAdvanced signature
@@ -924,4 +1055,4 @@ do
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Advanced/CoreAPI.lua $", "$Rev: 4933 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreAPI.lua $", "$Rev: 5141 $")

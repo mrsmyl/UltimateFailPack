@@ -1,14 +1,16 @@
 ## Title: Auc:Util:ItemSuggest
-## Interface: 40000
-## OptionalDependencies: Auc-Util-Appraiser Enchantrix
-## Dependancies: Auc-Advanced
+## Interface: 40100
+## OptionalDependencies:
+## Dependencies: Auc-Advanced
 ##
-## Version: 5.9.4960 (WhackyWallaby)
-## Revision: $Id: Auc-Util-ItemSuggest.toc 4933 2010-10-13 17:16:14Z Nechckn $
-## URL: http://auctioneeraddon.com/
+## Version: 5.11.5146 (DangerousDingo)
+## Revision: $Id: Auc-Util-ItemSuggest.toc 5145 2011-05-04 20:37:21Z Nechckn $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer
-## X-Max-Interface: 40000
+## X-Category: Auction House
+## X-Max-Interface: 40100
+## X-URL: http://auctioneeraddon.com/
+## X-Feedback: http://forums.norganna.org
 ##
 
 Embed.xml

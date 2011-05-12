@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnxAutoDisenchant.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxAutoDisenchant.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://enchantrix.org/
 
 	Automatic disenchant scanner.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 4933 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5141 $")
 
 local auto_de_session_ignore_list = {}
 local auto_de_frame
@@ -71,11 +71,14 @@ local function itemStringFromLink(link)
 	return itemString
 end
 
--- remove the uniqueID and viewer level from the link
--- this needs to be updated whenever the link format changes
+-- remove the uniqueID and viewer level from the link, but keep the reforging stat
+-- WARNING - this needs to be updated whenever the link format changes, and that will invalidate the ignore list
+-- "|cff1eff00|Hitem:59781:0:0:0:0:0:0:1111873024:81:0:0|h[Calanoid Shoulders]|h|r"
+-- head = "|cff1eff00|Hitem:59781:0:0:0:0:0:0:"
+-- tail = ":0|h[Calanoid Shoulders]|h|r"
 local function genericizeItemLink(link)
 	-- strip out unique id
-	local _, _, head, tail = string.find(link, "^(|c%x+|H.+:)[-%d]+:%d+(|h.+)")
+	local _, _, head, tail = string.find(link, "^(|c%x+|H.+:)[-%d]+:%d+(:%d+|h.+)")
 	return head .. "0:0" .. tail
 end
 
@@ -269,7 +272,7 @@ local function beginScan(bag)
 	setState("scan")
 	
 	-- do not scan while in combat
-	if UnitAffectingCombat("player") then
+	if InCombatLockdown() or UnitAffectingCombat("player") then
 		debugSpam("aborting scan during combat")
 		return
 	end
@@ -487,7 +490,7 @@ function showPrompt(link, bag, slot, value, spell)
 	clearPrompt()		-- safety
 	
 	-- avoid taint, don't hide or show while in combat
-	if UnitAffectingCombat("player") then
+	if InCombatLockdown() or UnitAffectingCombat("player") then
 		return
 	end
 	
@@ -540,7 +543,7 @@ end
 -- declared local at top
 function hidePrompt()
 	-- avoid taint, don't hide or show while in combat
-	if not UnitAffectingCombat("player") then
+	if not (InCombatLockdown() or UnitAffectingCombat("player")) then
 		auto_de_prompt:Hide()
 	end
 end

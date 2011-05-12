@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Simplified Auction Posting
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SimpFrame.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SimpFrame.lua 4993 2010-11-01 14:04:07Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a simple dialog for
@@ -624,7 +624,7 @@ function private.LoadItemLink(itemLink, size)
 			if reason == "Damaged" then
 				aucPrint(itemLink.." is damaged: you may be able to post it after repairing it")
 			else
-				aucPrint(itemLink.." cannot be posted: "..(AucAdvanced.Post.ErrorText[reason] or "Unknown Reason"))
+				aucPrint(itemLink.." cannot be posted: "..AucAdvanced.Post.GetErrorText(reason))
 			end
 			return private.LoadItemLink()
 		end
@@ -806,8 +806,7 @@ function private.PostAuction()
 	if success then
 		aucPrint("Posting "..number.." stacks of "..stack.."x "..link.." at Bid:"..coins(bid)..", BO:"..coins(buy).." for "..duration.."h")
 	else
-		reason = AucAdvanced.Post.ErrorText[reason] or "Unknown Reason"
-		aucPrint("Posting Failed for "..link..": "..reason)
+		aucPrint("Posting Failed for "..link..": "..AucAdvanced.Post.GetErrorText(reason))
 	end
 end
 
@@ -1291,4 +1290,4 @@ function private.CreateFrames()
 	frame:RegisterEvent("BAG_UPDATE")
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 4933 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 4993 $")

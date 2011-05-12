@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: AprSettings.lua 4901 2010-10-05 16:44:24Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: AprSettings.lua 4893 2010-10-03 21:16:33Z kandoko $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -548,4 +548,4 @@ function private.SetupConfigGui(gui)
 	private.guiId = id
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 4901 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 4893 $")

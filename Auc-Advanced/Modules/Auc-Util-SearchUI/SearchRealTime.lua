@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: SearchRealTime.lua 4720 2010-04-20 18:12:29Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -413,4 +413,4 @@ function lib.HookAH()
 	private.button.control.tex:SetVertexColor(1, 0.9, 0.1)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 4720 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 4720 $")

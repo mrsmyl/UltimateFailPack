@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnxUtil.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxUtil.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://enchantrix.org/
 
 	General utility functions
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxUtil.lua $", "$Rev: 4933 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxUtil.lua $", "$Rev: 5141 $")
 
 -- Global functions
 local getItems
@@ -39,7 +39,6 @@ local getReagentPrice
 local getLinkFromName
 local isDisenchantable
 local getItemIdFromSig
-local getItemHyperlinks
 local getItemIdFromLink
 local saveCraftReagentInfoToCache
 local getCraftReagentInfoFromCache
@@ -281,11 +280,6 @@ end
 
 
 
--- TODO: what is the correct limit post TBC?
--- ccox - 32090 is the highest I can find so far
--- but we REALLY should get rid of this search!
-Enchantrix.State.MAX_ITEM_ID = 33000
-
 function getLinkFromName(name)
 	assert(type(name) == "string")
 
@@ -317,21 +311,8 @@ function getLinkFromName(name)
 		end
 	end
 
-	if not EnchantConfig.cache.names[name] then
-		--print("DISABLED NAME CACHE LOOKUP FOR BETA SERVER", name)
-		-- still no result?  Darn.
-		-- last resort,  check ALL item ids until we find a name match, and cache it!
--- 		for i = 1, Enchantrix.State.MAX_ITEM_ID + 4000 do
--- 			local n, link = GetItemInfo(i)
--- 			if n then
--- 				if n == name then
--- 					EnchantConfig.cache.names[name] = link
--- 					break
--- 				end
--- 				Enchantrix.State.MAX_ITEM_ID = math.max(Enchantrix.State.MAX_ITEM_ID, i)
--- 			end
--- 		end
-	end
+	-- max item is now about 69000
+	-- we should NOT be doing a search item by item
 
 	return EnchantConfig.cache.names[name]
 end
@@ -460,15 +441,27 @@ function getIType(link)
 	return ("%d:%d:%d:%d"):format(iLevel, iQual, invType, iId)
 end
 
+
+
+-- itemId:enchantId:jewelId1:jewelId2:jewelId3:jewelId4:suffixId:uniqueId:linkLevel:reforgeId
+-- we want to keep just the itemID and suffixID (random enchantment)
 function getSigFromLink(link)
 	assert(type(link) == "string")
 
-	local _, _, id, rand = link:find("item:(%d+):%d+:(%d+):%d+")
+	local _, _, id, rand = link:find("item:(%d+):%d+:%d+:%d+:%d+:%d+:([-%d]+)")
 	if id and rand then
 		return id..":0:"..rand
+	elseif id then
+		return id..":0:0"
+	else
+		local _, _, trimmed = link:find("(item:.+:%d+)|?")
+		Enchantrix.Util.DebugPrint("getSigFromLink", ENX_INFO, "failed to get sig from link", "could not get sig for: " .. trimmed)
 	end
 end
 
+
+-- ccox - this is also wrong, but where is it used?
+-- itemId:enchantId:jewelId1:jewelId2:jewelId3:jewelId4:suffixId:uniqueId:linkLevel:reforgeId
 function getItems(str)
 	if (not str) then return end
 	local itemList = {};
@@ -481,16 +474,6 @@ function getItems(str)
 	return itemList;
 end
 
---Many thanks to the guys at irc://irc.datavertex.com/cosmostesters for their help in creating this function
-function getItemHyperlinks(str)
-	if (not str) then return nil end
-	local itemList = {};
-
-	for color, item, name in str:gmatch("|c(%x+)|Hitem:(%d+:%d+:%d+:%d+)|h%[(.-)%]|h|r") do
-		table.insert(itemList, "|c"..color.."|Hitem:"..item.."|h["..name.."]|h|r")
-	end
-	return itemList;
-end
 -----------------------------------
 --   General Utility Functions   --
 -----------------------------------
@@ -716,7 +699,7 @@ function createProfiler(name)
 end
 
 Enchantrix.Util = {
-	Revision			= "$Revision: 4933 $",
+	Revision			= "$Revision: 5141 $",
 
 	GetItems			= getItems,
 	GetItemType			= getItemType,
@@ -728,7 +711,6 @@ Enchantrix.Util = {
 	GetItemIdFromSig	= getItemIdFromSig,
 	IsDisenchantable	= isDisenchantable,
 	GetItemIdFromLink	= getItemIdFromLink,
-	GetItemHyperlinks	= getItemHyperlinks,
 	SaveCraftReagentInfoToCache		= saveCraftReagentInfoToCache,
 	GetCraftReagentInfoFromCache	= getCraftReagentInfoFromCache,
 
@@ -766,30 +748,6 @@ function Enchantrix.Util.GetIType(link)
 end
 
 
--- NOTE - ccox - this ignores the skill requirements due to item quality!
-function Enchantrix.Util.MaxDisenchantItemLevel(skill)
-	local maxLevel;
-
-	if (skill >= 375) then
-		maxLevel = 220;
-	elseif (skill >= 350) then
-		maxLevel = 200;
-	elseif (skill >= 325) then
-		maxLevel = 151;
-	elseif (skill >= 300) then
-		maxLevel = 129;		-- max level for WoW 2.2/BC ??
-	elseif (skill >= 125) then
-		-- skill 125 to 299
-		maxLevel = 19 + (5 * math.floor(skill / 25));
-	else
-		-- skill 1 to 124
-		maxLevel = 15 + (5 * math.floor(skill / 25));
-	end
-
-	return maxLevel;
-end
-
-
 
 function Enchantrix.Util.DisenchantSkillRequiredForItemLevel(level, quality)
 	-- should we cache this in a table?
@@ -799,8 +757,22 @@ function Enchantrix.Util.DisenchantSkillRequiredForItemLevel(level, quality)
 		return 0
 	end
 	
-	if (level >= 200) then
-		-- rares still bugged Nov 2009
+
+	-- ccox - Cataclysm items, this is partly guesswork
+	if (level >= 270) then
+		if (quality == 3) then
+			-- all blues
+			return 450;				-- 279 - 346
+		elseif (quality == 2) then
+			-- all greens
+			return 425;				-- 270 - 318
+		else
+			-- all epics
+			return 475;				-- 353 - 372
+		end
+		
+	elseif (level >= 200) then
+		-- rares still bugged Nov 2009, and Nov 2010, guess they're going to stay that way
 		if (quality ~= 3) then
 			return 375;
 		else
@@ -846,6 +818,10 @@ function Enchantrix.Util.DisenchantSkillRequiredForItemLevel(level, quality)
 		return temp;
 	end
 
+	if (quality > 2) then
+		return 25;
+	end
+	
 	return 1;
 end
 
@@ -997,6 +973,7 @@ local function balanceEssencePrices(scanReagentTable, style)
 		[16202] = 16203,  	-- eternal
 		[22447] = 22446,	-- planar
 		[34056] = 34055,	-- cosmic
+		[52718] = 52719,	-- celestial
 	};
 
 	for lesser, greater in pairs(essenceTable) do

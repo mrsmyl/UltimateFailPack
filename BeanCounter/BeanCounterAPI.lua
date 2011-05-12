@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: BeanCounterAPI.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BeanCounterAPI.lua 5141 2011-05-04 02:58:37Z Nechckn $
 
 	BeanCounterAPI - Functions for other addons to get BeanCounter Data
 	URL: http://auctioneeraddon.com/
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.9/BeanCounter/BeanCounterAPI.lua $","$Rev: 4933 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.11/BeanCounter/BeanCounterAPI.lua $","$Rev: 5141 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local lib = BeanCounter
 lib.API = {}
@@ -155,7 +155,7 @@ function lib.API.getAHProfit(player, item, lowDate, highDate, includeMeta)
 	if not player or player == "" then player = "server" end
 	if not item then item = "" end
 	
-	local sum, low, high, date = 0, 9999999999, 0
+	local sum, low, high, date = 0, 2051283600, 1  -- wow's date system errors when you go to far into the future 2035 seems like a good year
 	local settings = {["selectbox"] = {"1", player} , ["bid"] = true, ["auction"] = true, ["failedauction"] = true}
 	local tbl
 	--allow a already API searched data table to be passed instead of just a text string
@@ -202,62 +202,6 @@ function lib.API.getAHProfit(player, item, lowDate, highDate, includeMeta)
 	return sum, lowDate or low, highDate or high
 end
 
---[[This will return profits in date segments  allow easy to create graphs
-Similar to API.getProfit()  This utility return a table containing the profit earned in day based segments. useful for graphing a change over time
-example: entering (player, "arcane dust", 7) would return the the profit for arcane dust in 7 day segments starting from most recent to oldest
-]]
-function lib.API.getAHProfitGraph(player, item ,days)
-	if not player or player == "" then player = "server" end
-	if not item then item = "" end
-	if not days then days = 7 end
-	--Get data from BeanCounter
-	local settings = {["selectbox"] = {"1", player} , ["bid"] =true, ["auction"] = true}
-	local tbl = private.startSearch(item, settings, "none")
-	--Merge and edit provided table to needed format
-	for i,v in pairs(tbl) do
-		for a,b in pairs(v) do
-			tinsert(tbl, b)
-		end
-	end
-	--remove now redundant table entries
-	tbl.completedAuctions, tbl["completedBidsBuyouts"], tbl.failedAuctions, tbl.failedBids = nil, nil, nil, nil
-	--check if we actually have any results from the search
-	if #tbl == 0 then return {0}, 0, 0 end
-	--sort by date
-	sort(tbl, function(a,b) return a[5] > b[5] end)
-	--get min and max dates.
-	local high, low, count, sum, number = tbl[1][5], tbl[#tbl][5], 1, 0, 0
-	local range = high - (days* 86400)
-
-	tbl.sums = {}
-	tbl.sums[count] = {}
-	for i,v in ipairs(tbl) do
-		if tonumber(v[5]) >= range then
-			if v[4] == "Auction successful" then
-				number = tonumber(v[3]:match(".-;.-;.-;.-;.-;(.-);.*")) or 0
-				sum = sum + number
-			elseif v[4] == "Auction won" then
-				number = tonumber(v[3]:match(".-;.-;.-;.-;.-;.-;(.-);.*")) or 0
-				sum = sum - number
-			end
-			tbl.sums[count] = sum
-		else
-			count = count + 1
-			range = range - (days * 86400)
-			tbl.sums[count] = {}
-			sum = 0
-			if v[4] == "Auction successful" then
-				number = tonumber(v[3]:match(".-;.-;.-;.-;.-;(.-);.*")) or 0
-				sum = sum + number
-			elseif v[4] == "Auction won" then
-				number = tonumber(v[3]:match(".-;.-;.-;.-;.-;.-;(.-);.*")) or 0
-				sum = sum - number
-			end
-			tbl.sums[count] = sum
-		end
-	end
-	return tbl.sums, low, high
-end
 
 --[[
 Get  Sold / Failed Ratio
@@ -327,13 +271,13 @@ function lib.API.getAHSoldFailed(player, link, days, serverKey)
 			end
 		end
 	end
-	
+
 	return success, failed, sucessStack, failedStack
 end
 --[[Change or add a reason code to a transaction]]
 function  lib.API.updatedReason(serverKey, newReason, itemLink, bid, buy, net, stack, sellerName, deposit, fee, currentReason, Time)
 	--to string all number values for comparison to stored data
-	bid, buy, net, stack, deposit, fee, Time = tostring(bid), tostring(buy), tostring(net), tostring(stack), tostring(deposit), tostring(fee), tostring(Time)
+	bid, buy, net, stack, deposit, fee, Time = tostringall(bid, buy, net, stack, deposit, fee, Time)
 	--convert ... back to 0
 	if currentReason == "..." then currentReason = "0" end
 	if sellerName == "..." then sellerName = "0" end
@@ -344,18 +288,16 @@ function  lib.API.updatedReason(serverKey, newReason, itemLink, bid, buy, net, s
 	
 	for  player, playerData in pairs(BeanCounterDB[server]) do
 		for DB, data in pairs(playerData) do
-			if  DB == "failedBids" or DB == "failedAuctions" or DB == "completedAuctions" or DB == "completedBidsBuyouts" or DB == "failedBidsNeutral" or DB == "failedAuctionsNeutral" or DB == "completedAuctionsNeutral" or DB == "completedBidsBuyoutsNeutral" then
-				if data[itemID] and data[itemID][itemString] then
-					for i, text in pairs(data[itemID][itemString]) do
-						local STACK, NET, DEPOSIT , FEE, BUY , BID, SELLERNAME, TIME, CURRENTREASON, LOCATION = private.unpackString(text)
-						if currentReason == CURRENTREASON and stack == STACK and sellerName == SELLERNAME and bid == BID and buy == BUY and net == NET and deposit == DEPOSIT and Time == TIME then
-							local newText = private.packString(STACK, NET, DEPOSIT , FEE, BUY , BID, SELLERNAME, TIME, newReason, LOCATION)
-					
-							table.remove(data[itemID][itemString], i)
-							private.databaseAdd(DB, nil, itemString, newText)
-							private.wipeSearchCache() --clear cached searches
-							return
-						end
+			if data[itemID] and data[itemID][itemString] then
+				for i, text in pairs(data[itemID][itemString]) do
+					local STACK, NET, DEPOSIT , FEE, BUY , BID, SELLERNAME, TIME, CURRENTREASON, LOCATION = private.unpackString(text)
+					if currentReason == CURRENTREASON and stack == STACK and sellerName == SELLERNAME and bid == BID and buy == BUY and net == NET and deposit == DEPOSIT and Time == TIME then
+						local newText = private.packString(STACK, NET, DEPOSIT , FEE, BUY , BID, SELLERNAME, TIME, newReason, LOCATION)
+				
+						table.remove(data[itemID][itemString], i)
+						private.databaseAdd(DB, nil, itemString, newText)
+						private.wipeSearchCache() --clear cached searches
+						return
 					end
 				end
 			end
@@ -370,26 +312,27 @@ end
 we store itemKeys with a unique ID but our name array does not
 ]]
 function lib.API.getArrayItemLink(itemString)
-	local itemID, suffix, uniqueID = lib.API.decodeLink(itemString)
+	local itemID, suffix, uniqueID, reforged = lib.API.decodeLink(itemString)
 	local itemKey = itemID..":"..suffix
 	if BeanCounterDBNames[itemKey] then
-		return lib.API.createItemLinkFromArray(itemKey, uniqueID) --uniqueID is used as a scaling factor for "of the" suffix items
+		return lib.API.createItemLinkFromArray(itemKey, uniqueID, reforged) --uniqueID is used as a scaling factor for "of the" suffix items
 	end
 	debugPrint("Searching DB for ItemID..", suffix, itemID, "Failed Item does not exist")
 	return
 end
 
 --[[Converts the compressed link stored in the itemIDArray back to a standard blizzard format]]
-function lib.API.createItemLinkFromArray(itemKey, uniqueID)
+function lib.API.createItemLinkFromArray(itemKey, uniqueID, reforged)
 	if BeanCounterDBNames[itemKey] then
 		if not uniqueID then uniqueID = 0 end
+		if not reforged then reforged = 0 end
 		local itemID, suffix = strsplit(":", itemKey)
 		local color, name = strsplit(";", BeanCounterDBNames[itemKey])
-		return strjoin("", "|", color, "|Hitem:", itemID,":0:0:0:0:0:", suffix, ":", uniqueID, ":80|h[", name, "]|h|r")
+		return strjoin("", "|", color, "|Hitem:", itemID,":0:0:0:0:0:", suffix, ":", uniqueID, ":80:",reforged,"|h[", name, "]|h|r")
 	end
 	return
 end
---[[Convert and store an itemLink into teh compressed format used in teh itemIDArray]]
+--[[Convert and store an itemLink into the compressed format used in the itemIDArray]]
 function lib.API.storeItemLinkToArray(itemLink)
 	if not itemLink then return end
 	local color, itemID, suffix, name = itemLink:match("|(.-)|Hitem:(.-):.-:.-:.-:.-:.-:(.-):.+|h%[(.-)%]|h|r")
@@ -410,7 +353,7 @@ function lib.API.getItemString(itemLink)
 	return itemString, itemName
 end
 
---[[Returns id, suffix, uniqueID when passed an itemLink or itemString, this a mildly tweaked version of the one found in AucAdv.
+--[[Returns id, suffix, uniqueID, reforged when passed an itemLink or itemString, this a mildly tweaked version of the one found in AucAdv.
 Handles Hitem:string,  item:string, or full itemlinks
 ]]
 local function breakHyperlink(match, matchlen, ...)
@@ -428,9 +371,9 @@ end
 function lib.API.decodeLink(link)
 	local vartype = type(link)
 	if (vartype == "string") then
-		local lType, id, enchant, gem1, gem2, gem3, gemBonus, suffix, uniqueID, lichKing = breakHyperlink("item:", 5, strsplit("|", link))
+		local lType, id, enchant, gem1, gem2, gem3, gemBonus, suffix, uniqueID, lichKing, reforged = breakHyperlink("item:", 5, strsplit("|", link))
 		if (lType ~= "item") then return end
-			return id, suffix, uniqueID
+			return id, suffix, uniqueID, reforged
 		end
 	return
 end

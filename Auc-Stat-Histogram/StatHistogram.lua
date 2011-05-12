@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Histogram Statistics module
 	Version: 5.7.4568 (KillerKoala)
-	Revision: $Id: StatHistogram.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Revision: $Id: StatHistogram.lua 5018 2010-11-14 01:51:46Z Prowell $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -185,7 +185,7 @@ function lib.GetPrice(link, faction)
 
 	if not faction then faction = GetFaction() end
 	if (not data[faction]) or (not data[faction][itemId]) or (not data[faction][itemId][property]) then
-		debugPrint("GetPrice: No data", libType.."-"..libName, "Info")
+		--debugPrint("GetPrice: No data", libType.."-"..libName, "Info")
 		return
 	end
 	if pricecache and pricecache[faction] and pricecache[faction][itemId] and pricecache[faction][itemId][property] then
@@ -840,4 +840,4 @@ function private.refactor(pmax, precision)
 	stattable["count"] = count
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Stat-Histogram/StatHistogram.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-Histogram/StatHistogram.lua $", "$Rev: 5018 $")

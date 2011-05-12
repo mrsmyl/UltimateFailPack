@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnxMain.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxMain.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://enchantrix.org/
 
 	This is an addon for World of Warcraft that add a list of what an item
@@ -30,7 +30,7 @@
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxMain.lua $", "$Rev: 4933 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxMain.lua $", "$Rev: 5141 $")
 
 -- Local functions
 local addonLoaded
@@ -41,7 +41,7 @@ local spellTargetItemHook
 local useItemByNameHook
 local onEvent
 
-Enchantrix.Version = "5.9.4960"
+Enchantrix.Version = "5.11.5146"
 if (Enchantrix.Version == "<".."%version%>") then
 	Enchantrix.Version = "4.0.DEV"
 end
@@ -86,9 +86,8 @@ function addonLoaded(hookArgs, event, addOnName)
 	Enchantrix.Tooltip.AddonLoaded()
 	Enchantrix.AutoDisenchant.AddonLoaded()
 	Enchantrix.MiniIcon.Reposition()
-	Enchantrix.SideIcon.Update()
 
-	Enchantrix.Revision = Enchantrix.Util.GetRevision("$Revision: 4933 $")
+	Enchantrix.Revision = Enchantrix.Util.GetRevision("$Revision: 5141 $")
 	for name, obj in pairs(Enchantrix) do
 		if type(obj) == "table" then
 			Enchantrix.Revision = math.max(Enchantrix.Revision, Enchantrix.Util.GetRevision(obj.Revision))
@@ -226,8 +225,14 @@ function ENX_OnTooltipSetItem(this)
 			-- Ok, we think the item is disenchantable
 			-- search the tooltip text for the non-disenchantable string
 			for lineNum = 1, this:NumLines() do
-				local leftText = _G[this:GetName().."TextLeft"..lineNum]:GetText();
-				if (leftText == ITEM_DISENCHANT_NOT_DISENCHANTABLE) then
+				-- be careful, some addons don't format their tooltips very well
+				local lookup = tooltipName.."TextLeft"..lineNum;
+				local string = _G[lookup];
+				if (not string) then
+					return false
+				end
+				local leftText = string:GetText();
+				if (leftText and leftText == ITEM_DISENCHANT_NOT_DISENCHANTABLE) then
 					-- found the string, this item really isn't disenchantable
 					Enchantrix.Storage.SaveNonDisenchantable(link)
 					-- no need to continue
@@ -387,10 +392,11 @@ function onEvent(funcVars, event, player, spell, rank, target)
 					-- Save result
 					local reagentID = Enchantrix.Util.GetItemIdFromLink(link)
 					if reagentID then
-						-- for prospecting, we need to save the whole list
+						-- for prospecting and milling, we need to save the whole list
 						reagentList[ reagentID ] = (reagentList[ reagentID ] or 0) + quantity
-						if (isDisenchant) then
+						if (isDisenchant and i == 1) then
 							-- disenchant only yields one item, so we can pass it in one at a time
+							-- also, we want to ignore guild bonus materials, so only take the first one
 							Enchantrix.Storage.SaveDisenchant(sig, reagentID, quantity)
 						end
 					end

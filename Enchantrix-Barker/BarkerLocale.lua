@@ -1,6 +1,6 @@
 --[[
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: BarkerLocale.lua 3581 2008-10-11 12:36:19Z Norganna $
 	URL: http://enchantrix.org/
 
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix-Barker/BarkerLocale.lua $", "$Rev: 3581 $")
+EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix-Barker/BarkerLocale.lua $", "$Rev: 3581 $")
 
 local Babylonian = LibStub("Babylonian")
 assert(Babylonian, "Babylonian is not installed")

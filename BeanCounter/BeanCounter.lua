@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: BeanCounter.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BeanCounter.lua 5141 2011-05-04 02:58:37Z Nechckn $
 
 	BeanCounterCore - BeanCounter: Auction House History
 	URL: http://auctioneeraddon.com/
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.9/BeanCounter/BeanCounter.lua $","$Rev: 4933 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.11/BeanCounter/BeanCounter.lua $","$Rev: 5141 $","5.1.DEV.", 'auctioneer', 'libs')
 
 --AucAdvanced.Modules["Util"]["BeanCounter"]
 
@@ -49,8 +49,8 @@ local private = {
 	realmName = GetRealmName(),
 	AucModule, --registers as an auctioneer module if present and stores module local functions
 	faction = nil,
-	version = 3.00,
-	wealth, --This characters current net worth. This will be appended to each transaction.
+	version = 3.02,
+	wealth = 0, --This characters current net worth. This will be appended to each transaction.
 	compressed = false,
 
 	playerData, --Alias for BeanCounterDB[private.realmName][private.playerName]
@@ -483,8 +483,9 @@ end
 --[[
 Adds data to the database in proper place, adds link to itemName array, optionally compresses the itemstring into compact format
 return false if data fails to write
+Add at start of DB so its in newest to oldest order
 ]]
-function private.databaseAdd(key, itemLink, itemString, value, compress)
+function private.databaseAdd(key, itemLink, itemString, value, compress, server, player)
 	--if we are passed a link and not both then extract the string
 	if itemLink and not itemString then
 		itemString = lib.API.getItemString(itemLink)
@@ -496,33 +497,35 @@ function private.databaseAdd(key, itemLink, itemString, value, compress)
 		return false
 	end
 	--some keys do not need the uniqueID so Always compress em
-	--if key == "failedBids" or key == "failedAuctions" or key == "failedAuctionsNeutral" or key == "failedBidsNeutral"  then
-		--compress = true
-	--end
+	if key == "failedBids" or key == "failedAuctions" or key == "failedAuctionsNeutral" or key == "failedBidsNeutral"  then
+		compress = true
+	end
 	
-	local item, itemID, enchantID, jewelID1, jewelID2, jewelID3, jewelID4, suffixID, uniqueID, linkLevel = strsplit(":", itemString)
+	local item, itemID, enchantID, jewelID1, jewelID2, jewelID3, jewelID4, suffixID, uniqueID, linkLevel, reforged = strsplit(":", itemString)
 	--if this will be a compressed entry replace uniqueID with 0 or its scaling factor
 	if compress then
 		suffixID = tonumber(suffixID)
-		--print(itemString)
 		if suffixID < 0 then --scaling factor built into uniqueID, extract it and store so we can create properly scaled itemLinks
 			uniqueID = bit.band(uniqueID, 65535)
-		--	print(uniqueID)
 		else
 			uniqueID = 0
 		end
-		itemString = strjoin(":", item, itemID, enchantID, jewelID1, jewelID2, jewelID3, jewelID4, suffixID, uniqueID, linkLevel)
-		--print(itemString)
+		itemString = strjoin(":", item, itemID, enchantID, jewelID1, jewelID2, jewelID3, jewelID4, suffixID, uniqueID, linkLevel, reforged)
+	end
+	--use current player unless we pass in a server, player
+	local db = private.playerData
+	if BeanCounterDB[server] and BeanCounterDB[server][player] then
+		db = BeanCounterDB[server][player] 
 	end
 	
-	if private.playerData[key][itemID] then --if ltemID exists
-		if private.playerData[key][itemID][itemString] then
-			tinsert(private.playerData[key][itemID][itemString], value)
+	if db[key][itemID] then --if ltemID exists
+		if db[key][itemID][itemString] then
+			tinsert(db[key][itemID][itemString], 1, value) --insert into front of array
 		else
-			private.playerData[key][itemID][itemString] = {value}
+			db[key][itemID][itemString] = {value}
 		end
 	else
-		private.playerData[key][itemID]={[itemString] = {value}}
+		db[key][itemID]={[itemString] = {value}}
 	end
 	--Insert into the ItemName:ItemID dictionary array
 	if itemLink then

@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnxStorage.lua 3767 2008-11-05 17:57:29Z Norganna $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxStorage.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://enchantrix.org/
 
 	Database functions and saved variables.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxStorage.lua $", "$Rev: 3767 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxStorage.lua $", "$Rev: 5141 $")
 
 --[[
 Usages:
@@ -45,6 +45,7 @@ local getItemDisenchantFromTableForOneMaterial	-- Enchantrix.Storage.GetItemDise
 local saveDisenchant				-- Enchantrix.Storage.SaveDisenchant()
 local addonLoaded					-- Enchantrix.Storage.AddonLoaded()
 local saveNonDisenchantable			-- Enchantrix.Storage.SaveNonDisenchantable()
+local removeFromNonDisenchantable	-- Enchantrix.Storage.RemoveNonDisenchantable()
 
 local saveProspect					-- Enchantrix.Storage.SaveProspect()
 local getItemProspects				-- Enchantrix.Storage.GetItemProspects()
@@ -61,6 +62,7 @@ local serialize
 local normalizeDisenchant
 local mergeDisenchant
 local mergeDisenchantLists
+local writeToNonDisenchantable
 
 local tooltip = LibStub("nTipHelper:1")
 
@@ -183,6 +185,9 @@ function saveDisenchant(sig, reagentID, count)
 	if itype then
 		EnchantedItemTypes[itype] = mergeDisenchant(EnchantedItemTypes[itype], disenchant)
 	end
+	
+	-- if we disenchanted successfully, then make sure it isn't on the non-disenchantable list
+	removeFromNonDisenchantable(sig)
 end
 
 
@@ -490,8 +495,8 @@ end
 
 
 -- take an ilevel and round it up to the corresponding bracket
-local function roundupLevel(level)
-	for _, bracket in pairs(Enchantrix.Constants.levelUpperBounds) do
+local function roundupLevel(level, level_list)
+	for _, bracket in pairs(level_list) do
 		if bracket >= level then
 			return bracket
 		end
@@ -501,16 +506,27 @@ end
 
 -- get entry from disenchant table (or nil if nothing found)
 local function getBaseTableDisenchants(level, quality, type, item)
-	local rLevel = roundupLevel(level);
 
-	if Enchantrix.Constants.baseDisenchantTable[quality]
-		and Enchantrix.Constants.baseDisenchantTable[quality][type]
-		and Enchantrix.Constants.baseDisenchantTable[quality][type][rLevel] then
-			return Enchantrix.Constants.baseDisenchantTable[quality][type][rLevel]
+	if Enchantrix.Constants.baseDisenchantTable[quality] then
+		local baseTable = Enchantrix.Constants.baseDisenchantTable[quality][type];
+
+		-- so we don't have to keep armor and weapon tables when both are the same
+		-- if the weapon table is missing, use the armor table
+		if (not baseTable) then
+			baseTable = Enchantrix.Constants.baseDisenchantTable[quality][Enchantrix.Constants.ARMOR];
+		end
+		
+		if baseTable then
+			-- find level bracket
+			local rLevel = roundupLevel(level, baseTable.bounds);
+			if rLevel then
+				return baseTable[rLevel]
+			end
+		end
 	end
-
-	-- no matching entry found, this is bad because this is the backup!
-	Enchantrix.Util.DebugPrint("disenchantTable", ENX_INFO, "No data", "No match found in base disenchant table for", rLevel, quality, type, level, item )
+	
+	-- no matching entry found, this is bad!!
+	Enchantrix.Util.DebugPrint("disenchantTable", ENX_INFO, "No data", "No match found in base disenchant table for", quality, type, level, item )
 	return nil
 end
 
@@ -624,6 +640,7 @@ local function newindex(self, key, value)
 end
 
 
+
 function saveNonDisenchantable(itemLink)
 	if not NonDisenchantablesLocal then NonDisenchantablesLocal = {} end
 	local sig = Enchantrix.Util.GetSigFromLink(itemLink);
@@ -633,8 +650,18 @@ function saveNonDisenchantable(itemLink)
 		if (Enchantrix.Settings.GetSetting('chatShowFindings')) then
 			Enchantrix.Util.ChatPrint(_ENCH("FrmtFoundNotDisenchant"):format(itemLink))
 		end
-		NonDisenchantablesLocal[sig] = true;
-		NonDisenchantables[sig] = true;
+		NonDisenchantablesLocal[sig] = value;
+		NonDisenchantables[sig] = value;
+	end
+end
+
+function removeFromNonDisenchantable(sig)
+	if not NonDisenchantablesLocal then NonDisenchantablesLocal = {} end
+	-- put this in the local and combined list
+	-- only the local list will be saved in SavedVariables
+	if (NonDisenchantables[sig]) then
+		NonDisenchantablesLocal[sig] = NIL;
+		NonDisenchantables[sig] = NIL;
 	end
 end
 
@@ -664,6 +691,7 @@ Enchantrix.Storage = {
 	GetItemDisenchantFromTableForOneMaterial = getItemDisenchantFromTableForOneMaterial,
 	SaveDisenchant = saveDisenchant,
 	SaveNonDisenchantable = saveNonDisenchantable,
+	RemoveNonDisenchantable = removeFromNonDisenchantable,
 
 	SaveProspect = saveProspect,
 	GetItemProspects = getItemProspects,

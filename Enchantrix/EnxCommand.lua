@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: EnxCommand.lua 4051 2009-02-08 04:17:50Z ccox $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxCommand.lua 5071 2011-01-15 23:10:48Z ccox $
 	URL: http://enchantrix.org/
 
 	Slash command and GUI functions.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix/EnxCommand.lua $", "$Rev: 4051 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxCommand.lua $", "$Rev: 5071 $")
 
 -- Global functions
 local addonLoaded				-- Enchantrix.Command.AddonLoaded()
@@ -184,10 +184,6 @@ function handleCommand(command, source)
 			gui:Show()
 		end
 
-	elseif (cmd == 'clear') then
-		-- /enchantrix clear
-		clear(param, chatprint);
-
 	elseif (cmd == 'locale') then
 		-- /enchantrix locale
 		Enchantrix.Config.SetLocale(param, chatprint);
@@ -246,7 +242,6 @@ function chatPrintHelp()
 
 	lineFormat = "  |cffffffff/enchantrix %s %s|r - %s";
 	Enchantrix.Util.ChatPrint(lineFormat:format(_ENCH('CmdLocale'), _ENCH('OptLocale'), _ENCH('HelpLocale')));
-	Enchantrix.Util.ChatPrint(lineFormat:format(_ENCH('CmdClear'), _ENCH('OptClear'), _ENCH('HelpClear')));
 
 	Enchantrix.Util.ChatPrint(lineFormat:format(_ENCH('CmdDefault'), _ENCH('OptDefault'), _ENCH('HelpDefault')));
 	Enchantrix.Util.ChatPrint(lineFormat:format(_ENCH('CmdPrintin'), _ENCH('OptPrintin'), _ENCH('HelpPrintin')));
@@ -301,33 +296,6 @@ function onOff(state, chatprint)
 end
 
 -- The following functions are almost verbatim copies of the original functions but modified in order to make them compatible with direct GUI access.
-function clear(param, chatprint)
-	if (param == _ENCH('CmdClearAll')) or (param == "all") then
-		DisenchantList = {}
-		EnchantedLocal = {}
-		EnchantedBaseItems = {}
-
-		if (chatprint) then
-			Enchantrix.Util.ChatPrint(_ENCH('FrmtActClearall'));
-		end
-
-	else
-		local items = Enchantrix.Util.GetItemHyperlinks(param);
-
-		if (items) then
-			for pos, itemKey in ipairs(items) do
-				local sig = Enchantrix.Util.GetSigFromLink(itemKey)
-				local itemID = Enchantrix.Util.GetItemIdFromSig(sig)
-				EnchantedLocal[sig] = nil
-				EnchantedBaseItems[itemID] = nil
-
-				if (chatprint) then
-					Enchantrix.Util.ChatPrint(_ENCH('FrmtActClearOk'):format(itemKey))
-				end
-			end
-		end
-	end
-end
 
 -- This function was added by MentalPower to implement the /enx default command
 function default(param, chatprint)
@@ -335,7 +303,7 @@ function default(param, chatprint)
 
 	if  ( (param == nil) or (param == "") ) then
 		return
-	elseif (param == _ENCH('CmdClearAll')) or (param == "all") then
+	elseif (param == "all") then
 		param = "all"
 	else
 		paramLocalized = param
@@ -375,7 +343,7 @@ end
 
 
 Enchantrix.Command = {
-	Revision				= "$Revision: 4051 $",
+	Revision				= "$Revision: 5071 $",
 
 	AddonLoaded				= addonLoaded,
 	AuctioneerLoaded		= auctioneerLoaded,

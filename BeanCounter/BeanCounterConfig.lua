@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: BeanCounterConfig.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BeanCounterConfig.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	BeanCounterConfig - Controls Configuration data
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.9/BeanCounter/BeanCounterConfig.lua $","$Rev: 4933 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.11/BeanCounter/BeanCounterConfig.lua $","$Rev: 5141 $","5.1.DEV.", 'auctioneer', 'libs')
 
 --Most of this code is from enchantrix by ccox
 local lib = BeanCounter
@@ -402,7 +402,7 @@ function lib.MakeGuiConfig()
 	gui:AddTip(id, _BC('TTExtenalSearch')) --"When entering a search in another addon, BeanCounter will also display a search for that item.")
 	
 	gui:AddControl(id, "Checkbox",   0, 1, "sendSearchBrowseFrame", _BC('C_SendToSearch')) --Add BeanCounter's searched item to the Main Auction House Window?
-	gui:AddTip(id, _BC('TT_SendToSearch')) --"When entering a search in BeanCounter it will also add the string to the AH browse frame.
+	gui:AddTip(id, _BC('TT_sendtosearch')) --"When entering a search in BeanCounter it will also add the string to the AH browse frame.
 
 	gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
 	gui:AddControl(id, "WideSlider", 0, 1, "util.beacounter.invoicetime",    1, 20, 1, _BC('C_MailInvoiceTimeout')) --"Mail Invoice Timeout = %d seconds")
@@ -470,7 +470,7 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Subhead",    0,    _BC('C_DatabaseLength')) --"Determines how long BeanCounter will save Auction House Transactions."
 	gui:AddControl(id, "Checkbox",   0, 1, "oldDataExpireEnabled", format("Enable purging transactions older than %s months from the database. \nYou must hold the SHIFT key to check this box since this will DELETE data.", get("monthstokeepdata") or 48) )--Enable purging transactions older than %s months from the database. This will DELETE data.
 	gui:AddTip(id, _BC('TTDataExpireEnabled'))--Data older than the selected time range will be DELETED
-	gui:AddControl(id, "NumeriSlider", 0, 3, "monthstokeepdata",    6, 48 , 2, "How many months of data to keep?")
+	gui:AddControl(id, "NumeriSlider", 0, 3, "monthstokeepdata",    1, 48 , 1, "How many months of data to keep?")
 
 	id = gui:AddTab("BeanCounter Debug")
 	gui:AddControl(id, "Header",     0,    "BeanCounter Debug")

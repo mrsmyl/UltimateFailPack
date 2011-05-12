@@ -1,7 +1,7 @@
 --[[
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: BarkerSettings.lua 4938 2010-10-14 17:41:42Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BarkerSettings.lua 4935 2010-10-14 04:06:42Z ccox $
 	URL: http://enchantrix.org/
 
 	Settings GUI
@@ -62,7 +62,7 @@ Usage:
 	Barker.Settings.SetSetting('counts', true );
 
 ]]
-EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Enchantrix-Barker/BarkerSettings.lua $", "$Rev: 4938 $")
+EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix-Barker/BarkerSettings.lua $", "$Rev: 4935 $")
 
 local lib = {}
 Barker.Settings = lib

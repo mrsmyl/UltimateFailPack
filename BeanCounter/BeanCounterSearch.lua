@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: BeanCounterSearch.lua 4933 2010-10-13 17:16:14Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: BeanCounterSearch.lua 5141 2011-05-04 02:58:37Z Nechckn $
 
 	BeanCounterSearch - Search routines for BeanCounter data
 	URL: http://auctioneeraddon.com/
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.9/BeanCounter/BeanCounterSearch.lua $","$Rev: 4933 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.11/BeanCounter/BeanCounterSearch.lua $","$Rev: 5141 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local lib = BeanCounter
 local private, print, get, set, _BC = lib.getLocals()
@@ -55,8 +55,6 @@ local tbl = {}
 --This is all handled by ITEMIDS need to remove/rename this to be a utility to convert text searches to itemID searches
 function private.startSearch(itemName, settings, queryReturn, count, itemTexture) --queryReturn is passed by the externalsearch routine, when an addon wants to see what data BeanCounter knows
 	--Run the compression function once per session, use first search as trigger
-	--Check the postedDB tables and remove any entries that are older than 31 Days
-	if not private.compressed then private.refreshItemIDArray() private.sortArrayByDate() private.compactDB() private.prunePostedDB() private.sumDatabase() private.compressed = true end
 
 	if not itemName then return end
 	if not settings then settings = private.getCheckboxSettings() end
@@ -156,6 +154,10 @@ function private.searchByItemID(id, settings, queryReturn, count, itemTexture, c
 	local player = private.frame.SelectBoxSetting[2]
 	profit, low, high = lib.API.getAHProfit(player, data)
 	
+	--filter by dates
+	if settings.dateFilterLow or settings.dateFilterHigh then
+		data = private.filterbyDate(data, settings.dateFilterLow, settings.dateFilterHigh)
+	end
 	--reduce results to the latest XXXX ammount based on how many user wants displayed
 	if #data > count then
 		data = private.reduceSize(data, count)
@@ -177,6 +179,11 @@ function private.searchByItemID(id, settings, queryReturn, count, itemTexture, c
 		profit = private.tooltip:Coins(profit)
 		private.frame.slot.help:SetTextColor(.8, .5, 1)
 		private.frame.slot.help:SetText(change..(" %s from %s to %s"):format(profit or "", date("%x", low) or "", date("%x", high) or ""))
+		--set date filter box only if user is not using date filtering
+		if not get("util.beancounter.ButtonuseDateCheck") then
+			private.lowerDateBox:SetDate(low)
+			private.upperDateBox:SetDate(high)
+		end
 	else
 		private.frame.slot.help:SetTextColor(1, 0.8, 0)
 		private.frame.slot.help:SetText(_BC('HelpGuiItemBox')) --"Drop item into box to search."
@@ -312,7 +319,19 @@ function private.reduceSize(tbl, count)
 	end
 	return data
 end
+--Filter out dates older than we are interested in
+function private.filterbyDate(tbl, lowDate, highDate)
+	if not lowDate then lowDate = 1 end
+	if not highDate then highData = 2051283600 end -- wow's date system errors when you go to far into the future 2035
 
+	local data = {} -- this will be a new table, this prevents chages from being propagated back to the cached "data" refrence
+	for i,v in ipairs(tbl) do
+		if v[12] > lowDate and v[12] < highDate then
+			tinsert(data, v)
+		end
+	end
+	return data
+end
 --To simplify having two seperate search routines, the Data creation of each table has been made a local function
 	function private.COMPLETEDAUCTIONS(id, itemKey, text)
 			local uStack, uMoney, uDeposit , uFee, uBuyout , uBid, uSeller, uTime, uReason, uMeta = private.unpackString(text)
@@ -324,8 +343,8 @@ end
 			local profit =  (uMoney - uDeposit + uFee)
 			if stack > 0 then pricePer =  profit/stack end
 			
-			local itemID, suffix, uniqueID = lib.API.decodeLink(itemKey)
-			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID)
+			local itemID, suffix, uniqueID, reforged = lib.API.decodeLink(itemKey)
+			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID, reforged)
 
 			if not itemLink then itemLink = private.getItemInfo(id, "name") end--if not in our DB ask the server
 
@@ -357,8 +376,8 @@ end
 			local status =_BC('UiAucExpired')
 			if uReason == _BC('Cancelled') then status = _BC('UiAucCancelled') end --if its a cancel rather than true expired auction
 			
-			local itemID, suffix, uniqueID = lib.API.decodeLink(itemKey)
-			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID)
+			local itemID, suffix, uniqueID, reforged = lib.API.decodeLink(itemKey)
+			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID, reforged)
 			if not itemLink then itemLink = private.getItemInfo(id, "name") end--if not in our DB ask the server
 
 			return {
@@ -412,8 +431,8 @@ end
 				end
 			end
 
-			local itemID, suffix, uniqueID = lib.API.decodeLink(itemKey)
-			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID)
+			local itemID, suffix, uniqueID, reforged = lib.API.decodeLink(itemKey)
+			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID, reforged)
 			if not itemLink then itemLink = private.getItemInfo(id, "name") end--if not in our DB ask the server
 
 			return {
@@ -442,8 +461,8 @@ end
 			if uSeller == "0" then uSeller = "..." end
 			if uReason == "0" then uReason = "..." end
 			
-			local itemID, suffix, uniqueID = lib.API.decodeLink(itemKey)
-			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID)
+			local itemID, suffix, uniqueID, reforged = lib.API.decodeLink(itemKey)
+			local itemLink =  lib.API.createItemLinkFromArray(itemID..":"..suffix, uniqueID, reforged)
 			if not itemLink then itemLink = private.getItemInfo(id, "name") end--if not in our DB ask the server
 			
 			return {

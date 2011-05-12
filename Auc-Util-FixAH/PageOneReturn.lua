@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Fix for searches not returning to page one in Blizzard code.
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: Example.lua 3882 2008-12-02 16:36:58Z kandoko $
 	URL: http://auctioneeraddon.com/
 

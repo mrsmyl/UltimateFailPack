@@ -1,7 +1,7 @@
 --[[
 	Configator - A library to help you create a gui config
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: Configator.lua 278 2010-10-12 08:15:00Z brykrys $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: Configator.lua 286 2010-11-02 21:44:55Z kandoko $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -112,7 +112,7 @@ end -- LibStub
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/Configator.lua $","$Rev: 278 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/Configator.lua $","$Rev: 286 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local kit = {}
 
@@ -451,7 +451,6 @@ if not lib.help then
 		font:Show()
 
 		lib.help.refresh = true
-		return n, font, height
 	end
 	function lib.help:ClearAllLines()
 		lib.help.content.totalHeight = 0
@@ -589,7 +588,7 @@ function kit:GetButton(pos)
 	if self.buttons[pos] then return self.buttons[pos] end
 
 	-- Create a button for this tab
-	button = CreateFrame("Button", myName, self)
+	local button = CreateFrame("Button", nil, self)
 	button:SetWidth(150)
 	button:SetHeight(13)
 	button:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar")
@@ -735,8 +734,8 @@ function kit:ZeroFrame()
 
 	self.tabs[0] = {
 		nil, frame, content, -- For backwards compatability
-		catId = catId,
-		tabName = tabName,
+		catId = nil, --never been defined since configator was built
+		tabName = nil,--never been defined since configator was built
 		gapWidth = 0,
 		gapHeight = 0,
 		expandGap = 0,
@@ -1057,7 +1056,7 @@ end
 
 function kit:FocusShift(...)
 	assert(isGuiObject(self), "Must be called on a valid object")
-
+	local direction
 	if (IsShiftKeyDown()) then
 		direction = "previousFocus"
 	else
@@ -1091,7 +1090,7 @@ function kit:MakeScrollable(id)
 	scroll:UpdateScrollChildRect()
 	self.tabs[id].scroll = scroll
 	self.tabs[id][4] = scroll
-	GSC = scroll
+-- 	GSC = scroll --what was this ment to be? There is nowhere that refrences this so removing the global polution
 end
 
 -- this is a helper function for the tooltip addition
@@ -1603,14 +1602,14 @@ function kit:AddControl(id, cType, column, ...)
 		el.stype = cType
 		el:SetWidth(24)
 		el:SetHeight(16)
-		el.r, el.g, el.b, el.a = 0,0,0,1
+		el.r, el.g, el.b, el.a = 1,1,1,1 --no one notices black on black
 		el.bg = el:CreateTexture(nil, "BORDER");
 		el.bg:SetAllPoints(el)
 		el.bg:SetTexture("Interface\\TargetingFrame\\BarFill2")
 		el.bg:SetAlpha(0.7)
 		el.tex = el:CreateTexture(nil, "ARTWORK");
 		el.tex:SetAllPoints(el)
-		el.tex:SetTexture(r,g,b,a)
+		el.tex:SetTexture(el.r, el.g, el.b, el.a)
 		self:GetSetting(el)
 		el:SetScript("OnClick", function(obj, ...)
 			local f = ColorPickerFrame
@@ -1636,7 +1635,7 @@ function kit:AddControl(id, cType, column, ...)
 		el:SetJustifyH("LEFT")
 		kpos = kpos+1 kids[kpos] = el
 		if (colwidth) then colwidth = colwidth - 15 end
-		anchorPoint(content, el, last, 35+column+indent, maxLabelLength, 16, -2)
+		anchorPoint(content, el, last, 35+column+indent, colwidth, 16, -2)
 		el:SetText(text)
 		local textWidth = el:GetStringWidth()+25
 		control:SetHitRectInsets(-2,-textWidth, -2,-2)
@@ -1744,7 +1743,7 @@ function kit:GetSetting(element)
 		element:SetChecked(value or false)
 	elseif (element.stype == "EditBox") then
 		if (element.Numeric) then
-			oldvalue = value or 0;
+			local oldvalue = value or 0;
 			value = oldvalue;
 			if (element.minValue) then
 				value = math.max( value, element.minValue );
@@ -1776,7 +1775,7 @@ function kit:GetSetting(element)
 		MoneyInputFrame_ResetMoney(element)
 		MoneyInputFrame_SetCopper(element, tonumber(value) or 0);
 	elseif (element.stype == "MoneyFramePinned") then
-		oldvalue = tonumber(value) or 0;
+		local oldvalue = tonumber(value) or 0;
 		value = oldvalue;
 		if (element.minValue) then
 			value = math.max( value, element.minValue );
@@ -1815,7 +1814,7 @@ function kit:ChangeSetting(element, ...)
 		if (value) then value = true else value = false end
 	elseif (element.stype == "EditBox") then
 		if (element.Numeric) then
-			oldvalue = element:GetNumber() or 0;
+			local oldvalue = element:GetNumber() or 0;
 			value = oldvalue;
 			if (element.minValue) then
 				value = math.max( value, element.minValue );
@@ -1844,7 +1843,7 @@ function kit:ChangeSetting(element, ...)
 	elseif (element.stype == "MoneyFrame") then
 		value = MoneyInputFrame_GetCopper( element );
 	elseif (element.stype == "MoneyFramePinned") then
-		oldvalue = MoneyInputFrame_GetCopper( element );
+		local oldvalue = MoneyInputFrame_GetCopper( element );
 		value = oldvalue;
 		if (element.minValue) then
 			value = math.max( value, element.minValue );
@@ -1912,7 +1911,7 @@ function kit:SetEscSensitive(setting)
 		end
 	end
 	if (setting) then
-		table.insert(UISpecialFrames[i], name)
+		table.insert(UISpecialFrames, name)
 	end
 end
 

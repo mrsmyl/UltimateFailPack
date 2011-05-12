@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Standard Deviation Statistics module
 	Version: 5.7.4568 (KillerKoala)
-	Revision: $Id: StatStdDev.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Revision: $Id: StatStdDev.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -466,4 +466,4 @@ function private.InitData()
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Stat-StdDev/StatStdDev.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-StdDev/StatStdDev.lua $", "$Rev: 4828 $")

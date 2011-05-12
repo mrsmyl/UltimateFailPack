@@ -1,11 +1,14 @@
 ## Title: Auc:Util:GlypherPost
-## Interface: 30300
+## Interface: 40100
 ## Dependancies: Auc-Advanced
 ##
 ## Version: 5.6.4409 (KangaII)
-## Revision: $Id: Auc-Util-GlypherPost.toc 4383 2009-08-06 16:05:57Z Nechckn $
-## URL: http://auctioneeraddon.com/
+## Revision: $Id: Auc-Util-GlypherPost.toc 5143 2011-05-04 04:36:32Z Nechckn $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer
+## X-Category: Auction House
+## X-Max-Interface: 40100
+## X-URL: http://auctioneeraddon.com/
+## X-Feedback: http://forums.norganna.org
 ##
 Embed.xml

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher General
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherGeneral.lua 4446 2009-09-13 09:33:34Z brykrys $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherGeneral.lua 5054 2010-12-28 05:17:38Z kandoko $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -97,9 +97,9 @@ default("general.subtype", "All")
 default("general.quality", -1)
 default("general.timeleft", 0)
 default("general.ilevel.min", 0)
-default("general.ilevel.max", 300)
+default("general.ilevel.max", 400)
 default("general.ulevel.min", 0)
-default("general.ulevel.max", 80)
+default("general.ulevel.max", 85)
 default("general.seller", "")
 default("general.seller.exact", false)
 default("general.seller.regexp", false)
@@ -125,7 +125,9 @@ function lib:MakeGuiConfig(gui)
 
 	local last = gui:GetLast(id)
 	gui:SetControlWidth(0.35)
-	gui:AddControl(id, "Text",       0,   1, "general.name", "Item name")
+	local nameEdit = gui:AddControl(id, "Text",       0,   1, "general.name", "Item name")
+	nameEdit:SetScript("OnTextChanged", function(...) gui:ChangeSetting(...) end) --have the edit box update as user types, default box only updates on escape or enter
+	
 	local cont = gui:GetLast(id)
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",   0.11, 0, "general.name.exact", "Exact")
@@ -151,16 +153,16 @@ function lib:MakeGuiConfig(gui)
 
 	last = gui:GetLast(id)
 	gui:SetControlWidth(0.37)
-	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.min", 0, 300, 1, "Min item level")
+	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.min", 0, 400, 1, "Min item level")
 	gui:SetControlWidth(0.37)
-	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.max", 0, 300, 1, "Max item level")
+	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.max", 0, 400, 1, "Max item level")
 	cont = gui:GetLast(id)
 
 	gui:SetLast(id, last)
 	gui:SetControlWidth(0.17)
-	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.min", 0, 80, 1, "Min user level")
+	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.min", 0, 85, 1, "Min user level")
 	gui:SetControlWidth(0.17)
-	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.max", 0, 80, 1, "Max user level")
+	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.max", 0, 85, 1, "Max user level")
 
 	gui:SetLast(id, cont)
 
@@ -201,6 +203,39 @@ function lib.Search(item)
 		return false, private.debug
 	end
 end
+
+--Rescan is an optional method a searcher can implement that allows it to queue a rescan of teh ah
+--Just pass any item you want rescaned
+function lib.Rescan()
+	local name = get("general.name")
+	local min = get("general.ulevel.min")
+	local max = get("general.ulevel.max")
+	local quality = get("general.quality")
+
+	--convert these to the AH API index #
+	local searchtype = get("general.type")
+	local searchsubtype = get("general.subtype")
+
+	local classIndex, subclassIndex
+	for catId, catName in pairs(AucAdvanced.Const.CLASSES) do
+		if catName == searchtype then
+			classIndex = catId
+			for subId, subName in pairs(AucAdvanced.Const.SUBCLASSES[catId]) do
+				if subName == searchsubtype then
+					subclassIndex = subId
+					break
+				end
+			end
+			break
+		end
+	end
+
+	if name then
+		--print(name, min, max, nil, classIndex, subclassIndex, nil, quality)
+		AucSearchUI.RescanAuctionHouse(name, min, max, nil, classIndex, subclassIndex, nil, quality )
+	end
+end
+
 
 function private.LevelSearch(levelType, itemLevel)
 	local min = get("general."..levelType..".min")
@@ -326,4 +361,4 @@ function private.PriceSearch(buybid, price)
 	end
 	return false
 end
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 4446 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5054 $")

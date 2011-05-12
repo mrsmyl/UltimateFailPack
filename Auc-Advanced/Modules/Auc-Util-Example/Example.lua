@@ -18,8 +18,8 @@ end
 
 --[[
 	Auctioneer - Price Level Utility module
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: Example.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: Example.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that does something nifty.
@@ -173,4 +173,4 @@ end
 function private.Baz()
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Advanced/Modules/Auc-Util-Example/Example.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/Modules/Auc-Util-Example/Example.lua $", "$Rev: 4828 $")

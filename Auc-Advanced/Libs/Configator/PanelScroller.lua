@@ -1,7 +1,7 @@
 --[[
 	PanelScroller
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: PanelScroller.lua 275 2010-10-03 14:00:39Z kandoko $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: PanelScroller.lua 286 2010-11-02 21:44:55Z kandoko $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -84,12 +84,13 @@ end -- LibStub
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/PanelScroller.lua $","$Rev: 275 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/PanelScroller.lua $","$Rev: 286 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local kit = {
 	hPos = 0, hSize = 0, hWin = 0, hType = "AUTO",
 	vPos = 0, vSize = 0, vWin = 0, vType = "YES",
 }
+local abs = abs
 
 -- Set whether to allow horizontal scrolling ("YES", "NO" or "AUTO")
 function kit:SetScrollBarVisible(axis, visibility)

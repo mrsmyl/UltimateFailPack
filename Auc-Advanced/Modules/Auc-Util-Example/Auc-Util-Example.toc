@@ -2,7 +2,7 @@
 ## Interface: 30300
 ## Dependancies: Auc-Advanced
 ##
-## Version: 5.9.4960 (WhackyWallaby)
+## Version: 5.11.5146 (DangerousDingo)
 ## Revision: $Id: Auc-Util-Example.toc 4566 2009-12-08 14:43:28Z Nechckn $
 ## URL: http://auctioneeraddon.com/
 ## Author: Norganna's AddOns

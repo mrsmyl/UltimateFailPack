@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: CoreMain.lua 4953 2010-10-17 19:37:42Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: CoreMain.lua 5031 2010-12-05 17:18:14Z dinesh $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -71,15 +71,19 @@ function private.OnTooltip(tip, item, quantity, name, hyperlink, quality, ilvl, 
 			return
 		elseif AucAdvanced.Settings.GetSetting("ModTTShow") == "alt" and not IsAltKeyDown() then
 			return
-		elseif not AucAdvanced.Settings.GetSetting("ModTTShow") == "alt" and not AucAdvanced.Settings.GetSetting("ModTTShow") == "noalt" and not AucAdvanced.Settings.GetSetting("ModTTShow") == "never" and not AucAdvanced.Settings.GetSetting("ModTTShow") == "always" then
-			AucAdvanced.Settings.SetSetting("ModTTShow", "alt")
-			if not IsAltKeyDown() then
-				return
-			end
+		elseif AucAdvanced.Settings.GetSetting("ModTTShow") == "noshift" and IsShiftKeyDown() then
+			return
+		elseif AucAdvanced.Settings.GetSetting("ModTTShow") == "shift" and not IsShiftKeyDown() then
+			return
+		elseif AucAdvanced.Settings.GetSetting("ModTTShow") == "noctrl" and IsControlKeyDown() then
+			return
+		elseif AucAdvanced.Settings.GetSetting("ModTTShow") == "ctrl" and not IsControlKeyDown() then
+			return
 		end
 	else 
 		AucAdvanced.Settings.SetSetting("ModTTShow", "always")
 	end
+
 	tooltip:SetFrame(tip)
 
 	local extra = tooltip:GetExtra()
@@ -382,4 +386,4 @@ function AucAdvanced.Debug.Assert(test, message)
 	return DebugLib.Assert(addonName, test, message)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Advanced/CoreMain.lua $", "$Rev: 4953 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreMain.lua $", "$Rev: 5031 $")

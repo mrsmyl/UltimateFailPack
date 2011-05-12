@@ -1,6 +1,6 @@
 --[[
 	Stubby AddOn for World of Watcraft (tm)
-	Version: 5.9.4960 (WhackyWallaby)
+	Version: 5.11.5146 (DangerousDingo)
 	Revision: $Id: Stubby.lua 275 2010-10-03 14:00:39Z kandoko $
 	URL: http://auctioneeraddon.com/dl/Stubby/
 

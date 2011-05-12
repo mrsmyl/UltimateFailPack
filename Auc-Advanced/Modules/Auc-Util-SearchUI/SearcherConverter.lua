@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Converter
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherConverter.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherConverter.lua 5035 2010-12-11 18:03:15Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -42,6 +42,8 @@ local findConvertable = {}
 do
 	-- Set our constants
 	--Essences
+	local GCELESTIAL = 52719
+	local LCELESTIAL = 52718
 	local GCOSMIC = 34055
 	local GPLANAR = 22446
 	local GETERNAL = 16203
@@ -112,6 +114,7 @@ do
 	-- TWO WAY Tables
 
 	local lesser_greater = {
+		[LCELESTIAL] = GCELESTIAL,
 		[LCOSMIC] = GCOSMIC,
 		[LPLANAR] = GPLANAR,
 		[LETERNAL] = GETERNAL,
@@ -211,7 +214,6 @@ function private.doValidation()
 end
 
 -- This function is automatically called from AucSearchUI.NotifyCallbacks
-private.validationRequired = true
 function lib.Processor(event, subevent)
 	if event == "selecttab" then
 		if subevent == lib.tabname and private.doValidation then
@@ -313,7 +315,7 @@ function lib.Search (item)
 		market = market * resources.CutAdjust
 	end
 	if get("converter.adjust.deposit") then
-		-- note: GetDepositCost calls GetSellValue API, which handles numerical itemIDs (prefers them actually)
+		-- note: GetDepositCost can handle numerical itemIDs instead of links
 		local amount = GetDepositCost(newID, get("converter.adjust.deplength"), resources.faction, count)
 		if amount then
 			market = market - amount * get("converter.adjust.listings")
@@ -329,4 +331,4 @@ function lib.Search (item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherConverter.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherConverter.lua $", "$Rev: 5035 $")

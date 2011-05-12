@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Milling
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherMilling.lua 4840 2010-08-04 21:44:00Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherMilling.lua 5036 2010-12-11 20:38:14Z ccox $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -40,7 +40,7 @@ default("milling.profit.min", 1)
 default("milling.profit.pct", 50)
 default("milling.level.custom", false)
 default("milling.level.min", 0)
-default("milling.level.max", 450)
+default("milling.level.max", 525)
 default("milling.adjust.brokerage", true)
 default("milling.adjust.deposit", true)
 default("milling.adjust.deplength", 48)
@@ -96,8 +96,8 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "MoneyFramePinned",  0, 1, "milling.profit.min", 1, 99999999, "Minimum Profit")
 	gui:AddControl(id, "Slider",            0, 1, "milling.profit.pct", 1, 100, .5, "Min Discount: %0.01f%%")
 	gui:AddControl(id, "Checkbox",          0, 1, "milling.level.custom", "Use custom levels")
-	gui:AddControl(id, "Slider",            0, 2, "milling.level.min", 0, 450, 25, "Minimum skill: %s")
-	gui:AddControl(id, "Slider",            0, 2, "milling.level.max", 25, 450, 25, "Maximum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "milling.level.min", 0, 525, 25, "Minimum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "milling.level.max", 25, 525, 25, "Maximum skill: %s")
 	gui:AddControl(id, "Subhead",           0, "Note:")
 	gui:AddControl(id, "Note",              0, 1, 290, 30, "The \"Pct\" Column is \% of Milling Value")
 
@@ -202,4 +202,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherMilling.lua $", "$Rev: 4840 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherMilling.lua $", "$Rev: 5036 $")

@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer - Search UI - Searcher Arbitrage
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: SearcherArbitrage.lua 4880 2010-09-15 20:02:11Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: SearcherArbitrage.lua 4851 2010-08-21 05:36:29Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -365,4 +365,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Util-SearchUI/SearcherArbitrage.lua $", "$Rev: 4880 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherArbitrage.lua $", "$Rev: 4851 $")

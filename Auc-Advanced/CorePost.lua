@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.9.4960 (WhackyWallaby)
-	Revision: $Id: CorePost.lua 4960 2010-10-19 21:00:30Z Nechckn $
+	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: CorePost.lua 5141 2011-05-04 02:58:37Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -76,7 +76,7 @@ local LAG_ADJUST = (4 / 1000)
 local SIGLOCK_TIMEOUT = 8 -- seconds timeout waiting for bags to update after auction created
 local POST_TIMEOUT = 8 -- seconds general timeout after starting an auction, before deciding the auction has failed
 local POST_ERROR_PAUSE = 5 -- seconds pause after an error before trying next request
-local POST_THROTTLE = 0.1 -- time before starting to post the next item in the queue
+local POST_THROTTLE = 0 -- time before starting to post the next item in the queue
 local POST_TIMER_INTERVAL = 0.5 -- default interval of updates from the timer
 local MINIMUM_DEPOSIT = 100 -- 1 silver minimum deposit
 local PROMPT_HEIGHT = 120
@@ -89,9 +89,11 @@ local BindTypes = {
 	[ITEM_CONJURED] = "Conjured",
 	[ITEM_ACCOUNTBOUND] = "Accountbound",
 	[ITEM_BIND_TO_ACCOUNT] = "Accountbound",
+	[ITEM_BIND_TO_BNETACCOUNT] = "Accountbound",
+	[ITEM_BNETACCOUNTBOUND] = "Accountbound",
 }
 
-local UIAuctionErrors = {
+local UIKnownErrors = {
 	[ERR_NOT_ENOUGH_MONEY] = "ERR_NOT_ENOUGH_MONEY",
 	[ERR_AUCTION_BAG] = "ERR_AUCTION_BAG",
 	[ERR_AUCTION_BOUND_ITEM] = "ERR_AUCTION_BOUND_ITEM",
@@ -105,11 +107,24 @@ local UIAuctionErrors = {
 	[ERR_AUCTION_REPAIR_ITEM] = "ERR_AUCTION_REPAIR_ITEM",
 	[ERR_AUCTION_USED_CHARGES] = "ERR_AUCTION_USED_CHARGES",
 	[ERR_AUCTION_WRAPPED_ITEM] = "ERR_AUCTION_WRAPPED_ITEM",
+	[ERR_AUCTION_REPAIR_ITEM] = "ERR_AUCTION_REPAIR_ITEM",
 }
+function private.IsBlockingError(errorcode)
+	if UIKnownErrors[errorcode] then
+		return true
+	end
+end
+function private.IsReportableError(errorcode)
+	if errorcode and not UIKnownErrors[errorcode] then
+		return true
+	end
+end
 
+-- All errorcodes returned by any CorePost function should have an entry in this table
 -- todo: in OnLoad auto-replace values with translations based on table key: "ADV_Help_PostError"..key - e.g. "ADV_Help_PostErrorBound"
 -- Some of these errors are only of use when debugging, so should probably not be translated. i.e. the "InvalidX" codes
 local ErrorText = {
+	UnknownError = "An unknown error has occured",
 	Bound = "Cannot auction a Soulbound item",
 	Accountbound = "Cannot auction an Account Bound item",
 	Conjured = "Cannot auction a Conjured item",
@@ -131,8 +146,19 @@ local ErrorText = {
 	FailSlot = "Unable to place item in the Auction slot",
 	FailStart = "Failed to start auction",
 	FailMultisell = "Multisell failed to post all requested stacks",
+	QueueBusy = "The posting queue is currently busy",
 }
-lib.ErrorText = ErrorText
+lib.ErrorText = ErrorText -- Deprecated: we don't want to give other modules direct access to the table
+-- lib.GetErrorText shall be expected to always return a string
+function lib.GetErrorText(code)
+	local text = ErrorText[code]
+	if text then
+		return text
+	end
+	code = tostring(code)
+	debugPrint("Error code without matching ErrorText: "..code, "CorePost", "Unknown Errorcode", "Warning")
+	return "Unknown Errorcode ("..code..")"
+end
 
 -- local constants to index the posting request tables (deprecated)
 local REQ_SIG = 1
@@ -174,29 +200,15 @@ do
 ]]
 	local postRequests = {}
 	local lastReported = 0
-	local reportLock = 0
 	local lastCountSig, lastCountRequests, lastCountItems, lastCountAuctions
 	function private.QueueReport()
 		lastCountSig = nil
-		if reportLock ~= 0 then return end
 		local queuelength = #postRequests
 		if lastReported ~= queuelength then
 			lastReported = queuelength
 			AucAdvanced.SendProcessorMessage("postqueue", queuelength)
 		end
 	end
-	--[[ not used in current version
-	function private.SetQueueReports(activate)
-		if activate then
-			if reportLock > 0 then
-				reportLock = reportLock - 1
-			end
-			private.QueueReport()
-		else
-			reportLock = reportLock + 1
-		end
-	end
-	--]]
 	function private.QueueInsert(request)
 		tinsert(postRequests, request)
 		private.QueueReport()
@@ -271,14 +283,11 @@ do
 		if #postRequests > 0 then
 			local request = postRequests[1] -- save the first request
 			wipe(postRequests)
+			private.HidePrompt()
 			if request.posting then
-				if request.prompt then
-					private.HidePrompt()
-				elseif request.time then
-					-- request is currently being posted, put it back in the queue until the posting resolves
-					tinsert(postRequests, request)
-					CancelSell() -- abort current Multisell operation
-				end
+				-- request is currently being posted, put it back in the queue until the posting resolves
+				tinsert(postRequests, request)
+				CancelSell() -- abort current Multisell operation
 			end
 			private.QueueReport()
 		end
@@ -298,6 +307,10 @@ local AuctionDurationCode = {
 }
 function lib.ValidateAuctionDuration(duration)
 	return AuctionDurationCode[duration]
+end
+local LookupDurationHours = {12, 24, 48} -- convert duration code to hours, for display
+function lib.AuctionDurationHours(duration)
+	return LookupDurationHours[AuctionDurationCode[duration]]
 end
 
 function private.GetRequest(sig, size, bid, buyout, duration, multiple)
@@ -354,7 +367,7 @@ end
 
 	If successful it returns a request id; the id will be included in the "postresult" Processor message for each request
 	If a problem is detected it returns nil, reason
-		reason is an internal short text code; it can be converted to a displayable text message using lib.ErrorCodes[reason]
+		reason is an internal short text code; it can be converted to a displayable text message using lib.GetErrorText(reason)
 ]]
 function lib.PostAuction(sig, size, bid, buyout, duration, multiple)
 	local request, reason = private.GetRequest(sig, size, bid, buyout, duration, multiple)
@@ -371,43 +384,50 @@ end
 	May only be called from an OnClick handler
 --]]
 function lib.PostAuctionClick(sig, size, bid, buyout, duration, multiple)
-	local request, reason = private.GetRequest(sig, size, bid, buyout, duration, multiple)
+	local request, failure = private.GetRequest(sig, size, bid, buyout, duration, multiple)
 	if not request then
-		return nil, reason
+		return nil, failure
 	end
 	local noqueue = false -- placeholder for a Setting to block queueing when CorePost is busy
 
-	local isEmpty = lib.GetQueueLen() == 0
-	if not isEmpty and noqueue then
-		return nil, "Busy"
+	local postNow = lib.GetQueueLen() == 0
+	if postNow then
+		private.SigLockUpdate()
+		if private.IsSigLocked(request.sig) then
+			postNow = false
+		end
+	end
+	if not postNow and noqueue then
+		return nil, "QueueBusy"
 	end
 	private.QueueInsert(request)
 	local id = request.id
 
-	if isEmpty then
+	if postNow then
+		local success, reason, special
 		-- Attempt to post the auction immediately
 		private.Wait(0)
-		private.SigLockUpdate()
-		if not private.IsSigLocked(request.sig) then
-			if private.ClearAuctionSlot() then
-				local bag, slot = private.SelectStack(request)
-				if bag then
-					if private.LoadAuctionSlot(request, bag, slot) then
-						private.StartAuction(request)
-						return id
-					end
-				end
+		success, reason, special = private.LoadAuctionSlot(request)
+		if success then
+			success, reason, special = private.StartAuction(request)
+			if success then
+				return id
 			end
 		end
+		if noqueue and not reason then
+			private.QueueRemove() -- request will be at index 1
+			reason = "QueueBusy"
+		end
+		if reason then
+			if special then
+				if private.IsReportableError(special) then
+					geterrorhandler()(("Auctioneer encountered an error while posting: %s (%s)"):format(lib.GetErrorText(reason), tostring(special)))
+				end
+			end
+			return nil, reason or "UnknownError"
+		end
 	end
-	if noqueue then
-		-- posting failed, noqueue is flagged, so remove the request we just queued
-		-- todo: consider using/modifying SetQueueReports for this eventuality
-		lib.QueueRemove(lib.GetQueueLen())
-		return nil, "Busy"
-	else
-		return id
-	end
+	return id
 end
 
 --[[
@@ -435,7 +455,7 @@ end
     Returns:
 		true : if the item is (probably) auctionable.
 		false, reason : if the item is not auctionable
-			reason is an internal (non-localized) string code, use lib.ErrorText[errorcode] for a printable text string
+			reason is an internal (non-localized) string code, use lib.GetErrorText(errorcode) for a printable text string
 
     This function does not check everything, but if it says no,
     then the item is definately not auctionable.
@@ -634,8 +654,10 @@ do
 	local lockedsigs
 	local lastlocktime
 	function private.IsSigLocked(sig)
-		if lockedsigs and lockedsigs[sig] then
-			return true
+		if lockedsigs then
+			if not sig or lockedsigs[sig] then
+				return true
+			end
 		end
 	end
 	function private.GetSigLockCount(sig)
@@ -669,6 +691,7 @@ do
 	function private.SigLockUpdate()
 		if not lockedsigs then return end
 		-- use longer timeout delays if connectivity is bad, but always at least 1 second
+		-- todo: is the lag adjustment really neccessary or useful?
 		local _,_, lag = GetNetStats()
 		lag = max(lag * LAG_ADJUST, 1)
 		if GetTime() > lastlocktime + lag * SIGLOCK_TIMEOUT then
@@ -720,28 +743,42 @@ function private.RequestDisplayString(request, link)
 	return msg
 end
 
+--[[ PRIVATE: HandlePostingError1
+	Consolidates messaging and processing for a certain style of posting error (number 1, in case we add more styles later)
+--]]
+function private.HandlePostingError1(request, reason, special)
+	private.Wait(POST_ERROR_PAUSE)
+	local msg = ("%s not posted\n%s"):format(private.RequestDisplayString(request), lib.GetErrorText(reason))
+	if type(special) == "string" then
+		msg = msg.."\n("..special..")"
+	end
+	debugPrint(msg, "CorePost", "Post request failed", "Warning")
+	AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, reason)
+	if private.IsReportableError(special) then
+		geterrorhandler()("Auctioneer CorePost Error: "..msg)
+	else
+		message(msg)
+	end
+end
+
 function private.TrackPostingSuccess()
 	local request = private.GetQueueIndex(1)
 	if not (request and request.posting) then return end
 	local posted = request.posted + 1
 	request.posted = posted
 	if posted >= request.stacks then -- all stacks posted
-		ClearCursor()
-		ClickAuctionSellItemButton() -- Clear Auction slot
-		ClearCursor()
+		private.ClearAuctionSlot()
 		private.LockSig(request)
 		private.QueueRemove()
 		private.Wait(POST_THROTTLE)
 	else
-		request.time = GetTime() -- renew timeout for the next stack
+		request.posting = GetTime() -- renew timeout for the next stack
 	end
 	AucAdvanced.SendProcessorMessage("postresult", true, request.id, request)
 end
 
 function private.TrackPostingMultisellFail()
-	ClearCursor()
-	ClickAuctionSellItemButton() -- Clear Auction slot
-	ClearCursor()
+	private.ClearAuctionSlot()
 	local request = private.GetQueueIndex(1)
 	if not (request and request.posting) then return end
 	local link = request.link
@@ -769,32 +806,6 @@ function private.TrackCancelSell()
 	if not request or not request.posting then return end
 	-- flag to suppress error messages when the cancelled Multisell 'fails'
 	request.cancelled = true
-end
-
---[[ PRIVATE: ClearAuctionSlot()
-	Clears the cursor and the AuctionSellItem slot, and confirms that the clearing was successful
-	Called before starting posting process
-	In most other places we use a shorter inline code sequence, without the confirmations
---]]
-function private.ClearAuctionSlot()
-	-- cursor needs to be clear before we can attempt posting
-	ClearCursor()
-	if GetCursorInfo() or SpellIsTargeting() then
-		return
-	end
-
-	-- auction slot needs to be clear
-	if GetAuctionSellItemInfo() then
-		ClickAuctionSellItemButton()
-		ClearCursor()
-		if GetAuctionSellItemInfo() then
-			-- it's locked, wait for it to clear
-			private.waitBagUpdate = true -- watch for bag changes too
-			return
-		end
-	end
-
-	return true
 end
 
 --[[ PRIVATE: SelectStack(request)
@@ -858,24 +869,58 @@ function private.SelectStack(request)
 	return nil, "NotFound"
 end
 
---[[ PRIVATE: LoadAuctionSlot(request, bag, slot)
-	Loads the item in bag/slot into AuctionSellItem slot
-	AuctionSellItem slot and cursor must be clear
+function private.ClearAuctionSlot()
+	ClearCursor()
+	if GetAuctionSellItemInfo() then
+		ClickAuctionSellItemButton()
+		ClearCursor()
+		if GetAuctionSellItemInfo() then
+			-- it's locked, wait for it to clear
+			return
+		end
+	end
+	return true
+end
+
+--[[ PRIVATE: LoadAuctionSlot(request)
+	Loads the item specified in 'request' into AuctionSellItem slot
 	Performs numerous checks to verify the item is loaded correctly and is postable
+	If successful, returns true
+	If request is unpostable, returns nil, reason, additional
+		reason: errorcode - see entries in ErrorText
+		additional: may contain additional error info, used to determine if a full error should be thrown
+	(also if unpostable, dequeues the request and attempts to clean up the AuctionSellItem slot)
+	Otherwise returns nil, nil, action
+		action: code used by Update/Event mechanism
+	(Something prevents posting right now, but should clear given enough waiting time)
 --]]
-function private.LoadAuctionSlot(request, bag, slot)
+function private.LoadAuctionSlot(request)
+	if not private.ClearAuctionSlot() then
+		return nil, nil, 1 -- wait & watch for bag changes
+	end
+
+	local bag, slot = private.SelectStack(request)
+	if not bag then
+		if slot then -- not postable
+			private.QueueRemove()
+			return nil, slot, nil
+		end
+		return nil, nil, 1 -- wait & watch for bag changes
+	end
+
 	local link = GetContainerItemLink(bag, slot)
 	local checkname = GetItemInfo(link)
-	assert(link and checkname)
+	if not (link and checkname) then
+		private.QueueRemove()
+		return nil, "UnknownItem", nil
+	end
 
 	PickupContainerItem(bag, slot)
 	if not CursorHasItem() then
 		-- failed to pick up from bags, probably due to some unfinished operation; wait for another cycle
-		private.waitBagUpdate = true -- watch for bag changes too
-		return
+		return nil, nil, 1 -- wait & watch for bag changes
 	end
 
-	private.waitBagUpdate = nil
 	private.lastUIError = nil
 	if not AuctionFrameAuctions.duration then
 		-- Fix in case Blizzard_AuctionUI hasn't set this value yet (causes an error otherwise)
@@ -888,52 +933,36 @@ function private.LoadAuctionSlot(request, bag, slot)
 	local name, texture, count, quality, canUse, price, pricePerUnit, stackCount, totalCount = GetAuctionSellItemInfo()
 	if name ~= checkname then
 		-- failed to drop item in auction slot, probably because item is not auctionable (but was missed by our checks)
-		local msg = ("Unable to create auction for %s: %s"):format(private.RequestDisplayString(request, link), ErrorText["FailSlot"])
-		if private.lastUIError then
-			msg = msg.."\nAdditional info: "..private.lastUIError
-		end
-		debugPrint(msg, "CorePost", "Posting Failure", "Warning")
+		private.ClearAuctionSlot()
 		private.QueueRemove()
-		private.Wait(POST_ERROR_PAUSE)
-		AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, "FailSlot")
-		if private.lastUIError then
-			geterrorhandler()(msg)
-		else
-			message(msg)
-		end
-		return
+		return nil, "FailSlot", private.lastUIError
+	end
+	if private.lastUIError then
+		-- error can only have come from ClickAuctionSellItemButton or GetAuctionSellItemInfo
+		-- but item in slot appears to be correct
+		-- report for debugging  - ### consider if it should be removed or reduced in severity
+		private.ClearAuctionSlot() -- Put it back in the bags
+		private.QueueRemove()
+		return nil, "UnknownError", private.lastUIError
 	end
 	if totalCount < request.count * request.stacks then
 		-- not enough items to complete this request; abort whole request
-		ClickAuctionSellItemButton()
-		ClearCursor() -- Put it back in the bags
-		local msg = ("Unable to create auction for %s: %s"):format(private.RequestDisplayString(request, link), ErrorText["NotEnough"])
-		debugPrint(msg, "CorePost", "Posting Failure", "Warning")
+		private.ClearAuctionSlot() -- Put it back in the bags
 		private.QueueRemove()
-		private.Wait(POST_ERROR_PAUSE)
-		AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, "NotEnough")
-		message(msg)
-		return
+		return nil, "NotEnough", nil
 	end
 	if GetMoney() < CalculateAuctionDeposit(request.duration, request.count) * request.stacks then
 		-- not enough money to pay the deposit
-		ClickAuctionSellItemButton()
-		ClearCursor() -- Put it back in the bags
-		local msg = ("Unable to create auction for %s: %s"):format(private.RequestDisplayString(request, link), ErrorText["PayDeposit"])
-		debugPrint(msg, "CorePost", "Posting Failure", "Warning")
+		private.ClearAuctionSlot() -- Put it back in the bags
 		private.QueueRemove()
-		private.Wait(POST_ERROR_PAUSE)
-		AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, "PayDeposit")
-		message(msg)
-		return
+		return nil, "PayDeposit", nil
 	end
-	-- todo: should we check private.lastUIError at this point for unknown errors?
 
 	request.link = link -- store specific link (uniqueID)
 	request.totalcount = totalCount -- this will be used by the SigLock mechanism
 	request.selectedcount = count -- used by the Prompt sanity checks
 	request.name = name -- used by the Prompt sanity checks
-	request.texture = texture
+	request.texture = texture -- displayed in the Prompt
 
 	return true
 end
@@ -946,13 +975,13 @@ function private.VerifyAuctionSlot(request)
 	local name, texture, count, quality, canUse, price, pricePerUnit, stackCount, totalCount = GetAuctionSellItemInfo()
 	if name ~= request.name or count ~= request.selectedcount then
 		-- Either slot has been cleared, or has been replaced with something else
-		return
+		return nil, "FailSlot"
 	end
 	if totalCount < request.count * request.stacks then
-		return
+		return nil, "NotEnough"
 	end
 	if GetMoney() < CalculateAuctionDeposit(request.duration, request.count) * request.stacks then
-		return
+		return nil, "PayDeposit"
 	end
 
 	return true
@@ -966,13 +995,15 @@ function private.PerformPosting()
 	local request = private.promptRequest
 	private.HidePrompt()
 	if not request then return end
-	request.posting = nil -- temporarily unflag until we complete the checks
 
 	-- Sanity checks
 	if request ~= private.GetQueueIndex(1) then return end
 	if not private.VerifyAuctionSlot(request) then return end
 
-	private.StartAuction(request)
+	local success, reason, special = private.StartAuction(request)
+	if not success then
+		private.HandlePostingError1(request, reason, special)
+	end
 end
 
 --[[ PRIVATE: CancelPosting()
@@ -982,9 +1013,7 @@ function private.CancelPosting()
 	local request = private.promptRequest
 	private.HidePrompt()
 	if request and request == private.GetQueueIndex(1) then
-		ClearCursor()
-		ClickAuctionSellItemButton() -- Clear Auction slot
-		ClearCursor()
+		private.ClearAuctionSlot()
 		private.QueueRemove()
 	end
 end
@@ -994,15 +1023,14 @@ end
 	Item must already be loaded in AuctionSellItem slot
 --]]
 function private.ShowPrompt(request)
-	if private.promptRequest then
+	if private.promptRequest then -- ###
 		error("CorePost:ShowPrompt - private.promptRequest is not nil")
 	end
-	if private.Prompt:IsShown() then
+	if private.Prompt:IsShown() then -- ###
 		error("CorePost:ShowPrompt - Prompt is already shown")
 	end
 	private.promptRequest = request
 	request.prompt = true
-	request.posting = true
 	private.Prompt:Show()
 	private.Prompt.Text1:SetText("Ready to post "..private.RequestDisplayString(request))
 	private.Prompt.Text2:SetText("Min Bid "..AucAdvanced.Coins(request.bid, true)..", Buyout "..AucAdvanced.Coins(request.buy, true))
@@ -1030,75 +1058,64 @@ end
 --[[ PRIVATE: StartAuction(request)
 	Starts the auction
 	Item must already be loaded in AuctionSellItem slot
-	In WoW4.0 or later must only be called from within an OnClick handler (hardware event required)
+	Must only be called from within an OnClick handler (hardware event required)
 --]]
 function private.StartAuction(request)
 	debugPrint("Starting auction "..private.RequestDisplayString(request), "CorePost", "Starting Auction", "Info")
 	private.lastUIError = nil
 	StartAuction(request.bid, request.buy, request.duration, request.count, request.stacks)
-	if UIAuctionErrors[private.lastUIError] then
+	if private.IsBlockingError(private.lastUIError) then
 		-- UI Error is one of the known Auction errors that prevent posting
-		ClearCursor()
-		ClickAuctionSellItemButton()
-		ClearCursor() -- Put it back in the bags
-		local msg = ("Unable to create auction for %s: %s"):format(private.RequestDisplayString(request), ErrorText["FailStart"])
-		msg = msg.."\nAdditional info: "..private.lastUIError
-		debugPrint(msg, "CorePost", "Posting Failure", "Warning")
+		private.ClearAuctionSlot() -- Put it back in the bags
 		private.QueueRemove()
-		private.Wait(POST_ERROR_PAUSE)
-		AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, "FailStart")
-		--message(msg)
-		geterrorhandler()(msg)
-		return
+		return nil, "FailStart", private.lastUIError
 	end
-	request.time = GetTime() -- record time of posting for calculating timeout
-	request.posting = true
+	request.posting = GetTime() -- record time of posting for calculating timeout
 
 	return true
 end
 
+
 --[[
-	ProcessPosts()
-	This function is responsible for maintaining and processing the post queue.
-	Only called from OnUpdate.
-	Use private.Wait(0) to trigger ProcessPosts on next update.
+	Frame for OnUpdate and OnEvent handlers
 ]]
-local function ProcessPosts()
-	if lib.GetQueueLen() <= 0 or not (AuctionFrame and AuctionFrame:IsVisible()) then
-		private.Wait() -- put timer to sleep
-		return
-	end
 
+local EventFrame = CreateFrame("Frame")
+local EventFrameTimer -- Countdown timer
+EventFrame:Hide() -- Timer is initially stopped
+local function UpdateHandler(self, elapsed)
+	EventFrameTimer = EventFrameTimer - elapsed
+	if EventFrameTimer > 0 then return end
 	private.Wait(POST_TIMER_INTERVAL) -- set default wait time (overwritten later in certain cases)
+	private.waitBagUpdate = nil
+	private.SigLockUpdate()
 
-	local request = private.GetQueueIndex(1)
-
-	if request.posting then
-		-- This request is being posted. Check for timeout
-		-- (Other success/fail situations are handled by the TrackPostingX functions)
-		-- use longer timeout delays if connectivity is bad, but always at least 1 second
-		if request.prompt or not request.time then return end
-		local _,_, lag = GetNetStats()
-		lag = max(lag * LAG_ADJUST, 1)
-		if GetTime() > request.time + lag * POST_TIMEOUT then
-			local msg = ("Unable to confirm auction for %s: %s"):format(private.RequestDisplayString(request), ErrorText["FailTimeout"])
-			if private.lastUIError then
-				msg = msg.."\nAdditional info: "..private.lastUIError
-			end
-			debugPrint(msg, "CorePost", "Posting timeout", "Warning")
-			private.QueueRemove()
-			private.Wait(POST_ERROR_PAUSE)
-			AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, "FailTimeout")
-			if private.lastUIError then
-				geterrorhandler()(msg)
-			else
-				message(msg)
-			end
+	if lib.GetQueueLen() <= 0 or not (AuctionFrame and AuctionFrame:IsVisible()) then
+		if not private.IsSigLocked() then -- check for *any* sig locks
+			private.Wait() -- put timer to sleep
 		end
 		return
 	end
 
-	private.SigLockUpdate() -- check the status of any SigLocks
+	local request = private.GetQueueIndex(1)
+
+	if request.prompt then
+		return
+	end
+	if request.posting then
+		-- This request is being posted. Check for timeout
+		-- (Other success/fail situations are handled by the TrackPostingX functions)
+		-- use longer timeout delays if connectivity is bad, but always at least 1 second
+		-- todo: is lag adjustment really necessary or useful?
+		local _,_, lag = GetNetStats()
+		lag = max(lag * LAG_ADJUST, 1)
+		if GetTime() > request.posting + lag * POST_TIMEOUT then
+			private.QueueRemove()
+			private.HandlePostingError1(request, "FailTimeout", private.lastUIError)
+		end
+		return
+	end
+
 	if private.IsSigLocked(request.sig) then
 		-- see if we can find a request in the queue that is not SigLocked
 		for index, req in private.GetQueueIterator() do
@@ -1112,47 +1129,19 @@ local function ProcessPosts()
 		return
 	end
 
-	if not private.ClearAuctionSlot() then
-		return
-	end
-
-	local bag, slot = private.SelectStack(request)
-	if bag then
-		if not private.LoadAuctionSlot(request, bag, slot) then
-			return
-		end
+	local success, reason, special = private.LoadAuctionSlot(request)
+	if success then
 		private.ShowPrompt(request)
-	elseif slot then -- bag == nil
-		-- 'slot' contains the error code
-		private.Wait(POST_ERROR_PAUSE)
-		local msg = ("Aborting post request for %s: %s"):format(private.RequestDisplayString(request), ErrorText[slot])
-		debugPrint(msg, "CorePost", "Post request aborted", "Warning")
-		private.QueueRemove()
-		AucAdvanced.SendProcessorMessage("postresult", false, request.id, request, slot)
-		message(msg)
-		return
 	else
-		-- both bag and slot are nil: wait for another cycle
-		-- no errors but for some reason we cannot post this request at this time
-		-- (in current implementation, only occurs if we have found a locked stack)
-		private.waitBagUpdate = true -- flag to trigger for bag changes too
+		private.HandlePostingError1(request, reason, special)
+		if not reason then
+			if special == 1 then
+				private.waitBagUpdate = true
+			end
+		end
 	end
 end
-
-
---[[
-	Frame for OnUpdate and OnEvent handlers
-]]
-
-local EventFrame = CreateFrame("Frame")
-local EventFrameTimer -- Countdown timer
-EventFrame:Hide() -- Timer is initially stopped
-EventFrame:SetScript("OnUpdate", function(self, elapsed)
-	EventFrameTimer = EventFrameTimer - elapsed
-	if EventFrameTimer <= 0 then
-		ProcessPosts() -- EventFrameTimer will be updated by ProcessPosts via a call to private.Wait()
-	end
-end)
+EventFrame:SetScript("OnUpdate", UpdateHandler)
 
 --[[
 	PRIVATE: Wait(delay)
@@ -1224,6 +1213,11 @@ local function EventHandler(self, event, arg1, arg2)
 			-- if currently multiselling, it will fail - treat as deliberate cancel to suppress error
 			private.TrackCancelSell()
 		end
+	elseif event == "NEW_AUCTION_UPDATE" then
+		-- something has changed about the AuctionSellItem slot - should not happen while we are Prompting
+		if private.promptRequest and not private.VerifyAuctionSlot(private.promptRequest) then
+			private.HidePrompt()
+		end
 	end
 end
 EventFrame:SetScript("OnEvent", EventHandler)
@@ -1236,18 +1230,23 @@ EventFrame:RegisterEvent("ITEM_LOCK_CHANGED")
 EventFrame:RegisterEvent("BAG_UPDATE")
 EventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
 EventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
+EventFrame:RegisterEvent("NEW_AUCTION_UPDATE")
 
-function coremodule.OnLoad(addon)
-	if addon == "auc-advanced" then
-		-- Install values into locals/tables, that are not available until Auctioneer is fully loaded
-		DecodeSig = AucAdvanced.API.DecodeSig
-		for code, text in pairs(ErrorText) do
-			local transkey = "ADV_Help_PostError"..code
-			local transtext = _TRANS(transkey)
-			if transtext ~= transkey then -- _TRANS returns transkey if there is no available translation
-				ErrorText[code] = transtext
-			end
+function private.OnLoadRunOnce()
+	private.OnLoadRunOnce = nil
+	-- Install values into locals/tables, that are not available until Auctioneer is fully loaded
+	DecodeSig = AucAdvanced.API.DecodeSig
+	for code, text in pairs(ErrorText) do
+		local transkey = "ADV_Help_PostError"..code
+		local transtext = _TRANS(transkey)
+		if transtext ~= transkey then -- _TRANS returns transkey if there is no available translation
+			ErrorText[code] = transtext
 		end
+	end
+end
+function coremodule.OnLoad(addon)
+	if addon == "auc-advanced" and private.OnLoadRunOnce then
+		private.OnLoadRunOnce()
 	end
 end
 
@@ -1328,8 +1327,6 @@ private.Prompt.Item.tex:SetPoint("BOTTOMRIGHT", private.Prompt.Item, "BOTTOMRIGH
 
 private.Prompt.Heading = private.Prompt:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 private.Prompt.Heading:SetPoint("CENTER", private.Prompt.Frame, "CENTER", 20, 30)
---private.Prompt.Heading:SetPoint("TOPRIGHT", private.Prompt, "TOPRIGHT", -15, -20)
---private.Prompt.Heading:SetJustifyH("CENTER")
 private.Prompt.Heading:SetText("Auctioneer needs a confirmation to continue posting")
 
 private.Prompt.Text1 = private.Prompt:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -1341,13 +1338,11 @@ private.Prompt.Text2:SetPoint("CENTER", private.Prompt.Frame, "CENTER", 20, -10)
 -- Yes and No buttons are named to allow macros to /click them
 private.Prompt.Yes = CreateFrame("Button", "AuctioneerPostPromptYes", private.Prompt, "OptionsButtonTemplate")
 private.Prompt.Yes:SetText(CONTINUE)
---private.Prompt.Yes:SetPoint("BOTTOMRIGHT", private.Prompt, "BOTTOMRIGHT", -100, 10)
 private.Prompt.Yes:SetPoint("BOTTOMLEFT", private.Prompt, "BOTTOMLEFT", 100, 10)
 private.Prompt.Yes:SetScript("OnClick", private.PerformPosting)
 
 private.Prompt.No = CreateFrame("Button", "AuctioneerPostPromptNo", private.Prompt, "OptionsButtonTemplate")
 private.Prompt.No:SetText(CANCEL)
---private.Prompt.No:SetPoint("BOTTOMRIGHT", private.Prompt.Yes, "BOTTOMLEFT", -60, 0)
 private.Prompt.No:SetPoint("BOTTOMLEFT", private.Prompt.Yes, "BOTTOMRIGHT", 60, 0)
 private.Prompt.No:SetScript("OnClick", private.CancelPosting)
 
@@ -1368,4 +1363,4 @@ private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.9/Auc-Advanced/CorePost.lua $", "$Rev: 4960 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CorePost.lua $", "$Rev: 5141 $")
