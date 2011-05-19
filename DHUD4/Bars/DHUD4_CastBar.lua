@@ -582,7 +582,7 @@ end
 function castBar:ConfigBarText(font, size)
 
     --DHUD4:Debug("castBar:ConfigBarText")
-    self.nameText.text:SetFont(font, size)
-    self.text.text:SetFont(font, size)
-    self.delayText.text:SetFont(font, size)
+    if (self.nameText) then self.nameText.text:SetFont(font, size) end
+    if (self.text) then self.text.text:SetFont(font, size) end
+    if (self.delayText) then self.delayText.text:SetFont(font, size) end
 end

@@ -1,5 +1,5 @@
 --[[
-DHUD4_Abilities.lua $Rev: 81 $
+DHUD4_Abilities.lua $Rev: 83 $
 Copyright (c) 2006 by Markus Inger, 2006 by Caeryn Dryad, 2007-2010 by Horacio Hoyos
 
 This file is part of DHUD4.
@@ -751,7 +751,7 @@ function Abilities:UpdateRuneType(rune)
     if ( not frameTexture:GetTexture() ) then
         frameTexture:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD"..RUNE_TEXTURES[frame.runeType])
     end
-    if runeType == 4 and frame:IsVIsible() then
+    if runeType == 4 and frame:IsVisible() then
 		--Flash
 		frame.flash = true
 		frame.alphaStep = 0.1

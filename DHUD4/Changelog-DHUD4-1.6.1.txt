@@ -1,10 +1,21 @@
 ------------------------------------------------------------------------
-r82 | arcanefoam | 2011-05-11 02:07:17 +0000 (Wed, 11 May 2011) | 2 lines
+r84 | arcanefoam | 2011-05-14 13:37:10 +0000 (Sat, 14 May 2011) | 2 lines
 Changed paths:
-   A /tags/1.6 (from /trunk:81)
+   A /tags/1.6.1 (from /trunk:83)
 
-- Removed Debug info from DK module
-- Fixed cast bars not showing spell name
+- Fixed cast bar error
+- Fixed DK error
+------------------------------------------------------------------------
+r83 | arcanefoam | 2011-05-14 13:36:16 +0000 (Sat, 14 May 2011) | 2 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Bars/DHUD4_CastBar.lua
+   M /trunk/DHUD4.toc
+   A /trunk/Textures/Renaitre/Bars/1f.tga
+   A /trunk/Textures/Renaitre/Bars/2f.tga
+
+- Fixed cast bar error
+- Fixed DK error
 ------------------------------------------------------------------------
 r81 | arcanefoam | 2011-05-11 02:06:18 +0000 (Wed, 11 May 2011) | 2 lines
 Changed paths:
