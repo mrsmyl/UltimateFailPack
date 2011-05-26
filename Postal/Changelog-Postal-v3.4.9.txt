@@ -1,9 +1,39 @@
 ------------------------------------------------------------------------
-r334 | xinhuan | 2011-05-07 16:54:22 +0000 (Sat, 07 May 2011) | 1 line
+r341 | xinhuan | 2011-05-22 09:29:31 +0000 (Sun, 22 May 2011) | 1 line
 Changed paths:
-   A /tags/v3.4.7 (from /trunk:333)
+   A /tags/v3.4.9 (from /trunk:340)
 
-Tag release v3.4.7.
+Tag release v3.4.9.
+------------------------------------------------------------------------
+r340 | xinhuan | 2011-05-22 09:29:03 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/Postal.toc
+
+Update version to v3.4.9.
+------------------------------------------------------------------------
+r339 | xinhuan | 2011-05-22 09:28:37 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+
+Fix the "OpenAll.lua:497: 'end' expected (to close 'function' at line 158)" error.
+------------------------------------------------------------------------
+r337 | xinhuan | 2011-05-22 07:20:30 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/Postal.toc
+
+Update version to v3.4.8.
+------------------------------------------------------------------------
+r336 | xinhuan | 2011-05-22 07:19:18 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+
+Swap the order of Open All and Refresh code.
+------------------------------------------------------------------------
+r335 | xinhuan | 2011-05-22 07:11:33 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+
+Fix another issue where OpenAll stops opening mails.
 ------------------------------------------------------------------------
 r333 | xinhuan | 2011-05-07 16:53:48 +0000 (Sat, 07 May 2011) | 1 line
 Changed paths:

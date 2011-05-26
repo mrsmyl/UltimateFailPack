@@ -10,6 +10,7 @@ Postal_OpenAll.description2 = L[ [[|cFFFFCC00*|r Simple filters are available fo
 
 local MAX_MAIL_SHOWN = 50
 local mailIndex, attachIndex
+local numUnshownItems
 local lastItem, lastNumAttach, lastNumGold
 local wait
 local button
@@ -131,7 +132,8 @@ end
 
 function Postal_OpenAll:OpenAll(isRecursive)
 	refreshFrame:Hide()
-	mailIndex = GetInboxNumItems()
+	mailIndex, numUnshownItems = GetInboxNumItems()
+	numUnshownItems = numUnshownItems - mailIndex
 	attachIndex = ATTACHMENTS_MAX_RECEIVE
 	invFull = nil
 	invAlmostFull = nil
@@ -317,9 +319,12 @@ function Postal_OpenAll:ProcessNext()
 	else
 		-- Reached the end of opening all selected mail
 
-		-- We only want to refresh if there's more items to show
 		local numItems, totalItems = GetInboxNumItems()
-		if totalItems > numItems and numItems < MAX_MAIL_SHOWN then
+		if numUnshownItems ~= totalItems - numItems then
+			-- We will Open All again if the number of unshown items is different
+			return self:OpenAll(true) -- tail call
+		elseif totalItems > numItems and numItems < MAX_MAIL_SHOWN then
+			-- We only want to refresh if there's more items to show
 			Postal:Print(L["Not all messages are shown, refreshing mailbox soon to continue Open All..."])
 			refreshFrame:Show()
 			return
