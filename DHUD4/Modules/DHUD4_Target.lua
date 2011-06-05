@@ -24,7 +24,7 @@ local DogTag = LibStub("LibDogTag-3.0")
 
 local MODNAME = "DHUD4_Target"
 local DHUD4_Target = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 74 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 85 $"):match("%d+"))
 
 local unpack = unpack
 local _G = _G
@@ -659,7 +659,7 @@ local function GetOptions()
                             min = MINFONT,
                             max = MAXFONT,
                             disabled = function() return not db.cast end,
-                            hidden = function() return not (db.spell or db.timer or db.delay) end,
+                            hidden = function() return not (db.castSpell or db.castTimer or db.castDelay) end,
                             step = 1,
                         },
                         colors = {
@@ -964,7 +964,7 @@ do
             powerBar:ConfigBarText(DHUD4:GetFont(), db.barTextSize * DHUD4.GetScale(),
                 (string_len(db.powerCustomTextStyle) > 0) and db.powerCustomTextStyle or db.powerTextStyle, "target")
         end
-        
+
         -- Enable bar pop events
         healthBar.frame:SetScript("OnShow", function (this)
                 DHUD4:SendMessage("DHUD4_BAR", this.bar, true)
@@ -1096,12 +1096,11 @@ do
     function CreateIcon(icon, side)
         local x, y, width, height, x0, x1, y0, y1 = unpack(ICONS[icon]);
         local parent = DHUD4_LeftFrame
-        local point, relative
+        local point = "BOTTOM"
+        local relative = "TOP"
         if side == "r" then
             x = -x
             parent = DHUD4_RightFrame
-            point = "BOTTOM"
-            relative = "TOP"
         elseif side == "c" then
             parent = tnp
             point = "CENTER"
@@ -1423,17 +1422,6 @@ do
         end
     end
 
-	function OnBarShow(this, event)
-
-		--DHUD4:Debug("OnBarShow", this, event);
-		DHUD4:SendMessage("DHUD4_BAR_SHOW", this.bar);
-	end
-
-	function OnBarHide(this, event)
-
-		--DHUD4:Debug("OnBarHide", this, event);
-		DHUD4:SendMessage("DHUD4_BAR_HIDE", this.bar);
-	end
 end
 
 function DHUD4_Target:OnInitialize()
@@ -1641,7 +1629,9 @@ function DHUD4_Target:SetLayout()
     self:UnregisterAllEvents()
     healthBar:SetLayout("Target Health", 100, 80)
     powerBar:SetLayout("Target Power", 100, 80)
-    castBar:SetLayout("Target", 10, 3.9)
+    if(db.cast and castBar) then
+        castBar:SetLayout("Target",10, 3.9)
+    end
     if (eliteIcon and db.eliteIcon) then
         eliteIcon.background:SetTexture(DHUD4:GetCurrentTexture().."boss")
         eliteIcon:Show()

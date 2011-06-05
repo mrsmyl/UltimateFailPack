@@ -4,7 +4,7 @@
 ## X-eMail: arcanefoam AT gmail DOT com
 ## X-Website: http://www.wowace.com/projects/dhud3/
 ## Original Code: Markus Inger (Drathal/Silberklinge) 
-## Version: 1.6.1
+## Version: 1.6.2
 ## Notes: Heads Up Display with Player and Target Info
 ## Notes-esES: Heads Up Display con informacion del Jugador y el Blanco
 ## Notes-ruRU: �?дд-он отображает �?тату�?ную информацию игрока и его цели �? помощью �?лемента по �?ередине �?крана.
@@ -12,7 +12,7 @@
 ## SavedVariables: DHUD4DB
 ## X-Embeds: Ace3
 ## X-Category: Combat
-## X-Curse-Packaged-Version: 1.6.1
+## X-Curse-Packaged-Version: 1.6.3
 ## X-Curse-Project-Name: DHUD4
 ## X-Curse-Project-ID: dhud4
 ## X-Curse-Repository-ID: wow/dhud4/mainline

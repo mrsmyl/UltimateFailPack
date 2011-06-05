@@ -23,7 +23,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 
 local MODNAME = "DHUD4_Auras";
 local DHUD4_Auras = DHUD4:NewModule(MODNAME, "AceEvent-3.0");
-local VERSION = tonumber(("$Rev: 74 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 85 $"):match("%d+"));
 
 local _G = _G
 local math_ceil = math.ceil
@@ -380,9 +380,9 @@ do
                                 self.auraTimer = self.auraTimer + elapsed
                                 if self.auraTimer >= UPDATE_INTERVAL then
                                     local _, mainHandExpiration, _, _, offHandExpiration, _ = GetWeaponEnchantInfo()
-                                    if self.GetID() == 16 and mainHandExpiration then
+                                    if self:GetID() == 16 and mainHandExpiration then
                                         self.left = mainHandExpiration/1000
-                                    elseif self.GetID() == 17 and offHandExpiration then
+                                    elseif self:GetID() == 17 and offHandExpiration then
                                         self.left = offHandExpiration/1000
                                     end
                                     if self.left < 0 then
@@ -393,7 +393,7 @@ do
                                     DHUD4_Auras:Colorize(self, self.left/20)
                                     self.text:SetText(DHUD4:FormatTime(self.left))
                                     if ( GameTooltip:IsOwned(self) ) then
-                                        GameTooltip:SetInventoryItem("player", self.GetID())
+                                        GameTooltip:SetInventoryItem("player", self:GetID())
                                     end
                                 end
                             end)

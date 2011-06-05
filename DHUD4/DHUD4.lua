@@ -27,11 +27,11 @@ DHUD4 = LibStub("AceAddon-3.0"):NewAddon("DHUD4", "AceEvent-3.0", "AceConsole-3.
 
 
 --ACE Version
-local VERSION = tonumber(("$Rev: 76 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 85 $"):match("%d+"));
 DHUD4.revision = "r" .. VERSION;
-DHUD4.versionstring = "1.4-%s";
+DHUD4.versionstring = "1.6.3-%s";
 DHUD4.version = DHUD4.versionstring:format(VERSION);
-DHUD4.date = ("$Date: 2011-04-30 19:11:02 +0000 (Sat, 30 Apr 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
+DHUD4.date = ("$Date: 2011-06-04 18:57:05 +0000 (Sat, 04 Jun 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
 local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 local LSM3 = LibStub("LibSharedMedia-3.0");
 

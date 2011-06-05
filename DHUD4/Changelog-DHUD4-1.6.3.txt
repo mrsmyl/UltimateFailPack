@@ -1,0 +1,44 @@
+------------------------------------------------------------------------
+r86 | arcanefoam | 2011-06-04 18:58:45 +0000 (Sat, 04 Jun 2011) | 3 lines
+Changed paths:
+   A /tags/1.6.3 (from /trunk:85)
+
+- Fixed minor bugs
+- Fixed bug making cast bars text size options not showing in the options window
+- Added pop events to player bars so aura and abilities will be correctly placed when changing the layout.
+------------------------------------------------------------------------
+r85 | arcanefoam | 2011-06-04 18:57:05 +0000 (Sat, 04 Jun 2011) | 3 lines
+Changed paths:
+   M /trunk/DHUD4.lua
+   M /trunk/DHUD4.toc
+   M /trunk/Locale/enUS.lua
+   M /trunk/Modules/DHUD4_Auras.lua
+   M /trunk/Modules/DHUD4_Player.lua
+   M /trunk/Modules/DHUD4_Target.lua
+
+- Fixed minor bugs
+- Fixed bug making cast bars text size options not showing in the options window
+- Added pop events to player bars so aura and abilities will be corectly placed when changing the layout.
+------------------------------------------------------------------------
+r83 | arcanefoam | 2011-05-14 13:36:16 +0000 (Sat, 14 May 2011) | 2 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Bars/DHUD4_CastBar.lua
+   M /trunk/DHUD4.toc
+   A /trunk/Textures/Renaitre/Bars/1f.tga
+   A /trunk/Textures/Renaitre/Bars/2f.tga
+
+- Fixed cast bar error
+- Fixed DK error
+------------------------------------------------------------------------
+r81 | arcanefoam | 2011-05-11 02:06:18 +0000 (Wed, 11 May 2011) | 2 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Abilities/DHUD4_DeathKnight.lua
+   M /trunk/Bars/DHUD4_Bar.lua
+   M /trunk/Bars/DHUD4_CastBar.lua
+   M /trunk/DHUD4.toc
+
+- Removed Debug info from DK module
+- Fixed cast bars not showing spell name
+------------------------------------------------------------------------

@@ -539,7 +539,6 @@ L["With Pet"] = true
 L["Enable Pet Module"] = true
 L["In Vehicle"] = true
 L["Pet Frame"] = true
-L["Pet Happiness Icon"] = true
 L["Pet Module"] = true
 L["Pet"] = true
 L["PetBars"] = true
@@ -579,10 +578,6 @@ L["Weapon Auras order"] = true
 L["Weapon Enchants"] = true
 L["Weapon enchant display. Weapon auras are displayed in pairs: first two, last two, bottom two or top two slots, regardless of the buffs displayed"] = true
 L["Weapons"] = true
--- Locales from DHUD4_Paladin.lua
-L["Paladin Abilities"] = true
-L["Paladin"] = true
-L["Track paladin power"] = true
 -- Locales from DHUD4_Warrior.lua
 L["Sunder Armors Timer"] = true
 L["Sunder Armors"] = true
@@ -590,6 +585,10 @@ L["Track warrior sunder armors expiration"] = true
 L["Track warrior sunder armors"] = true
 L["Warrior Abilities"] = true
 L["Warrior"] = true
+-- Locales from DHUD4_Paladin.lua
+L["Paladin Abilities"] = true
+L["Paladin"] = true
+L["Track paladin power"] = true
 -- Locales from DHUD4_Abilities.lua
 L["Abilities Module"] = true
 L["Abilities Side"] = true

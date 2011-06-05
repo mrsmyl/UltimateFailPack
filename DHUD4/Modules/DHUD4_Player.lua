@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Player"
 local DHUD4_Player = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 74 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 85 $"):match("%d+"))
 
 local unpack = unpack
 local pairs = pairs
@@ -375,7 +375,7 @@ local function GetOptions()
                             min = MINFONT,
                             max = MAXFONT,
                             disabled = function() return not db.cast end,
-                            hidden = function() return not (db.spell or db.timer or db.delay) end,
+                            hidden = function() return not (db.castSpell or db.castTimer or db.castDelay) end,
                             step = 1,
                         },
                         colors = {
@@ -487,7 +487,7 @@ end
 --FIN
 
 -- Local Functions
-local ConfigLayout, CreateRestIcon, CreateCombatIcon, CreateLeaderIcon, CreateLootIcon, CreatePvpIcon, CreateIcon, SwapVehicle, OnBarShow, OnBarHide, UpdatePlayerPvP
+local ConfigLayout, CreateRestIcon, CreateCombatIcon, CreateLeaderIcon, CreateLootIcon, CreatePvpIcon, CreateIcon, SwapVehicle, UpdatePlayerPvP
 -- Local Varaibles
 local restIcon, combatIcon, leaderIcon, lootIcon, pvpIcon
 local healthBar, powerBar, castBar
@@ -528,6 +528,12 @@ do
             healthBar:InitStatusBarText(hbar, DHUD4:GetPosition(hbar))
             healthBar:ConfigBarText(DHUD4:GetFont(), db.barTextSize * DHUD4.GetScale(), (string_len(db.healthCustomTextStyle) > 0) and db.healthCustomTextStyle or db.healthTextStyle, "player")
         end
+        healthBar.frame:SetScript("OnShow", function (this)
+                DHUD4:SendMessage("DHUD4_BAR", this.bar, true)
+            end)
+        healthBar.frame:SetScript("OnHide", function (this)
+                DHUD4:SendMessage("DHUD4_BAR", this.bar, false)
+            end)
         healthBar:TrackUnitHealth("player", db.colors[tostring(7)])
 
         -- Power bar
@@ -538,6 +544,13 @@ do
             powerBar:InitStatusBarText(pbar, DHUD4:GetPosition(pbar))
             powerBar:ConfigBarText(DHUD4:GetFont(), db.barTextSize * DHUD4.GetScale(), (string_len(db.powerCustomTextStyle) > 0) and db.powerCustomTextStyle or db.powerTextStyle, "player")
         end
+        powerBar.frame:SetScript("OnShow", function (this)
+                DHUD4:SendMessage("DHUD4_BAR", this.bar, true)
+            end)
+        powerBar.frame:SetScript("OnHide", function (this)
+                DHUD4:SendMessage("DHUD4_BAR", this.bar, false)
+            end)
+
         powerBar:TrackUnitPower("player", db.colors[tostring(UnitPowerType("player"))], UnitPowerType("player"))
 
         -- Icons
@@ -720,7 +733,6 @@ do
         healthBar:ConfigBarText(DHUD4:GetFont(), db.barTextSize * DHUD4.GetScale(), (string_len(db.healthCustomTextStyle) > 0) and db.healthCustomTextStyle or db.healthTextStyle, unit)
         powerBar:TrackUnitPower(unit, db.colors[tostring(UnitPowerType("player"))], UnitPowerType("player"))
         powerBar:ConfigBarText(DHUD4:GetFont(), db.barTextSize * DHUD4.GetScale(), (string_len(db.powerCustomTextStyle) > 0) and db.powerCustomTextStyle or db.powerTextStyle, unit)
-
     end
 
 end
