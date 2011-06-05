@@ -1,0 +1,21 @@
+tag v40100-1.4.0
+78c075fa811628b86f70b4f78d5311c7835dfeb4
+James Whitehead II <jnwhiteh@gmail.com>
+2011-05-31 17:00:20 +0100
+
+Tagging v40100-1.4.0
+
+
+--------------------
+
+James Whitehead II:
+	- Possible fix for 21, receiving waypoints
+	- Add a /way list command to list waypoints in zone
+	This is a simple debug command that may be useful, but is not expected
+	to be useful to the average user.
+	- Fix handling of floors (fixes 28)
+	- Move to AddonCore and add version to About box
+	Fixes 22
+	- Ensure the waypoint table doesn't get dirty
+	- Fix title display when AddMFWaypoint is used
+	Fixes 25
