@@ -1,4 +1,4 @@
-﻿--[[
+--[[
        X-PERL Unitframes Localization File
 --]]
 
@@ -153,7 +153,7 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_MAXIMUM_SCALE			= "Balance maximum de cadres"
         XPERL_CONF_MAXIMUM_SCALE_DESC			= "Ajuster la taille maximum que des cadres peuvent \195\170tre mesur\195\169es \195\160 "
         XPERL_CONF_RESET_DEFAULTS			= "Mise \195\160 z\195\169ro"
-        XPERL_CONF_RESET_DEFAULTS_DESC			= "Remettre \195\160  z\195\169ro toutes les options \195\160 leurs valeurs par d\195\169faut"
+        XPERL_CONF_RESET_DEFAULTS_DESC			= "Remettre \195\160� z\195\169ro toutes les options \195\160 leurs valeurs par d\195\169faut"
         XPERL_CONF_LOAD_SETTINGS			= "Copies les r\195\169glages de..."
         XPERL_CONF_LOAD_SETTINGS_DESC			= "Copie des r\195\169glages d'un autre perso"
         XPERL_CONF_ANCHORMENU				= "Ancre"
@@ -182,17 +182,17 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_PLAYER_XP                    	= "Barre d'experience du joueur"
         XPERL_CONF_PLAYER_XP_DESC               	= "Active l'affichage de la barre d'experience du joueur"
         XPERL_CONF_PLAYER_REP				= "R\195\169putation de joueur"
-        XPERL_CONF_PLAYER_REP_DECS			= "Permettre l'affichage de la barre de la r\195\169putation du joueur. Cette r\195\169putation montr\195\169e est r\195\169putation la Â« observ\195\169e Â» de systÃ¨me comme choisie dans le directeur de r\195\169putation de Blizzard"
+        XPERL_CONF_PLAYER_REP_DECS			= "Permettre l'affichage de la barre de la r\195\169putation du joueur. Cette r\195\169putation montr\195\169e est r\195\169putation la « observ\195\169e » de système comme choisie dans le directeur de r\195\169putation de Blizzard"
         XPERL_CONF_PLAYER_PVP                   	= "Rangs PvP"
         XPERL_CONF_PLAYER_PVP_DESC              	= "Active l'affichage du rangs PvP du joueurs"
         XPERL_CONF_PLAYER_PVPICON			= "Drapeux PvP"
         XPERL_CONF_PLAYER_PVPICON_DESC			= "Active l'affichage des statuts PvP du joueur"
         XPERL_CONF_PLAYER_ENERGY			= "Ticker d'\195\169nergie"
-        XPERL_CONF_PLAYER_ENERGY_DESC			= "Affiche le ticker d'energie sous la barre d'energie pour les voleurs et les druides fÃ©lins"
+        XPERL_CONF_PLAYER_ENERGY_DESC			= "Affiche le ticker d'energie sous la barre d'energie pour les voleurs et les druides félins"
         XPERL_CONF_PARTY_FULLSCREEN			= "Avertissements de plein \195\169cran"
         XPERL_CONF_PARTY_FULLSCREEN_DESC		= "Permettre les avertissements de plein \195\169cran de Blizzard pour la  commande de HP et d'esprit basse"
         XPERL_CONF_PARTY_FULLSCREENWARN			= "VIE BASSE"
-        XPERL_CONF_PARTY_FULLSCREENWARN_DESC		= "Placer le  point bas de HP pour commencer \195\162  avertir"
+        XPERL_CONF_PARTY_FULLSCREENWARN_DESC		= "Placer le  point bas de HP pour commencer \195\162� avertir"
         XPERL_CONF_PARTY_FULLSCREENOK			= "Vie HAUTE"
         XPERL_CONF_PARTY_FULLSCREENOK_DESC		= "Placer le point de vie haute pour arr\195\170ter d'avertir"
         XPERL_CONF_PLAYER_HEALER_MODE			= "Healer Mode"
@@ -218,12 +218,6 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_PLAYER_PET_PORTRAIT3D_DESC		= "Active l'affichage du portrait 3D des familiers"
         XPERL_CONF_PLAYER_PET_HIT_INDICATOR	        = XPERL_CONF_HIT_INDICATOR
         XPERL_CONF_PLAYER_PET_HIT_INDICATOR_DESC        = "Permettre l'affichage des indicateurs de coup de combat au-dessus du portrait des familiers"
-        XPERL_CONF_PLAYER_PET_HAPPINESS        		= "Bonheur d'animal de compagnie"
-        XPERL_CONF_PLAYER_PET_HAPPINESS_DESC   	 	= "Active l'affichage de l'humeur du familier"
-        XPERL_CONF_PLAYER_PET_ONLYSAD			= "Seulement si triste"
-        XPERL_CONF_PLAYER_PET_ONLYSAD_DESC		= "Montrer seulement L'humeur si il est pas content"
-        XPERL_CONF_PLAYER_PET_FLASHSAD			= "Flash si triste"
-        XPERL_CONF_PLAYER_PET_FLASHSAD_DESC		= "Flash sur l'etat de l'humeur du familier si il est pas content"
         XPERL_CONF_PLAYER_PET_LEVEL             	= "Niveau du familier"
         XPERL_CONF_PLAYER_PET_LEVEL_DESC        	= "Active l'affichage du niveau des familiers"
         XPERL_CONF_PLAYER_PET_XP                	= "Barre d'experiance du familier"
@@ -236,7 +230,7 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_PLAYER_PET_BUFF_SIZE_DESC		= "Ajuste l'affichage de la taille des buffs/debuffs du familier"
 
         XPERL_CONF_TARGET_PORTRAIT              	= "Portrait de la cible"
-        XPERL_CONF_TARGET_PORTRAIT_DESC         	= "Permettre l'affichage du portrait de la cible \ r|c00FF0000NOTE : L'indicateur de coup de combat dÃ©pend de ceci."
+        XPERL_CONF_TARGET_PORTRAIT_DESC         	= "Permettre l'affichage du portrait de la cible \ r|c00FF0000NOTE : L'indicateur de coup de combat dépend de ceci."
         XPERL_CONF_TARGET_PORTRAIT3D            	= "Portrait 3d"
         XPERL_CONF_TARGET_PORTRAIT3D_DESC       	= "Active l'affichage du portrait 3D"
         XPERL_CONF_TARGET_HIT_INDICATOR		        = XPERL_CONF_HIT_INDICATOR
@@ -374,7 +368,7 @@ if (GetLocale() == "frFR") then
 	XPERL_CONF_FOCUS_CURABLE			= "D\195\169buffs soignable seulement"
 	XPERL_CONF_FOCUS_CURABLE_DESC			= "Limite l'affichage des d\195\169buffs que vous pouvez soign\195\169"
 	XPERL_CONF_FOCUS_REACTION			= "Sommet de r\195\169actions"
-	XPERL_CONF_FOCUS_REACTION_DESC			= "Permettre au somment de r\195\169action de color\195\169 le plat nomm\195\169 entier du cadre de la cible g\195\169n\195\169rale basé sur le friendlyness de la cible envers soi"
+	XPERL_CONF_FOCUS_REACTION_DESC			= "Permettre au somment de r\195\169action de color\195\169 le plat nomm\195\169 entier du cadre de la cible g\195\169n\195\169rale bas� sur le friendlyness de la cible envers soi"
 	XPERL_CONF_FOCUS_HEALER_MODE			= XPERL_CONF_PLAYER_HEALER_MODE
 	XPERL_CONF_FOCUS_HEALER_MODE_DESC		= XPERL_CONF_PLAYER_HEALER_MODE_DESC
 	XPERL_CONF_FOCUS_HEALERMODE_DEFICIT		= XPERL_CONF_PLAYER_HEALERMODE_DEFICIT
@@ -492,11 +486,11 @@ if (GetLocale() == "frFR") then
 	XPERL_CONF_RAID_HIGHLIGHTS			= "Accentuation des status"
 	XPERL_CONF_RAID_HIGHLIGHTS_DESC			= "Permettre l'accentuation des status "
 	XPERL_CONF_RAID_HIGHLIGHTS_HOTS			= "HoTs"
-	XPERL_CONF_RAID_HIGHLIGHTS_HOTS_DESC		= "Accentuera les unités avec une frontière bleue qui ont |c00FFFF80v\195\180tre|r sort de vie par tick"
+	XPERL_CONF_RAID_HIGHLIGHTS_HOTS_DESC		= "Accentuera les unit�s avec une fronti�re bleue qui ont |c00FFFF80v\195\180tre|r sort de vie par tick"
 	XPERL_CONF_RAID_HIGHLIGHTS_AGGRO		= "Aggro"
-	XPERL_CONF_RAID_HIGHLIGHTS_AGGRO_DESC		= "Accentuera des unit\195\169s avec une frontière rouge si elles ont l'aggro (|c00FFFF80Exige que Raid Helper's Target Counter soit chargé et permis|r)"
+	XPERL_CONF_RAID_HIGHLIGHTS_AGGRO_DESC		= "Accentuera des unit\195\169s avec une fronti�re rouge si elles ont l'aggro (|c00FFFF80Exige que Raid Helper's Target Counter soit charg� et permis|r)"
 	XPERL_CONF_RAID_HIGHLIGHTS_SHIELDS	        = "Boucliers"
-        XPERL_CONF_RAID_HIGHLIGHTS_SHIELDS_DESC	        = "Accentuera les unités avec une fronti\195\168re pourpre qui ont |c00FFFF80Votre|r buffs de bouclier (ie: PW:Shield)"
+        XPERL_CONF_RAID_HIGHLIGHTS_SHIELDS_DESC	        = "Accentuera les unit�s avec une fronti\195\168re pourpre qui ont |c00FFFF80Votre|r buffs de bouclier (ie: PW:Shield)"
 	XPERL_CONF_RAID_SPACING				= "Espacement"
 	XPERL_CONF_RAID_SPACING_DESC			= "D\195\169finir l'espacement des cadres de raid"
 	XPERL_CONF_RAID_PERC                    	= "Raid Pourcentage"
@@ -581,7 +575,7 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_COLOUR_APPLYTOGUILDLIST		= "Applique \195\160 la liste de guilde"
         XPERL_CONF_COLOUR_APPLYTOGUILDLIST_DESC		= "Applique la colorisation des noms par la couleurs de classe \195\160 la liste de guilde"
         XPERL_CONF_COLOUR_CLASSIC			= "Couleur de la barre de vie d'origine"
-        XPERL_CONF_COLOUR_CLASSIC_DESC			= "Dépasser la sélection des couleurs de barre de santé et employer aspect vert/rouge original de Nymbia. Noter que c'est visuellement différent d'employer le maximum vert et la minute rouge"
+        XPERL_CONF_COLOUR_CLASSIC_DESC			= "D�passer la s�lection des couleurs de barre de sant� et employer aspect vert/rouge original de Nymbia. Noter que c'est visuellement diff�rent d'employer le maximum vert et la minute rouge"
         XPERL_CONF_COLOUR_HEALTHEMPTY			= "Barre de vie vide"
         XPERL_CONF_COLOUR_HEALTHEMPTY_DESC		= "Change la couleur de toutes les barres de vies vides"
         XPERL_CONF_COLOUR_HEALTHFULL			= "Barre de vie pleine"
@@ -606,12 +600,12 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_COLOUR_UNFRIENDLY_DESC		= "D\195\169finire la couleurs pour les unit\195\169es inamicale (Note La colorisation des noms par la couleur de classe prends le dessus sur ce r\195\169glages pour les joueurs)"
         XPERL_CONF_COLOUR_ENEMY				= "Unit\195\169es \195\169nemies"
         XPERL_CONF_COLOUR_ENEMY_DESC			= "D\195\169finire la couleur pour les unit\195\169es \195\169nemies (Note La colorisation des noms par la couleur de classe prends le dessus sur ce r\195\169glages pour les joueurs)"
-        XPERL_CONF_COLOUR_NONE				= "Aucune réaction"
+        XPERL_CONF_COLOUR_NONE				= "Aucune r�action"
         XPERL_CONF_COLOUR_NONE_DESC			= "D\195\169finire la couleur pour les unit\195\169es n'ayant pas de drapeau PvP (Note La colorisation des noms par la couleur de classe prends le dessus sur ce r\195\169glages pour les joueurs)"
         XPERL_CONF_COLOUR_TAPPED			= "Tap\195\169"
         XPERL_CONF_COLOUR_TAPPED_DESC			= "D\195\169finire la couleur pour les unit\195\169es tap\195\169es"
         XPERL_CONF_COLOUR_RESET_REACTION		= RESET		-- "Reset"	Generic WoW localization
-        XPERL_CONF_COLOUR_RESET_REACTION_DESC		= "Remettre \195\160 z\195\169ro les couleurs de r\1958\169action des unit\195\169es de nouveau par défaut"
+        XPERL_CONF_COLOUR_RESET_REACTION_DESC		= "Remettre \195\160 z\195\169ro les couleurs de r\1958\169action des unit\195\169es de nouveau par d�faut"
 
         XPERL_CONF_TARGET_COUNTERS			= "Compteur de la cible"
         XPERL_CONF_TARGET_COUNTERS_DESC			= "Permet le compte des compteurs de cible, y compris des comptes d'aide"
@@ -633,7 +627,7 @@ if (GetLocale() == "frFR") then
         XPERL_CONF_RAIDHELP_CTTARGETS			= "Utilise CTRA ou Ora MT Target"
         XPERL_CONF_RAIDHELP_CTTARGETS_DESC		= "Pas de d\195\169faut"
         XPERL_CONF_RAIDHELP_NOAUTO			= "Pas de liste par d\195\169faut"
-        XPERL_CONF_RAIDHELP_NOAUTO_DESC			= "Ne pas cr\195\169er automatiquement la liste des guerriers principaux quand il n'y a aucune liste définie par CTRA/oRA MT"
+        XPERL_CONF_RAIDHELP_NOAUTO_DESC			= "Ne pas cr\195\169er automatiquement la liste des guerriers principaux quand il n'y a aucune liste d�finie par CTRA/oRA MT"
         XPERL_CONF_RAIDHELP_GROWUP			= "Se d\195\169velopper vers le haut"
         XPERL_CONF_RAIDHELP_GROWUP_DESC			= "D\195\169velopper la liste des guerriers principaux vers le haut"
 	XPERL_CONF_RAIDHELP_THREATBAR			= "Barre de menace"

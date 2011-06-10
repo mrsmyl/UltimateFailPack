@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:   ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 518 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 534 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -1678,9 +1678,6 @@ end
 function XPerl_Raid_Position(self)
 	SetRaidRoster()
 	XPerl_RaidTitles()
-	--Fix by sontix for When you target someone and the leader change,
-	--then the highlight target bugs out.
-	fullyInitiallized = true
 	--Removed the useless InCombatLockdown() shit.
 	--if (conf.party.smallRaid and fullyInitiallized) and not InCombatLockdown()) then
 	if (conf.party.smallRaid and fullyInitiallized) then	

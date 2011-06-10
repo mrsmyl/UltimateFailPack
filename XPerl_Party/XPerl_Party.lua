@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 509 $")
+		end, "$Revision: 532 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -40,7 +40,7 @@ local XPerl_Party_HighlightCallback
 function XPerl_Party_Events_OnLoad(self)
 	-- Added UNIT_POWER/UNIT_MAXPOWER to events list for 4.0 (By PlayerLin)
 	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "RAID_ROSTER_UPDATED", "PARTY_MEMBERS_CHANGED",
-			"UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
+			"UNIT_PHASE", "UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
 			"UNIT_TARGET", "UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_ENERGY", "UNIT_MAXENERGY", "UNIT_MANA", "UNIT_MAXMANA", "UNIT_RUNIC_POWER", "UNIT_MAXRUNIC_POWER",
 			"UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"RAID_TARGET_UPDATE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_LOGIN", "UNIT_THREAT_LIST_UPDATE",
@@ -65,6 +65,8 @@ end
 
 -- XPerl_Party_HighlightCallback
 function XPerl_Party_HighlightCallback(self, updateGUID)
+	if not updateGUID then return end
+
 	local f = XPerl_Party_GetUnitFrameByGUID(updateGUID)
 	if (f) then
 		XPerl_Highlight:SetHighlight(f, updateGUID)
@@ -498,7 +500,7 @@ local function UpdateAssignedRoles(self)
 	elseif (self.nameFrame.leaderIcon:IsShown()) then
 		icon:SetPoint("LEFT", self.nameFrame.leaderIcon, "RIGHT")
 	else
-		icon:SetPoint("TOPLEFT", 5, 5)
+		icon:SetPoint("TOPLEFT", 10, 5)
 	end
 
 	-- role icons option check by playerlin
@@ -540,6 +542,18 @@ local function UpdateAllAssignedRoles()
 	end
 end
 
+-- UpdatePhaseIndicators
+local function UpdatePhasingDisplays(self)
+	local unit = self.partyid
+	local inPhase = UnitInPhase(unit);
+	
+	if ( inPhase or not UnitExists(unit) or not UnitIsConnected(unit)) then
+		self.phasingIcon:Hide();
+	else
+		self.phasingIcon:Show();
+	end
+end
+
 -- XPerl_Party_UpdateLeader
 local function XPerl_Party_UpdateLeader(self)
 	if ("party"..GetPartyLeaderIndex() == self.partyid) then
@@ -555,9 +569,9 @@ local function XPerl_Party_UpdateLeader(self)
 		self.nameFrame.masterIcon:Show()
 	else
 		self.nameFrame.masterIcon:Hide()
-	end
-
-	UpdateAssignedRoles(self)
+	end	
+	-- Removed the call to UpdateAllAssignedRoles because UpdateLeader() is called by UpdateDisplay()
+	-- and UpdateDisplay() already call the UpdateAssignedRoles() function
 end
 
 -- XPerl_Party_UpdatePVP
@@ -653,10 +667,10 @@ local function XPerl_Party_UpdateRange(self, overrideUnit)
 			self.nameFrame.rangeIcon:Show()
 			self.nameFrame.rangeIcon:SetAlpha(1)
 		end
-		if (UnitInVehicle(self.partyid) and pconf.range30yard) then--Not sure if this is proper way to do it, so this pretty much forces anyone in a vehicle to show out of range.
-			self.nameFrame.rangeIcon:Show()
-			self.nameFrame.rangeIcon:SetAlpha(1)
-		end
+		--if (UnitInVehicle(self.partyid) and pconf.range30yard) then--Not sure if this is proper way to do it, so this pretty much forces anyone in a vehicle to show out of range.
+		--	self.nameFrame.rangeIcon:Show()
+		--	self.nameFrame.rangeIcon:SetAlpha(1)
+		--end
 	end
 end
 
@@ -738,6 +752,7 @@ end
 -- XPerl_Party_TargetRaidIcon
 local function XPerl_Party_TargetRaidIcon(self)
 	XPerl_Update_RaidIcon(self.targetFrame.raidIcon, self.partyid.."target")
+	XPerl_Update_RaidIcon(self.nameFrame.raidIcon, self.partyid)
 end
 
 -- XPerl_Party_UpdateTarget
@@ -832,8 +847,11 @@ function XPerl_Party_UpdateDisplay(self, less)
 	if (self.conf and self.partyid and UnitExists(self.partyid)) then
 		self.afk, self.dnd = nil,nil
 		XPerl_Party_UpdateName(self)
+		XPerl_Party_TargetRaidIcon(self)
 		XPerl_Party_UpdateLeader(self)
 		XPerl_Party_UpdateClass(self)
+		UpdateAssignedRoles(self)
+		UpdatePhasingDisplays(self)
 
 		if (not less) then
 			XPerl_SetManaBarType(self)
@@ -873,15 +891,17 @@ XPerl_ShowMessage("EXTRA EVENT")
 end
 
 -- PARTY_LEADER_CHANGED
-function XPerl_Party_Events:PARTY_LEADER_CHANGED()
--- fix from sontix for party frame screwed up when party member leaves/leader change. 
-	XPerl_Party_UpdateDisplayAll()
-	--for i,frame in pairs(PartyFrames) do
-	--	if (frame.partyid) then
-	--		XPerl_Party_UpdateLeader(frame)
-	--	end
-	--end
-end
+-- fix by Sontix this portion of code was never called becuse the even PARTY_LEDAER_CHANGED is not registered
+-- because Xperl rearrange the party members order to keep always on top the leader, UpdateDisplay() was need
+-- to not mess-up party frame 
+-- (in that function the Leader Icon is updated, so there's no need to listen to this event)
+-- function XPerl_Party_Events:PARTY_LEADER_CHANGED()
+--	for i,frame in pairs(PartyFrames) do
+--		if (frame.partyid) then
+-- 			XPerl_Party_UpdateLeader(frame)
+-- 		end
+-- 	end
+-- end
 
 XPerl_Party_Events.PARTY_LOOT_METHOD_CHANGED	= XPerl_Party_Events.PARTY_LEADER_CHANGED
 
@@ -936,20 +956,17 @@ end
 
 -- PARTY_MEMBER_ENABLE
 function XPerl_Party_Events:PARTY_MEMBER_ENABLE()
-	for k,v in pairs(PartyFrames) do
-		if (v.partyid) then
-			XPerl_Party_UpdateDisplay(v)
-		end
-		--v.afk, v.dnd = nil,nil
-		--XPerl_Party_UpdateHealth(v)
-		--XPerl_Party_UpdatePlayerFlags(v)
-		--XPerl_Party_UpdateCombat(v)
-		--XPerl_Party_UpdateTarget(v)
-		--XPerl_Party_Buff_UpdateAll(v)	-- 2.2.5 added this because Blizzard aren't sending an update event when you gain/lose buff timers for ppl who go out of range
-	end
+	XPerl_Party_UpdateDisplayAll()
+	--fix by Sontix this portion of code was a duplicate of UpdateDisplayAll()
+	--for k,v in pairs(PartyFrames) do
+	--	if (v.partyid) then
+	--		XPerl_Party_UpdateDisplay(v)
+	--	end
+	--end
 end
 
-XPerl_Party_Events.PARTY_MEMBER_DISABLE	= XPerl_Party_Events.PARTY_MEMBER_ENABLE
+XPerl_Party_Events.PARTY_MEMBER_DISABLE = XPerl_Party_Events.PARTY_MEMBER_ENABLE
+XPerl_Party_Events.UNIT_PHASE = XPerl_Party_Events.PARTY_MEMBER_ENABLE
 
 -- UNIT_MAXHEALTH
 function XPerl_Party_Events:UNIT_MAXHEALTH()
@@ -984,7 +1001,9 @@ function XPerl_Party_Events:PLAYER_ENTERING_WORLD()
 		XPerl_ProtectedCall(XPerl_Party_SetInitialAttributes)
 		CheckRaid()
 	end
-	XPerl_Party_Events:PARTY_MEMBER_ENABLE()
+	-- The is no need to call a funtion just to call another one it's a waste fo resources...call it directly.
+	--XPerl_Party_Events:PARTY_MEMBER_ENABLE()
+	XPerl_Party_UpdateDisplayAll()
 end
 
 -- RAID_ROSTER_UPDATED
@@ -1022,12 +1041,11 @@ do
 	end
 
 	function XPerl_Party_Events:PARTY_MEMBERS_CHANGED()
-	-- fix from sontix for party frame screwed up when party member leaves/leader change. 
 		BuildGuidMap()
 		checkRaidNextUpdate = 3
 		CheckRaid()
+		XPerl_SetHighlights()
 		XPerl_Party_UpdateDisplayAll()
-		UpdateAllAssignedRoles()
 	end
 end
 

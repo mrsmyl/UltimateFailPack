@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 520 $")
+XPerl_SetModuleRevision("$Revision: 528 $")
 
 function XPerl_OptionsFrame_DisableSlider(slider)
 	local name = slider:GetName();
@@ -1683,11 +1683,6 @@ function XPerl_Options_ImportOldConfig(old)
 			portrait		= Convert(old.ShowPlayerPetPortrait),
 			portrait3D		= Convert(old.ShowPlayerPetPortrait3D),
 			hitIndicator		= Convert(old.PetCombatHitIndicator),
-			happiness = {
-				enabled		= Convert(old.PetHappiness),
-				onlyWhenSad	= Convert(old.PetHappinessSad),
-				flashWhenSad	= Convert(old.PetFlashWhenSad),
-			},
 			level			= Convert(old.ShowPetLevel),
 			scale			= old.Scale_PetFrame		or 0.8,
 			xpBar			= Convert(old.ShowPetXP),
@@ -2365,11 +2360,6 @@ local function XPerl_Pet_ConfigDefault(default)
 		hitIndicator	= 1,
 		threat			= 1,
 		threatMode		= "portraitFrame",
-		happiness = {
-			enabled		= 1,
-			onlyWhenSad	= 1,
-			flashWhenSad	= 1,
-		},
 		level			= 1,
 		scale			= 0.7,
 --		xpBar			= nil,

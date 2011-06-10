@@ -1,4 +1,4 @@
-﻿if (GetLocale() == "deDE") then
+if (GetLocale() == "deDE") then
 
 -- Tabs
 XPERL_CONF_TITLE1			= GENERAL_LABEL -- "Allgemein"
@@ -420,12 +420,6 @@ XPERL_CONF_PLAYER_PET_HIT_INDICATOR			= XPERL_CONF_HIT_INDICATOR
 XPERL_CONF_PLAYER_PET_HIT_INDICATOR_DESC	= "Aktiviere die Anzeige von Treffer-Indikatoren \195\188ber dem Begleiterportrait"
 XPERL_CONF_PLAYER_PET_CASTBAR				= "Zauberleiste"
 XPERL_CONF_PLAYER_PET_CASTBAR_DESC			= "Aktiviere die Zauberleiste Deines Begleiters"
-XPERL_CONF_PLAYER_PET_HAPPINESS    			= "Begleiter Zufriedenheit"
-XPERL_CONF_PLAYER_PET_HAPPINESS_DESC    	= "Aktiviere die Anzeige der Zufriedenheit des Begleiters"
-XPERL_CONF_PLAYER_PET_ONLYSAD				= "Nur wenn unzufrieden"
-XPERL_CONF_PLAYER_PET_ONLYSAD_DESC			= "Nur anzeigen, wenn der Begleiter unzufrieden ist"
-XPERL_CONF_PLAYER_PET_FLASHSAD				= "Aufleuchten, wenn unzufrieden"
-XPERL_CONF_PLAYER_PET_FLASHSAD_DESC			= "Aufleuchten des Zufriedenheitsindikators, wenn der Begleiter unzufrieden ist"
 XPERL_CONF_PLAYER_PET_LEVEL        			= "Begleiter Level"
 XPERL_CONF_PLAYER_PET_LEVEL_DESC   			= "Aktiviere die Anzeige des Begleiterlevel"
 XPERL_CONF_PLAYER_PET_XP           			= "Begleiter Erfahrungsleiste"

@@ -10,29 +10,8 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 525 $")
-
+		end, "$Revision: 529 $")
 local XPerl_Player_Pet_HighlightCallback
-
--- Set_FOM_FeedButton
--- Set Feed'O'Matic button to same location as happy icon
--- We do a convoluted method here rather than attaching it to the happiness frame,
--- because it's an action button which would lock the Happiness frame during combat
-local function Set_FOM_FeedButton()
-	FOM_FeedButton:SetParent(UIParent)
-	FOM_FeedButton:SetScale(XPerl_Player_Pet.happyFrame:GetScale())
-
-	FOM_FeedButton:ClearAllPoints()
-	if (pconf.name or pconf.portrait) then
-		FOM_FeedButton:SetPoint("BOTTOMRIGHT", XPerl_Player_Pet.portraitFrame, "BOTTOMLEFT", 2, 0)
-	else
-		FOM_FeedButton:SetPoint("BOTTOMRIGHT", XPerl_Player_Pet.statsFrame, "BOTTOMLEFT", 2, 0)
-	end
-	FOM_FeedButton:SetHeight(XPerl_Player_Pet.happyFrame:GetHeight())
-	FOM_FeedButton:SetWidth(XPerl_Player_Pet.happyFrame:GetWidth())
-
-	FOM_FeedButton:Show()
-end
 
 -- XPerl_Player_Pet_OnLoad
 function XPerl_Player_Pet_OnLoad(self)
@@ -123,7 +102,7 @@ function XPerl_Player_Pet_OnLoad(self)
 	end
 
 	XPerl_RegisterHighlight(self.highlight, 2)
-	XPerl_RegisterPerlFrames(self, {self.nameFrame, self.statsFrame, self.portraitFrame, self.levelFrame, self.happyFrame})
+	XPerl_RegisterPerlFrames(self, {self.nameFrame, self.statsFrame, self.portraitFrame, self.levelFrame})
 	self.FlashFrames = {self.nameFrame, self.levelFrame, self.statsFrame, self.portraitFrame}
 
 	XPerl_RegisterOptionChanger(XPerl_Player_Pet_Set_Bits, self)
@@ -241,36 +220,6 @@ local function XPerl_Player_Pet_Buff_UpdateAll(self)
 	end
 end
 
----------------
--- Happiness --
----------------
-local lastHappy
-function XPerl_Player_Pet_SetHappiness(self)
-	local happiness, damagePercentage = 3, 125
-	if (not happiness) then
-		happiness = 3
-	end
-
-	local icon = self.happyFrame.icon
-	icon.tex:SetTexCoord(0.5625 - (0.1875 * happiness), 0.75 - (0.1875 * happiness), 0, 0.359375)
-
-	if (pconf.happiness.enable and (not pconf.happiness.onlyWhenSad or happiness < 3)) then
-		self.happyFrame:Show()
-
-		icon.tooltip = _G["PET_HAPPINESS"..happiness]
-		icon.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
-
-		if (pconf.happiness.flashWhenSad and happiness < 3) then
-			XPerl_FrameFlash(self.happyFrame)
-		else
-			XPerl_FrameFlashStop(self.happyFrame)
-		end
-	else
-		XPerl_FrameFlashStop(self.happyFrame)
-		self.happyFrame:Hide()
-	end
-end
-
 -- XPerl_Player_Pet_Update_Control
 local function XPerl_Player_Pet_Update_Control(self)
 	if (UnitIsCharmed(self.partyid) and not UnitInVehicle("player")) then
@@ -317,9 +266,6 @@ function XPerl_Player_Pet_UpdateDisplay(self)
 	XPerl_SetManaBarType(self)
 	XPerl_Player_Pet_UpdateMana(self)
 	XPerl_Player_Pet_UpdateLevel(self)
-	if (XPerl_Player_Pet_SetHappiness) then
-		XPerl_Player_Pet_SetHappiness(self)
-	end
 	XPerl_Player_Pet_Buff_UpdateAll(self)
 	XPerl_Player_Pet_UpdateCombat(self)
 end
@@ -338,14 +284,8 @@ end
 
 -- VARIABLES_LOADED
 function XPerl_Player_Pet_Events:VARIABLES_LOADED()
-	if (select(2, UnitClass("player")) == "HUNTER") then
-		-- added UNIT_POWER event check for 4.0 by PlayerLin, thanks Brounks.
-		XPerl_UnitEvents(self, XPerl_Player_Pet_Events, {"UNIT_FOCUS", "UNIT_MAXFOCUS", "UNIT_PET_EXPERIENCE", "UNIT_POWER"})
-	else
-		-- the UNIT_POWER shit must 'nil'ed when Player Pet isn't exist.
-		XPerl_Player_Pet_Events.UNIT_HAPPINESS = nil
-		XPerl_Player_Pet_SetHappiness = nil
-	end
+	-- added UNIT_POWER event check for 4.0 by PlayerLin, thanks Brounks.
+	XPerl_UnitEvents(self, XPerl_Player_Pet_Events, {"UNIT_FOCUS", "UNIT_MAXFOCUS", "UNIT_PET_EXPERIENCE", "UNIT_POWER"})
 
 	XPerl_Player_Pet_Events.VARIABLES_LOADED = nil
 end
@@ -381,18 +321,13 @@ end
 
 XPerl_Player_Pet_Events.UNIT_MAXHEALTH = XPerl_Player_Pet_Events.UNIT_HEALTH
 
--- Ticket 727 Player Pet frame's happiness not update fix.
 -- Ticket 735 Player Pet frame's power bar fix.
 -- Thanks Brounks pointed out again... -.- By PlayerLin
 
 -- UNIT_POWER/UNIT_MAXPOWER shit for 4.0 and later.
--- All power bars and Pet Happiness will firing UNIT_POWER/UNIT_MAXPOWER shit.
--- And SetHappiness shit too for Pet Happiness updating!
+-- All power bars will be firing UNIT_POWER/UNIT_MAXPOWER events.
 function XPerl_Player_Pet_Events:UNIT_POWER()
 	XPerl_Player_Pet_UpdateMana(self)
-	if (XPerl_Player_Pet_SetHappiness) then
-		XPerl_Player_Pet_SetHappiness(self)
-	end
 	XPerl_Player_Pet_UpdateCombat(self)
 end
 
@@ -413,14 +348,6 @@ XPerl_Player_Pet_Events.UNIT_FOCUS		= XPerl_Player_Pet_Events.UNIT_RAGE
 XPerl_Player_Pet_Events.UNIT_MAXFOCUS		= XPerl_Player_Pet_Events.UNIT_RAGE
 XPerl_Player_Pet_Events.UNIT_MAXRUNIC_POWER	= XPerl_Player_Pet_Events.UNIT_RAGE
 XPerl_Player_Pet_Events.UNIT_RUNIC_POWER	= XPerl_Player_Pet_Events.UNIT_RAGE
-
--- UNIT_HAPPINESS (Same as for 3.3.5 and older)
--- Happiness events come while you have a pet up, each 2 secs
-function XPerl_Player_Pet_Events:UNIT_HAPPINESS()
-	--XPerl_Player_Pet_UpdateDisplay();	-- Update all, fixes bug with stables in 1.11
-	XPerl_Player_Pet_SetHappiness(self)
-	XPerl_Player_Pet_UpdateCombat(self)
-end
 
 -- UNIT_LEVEL
 function XPerl_Player_Pet_Events:UNIT_LEVEL()
@@ -632,21 +559,13 @@ function XPerl_Player_Pet_Set_Bits(self)
 	end
 
 	if (pconf.name or pconf.portrait) then
-		self.happyFrame:SetPoint("BOTTOMRIGHT", self.portraitFrame, "BOTTOMLEFT", 2, 0)
-
 		if (pconf.level) then
 			self.levelFrame:SetPoint("TOPRIGHT", self.portraitFrame, "TOPLEFT", 2, 0)
 		end
 	else
-		self.happyFrame:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMLEFT", 2, 0)
-
 		if (pconf.level) then
-			self.levelFrame:SetPoint("TOPRIGHT", self.happyFrame, "TOPLEFT", 2, 0)
+			self.levelFrame:SetPoint("TOPRIGHT", self.statsFrame, "TOPLEFT", 2, 0)
 		end
-	end
-
-	if (FOM_FeedButton) then
-		Set_FOM_FeedButton()
 	end
 
 	if (pconf.xpBar) then

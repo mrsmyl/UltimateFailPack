@@ -1,0 +1,106 @@
+------------------------------------------------------------------------
+r537 | mysticalos | 2011-06-05 21:57:32 +0000 (Sun, 05 Jun 2011) | 1 line
+Changed paths:
+   A /tags/3.1.4 (from /trunk:536)
+
+Tagging as 3.1.4
+------------------------------------------------------------------------
+r536 | mysticalos | 2011-06-05 21:56:29 +0000 (Sun, 05 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+Bump version
+------------------------------------------------------------------------
+r535 | playerlin | 2011-06-04 10:30:24 +0000 (Sat, 04 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Ticket 1186 - Fixed a typo in XPerl.lua, cause the "if" condition expression never evaluate to "true", thanks Asjaskan reported this.
+------------------------------------------------------------------------
+r534 | playerlin | 2011-05-22 02:18:45 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Removing the target highlighting bugfix on XPerl_Raid.lua after fix same shit on PartyFrame in r532, it's useless now.
+------------------------------------------------------------------------
+r533 | mysticalos | 2011-05-22 00:12:17 +0000 (Sun, 22 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.lua
+
+fix a typo
+------------------------------------------------------------------------
+r532 | playerlin | 2011-05-21 08:19:07 +0000 (Sat, 21 May 2011) | 6 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Party/XPerl_Party.xml
+
+All fixes needed more checks ingame! :)
+1.Fixed a bug about screw up Target Highlighting on party members(fix by sontix).
+2.Added RaidTargetIcons on partyframe by sontix(not for playerframe yet).
+3.Ticket #252 - Group members' debuffs will correctly displayed when Set option "Group->Show buffs->Only castable", remove option "Group->Show debuffs->Only curable".
+4.Ticket #603 - Focusframe's option Only My Buffs will correctly set to itself, not Target one.
+(Thanks sontix for mentions those 2 tickets because we forgot them totally. :\)
+------------------------------------------------------------------------
+r531 | mysticalos | 2011-05-14 02:26:51 +0000 (Sat, 14 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+comment out useless check
+------------------------------------------------------------------------
+r530 | mysticalos | 2011-05-12 17:06:38 +0000 (Thu, 12 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Party/XPerl_Party.xml
+
+More stuff from sontix(Phase Indicator, PartyFrame mess up fix etc). Changes look fine so far.
+------------------------------------------------------------------------
+r529 | playerlin | 2011-05-09 15:15:47 +0000 (Mon, 09 May 2011) | 3 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Options/localization.koKR.lua
+   M /trunk/XPerl_Options/localization.ruRU.lua
+   M /trunk/XPerl_Options/localization.zhTW.lua
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+
+1.Fixed alignment problem in Option UI in r528.(I tested, but don't know it still has problems or not)
+2.Fixed destroyed zhTW, ruRU, koKR localization file of Option UI by shitload of "?" due they got saved with ANSI, not UTF-8.
+3.zhTW locale string updated, X-Perl's revision display bumped.
+------------------------------------------------------------------------
+r528 | mysticalos | 2011-05-08 18:56:15 +0000 (Sun, 08 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Options/XPerl_Options.toc
+   M /trunk/XPerl_Options/localization.deDE.lua
+   M /trunk/XPerl_Options/localization.esES.lua
+   M /trunk/XPerl_Options/localization.frFR.lua
+   M /trunk/XPerl_Options/localization.koKR.lua
+   M /trunk/XPerl_Options/localization.lua
+   M /trunk/XPerl_Options/localization.ruRU.lua
+   M /trunk/XPerl_Options/localization.zhCN.lua
+   M /trunk/XPerl_Options/localization.zhTW.lua
+   M /trunk/XPerl_PlayerPet/XPerl_PlayerPet.toc
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.xml
+
+untested patch from sontix
+------------------------------------------------------------------------
+r526 | mysticalos | 2011-05-06 05:11:30 +0000 (Fri, 06 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+Version change
+------------------------------------------------------------------------
+r525 | mysticalos | 2011-05-01 00:31:04 +0000 (Sun, 01 May 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+
+Workaround for pet happiness for now. UI still needs to be reworked for pets.
+------------------------------------------------------------------------

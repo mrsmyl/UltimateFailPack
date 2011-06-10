@@ -115,6 +115,20 @@
 					</Layer>
 
 					<Layer level="OVERLAY">
+						<!-- Raid Target Icon -->
+						<Texture name="$parentraidIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
+							<Size>
+								<AbsDimension x="20" y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="0" y="-4"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+						</Texture>
 						<!-- Leader Icon -->
 						<Texture name="$parentleaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>
@@ -267,7 +281,28 @@
 					</Frame>
 				</Frames>
 			</Frame>
-
+			<!-- Phase Indicator Frame -->
+			<Frame name="$parentPhasingIcon" parentKey="phasingIcon" forceAlpha="true" hidden="true">
+				<Size x="22" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="$parentnameFrame" relativePoint="BOTTOMRIGHT" x="0" y="2"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\TargetingFrame\UI-PhasingIcon" setAllPoints="true">
+							<TexCoords left="0.15625" right="0.84375" top="0.15625" bottom="0.84375"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(PARTY_PHASED_MESSAGE, nil, nil, nil, nil, true);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</Frame>
 			<!-- Party Target Frame -->
 			<Button name="$parenttargetFrame" hidden="true" inherits="SecureUnitButtonTemplate">	--frameStrata="MEDIUM"
 				<Scripts>

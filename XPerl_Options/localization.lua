@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 Localisation file
 ]]
 
@@ -428,12 +428,6 @@ XPERL_CONF_PLAYER_PET_HIT_INDICATOR		= XPERL_CONF_HIT_INDICATOR
 XPERL_CONF_PLAYER_PET_HIT_INDICATOR_DESC= "Enable display of combat hit indicators over pet portrait"
 XPERL_CONF_PLAYER_PET_CASTBAR			= "Cast Bar"
 XPERL_CONF_PLAYER_PET_CASTBAR_DESC		= "Enable your pet's casting bar"
-XPERL_CONF_PLAYER_PET_HAPPINESS         = "Pet Happiness"
-XPERL_CONF_PLAYER_PET_HAPPINESS_DESC    = "Enable display of pet's happiness"
-XPERL_CONF_PLAYER_PET_ONLYSAD			= "Only When Sad"
-XPERL_CONF_PLAYER_PET_ONLYSAD_DESC		= "Only show happiness when not happy"
-XPERL_CONF_PLAYER_PET_FLASHSAD			= "Flash When Sad"
-XPERL_CONF_PLAYER_PET_FLASHSAD_DESC		= "Flash the happyness indicator when pet is not happy"
 XPERL_CONF_PLAYER_PET_LEVEL				= "Pet Level"
 XPERL_CONF_PLAYER_PET_LEVEL_DESC		= "Enable display of pet's level"
 XPERL_CONF_PLAYER_PET_XP				= "Pet XP Bar"

@@ -5380,8 +5380,10 @@
 					<Frame name="$parent_Totems">
 						<Scripts>
 							<OnLoad>
-								if (select(2, UnitClass("player")) ~= "SHAMAN") then
-									self:Hide()
+								class = select(2, UnitClass("player"))
+								self:Hide()
+								if ((class == "SHAMAN") or (class == "DRUID")) then
+									self:Show()
 								end
 							</OnLoad>
 						</Scripts>
@@ -5664,70 +5666,9 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parent_Happiness" inherits="XPerlCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_ArcaneBar" relativePoint="BOTTOMLEFT">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_PLAYER_PET_HAPPINESS")
-								self.Validate = function()
-									XPerl_Options_EnableSibling(self,"OnlySad")
-									XPerl_Options_EnableSibling(self,"FlashSad")
-								end
-								self.flashFrame = XPerl_Player_PethappyFrame
-								self.configBase = "XPerlDB.pet.happiness"
-								self.configIndex = "enable"
-								self.configClick = XPerl_Player_Pet_Reset
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-
-					<CheckButton name="$parent_OnlySad" inherits="XPerlCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativePoint="BOTTOMRIGHT" relativeTo="$parent_Happiness">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_PLAYER_PET_ONLYSAD")
-								self.flashFrame = XPerl_Player_PethappyFrame
-								self.configBase = "XPerlDB.pet.happiness"
-								self.configIndex = "onlyWhenSad"
-								self.configClick = XPerl_Player_Pet_Reset
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-
-					<CheckButton name="$parent_FlashSad" inherits="XPerlCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_OnlySad" relativePoint="BOTTOMLEFT">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_PLAYER_PET_FLASHSAD")
-								self.flashFrame = XPerl_Player_PethappyFrame
-								self.configBase = "XPerlDB.pet.happiness"
-								self.configIndex = "flashWhenSad"
-								self.configClick = XPerl_Player_Pet_Reset
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-
 					<CheckButton name="$parent_Level" inherits="XPerlCheckButtonTemplate">
 						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="$parent_FlashSad" relativePoint="BOTTOM">
+							<Anchor point="TOPLEFT" relativeTo="$parent_ArcaneBar" relativePoint="BOTTOMLEFT">
 								<Offset><AbsDimension x="0" y="6"/></Offset>
 							</Anchor>
 						</Anchors>
@@ -8766,7 +8707,7 @@
 						<Scripts>
 							<OnLoad>
 								XPerl_OptionsSetMyText(self, "XPERL_CONF_FOCUS_ONLYMYBUFFS")
-								self.configBase = "XPerlDB.target.buffs"
+								self.configBase = "XPerlDB.focus.buffs"
 								self.configIndex = "onlyMine"
 								self.configClick = function()
 										XPerlDB.focustarget.buffs.onlyMine = XPerlDB.focus.buffs.onlyMine

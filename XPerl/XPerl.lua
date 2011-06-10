@@ -5,10 +5,10 @@
 local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 524 $")
-XPerl_SetModuleRevision("$Revision: 524 $")
+XPerl_SetModuleRevision("$Revision: 536 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 536 $")
 
--- Some local copies for speed
+--Some local copies for speed
 local strsub = strsub
 local format = format
 local cos, sin, abs = cos, sin, abs
@@ -2507,7 +2507,7 @@ local function AuraButtonOnShow(self)
 	end
 
 	local name, rank, buff, count, _, duration, endTime, caster, isStealable = UnitAura("player", self.xindex, self.xfilter)
-	if endTiem and duration then
+	if endTime and duration then
 		local start = endTime - duration
 		XPerl_CooldownFrame_SetTimer(self.cooldown, start, duration, 1, caster == "player")
 	end
@@ -2941,7 +2941,7 @@ function XPerl_Unit_UpdateBuffs(self, maxBuffs, maxDebuffs, castableOnly, curabl
 				end
 
 				for buffnum = 1,maxDebuffs do
-					local filter = (isFriendly and curableOnly == 1 or castableOnly == 1) and "RAID" or nil
+					local filter = (isFriendly and curableOnly == 1) and "RAID" or nil
 					local name, rank, debuff, debuffApplications, debuffType, duration, endTime, isMine, isStealable = XPerl_UnitDebuff(partyid, buffnum, filter)
 					if (not name) then
 						if (mine == 1) then
@@ -3232,14 +3232,14 @@ local function XPerlSetPortrait3D(self, argUnit)
 	local guid = UnitGUID(argUnit)
 	local fullbody
 	--PlayerLin: Added other checks, UnitIsPlayer check isn't enough and it's weird...
-	if UnitIsPlayer(argUnit) or UnitIsEnemy(argUnit, "target") or UnitIsFriend(argUnit, "target") then
+--	if UnitIsPlayer(argUnit) or UnitIsEnemy(argUnit, "target") or UnitIsFriend(argUnit, "target") then
 		--Male Worgen 3D Portrait fix, thanks sontix.
 		if string.find(tostring(self:GetModel()), "worgenmale", 1, true) ~= nil then
 			fullbody = true 
 		else
 			fullbody = UnitBuff(argUnit, dragonmawIllusion)
 		end
-	end
+--	end
 	local id = guid and tonumber(strsub(guid, -13, -9), 16)
 	if (alternateCamera[id] or fullbody ) then
 		self:SetCamera(1)
