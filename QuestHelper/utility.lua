@@ -1,7 +1,10 @@
-QuestHelper_File["utility.lua"] = "4.0.6.161r"
+QuestHelper_File["utility.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
 QuestHelper = CreateFrame("Frame", "QuestHelper", nil)
+
+--[[ static ]] ALLIANCE = 1
+--[[ static ]] HORDE = 2
 
 local default_colour_theme =
   {message_prefix={0.4, 0.78, 1},
@@ -258,7 +261,7 @@ function QuestHelper:UnitPosition(unit)
 end
 
 function QuestHelper:PlayerFaction()
-  return UnitFactionGroup("player") == "Alliance" and 1 or 2
+  return UnitFactionGroup("player") == "Alliance" and ALLIANCE or HORDE
 end
 
 function QuestHelper:LocationString(i, x, y)

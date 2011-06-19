@@ -1,4 +1,4 @@
-QuestHelper_File["graph_flightpath.lua"] = "4.0.6.161r"
+QuestHelper_File["graph_flightpath.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["graph_flightpath.lua"] = GetTime()
 
 -- Name to Name, gives {time, accurate}

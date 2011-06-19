@@ -1,19 +1,31 @@
-
-QuestHelper_File["pathfinding.lua"] = "4.0.6.161r"
+QuestHelper_File["pathfinding.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["pathfinding.lua"] = GetTime()
 
+-- Update flying for Mount Up guild achievement.
+-- Telport/Portal spell for Tol Barad.  Same location as portals in the Earthshrines in the cities?
+-- If a transition requires a quest, and the questgiver is at the initial portal location, not implimenting a requirement.
+
+
 -- This section for whenever from-player's-location-to pathing can be implimented.
+
+    -- Mage teleport spells and druid teleport spell all say "10 sec cast
+    -- Hearthstone is also a 10 second cast
+    -- So make one general setting for the 10 seconds plus 5 for the world to load
+
+    -- local porttime = 15
+    
+QueryQuestsCompleted();
+local dependancy_quest_list = GetQuestsCompleted()
 
 local static_alliance_landings = 
     {
         {12, 0.476, 0.598, "Exodar via portal"}, -- Exodar
         {21, 0.435, 0.787, "Darnassus via portal"}, -- Darnassus
-        -- Need Stormwind Port In coordinates
-        -- Need Ironforge Port In coordinates
-        -- Need Theramore Port In coordinates
+        {36, 0.496, 0.865, "Stormwind via portal"}, -- Stormwind
+        {25, 0.255, 0.084, "Ironforge via portal"}, -- Ironforge
+        {10, 0.660, 0.490, "Theramore via portal"}, -- Theramore
     }
     
-
 local static_horde_landings =
     {
         {1, 0.483, 0.645, "Orgrimmar via portal"}, -- Orgrimmar
@@ -23,58 +35,98 @@ local static_horde_landings =
         {46, 0.498, 0.558, "Stonard via portal"}, -- Stonard
     }
     
-
 local static_shared_landings =
     {
-        -- Need Shattrath Port In cooordinates
-        -- Need Dalaran Port In coordinates
+        {67, 0.559, 0.468, "Dalaran via portal"}, -- Dalaran
+        {60, 0.550, 0.402, "Shattrath via portal"}, -- Shattrath
         -- Need Tol Barad Port In coordinates
     }
 
--- Unchecked
-local SHATTRATH_CITY_PORTAL_IN = {60,0.530,0.492, "Shattrath City via portal"}
-local DALARAN_PORTAL_IN = {67,0.500,0.394, "Dalaran via portal"}
-
-QuestHelper:Assert(UnitClass("player"), "Pathfinding Druid Check - too soon")
-QuestHelper:Assert(UnitLevel("player"), "Pathfinding Druid Check - too soon")
-if UnitClass("player") == "Druid" and UnitLevel("player") > 14 then
+if IsSpellKnown(18960) then
     local static_druid_landings = {20,0.563,0.324, "Moonglade via spell"} -- Moonglade landing
 end
 
 -- end whimsey
 
 
-local BLASTED_LANDS_PORTAL_IN = {33,0.539,0.461, "Blasted Lands via portal"}
+-- More storage
+
+        -- Contingent on player's faction controlling the zone        
+        -- {{74, 0.491, 0.153}, {67, 0.268, 0.447}, 5, true}, -- Wingergrasp Keep --> Dalaran
+        -- {{175, 0.472, 0.519}, ORGRIMMAR_CATPORTAL_IN, 60, true}, -- Tol Barad --> Orgrimmar (If Horde Controlled)
+        -- {{175, 0.472, 0.519}, STORMWIND_CATPORTAL_IN, 60, true}, -- Tol Barad --> Stormwind (If Alliance Controlled)
+
+-- end storage
+
+
+local BLASTED_LANDS_PORTAL_IN = {33, 0.539, 0.461, "Blasted Lands via portal"}
+local ORGRIMMAR_CATPORTAL_IN = {1, 0.500, 0.377, "Orgrimmar via portal"}
+-- local STORMWIND_CATPORTAL_IN
 
 local static_horde_routes = 
   {
     -- Portals
-        {{1,0.471,0.618}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Orgrimmar --> Dark Portal
-        {{45,0.853,0.171}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Undercity --> Dark Portal
-        {{23,0.232,0.135}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Thunder Bluff --> Dark Portal
-        {{52,0.584,0.210}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Silvermoon --> Dark Portal
+        {{1, 0.471, 0.618}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Orgrimmar --> Dark Portal
+        {{45, 0.853, 0.171}, BLASTED_LANDS_PORTAL_IN, 5, true, level_limit = 58},  -- Undercity --> Dark Portal
+        {{23, 0.232, 0.135}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Thunder Bluff --> Dark Portal
+        {{52, 0.584, 0.210}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Silvermoon --> Dark Portal
 
-        {{56, 0.886, 0.477}, {1, 0.483, 0.645}, 60, true, level_limit = 58},  -- Hellfire Peninsula --> Orgrimmar
+        -- I'm really not concerned that the landing points are different.  This is a self-contained method.
+        -- It won't affect anything that we don't have two one-way paths here.
+        {{45, 0.549, 0.113}, {52, 0.495, 0.148}, 60}, -- Undercity <--> Silvermoon City
+
+        {{56, 0.886, 0.477}, {1, 0.483, 0.645}, 60, true},  -- Hellfire Peninsula --> Orgrimmar
+        {{184, 0.736, 0.535}, ORGRIMMAR_CATPORTAL_IN, 60, true}, -- Twilight Highlands --> Orgrimmar
         
-        -- Orgrimmar --> Tol Barad
-        -- Orgrimmar --> Maelstrom
+        {{1, 0.475, 0.392}, {176, 0.560, 0.799}, 60, false, level_limit = 85}, -- Orgrimmar <--> Tol Barad Peninsula
+
         
+        -- Okay, I give.  Since I haven't actually been through these portals, I don't really have a frame
+        -- of reference, but from everything I can see, there are a jumble of dependancies woven throughout
+        -- the quest chains that open the connections from Cataclysm to and from Orgrimmar, and likewise
+        -- Stormwind.  For the time being, I'm just opening the portals, but with level requirements based
+        -- on the starting levels for the quest chains, under the assumption that before you could use any
+        -- of these portals, you're going to have started the quest chain, which can't happen before the
+        -- listed level.  Once I've run these myself and understand just what's going on, then I can start
+        -- tying them to the proper quest-completion dependancy.
+        
+        -- From what I understand, at some point a portal from Orgrimmar to the zone opens in the EarthShrine
+        -- area in Orgrimmar.  When exactly is unclear.  Some zones, but not all, have a return portal.
+        -- This, too, is unclear.
+                
+        -- Orgrimmar --> Temple of Earth (Aqua)
+            -- Level limit because the quest to open requires level 82.
+        {{179, 0.509, 0.531}, ORGRIMMAR_CATPORTAL_IN, 60, true}, -- Temple of Earth (Aqua) --> Orgrimmar
+
+        {{1, 0.508, 0.363}, {179, 0.506, 0.529}, 60, true, level_limit = 82}, -- Orgrimmar --> Deepholm
+            -- Level limit because the quest to open requires level 82.
+        
+        {{1, 0.511, 0.383}, {198, 0.635, 0.234}, 60, true, level_limit = 80}, -- Orgrimmar --> Mount Hyjal
+            -- Level limit because the quest to open requires level 80.
+            
+        {{1, 0.502, 0.394}, {184, 0.736, 0.534}, 60, true, level_limit = 84}, -- Orgrimmar --> Twilight Highlands
+            -- Level limit because the quest to open requires level 84.
+
+        {{1, 0.489, 0.386}, {164, 0.549, 0.342}, 5, true, level_limit = 83}, -- Orgrimmar --> Uldum
+            -- Level limit because the quest to open requires level 83.
+
+        {{1, 0.492, 0.365}, {165, 0.514, 0.609}, 60, true, level_limit = 80}, -- Orgrimmar --> Vashj'ir
+            -- Level limit because the quest to open requires level 80.
+
 
     -- Zepplins
         {{1, 0.526, 0.529}, {168, 0.372, 0.525}, 210}, -- Orgrimmar <--> Grom'gol Base Camp
-        {{1, 0.449, 0.619}, {65, 0.414, 0.536}, 210, false, level_limit = 68}, -- Orgrimmar <--> Warsong Hold
         {{1, 0.506, 0.561}, {43, 0.607, 0.588}, 210}, -- Orgrimmar <--> Tirisfal Glades
-        {{168, 0.374, 0.509}, {43, 0.619, 0.591}, 210}, -- Grom'gol Base Camp <--> Tirisfal Glades
+        {{1, 0.428, 0.653}, {23, 0.152, 0.257}, 210}, -- Orgrimmar <--> Thunder Bluff
+        {{1, 0.449, 0.619}, {65, 0.414, 0.536}, 210}, -- Orgrimmar <--> Warsong Hold
 
+        {{43, 0.619, 0.591}, {168, 0.374, 0.509}, 210}, -- Tirisfal Glades <--> Grom'gol Base Camp
+        {{43, 0.590, 0.590}, {70, 0.777, 0.282}, 210}, -- Tirisfal Glades <--> Vengeance Landing
+        
+    -- Ships
+        {{184, 0.735, 0.528}, {184, 0.767, 0.152}, 210}, -- Dragonmaw Port <--> Krazzworks
+-- QuestHelper does not appear to like transitions from within the same zone.  Gonna have to figure this out.
 
-
-
-    -- Partially checked
-        {{1, 0.428, 0.653}, {23, 0.148, 0.258}, 210}, -- Orgrimmar <--> Thunder Bluff
-        {{43, 0.590, 0.590}, {70, 0.777, 0.283}, 210, false, level_limit = 68}, -- Tirisfal Glades <--> Vengeance Landing
-
-    -- Unchecked
-        {{45, 0.549, 0.11}, {52, 0.495, 0.148}, 60}, -- Undercity <--> Silvermoon City
   }
 
 
@@ -83,34 +135,36 @@ local static_alliance_routes =
     -- Portals
         {{21,0.440,0.782}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Darnassus --> Dark Portal
         {{12,0.482,0.630}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Exodar --> Dark Portal
-        {{25,0.273,0.070}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Ironforge --> Dark Portal
-        {{36,0.490,0.874}, BLASTED_LANDS_PORTAL_IN, 60, true, level_limit = 58},  -- Stormwind --> Dark Portal
+        {{25,0.273,0.070}, BLASTED_LANDS_PORTAL_IN, 5, true, level_limit = 58},  -- Ironforge --> Dark Portal
+        {{36,0.490,0.874}, BLASTED_LANDS_PORTAL_IN, 5, true, level_limit = 58},  -- Stormwind --> Dark Portal
     
---        {{56, 0.886, 0.528}, STORMWIND_CITY_PORTAL_IN, 60, true, level_limit = 58},  -- Hellfire Peninsula --> Stormwind
-        {{21, 0.442, 0.788}, {12, 0.476, 0.598}, 60, true}, -- Darnassus --> Exodar
-        {{12, 0.476, 0.619}, {21, 0.435, 0.787}, 60, true}, -- Exodar --> Darnassus
+        {{56, 0.886, 0.528}, {36, 0.496, 0.865}, 60, true},  -- Hellfire Peninsula --> Stormwind
+        {{21, 0.442, 0.788}, {12, 0.476, 0.598}, 5, true}, -- Darnassus --> Exodar
+        {{12, 0.476, 0.619}, {21, 0.435, 0.787}, 5, true}, -- Exodar --> Darnassus
 
         -- Stormwind --> Tol Barad?
-        -- Stormwind --> Maelstrom?
 
+        {{36, 0.734, 0.195}, {179, 0.487, 0.536}, 60, true, level_limit = 82}, -- Stormwind --> Temple of Earth (Amber)
+            -- Level limit because the quest to open requires level 82.
+        {{179, 0.486, 0.537}, {36, 0.745, 0.183}, 60, true}, -- Temple of Earth (Amber) --> Stormwind
+        
+        -- Stormwind <--> Deepholm
+        -- Stormwind <--> Mount Hyjal
+        -- Stormwind <--> Twilight Highlands
+        -- Stormwind <--> Uldum
+        -- Stormwind <--> Vashj'ir
 
     -- Ships
-        {{36, 0.180, 0.285}, {65, 0.597, 0.694}, 210, false, level_limit = 68}, -- Stormwind <--> Valiance Keep
-
+        {{36, 0.180, 0.285}, {65, 0.597, 0.694}, 210}, -- Stormwind <--> Valiance Keep
 
     -- Deeprun Tram (Wonder if this needs to be handled differently because of it's nature but this will suffice for now)
         {{36, 0.696, 0.311}, {25, 0.770, 0.513}, 180}, -- Stormwind <--> Ironforge
 
-
-
-
     -- Partially checked
-
 
     -- Unchecked (Do these still exist?)
         {{10, 0.718, 0.565}, {51, 0.047, 0.636}, 210}, -- Theramore Isle <--> Menethil Harbor
         {{51, 0.047, 0.571}, {70, 0.612, 0.626}, 210}, -- Menethil <--> Daggercap Bay
-
 
    -- Nate's Cataclysm content
    {{207, 0.54, 0.60}, {205, 0.30, 0.72}, 10}, -- Gilneas Zone <--> Greymane Court, Gilneas City. Exists solely to fix some pathing crashes. (We want to make an adjustment to the coords though.)
@@ -118,41 +172,43 @@ local static_alliance_routes =
    {{207, 0.66, 0.42}, {205, 0.67, 0.20}, 5}, -- Gilneas Zone <--> Merchant Square, Gilneas City. Exists solely to fix some pathing crashes. (We want to make an adjustment to the coords though.)
    {{207, 0.68, 0.62}, {205, 0.69, 0.82}, 10}, -- Gilneas Zone <--> Military District, Gilneas City. Exists solely to fix some pathing crashes. (We want to make an adjustment to the coords though.)
    {{207, 0.42, 0.36}, {24, 0.52, 0.89}, 86400}, -- Gilneas Zone <--> Teldrassil. Exists solely to fix some pathing crashes. 24-hour boat ride :D (This will be deleted later, when we can create the "official" path.)
-
   }
 
 local static_shared_routes = 
   {
     -- Portals
-        {{67, 0.268, 0.447}, {67, 0.240, 0.394}, 60}, -- Dalaran (Violet Citadel) <--> Dalaran (Purple Parlor)
-        {{67, 0.559, 0.468}, {66, 0.158, 0.428}, 60}, -- Dalaran <--> Violet Stand
+        {{67, 0.268, 0.447}, {67, 0.240, 0.394}, 5}, -- Dalaran (Violet Citadel) <--> Dalaran (Purple Parlor)
+        
+        {{67, 0.559, 0.468}, {66, 0.158, 0.428}, 5, false, level_limit = 68}, -- Dalaran <--> Crystalsong Forest
 
         {{24, 0.551, 0.885}, {21, 0.369, 0.584}, 5}, -- Rut'Theran Village <--> Darnassus
+        
+        {{33, 0.550, 0.541}, {56, 0.898, 0.502}, 60}, -- Blasted Lands <--> Hellfire Peninsula (Dark Portal)
 
+        {{67, 0.255, 0.514}, {8, 0.652, 0.498}, 60, true}, -- Dalaran --> Caverns of Time
         {{60, 0.486, 0.420}, {64, 0.482, 0.345}, 60, true}, -- Shattrath --> Isle of Quel'Danas
+        
+        {{60, 0.747, 0.316}, {8, 0.652, 0.498}, 60, true}, -- Shattrath --> Caverns of Time
+        -- Requires Revered with Keepers of Time
 
+        {{179, 0.493, 0.504}, {179, 0.571, 0.135}, 5, false, level_limit = 81}, -- Temple of Earth <--> Therazane's Throne
+            -- Requires Honored with Therazane and dependant on quest #26709
+        
+    -- Ships
+        {{68, 0.497, 0.784}, {70, 0.234, 0.578}, 210}, -- Moa'ki <--> Kamagua
+        {{68, 0.479, 0.788}, {65, 0.789, 0.537}, 210}, -- Moa'ki <--> Unu'pe
+        {{174, 0.390, 0.670}, {11, 0.702, 0.733}, 210}, -- Booty Bay <--> Ratchet
 
-    -- Ships (To keep QH from self-destructing)
-        {{3, 0.203, 0.540}, {24, 0.522, 0.895}, 210}, -- Azuremyst Isle <--> Teldrassil
-        {{36, 0.223, 0.560}, {24, 0.550, 0.938}, 210}, -- Stormwind <--> Teldrassil
-
-
-
-
-    -- Partially checked
-        {{11, 0.638, 0.387}, {174, 0.390, 0.670}, 210}, -- Ratchet <--> Booty Bay
-        {{67, 0.255, 0.514}, {8, 0.659, 0.498}, 5, true}, -- Dalaran --> Caverns of Time
-
+    -- Leave here to keep QH from self-destructing
+        {{24, 0.522, 0.895}, {3, 0.203, 0.540}, 210}, -- Teldrassil <--> Azuremyst Isle
+        {{24, 0.550, 0.938}, {36, 0.223, 0.560}, 210}, -- Teldrassil <--> Stormwind
 
     -- Unchecked
-   {{40, 0.318, 0.503}, {32, 0.347, 0.84}, 130}, -- Burning Steppes <--> Searing Gorge
-   {{70, 0.235, 0.578}, {68, 0.496, 0.784}, 210}, -- Kamagua <--> Moa'ki
-   {{65, 0.789, 0.536}, {68, 0.480, 0.787}, 210}, -- Unu'pe <--> Moa'ki
-   -- Route to new zone. Not valid, exists only to keep routing from exploding if you don't have the flight routes there.
-   {{41, 0.5, 0.5}, {64, 0.484, 0.251}, 7200}, -- Eversong Woods <--> Sunwell
-   {{34, 0.817, 0.461}, {78, 0.492, 0.312}, 86400}, -- EPL Ebon Hold <--> Scarlet Enclave Ebon Hold. Exists solely to fix some pathing crashes. 24-hour boat ride :D
-   
+        {{40, 0.318, 0.503}, {32, 0.347, 0.84}, 130}, -- Burning Steppes <--> Searing Gorge
 
+    -- Route to new zone. Not valid, exists only to keep routing from exploding if you don't have the flight routes there.
+        {{41, 0.5, 0.5}, {64, 0.484, 0.251}, 7200}, -- Eversong Woods <--> Sunwell
+        {{34, 0.817, 0.461}, {78, 0.492, 0.312}, 86400}, -- EPL Ebon Hold <--> Scarlet Enclave Ebon Hold. Exists solely to fix some pathing crashes. 24-hour boat ride :D
 
    -- Nate's Cataclysm content
    {{178, 0.83, 0.34}, {167, 0.45, 0.23}, 210, true}, -- Vash'jir --> Vash'jir Kelp Forest (One time, One way)
@@ -244,45 +300,47 @@ local static_shared_routes =
 -- Darkportal is handled specially, depending on whether or not you're level 58+ or not.
 local dark_portal_route = {{33, 0.550, 0.541}, {56, 0.898, 0.502}, 60}
 
+-- Waygate
+local ridingLevel = (select(4,GetAchievementInfo(892)) and 300) or (select(4,GetAchievementInfo(890)) and 225) or (select(4,GetAchievementInfo(889)) and 150) or (select(4,GetAchievementInfo(891)) and 75) or 0 -- this is thanks to Maldivia, who is a fucking genius
+local has_fmsl = not not GetSpellInfo(GetSpellInfo(90267)) 
+if ridingLevel >= 225 and has_fmsl then 
+    table.insert(static_shared_routes, {{18, 0.505, 0.078}, {72, 0.403, 0.830}, 60, false, level_limit = 77}) -- Un'Goro Crater <--> Sholozar Basin
+        -- Dependant on completion of quest #12613
+end 
+
+-- Cataclysm Quest-dependant static routes
+-- STILL WORKING ON THESE.  See Notes under Static_Horde.
+
+--    for k, v in ipairs(dependancy_quest_list) do
+--        if v[1] == 26709 then table.insert(static_shared_routes, {{179, 0.493, 0.504}, {179, 0.571, 0.135}, 5})  -- Temple of Earth <--> Therazane's Throne
+            -- Requires Honored with Therazane?
+--    end
+
+-- Horde
+    -- If Quest 26840 then Hyjal --> Orgrimmar
+
 local static_zone_transitions =
   {
     -- Eastern Kingdoms
 
-    
-    
     -- Kalimdor
     
-    
-    
     --Outland
-    
-    
     
     --Northrend
         {65, 72, 0.527, 0.322}, -- Borean Tundra <--> Scholazar Basin
         
-    
-    
-    
     --Cataclysm zones
     
-
-
-
-
-
-
-
     -- Work
-        {7, 1, 0.117, 0.936}, -- Durotar <--> Orgrimmar.Front
-        {7, 1, 0.366, 0.253}, -- Durotar <--> Orgrimmar.Side
-        {15, 1, 0.792, 0.017}, -- Azshara <--> Orgrimmar.Back
-    
+        {7, 1, 0.117, 0.936}, -- Durotar <--> Orgrimmar (Front)
+        {7, 1, 0.366, 0.253}, -- Durotar <--> Orgrimmar (Side)
+        {15, 1, 0.792, 0.017}, -- Azshara <--> Orgrimmar (Back)
+        {158, 5, 0.687, 0.2}, -- Ahn'Qiraj <--> Silithus
+        {168, 174, 0.50, 0.61}, -- Northern Stranglethorn <--> Cape of Stranglethorn
+        
+        {38, 168, 0, 0}, -- Stranglethorn World Map Wonkiness
 
-
-
-
---    {{174, 0.61, 0.20}, {168, 0.50, 0.74}, 5}, -- CoS <--> NS (Both part of STV)
    {2, 11, 0.687, 0.872}, -- Ashenvale <--> Northern Barrens
    {2, 6, 0.423, 0.711}, -- Ashenvale <--> Stonetalon Mountains
    {2, 15, 0.954, 0.484}, -- Ashenvale <--> Azshara
@@ -311,7 +369,7 @@ local static_zone_transitions =
    {13, 19, 0.685, 0.06}, -- Felwood <--> Winterspring
    {13, 20, 0.669, -0.063}, -- Felwood <--> Moonglade
    {17, 14, 0.899, 0.46}, -- Feralas <--> Thousand Needles
-   {6, 203, 0.29, 0.08}, -- Stonetalon Mountains <--> The Barrens
+   {6, 11, 0.29, 0.08}, -- Stonetalon Mountains <--> Northern Barrens IS THIS ONE RIGHT?
    {39, 51, 0.454, 0.89}, -- Arathi Highlands <--> Wetlands
    {39, 48, 0.2, 0.293}, -- Arathi Highlands <--> Hillsbrad Foothills
    {27, 29, 0.47, 0.071}, -- Badlands <--> Loch Modan
@@ -325,8 +383,8 @@ local static_zone_transitions =
    {28, 29, 0.844, 0.31}, -- Dun Morogh <--> Loch Modan
    {31, 37, 0.801, 0.158}, -- Duskwood <--> Elwynn Forest
    {31, 37, 0.15, 0.214}, -- Duskwood <--> Elwynn Forest
-   {31, 38, 0.447, 0.884}, -- Duskwood <--> Stranglethorn Vale
-   {31, 38, 0.209, 0.863}, -- Duskwood <--> Stranglethorn Vale
+   {31, 168, 0.447, 0.884}, -- Duskwood <--> Stranglethorn Vale
+   {31, 168, 0.209, 0.863}, -- Duskwood <--> Stranglethorn Vale
    {31, 30, 0.941, 0.103}, -- Duskwood <--> Redridge Mountains
    {31, 49, 0.079, 0.638}, -- Duskwood <--> Westfall
    {34, 50, 0.077, 0.661}, -- Eastern Plaguelands <--> Western Plaguelands
@@ -340,7 +398,7 @@ local static_zone_transitions =
    {42, 50, 0.217, 0.264}, -- The Hinterlands <--> Western Plaguelands
    {43, 45, 0.619, 0.651}, -- Tirisfal Glades <--> Undercity
    {43, 50, 0.851, 0.703}, -- Tirisfal Glades <--> Western Plaguelands
-   {38, 49, 0.292, 0.024}, -- Stranglethorn Vale <--> Westfall
+   {168, 49, 0.292, 0.024}, -- Stranglethorn Vale <--> Westfall
    {48, 35, 0.137, 0.458}, -- Hillsbrad Foothills <--> Silverpine Forest
    {48, 42, 0.899, 0.253}, -- Hillsbrad Foothills <--> The Hinterlands
    {51, 184, 0.80, 0.47}, -- Wetlands <--> Twilight Highlands

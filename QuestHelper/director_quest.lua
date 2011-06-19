@@ -1,4 +1,4 @@
-QuestHelper_File["director_quest.lua"] = "4.0.6.161r"
+QuestHelper_File["director_quest.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["director_quest.lua"] = GetTime()
 
 local debug_output = false
@@ -46,7 +46,10 @@ local function AppendObjlinks(target, source, tooltips, icon, last_name, map_lin
       for m, v in ipairs(source.loc) do
         QuestHelper: Assert(target)
         QuestHelper: Assert(QuestHelper_ParentLookup)
+-- Ugly database hack
         if v.p == 26 then v.p = 48 end -- Alterac Mountains merged to Hillsbrad Foothills
+        if v.p == 38 then v.p = 168 end -- Ditto Stranglethorn
+-- end hack        
         QuestHelper: Assert(QuestHelper_ParentLookup[v.p], v.p)
         table.insert(target, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, path_desc = copy(map_lines), icon_id = icon or 6})
       end
@@ -204,7 +207,10 @@ local function GetQuestMetaobjective(questid, lbcount, qindex)
           --print(v.rc, v.rz)
           --print(QuestHelper_IndexLookup[v.rc])
           --print(QuestHelper_IndexLookup[v.rc][v.rz])
+-- Ugly database hack
           if v.p == 26 then v.p = 48 end
+          if v.p == 38 then v.p = 168 end
+-- end hack
           table.insert(ttx, {desc = "Turn in quest", why = ite, loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, tracker_hidden = true, cluster = ttx, icon_id = 7, type_quest = ite.type_quest})
         end
       end

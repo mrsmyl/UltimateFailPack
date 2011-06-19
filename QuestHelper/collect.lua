@@ -1,7 +1,7 @@
-QuestHelper_File["collect.lua"] = "4.0.6.161r"
+QuestHelper_File["collect.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["collect.lua"] = GetTime()
 
-local --[[ static ]] MINSVNVERSION = 147
+local --[[ static ]] MINSVNVERSION = 180
 local --[[ static ]] PURGEDEV = false
 local debug_output = false
 if QuestHelper_File["collect.lua"] == "Development Version" then debug_output = true end
@@ -92,9 +92,15 @@ function QH_Collector_Init()
   
   QuestHelper_Collector_Version = QuestHelper_Collector_Version_Current
   
-  local svnversion = "161r"
+  local svnversion = "180r"
   local buildInfo, locale, faction = GetBuildInfo(), GetLocale(), QuestHelper:PlayerFaction()
-  local altfaction = (faction == 1) and 2 or 1
+  local altfaction = ""
+  if faction == ALLIANCE then
+	  altfaction = "Alliance"
+  else
+	  altfaction = "Horde"
+  end
+  local realm = GetRealmName()
 
   local remove_sigs = {}
   for k, v in pairs(QuestHelper_Collector) do
@@ -114,28 +120,35 @@ function QH_Collector_Init()
     QuestHelper_Collector[v] = nil
   end
 
+  if not QuestHelper_Collector.created then
+	  QuestHelper_Collector.created = time();
+  end
+
   -- Swap buildInfo and svnversion once first alteration is complete.
   -- Perhaps move locale out of the "signature"
   if not QuestHelper_Collector[svnversion] then 
     QuestHelper_Collector[svnversion] = {} 
-    QuestHelper_Collector[svnversion][buildInfo] = {}
-    QuestHelper_Collector[svnversion][buildInfo][locale] = {}
-    QuestHelper_Collector[svnversion][buildInfo][locale][faction] = {version = QuestHelper_Collector_Version}
-  elseif not QuestHelper_Collector[svnversion][buildInfo] then
-    QuestHelper_Collector[svnversion][buildInfo] = {}
-    QuestHelper_Collector[svnversion][buildInfo][locale] = {}
-    QuestHelper_Collector[svnversion][buildInfo][locale][faction] = {version = QuestHelper_Collector_Version}
-  elseif not QuestHelper_Collector[svnversion][buildInfo][locale] then
-    QuestHelper_Collector[svnversion][buildInfo][locale] = {}
-    QuestHelper_Collector[svnversion][buildInfo][locale][faction] = {version = QuestHelper_Collector_Version}
-  elseif not QuestHelper_Collector[svnversion][buildInfo][locale][faction] then
-    QuestHelper_Collector[svnversion][buildInfo][locale][faction] = {version = QuestHelper_Collector_Version}
+  end
+
+  if not QuestHelper_Collector[svnversion][realm] then
+    QuestHelper_Collector[svnversion][realm] = {}
+  end
+
+  if not QuestHelper_Collector[svnversion][realm][buildInfo] then
+    QuestHelper_Collector[svnversion][realm][buildInfo] = {}
+  end
+
+  if not QuestHelper_Collector[svnversion][realm][buildInfo][locale] then
+    QuestHelper_Collector[svnversion][realm][buildInfo][locale] = {}
+  end
+
+  if not QuestHelper_Collector[svnversion][realm][buildInfo][locale][faction] then
+    QuestHelper_Collector[svnversion][realm][buildInfo][locale][faction] = {}
   end
 
   --if not QuestHelper_Collector[sig] or QuestHelper_Collector[sig].compressed then QuestHelper_Collector[sig] = {version = QuestHelper_Collector_Version} end -- fuckin' bullshit, man
-  local QHCData = QuestHelper_Collector[svnversion][buildInfo][locale][faction]
+  local QHCData = QuestHelper_Collector[svnversion][realm][buildInfo][locale][faction]
   QuestHelper: Assert(not QHCData.compressed)
-  QuestHelper: Assert(QHCData.version == QuestHelper_Collector_Version_Current)
   QHCData.modified = time()
   
   QH_Collect_Achievement_Init(QHCData, API)
@@ -152,9 +165,6 @@ function QH_Collector_Init()
   QH_Collect_Loot_Init(QHCData, API)
   QH_Collect_Equip_Init(QHCData, API)
   QH_Collect_Merchant_Init(QHCData, API)
-  
-  if not QHCData.realms then QHCData.realms = {} end
-  QHCData.realms[GetRealmName()] = (QHCData.realms[GetRealmName()] or 0) + 1 -- I'm not entirely sure why I'm counting
   
   if false then  -- this will be disabled in most public releases, or set to a very rare probabalistic thing
     if not QHCData.routing_dump then QHCData.routing_dump = {} end

@@ -1,4 +1,4 @@
-QuestHelper_File["flightpath.lua"] = "4.0.6.161r"
+QuestHelper_File["flightpath.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["flightpath.lua"] = GetTime()
 
 local real_TakeTaxiNode = TakeTaxiNode
@@ -455,6 +455,7 @@ local elapsed = 0
 local function flight_updater(frame, delta)
   elapsed = elapsed + delta
   if elapsed > 1 then
+    frame:SetSize(150, 35)
     elapsed = elapsed - 1
     local data = QuestHelper.flight_data
     if data then

@@ -1,4 +1,4 @@
-QuestHelper_File["objtips.lua"] = "4.0.6.161r"
+QuestHelper_File["objtips.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["objtips.lua"] = GetTime()
 
 --[[

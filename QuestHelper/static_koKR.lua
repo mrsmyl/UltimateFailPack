@@ -1,4 +1,4 @@
-QuestHelper_File["static_koKR.lua"] = "4.0.6.161r"
+QuestHelper_File["static_koKR.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["static_koKR.lua"] = GetTime()
 
 if GetLocale() ~= "koKR" then return end

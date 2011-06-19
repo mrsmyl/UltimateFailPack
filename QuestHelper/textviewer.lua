@@ -1,4 +1,4 @@
-QuestHelper_File["textviewer.lua"] = "4.0.6.161r"
+QuestHelper_File["textviewer.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["textviewer.lua"] = GetTime()
 
 local viewer

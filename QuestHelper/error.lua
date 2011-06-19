@@ -1,4 +1,4 @@
-QuestHelper_File["error.lua"] = "4.0.6.161r"
+QuestHelper_File["error.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["error.lua"] = GetTime()
 
 --[[
@@ -29,6 +29,10 @@ end
 
 
 -- ganked verbatim from Swatter
+function QuestHelper_ErrorCatcher.GetPlayerInfo()
+  return string.format("Level %s %s (%s) %s (%s) on %s", UnitLevel("player"), UnitRace("player"), UnitClass("player"), GetRealmName())
+end
+
 function QuestHelper_ErrorCatcher.GetQuests()
   local return_string = ""
 
@@ -174,6 +178,7 @@ function QuestHelper_ErrorCatcher_ExplicitError(loud, o_msg, o_frame, o_stack, .
   terror.stack = o_stack or terror.stack
   terror.silent = not loud
   terror.quests = QuestHelper_ErrorCatcher.GetQuests()
+  terror.pinfo = QuestHelper_ErrorCatcher.GetPlayerInfo()
   
   QuestHelper_ErrorCatcher_RegisterError("crash", terror)
   
@@ -210,6 +215,7 @@ function QuestHelper_ErrorCatcher_GenerateReport()
   terror.silent = "(Full report)"
   terror.generated = true
   terror.quests = QuestHelper_ErrorCatcher.GetQuests()
+  terror.pinfo = QuestHelper_ErrorCatcher.GetPlayerInfo()
   
   first_error = terror
 end

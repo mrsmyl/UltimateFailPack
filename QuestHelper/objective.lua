@@ -1,4 +1,4 @@
-QuestHelper_File["objective.lua"] = "4.0.6.161r"
+QuestHelper_File["objective.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["objective.lua"] = GetTime()
 
 
@@ -514,7 +514,7 @@ local function AddLoc(self, index, x, y, w, why)
   
   if w > 0 then
     local pair = QuestHelper_ZoneLookup[index]
-    QuestHelper: Assert(pair, "Index does not exist... it is probably 26 and the value really is... '" .. tostring(index) .. "'")
+    QuestHelper: Assert(pair, "Index does not exist... it is probably 26 or 38 and the value really is... '" .. tostring(index) .. "'")
     if not pair then return end -- that zone doesn't exist! We require more vespene gas. Not enough rage!
     local c, z = pair[1], pair[2]
     x, y = self.qh.Astrolabe:TranslateWorldMapPosition(c, z, x, y, c, 0)

@@ -1,4 +1,4 @@
-QuestHelper_File["director_find.lua"] = "4.0.6.161r"
+QuestHelper_File["director_find.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["director_find.lua"] = GetTime()
 
 local function getitall(name)
@@ -63,7 +63,10 @@ local function generate_objective(dbi)
   for _, v in ipairs(dbi.loc) do
     QuestHelper: Assert(QuestHelper_ParentLookup)
     QuestHelper: Assert(QuestHelper_ParentLookup[v.p], v.p)
+-- Ugly database hack
     if v.p == 26 then v.p = 48 end
+    if v.p == 38 then v.p = 168 end
+-- end hack    
     table.insert(clooster, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, cluster = clooster, tracker_hidden = true, why = why, map_desc = {QuestHelper:HighlightText(dbi.name)}, tracker_desc = dbi.name, map_suppress_ignore = true, map_custom_menu = function (menu) QuestHelper:CreateMenuItem(menu, QHText("FIND_REMOVE")):SetFunction(function () QH_Route_ClusterRemove(clooster) end) end})
   end
   
@@ -263,7 +266,10 @@ function QH_FindName(name)
       --[[ assert(dbi) ]]
       
       if dbi.loc then
+-- Ugly database hack
         if dbi.loc.p == 26 then dbi.loc.p = 48 end
+        if dbi.loc.p == 38 then dbi.loc.p = 168 end
+-- end hack        
         table.insert(found_db, dbi)
         
         if has_name[dbi.name] then needs_postfix[dbi.name] = true end

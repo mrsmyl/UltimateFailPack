@@ -1,4 +1,4 @@
-QuestHelper_File["routing_loc.lua"] = "4.0.6.161r"
+QuestHelper_File["routing_loc.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["routing_loc.lua"] = GetTime()
 
 -- Okay, this is going to be revamped seriously later, but for now:

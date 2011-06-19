@@ -1,4 +1,4 @@
-QuestHelper_File["main.lua"] = "4.0.6.161r"
+QuestHelper_File["main.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["main.lua"] = GetTime()
 
 local version_string = QuestHelper_File["main.lua"] -- we pretty much save this only so we can inform the user that they're using a beta version
@@ -422,6 +422,8 @@ QH_Event("ADDON_LOADED", function (addonid)
     
     -- This is where the slow stuff goes
     -- 4.0.3a Breakage related
+    local datime = time() + 30 -- We're gonna wait 30 seconds, just in case.
+    --while datime >= time() do --[[sleep (busy wait)]] end
     QuestHelper_BuildZoneLookup()
     QH_Graph_Init()
     load_graph_links()
@@ -980,9 +982,9 @@ Thanks for testing!]], "QuestHelper " .. version_string, 500, 20, 10)
     end
     
     if nc and nc > 0 and nz == 0 and nc == self.c and self.z > 0 then
-    QuestHelper:Assert(nx < math.huge, "Broken at this point.")
+    --QuestHelper:Assert(nx < math.huge, "Broken at this point.")
       nx, ny = self.Astrolabe:TranslateWorldMapPosition(nc, nz, nx, ny, nc, self.z)
-    QuestHelper:Assert(nx < math.huge, "Broken at this point.")
+    --QuestHelper:Assert(nx < math.huge, "Broken at this point.")
       if nx and ny --[[and nx > -0.1 and ny > -0.1 and nx < 1.1 and ny < 1.1]] then -- removing the conditional because I think I can use the data even when it's a little wonky
         nz = self.z
       else

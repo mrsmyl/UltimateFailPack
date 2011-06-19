@@ -1,4 +1,4 @@
-QuestHelper_File["upgrade.lua"] = "4.0.6.161r"
+QuestHelper_File["upgrade.lua"] = "4.1.0.180r"
 local my_version = QuestHelper_File["upgrade.lua"]
 
 QuestHelper_Loadtime["upgrade.lua"] = GetTime()
@@ -166,6 +166,7 @@ QuestHelper_Zones =
   
   [-117]={[0]="TheForgeofSouls_Continent", [1]="TheForgeofSouls"},
   [-118]={[0]="PitofSaron_Continent", [1]="PitofSaron"},
+  [-119]={[0]="DeeprunTram_Continent", [1]="DeeprunTram"},
 }
 
 
@@ -338,6 +339,7 @@ QuestHelper_IndexLookup =
   ["PitofSaron_Continent"] = {156, -118, 0}, ["PitofSaron"] = {157, -118, 1},
   ["GilneasCity_Continent"] = {204, -78, 0}, ["GilneasCity"] = {205, -78, 1},
   ["GilneasZone_Continent"] = {206, -79, 0}, ["GilneasZone"] = {207, -79, 1},
+  ["DeeprunTram_Continent"] = {208, -119, 0}, ["DeeprunTram"] = {209, -119, 1},
 
 
 
@@ -395,13 +397,15 @@ function QuestHelper_BuildZoneLookup()
         local altered_index = "!!! QuestHelper_IndexLookup entry needs update: [%q] = {%s, %s, %s}"
         local altered_zone = "!!! QuestHelper_Zones entry needs update: [%s][%s] = %q -- was %s"
         
-        if not index and my_version == "4.0.6.$svnversion\$" then
-          QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(tostring(base_name), tostring(next_index), tostring(c), tostring(z)))
+        if not index and my_version == "4.1.0.$svnversion\$" then
+          --QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(tostring(base_name), tostring(next_index), tostring(c), tostring(z)))
+          QuestHelper:TextOut(false, altered_index:format(tostring(base_name), tostring(next_index), tostring(c), tostring(z)))
           next_index = next_index + 1
         else
-          if QuestHelper_Locale == "enUS" and my_version == "4.0.6.161r" then
+          if QuestHelper_Locale == "enUS" and my_version == "4.1.0.180r" then
             if original_lookup[base_name][2] ~= c or original_lookup[base_name][3] ~= z then
-              QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(base_name, index, c, z))
+              --QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(base_name, index, c, z))
+              QuestHelper:TextOut(false, altered_index:format(base_name, index, c, z))
             end
             
             if not original_zones[c] or original_zones[c][z] ~= zname then

@@ -1,4 +1,4 @@
-QuestHelper_File["filter_core.lua"] = "4.0.6.161r"
+QuestHelper_File["filter_core.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["filter_core.lua"] = GetTime()
 
 function QH_MakeFilter(name, func, params)

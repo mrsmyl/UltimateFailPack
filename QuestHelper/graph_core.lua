@@ -1,4 +1,4 @@
-QuestHelper_File["graph_core.lua"] = "4.0.6.161r"
+QuestHelper_File["graph_core.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["graph_core.lua"] = GetTime()
 
 -- Alright so what's the interface here
@@ -148,11 +148,17 @@ function QH_Graph_Pathmultifind(st, nda, reverse, make_path)
   --stats.dests_complex = 0
   --stats.dests_total = 0
 
+-- Ugly database hack
   if st.p == 26 then st.p = 48 end -- Alterac Mountains merged to Hillsbrad Foothills
+  if st.p == 38 then st.p = 168 end -- Ditto Stranglethorn
+-- end hack
   
   for k, v in ipairs(nda) do
     QuestHelper: Assert(v.x and v.y and v.p)
+-- Ugly database hack pt. 2
     if v.p == 26 then v.p = 48 end -- Alterac Mountains merged to Hillsbrad Foothills
+    if v.p == 38 then v.p = 168 end -- Ditto Stranglethorn
+-- end hack    
     local cpvp = canoplane(v.p)
     if plane[cpvp] then
       --print("Destination plane insertion")

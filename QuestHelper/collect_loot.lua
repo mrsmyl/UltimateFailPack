@@ -1,4 +1,4 @@
-QuestHelper_File["collect_loot.lua"] = "4.0.6.161r"
+QuestHelper_File["collect_loot.lua"] = "4.1.0.180r"
 QuestHelper_Loadtime["collect_loot.lua"] = GetTime()
 
 local debug_output = false
@@ -530,7 +530,7 @@ local function LootOpened()
   local items = {}
   items[PseudoIDs["gold"]] = 0
   for i = 1, GetNumLootItems() do
-    _, name, quant, _ = GetLootSlotInfo(i)
+    tex, name, quant, _ = GetLootSlotInfo(i)
     link = GetLootSlotLink(i)
     if quant == 0 then
       -- moneys
@@ -548,7 +548,20 @@ local function LootOpened()
         end
         items[QHC.PseudoIDs[name]] = (items[QHC.PseudoIDs[name]] or 0) + quant
       else
-        QuestHelper:Assert(link, "Need more info on '" .. name .. "'x" .. tostring(quant) .. ".")
+        if not link and not name then
+          local msg = "Texture is " .. tostring(tex) .. " with a quantity of " .. tostring(quant) .. "."
+          if LootSlotIsCoin(i) then
+            QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is coin. " .. msg)
+          elseif LootSlotIsItem(i) then
+            QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is item. " .. msg)
+          else
+            QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is ???. " .. msg)
+          end
+        elseif not link then
+          QuestHelper:Assert(link, "Need more info on '" .. name .. "'x" .. tostring(quant) .. ".")
+        elseif not name then
+          QuestHelper:Assert(name, "Need more info on '" .. link .. "'x" .. tostring(quant) .. ".")
+        end
         local itype = GetItemType(link)
         items[itype] = (items[itype] or 0) + quant
       end
