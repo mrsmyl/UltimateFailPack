@@ -1,4 +1,4 @@
-QuestHelper_File["main.lua"] = "4.1.0.180r"
+QuestHelper_File["main.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["main.lua"] = GetTime()
 
 local version_string = QuestHelper_File["main.lua"] -- we pretty much save this only so we can inform the user that they're using a beta version

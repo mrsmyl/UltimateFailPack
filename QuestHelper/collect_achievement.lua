@@ -1,4 +1,4 @@
-QuestHelper_File["collect_achievement.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_achievement.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_achievement.lua"] = GetTime()
 
 local QHCA
@@ -39,9 +39,10 @@ local function ScanAchievements(oldADB, newADB)
       if v.complete and not oldADB.criteria[k].complete then  -- Note that it's possible for objectives to be "uncompleted" when it's things like "do a bunch of shit in one run of this battleground" (see: isle of conquest)
         --QuestHelper:TextOut(string.format("Criteria complete, %d", k))
         --QuestHelper:TextOut(string.format("Criteria complete, %s", select(1, GetAchievementCriteriaInfo(k))))
-        if not QHCA[v.parent] then QHCA[v.parent] = {} end
-        if not QHCA[v.parent][k] then QHCA[v.parent][k] = {} end
-        table.insert(QHCA[v.parent][k], cloc)
+	if not QHCA[k] then QHCA[k] = {} end
+	if not QHCA[k].parent then QHCA[k].parent = v.parent end
+	if not QHCA[k].achieved then QHCA[k].achieved = {} end
+        table.insert(QHCA[k].achieved, cloc)
         --QHCA[v.parent][k] = (QHCA[v.parent][k] or "") .. cloc
       elseif v.progress > oldADB.criteria[k].progress then
         --QuestHelper:TextOut(string.format("Criteria progress, %d", k))

@@ -1,4 +1,4 @@
-QuestHelper_File["collect_hearth.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_hearth.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_hearth.lua"] = GetTime()
 
 local debug_output = false
@@ -17,7 +17,7 @@ local function OnZoneChanged()
     last_hearth = start
     local home = GetBindLocation()
     if not QHCZ[home] then QHCZ[home] = {} end
-    QHCZ.Landing = GetLoc()
+    QHCZ[home].Landing = GetLoc()
   end
 end
 

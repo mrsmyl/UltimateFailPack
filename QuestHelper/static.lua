@@ -1,4 +1,4 @@
-QuestHelper_File["static.lua"] = "4.1.0.180r"
+QuestHelper_File["static.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["static.lua"] = GetTime()
 
 QHDB = {}

@@ -1,4 +1,4 @@
-QuestHelper_File["collect_upgrade.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_upgrade.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_upgrade.lua"] = GetTime()
 
 function QH_Collector_Upgrade(chunk)

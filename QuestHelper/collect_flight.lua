@@ -1,4 +1,4 @@
-QuestHelper_File["collect_flight.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_flight.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_flight.lua"] = GetTime()
 
 local debug_output = false
@@ -15,13 +15,17 @@ local function GetRoute(currentname, endnode)
   
   local links = GetNumRoutes(endnode)
   if links > 50 then  -- links is apparently sometimes 999998. Why? I could not say. It is a mystery. Hopefully this will show up in the datafiles and I'll be able to debug it.
-    return path, string.format("@@@ WACKYLAND %s %d @@@", TaxiNodeGetType(endnode), links)
+    if (TaxiNodeGetType(endnode) == "NONE") then
+      return path, TaxiNodeName(endnode) .. " not currently in use."
+    else
+      return path, string.format("@@@ WACKYLAND %s %d @@@", TaxiNodeGetType(endnode), links)
+    end
   end
   
   local route = ""
   for j = 1, links - 1 do -- Why only the first n-1 links? Why not all? Research.
     if #route > 0 then route = route .. "," end
-    route = route .. string.format("(%fr,%f)", TaxiGetDestX(endnode, j), TaxiGetDestY(endnode, j))
+    route = route .. string.format("(%f,%f)", TaxiGetDestX(endnode, j), TaxiGetDestY(endnode, j))
   end
   
   return path, route
@@ -84,8 +88,8 @@ local function OnUpdate()
       end
     elseif phase == "FLYING" then
       -- yaay
-      QHCFT[path][route] = (type(QHCFT[path][route]) == "number" and QHCFT[path][route] or 0) + (GetTime() - start_time)
-      QHCFT[path][route .. "##count"] = (QHCFT[path][route .. "##count"] or 0) + 1
+      QHCFT[path][route].time = (QHCFT[path][route].time or 0) + (GetTime() - start_time)
+      QHCFT[path][route].count = (QHCFT[path][route].count or 0) + 1
       phase = "IDLE"
       path, route, start_time = nil, nil, nil
     end

@@ -1,4 +1,4 @@
-QuestHelper_File["collect_location.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_location.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_location.lua"] = GetTime()
 
 -- little endian two's complement
@@ -14,7 +14,8 @@ local function float(c)
   if not c then c = -128 end
   QuestHelper: Assert( c >= -128, string.format("c is too small. It is %s.", tostring(c)))
   QuestHelper: Assert( c < 128, string.format("c is too big. It is %s.", tostring(c)))
-  return c
+  local ret = tostring(c):gsub(",",".") -- eliminate issues with locales that use a comma as the decimal separator.
+  return ret
 end
 
 local function BolusizeLocation(delayed, c, z, x, y)

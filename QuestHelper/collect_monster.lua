@@ -1,4 +1,4 @@
-QuestHelper_File["collect_monster.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_monster.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_monster.lua"] = GetTime()
 
 local debug_output = false
@@ -86,7 +86,8 @@ local function MouseoverUnit()
       data.loc = GetLoc()
       data.minrange = minrange
       data.maxrange = maxrange
-      table.insert(critter, data)
+      if not critter.encounters then critter.encounters = {} end
+      table.insert(critter.encounters, data)
       --Merger.Add(critter, string.format("(%s %s %s),", GetLoc(), tostring(minrange), tostring(maxrange))) --strchar(minrange, maxrange))
       
       if #recentlySeenCritters_Recent >= 100 then

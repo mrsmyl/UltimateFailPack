@@ -1,4 +1,4 @@
-QuestHelper_File["collect_loot.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_loot.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_loot.lua"] = GetTime()
 
 local debug_output = false
@@ -444,6 +444,7 @@ local function LootOpened()
 
   -- First off, we try to figure out where the hell these items came from.
   
+  local ltype = nil
   local spot = nil
   local prefix = nil
   
@@ -451,12 +452,10 @@ local function LootOpened()
     -- yaaaaay
     --if debug_output then QuestHelper:TextOut("Fishing loot") end
     local loc = GetLoc()
-    if not QHC.fishing[loc.delayed] then QHC.fishing[loc.delayed] = {} end
-    if not QHC.fishing[loc.delayed][loc.c] then QHC.fishing[loc.delayed][loc.c] = {} end
-    if not QHC.fishing[loc.delayed][loc.c][loc.z] then QHC.fishing[loc.delayed][loc.c][loc.z] = {} end
-    if not QHC.fishing[loc.delayed][loc.c][loc.z][loc.x] then QHC.fishing[loc.delayed][loc.c][loc.z][loc.x] = {} end
-    if not QHC.fishing[loc.delayed][loc.c][loc.z][loc.x][loc.y] then QHC.fishing[loc.delayed][loc.c][loc.z][loc.x][loc.y] = {} end
-    spot = QHC.fishing[loc.delayed][loc.c][loc.z][loc.x][loc.y]
+    if not QHC.fishing then QHC.fishing = {} end
+    ltype = QHC.fishing
+    spot = {}
+    spot.loc = loc
     prefix = "fish"
     
   elseif pickpocket_phase == PP_PHASE_COMPLETE and pickpocket_timestamp and pickpocket_timestamp + 1 > GetTime() and targetguid == pickpocket_otarget_guid then
@@ -515,12 +514,9 @@ local function LootOpened()
     --if debug_output then QuestHelper:TextOut("Who knows") end  -- ugh
     local loc = GetLoc()
     if not QHC.worldloot then QHC.worldloot = {} end
-    if not QHC.worldloot[loc.delayed] then QHC.worldloot[loc.delayed] = {} end
-    if not QHC.worldloot[loc.delayed][loc.c] then QHC.worldloot[loc.delayed][loc.c] = {} end
-    if not QHC.worldloot[loc.delayed][loc.c][loc.z] then QHC.worldloot[loc.delayed][loc.c][loc.z] = {} end
-    if not QHC.worldloot[loc.delayed][loc.c][loc.z][loc.x] then QHC.worldloot[loc.delayed][loc.c][loc.z][loc.x] = {} end
-    if not QHC.worldloot[loc.delayed][loc.c][loc.z][loc.x][loc.y] then QHC.worldloot[loc.delayed][loc.c][loc.z][loc.x][loc.y] = {} end
-    spot = QHC.worldloot[loc.delayed][loc.c][loc.z][loc.x][loc.y]
+    ltype = QHC.worldloot
+    spot = {}
+    spot.loc = loc
     prefix = "loot"
     
   end
@@ -575,6 +571,8 @@ local function LootOpened()
   for k, v in pairs(items) do
     if v > 0 then pt[k] = (pt[k] or 0) + v end
   end
+
+  if ltype then table.insert(ltype, spot) end
 end
 
 function QH_Collect_Loot_Init(QHCData, API)

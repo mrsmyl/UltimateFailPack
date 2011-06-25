@@ -1,7 +1,7 @@
-QuestHelper_File["collect.lua"] = "4.1.0.180r"
+QuestHelper_File["collect.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect.lua"] = GetTime()
 
-local --[[ static ]] MINSVNVERSION = 180
+local --[[ static ]] MINSVNVERSION = 185
 local --[[ static ]] PURGEDEV = false
 local debug_output = false
 if QuestHelper_File["collect.lua"] == "Development Version" then debug_output = true end
@@ -84,15 +84,17 @@ QH_Collect_LZW_Init(nil, API)
 local CompressCollection
 
 function QH_Collector_Init()
+  -- Dunno why, but these statements cause the 1% issue.
+  --[[
   QH_Collector_UpgradeAll(QuestHelper_Collector)
   
   for _, v in pairs(QuestHelper_Collector) do
     if not v.modified then v.modified = time() - 7 * 24 * 60 * 60 end  -- eugh. Yeah, we set it to be a week ago. It's pretty grim.
   end
-  
+  --]]
   QuestHelper_Collector_Version = QuestHelper_Collector_Version_Current
   
-  local svnversion = "180r"
+  local svnversion = "185r"
   local buildInfo, locale, faction = GetBuildInfo(), GetLocale(), QuestHelper:PlayerFaction()
   local altfaction = ""
   if faction == ALLIANCE then

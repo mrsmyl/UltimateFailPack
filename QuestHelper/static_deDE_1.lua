@@ -1,4 +1,4 @@
-QuestHelper_File["static_deDE_1.lua"] = "4.1.0.180r"
+QuestHelper_File["static_deDE_1.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["static_deDE_1.lua"] = GetTime()
 
 if GetLocale() ~= "deDE" then return end

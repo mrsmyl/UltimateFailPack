@@ -1,4 +1,4 @@
-QuestHelper_File["collect_merchant.lua"] = "4.1.0.180r"
+QuestHelper_File["collect_merchant.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["collect_merchant.lua"] = GetTime()
 
 -- http://www.penny-arcade.com/comic/2005/01/05/
@@ -40,9 +40,16 @@ local function MerchantShow()
     QuestHelper: Assert(itemid)
     itemid = GetItemType(itemid)
     local _, _, price, quant, avail, _, _ = GetMerchantItemInfo(i)
-    local dstr = string.format("%d@@%d@@%d@@%d", itemid, quant, avail, price)
+    local dstr = {}
+    dstr.quant = quant
+    dstr.avail = avail
+    dstr.price = price
     --if debug_output then QuestHelper:TextOut(dstr) end
-    targ["shop_" .. dstr] = (targ["shop_" .. dstr] or 0) + 1
+    if not targ["shop"][itemid] then 
+      targ["shop"][itemid] = dstr
+    end
+
+    targ["shop"][itemid].count = (targ["shop"][itemid].count or 0) + 1
   end
 end
 

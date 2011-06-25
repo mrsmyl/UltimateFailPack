@@ -1,4 +1,4 @@
-QuestHelper_File["static_enUS.lua"] = "4.1.0.180r"
+QuestHelper_File["static_enUS.lua"] = "4.1.0.185r"
 QuestHelper_Loadtime["static_enUS.lua"] = GetTime()
 
 if GetLocale() ~= "enUS" then return end
