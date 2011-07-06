@@ -244,6 +244,9 @@ function HealBot_Init_Spells_Defaults(class)
         [HEALBOT_CRUSADER_AURA] = {
             CastTime = 0, Mana = 155, Level = 62 }, 
         
+        [HEALBOT_HOLY_SHOCK] = { 
+            CastTime = 0, Mana = 35, Level = 10},
+        
 --    };
 --  end
 

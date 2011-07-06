@@ -1605,7 +1605,6 @@
 	</Frame>
 	
 	
-	<Frame name="ARKINV_Frame2" inherits="ARKINV_TemplateFrameMain" id="2" /> <!-- keyring -->
 
 	
 	<Frame name="ARKINV_Frame3" inherits="ARKINV_TemplateFrameMain" id="3" /> <!-- bank -->

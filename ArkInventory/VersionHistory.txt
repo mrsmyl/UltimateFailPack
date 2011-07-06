@@ -15,6 +15,15 @@
 
  
 
+*3.02.80 (29-JUN-2011)*
+ * fixed - bug in erase code
+ * changed - TOC updated to 4.2
+ * added - bound to battle.net account now treated as soulbound
+ * removed - keyring
+
+*3.02.79 (29-JUN-2011)*
+ * incorrect upload
+ 
 *3.02.78 (28-APR-2011)*
  * workaround - Open All Bags keybinding calls ToggleAllBags, ToggleAllBags is now hooked and calls OpenAllBags instead
  * changed - TOC updated to 4.1

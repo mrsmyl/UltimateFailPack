@@ -1,5 +1,5 @@
-## Interface: 40100
-## X-Curse-Packaged-Version: 3.02.78
+## Interface: 40200
+## X-Curse-Packaged-Version: 3.02.80
 ## X-Curse-Project-Name: ArkInventory
 ## X-Curse-Project-ID: ark-inventory
 ## X-Curse-Repository-ID: wow/ark-inventory/mainline
@@ -13,7 +13,7 @@
 ## LoadOnDemand: 0
 ## SavedVariables: ARKINVDB
 
-## Notes: Allows viewing of your (and all your toons on that realm) Bags, Keyring, Bank, Guild Bank, Inventory, Mail, Pet, Mount, Currency and Auction items when-ever and where-ever you want.
+## Notes: Allows viewing of your (and all your toons on that realm) Bags, Bank, Guild Bank, Inventory, Mail, Pet, Mount, Currency and Auction items when-ever and where-ever you want.
 ## Notes-deDE: Ermöglicht das Anzeigen der Taschen, des Bankfachs, des Schlüsselbundes und des Gildentresors aller Charaktere zu jedem beliebigen Zeitpunkt.
 ## Notes-zhCN: 整合并分类显示你的背包、钥匙链、银行、工会银行，支持离线查看
 ## Notes-zhTW: 以分類方式顯示你的背包。
@@ -33,7 +33,6 @@ Libs\LibStub\LibStub.lua
 Libs\CallbackHandler\CallbackHandler-1.0.lua
 Libs\LibDataBroker\LibDataBroker-1.1.lua
 Libs\ArkDewdrop\ArkDewdrop-3.0.lua
-Libs\ArkCRC32\ArkCRC32-1.0.lua
 
 
 #@no-lib-strip@

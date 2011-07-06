@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.10: bug fix for one-handed caster weapons
+-- Version 1.5.11: updated for patch 4.2
 ------------------------------------------------------------
 
 
-PawnVersion = 1.510
+PawnVersion = 1.511
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -206,6 +206,10 @@ function PawnInitialize()
 	hooksecurefunc(GameTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetHyperlink", ...) end)
 	hooksecurefunc(GameTooltip, "SetInboxItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetInboxItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetInventoryItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetInventoryItem", ...) end)
+	if GameTooltip.SetItemByID then
+		-- Added in WoW 4.2 ***
+		hooksecurefunc(GameTooltip, "SetItemByID", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetItemByID", ...) end)
+	end
 	hooksecurefunc(GameTooltip, "SetLootItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetLootItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetLootRollItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetLootRollItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetMerchantItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetMerchantItem", ...) end)

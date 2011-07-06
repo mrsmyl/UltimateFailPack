@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 	dbSettings.lua
 		Database access for Bagnon
 --]]
@@ -74,7 +74,6 @@ function SavedSettings:GetDefaultSettings()
 		enabledFrames = {
 			inventory = true,
 			bank = true,
-			keys = true,
 		},
 		
 		autoDisplayEvents = {
@@ -91,10 +90,8 @@ function SavedSettings:GetDefaultSettings()
 		},
 		
 		slotColors = {
-			ammo = {0.7, 0.7, 1},
 			trade = {0.5, 1, 0.5},
-			shard = {0.9, 0.7, 1},
-			keyring = {1, 0.8, 0},
+			normal = {1, 1, 1},
 		},
 		
 		highlightOpacity = 0.5,
@@ -119,6 +116,17 @@ end
 
 function SavedSettings:UpgradeDB()
 	local major, minor, bugfix = self:GetDBVersion():match('(%w+)%.(%w+)%.(%w+)')
+	
+	--do upgrade stuff
+	if tonumber(minor) <= 6 and tonumber(bugfix) <= 2 then
+		local db = self.db
+		local autoDisplayEvents = self.db.autoDisplayEvents
+		if autoDisplayEvents then
+			for i = 1, #autoDisplayEvents do
+				autoDisplayEvents[i] = nil
+			end
+		end
+	end
 
 	self:GetDB().version = self:GetAddOnVersion()
 	Bagnon:Print(string.format(L.Updated, self:GetDBVersion()))

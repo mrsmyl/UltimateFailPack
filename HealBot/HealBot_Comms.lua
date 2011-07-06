@@ -143,8 +143,6 @@ function HealBot_Comms_Print_IncHealsSum(sender_id,addon_id,HealsCnt,linenum)
     g:SetText(sender_id);
     g=_G["HBIncH"..linenum.."Ver"]
     g:SetText(addon_id);
- --   g=_G["HBIncH"..linenum.."Cnt"]
- --   g:SetText(ceil(HealsCnt));
 end
 
 function HealBot_Comms_Print_AddonCPUSum(Addon,CPU,MEM,linenum)

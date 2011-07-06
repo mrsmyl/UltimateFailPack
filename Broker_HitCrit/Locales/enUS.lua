@@ -2,8 +2,8 @@
 ************************************************************************
 Project				: Broker_HitCrit
 Author				: zhinjio
-Project Revision	: 2.22.0-release
-Project Date		: 20110428045833
+Project Revision	: 2.22.1-release
+Project Date		: 20110704205759
 
 File				: Locales\enUS.lua
 Commit Author		: zhinjio

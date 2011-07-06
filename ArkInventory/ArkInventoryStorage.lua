@@ -24,7 +24,7 @@ function ArkInventory.EraseSavedData( player_id, loc_id, silent )
 					end
 					
 					ArkInventory.Frame_Main_DrawStatus( l, ArkInventory.Const.Window.Draw.Recalculate )
-					if not silent then
+					if ArkInventory.Global.Location[l] and not silent then
 						ArkInventory.Output( "Saved ", string.lower( ArkInventory.Global.Location[l].Name ), " data for ", pd.info.name, " has been erased" )
 					end
 					
@@ -1205,7 +1205,7 @@ function ArkInventory.Scan( bagTable )
 		if loc_id == nil then
 			--ArkInventory.OutputWarning( "aborted scan of bag ", blizzard_id, ", not an ", ArkInventory.Const.Program.Name, " controlled bag" )
 			return
-		elseif loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Bank or loc_id == ArkInventory.Const.Location.Key then
+		elseif loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Bank then
 			ArkInventory.ScanBag( blizzard_id )
 		elseif loc_id == ArkInventory.Const.Location.Vault then
 			if not processed[loc_id] then
@@ -1339,24 +1339,6 @@ function ArkInventory.ScanBag( blizzard_id )
 	end
 
 	
-	if loc_id == ArkInventory.Const.Location.Key then
-	
-		count = GetContainerNumSlots( blizzard_id )
-		
-		if not count or count == 0 then
-			if ArkInventory.db.global.option.bugfix.zerosizebag.alert then
-				ArkInventory.OutputWarning( "Aborted scan of bag ", blizzard_id, ", location ", loc_id, " [", ArkInventory.Global.Location[loc_id].Name, "] size returned was ", count, ", rescan has been scheduled for 10 seconds.  This warning can be disabled in the config menu" )
-			end
-			ArkInventory:SendMessage( "LISTEN_RESCAN_LOCATION_BUCKET", loc_id )
-			return
-		end
-		
-		texture = ArkInventory.Global.Location[loc_id].Texture
-		status = ArkInventory.Const.Bag.Status.Active
-		
-	end
-
-	
 	if loc_id == ArkInventory.Const.Location.Bank then
 	
 		count = GetContainerNumSlots( blizzard_id )
@@ -1449,10 +1431,13 @@ function ArkInventory.ScanBag( blizzard_id )
 			
 			texture, count, locked, quality, readable = GetContainerItemInfo( blizzard_id, slot_id )
 			--ArkInventory.Output( "h=", h, ", count[", count, "], q[", quality, "], read[", readable, "]" )
-			ArkInventory.TooltipSetItem( ArkInventory.Global.Tooltip.Scan, blizzard_id, slot_id )
 			
-			if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, "^" .. ITEM_SOULBOUND .. "$" ) or ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, "^" .. ITEM_BIND_ON_PICKUP .. "$" ) then
-				sb = true
+			ArkInventory.TooltipSetItem( ArkInventory.Global.Tooltip.Scan, blizzard_id, slot_id )
+			for _, v in pairs( ArkInventory.Const.Soulbound ) do
+				if ( v and ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, string.format( "^%s$", v ) ) ) then
+					sb = true
+					break
+				end
 			end
 			
 		else
@@ -1814,8 +1799,11 @@ function ArkInventory.ScanWearing( )
 
 			-- check for soulbound
 			ArkInventory.TooltipSetInventoryItem( ArkInventory.Global.Tooltip.Scan, inv_id )
-			if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, "^" .. ITEM_SOULBOUND .. "$" ) or ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, "^" .. ITEM_BIND_ON_PICKUP .. "$" ) then
-				sb = true
+			for _, v in pairs( ArkInventory.Const.Soulbound ) do
+				if ( v and ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, string.format( "^%s$", v ) ) ) then
+					sb = true
+					break
+				end
 			end
 			
 		else

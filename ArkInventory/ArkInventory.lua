@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 687 $
--- $Date: 2011-04-28 10:24:22 +1000 (Thu, 28 Apr 2011) $
+-- $Revision: 713 $
+-- $Date: 2011-06-29 18:29:08 +1000 (Wed, 29 Jun 2011) $
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
 
@@ -31,8 +31,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0278,
-		UIVersion = "3.2.78",
+		Version = 3.0280,
+		UIVersion = "3.2.80",
 		--Beta = "ALPHA",
 	},
 	
@@ -92,7 +92,7 @@ ArkInventory.Const = { -- constants
 
 	Location = {
 		Bag = 1,
-		Key = 2,
+		--Key = 2,
 		Bank = 3,
 		Vault = 4,
 		Mail = 5,
@@ -132,7 +132,7 @@ ArkInventory.Const = { -- constants
 		Type = { -- slot type numbers, do not change this order, just add new ones to the end of the list
 			Unknown = 0,
 			Bag = 1,
-			Key = 3,
+			--Key = 3,
 			--Soulshard = 5,
 			Herb = 6,
 			Enchanting = 7,
@@ -247,10 +247,10 @@ ArkInventory.Const = { -- constants
 					["id"] = "SYSTEM_CONTAINER",
 					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER"],
 				},
-				[406] = {
-					["id"] = "SYSTEM_KEY",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
-				},
+--				[406] = {
+--					["id"] = "SYSTEM_KEY",
+--					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
+--				},
 				[407] = {
 					["id"] = "SYSTEM_MISC",
 					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC"],
@@ -529,10 +529,10 @@ ArkInventory.Const = { -- constants
 					["id"] = "EMPTY_BAG",
 					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
 				},
-				[303] = {
-					["id"] = "EMPTY_KEY",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
-				},
+--				[303] = {
+--					["id"] = "EMPTY_KEY",
+--					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
+--				},
 				[305] = {
 					["id"] = "EMPTY_HERB",
 					["text"] = ArkInventory.Localise["WOW_SKILL_HERBALISM"],
@@ -778,6 +778,8 @@ ArkInventory.Const = { -- constants
 	
 	DatabaseDefaults = { },
 	
+	Soulbound = { ITEM_BIND_ON_PICKUP, ITEM_SOULBOUND, ITEM_BIND_TO_BNETACCOUNT, ITEM_BNETACCOUNTBOUND, ITEM_BIND_TO_ACCOUNT },
+	
 }
 
 ArkInventory.Const.Slot.Data = {
@@ -786,13 +788,6 @@ ArkInventory.Const.Slot.Data = {
 		["long"] = ArkInventory.Localise["UNKNOWN"],
 		["type"] = ArkInventory.Localise["UNKNOWN"],
 		["colour"] = { r = 1.0, g = 0.0, b = 0.0 }, -- red
-	},
-	[ArkInventory.Const.Slot.Type.Key] = {
-		["name"] = ArkInventory.Localise["STATUS_NAME_KEY"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
-		["colour"] = { r = 1.0, g = 1.0, b = 0.0 }, -- yellow,
-		["hide"] = true,
 	},
 	[ArkInventory.Const.Slot.Type.Bag] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_BAG"],
@@ -954,27 +949,6 @@ ArkInventory.Global = { -- globals
 			Bags = { },
 			canRestack = true,
 			hasChanger = true,
-			canSearch = true,
-			
-			Layout = { },
-			maxBar = 0,
-			maxSlot = { },
-			
-			isOffline = false,
-			canView = true,
-			canOverride = true,
-			
-			drawState = ArkInventory.Const.Window.Draw.Init,
-		},
-		
-		[ArkInventory.Const.Location.Key] = {
-			Internal = "key",
-			Name = KEYRING,
-			Texture = [[Interface\ContainerFrame\KeyRing-Bag-Icon]], --Interface\Icons\INV_Misc_Key_03
-			bagCount = 1,
-			Bags = { },
-			canRestack = true,
-			hasChanger = nil,
 			canSearch = true,
 			
 			Layout = { },
@@ -1464,7 +1438,6 @@ ArkInventory.Const.DatabaseDefaults.realm = {
 				["control"] = { -- which locations to take control of
 					[ArkInventory.Const.Location.Bag] = true,
 					[ArkInventory.Const.Location.Bank] = true,
-					[ArkInventory.Const.Location.Key] = true,
 					[ArkInventory.Const.Location.Vault] = true,
 					["*"] = false,
 				},
@@ -1836,11 +1809,6 @@ function ArkInventory.OnInitialize( )
 		table.insert( ArkInventory.Global.Location[loc_id].Bags, x )
 		--ArkInventory.Output( "added bag ", x, " to ", ArkInventory.Global.Location[loc_id].Name )
 	end
-	
-	-- keyring
-	loc_id = ArkInventory.Const.Location.Key
-	table.insert( ArkInventory.Global.Location[loc_id].Bags, KEYRING_CONTAINER )
-	--ArkInventory.Output( "added bag ", KEYRING_CONTAINER, " to ", ArkInventory.Global.Location[loc_id].Name )
 	
 	-- bank
 	loc_id = ArkInventory.Const.Location.Bank
@@ -3074,11 +3042,6 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		end
 	end
 
-	-- keys
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_KEY"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_KEY"] ) then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_KEY" )
-	end
-	
 	-- glyphs
 	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_GLYPH"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_GLYPH" )
@@ -3767,7 +3730,7 @@ function ArkInventory.Frame_Main_Get( loc_id )
 end
 	
 function ArkInventory.Frame_Main_Scale_All( )
-	for loc_id in ipairs( ArkInventory.Global.Location ) do
+	for loc_id in pairs( ArkInventory.Global.Location ) do
 		ArkInventory.Frame_Main_Scale( loc_id )
 	end
 end
@@ -3806,7 +3769,7 @@ function ArkInventory.Frame_Main_Scale( loc_id )
 end
 	
 function ArkInventory.Frame_Main_Reposition_All( )
-	for loc_id in ipairs( ArkInventory.Global.Location ) do
+	for loc_id in pairs( ArkInventory.Global.Location ) do
 		ArkInventory.Frame_Main_Reposition( loc_id )
 	end
 end
@@ -4104,7 +4067,7 @@ end
 
 function ArkInventory.Frame_Main_Paint_All( )
 
-	for loc_id, loc_data in ipairs( ArkInventory.Global.Location ) do
+	for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
 		frame = ArkInventory.Frame_Main_Get( loc_id )
 		ArkInventory.Frame_Main_Paint( frame )
 	end
@@ -4477,9 +4440,7 @@ function ArkInventory.Frame_Main_OnShow( frame )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
-	if loc_id == ArkInventory.Const.Location.Key then
-		PlaySound( "KeyRingOpen" )
-	elseif loc_id == ArkInventory.Const.Location.Bank then
+	if loc_id == ArkInventory.Const.Location.Bank then
 		PlaySound( "igCharacterInfoOpen" )
 	elseif loc_id == ArkInventory.Const.Location.Bag then
 		PlaySound( "igBackPackOpen" )
@@ -4519,7 +4480,7 @@ end
 
 function ArkInventory.Frame_Main_Hide( w )
 
-	for loc_id in ipairs( ArkInventory.Global.Location ) do
+	for loc_id in pairs( ArkInventory.Global.Location ) do
 		if not w or w == loc_id then
 			local frame = ArkInventory.Frame_Main_Get( loc_id )
 			frame:Hide( )
@@ -4534,9 +4495,7 @@ function ArkInventory.Frame_Main_OnHide( frame )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
-	if loc_id == ArkInventory.Const.Location.Key then
-		PlaySound( "KeyRingClose" )
-	elseif loc_id == ArkInventory.Const.Location.Bank then
+	if loc_id == ArkInventory.Const.Location.Bank then
 		
 		PlaySound( "igCharacterInfoClose" )
 		
@@ -5260,7 +5219,7 @@ function ArkInventory.Frame_Bar_Paint_All( )
 
 	--ArkInventory.Output( "Frame_Bar_Paint_All( )" )
 
-	for loc_id, loc_data in ipairs( ArkInventory.Global.Location ) do
+	for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
 
 		c = _G[string.format( "%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Container.Name )]
 		
@@ -6141,7 +6100,7 @@ end
 	
 function ArkInventory.Frame_Item_Empty_Paint_All( )
 
-	for loc_id, loc_data in ipairs( ArkInventory.Global.Location ) do
+	for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
 	
 		for bag_id in pairs( loc_data.Bags ) do
 		
@@ -7629,23 +7588,6 @@ function ArkInventory.BlizzardAPIHooks( disable )
 	end
 
 	
-	if disable or not ArkInventory.LocationIsControlled( ArkInventory.Const.Location.Key ) then
-		
-		-- unhook the keyring functions
-		
-		ArkInventory.MyUnhook( "ToggleKeyRing" )
-		
-		ArkInventory.Frame_Main_Hide( ArkInventory.Const.Location.Key )
-		
-	else
-		
-		-- hook the keyring functions
-		
-		ArkInventory.MyHook( "ToggleKeyRing", "HookToggleKeyRing", true )
-		
-	end
-	
-	
 	-- bank hooks
 	if not BankFrame then
 		
@@ -7827,21 +7769,6 @@ function ArkInventory.HookToggleBackpack( self )
 	end
 	
 	ArkInventory.OutputError( "Code failure: HookToggleBackpack( ), you should never have got here" )
-	
-end
-
-function ArkInventory.HookToggleKeyRing( self )
-
-	--ArkInventory.Output( "HookToggleKeyRing( )" )
-	
-	local loc_id = ArkInventory.Const.Location.Key
-	
-	if ArkInventory.LocationIsControlled( loc_id ) then
-		ArkInventory.Frame_Main_Toggle( loc_id )
-		return
-	end
-	
-	ArkInventory.OutputError( "Code failure: HookToggleKeyRing( ), you should never have got here" )
 	
 end
 
@@ -8289,8 +8216,6 @@ function ArkInventory.LocationControlSet( loc_id, control )
 		
 		if loc_id == ArkInventory.Const.Location.Bag then
 			CloseAllBags( )
-		elseif loc_id == ArkInventory.Const.Location.Keyring then
-			
 		elseif loc_id == ArkInventory.Const.Location.Bank and ArkInventory.Global.Mode.Bank then
 			CloseBankFrame( )
 		elseif loc_id == ArkInventory.Const.Location.Vault and ArkInventory.Global.Mode.Vault then

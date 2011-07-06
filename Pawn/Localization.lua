@@ -799,6 +799,7 @@ PawnRegexes =
 	-- ========================================
 	{'^"'}, -- Flavor text
 	{"^Requires"}, -- But "Requires level XX to YY" we DO care about.
+	{"^Season "}, -- Honor and Conquest gear
 	{"^Alterac Valley$"}, -- Stormpike Soldier's Blood
 	{"^Blackrock Depths$"}, -- Dark Brewmaiden's Brew
 	{"^Blade's Edge Mountains$"}, -- Felsworn Gas Mask

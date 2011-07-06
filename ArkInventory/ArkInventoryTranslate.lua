@@ -81,12 +81,6 @@ local updateTable = {
 	["WOW_ITEM_TYPE_GLYPH"] = function( value )
 		ArkInventory.Const.Category.Code.System[439].text = value
 	end,
-	["WOW_ITEM_TYPE_KEY"] = function( value )
-		ArkInventory.Const.Category.Code.System[406].text = value
-		ArkInventory.Const.Category.Code.Empty[303].text = value
-		ArkInventory.Const.Slot.Data[ArkInventory.Const.Slot.Type.Key].long = value
-		ArkInventory.Const.Slot.Data[ArkInventory.Const.Slot.Type.Key].type = value
-	end,
 	["WOW_ITEM_TYPE_MISC"] = function( value )
 		ArkInventory.Const.Category.Code.System[407].text = value
 	end,
@@ -252,7 +246,6 @@ local itemTable = { -- key, itemtype = true / itemsubtype = false, item id
 	{ "WOW_ITEM_TYPE_CONTAINER_LEATHERWORKING", false, 38399 },
 	{ "WOW_ITEM_TYPE_CONTAINER_MINING", false, 30746 },
 	{ "WOW_ITEM_TYPE_CONTAINER_TACKLE", false, 60218 },
-	{ "WOW_ITEM_TYPE_KEY", true, 30633 },
 	{ "WOW_ITEM_TYPE_GEM", true, 36919 },
 	{ "WOW_ITEM_TYPE_GLYPH", true, 43673 },
 	{ "WOW_ITEM_TYPE_MISC", true, 47180 },

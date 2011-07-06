@@ -191,6 +191,9 @@ local HealBot_luVars={}
 local HealBot_endAggro={}
 local HealBot_notVisible={}
 local HealBot_CustomDebuff_RevDurLast={}
+local hbManaPlayers={}
+local hbCurLowMana={}
+local mana,maxmana=0,0
 
 function HealBot_UpdTargetUnitID(unit)
     HealBot_luVars["TargetUnitID"]=unit
@@ -364,7 +367,7 @@ end
 
 function HealBot_AddChat(HBmsg)
     local hbChatChan=HealBot_Comms_GetChan("HBmsg");
-    if hbChatChan and HealBot_SpamCnt < 28 then
+    if hbChatChan and HealBot_SpamCnt < 32 then
         HealBot_SpamCnt=HealBot_SpamCnt+1;
         HBmsg="["..date("%H:%M", time()).."] "..HBmsg;
         SendChatMessage(HBmsg , "CHANNEL", nil, hbChatChan); 
@@ -715,6 +718,24 @@ function HealBot_SlashCmd(HBcmd)
         end
     elseif (HBcmd=="afr") then
         HealBot_AddChat("qaFR="..HealBot_luVars["qaFR"])
+    elseif (HBcmd=="aggro" and x and y) then
+        if tonumber(x) and tonumber(x)==2 then
+            if tonumber(y) and tonumber(y)>24 and tonumber(x)<96 then
+                HealBot_Globals.aggro2pct=tonumber(y)
+                HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_AGGRO2_SET_MSG..y)
+            else
+                HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_AGGRO2_ERROR_MSG)
+            end
+        elseif tonumber(x) and tonumber(x)==3 then
+            if tonumber(y) and tonumber(y)>74 and tonumber(y)<101 then
+                HealBot_Globals.aggro3pct=tonumber(y)
+                HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_AGGRO3_SET_MSG..y)
+            else
+                HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_AGGRO3_ERROR_MSG)
+            end
+        else
+            HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_AGGRO_ERROR_MSG)
+        end
     elseif (HBcmd=="test") then
         HealBot_AddDebug("test")
     else
@@ -883,6 +904,15 @@ function HealBot_UnitHealth(hbGUID, unit)
     return x,y;
 end
 
+function HealBot_UnitMana(unit)
+    x,y=nil,nil
+    if unit and UnitPowerType(unit)==0 then
+        x=UnitMana(unit)
+        y=UnitManaMax(unit)
+    end
+    return x,y;
+end
+
 function HealBot_RecalcHeals(hbGUID)
     if HealBot_luVars["DoUpdates"] then
         HealBot_Action_Refresh(hbGUID);
@@ -915,30 +945,38 @@ function HealBot_Set_Timers()
     if HealBot_Config.DisabledNow==0 then
         if HealBot_luVars["qaFR"]<10 then
             HB_Timer1=2
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/3, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/2, 4)  
             HB_Timer3=1
         elseif HealBot_luVars["qaFR"]<20 then
             HB_Timer1=1.5
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/3, 4)   
+            HB_Timer3=1
+        elseif HealBot_luVars["qaFR"]<30 then
+            HB_Timer1=1.2
             HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/4, 4)   
             HB_Timer3=1
         elseif HealBot_luVars["qaFR"]<40 then
             HB_Timer1=1
             HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/5, 4)   
             HB_Timer3=0.5
-        elseif HealBot_luVars["qaFR"]<80 then
-            HB_Timer1=0.5
+        elseif HealBot_luVars["qaFR"]<60 then
+            HB_Timer1=0.85
             HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/7, 4)   
+            HB_Timer3=0.33
+        elseif HealBot_luVars["qaFR"]<80 then
+            HB_Timer1=0.7
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/9, 4)   
             HB_Timer3=0.25
         else
-            HB_Timer1=0.3
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/9, 4)   
+            HB_Timer1=0.5
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/11, 4)   
             HB_Timer3=0.2
         end
         HealBot_AddDebug("qaFR="..HealBot_luVars["qaFR"])
     else
-        HB_Timer1=2
+        HB_Timer1=4
         HB_Timer2=HealBot_Globals.RangeCheckFreq
-        HB_Timer3=1
+        HB_Timer3=2
     end
 end
 
@@ -1316,7 +1354,8 @@ function HealBot_OnUpdate(self)
                     if HealBot_UnitID[xGUID] then HealBot_Action_ResetUnitStatus(HealBot_UnitID[xGUID]) end
                 end
             end
-        elseif HealBot_Timer3>=HB_Timer3 and HealBot_Loaded then
+        end
+        if HealBot_Timer3>=HB_Timer3 and HealBot_Loaded then
             HealBot_Timer3=0
         --    if not HealBot_luVars["DelayAuraCheck"] then
                 for xGUID in pairs(HealBot_Player_HoT) do
@@ -1380,7 +1419,7 @@ function HealBot_OnUpdate(self)
                 HealBot_doClearAggro()
                 aSwitch=2
             elseif aSwitch<4 and Healbot_Config_Skins.ShowAggro[Healbot_Config_Skins.Current_Skin]==1 then 
-                HealBot_CheckAggro()
+                HealBot_Action_CheckAggro()
                 aSwitch=3
             else
                 HealBot_Action_RefreshButtons()
@@ -1539,8 +1578,6 @@ function HealBot_OnEvent_VariablesLoaded(self)
     HealBot_luVars["qaFR2"]=10
     HealBot_luVars["qaFR3"]=10
     HealBot_luVars["qaFR4"]=10
-    HealBot_luVars["AggroAS"]=1
-    HealBot_luVars["AggroNS"]=1
     HealBot_luVars["IsSolo"]=true
     if strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PRIEST] then
         HealBot_ShortBuffs[HEALBOT_LEVITATE]=true
@@ -1877,6 +1914,13 @@ function HealBot_configClassHoT(class, race)
         HealBot_Watch_HoT[HEALBOT_ARCHANGEL]="C"
     else
         HealBot_Watch_HoT[HEALBOT_ARCHANGEL]=nil
+    end
+    if hbClassHoTwatch[HEALBOT_GLYPH_PRAYER_OF_HEALING]==3 then
+        HealBot_Watch_HoT[HEALBOT_GLYPH_PRAYER_OF_HEALING]="A"
+    elseif hbClassHoTwatch[HEALBOT_GLYPH_PRAYER_OF_HEALING]==2 and class==HealBot_Class_En[HEALBOT_PRIEST] then
+        HealBot_Watch_HoT[HEALBOT_GLYPH_PRAYER_OF_HEALING]="C"
+    else
+        HealBot_Watch_HoT[HEALBOT_GLYPH_PRAYER_OF_HEALING]=nil
     end
     if hbClassHoTwatch[HEALBOT_REJUVENATION]==3 then
         HealBot_Watch_HoT[HEALBOT_REJUVENATION]="A"
@@ -2352,6 +2396,8 @@ function HealBot_Register_Events()
 			HealBot_Register_Mana() 
 		elseif Healbot_Config_Skins.PowerCounter[Healbot_Config_Skins.Current_Skin]==1 and strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
 			HealBot_Register_Mana() 
+        elseif Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]>1 then
+            HealBot_Register_Mana() 
 		end
         HealBot:RegisterEvent("LEARNED_SPELL_IN_TAB");
       --  HealBot:RegisterEvent("PLAYER_TALENT_UPDATE");
@@ -2482,100 +2528,63 @@ function HealBot_UnRegister_Events()
     
 end
 
-local aUnit,oUnit,eUnit=nil,nil,nil
-local aGUID=nil
-local HealBot_nonAggro1={}
-local HealBot_nonAggro2={}
-local aggroSwitch=0
-function HealBot_CheckAggro()
-    aggroSwitch=aggroSwitch+1
-    if aggroSwitch==1 then
-        for aUnit,oUnit in pairs(HealBot_Aggro1) do 
-            HealBot_CheckUnitAggro(aUnit, oUnit)
-        end
---    elseif aggroSwitch==2 then
---        for xGUID,xUnit in pairs(HealBot_nonAggro1) do
---            if UnitExists(xUnit) then
---                z=HealBot_CalcThreat(xUnit) or 0
---                if z>0 then
---                    y = UnitThreatSituation(xUnit) or 0
---                    if HealBot_luVars["AggroAS"]==1 then
---                        HealBot_Aggro1[xUnit]=xUnit
---                        HealBot_luVars["AggroAS"]=2
---                    else
---                        HealBot_Aggro2[xUnit]=xUnit
---                        HealBot_luVars["AggroAS"]=1
---                    end
---                    HealBot_nonAggro1[xGUID]=nil
---                    if z==100 and y<3 then y=3 end
---                    HealBot_Action_UpdateAggro(xUnit,true,y,xGUID,z)
---                end
---            end
---        end
-    else -- elseif aggroSwitch==3 then
-        for aUnit,oUnit in pairs(HealBot_Aggro2) do 
-            HealBot_CheckUnitAggro(aUnit, oUnit)
-        end
---    else
-        aggroSwitch=0
---        for xGUID,xUnit in pairs(HealBot_nonAggro2) do
---            if UnitExists(xUnit) then
---                z=HealBot_CalcThreat(xUnit) or 0
---                if z>0 then
---                    y = UnitThreatSituation(xUnit) or 0
---                    if HealBot_luVars["AggroAS"]==1 then
---                        HealBot_Aggro1[xUnit]=xUnit
---                        HealBot_luVars["AggroAS"]=2
---                    else
---                        HealBot_Aggro2[xUnit]=xUnit
---                        HealBot_luVars["AggroAS"]=1
---                    end
---                    HealBot_nonAggro2[xGUID]=nil
---                    if z==100 and y<3 then y=3 end
---                    HealBot_Action_UpdateAggro(xUnit,true,y,xGUID,z)
---                end
---            end
---        end
-    end
-end
+local eUnit=nil
+local aTrack={}
 
-function HealBot_CheckUnitAggro(aUnit, oUnit)
-    y = UnitThreatSituation(aUnit)
-    xGUID=HealBot_UnitGUID(aUnit)
-    if not y then
-        if UnitIsEnemy(aUnit, aUnit.."target") then
-            if not UnitExists(aUnit.."targettarget") or not UnitIsUnit(aUnit, aUnit.."targettarget") then
-                HealBot_qClearUnitAggro(aUnit, xGUID)
-            end
-        elseif UnitIsEnemy(oUnit, oUnit.."target") then
-            if not UnitExists(oUnit.."targettarget") or UnitIsUnit(oUnit, oUnit.."targettarget") then
-                HealBot_qClearUnitAggro(aUnit, xGUID)
-                HealBot_SetAggro(oUnit)
-            end
-        else
-            HealBot_qClearUnitAggro(aUnit, xGUID)
+function HealBot_CheckUnitAggro(unit)
+    if UnitExists(unit) then
+        z, y=HealBot_CalcThreat(unit)
+        xGUID=HealBot_UnitGUID(unit)
+        x=y+z
+        if x==0 then
+            HealBot_qClearUnitAggro(unit, xGUID)
+        elseif (aTrack[unit] or 0)~=((1000*y)+z) then
+            aTrack[unit]=(1000*y)+z
+            HealBot_Action_UpdateAggro(unit,true,y,xGUID,z)
         end
     else
-        z=HealBot_CalcThreat(aUnit) or 0
-        if z==100 and y<3 then y=3 end
-        if y~=HealBot_Action_RetUnitThreat(hbGUID) or z~=HealBot_Action_RetUnitThreatPct(hbGUID) then HealBot_Action_UpdateAggro(aUnit,true,y,xGUID,z) end
+        HealBot_qClearUnitAggro(unit, "nil")
     end
 end
 
 function HealBot_CalcThreat(unit)
     z=nil
-    if UnitIsEnemy(unit, unit.."target") then 
+    y=nil
+    if UnitExists(unit.."target") and UnitIsEnemy(unit, unit.."target") then 
         if UnitIsUnit(unit, unit.."targettarget") then
             z=100
         else
             _, _, z, _, _ = UnitDetailedThreatSituation(unit, unit.."target")
+            z=floor(z or 0)
         end
     elseif eUnit and UnitExists(eUnit) and UnitIsEnemy(unit, eUnit) then 
         _, _, z, _, _ = UnitDetailedThreatSituation(unit, eUnit)
+        z=floor(z or 0)
     elseif UnitExists("playertarget") and UnitIsEnemy("player", "playertarget") then 
         _, _, z, _, _ = UnitDetailedThreatSituation(unit, "playertarget") 
+        z=floor(z or 0)
     end
-    return z
+    if not z then z=0 end
+    if z>=HealBot_Globals.aggro3pct then
+        y=3
+    else
+        if UnitExists(unit.."target") and UnitIsEnemy(unit, unit.."target") then 
+            y = UnitThreatSituation(unit, unit.."target")
+        elseif eUnit and UnitExists(eUnit) and UnitIsEnemy(unit, eUnit) then
+            y = UnitThreatSituation(unit, eUnit)
+        elseif UnitExists("playertarget") and UnitIsEnemy("player", "playertarget") then 
+            y = UnitThreatSituation(unit, "playertarget")
+        else
+            y = UnitThreatSituation(unit)
+        end
+        if not y then y=0 end
+        if z>=HealBot_Globals.aggro2pct then
+            if y<2 then y=2 end
+        elseif z>0 then
+            if y<1 then y=1 end
+        end
+    end
+    return z, y
 end
 
 function HealBot_qClearUnitAggro(unit, hbGUID)
@@ -2584,28 +2593,19 @@ function HealBot_qClearUnitAggro(unit, hbGUID)
 end
 
 function HealBot_ClearUnitAggro(unit, hbGUID)
-    if UnitExists(unit) and eUnit and hbGUID then
-        z=HealBot_CalcThreat(unit)
-        if not z or z==0 then
-            if HealBot_Aggro1[unit] then HealBot_Aggro1[unit]=nil end
-            if HealBot_Aggro2[unit] then HealBot_Aggro2[unit]=nil end
-        --    if HealBot_luVars["AggroNS"]==1 then
-        --        HealBot_nonAggro1[hbGUID]=unit
-        --        HealBot_luVars["AggroNS"]=2
-        --    else
-        --        HealBot_nonAggro2[hbGUID]=unit
-        --        HealBot_luVars["AggroNS"]=1
-        --    end
+    if UnitExists(unit) and HealBot_UnitID[hbGUID] then
+        z, y=HealBot_CalcThreat(unit)
+        x=y+z
+        if x==0 then
+            aTrack[unit]=0
             HealBot_Action_UpdateAggro(unit,false,nil,hbGUID)
-        else
-            y = UnitThreatSituation(unit) or 0
-            if z==100 and y<3 then y=3 end
-            if y~=HealBot_Action_RetUnitThreat(hbGUID) or z~=HealBot_Action_RetUnitThreatPct(hbGUID) then HealBot_Action_UpdateAggro(unit,true,y,hbGUID,z) end
+        elseif (aTrack[unit] or 0)~=((1000*y)+z) then
+            aTrack[unit]=(1000*y)+z
+            HealBot_Action_UpdateAggro(unit,true,y,hbGUID,z)
         end
-    else
-        if HealBot_Aggro1[unit] then HealBot_Aggro1[unit]=nil end
-        if HealBot_Aggro2[unit] then HealBot_Aggro2[unit]=nil end
-        if unit then HealBot_Action_UpdateAggro(unit,false,nil,hbGUID) end
+    elseif unit then 
+        aTrack[unit]=0
+        HealBot_Action_UpdateAggro(unit,false,nil,hbGUID)
     end
     if hbGUID then HealBot_Action_SetThreatPct(hbGUID, -5) end
 end
@@ -2613,43 +2613,52 @@ end
 function HealBot_SetAggro(unit)
  --   uName=UnitName(unit.."targettarget")
  --   aGUID=HealBot_Derive_GUID_fuName(uName)
-    aGUID=UnitGUID(unit.."targettarget")
-    if HealBot_PetGUID[aGUID] then aGUID=HealBot_PetGUID[aGUID] end
-    xUnit=HealBot_UnitID[aGUID]
-    if xUnit and xUnit~="target" then
-        if UnitIsUnit(unit, xUnit) then
-            z=100
-        elseif UnitIsEnemy(xUnit, xUnit.."target") and UnitIsUnit (xUnit, xUnit.."targettarget") then 
-            z=100
-        else
-            _, _, z, _, _ = UnitDetailedThreatSituation(xUnit, unit.."target")
-        end
-        y = UnitThreatSituation(xUnit) or 0
-        if z==100 and y<3 then y=3 end
-        if HealBot_Aggro1[xUnit] then
-            HealBot_Aggro1[xUnit]=unit
-        elseif HealBot_Aggro2[xUnit] then
-            HealBot_Aggro2[xUnit]=unit
-        elseif HealBot_luVars["AggroAS"]==1 then
-            HealBot_Aggro1[xUnit]=unit
-            HealBot_luVars["AggroAS"]=2
-        else
-            HealBot_Aggro2[xUnit]=unit
-            HealBot_luVars["AggroAS"]=1
-        end
-       -- if HealBot_nonAggro1[hbGUID] then HealBot_nonAggro1[hbGUID]=nil end
-       -- if HealBot_nonAggro2[hbGUID] then HealBot_nonAggro2[hbGUID]=nil end
-       -- if y~=HealBot_Action_RetUnitThreat(hbGUID) or z~=HealBot_Action_RetUnitThreatPct(hbGUID) then  HealBot_Action_UpdateAggro(xUnit,true,y,aGUID,z) end
-        HealBot_Action_UpdateAggro(xUnit,true,y,aGUID,z)
+    if UnitExists(unit.."target") and UnitIsEnemy(unit, unit.."target") and UnitExists(unit.."targettarget") and UnitIsEnemy(unit.."target", unit.."targettarget") then
+        aGUID=UnitGUID(unit.."targettarget")
+        if HealBot_PetGUID[aGUID] then aGUID=HealBot_PetGUID[aGUID] end
+        xUnit=HealBot_UnitID[aGUID]
+    else
+        xUnit=nil
     end
     if not eUnit or not UnitIsEnemy(unit, eUnit) then
-        eUnit=unit.."target"
-        HealBot_unitHealthMax["eUnit"]=UnitHealthMax(eUnit) or 2
-        HealBot_unitHealth["eUnit"]=UnitHealth(eUnit) or 1
-    elseif UnitHealthMax(eUnit)>HealBot_unitHealthMax["eUnit"] or (UnitHealthMax(eUnit)==HealBot_unitHealthMax["eUnit"] and UnitHealth(eUnit)>HealBot_unitHealth["eUnit"]) then
+        if xUnit and UnitIsEnemy(xUnit, xUnit.."target") then
+            eUnit=xUnit.."target"
+            HealBot_unitHealthMax["eUnit"]=UnitHealthMax(eUnit) or 2
+            HealBot_unitHealth["eUnit"]=UnitHealth(eUnit) or 1
+        elseif UnitIsEnemy(unit, unit.."target") then
+            eUnit=unit.."target"
+            HealBot_unitHealthMax["eUnit"]=UnitHealthMax(eUnit) or 2
+            HealBot_unitHealth["eUnit"]=UnitHealth(eUnit) or 1
+        else
+            eUnit=nil
+        end
+    elseif UnitIsEnemy(unit, unit.."target") and UnitHealthMax(unit.."target")>HealBot_unitHealthMax["eUnit"] or (UnitHealthMax(unit.."target")==HealBot_unitHealthMax["eUnit"] and UnitHealth(unit.."target")>HealBot_unitHealth["eUnit"]) then
         eUnit=unit.."target"
         HealBot_unitHealthMax["eUnit"]=UnitHealthMax(eUnit)
         HealBot_unitHealth["eUnit"]=UnitHealth(eUnit)
+    end
+    if xUnit and xUnit~="target" then
+        z, y=HealBot_CalcThreat(xUnit)
+        x=y+z
+        if x>0 then
+            if (aTrack[unit] or 0)~=((1000*y)+z) then
+                aTrack[unit]=(1000*y)+z
+                HealBot_Action_UpdateAggro(xUnit,true,y,aGUID,z)
+            end
+        end
+    else
+        aGUID=UnitGUID(unit)
+        if HealBot_PetGUID[aGUID] then aGUID=HealBot_PetGUID[aGUID] end
+        if HealBot_UnitID[aGUID] then
+            z, y=HealBot_CalcThreat(unit)
+            x=y+z
+            if x>0 then
+                if (aTrack[unit] or 0)~=((1000*y)+z) then
+                    aTrack[unit]=(1000*y)+z
+                    HealBot_Action_UpdateAggro(unit,true,y,aGUID,z)
+                end
+            end
+        end
     end
 end
 
@@ -2659,71 +2668,21 @@ function HealBot_nileUnit()
     HealBot_unitHealthMax["eUnit"]=0
 end
 
-function HealBot_Update_nonAggro()
-    for x,_ in pairs(HealBot_nonAggro1) do
-        HealBot_nonAggro1[x]=nil;
-    end
-    for x,_ in pairs(HealBot_nonAggro2) do
-        HealBot_nonAggro2[x]=nil;
-    end
-    for xGUID,xUnit in pairs(HealBot_UnitID) do
-        if HealBot_luVars["AggroNS"]==1 then
-            HealBot_nonAggro1[xGUID]=xUnit
-            HealBot_luVars["AggroNS"]=2
-        else
-            HealBot_nonAggro2[xGUID]=xUnit
-            HealBot_luVars["AggroNS"]=1
-        end
-    end
-end
-
-function HealBot_RetSetAggroSize()
-    z=0
-    for _,_ in pairs(HealBot_Aggro1) do 
-        z=z+1
-    end
-    y=0
-    for _,_ in pairs(HealBot_Aggro2) do 
-        y=y+1
-    end
-    return z, y
-end
-
 function HealBot_ClearAggro(force, unit)
     if unit then
         xGUID=HealBot_UnitGUID(unit)
         if force and xGUID then
+            aTrack[unit]=0
             HealBot_Action_UpdateAggro(unit,false,nil,xGUID)
-            HealBot_Aggro1[unit]=nil
             HealBot_Action_SetThreatPct(xGUID, -7)
         else
-            HealBot_ClearUnitAggro(unit, xGUID)
+            HealBot_qClearUnitAggro(unit, xGUID)
         end
-    else
-        for xUnit,_ in pairs(HealBot_Aggro1) do
-            xGUID=HealBot_UnitGUID(xUnit)
-            if force and xGUID then
-                HealBot_Action_UpdateAggro(xUnit,false,nil,xGUID)
-                HealBot_Aggro1[xUnit]=nil
-                HealBot_Action_SetThreatPct(xGUID, -7)
-            else
-                HealBot_qClearUnitAggro(xUnit, xGUID)
-            end
-        end
-        for xUnit,_ in pairs(HealBot_Aggro2) do
-            xGUID=HealBot_UnitGUID(xUnit)
-            if force and xGUID then
-                HealBot_Action_UpdateAggro(xUnit,false,nil,xGUID)
-                HealBot_Aggro2[xUnit]=nil
-                HealBot_Action_SetThreatPct(xGUID, -7)
-            else
-                HealBot_qClearUnitAggro(xUnit, xGUID)
-            end
-        end
-        if force then 
-            HealBot_Action_EndAggro() 
-            HealBot_nileUnit()
-        --    HealBot_Update_nonAggro()
+    elseif force then 
+        HealBot_Action_EndAggro() 
+        HealBot_nileUnit()
+        for xUnit,_ in pairs(aTrack) do
+            aTrack[xUnit]=0
         end
     end
 end
@@ -3006,7 +2965,7 @@ function HealBot_OnEvent_UnitHealth(self,unit,health,healthMax)
         HealBot_unitHealth[hGUID]=health
         HealBot_unitHealthMax[hGUID]=healthMax
         HealBot_RecalcHeals(hGUID)
-      --  HealBot_OnEvent_UnitCombat(nil,hUnit)
+        if HealBot_IsFighting then HealBot_OnEvent_UnitCombat(nil,hGUID) end
     end
 end
 
@@ -3127,6 +3086,11 @@ function HealBot_OnEvent_UnitMana(self,unit,pType,maxpower)
             return
         end
     end
+    if hbCurLowMana[xGUID] then 
+        HealBot_CheckLowMana(xGUID) 
+    elseif not HealBot_IsFighting and Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]>1 then
+        HealBot_CheckLowMana(xGUID) 
+    end
     xUnit=HealBot_IDs(unit,xGUID)
     if not xUnit or not HealBot_UnitName[xGUID] then return end
     HealBot_Action_SetBar3Value(HealBot_Unit_Button[xUnit])
@@ -3143,7 +3107,7 @@ function HealBot_OnEvent_UnitCombat(self,unit)
         if not xGUID then return end
         xUnit=HealBot_IDs(unit,xGUID)
         if not xUnit then return end
-        if UnitIsEnemy(xUnit, xUnit.."target") and UnitIsFriend("player",xUnit) and UnitExists(xUnit.."targettarget") then HealBot_SetAggro(xUnit) end
+        HealBot_SetAggro(xUnit)
     end
 end
 
@@ -3211,7 +3175,6 @@ function HealBot_OnEvent_UnitAura(self,unit)
         HealBot_luVars["DelayAuraCheck"]=true
     end
 
-   --HealBot_OnEvent_UnitCombat(nil,uaUnit)
 end
 
 function HealBot_SetUnitBuffTimer(hbGUID,buffName,endtime)
@@ -3600,15 +3563,6 @@ function HealBot_CheckUnitDebuffs(hbGUID)
             end
             if HealBot_Config.CDCshownAB==1 then
                 HealBot_Action_SetUnitDebuffStatus(hbGUID)
-                if not HealBot_Aggro1[xUnit] and not HealBot_Aggro2[xUnit] then 
-                    if HealBot_luVars["AggroAS"]==1 then
-                        HealBot_Aggro1[xUnit]=xUnit
-                        HealBot_luVars["AggroAS"]=2
-                    else
-                        HealBot_Aggro2[xUnit]=xUnit
-                        HealBot_luVars["AggroAS"]=1
-                    end
-                end
             end
         end
     end
@@ -3655,57 +3609,56 @@ function HealBot_CheckUnitDebuffs(hbGUID)
             else
                 HealBot_Action_ResetUnitStatus(xUnit)
             end
+            if HealBot_IsFighting then HealBot_OnEvent_UnitCombat(nil,xUnit) end
         end
-        if HealBot_UnitDebuff[hbGUID] then
-            if Healbot_Config_Skins.ShowDebuffIcon[Healbot_Config_Skins.Current_Skin]==1 and UnitIsVisible(xUnit) then
-                dName,_,deBuffTexture,bCount,_,_,expirationTime,_,_ = UnitDebuff(xUnit,HealBot_UnitDebuff[hbGUID]["name"])
-                if dName then
-                    if not HealBot_DeBuff_Texture[dName] and deBuffTexture then HealBot_DeBuff_Texture[dName]=deBuffTexture end
-                    if (expirationTime or 0)==0 then expirationTime=hbNoEndTime end
-                    if HealBot_DeBuff_Texture[dName] then
-                        if not trackdebuffIcon[hbGUID] then 
-                            trackdebuffIcon[hbGUID]=dName
-                        elseif trackdebuffIcon[hbGUID]~=dName and HealBot_Player_HoT[hbGUID] and HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..trackdebuffIcon[hbGUID]] then
-                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..trackdebuffIcon[hbGUID]]=1
-                            HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..trackdebuffIcon[hbGUID])
-							DeBuff_Count[hbGUID]=-1
-                            trackdebuffIcon[hbGUID]=dName
-                        end
-                        if not bCount then bCount=1 end
-                        if not HealBot_Player_HoT[hbGUID] then HealBot_Player_HoT[hbGUID]={} end
-                        if (DeBuff_Count[hbGUID] or -1)~=bCount then
-                            DeBuff_Count[hbGUID]=bCount
-                            if not HealBot_Globals.HealBot_Custom_Debuffs_RevDur[dName] then
-                                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=expirationTime+1
-                            else
-                                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=99
-                            end
-                        elseif not HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName] then 
-                            if HealBot_Globals.HealBot_Custom_Debuffs_RevDur[dName] then
-                                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=99
-                            else
-                                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=expirationTime+1 
-                            end
-                        end
-                        if not HealBot_Player_HoT_Icons[hbGUID] then HealBot_Player_HoT_Icons[hbGUID]={} end
-                        if not HealBot_Player_HoT_Icons[hbGUID][HealBot_PlayerGUID.."!"..dName] then HealBot_Player_HoT_Icons[hbGUID][HealBot_PlayerGUID.."!"..dName]=0 end
-                        if HealBot_Globals.HealBot_Custom_Debuffs_RevDur[dName] then
-                            if HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]==99 then
-                                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=HealBot_CustomDebuff_RevDurLast[dName][hbGUID]
-                                HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..dName)
-                            end
+        if Healbot_Config_Skins.ShowDebuffIcon[Healbot_Config_Skins.Current_Skin]==1 and UnitIsVisible(xUnit) then
+            dName,_,deBuffTexture,bCount,_,_,expirationTime,_,_ = UnitDebuff(xUnit,HealBot_UnitDebuff[hbGUID]["name"])
+            if dName then
+                if not HealBot_DeBuff_Texture[dName] and deBuffTexture then HealBot_DeBuff_Texture[dName]=deBuffTexture end
+                if (expirationTime or 0)==0 then expirationTime=hbNoEndTime end
+                if HealBot_DeBuff_Texture[dName] then
+                    if not trackdebuffIcon[hbGUID] then 
+                        trackdebuffIcon[hbGUID]=dName
+                    elseif trackdebuffIcon[hbGUID]~=dName and HealBot_Player_HoT[hbGUID] and HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..trackdebuffIcon[hbGUID]] then
+                        HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..trackdebuffIcon[hbGUID]]=1
+                        HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..trackdebuffIcon[hbGUID])
+                        DeBuff_Count[hbGUID]=-1
+                        trackdebuffIcon[hbGUID]=dName
+                    end
+                    if not bCount then bCount=1 end
+                    if not HealBot_Player_HoT[hbGUID] then HealBot_Player_HoT[hbGUID]={} end
+                    if (DeBuff_Count[hbGUID] or -1)~=bCount then
+                        DeBuff_Count[hbGUID]=bCount
+                        if not HealBot_Globals.HealBot_Custom_Debuffs_RevDur[dName] then
+                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=expirationTime+1
                         else
-                            if HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]~=expirationTime then
-                                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=expirationTime
-                                HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..dName)
-                            end
+                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=99
+                        end
+                    elseif not HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName] then 
+                        if HealBot_Globals.HealBot_Custom_Debuffs_RevDur[dName] then
+                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=99
+                        else
+                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=expirationTime+1 
                         end
                     end
-                elseif HealBot_Player_HoT[hbGUID] and HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..DebuffNameIn] then
-                    HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..DebuffNameIn]=1
-                    HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..DebuffNameIn)
-                    trackdebuffIcon[hbGUID]=nil
+                    if not HealBot_Player_HoT_Icons[hbGUID] then HealBot_Player_HoT_Icons[hbGUID]={} end
+                    if not HealBot_Player_HoT_Icons[hbGUID][HealBot_PlayerGUID.."!"..dName] then HealBot_Player_HoT_Icons[hbGUID][HealBot_PlayerGUID.."!"..dName]=0 end
+                    if HealBot_Globals.HealBot_Custom_Debuffs_RevDur[dName] then
+                        if HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]==99 then
+                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=HealBot_CustomDebuff_RevDurLast[dName][hbGUID]
+                            HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..dName)
+                        end
+                    else
+                        if HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]~=expirationTime then
+                            HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..dName]=expirationTime
+                            HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..dName)
+                        end
+                    end
                 end
+            elseif HealBot_Player_HoT[hbGUID] and HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..DebuffNameIn] then
+                HealBot_Player_HoT[hbGUID][HealBot_PlayerGUID.."!"..DebuffNameIn]=1
+                HealBot_HoT_Update(hbGUID, HealBot_PlayerGUID.."!"..DebuffNameIn)
+                trackdebuffIcon[hbGUID]=nil
             end
         end
     end
@@ -3900,6 +3853,7 @@ function HealBot_OnEvent_PlayerRegenDisabled(self)
             HealBot_luVars["HighlightTarget"]=nil
         end
     end        
+    HealBot_ClearLowMana()
 end
 
 function HealBot_OnEvent_PlayerRegenEnabled(self)
@@ -3927,6 +3881,128 @@ function HealBot_OnEvent_PlayerRegenEnabled(self)
         HealBot_Reset_UnitHealth()
     end
     HealBot_ClearAggro(true)
+    if Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]>1 then
+        HealBot_CheckLowMana()
+    end
+end
+
+
+function HealBot_CheckLowMana(hbGUID)
+--    if hbGUID then
+--        HealBot_CheckUnitLowMana(hbGUID, true)
+--    else
+--        for xGUID,_ in pairs(hbManaPlayers) do
+--            HealBot_CheckUnitLowMana(xGUID)
+--        end
+--    end
+end
+
+function HealBot_ClearLowMana()
+    for xGUID,_ in pairs(hbCurLowMana) do
+        xUnit=HealBot_UnitID[xGUID]
+        bar = HealBot_Action_HealthBar(HealBot_Unit_Button[xUnit]);
+        if bar then
+            iconName = _G[bar:GetName().."Icontm1"];
+            iconName:SetAlpha(0)
+            iconName = _G[bar:GetName().."Icontm2"];
+            iconName:SetAlpha(0)
+            iconName = _G[bar:GetName().."Icontm3"];
+            iconName:SetAlpha(0)
+            hbCurLowMana[xGUID]=nil
+        end
+    end
+end
+
+function HealBot_CheckUnitLowMana(hbGUID, ignorePowerType)
+    xUnit=HealBot_UnitID[hbGUID]
+    if UnitExists(xUnit) and (ignorePowerType or ((UnitPowerType(xUnit) or 1)==0)) then
+        mana,maxmana=HealBot_UnitMana(xUnit)
+        z=floor((mana/maxmana)*100)
+        y=0
+        if Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]==2 then
+            if z<10 then
+                y=3
+            elseif z<20 then
+                y=2
+            elseif z<30 then
+                y=1
+            end
+        elseif Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]==3 then
+            if z<15 then
+                y=3
+            elseif z<30 then
+                y=2
+            elseif z<45 then
+                y=1
+            end
+        elseif Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]==4 then
+            if z<20 then
+                y=3
+            elseif z<40 then
+                y=2
+            elseif z<60 then
+                y=1
+            end
+        elseif Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]==5 then
+            if z<25 then
+                y=3
+            elseif z<50 then
+                y=2
+            elseif z<75 then
+                y=1
+            end
+        end
+        bar = HealBot_Action_HealthBar(HealBot_Unit_Button[xUnit]);
+        if bar then
+            if y==3 then
+                iconName = _G[bar:GetName().."Icontm1"];
+                iconName:SetAlpha(1)
+                iconName = _G[bar:GetName().."Icontm2"];
+                iconName:SetAlpha(0)
+                iconName = _G[bar:GetName().."Icontm3"];
+                iconName:SetAlpha(0)
+                hbCurLowMana[hbGUID]=3
+            elseif y==2 then
+                iconName = _G[bar:GetName().."Icontm1"];
+                iconName:SetAlpha(1)
+                iconName = _G[bar:GetName().."Icontm2"];
+                iconName:SetAlpha(1)
+                iconName = _G[bar:GetName().."Icontm3"];
+                iconName:SetAlpha(0)
+                hbCurLowMana[hbGUID]=2
+            elseif y==1 then
+                iconName = _G[bar:GetName().."Icontm1"];
+                iconName:SetAlpha(1)
+                iconName = _G[bar:GetName().."Icontm2"];
+                iconName:SetAlpha(1)
+                iconName = _G[bar:GetName().."Icontm3"];
+                iconName:SetAlpha(1)
+                hbCurLowMana[hbGUID]=1
+            else
+                iconName = _G[bar:GetName().."Icontm1"];
+                iconName:SetAlpha(0)
+                iconName = _G[bar:GetName().."Icontm2"];
+                iconName:SetAlpha(0)
+                iconName = _G[bar:GetName().."Icontm3"];
+                iconName:SetAlpha(0)
+                hbCurLowMana[hbGUID]=nil
+            end
+        end
+    end
+end
+
+
+
+function HealBot_CheckPlayerMana(hbGUID, unit)
+    if ((UnitPowerType(unit) or 1)==0) then
+        hbManaPlayers[hbGUID]=UnitName(unit)
+    else
+        _,uClass=UnitClass(unit)
+        uClass=strsub((uClass or "XXXX"),1,4)
+        if uClass=="DRUI" then
+            hbManaPlayers[hbGUID]=UnitName(unit)
+        end
+    end
 end
 
 function HealBot_EnteringCombat()
@@ -4143,8 +4219,8 @@ function HealBot_IC_PartyMembersChanged()
         end
         for xGUID,xUnit in pairs(HealBot_UnitID) do
             if HealBot_UnitGUID(xUnit) and HealBot_UnitGUID(xUnit)~=xGUID then
-                HealBot_ClearAggro(true, xUnit)
-                HealBot_ClearAggro(true, HealBot_GetUnitID(xGUID))
+            --    HealBot_ClearAggro(nil, xUnit)
+            --    HealBot_ClearAggro(nil, HealBot_GetUnitID(xGUID))
                 HealBot_UpUnitInCombat[xGUID]=xUnit
             end
        end
@@ -4190,7 +4266,6 @@ function HealBot_OnEvent_PartyMembersChanged(self)
             if not UnitExists(xUnit) then
                 HealBot_UnitName[xUnit]=HEALBOT_WORD_RESERVED..":"..xUnit
                 HealBot_Action_ResetUnitStatus(xUnit) 
-                HealBot_ClearAggro(true, xUnit)
             end
         end
         HealBot_Action_CheckReserved()
@@ -4333,7 +4408,7 @@ function HealBot_OnEvent_PlayerTargetChanged(self)
         if Healbot_Config_Skins.TargetBarAlwaysShow[Healbot_Config_Skins.Current_Skin]==1 then
             if not UnitExists("target") and HealBot_Unit_Button["target"] then 
                 HealBot_UnitName["target"]=HEALBOT_WORD_RESERVED..":".."target"
-                HealBot_ClearAggro(true, "target")
+            --    HealBot_ClearAggro(nil, "target")
             end
             HealBot_RecalcHeals(HealBot_UnitGUID("target") or "target")
             HealBot_Action_ResetUnitStatus("target") 
@@ -4368,7 +4443,7 @@ function HealBot_OnEvent_PlayerTargetChanged(self)
         end
         if not HealBot_luVars["HighlightTargetFound"] and HealBot_luVars["HighlightTarget"] and 
           (HealBot_Action_retAggro(HealBot_UnitGUID(HealBot_luVars["HighlightTarget"])) or "z")=="h" then
-            HealBot_Action_UpdateAggro(HealBot_luVars["HighlightTarget"],"off",nil,HealBot_UnitGUID(HealBot_luVars["HighlightTarget"]))
+            HealBot_Action_UpdateAggro(HealBot_luVars["HighlightTarget"],"off",HealBot_Action_RetUnitThreat(HealBot_luVars["HighlightTarget"]),HealBot_UnitGUID(HealBot_luVars["HighlightTarget"]))
             HealBot_luVars["HighlightTarget"]=nil
         end    
     end
@@ -4570,7 +4645,7 @@ function HealBot_OnEvent_FocusChanged(self)
         if Healbot_Config_Skins.TargetBarAlwaysShow[Healbot_Config_Skins.Current_Skin]==1 then
             if not UnitExists("focus") and HealBot_Unit_Button["focus"] then 
                 HealBot_UnitName["focus"]=HEALBOT_WORD_RESERVED..":".."focus"
-                HealBot_ClearAggro(true, "focus")
+            --    HealBot_ClearAggro(nil, "focus")
             end
             HealBot_RecalcHeals(HealBot_UnitGUID("focus") or "focus")
             HealBot_Action_ResetUnitStatus("focus") 
@@ -4862,7 +4937,7 @@ end
 
 function HealBot_OnEvent_UnitSpellcastStart(self,unit,spellName)
     if not HealBot_Unit_Button[unit] then return end
-  --  HealBot_OnEvent_UnitCombat(self,unit)
+    if HealBot_IsFighting then HealBot_OnEvent_UnitCombat(nil,unit) end
 end
 
 function HealBot_OnEvent_UnitSpellcastStop(self,unit,spellName)
@@ -5436,9 +5511,8 @@ function HealBot_ClearLocalArr(hbGUID, getTime)
         end
         if HealBot_CheckBuffsTimehbGUID==hbGUID then HealBot_ResetCheckBuffsTime() end
         if HealBot_PetGUID[hbGUID] then HealBot_PetGUID[hbGUID]=nil end
+        if hbManaPlayers[hbGUID] then hbManaPlayers[hbGUID]=nil end
         HealBot_UnitTime[hbGUID]=nil
-    --    if HealBot_nonAggro1[hbGUID] then HealBot_nonAggro1[hbGUID]=nil end
-    --    if HealBot_nonAggro2[hbGUID] then HealBot_nonAggro2[hbGUID]=nil end
         HealBot_talentSpam(hbGUID,"remove",nil)
         HealBot_Action_ClearLocalArr(hbGUID)
         HealBot_IncHeals_ClearLocalArr(hbGUID)
@@ -5538,6 +5612,9 @@ function HealBot_Update_Skins()
             if not Healbot_Config_Skins.ShowAggroText[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowAggroText[Healbot_Config_Skins.Skins[x]] = 1 end
             if not Healbot_Config_Skins.ShowAggroBarsPct[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowAggroBarsPct[Healbot_Config_Skins.Skins[x]] = 1 end
             if not Healbot_Config_Skins.ShowAggroTextPct[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowAggroTextPct[Healbot_Config_Skins.Skins[x]] = 0 end
+            if not Healbot_Config_Skins.ShowAggroInd[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowAggroInd[Healbot_Config_Skins.Skins[x]] = 0 end
+            if not Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Skins[x]] = 1 end
+            if not Healbot_Config_Skins.AggroIndAlertLevel[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroIndAlertLevel[Healbot_Config_Skins.Skins[x]] = 2 end
             if not Healbot_Config_Skins.UseFluidBars[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.UseFluidBars[Healbot_Config_Skins.Skins[x]] = 0 end
             if not Healbot_Config_Skins.BarFreq[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.BarFreq[Healbot_Config_Skins.Skins[x]] = 5 end
             if not Healbot_Config_Skins.ShowHoTicons[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowHoTicons[Healbot_Config_Skins.Skins[x]] = 1  end
@@ -5580,15 +5657,11 @@ function HealBot_Update_Skins()
             if not Healbot_Config_Skins.targetcolr[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.targetcolr[Healbot_Config_Skins.Skins[x]] = 0.8 end
             if not Healbot_Config_Skins.targetcolg[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.targetcolg[Healbot_Config_Skins.Skins[x]] = 0.8 end
             if not Healbot_Config_Skins.targetcolb[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.targetcolb[Healbot_Config_Skins.Skins[x]] = 1 end
-            if not Healbot_Config_Skins.AggroCol1r[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol1r[Healbot_Config_Skins.Skins[x]] = 1 end
-            if not Healbot_Config_Skins.AggroCol1g[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol1g[Healbot_Config_Skins.Skins[x]] = 1 end
-            if not Healbot_Config_Skins.AggroCol1b[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol1b[Healbot_Config_Skins.Skins[x]] = 0 end
-            if not Healbot_Config_Skins.AggroCol2r[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol2r[Healbot_Config_Skins.Skins[x]] = 1 end
-            if not Healbot_Config_Skins.AggroCol2g[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol2g[Healbot_Config_Skins.Skins[x]] = 0 end
-            if not Healbot_Config_Skins.AggroCol2b[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol2b[Healbot_Config_Skins.Skins[x]] = 0 end
-            if not Healbot_Config_Skins.AggroCol3r[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol3r[Healbot_Config_Skins.Skins[x]] = 1 end
-            if not Healbot_Config_Skins.AggroCol3g[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol3g[Healbot_Config_Skins.Skins[x]] = 0 end
-            if not Healbot_Config_Skins.AggroCol3b[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroCol3b[Healbot_Config_Skins.Skins[x]] = 0 end
+            if Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Skins[x]] == 3 then Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Skins[x]] = 1 end
+            if Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Skins[x]] == 4 then Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Skins[x]] = 2 end
+            if not Healbot_Config_Skins.AggroColr[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroColr[Healbot_Config_Skins.Skins[x]] = 1 end
+            if not Healbot_Config_Skins.AggroColg[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroColg[Healbot_Config_Skins.Skins[x]] = 0 end
+            if not Healbot_Config_Skins.AggroColb[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroColb[Healbot_Config_Skins.Skins[x]] = 0 end
             if not Healbot_Config_Skins.AggroBarsMaxAlpha[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroBarsMaxAlpha[Healbot_Config_Skins.Skins[x]] = 1 end
             if not Healbot_Config_Skins.AggroBarsMinAlpha[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroBarsMinAlpha[Healbot_Config_Skins.Skins[x]] = 0.2 end
             if not Healbot_Config_Skins.AggroBarsFreq[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroBarsFreq[Healbot_Config_Skins.Skins[x]] = 0.03 end

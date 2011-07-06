@@ -668,6 +668,33 @@ function ArkInventory.ConvertOldOptions( )
 		ArkInventory.db.profile.option.version = upgrade_version
 		
 	end
+	
+	
+	
+	
+	upgrade_version = 3.0279
+	if ArkInventory.db.realm.player.version < upgrade_version then
+		
+		ArkInventory.Output( string.format( ArkInventory.Localise["UPGRADE_GLOBAL"], "player", upgrade_version ) )
+		ArkInventory.EraseSavedData( )
+		
+		ArkInventory.db.realm.player.version = upgrade_version
+		
+	end
+	
+	if ArkInventory.db.profile.option.version < upgrade_version then
+		
+		ArkInventory.Output( string.format( ArkInventory.Localise["UPGRADE_PROFILE"], ArkInventory.db:GetCurrentProfile( ), upgrade_version ) )
+		
+		ArkInventory.CategoryRenumber( "1!303", nil ) -- empty key slot
+		ArkInventory.CategoryRenumber( "1!406", nil ) -- key
+		
+		
+		
+		ArkInventory.db.profile.option.version = upgrade_version
+		
+	end
+
 
 	
 

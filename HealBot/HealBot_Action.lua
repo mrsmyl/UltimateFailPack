@@ -42,6 +42,7 @@ local HealBot_ButtonArray1={}
 local HealBot_ButtonArray2={}
 local HealBot_ButtonArray=1
 local HealBot_Aggro={}
+local HealBot_AggroIndicator={}
 local HealBot_AggroBar4={}
 local HealBot_AggroBarA=0.8
 local HealBot_AggroBarAup=true
@@ -87,15 +88,17 @@ for i = 1, #HealBot_Default_Sounds do
 end
 
 local barName=nil
+local mainBar=nil
 local barTemp=nil
 local HealBot_prevUnitThreat={}
 local Healbot_tempUnitThreat=0
 local UnitDebuffStatus={}
 local HealBot_UnitThreatPct={}
+local HealBot_UnitAggro={}
 local hbprevThreatPct=-3
-local hbtempThreatPct=-1
 -- local HealBot_resetUnitStatus=nil
 function HealBot_Action_UpdateAggro(unit,status,threatStatus,hbGUID,threatPct)
+    if HealBot_UnitAggro[unit] then HealBot_UnitAggro[unit]=nil end
     uName=UnitName(unit)
     barName=HealBot_Unit_Bar4[unit]
     if unit and not hbGUID then hbGUID=HealBot_GUID[unit] end
@@ -110,14 +113,9 @@ function HealBot_Action_UpdateAggro(unit,status,threatStatus,hbGUID,threatPct)
     end
     hbprevThreatPct=HealBot_UnitThreatPct[hbGUID] or -4
     if threatStatus and (Healbot_Config_Skins.ShowAggroBarsPct[Healbot_Config_Skins.Current_Skin]==1 or Healbot_Config_Skins.ShowAggroTextPct[Healbot_Config_Skins.Current_Skin]==1) then
-        if not threatPct then
-            hbtempThreatPct=HealBot_CalcThreat(unit)
-            if hbtempThreatPct==100 and threatStatus<2 then threatStatus=2 end
-        else
-            hbtempThreatPct=threatPct
-        end
-        if hbtempThreatPct and hbtempThreatPct>0 then
-            HealBot_UnitThreatPct[hbGUID]=hbtempThreatPct
+        if not threatPct then threatPct,_=HealBot_CalcThreat(unit) end
+        if threatPct>0 then
+            HealBot_UnitThreatPct[hbGUID]=threatPct
             if threatStatus==0 then
                 threatStatus=1
                 if not status then status=true end
@@ -143,6 +141,7 @@ function HealBot_Action_UpdateAggro(unit,status,threatStatus,hbGUID,threatPct)
         else
             HealBot_UnitThreatPct[hbGUID]=0
         end
+        if HealBot_UnitThreatPct[hbGUID]>0 then HealBot_UnitAggro[unit]=true end
     else
         if not threatStatus then threatStatus=0 end
         HealBot_UnitThreatPct[hbGUID]=0
@@ -158,9 +157,10 @@ function HealBot_Action_UpdateAggro(unit,status,threatStatus,hbGUID,threatPct)
             HealBot_Aggro[hbGUID]="d"
             HealBot_UnitThreat[hbGUID]=UnitDebuffStatus[hbGUID]
         elseif Healbot_Config_Skins.ShowAggro[Healbot_Config_Skins.Current_Skin]==1 and 
-               threatStatus>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]-2) then
+               threatStatus>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]) then
             HealBot_UnitThreat[hbGUID]=threatStatus
             HealBot_Aggro[hbGUID]="a"
+            HealBot_UnitAggro[unit]=true
         elseif status=="target" and Healbot_Config_Skins.HighLightTargetBar[Healbot_Config_Skins.Current_Skin]==1 then
             HealBot_Aggro[hbGUID]="h"
             HealBot_UnitThreat[hbGUID]=-2
@@ -184,14 +184,23 @@ function HealBot_Action_UpdateAggro(unit,status,threatStatus,hbGUID,threatPct)
             HealBot_UnitThreat[hbGUID]=threatStatus
             HealBot_Aggro[hbGUID]="a"
         end
+        if Healbot_Config_Skins.ShowAggro[Healbot_Config_Skins.Current_Skin]==1 and
+            Healbot_Config_Skins.ShowAggroInd[Healbot_Config_Skins.Current_Skin]==1 and
+            (HealBot_AggroIndicator[hbGUID] or -11) ~= threatStatus then
+                HealBot_Action_aggoIndicatorUpd(unit, hbGUID, threatStatus)
+        end
     else
         HealBot_UnitThreat[hbGUID]=threatStatus
         HealBot_Aggro[hbGUID]=nil
+        if HealBot_AggroIndicator[hbGUID] then
+            HealBot_AggroIndicator[hbGUID]=nil
+            HealBot_Action_aggoIndicatorUpd(unit, hbGUID, 0)
+        end
     end
     if status and 
        (HealBot_Aggro[hbGUID]=="d" or HealBot_Aggro[hbGUID]=="h" or 
        (HealBot_Aggro[hbGUID]=="a" and Healbot_Config_Skins.ShowAggroBars[Healbot_Config_Skins.Current_Skin]==1 and
-       threatStatus>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]-2))) then
+       threatStatus>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]))) then
         if not HealBot_AggroBar4[hbGUID] then
             if HealBot_UnitThreat[hbGUID]>-1 and HealBot_UnitThreat[hbGUID]<4 and Healbot_Config_Skins.ShowAggroBarsPct[Healbot_Config_Skins.Current_Skin]==1 then
                 barName:SetValue(HealBot_UnitThreatPct[hbGUID])
@@ -221,6 +230,66 @@ function HealBot_Action_UpdateAggro(unit,status,threatStatus,hbGUID,threatPct)
         HealBot_AggroBar4[hbGUID]=nil
     end
     HealBot_Action_ResetUnitStatus(unit)
+end
+
+function HealBot_Action_aggoIndicatorUpd(unit, hbGUID, threatStatus)
+    mainBar=HealBot_Unit_Bar1[unit]
+    HealBot_AggroIndicator[hbGUID]=threatStatus
+    if threatStatus>=Healbot_Config_Skins.AggroIndAlertLevel[Healbot_Config_Skins.Current_Skin] then
+        if threatStatus==1 then
+            iconName = _G[mainBar:GetName().."Iconal1"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconal2"];
+            iconName:SetAlpha(0)
+            iconName = _G[mainBar:GetName().."Iconal3"];
+            iconName:SetAlpha(0)
+            iconName = _G[mainBar:GetName().."Iconar1"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconar2"];
+            iconName:SetAlpha(0)
+            iconName = _G[mainBar:GetName().."Iconar3"];
+            iconName:SetAlpha(0)
+        elseif threatStatus==2 then
+            iconName = _G[mainBar:GetName().."Iconal1"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconal2"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconal3"];
+            iconName:SetAlpha(0)
+            iconName = _G[mainBar:GetName().."Iconar1"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconar2"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconar3"];
+            iconName:SetAlpha(0)
+        elseif threatStatus==3 then
+            iconName = _G[mainBar:GetName().."Iconal1"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconal2"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconal3"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconar1"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconar2"];
+            iconName:SetAlpha(1)
+            iconName = _G[mainBar:GetName().."Iconar3"];
+            iconName:SetAlpha(1)
+        end
+    elseif threatStatus>-1 and threatStatus<4 then
+        iconName = _G[mainBar:GetName().."Iconal1"];
+        iconName:SetAlpha(0)
+        iconName = _G[mainBar:GetName().."Iconal2"];
+        iconName:SetAlpha(0)
+        iconName = _G[mainBar:GetName().."Iconal3"];
+        iconName:SetAlpha(0)
+        iconName = _G[mainBar:GetName().."Iconar1"];
+        iconName:SetAlpha(0)
+        iconName = _G[mainBar:GetName().."Iconar2"];
+        iconName:SetAlpha(0)
+        iconName = _G[mainBar:GetName().."Iconar3"];
+        iconName:SetAlpha(0)
+    end
 end
 
 function HealBot_Action_SetThreatPct(hbGUID, threatPct)
@@ -443,7 +512,7 @@ function HealBot_HealthColor(unit,hlth,maxhlth,tooltipcol,hbGUID,UnitDead,Member
         end
     end
   
-    if HealBot_Aggro[hbGUID] and (HealBot_UnitThreat[hbGUID] or 0)>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]-2) and UnitIsConnected(unit) then
+    if HealBot_Aggro[hbGUID] and (HealBot_UnitThreat[hbGUID] or 0)>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]) and UnitIsConnected(unit) then
         hcaggro=true
     else
         hcaggro=nil
@@ -826,7 +895,7 @@ function HealBot_Action_EnableButton(button, hbGUID)
                 end
                 if HealBot_Aggro[hbGUID] then
                     HealBot_Action_SetUnitDebuffStatus(hbGUID)
-                    HealBot_Action_UpdateAggro(ebUnit,false,nil,hbGUID)
+                    HealBot_Action_UpdateAggro(ebUnit,false,HealBot_UnitThreat[hbGUID] or 0,hbGUID)
                     HealBot_Aggro[hbGUID]=nil
                 end
                 if HealBot_UnitDebuff[hbGUID] then
@@ -921,7 +990,7 @@ function HealBot_Action_EnableButton(button, hbGUID)
             if not ebufastenable and (uHlth<=(uMaxHlth*Healbot_Config_Skins.AlertLevel[Healbot_Config_Skins.Current_Skin]) or HealBot_MyTargets[hbGUID]) and HealBot_UnitInRange(HealBot_hSpell, ebUnit)==1 then
                 ebufastenable=true
                 HealBot_UnitRangeSpell[ebUnit]=HealBot_hSpell
-            elseif not ebufastenable and HealBot_Aggro[hbGUID] and (HealBot_UnitThreat[hbGUID] or 0)>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]-2) and HealBot_UnitInRange(HealBot_hSpell, ebUnit)==1 then
+            elseif not ebufastenable and HealBot_Aggro[hbGUID] and (HealBot_UnitThreat[hbGUID] or 0)>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]) and HealBot_UnitInRange(HealBot_hSpell, ebUnit)==1 then
                 ebufastenable=true
                 HealBot_UnitRangeSpell[ebUnit]=HealBot_hSpell
             end
@@ -1264,7 +1333,7 @@ function HealBot_Action_HBText(hlth,maxhlth,unitName,unit,healin, hbGUID)
             uName=HEALBOT_DISCONNECTED_TEXT.." "..uName;
         end    -- added by Diacono of Ursin
         if Healbot_Config_Skins.ShowAggroText[Healbot_Config_Skins.Current_Skin]==1 and HealBot_Aggro[hbGUID] and HealBot_Aggro[hbGUID]=="a" and 
-           (HealBot_UnitThreat[hbGUID] or 0)>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]-2) and uName then
+           (HealBot_UnitThreat[hbGUID] or 0)>(Healbot_Config_Skins.AggroAlertLevel[Healbot_Config_Skins.Current_Skin]) and uName then
             uName=">> "..uName.." <<"
             --uName=">"..HealBot_UnitThreat[hbGUID].."> "..uName.." <"..HealBot_UnitThreat[hbGUID].."<"
         end
@@ -1476,6 +1545,12 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         icon15ta = _G[bar:GetName().."Count15a"];   
         for x=1,3 do
             pIcon = _G[bar3:GetName().."Icon"..x];
+            pIcon:SetAlpha(0);
+            pIcon = _G[bar:GetName().."Iconal"..x];
+            pIcon:SetAlpha(0);
+            pIcon = _G[bar:GetName().."Iconar"..x];
+            pIcon:SetAlpha(0);
+            pIcon = _G[bar:GetName().."Icontm"..x];
             pIcon:SetAlpha(0);
         end
         icon1:SetHeight(iScale);
@@ -1863,6 +1938,26 @@ function HealBot_Action_RefreshButtons(hbGUID)
     end
 end
 
+function HealBot_Action_CheckAggro(unit)
+    if unit then
+        HealBot_CheckUnitAggro(unit)
+    elseif HealBot_IsFighting then
+        if HealBot_ButtonArray==1 then
+            for xUnit,_ in pairs(HealBot_ButtonArray1) do
+                HealBot_CheckUnitAggro(xUnit)
+            end
+        else
+            for xUnit,_ in pairs(HealBot_ButtonArray2) do
+                HealBot_CheckUnitAggro(xUnit)
+            end
+        end
+    else
+        for xUnit,_ in pairs(HealBot_UnitAggro) do
+            HealBot_CheckUnitAggro(xUnit)
+        end
+    end
+end
+
 local uRange=0
 local db1=nil
 local db2=nil
@@ -1986,6 +2081,7 @@ function HealBot_Action_SetHealButton(index,unit,hbGUID)
             HealBot_Unit_Button[unit]="init"
             HealBot_UnitSpec[hbGUID] = " "
             HealBot_UnitTime[hbGUID]=GetTime()
+            HealBot_CheckPlayerMana(hbGUID, unit)
         end
         if HealBot_UnitID[hbGUID]~=unit then
             HealBot_UnitID[hbGUID]=unit
@@ -2789,7 +2885,7 @@ function HealBot_Action_HealUnit_OnLeave(self)
     xGUID=HealBot_UnitGUID(self.unit)
     if Healbot_Config_Skins.HighLightActiveBar[Healbot_Config_Skins.Current_Skin]==1 and HealBot_Hightlight[xGUID] and HealBot_Hightlight[xGUID]=="M" then
         if HealBot_Aggro[xGUID] and HealBot_Aggro[xGUID]=="h" then
-            HealBot_Action_UpdateAggro(self.unit,"off",nil,xGUID)
+            HealBot_Action_UpdateAggro(self.unit,"off",HealBot_UnitThreat[xGUID] or 0,xGUID)
         end
     end
     HealBot_curGUID=nil
@@ -2998,15 +3094,12 @@ function HealBot_Action_SetHightlightTargetAggroCols()
 end
 
 function HealBot_Action_SetAggroCols()
-    HealBot_AggroBarColr[1]=Healbot_Config_Skins.AggroCol1r[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColg[1]=Healbot_Config_Skins.AggroCol1g[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColb[1]=Healbot_Config_Skins.AggroCol1b[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColr[2]=Healbot_Config_Skins.AggroCol2r[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColg[2]=Healbot_Config_Skins.AggroCol2g[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColb[2]=Healbot_Config_Skins.AggroCol2b[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColr[3]=Healbot_Config_Skins.AggroCol3r[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColg[3]=Healbot_Config_Skins.AggroCol3g[Healbot_Config_Skins.Current_Skin]
-    HealBot_AggroBarColb[3]=Healbot_Config_Skins.AggroCol3b[Healbot_Config_Skins.Current_Skin]
+    HealBot_AggroBarColr[2]=Healbot_Config_Skins.AggroColr[Healbot_Config_Skins.Current_Skin]
+    HealBot_AggroBarColg[2]=Healbot_Config_Skins.AggroColg[Healbot_Config_Skins.Current_Skin]
+    HealBot_AggroBarColb[2]=Healbot_Config_Skins.AggroColb[Healbot_Config_Skins.Current_Skin]
+    HealBot_AggroBarColr[3]=Healbot_Config_Skins.AggroColr[Healbot_Config_Skins.Current_Skin]
+    HealBot_AggroBarColg[3]=Healbot_Config_Skins.AggroColg[Healbot_Config_Skins.Current_Skin]
+    HealBot_AggroBarColb[3]=Healbot_Config_Skins.AggroColb[Healbot_Config_Skins.Current_Skin]
 end
 
 function HealBot_Action_setTestBar(b)
@@ -3305,6 +3398,7 @@ function HealBot_Action_ClearLocalArr(hbGUID)
     if HealBot_AggroBar4[hbGUID] then HealBot_AggroBar4[hbGUID]=nil end
     if HealBot_Aggro[hbGUID] then HealBot_Aggro[hbGUID]=nil end
     if HealBot_Hightlight[hbGUID] then HealBot_Hightlight[hbGUID]=nil end
+    if HealBot_AggroIndicator[hbGUID] then HealBot_AggroIndicator[hbGUID]=nil end
 end
 
 local HealBot_Mounts = {

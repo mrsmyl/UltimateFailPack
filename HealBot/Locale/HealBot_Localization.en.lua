@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "4.1.0.0";
+HEALBOT_VERSION = "4.2.0.0";
 
 -------------
 -- ENGLISH --
@@ -82,6 +82,7 @@ HEALBOT_DIVINE_HYMN                     = GetSpellInfo(64843) or "Divine Hymn";
 HEALBOT_RENEW                           = GetSpellInfo(139) or "Renew";
 HEALBOT_DESPERATE_PRAYER                = GetSpellInfo(19236) or "Desperate Prayer";
 HEALBOT_PRAYER_OF_HEALING               = GetSpellInfo(596) or "Prayer of Healing";
+HEALBOT_GLYPH_PRAYER_OF_HEALING         = GetSpellInfo(55680) or "Glyph of Prayer of Healing"
 HEALBOT_CIRCLE_OF_HEALING               = GetSpellInfo(34861) or "Circle of Healing";
 HEALBOT_HOLY_WORD_CHASTISE              = GetSpellInfo(88625) or "Holy Word: Chastise";
 HEALBOT_HOLY_WORD_SERENITY              = GetSpellInfo(88684) or "Holy Word: Serenity"; -- Heal
@@ -648,8 +649,9 @@ HEALBOT_ZONE_SA                         = "Strand of the Ancients";
 HEALBOT_ZONE_WG                         = "Warsong Gulch";
 
 HEALBOT_OPTION_AGGROTRACK               = "Monitor Aggro"
-HEALBOT_OPTION_AGGROBAR                 = "Flash bar"
-HEALBOT_OPTION_AGGROTXT                 = ">> Show text <<"
+HEALBOT_OPTION_AGGROBAR                 = "Bar"
+HEALBOT_OPTION_AGGROTXT                 = ">> Text <<"
+HEALBOT_OPTION_AGGROIND                 = "Indicator"
 HEALBOT_OPTION_BARUPDFREQ               = "Refresh Multiplier"
 HEALBOT_OPTION_USEFLUIDBARS             = "Use fluid bars"
 HEALBOT_OPTION_CPUPROFILE               = "Use CPU profiler (Addons CPU usage Info)"
@@ -756,12 +758,13 @@ HEALBOT_HELP={ [1] = "[HealBot] /hb h -- Display help",
                [5] = "[HealBot] /hb bt -- Toggle Buff Monitor between disabled and enabled",
                [6] = "[HealBot] /hb dt -- Toggle Debuff Monitor between disabled and enabled",
                [7] = "[HealBot] /hb skin <skinName> -- Switch Skins",
-               [8] = "[HealBot] /hb hs -- Display additional slash commands",
+               [8] = "[HealBot] /hb ui -- Reload UI",
+               [9] = "[HealBot] /hb hs -- Display additional slash commands",
               }
 
 HEALBOT_HELP2={ [1] = "[HealBot] /hb d -- Reset options to default",
-                [2] = "[HealBot] /hb ui -- Reload UI",
-                [3] = "[HealBot] /hb ri -- Reset HealBot",
+                [2] = "[HealBot] /hb aggro 2 <n> -- Set aggro level 2 on threat percentage <n>",
+                [3] = "[HealBot] /hb aggro 3 <n> -- Set aggro level 3 on threat percentage <n>",
                 [4] = "[HealBot] /hb tr <Role> -- Set highest role priority for SubSort by Role. Valid Roles are 'TANK', 'HEALER' or 'DPS'",
                 [5] = "[HealBot] /hb use10 -- Automatically use Engineering slot 10",
                 [6] = "[HealBot] /hb pcs <n> -- Adjust the size of the Holy power charge indicator by <n>, Default value is 7 ",
@@ -886,11 +889,11 @@ HEALBOT_WORD_FILTER                     = "Filter"
 HEALBOT_OPTION_AGGROPCTBAR              = "Move bar"
 HEALBOT_OPTION_AGGROPCTTXT              = "Show text"
 HEALBOT_OPTION_AGGROPCTTRACK            = "Track percentage" 
-HEALBOT_OPTIONS_ALERTAGGROLEVEL0        = "0 - has no threat and not tanking anything"
-HEALBOT_OPTIONS_ALERTAGGROLEVEL1        = "1 - has threat and not tanking anything"
-HEALBOT_OPTIONS_ALERTAGGROLEVEL2        = "2 - insecurely tanking, not highest threat on mob"
-HEALBOT_OPTIONS_ALERTAGGROLEVEL3        = "3 - securely tanking at least one mob"
-HEALBOT_OPTIONS_AGGROALERT              = "Aggro alert level"
+HEALBOT_OPTIONS_ALERTAGGROLEVEL1        = "1 - Low threat"
+HEALBOT_OPTIONS_ALERTAGGROLEVEL2        = "2 - High threat"
+HEALBOT_OPTIONS_ALERTAGGROLEVEL3        = "3 - Tanking"
+HEALBOT_OPTIONS_AGGROALERT              = "Bar alert level"
+HEALBOT_OPTIONS_AGGROINDALERT           = "Indicator alert level"
 HEALBOT_OPTIONS_TOOLTIPSHOWHOT          = "Show active monitored HoT details"
 HEALBOT_WORDS_MIN                       = "min"
 HEALBOT_WORDS_MAX                       = "max"
@@ -935,10 +938,7 @@ HEALBOT_OPTIONS_TAB_HIDE                = "Hide"
 HEALBOT_OPTIONS_TAB_AGGRO               = "Aggro"
 HEALBOT_OPTIONS_TAB_ICONTEXT            = "Icon text"
 HEALBOT_OPTIONS_TAB_TEXT                = "Bar text"
-HEALBOT_OPTIONS_AGGROBARCOLS            = "Aggro bar colours";
-HEALBOT_OPTIONS_AGGRO1COL               = "Has high\nthreat"
-HEALBOT_OPTIONS_AGGRO2COL               = "Insecurely\ntanking"
-HEALBOT_OPTIONS_AGGRO3COL               = "Securely\ntanking"
+HEALBOT_OPTIONS_AGGRO3COL               = "Aggro bar\ncolour"
 HEALBOT_OPTIONS_AGGROFLASHFREQ          = "Flash frequency"
 HEALBOT_OPTIONS_AGGROFLASHALPHA         = "Flash opacity"
 HEALBOT_OPTIONS_SHOWDURATIONFROM        = "Show duration from"
@@ -1017,3 +1017,11 @@ HEALBOT_RESTRICTTARGETBAR_ON            = "Restrict Target bar turned On"
 HEALBOT_RESTRICTTARGETBAR_OFF           = "Restrict Target bar turned Off"
 HEALBOT_PRELOADOPTIONS_ON               = "PreLoad Options turned On"
 HEALBOT_PRELOADOPTIONS_OFF              = "PreLoad Options turned Off"
+HEALBOT_AGGRO2_ERROR_MSG                = "To set aggro level 2, threat percentage must be between 25 and 95"
+HEALBOT_AGGRO3_ERROR_MSG                = "To set aggro level 3, threat percentage must be between 75 and 100"
+HEALBOT_AGGRO2_SET_MSG                  = "Aggro level 2 set at threat percentage "
+HEALBOT_AGGRO3_SET_MSG                  = "Aggro level 3 set at threat percentage "
+HEALBOT_WORD_THREAT                     = "Threat"
+HEALBOT_AGGRO_ERROR_MSG                 = "Invalid aggro level - use 2 or 3"
+
+HEALBOT_OPTIONS_QUERYTALENTS            = "Query talent data"       

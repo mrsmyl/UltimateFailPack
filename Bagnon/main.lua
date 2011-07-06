@@ -5,7 +5,7 @@
 
 Bagnon = LibStub('AceAddon-3.0'):NewAddon('Bagnon', 'AceEvent-3.0', 'AceConsole-3.0')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-
+local Facade = LibStub('LibButtonFacade', true)
 
 --[[
 	Binding Setup
@@ -14,7 +14,6 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
 BINDING_HEADER_BAGNON = 'Bagnon'
 BINDING_NAME_BAGNON_TOGGLE = L.ToggleBags
 BINDING_NAME_BANKNON_TOGGLE = L.ToggleBank
-BINDING_NAME_BAGNON_KEYS_TOGGLE = L.ToggleKeys
 
 
 --[[
@@ -30,6 +29,10 @@ function Bagnon:OnInitialize()
 	self:CreateOptionsLoader()
 	self:CreateLDBLauncher()
 	self:CreateGuildBankLoader()
+	
+	if Facade then
+		self:StartupFacade()
+	end
 end
 
 --create a loader for the options menu
@@ -63,8 +66,6 @@ function Bagnon:CreateLDBLauncher()
 			if button == 'LeftButton' then
 				if IsShiftKeyDown() then
 					Bagnon:ToggleFrame('bank')
-				elseif IsAltKeyDown() then
-					Bagnon:ToggleFrame('keys')
 				else
 					Bagnon:ToggleFrame('inventory')
 				end
@@ -79,7 +80,6 @@ function Bagnon:CreateLDBLauncher()
 			tooltip:AddLine('Bagnon')
 			tooltip:AddLine(L.TipShowInventory, 1, 1, 1)
 			tooltip:AddLine(L.TipShowBank, 1, 1, 1)
-			tooltip:AddLine(L.TipShowKeyring, 1, 1, 1)
 			tooltip:AddLine(L.TipShowOptions, 1, 1, 1)
 		end,
 	})
@@ -186,20 +186,6 @@ function Bagnon:HookBagClickEvents()
 		end
 	end
 
-	--keyring
-	local oToggleKeyRing = ToggleKeyRing
-	ToggleKeyRing = function()
-		local toggled = self:FrameControlsBag('keys', KEYRING_CONTAINER) and self:ToggleFrame('keys')
-
-		if not toggled then
-			toggled = self:FrameControlsBag('inventory', KEYRING_CONTAINER) and self:ToggleFrame('inventory')
-		end
-
-		if not toggled then
-			oToggleKeyRing()
-		end
-	end
-
 	--all bags
 	--closing the game menu triggers this function, and can be done in combat
 	hooksecurefunc('CloseAllBags', function()
@@ -207,8 +193,14 @@ function Bagnon:HookBagClickEvents()
 	end)
 
 	local oOpenAllBags = OpenAllBags
-	OpenAllBags = function(frame)
-		local opened = self:FrameControlsBag('inventory', BACKPACK_CONTAINER) and self:ShowFrame('inventory')
+	OpenAllBags = function(force)
+		local opened = false
+		if force then
+			opened = self:FrameControlsBag('inventory', BACKPACK_CONTAINER) and self:ShowFrame('inventory')
+		else
+			opened = self:FrameControlsBag('inventory', BACKPACK_CONTAINER) and self:ToggleFrame('inventory')
+		end
+
 		if not opened then
 			oOpenAllBags(force)
 		end
@@ -234,18 +226,6 @@ function Bagnon:HookBagClickEvents()
 	hooksecurefunc('BagSlotButton_UpdateChecked', bag_checkIfInventoryShown)
 	hooksecurefunc('BackpackButton_UpdateChecked', bag_checkIfInventoryShown)
 
-	local function bag_checkIfKeysShown(self)
-		if Bagnon:IsFrameEnabled('keys') then
-			if Bagnon.FrameSettings:Get('keys'):IsShown() then
-		    		KeyRingButton:SetButtonState("PUSHED", 1)
-		    	else
-		    		KeyRingButton:SetButtonState("NORMAL")
-		    	end
-		end
-	end
-
-	hooksecurefunc('UpdateMicroButtons', bag_checkIfKeysShown)
-
 	self.Callbacks:Listen(self, 'FRAME_SHOW')
 	self.Callbacks:Listen(self, 'FRAME_HIDE')
 end
@@ -259,22 +239,12 @@ function Bagnon:FRAME_SHOW(msg, frameID)
 			self:CheckBagFrameBags(true)
 		end
 	end
-	if frameID == 'keys' then
-		if self:IsFrameEnabled('keys') then
-			self:CheckBagFrameKeys(true)
-		end
-	end
 end
 
 function Bagnon:FRAME_HIDE(msg, frameID)
 	if frameID == 'inventory' then
 		if self:IsFrameEnabled('inventory') then
 			self:CheckBagFrameBags(false)
-		end
-	end
-	if frameID == 'keys' then
-		if self:IsFrameEnabled('keys') then
-			self:CheckBagFrameKeys(false)
 		end
 	end
 end
@@ -287,17 +257,6 @@ function Bagnon:CheckBagFrameBags(checked)
 	_G["CharacterBag2Slot"]:SetChecked(checked)
 	_G["CharacterBag3Slot"]:SetChecked(checked)
 end
-
-function Bagnon:CheckBagFrameKeys(checked)
-	if Bagnon:IsFrameEnabled('keys') then
-		if Bagnon.FrameSettings:Get('keys'):IsShown() then
-	    		KeyRingButton:SetButtonState("PUSHED", 1)
-	    	else
-	    		KeyRingButton:SetButtonState("NORMAL")
-	    	end
-	end
-end
-
 
 --[[
 	Automatic Display
@@ -317,6 +276,8 @@ function Bagnon:RegisterAutoDisplayEvents()
 	self:RegisterEvent('TRADE_SKILL_CLOSE')
 	self:RegisterEvent('GUILDBANKFRAME_OPENED')
 	self:RegisterEvent('GUILDBANKFRAME_CLOSED')
+	self:RegisterEvent('PLAYER_REGEN_DISABLED')
+	self:RegisterEvent('UNIT_ENTERED_VEHICLE')
 
 	--override normal bank display
 	BankFrame:UnregisterEvent('BANKFRAME_OPENED')
@@ -353,6 +314,17 @@ end
 
 
 --[[ Display Events ]]--
+
+-- combat
+function Bagnon:PLAYER_REGEN_DISABLED()
+	self:HideFrameAtEvent('inventory', 'combat')
+end
+
+function Bagnon:UNIT_ENTERED_VEHICLE(unit)
+	if unit == 'player' then
+		self:HideFrameAtEvent('inventory', 'vehicle')
+	end
+end
 
 --visiting the bank
 function Bagnon:BANK_OPENED()
@@ -445,8 +417,6 @@ function Bagnon:HandleSlashCommand(cmd)
 		self:ToggleFrame('bank')
 	elseif cmd == 'bags' then
 		self:ToggleFrame('inventory')
-	elseif cmd == 'keys' then
-		self:ToggleFrame('keys')
 	elseif cmd == 'version' then
 		self:PrintVersion()
 	elseif cmd == 'config' then
@@ -472,7 +442,6 @@ function Bagnon:PrintHelp()
 	self:Print(L.Commands)
 	PrintCmd('bags', L.CmdShowInventory)
 	PrintCmd('bank', L.CmdShowBank)
-	PrintCmd('keys', L.CmdShowKeyring)
 	PrintCmd('version', L.CmdShowVersion)
 end
 
@@ -482,4 +451,43 @@ function Bagnon:ShowOptions()
 		return true
 	end
 	return false
+end
+
+
+--[[
+	ButtonFacade Support
+--]]
+
+if Facade then
+	function Bagnon:StartupFacade()
+		Facade:RegisterSkinCallback('Bagnon', self.OnFacadeChanged, self)
+		self:FacadeGroup('inventory')
+		self:FacadeGroup('bank')
+		
+		local enabled, loadable = select(4, GetAddOnInfo('Bagnon_GuildBank'))
+		if enabled and loadable then
+			self:FacadeGroup('guildbank')
+		end
+	end
+	
+	function Bagnon:FacadeGroup(frameID)
+		-- It's hacky, but the simplest way to do it
+		local frameSets = BagnonFrameSettings.frames[frameID]
+		local sets = frameSets and frameSets[frameID] or BagnonFrameSettings.facade
+		
+		Facade:Group('Bagnon', frameID):Skin(sets and unpack(sets))
+	end
+	
+	function Bagnon:OnFacadeChanged(skin, glossAlpha, gloss, frameID, _, colors)
+		-- It's hacky, but the simplest way to do it
+		local target
+		if not frameID then
+			target = BagnonFrameSettings
+		else
+			BagnonFrameSettings.frames[frameID] =  BagnonFrameSettings.frames[frameID] or {}
+			target = BagnonFrameSettings.frames[frameID]
+		end
+		
+		target.facade = {skin, glossAlpha, gloss, colors}
+	end
 end

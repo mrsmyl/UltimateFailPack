@@ -1,10 +1,11 @@
-﻿--[[
+--[[
 	frameSettings.lua
 		A bagnon frame settings object
 --]]
 
 local FrameSettings = {}
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
+local Facade = LibStub('LibButtonFacade', true)
 Bagnon.FrameSettings = FrameSettings
 
 
@@ -509,4 +510,13 @@ end
 
 function FrameSettings:GetPlayerFilter()
 	return self.playerFilter or UnitName('player')
+end
+
+
+--[[ ButtonFacade Settings ]]--
+
+if Facade then
+	function FrameSettings:GetFacade()
+		self:GetDB():GetFacade()
+	end
 end

@@ -1686,7 +1686,7 @@ function ArkInventory.ConfigInternalControlSettings( path )
 			end,
 			values = function( )
 				local t = { }
-				for loc_id, loc_data in ipairs( ArkInventory.Global.Location ) do
+				for loc_id, loc_data in ArkInventory.spairs( ArkInventory.Global.Location ) do
 					if ArkInventory.Global.Location[loc_id].canView then
 						t[loc_id] = loc_data.Name
 					end

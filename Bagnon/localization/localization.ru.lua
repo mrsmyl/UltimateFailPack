@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 	Bagnon Localization Information: Russian Localization by kutensky
 	Updated by StingerSoft
 		This file must be present to have partial translations
@@ -23,14 +23,12 @@ L.UpdatedIncompatible = 'Обновление от несовместимой в
 L.Commands = 'Команды:'
 L.CmdShowInventory = 'Открыть/закрыть инвентарь'
 L.CmdShowBank = 'Открыть/закрыть банк'
-L.CmdShowKeyring = 'Открыть/закрыть связку ключей'
 L.CmdShowVersion = 'Сообщить текущую версию модификации'
 
 
 --frame text
 L.TitleBags = 'Инвентарь |3-1(%s)'
 L.TitleBank = 'Банк |3-1(%s)'
-L.TitleKeys = 'Связка ключей |3-1(%s)'
 
 
 --tooltips
@@ -53,5 +51,4 @@ L.Total = 'Всего'
 --databroker plugin tooltips
 L.TipShowBank = '<Shift-Левый клик> - открыть/закрыть банк.'
 L.TipShowInventory = '<Левый клик> - открыть/закрыть инвентарь.'
-L.TipShowKeyring = '<Alt-левый клик> - открыть/закрыть связку ключей.'
 L.TipShowOptions = '<Правый-клик> - настройки.'

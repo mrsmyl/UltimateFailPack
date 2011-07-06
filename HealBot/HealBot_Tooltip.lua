@@ -48,6 +48,8 @@ local mins,secs=0,0
 local sName,sRank=nil,nil
 local vUnit=nil
 local xGUID=nil
+local tp=nil
+local mana, maxmana = nil, nil
 local doTalentRequest={}
 local hbGameTooltip = CreateFrame("GameTooltip", "hbGameTooltip", nil, "GameTooltipTemplate")
 
@@ -118,6 +120,7 @@ function HealBot_Action_RefreshTooltip(unit, state)
     end
   
     hlth,maxhlth=HealBot_UnitHealth(xGUID, unit)
+    mana,maxmana=HealBot_UnitMana(unit)
 
     if hlth>maxhlth then
         maxhlth=HealBot_CorrectPetHealth(unit,hlth,maxhlth,xGUID)
@@ -188,7 +191,7 @@ function HealBot_Action_RefreshTooltip(unit, state)
         if uName then
             r,g,b=HealBot_Action_RetHealBot_ClassCol(xGUID, unit)
             if UnitClass(unit) then
-                if not HealBot_InspectUnit and HealBot_UnitSpec[xGUID] and doTalentRequest[xGUID] and doTalentRequest[xGUID]==1 then
+                if HealBot_Globals.QueryTalents==1 and not HealBot_InspectUnit and HealBot_UnitSpec[xGUID] and (doTalentRequest[xGUID] or 0)==1 then
                     if HealBot_UnitSpec[xGUID]==" " or not HealBot_IsFighting then
                         HealBot_InspectUnit=true
                         HealBot_TalentQuery(unit)
@@ -231,10 +234,10 @@ function HealBot_Action_RefreshTooltip(unit, state)
                 hlthdelta=maxhlth-hlth;
                 r,g,b,a=HealBot_HealthColor(unit,hlth,maxhlth,true,xGUID,false,uBuff,DebuffType,HealBot_IncHeals_retHealsIn(xGUID));
                 if UnitOffline then 
-                    HealBot_Tooltip_SetLine(linenum,HB_TOOLTIP_OFFLINE..": "..UnitOffline,1,1,1,1,hlth.."/"..maxhlth.." (-"..maxhlth-hlth..")",r,g,b,1)
+                    HealBot_Tooltip_SetLine(linenum,HB_TOOLTIP_OFFLINE..": "..UnitOffline,1,1,1,1,hlth.."/"..maxhlth.." ("..floor((hlth/maxhlth)*100).."%)",r,g,b,1)
                 elseif zone and not strfind(zone,"Level") then
                     if zone==HB_TOOLTIP_OFFLINE then HealBot_Action_UnitIsOffline(xGUID,time()) end
-                    HealBot_Tooltip_SetLine(linenum,zone,1,1,1,1,hlth.."/"..maxhlth.." (-"..maxhlth-hlth..")",r,g,b,1)
+                    HealBot_Tooltip_SetLine(linenum,zone,1,1,1,1,hlth.."/"..maxhlth.." ("..floor((hlth/maxhlth)*100).."%)",r,g,b,1)
                 end
                 vUnit=HealBot_retIsInVehicle(unit)
                 if vUnit then
@@ -243,10 +246,20 @@ function HealBot_Action_RefreshTooltip(unit, state)
                     hlth,maxhlth=HealBot_VehicleHealth(vUnit)
                     r,g,b,a=HealBot_HealthColor(vUnit,hlth,maxhlth,true,HealBot_UnitGUID(vUnit),false,uBuff,DebuffType,0);
                     if UnitExists(vUnit) then
-                        HealBot_Tooltip_SetLine(linenum,"  "..UnitName(vUnit),lr,lg,lb,1,hlth.."/"..maxhlth.." (-"..maxhlth-hlth..")",r,g,b,1)
+                        HealBot_Tooltip_SetLine(linenum,"  "..UnitName(vUnit),lr,lg,lb,1,hlth.."/"..maxhlth.." ("..floor((hlth/maxhlth)*100).."%)",r,g,b,1)
                     else
-                        HealBot_Tooltip_SetLine(linenum,"  "..HEALBOT_VEHICLE,lr,lg,lb,1,hlth.."/"..maxhlth.." (-"..maxhlth-hlth..")",r,g,b,1)
+                        HealBot_Tooltip_SetLine(linenum,"  "..HEALBOT_VEHICLE,lr,lg,lb,1,hlth.."/"..maxhlth.." ("..floor((hlth/maxhlth)*100).."%)",r,g,b,1)
                     end
+                end
+            end
+            tp,_ = HealBot_CalcThreat(unit)
+            if tp>0 or mana then
+                if not mana then
+                    HealBot_Tooltip_SetLine(linenum,HEALBOT_WORD_THREAT.." "..tp.."%",1,0.1,0.1,1," ",0,0,0,0)
+                elseif tp==0 then
+                    HealBot_Tooltip_SetLine(linenum," ",0,0,0,0,mana.."/"..maxmana.." ("..floor((mana/maxmana)*100).."%)",0.4,0.4,1,1)
+                else
+                    HealBot_Tooltip_SetLine(linenum,HEALBOT_WORD_THREAT.." "..tp.."%",1,0.1,0.1,1,mana.."/"..maxmana.." ("..floor((mana/maxmana)*100).."%)",0.4,0.4,1,1)
                 end
             end
             if DebuffType then
@@ -472,14 +485,14 @@ function HealBot_Tooltip_SpellInfo(spellName)
         if HealBot_Spells[spellName].Mana>0 then
             linenum=linenum+1
             if HealBot_Spells[spellName].Mana<HealBot_Tooltip_Power then
-                HealBot_Tooltip_SetLine(linenum,HEALBOT_WORDS_CAST..": "..HealBot_Spells[spellName].CastTime.." "..HEALBOT_WORDS_SEC..".",0.8,0.8,0.8,1,"Power: "..HealBot_Spells[spellName].Mana,0.5,0.5,1,1)
+                HealBot_Tooltip_SetLine(linenum,HEALBOT_WORDS_CAST..": "..HealBot_Spells[spellName].CastTime.." "..HEALBOT_WORDS_SEC..".",0.8,0.8,0.8,1,"Power: "..HealBot_Spells[spellName].Mana,0.4,0.4,1,1)
             else
-                HealBot_Tooltip_SetLine(linenum,HEALBOT_WORDS_CAST..": "..HealBot_Spells[spellName].CastTime.." "..HEALBOT_WORDS_SEC..".",0.8,0.8,0.8,1,"Mana: "..HealBot_Spells[spellName].Mana,0.5,0.5,1,1)
+                HealBot_Tooltip_SetLine(linenum,HEALBOT_WORDS_CAST..": "..HealBot_Spells[spellName].CastTime.." "..HEALBOT_WORDS_SEC..".",0.8,0.8,0.8,1,"Mana: "..HealBot_Spells[spellName].Mana,0.4,0.4,1,1)
             end
         end
     elseif HealBot_OtherSpells[spellName] then
         linenum=linenum+1 
-        HealBot_Tooltip_SetLine(linenum,HEALBOT_WORDS_CAST..": "..HealBot_OtherSpells[spellName].CastTime.." "..HEALBOT_WORDS_SEC..".",0.8,0.8,0.8,1,"Mana: "..HealBot_OtherSpells[spellName].Mana,0.5,0.5,1,1)
+        HealBot_Tooltip_SetLine(linenum,HEALBOT_WORDS_CAST..": "..HealBot_OtherSpells[spellName].CastTime.." "..HEALBOT_WORDS_SEC..".",0.8,0.8,0.8,1,"Mana: "..HealBot_OtherSpells[spellName].Mana,0.4,0.4,1,1)
     end
 end
 

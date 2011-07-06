@@ -1,8 +1,4 @@
-﻿## Interface: 40100
-## X-Curse-Packaged-Version: 3.02.78
-## X-Curse-Project-Name: ArkInventory
-## X-Curse-Project-ID: ark-inventory
-## X-Curse-Repository-ID: wow/ark-inventory/mainline
+﻿## Interface: 40200
 
 ## Title: ArkInventory [Rules] Example
 ## Notes: Example rule for ArkInventory
@@ -18,3 +14,7 @@
 
 
 ArkInventoryRulesExample.lua
+-- X-Curse-Packaged-Version: 3.02.80
+-- X-Curse-Project-Name: ArkInventory
+-- X-Curse-Project-ID: ark-inventory
+-- X-Curse-Repository-ID: wow/ark-inventory/mainline

@@ -441,7 +441,7 @@ local function RestackRun( loc_id )
 	
 	-- DO NOT USE CACHED DATA FOR RESTACKING, PULL THE DATA DIRECTLY FROM WOW AGAIN, THE UI WILL CATCH UP
 	
-	if loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Key then
+	if loc_id == ArkInventory.Const.Location.Bag then
 		
 		ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
 		

@@ -1354,7 +1354,7 @@ function ArkInventory.MenuSwitchLocation( frame, level, value, offset )
 	
 	if level == offset + 1 then
 	
-		for set_id, loc in ipairs( ArkInventory.Global.Location ) do
+		for set_id, loc in ArkInventory.spairs( ArkInventory.Global.Location ) do
 			if ArkInventory.Global.Location[set_id].canView then
 				ArkInventory.Lib.Dewdrop:AddLine(
 					"text", loc.Name,

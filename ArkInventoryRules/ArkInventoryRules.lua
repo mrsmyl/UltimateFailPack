@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2010, all rights reserved.
--- $Revision: 684 $
--- $Date: 2011-04-27 23:20:10 +1000 (Wed, 27 Apr 2011) $
+-- $Revision: 709 $
+-- $Date: 2011-06-29 17:50:14 +1000 (Wed, 29 Jun 2011) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -1060,8 +1060,6 @@ function ArkInventoryRules.System.location( ... )
 		local k = string.lower( strtrim( arg ) )
 		if k == "bag" or k == string.lower( ArkInventory.Localise["LOCATION_BAG"] ) then
 			k = ArkInventory.Const.Location.Bag
-		elseif k == "key" or k == "keyring" or k == string.lower( KEYRING ) then
-			k = ArkInventory.Const.Location.Key
 		elseif k == "bank" or k == string.lower( ArkInventory.Localise["LOCATION_BANK"] ) then
 			k = ArkInventory.Const.Location.Bank
 		elseif k == "guild bank" or k == "vault" or k == string.lower( GUILD_BANK ) then

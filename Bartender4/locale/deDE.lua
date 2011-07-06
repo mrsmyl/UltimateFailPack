@@ -136,7 +136,7 @@ L["I just installed Bartender4, but my keybindings do not show up on the buttons
 L["I've found a bug! Where do I report it?"] = "Ich habe einen Fehler gefunden! Wo kann ich ihn reporten?"
 L["Its simple! Just check the Keyring option in the BagBars configuration menu, and it'll appear next to your bags."] = "Ganz einfach! Aktiviere die Schlüsselbund-Option im Konfigurationsmenü der Taschenleiste und es wird neben den Taschen aufscheinen."
 L["Key Bindings"] = "Tastenbelegung"
-L["Keyring"] = "Schlüsselbund" -- Needs review
+L["Keyring"] = "Schlüsselring"
 L["Layout"] = "Layout"
 L["Left"] = "Links"
 L["Left ending"] = "Linker Abschluß"
@@ -156,7 +156,7 @@ L["Number of buttons."] = "Anzahl der Schaltflächen."
 L["Number of rows."] = "Anzahl der Reihen."
 L["Offset in X direction (horizontal) from the given anchor point."] = "Offset in Richtung X (horizontal) vom gegebenen Ankerpunkt aus."
 L["Offset in Y direction (vertical) from the given anchor point."] = "Offset in Richtung Y (vertikal) vom gegebenen Ankerpunkt aus."
--- L["Once open, simply hover the button you want to bind, and press the key you want to be bound to that button. The keyBound tooltip and on-screen status will inform you about already existing bindings to that button, and the success of your binding attempt."] = "Once open, simply hover the button you want to bind, and press the key you want to be bound to that button. The keyBound tooltip and on-screen status will inform you about already existing bindings to that button, and the success of your binding attempt."
+L["Once open, simply hover the button you want to bind, and press the key you want to be bound to that button. The keyBound tooltip and on-screen status will inform you about already existing bindings to that button, and the success of your binding attempt."] = "Sobald es geöffnet ist, fahre einfach mit der Maus über die Schaltfläche, welche du mit einer Taste verknüpfen möchtest und drücke die Taste, die an diese Schaltfläche gebunden werden soll. Der Tooltip und der On-Screen Status wird dich über bestehende Zuweisungen und über den Erfolg des Zuweisungsversuches informieren." -- Needs review
 L["One Bag"] = "Eine Tasche"
 L["One action bar only"] = "Nur eine Aktionsleiste"
 L["Only show one Bag Button in the BagBar."] = "Nur eine Tasche in der Taschenleiste zeigen."
@@ -202,12 +202,12 @@ L["Three bars stacked"] = "Drei Leisten übereinander gestapelt"
 L[ [=[Toggle Button Zoom
 For more style options you need to install ButtonFacade]=] ] = [=[Schaltflächen Zoom umschalten
 Für weitere Stiloptionen muss ButtonFacade installiert werden.]=]
-L["Toggle actions on key press instead of release"] = "Löst Aktionen beim Betätigen der Taste und nicht beim Loslassen aus." -- Needs review
+L["Toggle actions on key press instead of release"] = "Löst Aktionen beim Betätigen der Taste und nicht beim Loslassen aus."
 L["Toggle the button grid."] = "Das Schaltflächen Gitternetz umschalten."
 L["Toggle the use of the modifier-based focus-cast functionality."] = "Die modifikatorbasierenden Fokuszauber-Funktionalität ein/ausschalten."
 L["Toggle the use of the modifier-based self-cast functionality."] = "Schaltet die Benutzung modifikatorbasierender Funktionalität von Selbstzaubern ein/aus."
 L["Toggle the use of the right-click self-cast functionality."] = "Die Benutzung der Rechtsklick-Selbstzauber-Funktion ein/ausschalten."
-L["Toggles actions immediately when you press the key, and not only on release. Note that draging actions will cause them to be cast in this mode."] = "Löst Aktionen sofort beim Betätigen der Taste und nicht beim Loslassen aus. Beachte in diesem Modus, dass beim Verschieben einer Aktion diese auch ausgelöst wird" -- Needs review
+L["Toggles actions immediately when you press the key, and not only on release. Note that draging actions will cause them to be cast in this mode."] = "Löst Aktionen sofort beim Betätigen der Taste und nicht beim Loslassen aus. Beachte in diesem Modus, dass beim Verschieben einer Aktion diese auch ausgelöst wird." -- Needs review
 L["Totem Bar"] = "Totem-Leiste"
 L["Two action bars"] = "Zwei Aktionsleisten"
 L["Two bars wide"] = "Doppelte Leistenbreite"
@@ -219,13 +219,13 @@ L["VehicleBar"] = "Fahrzeugsleiste"
 L["Vertical Growth"] = "Vertikale Ausweitung"
 L["Vertical growth direction for this bar."] = "Vertikale Ausweitungsrichtung für diese Leiste."
 L["Visibility"] = "Sichtbarkeit"
--- L["When reporting a bug, make sure you include the |cffffff78steps on how to reproduce the bug|r, supply any |cffffff78error messages|r with stack traces if possible, give the |cffffff78revision number|r of Bartender4 the problem occured in and state whether you are using an |cffffff78English client or otherwise|r."] = "When reporting a bug, make sure you include the |cffffff78steps on how to reproduce the bug|r, supply any |cffffff78error messages|r with stack traces if possible, give the |cffffff78revision number|r of Bartender4 the problem occured in and state whether you are using an |cffffff78English client or otherwise|r."
+L["When reporting a bug, make sure you include the |cffffff78steps on how to reproduce the bug|r, supply any |cffffff78error messages|r with stack traces if possible, give the |cffffff78revision number|r of Bartender4 the problem occured in and state whether you are using an |cffffff78English client or otherwise|r."] = "Wenn du einen Fehler meldest, stelle sicher, dass du die |cffffff78Schritte zu Reproduktion|r und die Fehlermeldungen mit Stack Traces (wenn möglich) angibst. Außerdem ist die |cffffff78Revisionsnummer|r von Bartender, in der das Problem auftrat, und ob du einen |cffffff78englischen Client benutzt|r von großem Nutzen." -- Needs review
 L["Who wrote this cool addon?"] = "Wer hat dieses coole Addon geschrieben?" -- Needs review
 L["X Offset"] = "X Offset"
 L["XP Bar"] = "Erfahrungsleiste"
 L["Y Offset"] = "Y Offset"
--- L["You can either click the KeyBound button in the options, or use the |cffffff78/kb|r chat command to open the keyBound control. Alternatively, you can also use the Blizzard Keybinding Interface."] = "You can either click the KeyBound button in the options, or use the |cffffff78/kb|r chat command to open the keyBound control. Alternatively, you can also use the Blizzard Keybinding Interface."
--- L["You can report bugs or give suggestions at the discussion forums at |cffffff78http://forums.wowace.com/showthread.php?t=12513|r or check the project page at |cffffff78http://www.wowace.com/addons/bartender4/|r"] = "You can report bugs or give suggestions at the discussion forums at |cffffff78http://forums.wowace.com/showthread.php?t=12513|r or check the project page at |cffffff78http://www.wowace.com/addons/bartender4/|r"
+L["You can either click the KeyBound button in the options, or use the |cffffff78/kb|r chat command to open the keyBound control. Alternatively, you can also use the Blizzard Keybinding Interface."] = "Du kannst entweder auf die Tastenzuweisungsschaltfläche in den Optionen klicken oder benutze den |cffffff78/kb|r Chatbefehl, um die Tastenzuweisung einzustellen. Alternativ kannst du das Blizzard Tastenzuweisungsinterface verwenden." -- Needs review
+L["You can report bugs or give suggestions at the discussion forums at |cffffff78http://forums.wowace.com/showthread.php?t=12513|r or check the project page at |cffffff78http://www.wowace.com/addons/bartender4/|r"] = "Im Diskussionsforum auf |cffffff78http://forums.wowace.com/showthread.php?t=12513|r kannst du Fehler melden oder Vorschläge geben oder besuche die Projektseite auf |cffffff78http://www.wowace.com/addons/bartender4/|r" -- Needs review
 L["You can set the bar to be always hidden, if you only wish to access it using key-bindings."] = "Man kann die Leiste dauerhaft verstecken, um sie nur über die Tastaturbelegung anzusteuern."
 L[ [=[You can use any macro conditionals in the custom string, using "show" and "hide" as values.
 

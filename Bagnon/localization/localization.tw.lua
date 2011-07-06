@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 	THIS FILE IS ENCODED IN UTF-8
 
 	Bagnon Localization Information: Chinese Traditional
@@ -30,17 +30,16 @@ L.UpdatedIncompatible = '由一個不相容版本升級，已載入默認設置�
 L.Commands = '命令：'
 L.CmdShowInventory = '開關背包介面'
 L.CmdShowBank = '開關銀行介面'
-L.CmdShowKeyring = '開關鑰匙鏈介面'
 L.CmdShowVersion = '顯示當前版本'
 
 
 --frame text
 L.TitleBags = '%s的背包'
 L.TitleBank = '%s的銀行'
-L.TitleKeys = '%s的鑰匙鏈'
 
 
 --tooltips
+L.Bags = '容器'
 L.TipBank = '銀行'
 L.TipChangePlayer = '查看其他角色的物品'
 L.TipGoldOnRealm = '%s上的總資產'
@@ -55,10 +54,11 @@ L.TipShowSearch = '顯示搜索介面'
 L.TipShowSearch = '搜索'
 L.TipShowFrameConfig = '打開設置菜單'
 L.TipDoubleClickSearch = '按兩下打開搜索框'
+L.TipInventoryToggle = '<右鍵點選>打開或關閉背包視窗'
+L.TipBankToggle = '<右鍵點選>打開或關閉銀行視窗'
 L.Total = '總共'
 
 --databroker plugin tooltips
 L.TipShowBank = 'Shift-點擊 開關銀行'
 L.TipShowInventory = '點擊 開關背包'
-L.TipShowKeyring = 'Alt-點擊 開關鑰匙鏈'
 L.TipShowOptions = '右擊 打開設置菜單'

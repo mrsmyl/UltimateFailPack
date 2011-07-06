@@ -2,13 +2,13 @@
 ************************************************************************
 Project				: Broker_HitCrit
 Author				: zhinjio
-Project Revision	: 2.22.0-release
-Project Date		: 20110428045833
+Project Revision	: 2.22.1-release
+Project Date		: 20110704205759
 
 File				: Broker_HitCrit.lua
 Commit Author		: zhinjio
-Commit Revision		: 119
-Commit Date			: 20110428045833
+Commit Revision		: 122
+Commit Date			: 20110704205759
 ************************************************************************
 Description	:
 	Main addon file. 
@@ -33,7 +33,7 @@ local AceConfigDialog 	= LibStub("AceConfigDialog-3.0")
 local addonversion = GetAddOnMetadata( FULLNAME, "Version" )
 addonversion = string.gsub( addonversion, "@project.version@", " - Development" )
 local addonauthor = "zhinjio"
-local builddate = "20110428045833"
+local builddate = "20110704205759"
 
 local _G = getfenv(0)
 _G["HitCrit"] = HitCrit
@@ -392,7 +392,7 @@ local function amTracking( type )
 end
 
 function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
-	_, _, eType, hideCaster, sGUID, sName, sFlags, dGUID, dName, dFlags, ... )
+	_, _, eType, hideCaster, sGUID, sName, sFlags, sRFlags, dGUID, dName, dFlags, ... )
 --	eType				sGUID				sName		sFlags	dGUID				dName		dFlags		...
 -- SPELL_HEAL			0x0100000003EDD6BF	"Zhinjio"	0x10511	0x0100000003EDD6BF	"Zhinjio"	0x10511		48785	"Flash of Light"	0x2	3653	3653	0	nil
 -- SPELL_HEAL			0x0100000003EDD6BF	"Zhinjio"	0x10511	0x0100000003EDD6BF	"Zhinjio"	0x10511		48785	"Flash of Light"	0x2	5413	5413	0	1
@@ -406,6 +406,7 @@ function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
 --	sGUID		source GUID
 --	sName		source Name
 --	sFlags		source Flags
+--	sRFlags		source Raid Flags	-- added in 4.2
 --	dGUID		destination GUID
 --	dName		destination Name
 --	dFlags		destination Flags
@@ -545,11 +546,12 @@ StaticPopupDialogs["HC_CONFIRM_RESET_DATA"] = {
 	text = "",
 	button1 = L["Yes"],
 	button2 = L["No"],
-	OnAccept = function()
+	OnAccept = function( self )
 		HitCrit_ResetData()
+		self:Hide()
 	end,
-	EditBoxOnEscapePressed = function()
-		this:GetParent():Hide()
+	EditBoxOnEscapePressed = function( self )
+		self:Hide()
 	end,
 	timeout = 0,
 	exclusive = 1,
@@ -597,7 +599,7 @@ local function HitCrit_ExpandHandler( cell, arg, button )
 		HitCrit_Debug( "got rT and rC of " .. resetType .. "/" .. resetCat )
 		dbe[resetType][rCat] = not dbe[resetType][rCat]
 	end
-	addon:drawTooltip()
+	addon:drawTooltip( HitCrit.currTT )
 	tooltip:Show()
 end
 
@@ -2629,6 +2631,8 @@ end
 ************************************************************************
 CHANGELOG:
 
+Date : 5/7/11
+	Revert bad change (not sure when it happened) in expandHandler
 Date : 04/27/11
 	Updated for 4.1 CLEU, et al
 	Added LibDBIcon
