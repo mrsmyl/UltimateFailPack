@@ -4,7 +4,7 @@
 
 local playerClass, playerName, playerGUID
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 521 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 543 $")
 
 local GetNumPartyMembers = GetNumPartyMembers
 local GetNumRaidMembers = GetNumRaidMembers
@@ -1287,15 +1287,15 @@ xpHigh.clEvents = {}
 -- COMBAT_LOG_EVENT_UNFILTERED
 -- Using this instead of UNIT_SPELLCAST_SUCCEEDED so we can use the dstGUID for a guarenteed correct target, rather than implied and not necessarily correct name
 local dstMask = COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
-function xpHigh:COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh:COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstName, dstFlags, dstRaidFlags, ...)
 	local ev = self.clEvents[event]
 	if (ev) then
-		ev(self, timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+		ev(self, timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	end
 end
 
 -- COMBATLOG:SPELL_CAST_SUCCESS
-function xpHigh.clEvents:SPELL_CAST_SUCCESS(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh.clEvents:SPELL_CAST_SUCCESS(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if (srcGUID == UnitGUID("player")) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			local spellId, spellName, spellSchool = ...
@@ -1322,7 +1322,7 @@ function xpHigh.clEvents:SPELL_CAST_SUCCESS(timestamp, event, hideCaster, srcGUI
 end
 
 -- COMBATLOG:SPELL_HEAL
-function xpHigh.clEvents:SPELL_HEAL(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh.clEvents:SPELL_HEAL(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if (conf.highlight.HEAL and conf.highlight.extraSparkles and srcGUID == UnitGUID("player")) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			-- Pretty sparkles for our healing target
@@ -1332,7 +1332,7 @@ function xpHigh.clEvents:SPELL_HEAL(timestamp, event, hideCaster, srcGUID, srcNa
 end
 
 -- COMBATLOG:SPELL_PERIODIC_HEAL
-function xpHigh.clEvents:SPELL_PERIODIC_HEAL(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh.clEvents:SPELL_PERIODIC_HEAL(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if (conf.highlight.HOT and conf.highlight.extraSparkles and srcGUID == UnitGUID("player")) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			local spellId, spellName, spellSchool, amount = ...
@@ -1347,7 +1347,7 @@ function xpHigh.clEvents:SPELL_PERIODIC_HEAL(timestamp, event, hideCaster, srcGU
 end
 
 -- COMBATLOG:SPELL_DAMAGE
-function xpHigh.clEvents:SPELL_DAMAGE(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, amount, ...)
+function xpHigh.clEvents:SPELL_DAMAGE(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, amount, ...)
 	if (band(dstFlags, dstMask) ~= 0) then
 		local overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ...
 		if (absorbed) then
@@ -1358,7 +1358,7 @@ end
 xpHigh.clEvents.SPELL_PERIODIC_DAMAGE = xpHigh.clEvents.SPELL_DAMAGE
 
 -- COMBATLOG:SPELL_MISSED
-function xpHigh.clEvents:SPELL_MISSED(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh.clEvents:SPELL_MISSED(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if (band(dstFlags, dstMask) ~= 0) then
 		local spellId, spellName, spellSchool, missType, missAmount = ...
 		if (missType == "ABSORB") then
@@ -1369,7 +1369,7 @@ end
 xpHigh.clEvents.SPELL_PERIODIC_MISSED = xpHigh.clEvents.SPELL_MISSED
 
 -- COMBATLOG:SWING_DAMAGE
-function xpHigh.clEvents:SWING_DAMAGE(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, amount, ...)
+function xpHigh.clEvents:SWING_DAMAGE(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, amount, ...)
 	if (band(dstFlags, dstMask) ~= 0) then
 		local overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ...
 		if (absorbed) then
@@ -1379,7 +1379,7 @@ function xpHigh.clEvents:SWING_DAMAGE(timestamp, event, hideCaster, srcGUID, src
 end
 
 -- COMBATLOG:SWING_MISSED
-function xpHigh.clEvents:SWING_MISSED(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh.clEvents:SWING_MISSED(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if (band(dstFlags, dstMask) ~= 0) then
 		local missType, missAmount = ...
 		if (missType == "ABSORB") then
@@ -1389,7 +1389,7 @@ function xpHigh.clEvents:SWING_MISSED(timestamp, event, hideCaster, srcGUID, src
 end
 
 -- ENVIRONMENTAL_DAMAGE
-function xpHigh.clEvents:ENVIRONMENTAL_DAMAGE(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function xpHigh.clEvents:ENVIRONMENTAL_DAMAGE(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if (band(dstFlags, dstMask) ~= 0) then
 		local environmentalType, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ...
 		if (missType == "ABSORB") then
@@ -1399,7 +1399,7 @@ function xpHigh.clEvents:ENVIRONMENTAL_DAMAGE(timestamp, event, hideCaster, srcG
 end
 
 -- COMBATLOG:SPELL_AURA_APPLIED
-function xpHigh.clEvents:SPELL_AURA_APPLIED(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, auraType)
+function xpHigh.clEvents:SPELL_AURA_APPLIED(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, auraType)
 	if (conf.highlight.SHIELD) then
 		if ((srcGUID == dstGUID or srcGUID == playerGUID or dstGUID == playerGUID) and band(dstFlags, dstMask) ~= 0) then
 			local def = absorbSpells[spellName]
@@ -1441,7 +1441,7 @@ end
 xpHigh.clEvents.SPELL_AURA_REFRESH = xpHigh.clEvents.SPELL_AURA_APPLIED
 
 -- COMBATLOG:SPELL_AURA_REMOVED
-function xpHigh.clEvents:SPELL_AURA_REMOVED(timestamp, event, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, auraType, ...)
+function xpHigh.clEvents:SPELL_AURA_REMOVED(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, auraType, ...)
 	if (conf.highlight.SHIELD) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			local def = absorbSpells[spellName]

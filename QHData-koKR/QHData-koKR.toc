@@ -1,0 +1,11 @@
+## Interface: 40200
+## Title: QuestHelper Data (koKR)
+## Author: zorbathut, smariot, vipersniper, nesher, nconantj
+## Notes: Contains the data needed by QuestHelper
+## Version: 4.2.0.211r
+## Dependencies: QHData-base
+## LoadOnDemand: 1
+
+static_koKR.lua
+static_koKR_1.lua
+static_koKR_2.lua

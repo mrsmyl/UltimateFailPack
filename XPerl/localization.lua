@@ -6,7 +6,7 @@ XPerl_ProductName		= "|cFFD00000X-Perl|r UnitFrames"
 XPerl_ShortProductName	= "|cFFD00000X-Perl|r"
 XPerl_Author			= "|cFFFF8080Zek|r"
 XPerl_Description		= XPerl_ProductName.." by "..XPerl_Author
-XPerl_VersionNumber 	= "3.1.4"
+XPerl_VersionNumber 	= "3.1.5"
 XPerl_Version			= XPerl_Description.." - "..XPerl_VersionNumber
 XPerl_LongDescription	= "UnitFrame replacement for new look Player, Pet, Party, Target, Target's Target, Focus, Raid"
 XPerl_ModMenuIcon		= "Interface\\Icons\\INV_Misc_Gem_Pearl_02"
@@ -192,7 +192,7 @@ XPerl_DefaultRangeSpells = {
 	PRIEST	= {spell = GetSpellInfo(2061)},				-- Flash Heal
 	SHAMAN	= {spell = GetSpellInfo(331)},				-- Healing Wave
 	MAGE	= {spell = GetSpellInfo(475)},				-- Remove Lesser Curse
-	WARLOCK	= {spell = GetSpellInfo(5227)},				-- Underwater Breathing
+	WARLOCK	= {spell = GetSpellInfo(5697)},				-- Underwater Breathing
 	ANY		= {item = GetItemInfo(21991)}				-- Heavy Netherweave Bandage
 }
 

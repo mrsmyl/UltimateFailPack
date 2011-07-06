@@ -1,4 +1,4 @@
-local revision = tonumber(string.sub("$Revision: 1127 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1159 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -26,8 +26,8 @@ function Recount:SetLevel(frame,level)
 end
 
 function Recount:InitOrder()
-	TopWindow=UIParent
-
+	TopWindow=nil
+	
 	Recount:AddWindow(Recount.MainWindow)
 	Recount:AddWindow(Recount.DetailWindow)
 	Recount:AddWindow(Recount.GraphWindow)
@@ -43,9 +43,13 @@ function Recount:SetWindowTop(window)
 		Check.Below=window.Below
 		window.Below=Check
 
-		Check.Below.Above=Check
+		if Check.Below then
+			Check.Below.Above=Check
+			Recount:SetLevel(Check,Check.Below:GetFrameLevel()+10)		
+		else
+			Recount:SetLevel(Check,UIParent:GetFrameLevel()+10)
+		end
 		
-		Recount:SetLevel(Check,Check.Below:GetFrameLevel()+10)		
 		Check=window.Above
 	end
 	Recount:SetLevel(window,window.Below:GetFrameLevel()+10)
@@ -54,10 +58,18 @@ end
 
 function Recount:AddWindow(window)
 	window.Below=TopWindow
-	TopWindow.Above=window
+	
+	local toplevel
+	
+	if TopWindow then 
+		TopWindow.Above=window 
+		toplevel = TopWindow:GetFrameLevel()
+	else
+		toplevel = UIParent:GetFrameLevel()
+	end
 	window.Above=nil
 	
-	Recount:SetLevel(window,TopWindow:GetFrameLevel()+10)
+	Recount:SetLevel(window,toplevel+10)
 	TopWindow=window
 
 	if window:GetName()~="Recount_ConfigWindow" then

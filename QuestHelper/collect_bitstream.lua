@@ -1,4 +1,4 @@
-QuestHelper_File["collect_bitstream.lua"] = "4.1.0.185r"
+QuestHelper_File["collect_bitstream.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["collect_bitstream.lua"] = GetTime()
 
 local Merger

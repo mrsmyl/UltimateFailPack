@@ -2,7 +2,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale( "Recount" )
 local Epsilon=0.000000000000000001
 
-local revision = tonumber(string.sub("$Revision: 1125 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1167 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -236,7 +236,7 @@ end
 local DataModes={}
 
 function DataModes:DamageReturner(data, num)
-	if not data then return 0,0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0,0 end
 
 	local damage, dps = Recount:MergedPetDamageDPS(data,Recount.db.profile.CurDataSet)
 	if num==1 then
@@ -247,7 +247,7 @@ function DataModes:DamageReturner(data, num)
 end
 
 function DataModes:DPSReturner(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 
 	local _, dps = Recount:MergedPetDamageDPS(data,Recount.db.profile.CurDataSet)
 
@@ -260,7 +260,7 @@ end
 
 
 function DataModes:FriendlyDamageReturner(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].FDamage or 0)
 	end
@@ -269,7 +269,7 @@ function DataModes:FriendlyDamageReturner(data, num)
 end
 
 function DataModes:DamageTakenReturner(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].DamageTaken or 0)
 	end
@@ -315,7 +315,7 @@ function Recount:MergedPetHealingDPS(data,fight)
 end
 
 function DataModes:HealingReturner(data, num)
-	if not data then return 0, 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0, 0 end
 	local healing, hps = Recount:MergedPetHealingDPS(data,Recount.db.profile.CurDataSet)
 	if num==1 then
 		return healing, hps
@@ -326,7 +326,7 @@ function DataModes:HealingReturner(data, num)
 end
 
 function DataModes:HealingTaken(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].HealingTaken or 0)
 	end
@@ -336,7 +336,7 @@ function DataModes:HealingTaken(data, num)
 end
 
 function DataModes:OverhealingReturner(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 	local overhealing = data.Fights[Recount.db.profile.CurDataSet].Overhealing or 0
 	if num==1 then
 		local OverhealPercent
@@ -348,7 +348,7 @@ function DataModes:OverhealingReturner(data, num)
 end
 
 function DataModes:DeathReturner(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].DeathCount or 0)
 	end
@@ -357,7 +357,7 @@ function DataModes:DeathReturner(data, num)
 end
 
 function DataModes:DOTReturner(data, num)
-	if not data then return 0,0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0,0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].DOT_Time or 0), (data.Fights[Recount.db.profile.CurDataSet].DOT_Time or 0)/((data.Fights[Recount.db.profile.CurDataSet].ActiveTime or 0)+Epsilon)
 	end
@@ -366,7 +366,7 @@ function DataModes:DOTReturner(data, num)
 end
 
 function DataModes:HOTReturner(data, num)
-	if not data then return 0,0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0,0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].HOT_Time or 0), (data.Fights[Recount.db.profile.CurDataSet].HOT_Time or 0)/((data.Fights[Recount.db.profile.CurDataSet].ActiveTime or 0)+ Epsilon)
 	end
@@ -375,7 +375,7 @@ function DataModes:HOTReturner(data, num)
 end
 
 function DataModes:ActiveTime(data, num)
-	if not data then return 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0 end
 	if num==1 then
 		return (math_floor((data.Fights[Recount.db.profile.CurDataSet].ActiveTime or 0)*100)/100 or 0)
 	end
@@ -384,7 +384,7 @@ function DataModes:ActiveTime(data, num)
 end
 
 function DataModes:Absorbs(data, num)
-	if not data then return 0, 0 end
+	if not data or not data.Fights[Recount.db.profile.CurDataSet] then return 0, 0 end
 	if num==1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].Absorbs or 0), (data.Fights[Recount.db.profile.CurDataSet].Absorbs or 0)/((data.Fights[Recount.db.profile.CurDataSet].ActiveTime or 0) + Epsilon)
 	else

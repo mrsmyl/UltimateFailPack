@@ -1,4 +1,4 @@
-QuestHelper_File["collect.lua"] = "4.1.0.185r"
+QuestHelper_File["collect.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["collect.lua"] = GetTime()
 
 local --[[ static ]] MINSVNVERSION = 185
@@ -94,7 +94,7 @@ function QH_Collector_Init()
   --]]
   QuestHelper_Collector_Version = QuestHelper_Collector_Version_Current
   
-  local svnversion = "185r"
+  local svnversion = "211r"
   local buildInfo, locale, faction = GetBuildInfo(), GetLocale(), QuestHelper:PlayerFaction()
   local altfaction = ""
   if faction == ALLIANCE then
@@ -144,12 +144,12 @@ function QH_Collector_Init()
     QuestHelper_Collector[svnversion][realm][buildInfo][locale] = {}
   end
 
-  if not QuestHelper_Collector[svnversion][realm][buildInfo][locale][faction] then
-    QuestHelper_Collector[svnversion][realm][buildInfo][locale][faction] = {}
+  if not QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction] then
+    QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction] = {}
   end
 
   --if not QuestHelper_Collector[sig] or QuestHelper_Collector[sig].compressed then QuestHelper_Collector[sig] = {version = QuestHelper_Collector_Version} end -- fuckin' bullshit, man
-  local QHCData = QuestHelper_Collector[svnversion][realm][buildInfo][locale][faction]
+  local QHCData = QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction]
   QuestHelper: Assert(not QHCData.compressed)
   QHCData.modified = time()
   

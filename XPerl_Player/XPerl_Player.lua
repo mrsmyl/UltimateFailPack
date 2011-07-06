@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 514 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 539 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -747,8 +747,7 @@ function XPerl_Player_Events:PLAYER_ENTERING_WORLD()
 	local events = {"UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_MAXENERGY", "UNIT_MAXMANA", "UNIT_MAXRUNIC_POWER",
 			"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
 			"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE", "UNIT_FLAGS", "PLAYER_FLAGS_CHANGED",
-			"UNIT_SPELLCAST_SUCCEEDED", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE",
-			"UNIT_SPELLCAST_SENT", "PLAYER_TALENT_UPDATE", "MASTERY_UPDATE", "UPDATE_SHAPESHIFT_FORM",
+			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "MASTERY_UPDATE", "UPDATE_SHAPESHIFT_FORM",
 			"RUNE_TYPE_UPDATE", "RUNE_POWER_UPDATE"}
 
 
@@ -834,46 +833,9 @@ end
 XPerl_Player_Events.UNIT_MAXHEALTH = XPerl_Player_Events.UNIT_HEALTH
 XPerl_Player_Events.PLAYER_DEAD    = XPerl_Player_Events.UNIT_HEALTH
 
-function XPerl_Player_Events:UNIT_SPELLCAST_SENT(spell, rank, targetName, castID)
-	if (pconf.energyTicker and spell and UnitPowerMax(self.partyid, 0) > 0) then
-		self.tickerPrevMana = UnitPower(self.partyid, 0)
-		self:UnregisterEvent("UNIT_MANA")
-	end
-end
-
--- checkUsedMana
-local function checkUsedMana(self)
-	if (self.tickerPrevMana and UnitPower(self.partyid, 0) < self.tickerPrevMana) then
-		local diffTime = GetTime() - self.tickerCastTime
-		self.statsFrame.energyTicker:SetValue(diffTime)
-		self.statsFrame.energyTicker:Show()
-		return true
-	end
-end
-
--- UNIT_SPELLCAST_SUCCEEDED
-function XPerl_Player_Events:UNIT_SPELLCAST_SUCCEEDED(spell, rank, castID)
-	if (pconf.energyTicker and spell and UnitPowerMax(self.partyid, 0) > 0) then
-		self.tickerCastTime = GetTime()
-		if (not checkUsedMana(self)) then
-			self.waitForManaReduction = true
-			self:RegisterEvent("UNIT_MANA")
-		end
-	end
-end
-
 -- UNIT_MANA
 function XPerl_Player_Events:UNIT_MANA()
 	XPerl_Player_UpdateMana(self)
-
-	if (self.waitForManaReduction) then
-		checkUsedMana(self)
-
-		self.waitForManaReduction = nil
-		self.tickerPrevMana = nil
-		self.tickerCastTime = nil
-		self:UnregisterEvent("UNIT_MANA")
-	end
 end
 
 -- UNIT_MAXMANA
@@ -1141,34 +1103,6 @@ function XPerl_Player_SetWidth(self)
 	XPerl_RestorePosition(self)
 end
 
--- MakeEnergyTicker
-local function MakeEnergyTicker(self)
-	local f = CreateFrame("StatusBar", self.statsFrame:GetName().."energyTicker", self.statsFrame.manaBar)
-	self.statsFrame.energyTicker = f
-	f:SetPoint("TOPLEFT", self.statsFrame.manaBar, "BOTTOMLEFT", 0, 0)
-	f:SetPoint("BOTTOMRIGHT", self.statsFrame.manaBar, "BOTTOMRIGHT", 0, -2)
-	f:SetStatusBarTexture("Interface\\Addons\\XPerl\\Images\\XPerl_FrameBack")
-	f:SetHeight(2)
-	--f:SetFrameLevel(self.statsFrame.manaBar:GetFrameLevel() + 1)
-	f:Hide()
-
-	f.spark = f:CreateTexture(nil, "OVERLAY")
-	f.spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-	f.spark:SetBlendMode("ADD")
-	f.spark:SetWidth(12)
-	f.spark:SetHeight(12)
-	f.spark:SetPoint("CENTER", 0, 0)
-
-	f:SetStatusBarColor(0.4, 0.7, 1)
-	f.spark:SetVertexColor(0.4, 0.7, 1)
-	f:SetMinMaxValues(0, 5)
-
-	f.EnergyTime = 0
-	f:SetScript("OnUpdate", XPerl_Player_Energy_OnUpdate)
-
-	MakeEnergyTicker = nil
-end
-
 -- MakeXPBars
 local function MakeXPBars(self)
 	local f = CreateBar(self, "xpBar")
@@ -1225,12 +1159,6 @@ function XPerl_Player_Set_Bits(self)
 	else
 		if (self.statsFrame.repBar) then
 			self.statsFrame.repBar:Hide()
-		end
-	end
-
-	if (pconf.energyTicker) then
-		if (not self.statsFrame.energyTicker) then
-			MakeEnergyTicker(self)
 		end
 	end
 

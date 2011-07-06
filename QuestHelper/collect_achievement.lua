@@ -1,4 +1,4 @@
-QuestHelper_File["collect_achievement.lua"] = "4.1.0.185r"
+QuestHelper_File["collect_achievement.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["collect_achievement.lua"] = GetTime()
 
 local QHCA

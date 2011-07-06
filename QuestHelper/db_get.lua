@@ -1,4 +1,4 @@
-QuestHelper_File["db_get.lua"] = "4.1.0.185r"
+QuestHelper_File["db_get.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["db_get.lua"] = GetTime()
 
 local dev_mode = (QuestHelper_File["db_get.lua"] == "Development Version")
@@ -8,7 +8,7 @@ local dev_mode = (QuestHelper_File["db_get.lua"] == "Development Version")
 local QHDB_temp = QHDB
 QHDB = nil
 local QHDB = QHDB_temp]]
---QuestHelper: Assert(dev_mode or #QHDB == 4)
+QuestHelper: Assert(#QHDB == 4, "Please make sure that you are loading a locale.")
 
 local weak_v = { __mode = 'v' }
 local weak_k = { __mode = 'k' }
@@ -273,4 +273,31 @@ function DB_DumpItems()
     dt[string.format("%s/%s", freq_group[k], tostring(freq_id[k]))] = true
   end
   return dt
+end
+
+function DB_PrintTable(tbl, idt)
+  for k, v in pairs(tbl) do
+    if type(v) ~= "table" then
+      print(idt .. tostring(k) .. " = " .. tostring(v))
+    else
+      print(idt .. tostring(k) .. " =")
+      DB_PrintTable(v, idt .. "    ")
+    end
+  end
+end
+  
+function DB_Export()
+  for group, _ in pairs(QHDB) do
+    print(group)
+    for idx = 1, 99999 do
+      if DB_HasItem(group, idx) then
+        local ite = DB_GetItem(group, idx)
+        if type(ite) == "table" then
+          DB_PrintTable(ite, "    ")
+        else
+          print(ite)
+        end
+      end
+    end
+  end
 end

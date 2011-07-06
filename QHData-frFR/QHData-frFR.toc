@@ -1,0 +1,11 @@
+## Interface: 40200
+## Title: QuestHelper Data (frFR)
+## Author: zorbathut, smariot, vipersniper, nesher, nconantj
+## Notes: Contains the data needed by QuestHelper
+## Version: 4.2.0.211r
+## Dependencies: QHData-base
+## LoadOnDemand: 1
+
+static_frFR.lua
+static_frFR_1.lua
+static_frFR_2.lua

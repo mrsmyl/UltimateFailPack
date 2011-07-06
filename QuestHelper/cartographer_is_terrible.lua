@@ -1,4 +1,4 @@
--- QuestHelper_File["cartographer_is_terrible.lua"] = "4.1.0.185r"
+-- QuestHelper_File["cartographer_is_terrible.lua"] = "4.2.0.211r"
 -- QuestHelper_Loadtime["cartographer_is_terrible.lua"] = GetTime()
 
 -- http://gunnerkrigg.wikia.com/wiki/Category:Terrible

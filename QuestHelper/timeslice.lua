@@ -1,4 +1,4 @@
-QuestHelper_File["timeslice.lua"] = "4.1.0.185r"
+QuestHelper_File["timeslice.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["timeslice.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["timeslice.lua"] == "Development Version")

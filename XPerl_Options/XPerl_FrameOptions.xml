@@ -3446,7 +3446,7 @@
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
-					
+
 					<CheckButton name="$parent_IgnoreSeasonal" inherits="XPerlCheckButtonTemplate">
 						<Size><AbsDimension x="26" y="26"/></Size>
 						<Anchors>
@@ -3645,7 +3645,7 @@
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
-					
+
 					<CheckButton name="$parent_HighlightMending" inherits="XPerlCheckButtonTemplate">
 						<Size><AbsDimension x="26" y="26"/></Size>
 						<Anchors>
@@ -4431,8 +4431,7 @@
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
-					
-					-- added by playerlin 20100820
+
 					<CheckButton name="$parent_XPerlOldRoleIcons" inherits="XPerlCheckButtonTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_ShowReadyCheck" relativePoint="BOTTOMLEFT">
@@ -4636,7 +4635,7 @@
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
-					
+
 					<CheckButton name="$parent_ShowRunes" inherits="XPerlCheckButtonTemplate">
 						<Anchors>
 							<Anchor point="TOPRIGHT" relativeTo="$parent_HitIndicator" relativePoint="BOTTOM">
@@ -4660,7 +4659,7 @@
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
-					
+
 					<CheckButton name="$parent_DockRunes" inherits="XPerlCheckButtonTemplate">
 						<Size><AbsDimension x="26" y="26"/></Size>
 						<Anchors>
@@ -4939,28 +4938,9 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parent_EnergyTicker" inherits="XPerlCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Values" relativePoint="BOTTOMLEFT">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_PLAYER_ENERGY")
-								self.flashFrame = XPerl_PlayerstatsFrameenergyTicker
-								self.configBase = "XPerlDB.player"
-								self.configIndex = "energyTicker"
-								self.configClick = function()
-									XPerl_Player_SetWidth(XPerl_Player)
-								end
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-
 					<CheckButton name="$parent_Number" inherits="XPerlCheckButtonTemplate">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_EnergyTicker" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Values" relativePoint="BOTTOMLEFT">
 								<Offset><AbsDimension x="0" y="6"/></Offset>
 							</Anchor>
 						</Anchors>
@@ -5376,7 +5356,7 @@
 							</Slider>
 						</Frames>
 					</Frame>
-					
+
 					<Frame name="$parent_Totems">
 						<Scripts>
 							<OnLoad>
@@ -5684,25 +5664,9 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parent_XP" inherits="XPerlCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Level" relativePoint="BOTTOMLEFT">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_PLAYER_PET_XP")
-								self.configBase = "XPerlDB.pet"
-								self.configIndex = "xpBar"
-								self.configClick = XPerl_Player_Pet_Reset
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-
 					<CheckButton name="$parent_Values" inherits="XPerlCheckButtonTemplate">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_XP" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Level" relativePoint="BOTTOMLEFT">
 								<Offset><AbsDimension x="0" y="6"/></Offset>
 							</Anchor>
 						</Anchors>
@@ -13908,7 +13872,7 @@
 		</Scripts>
 		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD"/>
 	</Button>
-	
+
 	<Frame name="XPerlCustomListTemplate" virtual="true">
 		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<EdgeSize>
@@ -14016,7 +13980,7 @@
 			</ScrollFrame>
 		</Frames>
 	</Frame>
-	
+
 	<Frame name="XPerl_Custom_Config" frameStrata="DIALOG" inherits="XPerl_OptionsTemplateNaked" parent="UIParent" hidden="true">
 		<Scripts>
 			<OnShow>
@@ -14050,7 +14014,7 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-		
+
 			<Frame name="$parentzoneList" inherits="XPerlCustomListTemplate">
 				<Scripts>
 					<OnLoad>
@@ -14080,7 +14044,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			
+
 			<StatusBar name="$parenticonCollect" orientation="VERTICAL">
 				<BarTexture file="Interface\Tooltips\UI-Tooltip-Background"/>
 				<Scripts>
@@ -14101,7 +14065,7 @@
 					</Anchor>
 				</Anchors>
 			</StatusBar>
-			
+
 			<Frame name="$parentEdit">
 				<Scripts>
 					<OnShow>

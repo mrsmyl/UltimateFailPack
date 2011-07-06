@@ -3,8 +3,9 @@ local SM = LibStub:GetLibrary("LibSharedMedia-3.0")
 local Events = LibStub("AceEvent-3.0")
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale( "Recount" )
+local LD = LibStub("LibDropdown-1.0")
 
-local revision = tonumber(string.sub("$Revision: 1148 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1169 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -60,6 +61,102 @@ function me:SetFontSize(string, size)
 	local Font, Height, Flags = string:GetFont()
 	string:SetFont(Font, size, Flags)
 end
+
+local function Faded(self)
+	self:Release()
+end
+
+local function FadeMenu(self)
+	local fadeInfo = {}
+	fadeInfo.mode = "OUT"
+	fadeInfo.timeToFade = 0.1
+	fadeInfo.finishedFunc = Faded
+	fadeInfo.finishedArg1 = self
+	UIFrameFade(self, fadeInfo);
+end
+
+function Recount:OpenBarDropDown(myframe)
+	local baropts = 
+	{
+		type = 'group',
+		args = {
+	--[[		title = {
+				name = self.relativeTo.LeftText:GetText(),
+				type = "description",
+			},]]
+			details = {
+				order = 10,
+				name = L["Show Details (Left Click)"],
+				type = "execute",
+				func = me.ShowDetailWrapper,
+			},
+			graph = {
+				order = 20,
+				name = L["Show Graph (Shift Click)"],
+				type = "execute",
+				func = me.ShowGraphWindowWrapper,
+			},
+			addgraph = {
+				order = 30,
+				name = L["Add to Current Graph (Alt Click)"],
+				type = "execute",
+				func = me.AddCombatantToGraphWrapper,
+			},
+			delete = {
+				order = 40,
+				name = L["Delete Combatant (Ctrl-Alt Click)"],
+				type = "execute",
+				func = me.DeleteCombatantWrapper,
+			},
+		}
+	}
+
+	-- adopted from BulkMail
+	-- release if if already shown
+	barmenuframe = barmenuframe and barmenuframe:Release()
+	-- create the menu   
+	if Recount.MainWindow.RealtimeSettings then
+		baropts.args.realtime = {
+			order = 35,
+			name = L["Show Realtime Graph (Ctrl Click)"],
+			type = "execute",
+			func = me.ShowRealtimeWrapper,
+		}
+	else
+		baropts.args.realtime = nil
+	end
+
+	me.name = myframe.name
+	
+	barmenuframe = barmenuframe or LD:OpenAce3Menu(baropts)
+	barmenuframe:SetClampedToScreen(true)
+	barmenuframe:SetAlpha(1.0)
+	barmenuframe:Show()
+
+	local leftPos = myframe:GetLeft() -- Elsia: Side code adapted from Mirror
+	local rightPos = myframe:GetRight()
+	local side
+	local oside
+	if not rightPos then
+		rightPos = 0
+	end
+	if not leftPos then
+		leftPos = 0
+	end
+
+	local rightDist = GetScreenWidth() - rightPos
+
+	if leftPos and rightDist < leftPos then
+		side = "TOPLEFT"
+		oside = "TOPRIGHT"
+	else
+		side = "TOPRIGHT"
+		oside = "TOPLEFT"
+	end
+   barmenuframe:SetPoint(oside, myframe, side, 0, 0)
+--   barmenuframe:SetFrameLevel(myframe:GetFrameLevel()+90)
+end
+
 
 function Recount:BarDropDownOpen(myframe)
 	Recount_BarDropDownMenu = CreateFrame("Frame", "Recount_BarDropDownMenu", myframe);
@@ -155,9 +252,10 @@ function me:CreateRow(num)
 	if num ~= 0 then
 		row:SetScript("OnClick", function(self,button) 
 						if button=="RightButton" then
-							Recount:BarDropDownOpen(self)
+							Recount:OpenBarDropDown(self)
+--[[							Recount:BarDropDownOpen(self)
 							CloseDropDownMenus(1)
-							ToggleDropDownMenu(1, nil, Recount_BarDropDownMenu)
+							ToggleDropDownMenu(1, nil, Recount_BarDropDownMenu)--]]
 						elseif type(self.clickFunc)=="function" and self.clickData then
 							self:clickFunc(self.clickData)						
 						end
@@ -270,6 +368,12 @@ function Recount:DeleteCombatant(name)
 	dbCombatants[name]=nil
 	
 	Recount.NewData = true
+end
+
+function me:DeleteCombatantWrapper(self)
+	me:DeleteCombatant(me.name)
+	FadeMenu(barmenuframe)
+--	barmenuframe = barmenuframe and barmenuframe:Release()
 end
 
 function me:DeleteCombatant(name) -- Elsia: Add delete combatant feature
@@ -478,8 +582,9 @@ function Recount:CreateMainWindow()
 	theFrame.TitleClick:EnableMouse(true)
 	theFrame.TitleClick:SetScript("OnMouseDown",function(self,button) 
 							if button=="RightButton" then
-								Recount:ModeDropDownOpen(self)
-								ToggleDropDownMenu(1, nil, Recount_ModeDropDownMenu)
+								Recount:OpenModeDropDown(self)
+--[[								Recount:ModeDropDownOpen(self)
+								ToggleDropDownMenu(1, nil, Recount_ModeDropDownMenu)--]]
 							end
 
 							local parent=self:GetParent()
@@ -568,8 +673,9 @@ function Recount:CreateMainWindow()
 	theFrame.FileButton:SetHeight(16)
 	theFrame.FileButton:SetPoint("RIGHT",theFrame.ResetButton,"LEFT",0,0)
 	theFrame.FileButton:SetScript("OnClick",function(self) 
-						Recount:FightDropDownOpen(self)
-						ToggleDropDownMenu(1, nil, Recount_FightDropDownMenu) 
+						Recount:OpenFightDropDown(self)
+--[[						Recount:FightDropDownOpen(self)
+						ToggleDropDownMenu(1, nil, Recount_FightDropDownMenu) ]]
 						end)
 	theFrame.FileButton:SetFrameLevel(theFrame.FileButton:GetFrameLevel()+1)
 
@@ -761,9 +867,20 @@ function me:MainWindowSelectPlayer(name)
 	me:ShowDetail(name)
 end
 
+function me:ShowGraphWindowWrapper()
+	me:ShowGraphWindow(me.name)
+	FadeMenu(barmenuframe)
+--	barmenuframe = barmenuframe and barmenuframe:Release()
+end
+
 function me:ShowGraphWindow(name)
 	Recount:SetGraphData(name,dbCombatants[name].TimeData,Recount.db2.CombatTimes)
 	Recount.GraphCompare=false
+end
+
+function me.ShowRealtimeWrapper(self)
+	me:ShowRealtime(me.name)
+	FadeMenu(barmenuframe)
 end
 
 function me:ShowRealtime(name)
@@ -771,6 +888,12 @@ function me:ShowRealtime(name)
 	if Settings then
 		Recount:CreateRealtimeWindow(name,Settings[1],Settings[2])
 	end
+end
+
+function me:ShowDetailWrapper()
+	me:ShowDetail(me.name)
+	FadeMenu(barmenuframe)
+--	barmenuframe = barmenuframe and barmenuframe:Release()
 end
 
 function me:ShowDetail(name)
@@ -991,6 +1114,97 @@ ConvertDataSet2["OverallData"]="a_overall"
 ConvertDataSet2["CurrentFightData"]="b_current"
 ConvertDataSet2["LastFightData"]="c_last"
 
+function Recount:OpenFightDropDown(myframe)
+	local fightopts = 
+	{
+		type = 'group',
+		args = {
+	--[[		title = {
+				name = self.relativeTo.LeftText:GetText(),
+				type = "description",
+			},]]
+			overall = {
+				order = 10,
+				name = L["Overall Data"],
+				type = "toggle",
+				get = function() return Recount.db.profile.CurDataSet == "OverallData" end,
+				set = function() Recount.db.profile.CurDataSet="OverallData";me:UpdateDetailData();Recount.MainWindow.DispTableSorted={};Recount.MainWindow.DispTableLookup={};Recount.FightName="Overall Data";Recount:RefreshMainWindow();if RecountDeathTrack then RecountDeathTrack:SetFight(Recount.db.profile.CurDataSet) end; FadeMenu(fightmenuframe) end,
+			},
+			current = {
+				order = 20,
+				name = L["Current Fight"],
+				type = "toggle",
+				get = function() return Recount.db.profile.CurDataSet == "CurrentFightData" or Recount.db.profile.CurDataSet == "LastFightData" end,
+				set = function() if Recount.InCombat then Recount.db.profile.CurDataSet="CurrentFightData" else Recount.db.profile.CurDataSet="LastFightData" end;me:UpdateDetailData();Recount.MainWindow.DispTableSorted={};Recount.MainWindow.DispTableLookup={}; Recount.FightName="Current Fight";Recount:RefreshMainWindow();if RecountDeathTrack then RecountDeathTrack:SetFight(Recount.db.profile.CurDataSet) end; FadeMenu(fightmenuframe) end,
+			},
+		}
+	}
+
+	-- adopted from BulkMail
+	-- release if if already shown
+	fightmenuframe = fightmenuframe and fightmenuframe:Release()
+	-- create the menu   
+	if Recount.db.profile.CurDataSet == "OverallData" then
+			fightopts.args.overall.tristate = true
+	else
+			fightopts.args.overall.tristate = false
+	end
+
+	if Recount.db.profile.CurDataSet == "CurrentFightData" or Recount.db.profile.CurDataSet == "LastFightData" then
+			fightopts.args.current.tristate = true
+	else
+			fightopts.args.current.tristate = false
+	end
+
+	local currentorder = 1
+	
+	for k, v in pairs(Recount.db2.FoughtWho) do
+		fightopts.args["fight"..currentorder] = 
+		{
+				order = 30+(currentorder-1)*10,
+				name = L["Fight"].." "..k.." - "..v,
+				type = "toggle",
+				get = function() return Recount.db.profile.CurDataSet == "Fight"..k end,
+				set = function() Recount.db.profile.CurDataSet="Fight"..k;me:UpdateDetailData();Recount.MainWindow.DispTableSorted={};Recount.MainWindow.DispTableLookup={};Recount.FightName=v;Recount:RefreshMainWindow();if RecountDeathTrack then RecountDeathTrack:SetFight(Recount.db.profile.CurDataSet) end;  FadeMenu(fightmenuframe) end,
+		}
+		if Recount.db.profile.CurDataSet == "Fight"..k then
+			fightopts.args["fight"..currentorder].tristate = true
+		else
+			fightopts.args["fight"..currentorder].tristate = false
+		end
+		currentorder = currentorder + 1
+	end
+	
+	fightmenuframe = fightmenuframe or LD:OpenAce3Menu(fightopts)
+	fightmenuframe:SetClampedToScreen(true)
+	fightmenuframe:SetAlpha(1.0)
+	fightmenuframe:Show()
+	
+	local leftPos = myframe:GetLeft() -- Elsia: Side code adapted from Mirror
+	local rightPos = myframe:GetRight()
+	local side
+	local oside
+	if not rightPos then
+		rightPos = 0
+	end
+	if not leftPos then
+		leftPos = 0
+	end
+
+	local rightDist = GetScreenWidth() - rightPos
+
+	if leftPos and rightDist < leftPos then
+		side = "TOPLEFT"
+		oside = "TOPRIGHT"
+	else
+		side = "TOPRIGHT"
+		oside = "TOPLEFT"
+	end
+
+	fightmenuframe:SetPoint(oside, myframe, side, 0, 0)
+--	fightmenuframe:SetFrameLevel(myframe:GetFrameLevel()+90)
+end
+
 function Recount:FightDropDownOpen(myframe)
 	Recount_FightDropDownMenu = CreateFrame("Frame", "Recount_FightDropDownMenu", myframe);
 	Recount_FightDropDownMenu.displayMode = "MENU";
@@ -1051,6 +1265,72 @@ function me:CreateFightDropdown(level)
 			info.func = function() Recount.db.profile.CurDataSet="Fight"..k;me:UpdateDetailData();Recount.MainWindow.DispTableSorted={};Recount.MainWindow.DispTableLookup={};Recount.FightName=v;Recount:RefreshMainWindow();if RecountDeathTrack then RecountDeathTrack:SetFight(Recount.db.profile.CurDataSet) end  end
 			UIDropDownMenu_AddButton(info, level)
 		end
+end
+
+function Recount:OpenModeDropDown(myframe)
+	local modeopts = 
+	{
+		type = 'group',
+		args = {
+	--[[		title = {
+				name = self.relativeTo.LeftText:GetText(),
+				type = "description",
+			},]]
+		}
+	}
+
+	-- adopted from BulkMail
+	-- release if if already shown
+	modemenuframe = modemenuframe and modemenuframe:Release()
+	-- create the menu   
+	local currentorder = 1
+	
+	for k,v in pairs(Recount.MainWindowData) do
+
+		modeopts.args["mode"..currentorder] = 
+		{
+				order = currentorder*10,
+				name = v[1],
+				type = "toggle",
+				get = function() return Recount.db.profile.MainWindowMode==k end,
+				set = function() Recount:SetMainWindowMode(k); FadeMenu(modemenuframe) end,
+		}
+		if Recount.db.profile.MainWindowMode==k then
+			modeopts.args["mode"..currentorder].tristate = true
+		else
+			modeopts.args["mode"..currentorder].tristate = false
+		end
+		currentorder = currentorder + 1
+	end
+	
+	modemenuframe = modemenuframe or LD:OpenAce3Menu(modeopts)
+	modemenuframe:SetClampedToScreen(true)
+	modemenuframe:SetAlpha(1.0)
+	modemenuframe:Show()
+	
+	local leftPos = myframe:GetLeft() -- Elsia: Side code adapted from Mirror
+	local rightPos = myframe:GetRight()
+	local side
+	local oside
+	if not rightPos then
+		rightPos = 0
+	end
+	if not leftPos then
+		leftPos = 0
+	end
+
+	local rightDist = GetScreenWidth() - rightPos
+
+	if leftPos and rightDist < leftPos then
+		side = "TOPLEFT"
+		oside = "TOPRIGHT"
+	else
+		side = "TOPRIGHT"
+		oside = "TOPLEFT"
+	end
+
+	modemenuframe:SetPoint(oside, myframe, side, 0, 0)
+--	modemenuframe:SetFrameLevel(myframe:GetFrameLevel()+90)
 end
 
 function Recount:ModeDropDownOpen(myframe)
@@ -1198,6 +1478,12 @@ local GraphName={
 
 function Recount:AddGraphNameEntry(k,v)
 	GraphName.insert(k,v)
+end
+
+function me:AddCombatantToGraphWrapper(self)
+	me:AddCombatantToGraph(me.name)
+	FadeMenu(barmenuframe)
+--	barmenuframe = barmenuframe and barmenuframe:Release()
 end
 
 function me:AddCombatantToGraph(name)

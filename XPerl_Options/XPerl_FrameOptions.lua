@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 528 $")
+XPerl_SetModuleRevision("$Revision: 539 $")
 
 function XPerl_OptionsFrame_DisableSlider(slider)
 	local name = slider:GetName();
@@ -115,9 +115,9 @@ end
 -- XPerl_GetCheck
 function XPerl_GetCheck(f)
 	if (f:GetChecked()) then
-	        return 1
+		return 1
 	else
-	        return 0
+		return 0
 	end
 end
 
@@ -217,7 +217,7 @@ function XPerl_Options_IncrementSibling(self,sibling)
 	local siblingFrame = _G[siblingName]
 
 	if (siblingFrame and (siblingFrame.GetFrameType or siblingFrame.GetObjectType)(siblingFrame) == "EditBox") then
-        	local n = tonumber(siblingFrame:GetText())
+		local n = tonumber(siblingFrame:GetText())
 		n = n + 1
 		siblingFrame:SetText(n)
 		return n
@@ -230,7 +230,7 @@ function XPerl_Options_DecrementSibling(self,sibling)
 	local siblingFrame = _G[siblingName]
 
 	if (siblingFrame and (siblingFrame.GetFrameType or siblingFrame.GetObjectType)(siblingFrame) == "EditBox") then
-        	local n = tonumber(siblingFrame:GetText())
+		local n = tonumber(siblingFrame:GetText())
 		n = n - 1
 		siblingFrame:SetText(n)
 		return n
@@ -240,7 +240,7 @@ end
 -- XPerl_Options_CheckRadio
 function XPerl_Options_CheckRadio(self,buttons)
 	local prefix = self:GetParent():GetName().."_"
-	
+
 	for i,name in pairs(buttons) do
 		if (prefix..name == self:GetName()) then
 			_G[prefix..name]:SetChecked(true)
@@ -259,7 +259,7 @@ end
 -- XPerl_Raid_OptionActions
 function XPerl_Raid_OptionActions()
 	if (XPerl_Raid_Position) then
-        	XPerl_Raid_Position()
+		XPerl_Raid_Position()
 		XPerl_Raid_Set_Bits(XPerl_Raid_Frame)
 		XPerl_Raid_UpdateDisplayAll()
 		if (XPerl_RaidPets_OptionActions) then
@@ -270,27 +270,27 @@ end
 
 -- XPerl_Options_OnUpdate
 function XPerl_Options_OnUpdate(self,arg1)
-	
+
 	if (self.Fading) then
-	        local alpha = self:GetAlpha()
-	        if (self.Fading == "in") then
-	                alpha = alpha + (arg1 * 2)		-- elapsed * 2 == fade in/out in 1/2 second
-	                if (alpha > 1) then
-	                        alpha = 1
-	                end
-	        elseif (self.Fading == "out") then
-	                alpha = alpha - (arg1 * 2)
-	                if (alpha < 0) then
-	                        alpha = 0
-	                end
-	        end
-	        self:SetAlpha(alpha)
-	        if (alpha == 0) then
+		local alpha = self:GetAlpha()
+		if (self.Fading == "in") then
+			alpha = alpha + (arg1 * 2)		-- elapsed * 2 == fade in/out in 1/2 second
+			if (alpha > 1) then
+				alpha = 1
+			end
+		elseif (self.Fading == "out") then
+			alpha = alpha - (arg1 * 2)
+			if (alpha < 0) then
+				alpha = 0
+			end
+		end
+		self:SetAlpha(alpha)
+		if (alpha == 0) then
+			self.Fading = nil
+			self:Hide()
+		elseif (alpha == 1) then
 	                self.Fading = nil
-	                self:Hide()
-	        elseif (alpha == 1) then
-	                self.Fading = nil
-	        end
+		end
 	else
 		local f = GetMouseFocus()
 		if (f) then
@@ -313,14 +313,14 @@ local Sliders = {}
 function XPerl_Options_MaxScaleSet()
 
 	for i,slider in pairs(Sliders) do
-        	local old = slider:GetValue()
+		local old = slider:GetValue()
 		local min = slider.min or 50
 		local max = slider.max or floor(XPerlDB.maximumScale * 100 + 0.5)
 
-        	slider:SetMinMaxValues(min, max)
+		slider:SetMinMaxValues(min, max)
 
-        	_G[slider:GetName().."Low"]:SetFormattedText("%d"..PERCENT_SYMBOL, min)
-        	_G[slider:GetName().."High"]:SetFormattedText("%d"..PERCENT_SYMBOL, max)
+		_G[slider:GetName().."Low"]:SetFormattedText("%d"..PERCENT_SYMBOL, min)
+		_G[slider:GetName().."High"]:SetFormattedText("%d"..PERCENT_SYMBOL, max)
 
 		if (old > max) then
 			slider:SetValue(max)
@@ -333,20 +333,21 @@ end
 -- XPerl_SliderSetup(self)
 function XPerl_SliderSetup(self, percent)
 	self.xperlSliderEnabled = true
+
 	self.IsEnabled = function(self)
-	        return self.xperlSliderEnabled
+		return self.xperlSliderEnabled
 	end
 	self.DisableSlider = function(self)
-	        self.xperlSliderEnabled = false
-	        XPerl_OptionsFrame_DisableSlider(self)
-	        _G[self:GetName().."Current"]:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+		self.xperlSliderEnabled = false
+		XPerl_OptionsFrame_DisableSlider(self)
+		_G[self:GetName().."Current"]:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
 		self:EnableMouse(false)
 		self:EnableMouseWheel(false)
 	end
 	self.EnableSlider = function(self)
-	        self.xperlSliderEnabled = true
-	        XPerl_OptionsFrame_EnableSlider(self)
-	        _G[self:GetName().."Current"]:SetVertexColor(0.4, 0.4, 0.80)
+		self.xperlSliderEnabled = true
+		XPerl_OptionsFrame_EnableSlider(self)
+		_G[self:GetName().."Current"]:SetVertexColor(0.4, 0.4, 0.80)
 		self:EnableMouse(true)
 		self:EnableMouseWheel(true)
 	end
@@ -473,11 +474,11 @@ function XPerl_Options_RegisterScalingSlider(self, min, max)
 		max = floor(((XPerlDB and XPerlDB.maximumScale) or 1.5) * 100 + 0.5)
 	end
 
-        _G[self:GetName().."Low"]:SetFormattedText("%d"..PERCENT_SYMBOL, min)
-        _G[self:GetName().."High"]:SetFormattedText("%d"..PERCENT_SYMBOL, max)
+	_G[self:GetName().."Low"]:SetFormattedText("%d"..PERCENT_SYMBOL, min)
+	_G[self:GetName().."High"]:SetFormattedText("%d"..PERCENT_SYMBOL, max)
 
-        self:SetMinMaxValues(min, max)
-        self:SetValueStep(1)
+	self:SetMinMaxValues(min, max)
+	self:SetValueStep(1)
 
 	if (self.configBase) then
 		self:SetScript("OnShow", scalingOnShow)
@@ -1034,7 +1035,7 @@ function XPerl_Options_SetupStatsFrames()
 		XPerl_StatsFrameSetup(XPerl_Player, {XPerl_Player.statsFrame.druidBar, XPerl_Player.statsFrame.xpBar, XPerl_Player.statsFrame.repBar})
 	end
 	if (XPerl_Player_Pet) then
-		XPerl_StatsFrameSetup(XPerl_Player_Pet, {XPerl_Player_Pet.statsFrame.xpBar}, 2)
+		XPerl_StatsFrameSetup(XPerl_Player_Pet, nil, 2)
 	end
 	XPerl_StatsFrameSetup(XPerl_Target)
 	XPerl_StatsFrameSetup(XPerl_Focus)
@@ -1511,7 +1512,7 @@ function XPerl_Options_LayoutFill(self, setName)
 	end
 
 	local offset = self.scrollBar.bar:GetValue()
-	
+
 	--frame, numItems, numToDisplay, valueStep, button, smallWidth, bigWidth, highlightFrame, smallHighlightWidth, bigHighlightWidth, alwaysShowScrollBar )
 
 	if (FauxScrollFrame_Update(self.scrollBar, #list, 16, 1)) then
@@ -1640,7 +1641,6 @@ function XPerl_Options_ImportOldConfig(old)
 			scale			= old.Scale_PlayerFrame		or 0.8,
 			partyNumber		= Convert(old.ShowPartyNumber),
 			withName		= Convert(old.ShowPartyNumberWithName),
-			energyTicker	= Convert(old.EnergyTicker),
 			showRunes		= 1,
 			dockRunes		= 1,
 
@@ -1685,7 +1685,6 @@ function XPerl_Options_ImportOldConfig(old)
 			hitIndicator		= Convert(old.PetCombatHitIndicator),
 			level			= Convert(old.ShowPetLevel),
 			scale			= old.Scale_PetFrame		or 0.8,
-			xpBar			= Convert(old.ShowPetXP),
 			name			= Convert(old.ShowPlayerPetName),
 			buffs = {
 				enable		= 1,
@@ -2313,7 +2312,6 @@ local function XPerl_Player_ConfigDefault(default)
 		scale			= 0.9,
 		partyNumber		= 1,
 --		withName		= nil,
-		energyTicker	= 1,
 		showRunes		= 1,
 		dockRunes		= 1,
 
@@ -2458,8 +2456,8 @@ local function XPerl_Raid_ConfigDefault(default)
 			type		= 1,
 		},
 		anchor			= "TOP",
-		hideframemanager = { 
-			enable = 1, 
+		hideframemanager = {
+			enable = 1,
 		},
 	}
 end
@@ -2605,7 +2603,7 @@ function XPerl_Options_Custom_FillList(self)
 			end
 		end
 	end
-	
+
 	if (not self.selection or not list) then
 		self.selection = 1
 	else
@@ -2715,7 +2713,7 @@ function XPerl_Options_Custom_InitList(self, type)
 	self.FillList = XPerl_Options_Custom_FillList
 	self.OnClick = XPerl_Options_Custom_OnClick
 	self:FillList()
-	
+
 	if (type == "debuff") then
 		self.debuff = nil
 		if (self.line[1]:IsShown()) then

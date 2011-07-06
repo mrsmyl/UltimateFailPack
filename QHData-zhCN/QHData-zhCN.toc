@@ -1,0 +1,9 @@
+## Interface: 40200
+## Title: QuestHelper Data (zhCN)
+## Author: zorbathut, smariot, vipersniper, nesher, nconantj
+## Notes: Contains the data needed by QuestHelper
+## Version: 4.2.0.211r
+## Dependencies: QHData-base
+## LoadOnDemand: 1
+
+static_zhCN.lua

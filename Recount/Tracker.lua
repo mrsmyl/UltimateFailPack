@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1151 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1154 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -968,13 +968,14 @@ local parsefunc
 -- Pre-4.1 CLEU compat start
 local TOC
 local dummyTable = {}
+local loopprevent
 do
 	-- Because GetBuildInfo() still returns 40000 on the PTR
 	local major, minor, rev = strsplit(".", (GetBuildInfo()))
 	TOC = major*10000 + minor*100
 end
 -- Pre-4.1 CLEU compat end
-function Recount:CombatLogEvent(_,timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+function Recount:CombatLogEvent(_,timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstName, dstFlags, dstRaidFlags, ...)
 	if not Recount.db.profile.GlobalDataCollect or not Recount.CurrentDataCollect then
 		return
 	end
@@ -983,12 +984,16 @@ function Recount:CombatLogEvent(_,timestamp, eventtype, hideCaster, srcGUID, src
 		return
 	end
 
-	-- Pre-4.1 CLEU compat start
+	-- Pre-4.2 CLEU compat start
 	if TOC < 40100 and hideCaster ~= dummyTable then
 		-- Insert a dummy for the new argument introduced in 4.1 and perform a tail call
 		return self:CombatLogEvent(_,timestamp, eventtype, dummyTable, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+	elseif TOC < 40200 and TOC > 40000 and not loopprevent then
+		loopprevent = true -- Prevent infinite recursion...
+		-- Also make it compatible with 4.1 by dropping the raid flags that don't exist in it.
+		return self:CombatLogEvent(_,timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	end
-	-- Pre-4.1 CLEU compat end
+	-- Pre-4.2 CLEU compat end
 	
 	srcRetention = Recount:CheckRetentionFromFlags(srcFlags,srcName,srcGUID)
 	dstRetention = Recount:CheckRetentionFromFlags(dstFlags,dstName,dstGUID)

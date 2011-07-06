@@ -5,10 +5,10 @@
 local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
-XPerl_SetModuleRevision("$Revision: 536 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 536 $")
+XPerl_SetModuleRevision("$Revision: 540 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 540 $")
 
---Some local copies for speed
+--Some local copies for speed 
 local strsub = strsub
 local format = format
 local cos, sin, abs = cos, sin, abs

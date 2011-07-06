@@ -1,4 +1,4 @@
-## Interface: 40100
+## Interface: 40200
 ## Title: QuestHelper
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Calculates an optimal route for you to follow while questing.
@@ -7,7 +7,8 @@
 ## Notes-esES: Calcula la mejor ruta a seguir para usted.
 ## Notes-esMX: Calcula la mejor ruta a seguir para usted.
 ## Notes-koKR: 노선에 대한 계산을 수행합니다.
-## Version: 4.1.0.185r
+## Version: 4.2.0.211r
+## Dependencies: QHData-base
 ## OptionalDeps: Cartographer_Waypoints, TomTom, Cartographer_InstanceMaps, !Swatter, tekticles, UnicodeFont, ClearFont2
 ## SavedVariables: QuestHelper_Pref QuestHelper_UID QuestHelper_SaveDate QuestHelper_Errors QuestHelper_Collector QuestHelper_Collector_Version
 ## SavedVariablesPerCharacter: QuestHelper_KnownFlightRoutes QuestHelper_Home QuestHelper_CharVersion QuestHelper_Flight_Updates
@@ -95,35 +96,6 @@ lang\svse.lua
 lang\trtr.lua
 lang\zhcn.lua
 lang\zhtw.lua
-
-# This is kind of a lot of files.
-static.lua
-static_1.lua
-static_2.lua
-static_deDE.lua
-static_deDE_1.lua
-static_deDE_2.lua
-static_enUS.lua
-static_enUS_1.lua
-static_enUS_2.lua
-static_esES.lua
-static_esES_1.lua
-static_esES_2.lua
-static_esMX.lua
-static_esMX_1.lua
-static_esMX_2.lua
-static_frFR.lua
-static_frFR_1.lua
-static_frFR_2.lua
-static_koKR.lua
-static_koKR_1.lua
-static_koKR_2.lua
-static_ruRU.lua
-static_ruRU_1.lua
-static_ruRU_2.lua
-static_zhTW.lua
-static_zhTW_1.lua
-static_zhTW_2.lua
 
 # oh shut up
 collect_notifier.lua

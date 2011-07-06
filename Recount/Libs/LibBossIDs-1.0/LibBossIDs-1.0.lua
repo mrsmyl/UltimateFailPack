@@ -1,6 +1,6 @@
 --[[
 Name: LibBossIDs-1.0
-Revision: $Revision: 59 $
+Revision: $Revision: 64 $
 Author: Elsia
 Website: http://www.wowace.com/addons/libbossids-1-0/
 Documentation:
@@ -10,7 +10,7 @@ Dependencies: LibStub
 License: Public Domain, Absolutely no Warranty.
 ]]
 
-local MAJOR, MINOR = "LibBossIDs-1.0", "$Revision: 59 $"
+local MAJOR, MINOR = "LibBossIDs-1.0", "$Revision: 64 $"
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not lib then return end
@@ -25,6 +25,9 @@ if not lib then return end
 -- Commented out lines without comments are deemed to not be actual bosses, but trash mobs
 -- Otherwise comments indicate why they are not yet included.
 
+-- GENERALLY LibBossID users are interested in "Are we about to start a bossfight?" or "Did we just defeat a boss?"
+
+
 local BossIDs = {
    -------------------------------------------------------------------------------
    -- Abyssal Maw: Throne of the Tides
@@ -33,7 +36,8 @@ local BossIDs = {
    [40765]	= true,	-- Commander Ulthok
    [40825]	= true,	-- Erunak Stonespeaker
    [40788]	= true,	-- Mindbender Ghur'sha
-   [42172]	= true,	-- Ozumat
+   [42172]	= true,	-- Ozumat? Not in heroic! /Mikk
+   [44566]  = true, -- Ozumat - confirmed in heroic! /Mikk
 
    -------------------------------------------------------------------------------
    -- Ahn'kahet: The Old Kingdom
@@ -339,13 +343,24 @@ local BossIDs = {
    [27483]	= true,	-- King Dred
    [26632]	= true,	-- The Prophet Tharon'ja
    [27696]	= true,	-- The Prophet Tharon'ja
-
+   
+   -------------------------------------------------------------------------------
+   -- Firelands 4.2 PTR
+   -------------------------------------------------------------------------------
+   [52530]	= true,	-- Alysrazor
+   [53494]	= true,	-- Baleroc
+   [52498]	= true,	-- Bethtilac
+   [52571]	= true,	-- FandralStaghelm
+   [52409]	= true,	-- Ragnaros
+   [52558]	= true,	-- Rhyolith
+   [53691]	= true,	-- Shannox
+   
    -------------------------------------------------------------------------------
    -- Forge of Souls
    -------------------------------------------------------------------------------
    [36497]	= true,	-- Bronjahm
    [36502]	= true,	-- Devourer of Souls
-
+      
    -------------------------------------------------------------------------------
    -- Gnomeregan
    -------------------------------------------------------------------------------
@@ -1325,7 +1340,7 @@ local BossIDs = {
    [52148]	=true,	-- Jin'do the Godbreaker
    [52151]	=true,	-- Bloodlord Mandokir
    [52155]	=true,	-- High Priest Venoxis
-   [52157]	=true,	-- Ohgan (Mandokirs Raptor)
+   -- [52157]	=true,	-- Ohgan (Mandokirs Raptor)  disabled by Mikk- this is an add, not a boss.
    [52269]	=true,	-- Renataki
    [52258]	=true,	-- Gri'lek
    [52271]	=true,	-- Hazza'rah

@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 529 $")
+		end, "$Revision: 539 $")
 local XPerl_Player_Pet_HighlightCallback
 
 -- XPerl_Player_Pet_OnLoad
@@ -159,11 +159,6 @@ end
 -- XPerl_Player_Pet_UpdateLevel
 local function XPerl_Player_Pet_UpdateLevel(self)
 	XPerl_Unit_UpdateLevel(self)
-	local petxp, petxpmax = GetPetExperience()
-	self.statsFrame.xpBar:SetStatusBarColor(0.3, 0.3, 1, 1)
-	self.statsFrame.xpBar.bg:SetVertexColor(0.3, 0.3, 1, 0.25)
-	self.statsFrame.xpBar:SetMinMaxValues(0, petxpmax)
-	self.statsFrame.xpBar:SetValue(petxp)
 end
 
 -- XPerl_Player_Pet_UpdateHealth
@@ -497,7 +492,7 @@ function XPerl_Player_Pet_SetWidth(self)
 	self.statsFrame:SetWidth(80 + pconf.size.width)
 	self.nameFrame:SetWidth(80 + pconf.size.width)
 	self:SetScale(pconf.scale)
-	XPerl_StatsFrameSetup(self, {self.statsFrame.xpBar}, 2)
+	XPerl_StatsFrameSetup(self, nil, 2)
 	XPerl_SavePosition(self, true)
 end
 
@@ -568,14 +563,6 @@ function XPerl_Player_Pet_Set_Bits(self)
 		end
 	end
 
-	if (pconf.xpBar) then
-		self.statsFrame.xpBar:Show()
-		self.statsFrame:SetHeight(44)
-	else
-		self.statsFrame.xpBar:Hide()
-		self.statsFrame:SetHeight(34)
-	end
-
 	if (pconf.level) then
 		self.levelFrame:Show()
 	else
@@ -591,7 +578,7 @@ function XPerl_Player_Pet_Set_Bits(self)
 			self.buffFrame:SetPoint("BOTTOMLEFT", self.nameFrame, "TOPLEFT", 3, 0)
 		end
 	else
-		if (not pconf.extendPortrait and (pconf.xpBar or not pconf.portrait or not pconf.name)) then
+		if (not pconf.extendPortrait and (not pconf.portrait or not pconf.name)) then
 			self.buffFrame:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 3, 0)
 		else
 			self.buffFrame:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 3, 0)
@@ -606,7 +593,7 @@ function XPerl_Player_Pet_Set_Bits(self)
 		self.statsFrame.manaBar.text:Hide()
 	end
 
-	self.portraitFrame:SetHeight(56 + ((pconf.extendPortrait and pconf.xpBar) or 0) * 10)
+	self.portraitFrame:SetHeight(56 + (pconf.extendPortrait or 0) * 10)
 
 	self.highlight:ClearAllPoints()
 	if (pconf.portrait or pconf.name) then

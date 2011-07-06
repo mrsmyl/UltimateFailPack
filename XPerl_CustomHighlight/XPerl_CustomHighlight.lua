@@ -7,7 +7,7 @@ if (not XPerl_RequestConfig) then
 end
 
 local conf
-XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 521 $")
+XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 539 $")
 
 local ch = CreateFrame("Frame", "XPerl_Custom")
 ch.active = {}
@@ -72,9 +72,6 @@ function ch:DefaultZoneData()
 			},--]]
 		[XPERL_LOC_ZONE_NAXXRAMAS] =
 			{
-				[28796] = true,								-- Poison Bolt Volley (Grand Widow Faerlina)
-				[28794] = true,								-- Rain of Fire (Grand Widow Faerlina)
-
 				[29213] = true,								-- Curse of the Plaguebringer (Noth the Plaguebringer)
 				[29212] = true,								-- Cripple (Noth the Plaguebringer)
 
@@ -86,7 +83,6 @@ function ch:DefaultZoneData()
 				[54378] = true,								-- Mortal Wound (Gluth)
 				[29306] = true,								-- Infected Wound (Gluth)
 
-				[28522] = true,								-- Icebolt (Sapphiron)
 				[28542] = true,								-- Life Drain (Sapphiron)
 
 				[28410] = true,								-- Chains of Kel'Thuzad (Kel'Thuzad)
@@ -164,9 +160,9 @@ function ch:DefaultZoneData()
 			},
 		[XPERL_LOC_ZONE_ICECROWN_CITADEL] =
 			{
-				[70451] = true,								-- Blood Mirror (Trash)
-				[70432] = true,								-- Blood Sap (Trash)
-				[71154] = true,								-- Rend Flesh (Trash)
+--				[70451] = true,								-- Blood Mirror (Trash)
+--				[70432] = true,								-- Blood Sap (Trash)
+--				[71154] = true,								-- Rend Flesh (Trash)
 
 				[69065] = true,								-- Impaled (Lord Marrowgars)
 
@@ -227,12 +223,12 @@ function ch:DefaultZoneData()
 				[77786] = true,								-- Consuming Flames (Maloriak)
 
 				[82935] = true,								-- Caustic Slime (Chimaeron)
+				[89084] = true,								-- Low Health (Chimaeron)
 
 				[78092] = true,								-- Tracking (Atramedes)
 				[92685] = true,								-- Pestered! (Atramedes Heroic)
 
-				[79318] = true,								-- Dominion (Nefarian Heroic)
-				
+				[79318] = true,								-- Dominion (Nefarian Heroic)				
 				[79339] = true,								-- Explosive Cinders (Nefarian Heroic)
 			},
 		[XPERL_LOC_ZONE_BASTION_OF_TWILIGHT] =

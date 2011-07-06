@@ -1,0 +1,22 @@
+tag 4.2.0.8-Release
+a82562fef57399a1dd225f7fafb73811fb94d332
+tekkub :bear:  <tekkub@gmail.com>
+2011-06-27 02:02:43 -0600
+
+Weekly build
+
+
+--------------------
+
+tekkub :bear: :
+	- Weekly build 4.2.0.8-Release
+	- Update changelog for 4.2.0.8-Release
+	- Updating TOC to 40200
+tekkub :bear: :
+	- Update changelog for 4.1.0.7-Beta
+	- Weekly build 4.1.0.7-Beta
+	- You didn't see that
+	- Update changelog for 4.1.0.6-Beta
+	- Weekly build 4.1.0.6-Beta
+	- Updating TOC to 40100
+	- Fix for quest item data not loaded after login

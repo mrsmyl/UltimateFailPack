@@ -1,4 +1,4 @@
-QuestHelper_File["main.lua"] = "4.1.0.185r"
+QuestHelper_File["main.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["main.lua"] = GetTime()
 
 local version_string = QuestHelper_File["main.lua"] -- we pretty much save this only so we can inform the user that they're using a beta version
@@ -248,14 +248,14 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["textviewer.lua"] = true,
       ["error.lua"] = true,
       ["timeslice.lua"] = true,
-      ["lang.lua"] = true,
+--      ["lang.lua"] = true,
       ["core.lua"] = true,
       ["tooltip.lua"] = true,
       ["arrow.lua"] = true,
       ["radar.lua"] = true,
       
       ["config.lua"] = true,
-
+--[[
       ["static.lua"] = true,
       ["static_1.lua"] = true,
       ["static_2.lua"] = true,
@@ -283,7 +283,7 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["static_zhTW.lua"] = true,
       ["static_zhTW_1.lua"] = true,
       ["static_zhTW_2.lua"] = true,
-
+--]]
       ["collect.lua"] = true,
       ["collect_achievement.lua"] = true,
       ["collect_lzw.lua"] = true,

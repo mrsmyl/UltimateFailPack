@@ -1,0 +1,11 @@
+## Interface: 40200
+## Title: QuestHelper Data (Base)
+## Author: zorbathut, smariot, vipersniper, nesher, nconantj
+## Notes: Contains the data needed by QuestHelper
+## Version: 4.2.0.211r
+
+# This is kind of a lot of files.
+static.lua
+static_1.lua
+static_2.lua
+locale.lua

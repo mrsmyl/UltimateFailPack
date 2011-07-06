@@ -1,4 +1,4 @@
-QuestHelper_File["collect_spec.lua"] = "4.1.0.185r"
+QuestHelper_File["collect_spec.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["collect_spec.lua"] = GetTime()
 
 local Bitstream

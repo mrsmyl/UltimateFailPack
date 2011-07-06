@@ -1,4 +1,4 @@
-QuestHelper_File["pattern.lua"] = "4.1.0.185r"
+QuestHelper_File["pattern.lua"] = "4.2.0.211r"
 QuestHelper_Loadtime["pattern.lua"] = GetTime()
 
 -- The following junk is for building functions to parse strings for various locales.

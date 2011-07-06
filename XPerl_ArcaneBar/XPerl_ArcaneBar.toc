@@ -1,4 +1,4 @@
-﻿## Interface: 40100
+﻿## Interface: 40200
 ## Title: X-Perl |cffeda55fArcane Bars|r by |cFFFF8080Zek|r
 ## Title-ruRU: X-Perl |cffeda55fПолосы применений|r
 ## Title-zhCN: X-Perl |cffeda55f施法条|r
@@ -10,8 +10,8 @@
 ## Author: Zek
 ## X-License: GNU GPL v3, 29 June 2007
 ## RequiredDeps: XPerl
-## X-Curse-Packaged-Version: 3.1.4
-## X-Curse-Project-Name: X-Perl UnitFrames
-## X-Curse-Project-ID: xperl
-## X-Curse-Repository-ID: wow/xperl/mainline
 XPerl_ArcaneBar.xml
+-- X-Curse-Packaged-Version: 3.1.5
+-- X-Curse-Project-Name: X-Perl UnitFrames
+-- X-Curse-Project-ID: xperl
+-- X-Curse-Repository-ID: wow/xperl/mainline

@@ -1,6 +1,3 @@
-QuestHelper_File["lang.lua"] = "4.1.0.185r"
-QuestHelper_Loadtime["lang.lua"] = GetTime()
-
 -- These tables will be filled in later by their specific files.
 QuestHelper_SubstituteFonts = {}
 QuestHelper_Translations = {}
