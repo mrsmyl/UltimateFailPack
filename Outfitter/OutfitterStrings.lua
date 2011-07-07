@@ -1,4 +1,4 @@
-﻿Outfitter.cVersion = "5.2.2"
+﻿Outfitter.cVersion = "5.2.3"
 
 Outfitter.cTitle = "Outfitter"
 Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
@@ -176,7 +176,7 @@ Outfitter.cUnequipOutfitMessageFormat = "Outfitter: %s unequipped"
 
 Outfitter.cAboutTitle = "About Outfitter %s"
 Outfitter.cAboutAuthor = "Designed and written by John Stephen"
-Outfitter.cAboutCopyright = "Copyright 2009, 2010 John Stephen, wobbleworks.com"
+Outfitter.cAboutCopyright = "Copyright 2009, 2010, 2011 John Stephen, wobbleworks.com"
 Outfitter.cAboutThanks = "Many thanks to all fans and supporters."
 
 Outfitter.cGermanLocalization = "German Localization"

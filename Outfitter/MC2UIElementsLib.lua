@@ -1259,6 +1259,11 @@ function Addon.UIElementsLib._DropDownMenuButton:Construct(pParent, pMenuFunc, p
 	self.Button.HighlightTexture:SetBlendMode("ADD")
 	self.Button.HighlightTexture:SetAllPoints()
 	
+	self.Icon = self:CreateTexture(self:GetName().."Icon", "ARTWORK")
+	self.Icon:SetWidth(1)
+	self.Icon:SetHeight(1)
+	self.Icon:SetPoint("TOPLEFT", self.LeftTexture, "TOPLEFT", 0, 0)
+	
 	self.MenuFunc = pMenuFunc
 	self.OrigHeight = self:GetHeight()
 	UIDropDownMenu_Initialize(self, self.WoWMenuInitFunction)
