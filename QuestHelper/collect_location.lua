@@ -1,4 +1,4 @@
-QuestHelper_File["collect_location.lua"] = "4.2.0.211r"
+QuestHelper_File["collect_location.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["collect_location.lua"] = GetTime()
 
 -- little endian two's complement

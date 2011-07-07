@@ -40,7 +40,7 @@ Note:
 	http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
 
-QuestHelper_File["AstrolabeQH/Astrolabe.lua"] = "4.2.0.211r"
+QuestHelper_File["AstrolabeQH/Astrolabe.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["AstrolabeQH/Astrolabe.lua"] = GetTime()
 
 -- WARNING!!!

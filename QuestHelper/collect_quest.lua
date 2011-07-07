@@ -1,4 +1,4 @@
-QuestHelper_File["collect_quest.lua"] = "4.2.0.211r"
+QuestHelper_File["collect_quest.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["collect_quest.lua"] = GetTime()
 
 local debug_output = false
@@ -160,7 +160,7 @@ local function Looted(message)
   --if debug_output then QuestHelper:TextOut(string.format("Added event %s", string.format("I%di", ltype))) end
 end
 
-local function Combat(_, event, _, _, _, guid)
+local function Combat(_, event, _, _, _, _, _, guid)
   if event ~= "UNIT_DIED" then return end
   if not IsMonsterGUID(guid) then return end
   local mtype = GetMonsterType(guid, true)

@@ -1,4 +1,4 @@
-QuestHelper_File["help.lua"] = "4.2.0.211r"
+QuestHelper_File["help.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["help.lua"] = GetTime()
 
 local QuestHelper_Version = QuestHelper_File["help.lua"]

@@ -1,4 +1,4 @@
-QuestHelper_File["error.lua"] = "4.2.0.211r"
+QuestHelper_File["error.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["error.lua"] = GetTime()
 
 --[[
@@ -30,7 +30,9 @@ end
 
 -- ganked verbatim from Swatter
 function QuestHelper_ErrorCatcher.GetPlayerInfo()
-  return string.format("Level %s %s (%s) %s (%s) on %s", UnitLevel("player"), UnitRace("player"), UnitClass("player"), GetRealmName())
+  local race, rfile = UnitRace("player")
+  local class, cfile = UnitClass("player")
+  return string.format("Level %s %s %s on %s", UnitLevel("player"), race, class, GetRealmName())
 end
 
 function QuestHelper_ErrorCatcher.GetQuests()

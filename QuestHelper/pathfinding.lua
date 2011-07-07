@@ -1,4 +1,4 @@
-QuestHelper_File["pathfinding.lua"] = "4.2.0.211r"
+QuestHelper_File["pathfinding.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["pathfinding.lua"] = GetTime()
 
 -- Update flying for Mount Up guild achievement.
@@ -454,6 +454,13 @@ function load_graph_links()
   local function convert_coordinate(coord)
     QuestHelper: Assert(coord[1] and coord[2] and coord[3])
     
+    -- I hate Blizzard... They can't make up their mind weather we are on TwilightHighlands or TwilightHiglands_terrain1, but we only seem to be on one or the other.
+    if coord[1] == 177 and not QuestHelper_ZoneLookup[coord[1]] then
+      coord[1] = 184
+    elseif coord[1] == 184 and not QuestHelper_ZoneLookup[coord[1]] then
+      coord[1] = 177
+    end
+
     -- I hate Blizzard... They can't make up their mind weather we are on Hyjal or Hyjal_terrain1, but we only seem to be on one or the other.
     if coord[1] == 198 and not QuestHelper_ZoneLookup[coord[1]] then
       coord[1] = 185

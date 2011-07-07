@@ -2,7 +2,7 @@
 ## Title: QuestHelper Data (enUS)
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Contains the data needed by QuestHelper
-## Version: 4.2.0.211r
+## Version: 4.2.0.217r
 ## Dependencies: QHData-base
 ## LoadOnDemand: 1
 

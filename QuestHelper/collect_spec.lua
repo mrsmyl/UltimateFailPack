@@ -1,4 +1,4 @@
-QuestHelper_File["collect_spec.lua"] = "4.2.0.211r"
+QuestHelper_File["collect_spec.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["collect_spec.lua"] = GetTime()
 
 local Bitstream
@@ -52,7 +52,7 @@ local function GetSpecBolus()
     talents[tab] = {}
     for ta = 1, GetNumTalents(t) do
       local talent, _, _, _, rank, _ = GetTalentInfo(t, ta)
-      talents[tab][talent] = rank
+      if talent then talents[tab][talent] = rank end
     end
   end
 

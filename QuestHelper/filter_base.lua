@@ -1,4 +1,4 @@
-QuestHelper_File["filter_base.lua"] = "4.2.0.211r"
+QuestHelper_File["filter_base.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["filter_base.lua"] = GetTime()
 
 local avg_level = UnitLevel("player")

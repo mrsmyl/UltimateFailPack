@@ -1,4 +1,4 @@
-QuestHelper_File["collect_flight.lua"] = "4.2.0.211r"
+QuestHelper_File["collect_flight.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["collect_flight.lua"] = GetTime()
 
 local debug_output = false
@@ -69,7 +69,7 @@ local function TaximapOpened()
     if type ~= "CURRENT" then
       local path, route = GetRoute(currentname, i)
       if not QHCFT[path] then QHCFT[path] = {} end
-      if not QHCFT[path][route] then QHCFT[path][route] = true end
+      if not QHCFT[path][route] then QHCFT[path][route] = {} end
     end
   end
 end

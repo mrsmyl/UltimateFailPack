@@ -1,4 +1,4 @@
-QuestHelper_File["tooltip.lua"] = "4.2.0.211r"
+QuestHelper_File["tooltip.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["tooltip.lua"] = GetTime()
 
 if QuestHelper_File["tooltip.lua"] == "Development Version" then

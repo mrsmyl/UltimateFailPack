@@ -1,4 +1,4 @@
-QuestHelper_File["config.lua"] = "4.2.0.211r"
+QuestHelper_File["config.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["config.lua"] = GetTime()
 
 -- This is pretty much ganked wholesale from lightsfuryuther's QuestHelperConfig UI mod, then tweaked heavily because I'm kind of an obsessive asshole when it comes to make things work.

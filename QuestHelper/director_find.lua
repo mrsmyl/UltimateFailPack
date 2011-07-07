@@ -1,4 +1,4 @@
-QuestHelper_File["director_find.lua"] = "4.2.0.211r"
+QuestHelper_File["director_find.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["director_find.lua"] = GetTime()
 
 local function getitall(name)

@@ -1,8 +1,9 @@
-QuestHelper_File["db_get.lua"] = "4.2.0.211r"
+QuestHelper_File["db_get.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["db_get.lua"] = GetTime()
 
 local dev_mode = (QuestHelper_File["db_get.lua"] == "Development Version")
-
+QHDB_Export = {}
+local export = false
 -- yoink
 --[[
 local QHDB_temp = QHDB
@@ -200,7 +201,12 @@ function DB_GetItem(group, id, silent, register)
   if ite then
     frequencies[ite] = (frequencies[ite] or 0) + (register and 1 or 1000000000) -- effectively infinity
   end
-  
+ 
+  if export then 
+    if not QHDB_Export[group] then QHDB_Export[group] = {} end
+    QHDB_Export[group][id] = ite 
+  end
+
   return ite
 end
 
@@ -273,31 +279,4 @@ function DB_DumpItems()
     dt[string.format("%s/%s", freq_group[k], tostring(freq_id[k]))] = true
   end
   return dt
-end
-
-function DB_PrintTable(tbl, idt)
-  for k, v in pairs(tbl) do
-    if type(v) ~= "table" then
-      print(idt .. tostring(k) .. " = " .. tostring(v))
-    else
-      print(idt .. tostring(k) .. " =")
-      DB_PrintTable(v, idt .. "    ")
-    end
-  end
-end
-  
-function DB_Export()
-  for group, _ in pairs(QHDB) do
-    print(group)
-    for idx = 1, 99999 do
-      if DB_HasItem(group, idx) then
-        local ite = DB_GetItem(group, idx)
-        if type(ite) == "table" then
-          DB_PrintTable(ite, "    ")
-        else
-          print(ite)
-        end
-      end
-    end
-  end
 end

@@ -1,4 +1,4 @@
-QuestHelper_File["collect_warp.lua"] = "4.2.0.211r"
+QuestHelper_File["collect_warp.lua"] = "4.2.0.217r"
 QuestHelper_Loadtime["collect_warp.lua"] = GetTime()
 
 local debug_output = false
