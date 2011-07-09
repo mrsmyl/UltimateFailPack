@@ -1,4 +1,4 @@
-QuestHelper_File["routing_core.lua"] = "4.2.0.217r"
+QuestHelper_File["routing_core.lua"] = "4.2.0.218r"
 QuestHelper_Loadtime["routing_core.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["routing_core.lua"] == "Development Version")

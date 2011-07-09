@@ -1,4 +1,4 @@
-QuestHelper_File["collect_flight.lua"] = "4.2.0.217r"
+QuestHelper_File["collect_flight.lua"] = "4.2.0.218r"
 QuestHelper_Loadtime["collect_flight.lua"] = GetTime()
 
 local debug_output = false

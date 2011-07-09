@@ -1,4 +1,4 @@
-QuestHelper_File["custom.lua"] = "4.2.0.217r"
+QuestHelper_File["custom.lua"] = "4.2.0.218r"
 QuestHelper_Loadtime["custom.lua"] = GetTime()
 
 local search_frame = CreateFrame("Button", nil, UIParent)

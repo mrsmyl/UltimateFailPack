@@ -2,7 +2,7 @@
 ## Title: QuestHelper Data (deDE)
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Contains the data needed by QuestHelper
-## Version: 4.2.0.217r
+## Version: 4.2.0.218r
 ## Dependencies: QHData-base
 ## LoadOnDemand: 1
 
