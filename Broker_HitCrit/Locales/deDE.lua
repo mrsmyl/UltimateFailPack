@@ -2,8 +2,8 @@
 ************************************************************************
 Project				: Broker_HitCrit
 Author				: zhinjio
-Project Revision	: 2.22.1-release
-Project Date		: 20110704205759
+Project Revision	: 2.22.2-release
+Project Date		: 20110705025101
 
 File				: Locales\deDE.lua
 Commit Author		: zhinjio
@@ -98,6 +98,7 @@ L["Healing Schools"] = "Heilungsarten"
 L["Helpful Translators (thank you) : %s"] = "Hilfreiche Übersetzer (Danke euch) : %s"
 L["Hit"] = "Treffer"
 L["HitCrit Data Browser"] = "HitCrit Datenbrowser"
+-- L["If you notice errors or values not updating, try clearing out values."] = "If you notice errors or values not updating, try clearing out values."
 -- L["Inactive Spec"] = "Inactive Spec"
 L["LDB Text Display Options"] = "LDB-Textanzeige-Optionen"
 L["LDBDISPLAY_OPTIONS_DESC"] = "Optionen um den Text der in der LDB-Leiste angezeigt wird zu ändern"
@@ -115,6 +116,7 @@ L["No"] = "Nein"
 L["Notes"] = "Notizen"
 L["Parrot Integration"] = "Parrot Integration"
 -- L["Please note: All spell suppression, tracking and expansion toggles have been reset."] = "Please note: All spell suppression, tracking and expansion toggles have been reset."
+-- L["Please note: Due to changes in 4.2, you may need to clear data."] = "Please note: Due to changes in 4.2, you may need to clear data."
 L["Please report this error on the project webpage."] = "Bitte berichte diesen Fehler auf der Projekt-Homepage."
 L["RESETALL_TOOLTIP"] = "Klicken um alle gespeicherten HitCrit Daten für diesen Charakter zurückzusetzen"
 L["RESETCATEGORY_TOOLTIP"] = "Klicken um HitCrit Daten dieser Kategorie für diesen Charakter zurückzusetzen"

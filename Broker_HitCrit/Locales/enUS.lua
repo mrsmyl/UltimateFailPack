@@ -2,8 +2,8 @@
 ************************************************************************
 Project				: Broker_HitCrit
 Author				: zhinjio
-Project Revision	: 2.22.1-release
-Project Date		: 20110704205759
+Project Revision	: 2.22.2-release
+Project Date		: 20110705025101
 
 File				: Locales\enUS.lua
 Commit Author		: zhinjio
@@ -101,6 +101,7 @@ L["Healing Schools"] = true
 L["Helpful Translators (thank you) : %s"] = true
 L["Hit"] = true
 L["HitCrit Data Browser"] = true
+L["If you notice errors or values not updating, try clearing out values."] = true
 L["Inactive Spec"] = true
 L["LDB Text Display Options"] = true
 L["LDBDISPLAY_OPTIONS_DESC"] = "Options that change the text displayed on the LDB Bar"
@@ -118,6 +119,7 @@ L["No"] = true
 L["Notes"] = true
 L["Parrot Integration"] = true
 L["Please note: All spell suppression, tracking and expansion toggles have been reset."] = true
+L["Please note: Due to changes in 4.2, you may need to clear data."] = true
 L["Please report this error on the project webpage."] = true
 L["RESETALL_TOOLTIP"] = "Click to reset all saved HitCrit data for this toon"
 L["RESETCATEGORY_TOOLTIP"] = "Click to reset HitCrit data for the selected category for this toon"

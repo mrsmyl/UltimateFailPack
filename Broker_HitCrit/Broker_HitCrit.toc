@@ -1,13 +1,13 @@
 ## Interface: 40200
 ##
 ## Title: Broker_HitCrit
-## Version:  2.22.1-release
+## Version:  2.22.2-release
 ## Notes: LDB data source for Combat Tracking
 ## Author: zhinjio
 ## X-Email: zhinjio@gmail.com
 ## X-Category: Combat 
 ##
-## X-Date: 2011-07-04T20:57:59Z
+## X-Date: 2011-07-05T02:51:01Z
 ## X-WoWI-ID: 11580
 ##
 ## LoadManagers: AddonLoader
@@ -18,7 +18,7 @@
 ## OptionalDeps: Ace3, LibQTip-1.0, LibDBIcon-1.0, LibDataBroker-1.1
 ##
 ##
-## X-Curse-Packaged-Version: 2.22.1-release
+## X-Curse-Packaged-Version: 2.22.2-release
 ## X-Curse-Project-Name: Broker_HitCrit
 ## X-Curse-Project-ID: broker-hitcrit
 ## X-Curse-Repository-ID: wow/broker-hitcrit/mainline

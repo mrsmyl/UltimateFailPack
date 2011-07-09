@@ -2,8 +2,8 @@
 ************************************************************************
 Project				: Broker_HitCrit
 Author				: zhinjio
-Project Revision	: 2.22.1-release
-Project Date		: 20110704205759
+Project Revision	: 2.22.2-release
+Project Date		: 20110705025101
 
 File				: Locales\zhTW.lua
 Commit Author		: zhinjio
@@ -98,6 +98,7 @@ L["Healing"] = "治療"
 L["Helpful Translators (thank you) : %s"] = "幫忙翻譯者(感謝你)：%s"
 L["Hit"] = "擊中"
 L["HitCrit Data Browser"] = "HitCrit資料瀏覽"
+-- L["If you notice errors or values not updating, try clearing out values."] = "If you notice errors or values not updating, try clearing out values."
 -- L["Inactive Spec"] = "Inactive Spec"
 -- L["LDB Text Display Options"] = "LDB Text Display Options"
 -- L["LDBDISPLAY_OPTIONS_DESC"] = "Options that change the text displayed on the LDB Bar"
@@ -115,6 +116,7 @@ L["Melee"] = "近戰"
 -- L["Notes"] = "Notes"
 -- L["Parrot Integration"] = "Parrot Integration"
 -- L["Please note: All spell suppression, tracking and expansion toggles have been reset."] = "Please note: All spell suppression, tracking and expansion toggles have been reset."
+-- L["Please note: Due to changes in 4.2, you may need to clear data."] = "Please note: Due to changes in 4.2, you may need to clear data."
 -- L["Please report this error on the project webpage."] = "Please report this error on the project webpage."
 -- L["RESETALL_TOOLTIP"] = "Click to reset all saved HitCrit data for this toon"
 -- L["RESETCATEGORY_TOOLTIP"] = "Click to reset HitCrit data for the selected category for this toon"

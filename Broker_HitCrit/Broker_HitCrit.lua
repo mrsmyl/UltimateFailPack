@@ -2,13 +2,13 @@
 ************************************************************************
 Project				: Broker_HitCrit
 Author				: zhinjio
-Project Revision	: 2.22.1-release
-Project Date		: 20110704205759
+Project Revision	: 2.22.2-release
+Project Date		: 20110705025101
 
 File				: Broker_HitCrit.lua
 Commit Author		: zhinjio
-Commit Revision		: 122
-Commit Date			: 20110704205759
+Commit Revision		: 124
+Commit Date			: 20110705025101
 ************************************************************************
 Description	:
 	Main addon file. 
@@ -33,7 +33,7 @@ local AceConfigDialog 	= LibStub("AceConfigDialog-3.0")
 local addonversion = GetAddOnMetadata( FULLNAME, "Version" )
 addonversion = string.gsub( addonversion, "@project.version@", " - Development" )
 local addonauthor = "zhinjio"
-local builddate = "20110704205759"
+local builddate = "20110705025101"
 
 local _G = getfenv(0)
 _G["HitCrit"] = HitCrit
@@ -392,7 +392,7 @@ local function amTracking( type )
 end
 
 function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
-	_, _, eType, hideCaster, sGUID, sName, sFlags, sRFlags, dGUID, dName, dFlags, ... )
+	_, _, eType, hideCaster, sGUID, sName, sFlags, sRFlags, dGUID, dName, dFlags, dRFlags, ... )
 --	eType				sGUID				sName		sFlags	dGUID				dName		dFlags		...
 -- SPELL_HEAL			0x0100000003EDD6BF	"Zhinjio"	0x10511	0x0100000003EDD6BF	"Zhinjio"	0x10511		48785	"Flash of Light"	0x2	3653	3653	0	nil
 -- SPELL_HEAL			0x0100000003EDD6BF	"Zhinjio"	0x10511	0x0100000003EDD6BF	"Zhinjio"	0x10511		48785	"Flash of Light"	0x2	5413	5413	0	1
@@ -410,6 +410,7 @@ function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
 --	dGUID		destination GUID
 --	dName		destination Name
 --	dFlags		destination Flags
+--	dRFlags		destination Raid Flags	-- added in 4.2
 --
 --		The remaining parameters are dependent on eType
 --
@@ -1274,7 +1275,11 @@ function HitCrit_upgradeDB()
 		olddb.options.display.dbVersion = "3.2"
 		HitCrit_Print( string.format( L["Database upgraded to %s"], "3.2" ) )
 	end
-
+	if ( olddb.options.display.dbVersion == "3.2" ) then
+		HitCrit_Print( L["Please note: Due to changes in 4.2, you may need to clear data."] )
+		HitCrit_Print( L["If you notice errors or values not updating, try clearing out values."] )
+		olddb.options.display.dbVersion = "3.3"
+	end
 end
 
 function HitCrit:ChangeLabel()
@@ -2417,7 +2422,7 @@ function HitCrit:OnEnable()
 					type = false,
 					debug = false,
 					tipscale = 1,
-					dbVersion = "3.2",
+					dbVersion = "3.3",
 					label = false,
 					labelHeal = false,
 					labelDmg = false,
@@ -2631,6 +2636,9 @@ end
 ************************************************************************
 CHANGELOG:
 
+Date : 7/4/11
+	Updated for 4.2 CLEU changes
+	toc bump
 Date : 5/7/11
 	Revert bad change (not sure when it happened) in expandHandler
 Date : 04/27/11
