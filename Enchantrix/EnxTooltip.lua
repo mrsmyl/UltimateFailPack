@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: EnxTooltip.lua 5007 2010-11-10 07:25:24Z Hirsute $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: EnxTooltip.lua 5194 2011-07-04 17:46:21Z Nechckn $
 	URL: http://enchantrix.org/
 
 	Tooltip functions.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxTooltip.lua $", "$Rev: 5007 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Enchantrix/EnxTooltip.lua $", "$Rev: 5194 $")
 
 -- Global functions
 local addonLoaded	-- Enchantrix.Tooltip.AddonLoaded()
@@ -120,6 +120,7 @@ local function prospectTooltip(prospect, tooltip, name, link, quality, count)
 		-- Name and quality
 		local rName, _, rQuality = Enchantrix.Util.GetReagentInfo(result)
 		local _, _, _, color = GetItemQualityColor(rQuality or 0)
+		color = "|c"..color
 		tooltipFormat:SetPattern("|q", color or "|cffcccc33")
 		if (not rName) then rName = "item:"..result; end
 		tooltipFormat:SetPattern("$name", rName)
@@ -213,6 +214,7 @@ local function millingTooltip(prospect, tooltip, name, link, quality, count)
 		-- Name and quality
 		local rName, _, rQuality = Enchantrix.Util.GetReagentInfo(result)
 		local _, _, _, color = GetItemQualityColor(rQuality or 0)
+		color = "|c"..color
 		tooltipFormat:SetPattern("|q", color or "|cffcccc33")
 		if (not rName) then rName = "item:"..result; end
 		tooltipFormat:SetPattern("$name", rName)
@@ -396,6 +398,7 @@ function itemTooltip(tooltip, name, link, itemType, itemId, quality, count)
 				-- Name and quality
 				local rName, _, rQuality = Enchantrix.Util.GetReagentInfo(result)
 				local _, _, _, color = GetItemQualityColor(rQuality or 0)
+				color = "|c"..color
 				tooltipFormat:SetPattern("|q", color or "|cffcccc33")
 				if (not rName) then rName = "item:"..result; end
 				tooltipFormat:SetPattern("$name", rName)
@@ -599,6 +602,7 @@ function enchantTooltip(tooltip, name, link, isItem)
 		local style, extra = Enchantrix.Util.GetPricingModel();
 		local hsp, median, market, five, fix = Enchantrix.Util.GetReagentPrice(reagent[1],extra)
 		local _, _, _, color = GetItemQualityColor(rQuality)
+		color = "|c"..color
 
 		reagent[1] = rName
 		table.insert(reagent, rQuality)
@@ -730,7 +734,7 @@ function hookSpellTooltip(tipFrame, link, name, rank)
 end
 
 Enchantrix.Tooltip = {
-	Revision		= "$Revision: 5007 $",
+	Revision		= "$Revision: 5194 $",
 
 	AddonLoaded		= addonLoaded,
 	Format			= tooltipFormat,

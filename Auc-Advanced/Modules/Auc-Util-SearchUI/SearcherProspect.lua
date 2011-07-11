@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Prospect
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: SearcherProspect.lua 5037 2010-12-11 20:41:29Z ccox $
 	URL: http://auctioneeraddon.com/
 
@@ -203,4 +203,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherProspect.lua $", "$Rev: 5037 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearcherProspect.lua $", "$Rev: 5037 $")

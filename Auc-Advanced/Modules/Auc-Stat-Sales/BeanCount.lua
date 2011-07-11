@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Stat-Sales module
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: BeanCount.lua 4838 2010-08-03 07:41:13Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -465,4 +465,4 @@ private.scriptframe = CreateFrame("Frame")
 private.scriptframe:SetScript("OnEvent", private.onEvent)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-Sales/BeanCount.lua $", "$Rev: 4838 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Stat-Sales/BeanCount.lua $", "$Rev: 4838 $")

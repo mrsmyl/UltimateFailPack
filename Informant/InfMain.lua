@@ -1,8 +1,8 @@
 ﻿--[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: InfMain.lua 5011 2010-11-13 02:33:09Z Hirsute $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: InfMain.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	License:
@@ -27,9 +27,9 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Informant/InfMain.lua $","$Rev: 5011 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Informant/InfMain.lua $","$Rev: 5184 $")
 
-INFORMANT_VERSION = "5.11.5146"
+INFORMANT_VERSION = "5.12.5198"
 if (INFORMANT_VERSION == "<".."%version%>") then
 	INFORMANT_VERSION = "5.2.DEV"
 end
@@ -959,11 +959,22 @@ function onLoad()
 	slidebar()
 end
 
+local ALTCHATLINKTOOLTIP_OPEN
+local function callbackAltChatLinkTooltip(link, text, button, chatFrame)
+	if button == "LeftButton"
+	and Informant.Settings.GetSetting("altchatlink-tooltip")
+	and link:sub(1, 4) == "item" then
+		return ALTCHATLINKTOOLTIP_OPEN
+	end
+end
+
 local function frameLoaded()
 	Stubby.RegisterEventHook("PLAYER_LEAVING_WORLD", "Informant", onQuit)
 
 	tooltip:Activate()
 	tooltip:AddCallback(Informant.TooltipHandler, 300)
+	tooltip:AltChatLinkRegister(callbackAltChatLinkTooltip)
+	ALTCHATLINKTOOLTIP_OPEN = tooltip:AltChatLinkConstants()
 
 	onLoad()
 

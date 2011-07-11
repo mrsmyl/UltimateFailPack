@@ -18,6 +18,6 @@
 	<script file="FilterItemPrice.lua"/>
 	<script file="FilterItemAuctionHistory.lua"/>
 	<Script>
-		AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/Embed.xml $", "$Rev: 3655 $")
+		AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/Embed.xml $", "$Rev: 3655 $")
 	</Script>
 </Ui>

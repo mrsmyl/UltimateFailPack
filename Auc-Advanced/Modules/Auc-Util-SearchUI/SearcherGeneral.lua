@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher General
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: SearcherGeneral.lua 5054 2010-12-28 05:17:38Z kandoko $
 	URL: http://auctioneeraddon.com/
 
@@ -361,4 +361,4 @@ function private.PriceSearch(buybid, price)
 	end
 	return false
 end
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5054 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5054 $")

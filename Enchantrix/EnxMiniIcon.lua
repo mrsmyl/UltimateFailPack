@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: EnxMiniIcon.lua 5000 2010-11-07 19:38:24Z ccox $
 	URL: http://enchantrix.org/
 
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxMiniIcon.lua $", "$Rev: 5000 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Enchantrix/EnxMiniIcon.lua $", "$Rev: 5000 $")
 
 local settings = Enchantrix.Settings
 

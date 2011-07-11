@@ -5,7 +5,7 @@
 
 	AddOn: BeanCounter
 	Revision: $Id: BeanCounterStrings.lua 5078 2011-01-27 02:02:43Z Nechckn $
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 
 	License:
 		This program is free software; you can redistribute it and/or

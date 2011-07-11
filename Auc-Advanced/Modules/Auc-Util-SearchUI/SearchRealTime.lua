@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: SearchRealTime.lua 4720 2010-04-20 18:12:29Z brykrys $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: SearchRealTime.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This Auctioneer module allows the user to search the current Browse tab
@@ -167,6 +167,7 @@ function lib.RefreshPage()
 	AuctionFrameBrowse.page = page
 	SortAuctionClearSort("list")
 	private.IsRefresh = true
+	AucAdvanced.Scan.SetAuctioneerQuery()
 	QueryAuctionItems("", "", "", nil, nil, nil, page, nil, nil)
 end
 
@@ -413,4 +414,4 @@ function lib.HookAH()
 	private.button.control.tex:SetVertexColor(1, 0.9, 0.1)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 4720 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5159 $")

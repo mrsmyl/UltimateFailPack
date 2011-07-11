@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Filter IgnoreTimeLeft
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: FilterTimeLeft.lua 4432 2009-08-29 14:55:35Z dinesh $
 	URL: http://auctioneeraddon.com/
 
@@ -108,4 +108,4 @@ function lib.PostFilter(item, searcher, buyorbid)
 	return false
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/FilterTimeLeft.lua $", "$Rev: 4432 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/FilterTimeLeft.lua $", "$Rev: 4432 $")

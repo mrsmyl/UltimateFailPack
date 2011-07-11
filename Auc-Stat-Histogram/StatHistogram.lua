@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Histogram Statistics module
-	Version: 5.7.4568 (KillerKoala)
-	Revision: $Id: StatHistogram.lua 5018 2010-11-14 01:51:46Z Prowell $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: StatHistogram.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -840,4 +840,4 @@ function private.refactor(pmax, precision)
 	stattable["count"] = count
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-Histogram/StatHistogram.lua $", "$Rev: 5018 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Stat-Histogram/StatHistogram.lua $", "$Rev: 5159 $")

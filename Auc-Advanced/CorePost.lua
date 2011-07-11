@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: CorePost.lua 5141 2011-05-04 02:58:37Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: CorePost.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -60,6 +60,7 @@ local Const = AucAdvanced.Const
 local debugPrint = AucAdvanced.Debug.DebugPrint
 local _TRANS = AucAdvanced.localizations
 local DecodeSig -- to be filled with AucAdvanced.API.DecodeSig when it has loaded
+local GetSigFromLink -- to be filled with AucAdvanced.API.GetSigFromLink when it has loaded
 
 -- local versions of API globals
 local floor = floor
@@ -93,6 +94,7 @@ local BindTypes = {
 	[ITEM_BNETACCOUNTBOUND] = "Accountbound",
 }
 
+-- Info for handling UI_ERROR_MESSAGE errors
 local UIKnownErrors = {
 	[ERR_NOT_ENOUGH_MONEY] = "ERR_NOT_ENOUGH_MONEY",
 	[ERR_AUCTION_BAG] = "ERR_AUCTION_BAG",
@@ -109,11 +111,13 @@ local UIKnownErrors = {
 	[ERR_AUCTION_WRAPPED_ITEM] = "ERR_AUCTION_WRAPPED_ITEM",
 	[ERR_AUCTION_REPAIR_ITEM] = "ERR_AUCTION_REPAIR_ITEM",
 }
+-- If the UI error message one that is known to cause posting to fail
 function private.IsBlockingError(errorcode)
 	if UIKnownErrors[errorcode] then
 		return true
 	end
 end
+-- Whether we want the user to report the UI error message
 function private.IsReportableError(errorcode)
 	if errorcode and not UIKnownErrors[errorcode] then
 		return true
@@ -151,6 +155,9 @@ local ErrorText = {
 lib.ErrorText = ErrorText -- Deprecated: we don't want to give other modules direct access to the table
 -- lib.GetErrorText shall be expected to always return a string
 function lib.GetErrorText(code)
+	if not code then
+		return "No error"
+	end
 	local text = ErrorText[code]
 	if text then
 		return text
@@ -492,29 +499,22 @@ end
 	this is not the same as the number of items currently in the bags
 --]]
 function lib.CountAvailableItems(sig)
-	local matchId, matchSuffix, matchFactor, matchEnchant = DecodeSig(sig)
-	if not matchId then return end
+	if type(sig) ~= "string" then return end
 	local totalCount, unpostableCount = 0, 0
 	local unpostableError
 
 	for bag = 0, NUM_BAG_FRAMES do
 		for slot = 1, GetContainerNumSlots(bag) do
 			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local _, itemId, itemSuffix, itemFactor, itemEnchant = AucAdvanced.DecodeLink(link)
-				if itemId == matchId
-				and itemSuffix == matchSuffix
-				and itemFactor == matchFactor
-				and itemEnchant == matchEnchant then
-					local _, count = GetContainerItemInfo(bag, slot)
-					if not count or count < 1 then count = 1 end
-					totalCount = totalCount + count
-					local test, code = lib.IsAuctionable(bag, slot)
-					if not test then
-						unpostableCount = unpostableCount + count
-						if unpostableError ~= "Damaged" then -- if there are both "Damaged" and "Soulbound" items, we want to report the "Damaged" code here
-							unpostableError = code
-						end
+			if link and GetSigFromLink(link) == sig then
+				local _, count = GetContainerItemInfo(bag, slot)
+				if not count or count < 1 then count = 1 end
+				totalCount = totalCount + count
+				local test, code = lib.IsAuctionable(bag, slot)
+				if not test then
+					unpostableCount = unpostableCount + count
+					if unpostableError ~= "Damaged" then -- if there are both "Damaged" and "Soulbound" items, we want to report the "Damaged" code here
+						unpostableError = code
 					end
 				end
 			end
@@ -535,12 +535,13 @@ end
     FindMatchesInBags(itemId, [suffix, [factor, [enchant, [seed] ] ] ])
     Returns: { {bag, slot, count}, ... }, itemCount, blankBagId, blankSlotNumber, foundLink, foundLocked
 	Library wrapper for the internal version, to check parameters (and to support anticipated future changes)
+	Deprecated
 ]]
 function lib.FindMatchesInBags(...)
 	return private.FindMatchesInBags(lib.DecodeSig(...))
 end
 -- Internal implementation of FindMatchesInBags
--- This is no longer used by ProcessPosts, and is likely to become deprecated
+-- Deprecated: This is no longer used by ProcessPosts
 function private.FindMatchesInBags(matchId, matchSuffix, matchFactor, matchEnchant)
 	if not matchId then return end
 	local matches = {}
@@ -707,7 +708,7 @@ do
 			for slot = 1, GetContainerNumSlots(bag) do
 				local link = GetContainerItemLink(bag, slot)
 				if link then
-					local sig = AucAdvanced.API.GetSigFromLink(link)
+					local sig = GetSigFromLink(link)
 					if lockedsigs[sig] then
 						local _, count = GetContainerItemInfo(bag, slot)
 						if not count or count < 1 then count = 1 end
@@ -813,7 +814,6 @@ end
 --]]
 function private.SelectStack(request)
 	local sig, count = request.sig, request.count
-	local matchId, matchSuffix, matchFactor, matchEnchant = DecodeSig(sig)
 	local foundBag, foundSlot, foundStop, foundSize
 
 	--[[ Selection algorithm version 4
@@ -830,32 +830,25 @@ function private.SelectStack(request)
 	for bag = 0, NUM_BAG_FRAMES do
 		for slot = 1, GetContainerNumSlots(bag) do
 			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local _, itemId, itemSuffix, itemFactor, itemEnchant = AucAdvanced.DecodeLink(link)
-				if itemId == matchId
-				and itemSuffix == matchSuffix
-				and itemFactor == matchFactor
-				and itemEnchant == matchEnchant
-				and lib.IsAuctionable(bag, slot) then
-					local _, thiscount, locked = GetContainerItemInfo(bag,slot)
-					if locked then
-						return -- return immediately if we find a locked stack
-					elseif not foundStop then
-						if thiscount == count then
-							-- found a stack the correct size
-							foundBag = bag
-							foundSlot = slot
-							foundStop = true
-						elseif thiscount > count and (not foundSize or thiscount < foundSize) then
-							-- find the smallest stack larger than the requested size
-							foundSize = thiscount
-							foundBag = bag
-							foundSlot = slot
-						elseif not foundBag then
-							-- record the first bag/slot, if none of the above cases apply
-							foundBag = bag
-							foundSlot = slot
-						end
+			if link and GetSigFromLink(link) == sig and lib.IsAuctionable(bag, slot) then
+				local _, thiscount, locked = GetContainerItemInfo(bag,slot)
+				if locked then
+					return -- return immediately if we find a locked stack
+				elseif not foundStop then
+					if thiscount == count then
+						-- found a stack the correct size
+						foundBag = bag
+						foundSlot = slot
+						foundStop = true
+					elseif thiscount > count and (not foundSize or thiscount < foundSize) then
+						-- find the smallest stack larger than the requested size
+						foundSize = thiscount
+						foundBag = bag
+						foundSlot = slot
+					elseif not foundBag then
+						-- record the first bag/slot, if none of the above cases apply
+						foundBag = bag
+						foundSlot = slot
 					end
 				end
 			end
@@ -1023,10 +1016,10 @@ end
 	Item must already be loaded in AuctionSellItem slot
 --]]
 function private.ShowPrompt(request)
-	if private.promptRequest then -- ###
+	if private.promptRequest then
 		error("CorePost:ShowPrompt - private.promptRequest is not nil")
 	end
-	if private.Prompt:IsShown() then -- ###
+	if private.Prompt:IsShown() then
 		error("CorePost:ShowPrompt - Prompt is already shown")
 	end
 	private.promptRequest = request
@@ -1132,12 +1125,11 @@ local function UpdateHandler(self, elapsed)
 	local success, reason, special = private.LoadAuctionSlot(request)
 	if success then
 		private.ShowPrompt(request)
-	else
+	elseif reason then
 		private.HandlePostingError1(request, reason, special)
-		if not reason then
-			if special == 1 then
-				private.waitBagUpdate = true
-			end
+	else
+		if special == 1 then
+			private.waitBagUpdate = true
 		end
 	end
 end
@@ -1236,6 +1228,7 @@ function private.OnLoadRunOnce()
 	private.OnLoadRunOnce = nil
 	-- Install values into locals/tables, that are not available until Auctioneer is fully loaded
 	DecodeSig = AucAdvanced.API.DecodeSig
+	GetSigFromLink = AucAdvanced.API.GetSigFromLink
 	for code, text in pairs(ErrorText) do
 		local transkey = "ADV_Help_PostError"..code
 		local transtext = _TRANS(transkey)
@@ -1363,4 +1356,4 @@ private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CorePost.lua $", "$Rev: 5141 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CorePost.lua $", "$Rev: 5159 $")

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: BidMonitor.lua 4426 2009-08-28 01:39:55Z kandoko $
 	URL: http://auctioneeraddon.com/
 
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.11/BeanCounter/BidMonitor.lua $","$Rev: 4426 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.12/BeanCounter/BidMonitor.lua $","$Rev: 4426 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local libName = "BeanCounter"
 local libType = "Util"

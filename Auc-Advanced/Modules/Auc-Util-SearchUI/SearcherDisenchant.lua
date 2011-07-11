@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Disenchant
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: SearcherDisenchant.lua 5036 2010-12-11 20:38:14Z ccox $
 	URL: http://auctioneeraddon.com/
 
@@ -189,4 +189,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherDisenchant.lua $", "$Rev: 5036 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearcherDisenchant.lua $", "$Rev: 5036 $")

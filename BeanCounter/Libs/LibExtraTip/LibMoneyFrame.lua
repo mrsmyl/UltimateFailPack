@@ -25,12 +25,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 @version 1.0
 --]]
 
-local MAJOR,MINOR,REVISION = "LibMoneyFrame", 1, "$Revision: 144 $"
+local MAJOR,MINOR,REVISION = "LibMoneyFrame", 1, "$Revision: 307 $"
 
 -- A string unique to this version to prevent frame name conflicts.
 local LIBSTRING = MAJOR.."_"..MINOR.."_"..REVISION
 local lib = LibStub:NewLibrary(MAJOR.."-"..MINOR, REVISION)
 if not lib then return end
+
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibMoneyFrame.lua $","$Rev: 307 $","5.12.DEV.", 'auctioneer', 'libs')
 
 -- Call function to deactivate any outdated version of the library.
 -- (calls the OLD version of this function, NOT the one defined in this

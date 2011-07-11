@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: Core.lua 5034 2010-12-08 23:36:20Z kandoko $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: Core.lua 5165 2011-05-21 19:12:43Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -238,82 +238,130 @@ local isHerb =
 	[52988] = true,-- WHIPTAIL
 	}
 
---this set of tables allows us to match the locale dependet itemtype to the gear a player class can use
-local isGear = {
-	--armor
-	["cloth"] = GetSpellInfo(9078),
-	["leather"] = GetSpellInfo(9077),
-	["mail"] = GetSpellInfo(8737),
-	["plate"] = GetSpellInfo(750),
-	["shield"] = GetSpellInfo(9116),
-	--weapons
-	["bows"] = GetSpellInfo(264),
-	["crossbows"] = GetSpellInfo(5011),
-	["daggers"] = GetSpellInfo(1180),
-	["fist weapons"] = GetSpellInfo(15590),
-	["guns"] = GetSpellInfo(266),
-	["one-handed axes"] = GetSpellInfo(196),
-	["one-handed maces"] = GetSpellInfo(198),
-	["one-handed swords"] = GetSpellInfo(201),
-	["polearms"] = GetSpellInfo(200),
-	["staves"] = GetSpellInfo(227),
-	["thrown"] = GetSpellInfo(2567),
-	["two-handed axes"] = GetSpellInfo(197),
-	["two-handed maces"] = GetSpellInfo(199),
-	["two-handed swords"] = GetSpellInfo(202),
-	["wands"] = GetSpellInfo(5009),
-}
---what gear each class CANNOT use
+--what armor each class can use localized
+local _, CLOTH, LEATHER, MAIL, PLATE = GetAuctionItemSubClasses(2) --only way I found to get a localized subtype
 local isClass = {
-	["DEATHKNIGHT"] = "shield|thrown|staves|crossbows|bows|fist weapons|leather|mail|guns|cloth|wands|daggers",
-	["SHAMAN"] = "one-handed swords|thrown|staves|crossbows|plate|bows|two-handed swords|leather|guns|polearms|cloth|wands",
-	["MAGE"] = "two-handed maces|shield|thrown|crossbows|plate|one-handed maces|one-handed axes|bows|fist weapons|two-handed swords|leather|mail|guns|polearms|two-handed axes",
-	["PRIEST"] = "one-handed swords|two-handed maces|shield|thrown|crossbows|plate|one-handed axes|bows|fist weapons|two-handed swords|leather|mail|guns|polearms|two-handed axes",
-	["WARLOCK"] = "two-handed maces|shield|thrown|crossbows|plate|one-handed maces|one-handed axes|bows|fist weapons|two-handed swords|leather|mail|guns|polearms|two-handed axes",
-	["DRUID"] = "one-handed swords|shield|thrown|crossbows|plate|one-handed axes|bows|fist weapons|two-handed swords|mail|guns|polearms|cloth|wands|two-handed axes",
-	["ROGUE"] = "two-handed maces|shield|staves|plate|two-handed swords|mail|polearms|cloth|wands|two-handed axes",
+	["DEATHKNIGHT"] = PLATE,
+	["MAGE"] = CLOTH,
+	["PRIEST"] = CLOTH,
+	["WARLOCK"] = CLOTH,
+	["DRUID"] = LEATHER,
+	["ROGUE"] = LEATHER,
 	--lvl 40
-	["WARRIOR"] = "leather|mail|cloth|wands",
-	["WARRIORLOW"] = "leather|cloth|wands", --warriors and paladins plate does not appear before 40,
-	["HUNTER"] = "two-handed maces|shield|plate|one-handed maces|leather|cloth|wands",
-	["HUNTERLOW"] = "two-handed maces|shield|plate|one-handed maces|mail|cloth|wands",
-	["PALADIN"] = "thrown|staves|crossbows|bows|fist weapons|leather|mail|guns|cloth|wands|daggers",
-	["PALADINLOW"] = "thrown|staves|crossbows|bows|fist weapons|leather|guns|cloth|wands|daggers",
-	}
+	["WARRIOR"] = PLATE,
+	["WARRIORLOW"] = MAIL, --warriors and paladins plate does not appear before 40,
+	["PALADIN"] = PLATE,
+	["PALADINLOW"] = MAIL,
+	["HUNTER"] = MAIL,
+	["HUNTERLOW"] = LEATHER,
+	["SHAMAN"] = MAIL,
+	["SHAMANLOW"] = LEATHER,
+}
 
-local playerClassEquipment
-function classexpand()
+local playerArmorType
+function lib.playerArmor()
 	local _, class =  UnitClass("player")
 	local level = UnitLevel("player")
 	if not isClass[class] then print("Unknown player class..", class) return end
-	
-	if level < 40 and (class == "WARRIOR" or class == "PALADIN" or class == "HUNTER") then
+
+	if level < 40 and (class == "WARRIOR" or class == "PALADIN" or class == "HUNTER" or class == "SHAMAN") then
 		class = class.."LOW"
 	end
-	
-	local temp = {}
-	for usable in isClass[class]:gmatch("(.-)|") do
-		local skill = isGear[usable]
-		if skill then
-			temp[skill] = usable
-		end
-	end
-	return temp
+	return isClass[class]
 end
---Taken from auc core, used to find soulbound state
-local BindTypes = {
-	[ITEM_SOULBOUND] = "Bound",
-	[ITEM_BIND_ON_PICKUP] = "Bound",
+--Inv slot types, used to help define what gear is usable via tooltip parse
+local InventoryTypes = {
+	[INVTYPE_2HWEAPON] = INVTYPE_2HWEAPON,
+	[INVTYPE_AMMO] = INVTYPE_AMMO,
+	[INVTYPE_BAG] = INVTYPE_BAG,
+	[INVTYPE_BODY] = INVTYPE_BODY,
+	[INVTYPE_CHEST] = INVTYPE_CHEST,
+	[INVTYPE_CLOAK] = INVTYPE_CLOAK,
+	[INVTYPE_FEET] = INVTYPE_FEET,
+	[INVTYPE_FINGER] = INVTYPE_FINGER,
+	[INVTYPE_HAND] = INVTYPE_HAND,
+	[INVTYPE_HEAD] = INVTYPE_HEAD,
+	[INVTYPE_HOLDABLE] = INVTYPE_HOLDABLE,
+	[INVTYPE_LEGS] = INVTYPE_LEGS,
+	[INVTYPE_NECK] = INVTYPE_NECK,
+	[INVTYPE_QUIVER] = INVTYPE_QUIVER,
+	[INVTYPE_RANGED] = INVTYPE_RANGED,
+	[INVTYPE_RANGEDRIGHT] = INVTYPE_RANGEDRIGHT,
+	[INVTYPE_RELIC] = INVTYPE_RELIC,
+	[INVTYPE_ROBE] = INVTYPE_ROBE,
+	[INVTYPE_SHIELD] = INVTYPE_SHIELD,
+	[INVTYPE_SHOULDER] = INVTYPE_SHOULDER,
+	[INVTYPE_TABARD] = INVTYPE_TABARD,
+	[INVTYPE_THROWN] = INVTYPE_THROWN,
+	[INVTYPE_TRINKET] = INVTYPE_TRINKET ,
+	[INVTYPE_WAIST] = INVTYPE_WAIST,
+	[INVTYPE_WEAPON] = INVTYPE_WEAPON,
+	[INVTYPE_WEAPONMAINHAND] = INVTYPE_WEAPONMAINHAND,
+	[INVTYPE_WEAPONMAINHAND_PET] = INVTYPE_WEAPONMAINHAND_PET,
+	[INVTYPE_WEAPONOFFHAND] = INVTYPE_WEAPONOFFHAND,
+	[INVTYPE_WRIST] = INVTYPE_WRIST,
 }
 --Auc Core tooltip scanner
 local ScanTip  = AppraiserTip
 local ScanTip2  = AppraiserTipTextLeft2
 local ScanTip3 = AppraiserTipTextLeft3
+local ScanTipRight2  = AppraiserTipTextRight2
+local ScanTipRight3 = AppraiserTipTextRight3
+function lib.cannotUse(itemSubType)
+	--check desirable armor types
+	if itemSubType == CLOTH or itemSubType == LEATHER or itemSubType == MAIL or itemSubType == PLATE then
+		if playerArmorType ~= itemSubType then
+--~ 			print(1, AppraiserTipTextLeft1:GetText(), ScanTip2:GetText(), playerArmorType ,itemSubType)
+			return true
+		end
+	end
+	--scan tooltip  if its a valid equip text, look at color
+	if InventoryTypes[ScanTip2:GetText()] or InventoryTypes[ScanTip3:GetText()] then
+		local hex,r,g,b
+
+		r,g,b = ScanTip2:GetTextColor()
+		hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
+		if ScanTip2:GetText() and hex == "fe1f1f" then
+--~ 			print(2, AppraiserTipTextLeft1:GetText(), ScanTip2:GetText())
+			return true
+		end
+
+		r,g,b = ScanTip3:GetTextColor()
+		hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
+		if ScanTip3:GetText() and hex == "fe1f1f" then
+--~ 			print(3, AppraiserTipTextLeft1:GetText(), ScanTip3:GetText())
+			return true
+		end
+		--check for red text in right side of tooltip
+		r,g,b = ScanTipRight2:GetTextColor()
+		hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
+		if ScanTipRight2:GetText() and hex == "fe1f1f" then
+--~ 			print(4, AppraiserTipTextLeft1:GetText(), ScanTipRight2:GetText())
+			return true
+		end
+
+		r,g,b = ScanTipRight3:GetTextColor()
+		hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
+		if ScanTipRight3:GetText() and hex == "fe1f1f" then
+--~ 			print(5, AppraiserTipTextLeft1:GetText(), ScanTipRight3:GetText())
+			return true
+		end
+
+	end
+	--its equipable by the class so dont sell
+	return false
+end
+
+--Taken from auc core, used to find soulbound state
+local BindTypes = {
+	[ITEM_SOULBOUND] = "Bound",
+	[ITEM_BIND_ON_PICKUP] = "Bound",
+}
 
 lib.vendorlist = {}
 function lib.vendorAction(autovendor)
-	if not playerClassEquipment then 
-		 playerClassEquipment = classexpand()--create the players localized usable gear list
+	if not playerArmorType then 
+		 playerArmorType = lib.playerArmor()--create the players localized usable armor
 	end
 	empty(lib.vendorlist) --this needs to be cleared on every vendor open
 	for bag=0,4 do
@@ -332,14 +380,13 @@ function lib.vendorAction(autovendor)
 					ScanTip:ClearLines()
 					ScanTip:SetBagItem(bag, slot)
 					local soulbound = BindTypes[ScanTip2:GetText()] or BindTypes[ScanTip3:GetText()]
-					ScanTip:Hide()
 					--autovendor  is used to sell without confirmation.
 					if autovendor then
 						if get("util.automagic.autoselllist") and get("util.automagic.autoselllistnoprompt") and lib.autoSellList[ itemID ] then
 							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
 						elseif itemRarity == 0 and get("util.automagic.autosellgrey") and get("util.automagic.autosellgreynoprompt") then
 							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
-						elseif soulbound and get("util.automagic.vendorunusablebop") and get("util.automagic.autosellbopnoprompt") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and playerClassEquipment[itemSubType] then
+						elseif soulbound and get("util.automagic.vendorunusablebop") and get("util.automagic.autosellbopnoprompt") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
 							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
 						elseif get("util.automagic.autosellreason") and get("util.automagic.autosellreasonnoprompt") then
 							local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
@@ -352,7 +399,7 @@ function lib.vendorAction(autovendor)
 							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
 						elseif itemRarity == 0 and get("util.automagic.autosellgrey") then
 							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
-						elseif soulbound and get("util.automagic.vendorunusablebop") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and playerClassEquipment[itemSubType] then
+						elseif soulbound and get("util.automagic.vendorunusablebop") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
 							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
 						elseif get("util.automagic.autosellreason") then
 							local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
@@ -361,6 +408,8 @@ function lib.vendorAction(autovendor)
 							end
 						end
 					end
+					--clear tooltip for this loop
+					ScanTip:Hide()
 				end
 			end
 		end
@@ -556,4 +605,4 @@ function lib.getReason(itemLink, itemName, itemCount, text)
 	return
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5034 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5165 $")

@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: Enchantrix
-	Revision: $Id: EnxStrings.lua 5073 2011-01-16 00:38:55Z ccox $
-	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: EnxStrings.lua 5194 2011-07-04 17:46:21Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -1479,6 +1479,8 @@ EnchantrixLocalizations = {
 		["FrmtPctlessSkipped"]	= "%d enchères ignorées en raison de la marge de profit (%s)";
 
 		-- Section: Tooltip Messages
+		["Click"]	= "Clic";
+		["EnxMMTip"]	= "Enchantrix vous montre quels composants seront récupérées sur un objet désenchanté, prospecté, ou moulu. Il s'intègre avec Auctioneer pour faciliter les décisions d'achats et de mises en ventes.";
 		["FrmtBarkerPrice"]	= "Prix marchand (marge : %d%%)";
 		["FrmtDEItemLevels"]	= "En désenchantant articles de niv %d a %d";
 		["FrmtDisinto"]	= "Se désenchante en :";
@@ -1491,7 +1493,7 @@ EnchantrixLocalizations = {
 		["FrmtMillingValueAuctVal"]	= "Valeur de mouture (AucAdv)";
 		["FrmtMillingValueMarket"]	= "Valeur de mouture (référence)";
 		["FrmtMillsInto"]	= "Sert à la fabrication de :";
-		["FrmtPriceEach"]	= "(%s l'unité)";
+		["FrmtPriceEach"]	= "(%s ch)";
 		["FrmtProspectFound"]	= "%s a été prospecté en :";
 		["FrmtProspectFrom"]	= "Prospecté dans %s";
 		["FrmtProspectInto"]	= "Prospectable en :";
@@ -1509,6 +1511,11 @@ EnchantrixLocalizations = {
 		["FrmtWarnAuctNotLoaded"]	= "[Auctioneer non chargé, utilisation du prix en cache]";
 		["FrmtWarnNoPrices"]	= "[Aucun prix disponible]";
 		["FrmtWarnPriceUnavail"]	= "[Quelques prix indisponibles]";
+		["RightClick"]	= "Clic droit";
+		["ShiftClick"]	= "Maj+clic";
+		["TipOpenConfig"]	= "pour éditer la configuration";
+		["TipOpenEnchant"]	= "pour ouvrir la fenêtre d'Enchantement";
+		["TipOpenJewel"]	= "pour ouvrir la fenêtre de Joaillerie";
 		["TooltipMillingLevel"]	= "Mouture requiert la compétence %d";
 		["TooltipProspectLevel"]	= "Prospection demande la compétence %d";
 		["TooltipShowDisenchantLevel"]	= "Désenchantement demande la compétence %d";
@@ -1518,11 +1525,11 @@ EnchantrixLocalizations = {
 		["ExportPriceAucAdv"]	= "Exporter les prix \"Enchantrix\" vers \"AuctioneerAdvanced\"";
 		["GuiActivateProfile"]	= "Activer un profil existant";
 		["GuiAutoDeBoughtForDE"]	= "Seulement les articles achetés pour désenchantement";
-		["GuiAutoDeEnable"]	= "Chercher pour des objets désenchentables -  A UTILISER AVEC PRÉCAUTION!";
+		["GuiAutoDeEnable"]	= "Chercher pour des objets désenchentables -  A UTILISER AVEC PRÉCAUTION!¶";
 		["GuiAutoDeEpicItems"]	= "Auto Désenchantement des articles épiques (violets)";
-		["GuiAutoDeOptions"]	= "Automatisation";
-		["GuiAutoDePromptLine1"]	= "Voulez-vous désenchanter :";
-		["GuiAutoDePromptLine3"]	= "Évalué à %s";
+		["GuiAutoDeOptions"]	= "Automatisation¶";
+		["GuiAutoDePromptLine1"]	= "Voulez-vous désenchanter :¶";
+		["GuiAutoDePromptLine3"]	= "Évalué à %s¶";
 		["GuiAutoDEPurchaseReason"]	= "Acheté pour %s";
 		["GuiAutoDeRareItems"]	= "Désenchantement automatique des articles rares (bleus)";
 		["GuiAutoDESuggestion"]	= "Suggestion : %s cet article";
@@ -1591,6 +1598,14 @@ EnchantrixLocalizations = {
 		["GuiWeightSettings"]	= "réactifs de désenchantement désirés";
 		["GuiYes"]	= "Oui";
 		["ModTTShow"]	= "Montrer la bulle d'aide uniquement si Alt est pressé";
+		["ModTTShow_alt"]	= "Quand Alt est enfoncé";
+		["ModTTShow_always"]	= "Toujours";
+		["ModTTShow_ctrl"]	= "Quand Control est enfoncé";
+		["ModTTShow_never"]	= "Jamais";
+		["ModTTShow_noalt"]	= "Quand Alt n'est pas enfoncé";
+		["ModTTShow_noctrl"]	= "Quand Control n'est pas enfoncé";
+		["ModTTShow_noshift"]	= "Quand Maj n'est pas enfoncé";
+		["ModTTShow_shift"]	= "Quand Maj est enfoncé";
 
 	};
 

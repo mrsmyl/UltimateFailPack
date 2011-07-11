@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: CoreUtil.lua 5064 2011-01-09 17:21:51Z brykrys $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: CoreUtil.lua 5194 2011-07-04 17:46:21Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -485,22 +485,39 @@ Recommended method:
 
 Usage:
   local lib,parent,private = AucAdvanced.NewModule(libType, libName)
+  local lib,parent = AucAdvanced.NewModule(libType, libName, nil, true) -- no Private table created
+  local lib,parent,private = AucAdvanced.NewModule(libType, libName, libTable) -- caller may optionally provide its own libTable
+
+  libType must be one of "Filter" "Match" "Stat" "Util"
 
 --]]
-local moduleKit = {}
-function lib.NewModule(libType, libName)
-	assert(lib.Modules[libType], "Invalid AucAdvanced libType specified: "..tostring(libType))
+-- local moduleKit = {} -- currently unused
+function lib.NewModule(libType, libName, libTable, noPrivate)
+	if not lib.Modules[libType] then
+		error("Invalid libType specified for NewModule: "..tostring(libType), 2)
+	end
+	if libTable and type(libTable) ~= "table" then
+		error("Invalid module table provided to NewModule", 2)
+	end
 
 	if not lib.Modules[libType][libName] then
-		local module = {}
-		local modulePrivate = {}
-		module.libType = libType
-		module.libName = libName
-		module.Private = modulePrivate
+		local module = libTable or {}
+		local modulePrivate
+		if not noPrivate then
+			modulePrivate = module.Private or {} -- if libTable includes a 'Private' entry, use that
+			module.Private = modulePrivate
+		end
+		module.libName = libName -- this is unused by anything - should we deprecate it?
+		module.libType = libType -- ditto
 		module.GetName = function() return libName end
+		if not module.GetLocalName then -- don't create if it already exists
+			module.GetLocalName = module.GetName
+		end
+		--[[ currently unused
 		for k,v in pairs(moduleKit) do
 			module[k] = v
 		end
+		--]]
 
 		lib.Modules[libType][libName] = module
 		lib.SendProcessorMessage("newmodule", libType, libName)
@@ -689,4 +706,4 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreUtil.lua $", "$Rev: 5064 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CoreUtil.lua $", "$Rev: 5194 $")

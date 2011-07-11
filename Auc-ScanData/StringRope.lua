@@ -1,6 +1,6 @@
 --[[
 	StringRope Lib for World of Warcraft (tm)
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: StringRope.lua 3938 2008-12-27 09:35:32Z norganna $
 	URL: http://norganna.org
 

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: AprSettings.lua 4893 2010-10-03 21:16:33Z kandoko $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: AprSettings.lua 5194 2011-07-04 17:46:21Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -188,7 +188,7 @@ function lib.RoundBuy(value)
 end
 
 local scrollItems = {}
-function lib.UpdateList()
+function lib.UpdateList() -- dead code?
 	local n = #scrollItems
 	for i = 1, n do
 		scrollItems[i] = nil
@@ -238,7 +238,7 @@ function lib.UpdateList()
 	private:SetScroll()
 end
 
-function private:SetScroll()
+function private:SetScroll() -- dead code?
 	local pos = private.scroller:GetValue()
 	for i = 0, 7 do
 		local item = scrollItems[pos+i]
@@ -246,7 +246,7 @@ function private:SetScroll()
 		if item then
 			button.icon:SetTexture(item[3])
 			local _,_,_, hex = GetItemQualityColor(item[4])
-			button.name:SetText(hex.."["..item[2].."]|r")
+			button.name:SetText("|c"..hex.."["..item[2].."]|r")
 			button:Show()
 			if (item[1] == private.selected) then
 				button.bg:Show()
@@ -259,13 +259,13 @@ function private:SetScroll()
 	end
 end
 
-function private:SelectItem(...)
+function private:SelectItem(...) -- dead code?
 	private.selected = self.id
 	private:SetScroll()
 	private:SetVisibility()
 end
 
-function private:SetVisibility()
+function private:SetVisibility() -- dead code?
 	if private.selected and private.selected ~= "" then
 		private.itemModel.setting = "util.appraiser.item."..private.selected..".model"
 		private.itemStack.setting = "util.appraiser.item."..private.selected..".stack"
@@ -548,4 +548,4 @@ function private.SetupConfigGui(gui)
 	private.guiId = id
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 4893 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 5194 $")

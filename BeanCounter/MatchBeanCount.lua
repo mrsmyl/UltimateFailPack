@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - BeanCounter Matcher module
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: MatchBeanCount.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 
@@ -36,7 +36,7 @@
 --	AucAdvanced.Print("BeanCounter not loaded")
 --	return
 --end
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.11/BeanCounter/MatchBeanCount.lua $","$Rev: 4828 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.12/BeanCounter/MatchBeanCount.lua $","$Rev: 4828 $","5.1.DEV.", 'auctioneer', 'libs')
 
 if not AucAdvanced then return end
 

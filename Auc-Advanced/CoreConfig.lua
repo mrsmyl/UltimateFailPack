@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: CoreConfig.lua 4873 2010-09-08 16:48:27Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -190,4 +190,4 @@ SLASH_AUCADVANCED2 = "/aadv"
 SLASH_AUCADVANCED3 = "/auctioneer"
 SlashCmdList["AUCADVANCED"] = function(msg, editbox) private.CommandHandler(editbox, strsplit(" ", msg)) end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreConfig.lua $", "$Rev: 4873 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CoreConfig.lua $", "$Rev: 4873 $")

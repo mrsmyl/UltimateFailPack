@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: AprFrame.lua 5015 2010-11-13 13:04:30Z brykrys $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: AprFrame.lua 5194 2011-07-04 17:46:21Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -324,7 +324,7 @@ function private.CreateFrames()
 		frame.salebox.sig = sig
 		local _,_,_, hex = GetItemQualityColor(item[4])
 		frame.salebox.icon:SetNormalTexture(item[3])
-		frame.salebox.name:SetText(hex.."["..item[2].."]|r")
+		frame.salebox.name:SetText("|c"..hex.."["..item[2].."]|r")
 		if item.auction then
 			frame.salebox.info:SetText(_TRANS('APPR_Interface_HaveUpAuction'):format(item[6]) )--You have %s up for auction
 		else
@@ -1552,6 +1552,7 @@ function private.CreateFrames()
 				button.icon:SetDesaturated(curIgnore)
 
 				local _,_,_, hex = GetItemQualityColor(item[4])
+				hex = "|c"..hex
 				local stackX = "x "
 				if curAuction then
 					stackX = ""
@@ -2743,4 +2744,4 @@ function private.CreateFrames()
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5015 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5194 $")

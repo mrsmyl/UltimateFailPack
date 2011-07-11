@@ -1,7 +1,7 @@
 --[[
 Auctioneer - StatSimple
-Version: 5.7.4568 (KillerKoala)
-Revision: $Id: StatSimple.lua 4828 2010-07-21 22:20:18Z Prowell $
+Version: 5.12.5198 (QuirkyKiwi)
+Revision: $Id: StatSimple.lua 5159 2011-05-14 19:18:45Z Nechckn $
 URL: http://auctioneeraddon.com/
 
 This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -672,4 +672,4 @@ function private.InitData()
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-Simple/StatSimple.lua $", "$Rev: 4828 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Stat-Simple/StatSimple.lua $", "$Rev: 5159 $")

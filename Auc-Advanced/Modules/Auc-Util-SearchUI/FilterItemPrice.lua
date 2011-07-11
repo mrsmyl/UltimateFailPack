@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Filter IgnoreItemPrice
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: FilterItemPrice.lua 4828 2010-07-21 22:20:18Z Prowell $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: FilterItemPrice.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -44,12 +44,10 @@ private.sheetdata = {}
 
 function private.OnEnterSheet(button, row, index)
 	if private.ignorelistGUI.sheet.rows[row][index]:IsShown()then --Hide tooltip for hidden cells
-		local link, name
-		link = private.ignorelistGUI.sheet.rows[row][index]:GetText()
-		name = GetItemInfo(link)
-		if link and name then
+		local link = private.ignorelistGUI.sheet.rows[row][index]:GetText()
+		if link and link:match("|Hitem:%d") then
 			GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
-			AucAdvanced.ShowItemLink(GameTooltip, link, count)
+			GameTooltip:SetHyperlink(link)
 		end
 	end
 end
@@ -262,4 +260,4 @@ function lib.PostFilter(item, searcher, buyorbid)
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/FilterItemPrice.lua $", "$Rev: 4828 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/FilterItemPrice.lua $", "$Rev: 5184 $")

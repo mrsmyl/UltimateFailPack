@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: EnxAutoDisenchant.lua 5141 2011-05-04 02:58:37Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: EnxAutoDisenchant.lua 5137 2011-05-01 01:49:57Z ccox $
 	URL: http://enchantrix.org/
 
 	Automatic disenchant scanner.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5141 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5137 $")
 
 local auto_de_session_ignore_list = {}
 local auto_de_frame

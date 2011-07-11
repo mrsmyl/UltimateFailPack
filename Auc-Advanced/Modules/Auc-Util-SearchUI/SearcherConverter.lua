@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Converter
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: SearcherConverter.lua 5035 2010-12-11 18:03:15Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -331,4 +331,4 @@ function lib.Search (item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherConverter.lua $", "$Rev: 5035 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearcherConverter.lua $", "$Rev: 5035 $")

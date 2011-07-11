@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: AskPrice.lua 5113 2011-03-14 23:11:33Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: AskPrice.lua 5162 2011-05-16 17:21:41Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	Auctioneer AskPrice created by Mikezter and merged into
@@ -476,7 +476,7 @@ end
 
 --This function changed after AskPrice revision 2825 to include AucAdvanced's revision number in adition to AskPrice's
 function private.GetVersion()
-	return tonumber(("$Revision: 5113 $"):match("(%d+)")), (AucAdvanced.GetCurrentRevision()) --We just want the first return from GetCurrentRevision()
+	return tonumber(("$Revision: 5162 $"):match("(%d+)")), (AucAdvanced.GetCurrentRevision()) --We just want the first return from GetCurrentRevision()
 end
 
 --This function is used to check if the received request (which should be lowercased before the function is called) is a valid SmartWords request
@@ -497,27 +497,20 @@ private.SlashHandler = {}
 --This is the function that will be called by the slash handler when
 --/askprice send is issued.
 function private.SlashHandler.send(queryString)
-	local parseError = false
+	local parseError = true 	--Report errors unless we succeed. Reduces error checks
 	if queryString then
 		local player, itemLinks = strsplit(" ", queryString, 2)
 
 		--Error out if we have a target, but no potential itemLinks
-		if itemLinks then
+		if itemLinks and player:find("%a.*") then --if we dont have a target we also need to flag a parse error
 			local items = private.getItems(itemLinks)
-			--Error out if we dont get any items back
-			if #items == 0 then parseError = true end
-
 			for i = 1, #items, 2 do
 				local count = items[i]
 				local link = items[i+1]
-
+				parseError = false
 				private.sendResponse(link, count, player, 1, private.getData(link))
 			end
-		else
-			parseError = true
 		end
-	else
-			parseError = true
 	end
 
 	if parseError then
@@ -604,4 +597,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5113 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5162 $")

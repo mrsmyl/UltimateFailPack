@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Finish module
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: ScanFinish.lua 4828 2010-07-21 22:20:18Z Prowell $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: ScanFinish.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a few event functionalities
@@ -47,7 +47,7 @@ function lib.Processor(callbackType, ...)
 		local msg = ("CallbackType=%s, Sound=%s, IsBlocked=%s, IsScanning=%s"):format(callbackType, 
 			tostring(AucAdvanced.Settings.GetSetting("util.scanfinish.soundpath")), 
 			tostring(AucAdvanced.API.IsBlocked()), tostring(AucAdvanced.Scan.IsScanning()))
-		debugPrint(msg, "ScanFinish Processor", callbackType, 0, "Debug")
+		--debugPrint(msg, "ScanFinish Processor", callbackType, 0, "Debug")
 	end
 	
 	if (callbackType == "scanfinish") then
@@ -86,7 +86,7 @@ function lib.OnLoad()
 end
 
 function private.ScanStart(scanSize, querysig, query)
-	debugPrint(scanSize, "ScanFinish", "ScanStart", 0, "Debug")
+	--debugPrint(scanSize, "ScanFinish", "ScanStart", 0, "Debug")
 
 	if (scanSize ~= "Full") then return end
 	AlertShutdownOrLogOff()
@@ -94,7 +94,7 @@ end
 
 
 function private.ScanFinish(scanSize, querysig, query, wasComplete)
-	debugPrint(scanSize..","..tostring(wasComplete), "ScanFinish", "ScanFinish", 0, "Debug")
+	--debugPrint(scanSize..","..tostring(wasComplete), "ScanFinish", "ScanFinish", 0, "Debug")
 
 	if (scanSize ~= "Full") then return end
 	if (not wasComplete) then return end
@@ -109,7 +109,7 @@ function private.PerformFinishEvents()
 		AucAdvanced.Settings.GetSetting("util.scanfinish.emote"),
 		tostring(AucAdvanced.Settings.GetSetting("util.scanfinish.logout")),
 		tostring(AucAdvanced.Settings.GetSetting("util.scanfinish.shutdown")))
-	debugPrint(msg, "ScanFinish", "PerformFinishEvents", 0, "Debug")
+	--debugPrint(msg, "ScanFinish", "PerformFinishEvents", 0, "Debug")
 
 	--Sound
 	PlayCompleteSound()
@@ -292,4 +292,4 @@ function private.ConfigChanged()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 4828 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5159 $")

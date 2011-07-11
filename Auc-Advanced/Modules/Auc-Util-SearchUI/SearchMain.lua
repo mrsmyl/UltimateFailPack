@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: SearchMain.lua 5085 2011-02-23 05:07:41Z kandoko $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: SearchMain.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This Addon provides a Search tab on the AH interface, which allows
@@ -218,7 +218,7 @@ function lib.RescanAuctionHouse(name, minUseLevel, maxUseLevel, invTypeIndex, cl
 	if name and name:match("^(|c%x+|Hitem.+|h%[.+%])") then
 		--look up the itemlink info or pass it as a plain text if no info is returned
 		name, _, qualityIndex, _, minUseLevel, itemType, itemSubType, _ = GetItemInfo(name)
-		
+
 		for catId, catName in pairs(AucAdvanced.Const.CLASSES) do
 			if catName == itemType then
 				classIndex = catId
@@ -233,7 +233,7 @@ function lib.RescanAuctionHouse(name, minUseLevel, maxUseLevel, invTypeIndex, cl
 		end
 	end
 
-	if name then		
+	if name then
 		if AucAdvanced.Scan.IsScanning() or AucAdvanced.Scan.IsPaused() then
 			AucAdvanced.Scan.StartPushedScan(name, minUseLevel, maxUseLevel, invTypeIndex, classIndex, subclassIndex, isUsable, qualityIndex)
 		else
@@ -832,7 +832,7 @@ function private.purchaseall()
 		local buyout = data[5]
 		local reason = data[7]
 		local price = 0
-	
+
 		if strmatch(reason, ":buy") then
 			price = buyout
 		elseif strmatch(reason, ":bid") then
@@ -969,7 +969,7 @@ function lib.LoadCurrent()
 		lib.LoadSearch()
 		return
 	end
-		
+
 	local existing = AucAdvancedData.UtilSearchUiData.SavedSearches[name]
 	if not existing then
 		hasUnsaved = true
@@ -1413,12 +1413,18 @@ function lib.MakeGuiConfig()
 			end
 			ChatEdit_InsertLink(link)
 		elseif IsAltKeyDown() then --Search for the item in browse tab.
-			local name = gui.sheet.rows[row][index]:GetText()
-			if not name then
+			local link = gui.sheet.rows[row][index]:GetText()
+			if not link then
 				return
 			end
-			name = GetItemInfo(name)
-			QueryAuctionItems(name)
+			local itemName = GetItemInfo(link)
+			if not itemName then
+				return
+			end
+			AuctionFrameBrowse_Reset(BrowseResetButton)
+			AuctionFrameBrowse.page = 0
+			BrowseName:SetText(itemName)
+			AuctionFrameBrowse_Search()
 		end
 	end
 	--records the column width changes
@@ -1501,7 +1507,7 @@ function lib.MakeGuiConfig()
 			local searcher = gui.config.selectedTab
 			if lib.Searchers[searcher].Rescan then
 				gui.Rescan:Show()
-				gui.Rescan:SetScript("OnClick", function() 
+				gui.Rescan:SetScript("OnClick", function()
 									if flagRescan then
 										flagRescan = nil
 										CooldownFrame_SetTimer(private.gui.Rescan.frame, GetTime(), 0, 0)
@@ -1532,12 +1538,12 @@ function lib.MakeGuiConfig()
 	gui.Rescan:Hide()
 	gui.Rescan.TooltipText = "Refresh the Auction House snapshot, then search\nClick again to cancel"
 	gui.Rescan:SetScript("OnEnter", showTooltipText)
-	gui.Rescan:SetScript("OnLeave", hideTooltip)	
+	gui.Rescan:SetScript("OnLeave", hideTooltip)
 	--animation
 	gui.Rescan.frame = CreateFrame("Cooldown", nil, gui.Rescan, "CooldownFrameTemplate")
 	gui.Rescan.frame:SetAllPoints(gui.Rescan)
-			
-	
+
+
 	gui:AddCat("Welcome")
 
 	id = gui:AddTab("About")
@@ -1815,7 +1821,7 @@ if LibStub then
 	else
 		sideIcon = "Interface\\AddOns\\Auc-Util-SearchUI\\Textures\\SearchUIIcon"
 	end
-	
+
 	local LibDataBroker = LibStub:GetLibrary("LibDataBroker-1.1", true)
 	if LibDataBroker then
 		private.LDBButton = LibDataBroker:NewDataObject("Auc-Util-SearchUI", {
@@ -1823,13 +1829,13 @@ if LibStub then
 					icon = sideIcon,
 					OnClick = function(self, button) lib.Toggle(self, button) end,
 				})
-		
+
 		function private.LDBButton:OnTooltipShow()
 			self:AddLine("Auction SearchUI",  1,1,0.5, 1)
 			self:AddLine("Allows you to perform searches on the Auctioneer auction cache snapshot, even when away from the Auction House",  1,1,0.5, 1)
 			self:AddLine("|cff1fb3ff".."Click|r to open the Search UI.",  1,1,0.5, 1)
 		end
-		
+
 		function private.LDBButton:OnEnter()
 			GameTooltip:SetOwner(self, "ANCHOR_NONE")
 			GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
@@ -1837,7 +1843,7 @@ if LibStub then
 			private.LDBButton.OnTooltipShow(GameTooltip)
 			GameTooltip:Show()
 		end
-		
+
 		function private.LDBButton:OnLeave()
 			GameTooltip:Hide()
 		end
@@ -2130,7 +2136,7 @@ function private.OnUpdate(self, elapsed)
 		flagScanStats = false
 		lib.NotifyCallbacks("postscanupdate")
 	end
-	
+
 	if flagRescan and private.gui and private.gui.Rescan.frame:IsShown() then
 		--if scan still in progress, keep the button churnin'
 		if flagRescan + 2.5 < GetTime() then
@@ -2143,11 +2149,11 @@ function private.OnUpdate(self, elapsed)
 			CooldownFrame_SetTimer(private.gui.Rescan.frame, GetTime(), 0, 0)
 			private.gui.Search:Enable()
 			lib.PerformSearch()
-		end	
+		end
 	end
 end
 
 private.updater = CreateFrame("Frame", nil, UIParent)
 private.updater:SetScript("OnUpdate", private.OnUpdate)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearchMain.lua $", "$Rev: 5085 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearchMain.lua $", "$Rev: 5159 $")

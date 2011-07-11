@@ -1,6 +1,6 @@
 --[[
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: BarkerManifest.lua 3581 2008-10-11 12:36:19Z Norganna $
 	URL: http://enchantrix.org/
 
@@ -105,4 +105,4 @@ function manifest.Validate()
 	return true
 end
 
-EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix-Barker/BarkerManifest.lua $", "$Rev: 3581 $")
+EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Enchantrix-Barker/BarkerManifest.lua $", "$Rev: 3581 $")

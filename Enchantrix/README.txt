@@ -1,4 +1,4 @@
-Enchantrix v5.11.5146
+Enchantrix v5.12.5198
 -------------------------------
 FROM: http://enchantrix.org
 

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: CoreScan.lua 5141 2011-05-04 02:58:37Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: CoreScan.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -233,11 +233,6 @@ function private.LoadScanData()
 	end
 end
 
-function lib.GetImage()
-	-- Deprecated
-	if private.LoadScanData then private.LoadScanData() end
-end
-
 function lib.LoadScanData()
 	if private.LoadScanData then private.LoadScanData() end
 end
@@ -426,6 +421,7 @@ function lib.StartScan(name, minUseLevel, maxUseLevel, invTypeIndex, classIndex,
 		private.isNoSummary = NoSummary
 		local startPage = 0
 
+		lib.SetAuctioneerQuery() -- flag the following query as coming from Auctioneer
 		QueryAuctionItems(name or "", minUseLevel or "", maxUseLevel or "",
 				invTypeIndex, classIndex, subclassIndex, startPage, isUsable, qualityIndex, GetAll)
 		if not private.curQuery then
@@ -674,30 +670,6 @@ function private.GetNextID(idList)
 	end
 	idList[1] = nextId
 	return nextId
-end
-
--- Library wrapper for private.GetScanData. Deprecated function
-function lib.GetScanData(serverKey, reserved)
-	_G.AucAdvanced.API.ShowDeprecationAlert(nil, "Direct access to the ScanData image is deprecated. Instead QueryImage, GetImageCopy or GetImageItem should be used")
-	if serverKey then
-		local realmName, faction = _G.AucAdvanced.SplitServerKey(serverKey)
-		if not realmName then
-			if serverKey == "Alliance" or serverKey == "Horde" or serverKey == "Neutral" then
-				faction = serverKey
-			else
-				error("Invalid serverKey passed to GetScanData")
-			end
-			if reserved then
-				realmName = reserved
-			else
-				realmName = GetRealmName()
-			end
-			serverKey = realmName.."-"..faction
-		end
-	else
-		serverKey = GetFaction()
-	end
-	return private.GetScanData(serverKey)
 end
 
 function lib.GetScanStats(serverKey)
@@ -970,7 +942,7 @@ local Commitfunction = function()
 			lastPause = GetTime()
 		end
 		if (not data[Const.SELLER] or data[Const.SELLER]=="") then data[Const.SELLER], entryUnresolved = "", true end
-		
+
 		if (data[Const.LINK] and not (data[Const.ILEVEL] and data[Const.ITYPE] and data[Const.ISUB] and data[Const.IEQUIP]
 				and data[Const.ITEMID] and data[Const.SUFFIX] and data[Const.FACTOR] and data[Const.ENCHANT] and data[Const.SEED])) then
 			local itemLink = data[Const.LINK]
@@ -993,7 +965,7 @@ local Commitfunction = function()
 				data[Const.IEQUIP] = idat[9]
 				data[Const.ITEMID] = idat[11]
 				data[Const.SUFFIX] = idat[12]
-				data[Const.FACTOR] = idat[13]			
+				data[Const.FACTOR] = idat[13]
 				data[Const.ENCHANT] = idat[14]
 				data[Const.SEED] = idat[15]
 			end
@@ -1001,8 +973,8 @@ local Commitfunction = function()
 
 		local i
 		for i = 1, Const.LASTENTRY, 1 do
-			if (i ~= Const.MININC and i ~= Const.BUYOUT and i ~= Const.CURBID and i ~= Const.IEQUIP and i ~= Const.AMHIGH and i ~= Const.CANUSE and i ~= Const.FLAG) then 
-				if ((not data[i]) or data[i]=="") then 
+			if (i ~= Const.MININC and i ~= Const.BUYOUT and i ~= Const.CURBID and i ~= Const.IEQUIP and i ~= Const.AMHIGH and i ~= Const.CANUSE and i ~= Const.FLAG) then
+				if ((not data[i]) or data[i]=="") then
 					missingData = true
 					entryUnresolved = true
 					if (i ~= Const.SELLER) then
@@ -1026,10 +998,10 @@ local Commitfunction = function()
 				"High Bidder %s  Can Use: %s  ID %s  Item ID %s  Suffix %s  Factor %s  Enchant %s  Seed %s\n",
 				"Texture: %s")):format(
 				data.PAGE, data.PAGEINDEX, (entryUnusable and "too broken, can not use at all") or "using with missed items blanked",
-				data[Const.LINK] or "(nil)", data[Const.COUNT] or -1, data[Const.NAME] or "(nil)", data[Const.SELLER] or "(UNKNOWN)", 
+				data[Const.LINK] or "(nil)", data[Const.COUNT] or -1, data[Const.NAME] or "(nil)", data[Const.SELLER] or "(UNKNOWN)",
 				data[Const.ULEVEL] or -1, data[Const.QUALITY] or -1, data[Const.ILEVEL] or -1,data[Const.ITYPE] or -1, data[Const.ISUB] or -1, data[Const.IEQUIP] or '(n/a)',
 				data[Const.PRICE] or -1, data[Const.CURBID] or -1, data[Const.MINBID] or -1, data[Const.MININC] or -1, data[Const.BUYOUT] or -1,
-				data[Const.TLEFT] or -1, data[Const.TIME] or "(nil)", data[Const.AMHIGH] and "Yes" or "No", 
+				data[Const.TLEFT] or -1, data[Const.TIME] or "(nil)", data[Const.AMHIGH] and "Yes" or "No",
 				(data[Const.CANUSE]==false and "Yes") or (data[Const.CANUSE] and "No" or "(nil)"), data[Const.ID] or '(nil)', data[Const.ITEMID] or '(nil)',
 				data[Const.SUFFIX] or '(nil)', data[Const.FACTOR] or '(nil)', data[Const.ENCHANT] or '(nil)', data[Const.SEED] or '(nil)', data[Const.TEXTURE] or '(nil)'))
 		end
@@ -1113,7 +1085,7 @@ local Commitfunction = function()
 	end
 	if (wasEndPagesOnly) then
 		scanSize = "TailScan-"..scanSize
-		printSummary = false
+		printSummary = get("scandata.summaryonpartial") -- todo: do we want a separate "summary on end pages only" option?
 	elseif (TempcurQuery.qryinfo.nosummary) then
 		printSummary = false
 		scanSize = "NoSum-"..scanSize
@@ -1543,7 +1515,7 @@ function private.ScanPage(nextPage, really)
 			private.curQuery.minUseLevel or "", private.curQuery.maxUseLevel or "",
 			private.curQuery.invType, private.curQuery.classIndex, private.curQuery.subclassIndex, nextPage,
 			private.curQuery.isUsable, private.curQuery.quality)
-			
+
 		_G.AuctionFrameBrowse.page = nextPage
 
 		-- The maximum time we'll wait for the pagedata to be returned to us:
@@ -1587,15 +1559,15 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 				"High Bidder %s  Can Use: %s  ID %s  Item ID %s  Suffix %s  Factor %s  Enchant %s  Seed %s\n",
 				"Texture: %s")):format(
 				page, data.PAGE, i, data.PAGEINDEX, (entryUnusable and "too broken, can not use at all") or "using with missed items blanked",
-				data[Const.LINK] or "(nil)", data[Const.COUNT] or -1, data[Const.NAME] or "(nil)", data[Const.SELLER] or "(UNKNOWN)", 
+				data[Const.LINK] or "(nil)", data[Const.COUNT] or -1, data[Const.NAME] or "(nil)", data[Const.SELLER] or "(UNKNOWN)",
 				data[Const.ULEVEL] or -1, data[Const.QUALITY] or -1, data[Const.ILEVEL] or -1,data[Const.ITYPE] or -1, data[Const.ISUB] or -1, data[Const.IEQUIP] or '(n/a)',
 				data[Const.PRICE] or -1, data[Const.CURBID] or -1, data[Const.MINBID] or -1, data[Const.MININC] or -1, data[Const.BUYOUT] or -1,
-				data[Const.TLEFT] or -1, data[Const.TIME] or "(nil)", data[Const.AMHIGH] and "Yes" or "No", 
+				data[Const.TLEFT] or -1, data[Const.TIME] or "(nil)", data[Const.AMHIGH] and "Yes" or "No",
 				(data[Const.CANUSE]==false and "Yes") or (data[Const.CANUSE] and "No" or "(nil)"), data[Const.ID] or '(nil)', data[Const.ITEMID] or '(nil)',
 				data[Const.SUFFIX] or '(nil)', data[Const.FACTOR] or '(nil)', data[Const.ENCHANT] or '(nil)', data[Const.SEED] or '(nil)', data[Const.TEXTURE] or '(nil)'))
 		end
 	end
-	
+
 
 	if (not itemData[Const.LINK]) then
 		local itemLink = GetAuctionItemLink(list, i)
@@ -1623,7 +1595,7 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 			itemData[Const.IEQUIP] = idat[9]
 			itemData[Const.ITEMID] = idat[11]
 			itemData[Const.SUFFIX] = idat[12]
-			itemData[Const.FACTOR] = idat[13]			
+			itemData[Const.FACTOR] = idat[13]
 			itemData[Const.ENCHANT] = idat[14]
 			itemData[Const.SEED] = idat[15]
 		end
@@ -1642,11 +1614,11 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 	end
 
 
-	if (not itemData[Const.NAME] or not itemData[Const.TEXTURE] or not itemData[Const.COUNT] or not itemData[Const.QUALITY] 
+	if (not itemData[Const.NAME] or not itemData[Const.TEXTURE] or not itemData[Const.COUNT] or not itemData[Const.QUALITY]
 			or not itemData[Const.CANUSE] or not itemData[Const.ULEVEL] or not itemData[Const.MINBID]
 			or not itemData[Const.MININC] or not itemData[Const.BUYOUT] or not itemData[Const.CURBID]
 			or not itemData[Const.AMHIGH] or not itemData[Const.SELLER]) then
-	
+
 		local name, texture, count, quality, canUse, level, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus
 		name, texture, count, quality, canUse, level, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus = GetAuctionItemInfo(list, i)
 		itemData[Const.NAME] = name or itemData[Const.NAME]
@@ -1660,7 +1632,7 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 		itemData[Const.MININC] = minIncrement or itemData[Const.MININC]
 		buyoutPrice = buyoutPrice or itemData[Const.BUYOUT] or 0
 		itemData[Const.BUYOUT] = buyoutPrice
-		
+
 		minBid = minBid or itemData[Const.MINBID] or 0
 		itemData[Const.MINBID] = minBid
 
@@ -1676,7 +1648,7 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 			nextBid = 1
 		end
 		itemData[Const.PRICE] = nextBid
-		itemData[Const.SELLER] = owner or itemData[Const.SELLER] 
+		itemData[Const.SELLER] = owner or itemData[Const.SELLER]
 	end
 
 	if _G.nLog then
@@ -1686,7 +1658,7 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 				morphed = true
 			end
 		end
-		
+
 		if _G.nLog and morphed then
 			itemData.MORPHED = true
 			local message
@@ -1704,19 +1676,19 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 			else
 				message = ("%s%s"):format(message, itemData[Const.LINK] or "(nil)")
 			end
-			
+
 			if itemData[Const.COUNT] ~= GetAuctionItemData[Const.COUNT] then
 				message = ("%s -- %s (%s)"):format(message, itemData[Const.COUNT] or "(nil)", GetAuctionItemData[Const.COUNT] or "(nil)")
 			else
 				message = ("%s -- %s"):format(message, itemData[Const.COUNT] or "(nil)")
 			end
-			
+
 			if itemData[Const.NAME] ~= GetAuctionItemData[Const.NAME] then
 				message = ("%s of %s (%s)"):format(message, itemData[Const.NAME] or "(nil)", GetAuctionItemData[Const.NAME] or "(nil)")
 			else
 				message = ("%s of %s"):format(message, itemData[Const.NAME] or "(nil)")
 			end
-			
+
 			if itemData[Const.SELLER] ~= GetAuctionItemData[Const.SELLER] then
 				message = ("%s sold by %s (%s)\n"):format(message, itemData[Const.SELLER] or "(UNKNOWN)", GetAuctionItemData[Const.SELLER] or "(UNKNOWN)")
 			else
@@ -1727,11 +1699,11 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 			while pos <= #Const.ScanPosLabels do
 				if (pos ~= Const.SELLER and pos ~= Const.NAME and pos ~= Const.COUNT and pos ~= Const.LINK) then
 					if itemData[pos] ~= GetAuctionItemData[pos] then
-						message = ("%s%s %s (%s), "):format(message, itemData[pos] or "(nil)", GetAuctionItemData[pos] or "(nil)")
+						message = ("%s%s (%s), "):format(message, itemData[pos] or "(nil)", GetAuctionItemData[pos] or "(nil)")
 					else
-						message = ("%s%s %s, "):format(message, itemData[pos] or "(nil)")
+						message = ("%s%s, "):format(message, itemData[pos] or "(nil)")
 					end
-		
+
 					printed = printed + 1
 					if (printed % 5)==0 then message = message.."\n" end
 				end
@@ -1740,7 +1712,7 @@ function private.GetAuctionItem(list, page, i, itemLinksTried, itemData)
 			_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_ERROR, "GetAuctionItem detected changing auction.", message)
 		end
 	end
-	
+
 	return itemData
 end
 
@@ -1843,7 +1815,7 @@ local StorePageFunction = function()
 	if not private.curPages then
 		private.curPages = {}
 	end
-	
+
 
 	if (_G.nLog) then
 		_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, ("StorePage For Page %d Started %fs after Query Start"):format(page, startTime - queryStarted), ("StorePage (Page %d) Called\n%f seconds have elapsed since scan start"):format(page, startTime - queryStarted))
@@ -1897,7 +1869,7 @@ local StorePageFunction = function()
 
 	local storecount = 0
 	local sellerOnly = true
-	
+
 	local missedCounts, remissedCounts, switchCounts, mc = {}, {}, nil, nil
 	for i = 1, Const.LASTENTRY do
 		missedCounts[i] = 0
@@ -1906,7 +1878,7 @@ local StorePageFunction = function()
 	for i = 1, Const.LASTENTRY do
 		remissedCounts[i] = 0
 	end
-	
+
 	if not private.breakStorePage and (page > curQuery.qryinfo.page) then
 		local itemLinksTried = {}
 		local retries = { }
@@ -1922,7 +1894,7 @@ local StorePageFunction = function()
 						break
 					end
 				end
-			end 
+			end
 
 			local itemData = private.GetAuctionItem("list", page, i, itemLinksTried)
 
@@ -2020,10 +1992,10 @@ local StorePageFunction = function()
 							missingMap = missingMap.."-"
 						end
 					end
-					
-					_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, 
+
+					_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO,
 						("StorePage Retry Successful Page %d"):format(page),
-						("Page: %d\nRetry Count: %d\nRecords Returned: %d\nRecords Left: %d\nPage Elapsed Time: %.2fs\nResolved:\n %s\nRemaining Unresolved:\n %s\nSeller Only Remaining: %s,   Wait on Only Seller: %s"):format(page, tryCount, 
+						("Page: %d\nRetry Count: %d\nRecords Returned: %d\nRecords Left: %d\nPage Elapsed Time: %.2fs\nResolved:\n %s\nRemaining Unresolved:\n %s\nSeller Only Remaining: %s,   Wait on Only Seller: %s"):format(page, tryCount,
 							#retries - #newRetries, #newRetries, GetTime() - startTime, resolvedMap, missingMap, sellerOnly and "True" or "False", get("core.scan.sellernamedelay") and "True" or "False"))
 				end
 				-- Found at least one.  Reset retry delay.
@@ -2051,26 +2023,26 @@ local StorePageFunction = function()
 			end
 			readCount = readCount + 1
 			-- Put it to scan and let the commit routine deal with it.
-			if (not i[2][Const.SELLER] and not i[2][Const.LINK]) then 
-				i[2][Const.SELLER] = "" 
+			if (not i[2][Const.SELLER] and not i[2][Const.LINK]) then
+				i[2][Const.SELLER] = ""
 				all_missed = all_missed + 1
-			elseif (not i[2][Const.SELLER] and not i[2][Const.ITEMID]) then 
-				i[2][Const.SELLER] = "" 
+			elseif (not i[2][Const.SELLER] and not i[2][Const.ITEMID]) then
+				i[2][Const.SELLER] = ""
 				ld_and_names_missed = ld_and_names_missed + 1
 			elseif (not i[2][Const.SELLER]) then
-				i[2][Const.SELLER] = "" 
+				i[2][Const.SELLER] = ""
 				names_missed = names_missed + 1
-			elseif (not i[2][Const.LINK]) then 
+			elseif (not i[2][Const.LINK]) then
 				links_missed = links_missed + 1
 			elseif (not i[2][Const.ITEMID]) then
 				link_data_missed = link_data_missed + 1
 			end
 			tinsert(curScan, i[2])
-		end		
-		
+		end
+
 		if _G.nLog and #retries > 0 then
 			_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, ("StorePage Incomplete Resolution of Page %d"):format(page),
-				("Page: %d\nRetries Setting: %d\nUnresolved Entries: %d\nMissing Everything: %d, Just Names: %d, Just Links (and link data): %d, Names and Link Data: %d, Link Data: %d"):format(page, 
+				("Page: %d\nRetries Setting: %d\nUnresolved Entries: %d\nMissing Everything: %d, Just Names: %d, Just Links (and link data): %d, Names and Link Data: %d, Link Data: %d"):format(page,
 				maxTries, #retries, all_missed, names_missed, links_missed, ld_and_names_missed, link_data_missed ))
 		end
 
@@ -2082,8 +2054,8 @@ local StorePageFunction = function()
 			curQuery.pageError = true
 		end
 	end
-	
-	
+
+
 	if isGetAll then
 		for _, frame in pairs(EventFramesRegistered) do
 			frame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
@@ -2095,7 +2067,7 @@ local StorePageFunction = function()
 		EventFramesRegistered=nil
 	end
 
-	
+
 	-- Just updated the page if it was a new page, so record it as latest page.
 	if (page > curQuery.qryinfo.page) then
 		curQuery.qryinfo.page = page
@@ -2138,14 +2110,14 @@ local StorePageFunction = function()
 				end
 			end
 			local wasEndOnly = false
-			if (incomplete) then
-				wasEndOnly = (curPages[maxPages-1] and true) or false
-				for i = 0, maxPages-3 do
-					if not curPages[i] then
+			if incomplete and curPages[maxPages-1] then
+				wasEndOnly = true
+				for i = 1, maxPages-3 do
+					if curPages[i] then
 						wasEndOnly = false
 						break
 					end
-				end		
+				end
 			end
 			elapsed = GetTime() - private.scanStarted - private.totalPaused
 			private.UpdateScanProgress(nil, totalAuctions, #curScan, elapsed, page+2, maxPages, curQuery)
@@ -2156,7 +2128,7 @@ local StorePageFunction = function()
 	RunTime = RunTime + endTime-lastPause
 	private.storeTime = (private.storeTime or 0) + RunTime
 	if (_G.nLog) then
-		_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, ("StorePage Page %d Complete (%fs)"):format(page, RunTime), 
+		_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, ("StorePage Page %d Complete (%fs)"):format(page, RunTime),
 		("Query Elapsed: %fs\nThis Page Store Elapsed: %fs\nThis Page Code Execution Time: %fs"):format(endTime-queryStarted, endTime-startTime, RunTime))
 	end
 end
@@ -2398,6 +2370,11 @@ end
 private.CanSend = CanSendAuctionQuery
 
 function QueryAuctionItems(name, minLevel, maxLevel, invTypeIndex, classIndex, subclassIndex, page, isUsable, qualityIndex, GetAll, ...)
+	if not private.isAuctioneerQuery and not get("core.scan.scanallqueries")then
+		-- Optional bypass to handle compatibility problems with other AddOns
+		return private.Hook.QueryAuctionItems(name, minLevel, maxLevel, invTypeIndex, classIndex, subclassIndex, page, isUsable, qualityIndex, GetAll, ...)
+	end
+	private.isAuctioneerQuery = nil
 	if private.warnTaint then
 		_print("\nAuctioneer:\n  WARNING, The CanSendAuctionQuery() function was tainted by the addon: {{"..private.warnTaint.."}}.\n  This may cause minor inconsistencies with scanning.\n  If possible, adjust the load order to get me to load first.\n ")
 		private.warnTaint = nil
@@ -2463,6 +2440,11 @@ function QueryAuctionItems(name, minLevel, maxLevel, invTypeIndex, classIndex, s
 		private.Hook.QueryAuctionItems(
 			name or "", minLevel or "", maxLevel or "", invTypeIndex, classIndex, subclassIndex,
 			page, isUsable, qualityIndex, GetAll, ...))
+end
+
+-- Function to indicate that the next call to QueryAuctionItems comes from Auctioneer itself.
+function lib.SetAuctioneerQuery()
+	private.isAuctioneerQuery = true
 end
 
 function lib.SetPaused(pause)
@@ -2848,4 +2830,4 @@ end
 internal.Scan.Logout = lib.Logout
 internal.Scan.AHClosed = lib.AHClosed
 
-_G.AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreScan.lua $", "$Rev: 5141 $")
+_G.AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CoreScan.lua $", "$Rev: 5184 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: CoreBuy.lua 5104 2011-03-10 20:45:19Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: CoreBuy.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -67,7 +67,19 @@ local ErrorText = {
 	InvalidBuyout = "Buyout is invalid",
 	NoItem = "Unable to retrieve info for this item",
 }
-lib.ErrorText = ErrorText
+-- lib.GetErrorText shall be expected to always return a string
+function lib.GetErrorText(code)
+	if not code then
+		return "No error"
+	end
+	local text = ErrorText[code]
+	if text then
+		return text
+	end
+	code = tostring(code)
+	debugPrint("Error code without matching ErrorText: "..code, "CorePost", "Unknown Errorcode", "Warning")
+	return "Unknown Errorcode ("..code..")"
+end
 
 private.BuyRequests = {}
 private.PendingBids = {}
@@ -696,4 +708,4 @@ private.Prompt.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-Frien
 private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreBuy.lua $", "$Rev: 5104 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CoreBuy.lua $", "$Rev: 5159 $")

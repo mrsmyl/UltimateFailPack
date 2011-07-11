@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: Swatter.lua 303 2011-04-06 18:55:54Z brykrys $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: Swatter.lua 305 2011-05-18 08:01:16Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -41,7 +41,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="5.11.5146"
+Swatter.Version="5.12.5198"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "5.1.DEV"
 end
@@ -73,7 +73,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 303 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 305 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -696,5 +696,3 @@ SlashCmdList["SWATTER"] = function(msg)
 		chat("Swatter errors have been cleared")
 	end
 end
-
-addSlideIcon()

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Snatch
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: SearcherSnatch.lua 5054 2010-12-28 05:17:38Z kandoko $
 	URL: http://auctioneeraddon.com/
 
@@ -641,4 +641,4 @@ function private.refreshDisplay()
 	frame.pctBox.help:SetText(format("Buy as percent of %s value", get("snatch.price.model") or "market") )
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherSnatch.lua $", "$Rev: 5054 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearcherSnatch.lua $", "$Rev: 5054 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Button module
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: ScanButton.lua 4854 2010-08-22 03:55:16Z kandoko $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: ScanButton.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a textual scan progress
@@ -360,7 +360,7 @@ function private.play()
 		AucAdvanced.Scan.SetPaused(false)
 	elseif not AucAdvanced.Scan.IsScanning() then
 		if #queue == 0 then queue = private.checkedFrames() end --check for user selected frames
-		debugPrint(("play: queue count=%i"):format(#queue), "ScanButton", "play", 0, "Debug")
+		--debugPrint(("play: queue count=%i"):format(#queue), "ScanButton", "play", 0, "Debug")
 		if #queue > 0  then
 			if AucAdvanced.Settings.GetSetting("util.scanbutton.message") then print("Starting search on filter: |CFFFFFF00", CLASS_FILTERS[queue[1]]) end
 			AucAdvanced.Scan.StartScan("", "", "", nil, queue[1], nil, nil, nil)
@@ -543,4 +543,4 @@ function private.AuctionFrameFilters_UpdateClasses()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-ScanButton/ScanButton.lua $", "$Rev: 4854 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-ScanButton/ScanButton.lua $", "$Rev: 5159 $")

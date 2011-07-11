@@ -18,7 +18,7 @@ end
 
 --[[
 	Auctioneer - Stat's API Example module
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: Example.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 

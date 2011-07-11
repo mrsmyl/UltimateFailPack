@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - iLevel Standard Deviation Statistics module
-	Version: 5.7.4568 (KillerKoala)
-	Revision: $Id: iLevel.lua 4991 2010-11-01 09:40:49Z brykrys $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: iLevel.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -530,4 +530,4 @@ function private.PackStats(data)
 	return concat(tmp, ",", 1, ntmp)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Stat-iLevel/iLevel.lua $", "$Rev: 4991 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Stat-iLevel/iLevel.lua $", "$Rev: 5159 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Start module
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: ScanStart.lua 4828 2010-07-21 22:20:18Z Prowell $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: ScanStart.lua 5159 2011-05-14 19:18:45Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a few event functionalities
@@ -45,7 +45,7 @@ function lib.Processor(callbackType, ...)
 	if blnDebug then
 		local msg = ("CallbackType=%s, IsBlocked=%s, IsScanning=%s"):format(callbackType, tostring(AucAdvanced.API.IsBlocked()),
 			tostring(AucAdvanced.Scan.IsScanning()))
-		debugPrint(msg, "ScanStart Processor", callbackType, 0, "Debug")
+		--debugPrint(msg, "ScanStart Processor", callbackType, 0, "Debug")
 	end
 	if (callbackType == "scanstart") then
 		if not AucAdvanced.Settings.GetSetting("util.scanstart.activated") then
@@ -85,13 +85,13 @@ end
 function private.ScanStart(scanSize, querysig, query)
 	if blnDebug then
 		local msg = ("scanSize=%s, querysig=%s"):format(scanSize, querysig)
-		debugPrint(msg, "ScanStart Handler", "Scan Started", 0, "Debug")
+		--debugPrint(msg, "ScanStart Handler", "Scan Started", 0, "Debug")
 	end
 
 	if (scanSize == "Full" or scanSize == "Partial") then
 		--Message
 		local scanId = scanSize:lower()
-		debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".message.channel"), "ScanStart Handler", "Chat", 0, "Debug")
+		--debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".message.channel"), "ScanStart Handler", "Chat", 0, "Debug")
 		if AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".message.channel") == "none" then
 			--don't do anything
 		elseif AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".message.channel") == "GENERAL" then
@@ -102,17 +102,17 @@ function private.ScanStart(scanSize, querysig, query)
 
 		--Emote
 		if not (AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".emote") == "none") then
-			debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".emote"), "ScanStart Handler", "Performing EMOTE", 0, "Debug")
+			--debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".emote"), "ScanStart Handler", "Performing EMOTE", 0, "Debug")
 			DoEmote(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".emote"))
 		end
 
 		--Set AFK and/or DND
 		if (AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".dnd.activated")) then
-			debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".dnd.text"), "ScanStart Handler", "Setting DND", 0, "Debug")
+			--debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".dnd.text"), "ScanStart Handler", "Setting DND", 0, "Debug")
 			if not UnitIsDND("player") then SendChatMessage(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".dnd.text"), "DND") end
 		end
 		if (AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".afk.activated")) then
-			debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".afk.text"), "ScanStart Handler", "Setting AFK", 0, "Debug")
+			--debugPrint(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".afk.text"), "ScanStart Handler", "Setting AFK", 0, "Debug")
 			if not UnitIsAFK("player") then SendChatMessage(AucAdvanced.Settings.GetSetting("util.scanstart."..scanId..".afk.text"), "AFK") end
 		end
 	end
@@ -214,4 +214,4 @@ function private.ConfigChanged()
 	if AucAdvanced.Settings.GetSetting("util.scanstart.debug") then blnDebug = true end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-ScanStart/ScanStart.lua $", "$Rev: 4828 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-ScanStart/ScanStart.lua $", "$Rev: 5159 $")

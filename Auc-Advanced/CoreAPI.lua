@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Advanced
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: CoreAPI.lua 5141 2011-05-04 02:58:37Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: CoreAPI.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -892,7 +892,7 @@ function lib.GetSigFromLink(link)
 
 	if suffix and suffix ~= "0" then
 		local factor = "0"
-		if suffix and suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
+		if suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
 			local nseed = tonumber(seed)
 			if nseed then
 				factor = ("%d"):format(bitand(nseed, 65535)) -- here format is faster than tostring
@@ -918,11 +918,11 @@ end
 -- Creates an item link from an AucAdvanced signature
 function lib.GetLinkFromSig(sig)
 	local id, suffix, factor, enchant = strsplit(":", sig)
-
-	local itemstring = format("item:%d:%d:0:0:0:0:%d:%d:0", id, enchant or 0, suffix or 0, factor or 0)
+	local itemstring = format("item:%s:%s:0:0:0:0:%s:%s:80:0", id, enchant or "0", suffix or "0", factor or "0")
 	local name, link = GetItemInfo(itemstring)
-	link = SanitizeLink(link)
-	return link, name -- name is ignored by most calls
+	if link then
+		return SanitizeLink(link), name -- name is ignored by most calls
+	end
 end
 
 -- Decodes an AucAdvanced signature into numerical values
@@ -936,6 +936,64 @@ function lib.DecodeSig(sig)
 	factor = tonumber(factor) or 0
 	enchant = tonumber(enchant) or 0
 	return id, suffix, factor, enchant
+end
+
+-- A Short Sig is the same format as a normal Sig, but contains at most 3 fields - ID:Suffix:Factor
+-- the functions GetLinkFromSig and DecodeSig will still work on a SSig
+-- Used by Stat modules for storage/packing of saved data
+-- for speed we assume that link has already been verified as a valid item link
+function lib.GetShortSigFromLink(link)
+	local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed = strsplit(":", link)
+	if suffix and suffix ~= "0" then
+		if suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
+			local nseed = tonumber(seed)
+			if nseed then
+				local nfactor = bitand(nseed, 65535)
+				if nfactor ~= 0 then
+					-- the following construction appears to be faster
+					-- than just using a single, more complicated, format call
+					return id..":"..suffix..":"..format("%d", nfactor)
+				end
+			end
+		end
+		return id..":"..suffix
+	end
+	return id
+end
+
+function lib.SigToShortSig(sig)
+	-- strip off enchant field, then strip off any trailing "0"
+	local id, suffix, factor, enchant = strsplit(sig)
+	if not enchant then -- already in ssig format
+		return sig
+	end
+	if factor and factor ~= "0" then
+		return id..":"..suffix..":"..factor
+	elseif suffix and suffix ~= "0" then
+		return id..":"..suffix
+	end
+	return id
+end
+
+-- Returns id (number), property (string)
+-- Used by Stat modules for storage/packing of saved data
+-- for speed we assume that link has already been verified as a valid item link
+function lib.GetPropertyFromLink(link)
+	local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed = strsplit(":", link)
+	id = tonumber(id)
+	if suffix and suffix ~= "0" then
+		if suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
+			local nseed = tonumber(seed)
+			if nseed then
+				local nfactor = bitand(nseed, 65535)
+				if nfactor ~= 0 then
+					return id, suffix.."x"..format("%d", nfactor)
+				end
+			end
+		end
+		return id, suffix
+	end
+	return id, "0"
 end
 
 -------------------------------------------------------------------------------
@@ -1055,4 +1113,4 @@ do
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreAPI.lua $", "$Rev: 5141 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CoreAPI.lua $", "$Rev: 5184 $")

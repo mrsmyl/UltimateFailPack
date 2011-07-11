@@ -5,7 +5,7 @@
 
 	AddOn: EnchantrixBarker
 	Revision: $Id: BarkerStrings.lua 5073 2011-01-16 00:38:55Z ccox $
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 
 	License:
 		This program is free software; you can redistribute it and/or

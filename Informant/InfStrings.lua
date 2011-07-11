@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: Informant
-	Revision: $Id: InfStrings.lua 5078 2011-01-27 02:02:43Z Nechckn $
-	Version: 5.11.5146 (DangerousDingo)
+	Revision: $Id: InfStrings.lua 5194 2011-07-04 17:46:21Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -365,7 +365,7 @@ InformantLocalizations = {
 		["INF_Help_CmdDefaultAll"]	= "Alle Informant Optionen wurden auf die Grundeinstellungen zurückgesetzt";
 		["INF_Help_CmdDefaultSingle"]	= "Informants %s Option wurde auf die Grundeinstellung zurückgesetzt";
 		["INF_Help_CmdDisable"]	= "Ausschalten";
-		["INF_Help_CmdEmbed"]	= "einbinden";
+		["INF_Help_CmdEmbed"]	= "Einbinden";
 		["INF_Help_CmdHeader"]	= "Informants Befehle:";
 		["INF_Help_CmdHelp"]	= "Hilfe";
 		["INF_Help_CmdHelpDisable"]	= "Verhindert, dass Informant automatisch beim nächsten Einloggen geladen wird";
@@ -395,6 +395,7 @@ InformantLocalizations = {
 		["INF_Help_On"]	= "An";
 		["INF_Help_OptLocale"]	= "<Sprache>";
 		["INF_Help_ShowBindingTTHeading"]	= "Zeige Bindungsverhalten im Tooltip";
+		["INF_Help_ShowBindingTTText"]	= "Informationen zum Bindungsverhalten eines Gegenstandes (Bei Benutzung gebunden, Beim Ausrüsten gebunden, Beim Aufheben gebunden) und spezielle Bindungsverhalten (Accountgebunden, Gildengebunden), können auf Wunsch in Informants Tooltip angezeigt werden. Diese Option ist Standardmäßig deaktiviert, da diese Information vor dem Anlegen eines Gegenstandes auch im Blizzard Tooltip verfügbar ist.";
 		["INF_Help_Toggle"]	= "Umschalten";
 		["INF_Help_Welcome"]	= "Informant V%s geladen";
 		["INF_Help_WhatIs"]	= "Was ist Informant?";
@@ -402,6 +403,7 @@ InformantLocalizations = {
 
 		-- Section: HelpTooltip
 		["INF_HelpTooltip_ActivateProfile"]	= "Wähle das Profil das Du für diesen Charackter benutzen willst";
+		["INF_HelpTooltip_AltChatLink"]	= "Ermöglicht einen Alt+Linksklick auf einen Link um den Tooltip zu öffnen";
 		["INF_HelpTooltip_AutoUpdate"]	= "Erlaubt Informant den Inhalt Deiner Taschen und das Inventar des Händlers für Updates zu Scannen";
 		["INF_Helptooltip_DefaultProfile"]	= "Zurücksetzen der Einstellungen für das aktuelle Profil";
 		["INF_HelpTooltip_DeleteProfile"]	= "Löscht das aktuelle Profil";
@@ -427,6 +429,7 @@ InformantLocalizations = {
 
 		-- Section: Interface
 		["INF_Interface_ActivateProfile"]	= "Aktiviere ein gegenwärtiges Profil";
+		["INF_Interface_AltChatLink"]	= "Öffnet Tooltips vom Chat mit Alt+Linksklick";
 		["INF_Interface_AutoUpdate"]	= "Die Iteminformationen automatisch bei Händlern aktualisieren";
 		["INF_Interface_BindingHeader"]	= "Informant";
 		["INF_Interface_BindingTitle"]	= "Schließe das Informationsfenster";
@@ -676,6 +679,7 @@ InformantLocalizations = {
 
 		-- Section: HelpTooltip
 		["INF_HelpTooltip_ActivateProfile"]	= "Select the profile that you wish to use for this character";
+		["INF_HelpTooltip_AltChatLink"]	= "Enables opening a tooltip by left-clicking on an item link in chat while the Alt key is pressed.";
 		["INF_HelpTooltip_AutoUpdate"]	= "Allow Informant to scan your bags and merchant inventory for updates";
 		["INF_Helptooltip_DefaultProfile"]	= "Reset all settings for the current profile";
 		["INF_HelpTooltip_DeleteProfile"]	= "Deletes the currently selected profile";
@@ -701,6 +705,7 @@ InformantLocalizations = {
 
 		-- Section: Interface
 		["INF_Interface_ActivateProfile"]	= "Activate a current profile";
+		["INF_Interface_AltChatLink"]	= "Open tooltips from chat links with Alt left-clicks";
 		["INF_Interface_AutoUpdate"]	= "Automatically update item information at merchants";
 		["INF_Interface_BindingHeader"]	= "Informant";
 		["INF_Interface_BindingTitle"]	= "Toggle Information Window";
@@ -1204,10 +1209,10 @@ InformantLocalizations = {
 	frFR = {
 
 		-- Section: Help
-		["INF_Help_ChatProfileDeleted"]	= "Supprimer le profil :";
-		["INF_Help_ChatProfileReset"]	= "Réinitialisation du profil :";
-		["INF_Help_ChatProfileSaved"]	= "Sauvegarder le profil :";
-		["INF_Help_ChatProfileUsing"]	= "Utiliser le profil :";
+		["INF_Help_ChatProfileDeleted"]	= "Profil supprimé :";
+		["INF_Help_ChatProfileReset"]	= "Profil réinitialisé :";
+		["INF_Help_ChatProfileSaved"]	= "Profil sauvegardé :";
+		["INF_Help_ChatProfileUsing"]	= "Profil utilisé :";
 		["INF_Help_CmdClearAll"]	= "tout";
 		["INF_Help_CmdDefault"]	= "par défaut";
 		["INF_Help_CmdDefaultAll"]	= "Toutes les options d'Informant ont été réinitialisées";
@@ -1225,7 +1230,7 @@ InformantLocalizations = {
 		["INF_Help_CmdSetLocale"]	= "Mettre %s à '%s'";
 		["INF_Help_CmdShowILevel"]	= "voir-ilevel";
 		["INF_Help_CmdShowLink"]	= "voir-lien";
-		["INF_Help_CmdShowStack"]	= "Voir-Pile";
+		["INF_Help_CmdShowStack"]	= "voir-pile";
 		["INF_Help_CmdShowUsage"]	= "voir-utilisation";
 		["INF_Help_CmdShowVendor"]	= "voir-vendeur";
 		["INF_Help_CmdShowVendorBuy"]	= "voir-vendeur-achat";
@@ -1242,6 +1247,8 @@ InformantLocalizations = {
 		["INF_Help_Off"]	= "Arrêt";
 		["INF_Help_On"]	= "Marche";
 		["INF_Help_OptLocale"]	= "<langue>";
+		["INF_Help_ShowBindingTTHeading"]	= "Montrer le comportement de liage de l'objet dans l'infobulle";
+		["INF_Help_ShowBindingTTText"]	= "Le comportement de liage d'un objet (Lié quand utilisé, Lié quand équipé, Lié quand ramassé) et le comportement de liage spécial (Lié au compte, Lié à la guilde) peuvent être affichés dans l'infobulle d'Informant. Par défaut, cette option est désactivée car l'information est aussi présente dans l'infobulle de Blizzard avant le liage d'un objet.";
 		["INF_Help_Toggle"]	= "Changer";
 		["INF_Help_Welcome"]	= "Informant v%s chargé";
 		["INF_Help_WhatIs"]	= "Qu'est-ce qu'Informant ?";
@@ -1257,6 +1264,7 @@ InformantLocalizations = {
 		["INF_HelpTooltip_ModTTShow"]	= "Ceci empêche l'affichage du tooltip supplémentaire d'Informant sauf si la touche Alt est appuyée.";
 		["INF_HelpTooltip_ProfileName"]	= "Entrez le nom du profil que vous souhaitez créer";
 		["INF_HelpTooltip_ProfileSave"]	= "Cliquez sur ce bouton pour créer ou écraser le nom de profil spécifié";
+		["INF_HelpTooltip_ShowBindinginTT"]	= "Montrer comment un objet est lié (quand utilisé, quand équipé, quand ramassé, etc.) dans l'infobulle d'Informant";
 		["INF_HelpTooltip_ShowCrafted"]	= "En activant cette option entraînera des informateurs pour afficher l'élément conçu et c'est Évaluateur, Désenchantement et les valeurs du vendeur (le cas échéant) dans l'encadré d'aide de la recette, plan, schématique, de patrons, et les info-bulles Point Design.";
 		["INF_HelpTooltip_ShowIlevel"]	= "Affichage ou non du niveau de l'objet (ceci est différent du niveau pour utiliser l'objet)";
 		["INF_HelpTooltip_ShowLink"]	= "Permet l'affichage du lien d'un objet";
@@ -1298,9 +1306,18 @@ InformantLocalizations = {
 		["INF_Interface_InfWinVendorCount"]	= "Disponible auprès de %d commerçants :";
 		["INF_Interface_InfWinVendorName"]	= "%s";
 		["INF_Interface_ModTTShow"]	= "Afficher uniquement les tooltip supplémentaire si Alt est enfoncé";
+		["INF_Interface_MTS_Alt"]	= "Quand Alt est enfoncé";
+		["INF_Interface_MTS_Always"]	= "Toujours";
+		["INF_Interface_MTS_Ctrl"]	= "Quand on appuie sur Ctrl";
+		["INF_Interface_MTS_Never"]	= "Ne jamais\n";
+		["INF_Interface_MTS_NoAlt"]	= "Lorsque Alt n'est pas pressé\n";
+		["INF_Interface_MTS_NoCtrl"]	= "Lorsque Ctrl n'est pas pressé";
+		["INF_Interface_MTS_NoShift"]	= "Lorsque le poste n'est pas pressé";
+		["INF_Interface_MTS_Shift"]	= "Quand j'appuie sur Shift";
 		["INF_Interface_ProfileName"]	= "Nouveau nom de profil";
 		["INF_Interface_SaveProfile"]	= "Sauvegarde";
 		["INF_Interface_SetupProfiles"]	= "Régler, configurer et éditer les profiles";
+		["INF_Interface_ShowBindinginTT"]	= "Voir la rubrique comportement de liaison dans les infobulles?";
 		["INF_Interface_ShowCrafted"]	= "Afficher conçu point et la valeur.";
 		["INF_Interface_ShowIlevel"]	= "Montrer le niveau de l'objet";
 		["INF_Interface_ShowLink"]	= "Montrer le lien d'un objet";
@@ -1453,6 +1470,11 @@ InformantLocalizations = {
 		["INF_Tooltip_SkillTailoring"]	= "Couture";
 		["INF_Tooltip_SkillWarlock"]	= "Sorts de Démoniste";
 		["INF_Tooltip_SkillWarrior"]	= "Compétences du Guerrier";
+		["INF_Tooltip_SoulBindEquip"]	= "Lié quand équipé";
+		["INF_Tooltip_SoulBindPickup"]	= "Lié quand ramassé";
+		["INF_Tooltip_SoulBindUse"]	= "Bind sur l'utilisation";
+		["INF_Tooltip_SpecialBindAccount"]	= "Lier au compte";
+		["INF_Tooltip_SpecialBindGuild"]	= "Bind sur Guild";
 		["INF_Tooltip_StackSize"]	= "S'empile en lot de %d";
 		["INF_Tooltip_Use"]	= "Utilisé pour : %s";
 
@@ -2007,8 +2029,12 @@ InformantLocalizations = {
 		["INF_Interface_ModTTShow"]	= "Tylko dodatkowe podpowiedzi gdy Alt jest wciśnięty";
 		["INF_Interface_MTS_Alt"]	= "Gdy klawisz Alt jest wciśnięty";
 		["INF_Interface_MTS_Always"]	= "zawsze";
+		["INF_Interface_MTS_Ctrl"]	= "Gdy klawisz Ctrl jest wciśnięty";
 		["INF_Interface_MTS_Never"]	= "nigdy";
 		["INF_Interface_MTS_NoAlt"]	= "Gdy klawisz Alt nie jest wciśnięty";
+		["INF_Interface_MTS_NoCtrl"]	= "Gdy klawisz Ctrl nie jest wciśnięty";
+		["INF_Interface_MTS_NoShift"]	= "Gdy klawisz Shift nie jest wciśnięty";
+		["INF_Interface_MTS_Shift"]	= "Gdy klawisz Shift jest wciśnięty";
 		["INF_Interface_ProfileName"]	= "Nowa nazwa profilu";
 		["INF_Interface_SaveProfile"]	= "Zapisz";
 		["INF_Interface_SetupProfiles"]	= "Opcje, Konfiguracja oraz Edycja Profili";
@@ -2303,6 +2329,7 @@ InformantLocalizations = {
 		["INF_HelpTooltip_ModTTShow"]	= "Данные от Informant отобразятся в подсказке только при нажатии Alt";
 		["INF_HelpTooltip_ProfileName"]	= "Введите имя нового профиля";
 		["INF_HelpTooltip_ProfileSave"]	= "Нажмите эту кнопку, чтобы создать или перезаписать профиль";
+		["INF_HelpTooltip_ShowBindinginTT"]	= "Покажите, как пункт связывает (по использованию, на персонаже, на Pickupt, и т.д.) в Информатор подсказка";
 		["INF_HelpTooltip_ShowCrafted"]	= "Переходя по этой причине будет Информатор, чтобы показать созданного пункта, и это оценщик, и разочаровать продавца ценностей (если применимо) в подсказке рецепта, план, Schematic, узор, и подсказок элемент дизайна.";
 		["INF_HelpTooltip_ShowIlevel"]	= "Включить отображение уровня предмета. (Не путать с минимальным уровнем игрока, необходимым для использования предмета.";
 		["INF_HelpTooltip_ShowLink"]	= "Показать в подсказке линк на предмет. Послать линк в чат из прямо из подсказки невозможно.";
@@ -2355,6 +2382,7 @@ InformantLocalizations = {
 		["INF_Interface_ProfileName"]	= "Имя профиля";
 		["INF_Interface_SaveProfile"]	= "Сохранить";
 		["INF_Interface_SetupProfiles"]	= "Настройка профилей";
+		["INF_Interface_ShowBindinginTT"]	= "Показать пункта обязательного поведения в подсказке?\n";
 		["INF_Interface_ShowCrafted"]	= "Показать созданного пункта и значения.";
 		["INF_Interface_ShowIlevel"]	= "Показать уровень предмета";
 		["INF_Interface_ShowLink"]	= "Показать линк на предмет";
@@ -2558,6 +2586,8 @@ InformantLocalizations = {
 		["INF_Help_Off"]	= "关闭";
 		["INF_Help_On"]	= "开启";
 		["INF_Help_OptLocale"]	= "<区域>";
+		["INF_Help_ShowBindingTTHeading"]	= "显示项的绑定行为提示";
+		["INF_Help_ShowBindingTTText"]	= "一个项目的灵魂绑定行为（关于使用，装备后绑定，绑定拾取绑定）和特殊约束力的行为（上户口，在公会绑定绑定）可以显示在线人的提示如果需要的话。这默认为off，因为信息可通过暴雪的提示前一项目具有约束力。";
 		["INF_Help_Toggle"]	= "勾选";
 		["INF_Help_Welcome"]	= "信息 v%s 已加载";
 		["INF_Help_WhatIs"]	= "什么是Informant？";
@@ -2574,6 +2604,7 @@ InformantLocalizations = {
 		["INF_HelpTooltip_ProfileName"]	= "输入你想创建的配置文件名。";
 		["INF_HelpTooltip_ProfileSave"]	= "点击此按钮来创建或覆盖一个特定名字的配置文件。";
 		["INF_HelpTooltip_ShowBindinginTT"]	= "在提示信息中显示物品绑定(装备绑定,拾取绑定等)";
+		["INF_HelpTooltip_ShowCrafted"]	= "打开这个将导致线人，显示制作的项目，它在新配方，规划，原理图，图案，设计项目的工具提示提示估价师，Disenchant和供应商值（如适用）。";
 		["INF_HelpTooltip_ShowIlevel"]	= "设置显示物品等级（不同于物品的使用所需等级）";
 		["INF_HelpTooltip_ShowLink"]	= "设置显示物品链接（链接无法被嵌入）";
 		["INF_HelpTooltip_ShowMerchant"]	= "在提示窗口显示出售此物品的商人数量，并在进阶窗口中显示这些商人的名字和位置";
@@ -2589,6 +2620,7 @@ InformantLocalizations = {
 
 		-- Section: Interface
 		["INF_Interface_ActivateProfile"]	= "启用目前指定的配置文件";
+		["INF_Interface_AltChatLink"]	= "在聊天链接上用 Alt 左键 打开提示窗口";
 		["INF_Interface_AutoUpdate"]	= "自动在商人处更新物品信息";
 		["INF_Interface_BindingHeader"]	= "Informant（物品助手）";
 		["INF_Interface_BindingTitle"]	= "切换信息窗口";

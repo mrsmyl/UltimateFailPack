@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: EnxUtil.lua 5141 2011-05-04 02:58:37Z Nechckn $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: EnxUtil.lua 5138 2011-05-01 02:04:22Z ccox $
 	URL: http://enchantrix.org/
 
 	General utility functions
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Enchantrix/EnxUtil.lua $", "$Rev: 5141 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Enchantrix/EnxUtil.lua $", "$Rev: 5138 $")
 
 -- Global functions
 local getItems
@@ -699,7 +699,7 @@ function createProfiler(name)
 end
 
 Enchantrix.Util = {
-	Revision			= "$Revision: 5141 $",
+	Revision			= "$Revision: 5138 $",
 
 	GetItems			= getItems,
 	GetItemType			= getItemType,

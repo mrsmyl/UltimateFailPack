@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: CoreMain.lua 5031 2010-12-05 17:18:14Z dinesh $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: CoreMain.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -80,7 +80,7 @@ function private.OnTooltip(tip, item, quantity, name, hyperlink, quality, ilvl, 
 		elseif AucAdvanced.Settings.GetSetting("ModTTShow") == "ctrl" and not IsControlKeyDown() then
 			return
 		end
-	else 
+	else
 		AucAdvanced.Settings.SetSetting("ModTTShow", "always")
 	end
 
@@ -154,26 +154,18 @@ function private.OnTooltip(tip, item, quantity, name, hyperlink, quality, ilvl, 
 end
 
 function private.ClickBagHook(hookParams, returnValue, self, button, ignoreShift)
-	--if click-hooks are disabled, do nothing
-	if (not AucAdvanced.Settings.GetSetting("clickhook.enable")) then return end
-	
-	local bag = self:GetParent():GetID()
-	local slot = self:GetID()
-
-	local link = GetContainerItemLink(bag, slot)
-
-	if (AuctionFrame and AuctionFrameBrowse and AuctionFrameBrowse:IsVisible()) then
-		if link then
-			if (button == "RightButton") and (IsAltKeyDown()) then
-				local itemType, itemID = AucAdvanced.DecodeLink(link)
-				if (itemType and itemType == "item" and itemID) then
-					local itemName = GetItemInfo(tostring(itemID))
-					if (itemName) then
-						AuctionFrameBrowse_Reset(BrowseResetButton)
-						AuctionFrameBrowse.page = 0
-						QueryAuctionItems(itemName, "", "", nil, nil, nil, nil, nil)
-						BrowseName:SetText(itemName)
-					end
+	if button == "RightButton" and IsAltKeyDown() and AucAdvanced.Settings.GetSetting("clickhook.enable") then
+		if AuctionFrame and AuctionFrameBrowse and AuctionFrameBrowse:IsVisible() then
+			local bag = self:GetParent():GetID()
+			local slot = self:GetID()
+			local link = GetContainerItemLink(bag, slot)
+			if link and link:match("item:%d") then
+				local itemName = GetItemInfo(link)
+				if itemName then
+					AuctionFrameBrowse_Reset(BrowseResetButton)
+					AuctionFrameBrowse.page = 0
+					BrowseName:SetText(itemName)
+					AuctionFrameBrowse_Search()
 				end
 			end
 		end
@@ -188,11 +180,20 @@ function private.ClickLinkHook(self, item, link, button)
 				if itemName then
 					AuctionFrameBrowse_Reset(BrowseResetButton)
 					AuctionFrameBrowse.page = 0
-					QueryAuctionItems(itemName, "", "", nil, nil, nil, nil, nil)
 					BrowseName:SetText(itemName)
+					AuctionFrameBrowse_Search()
 				end
 			end
 		end
+	end
+end
+
+local ALTCHATLINKTOOLTIP_OPEN
+function private.AltChatLinkTooltipHook(link, text, button, chatFrame)
+	if button == "LeftButton"
+	and AucAdvanced.Settings.GetSetting("core.tooltip.altchatlink_leftclick")
+	and link:sub(1, 4) == "item" then
+		return ALTCHATLINKTOOLTIP_OPEN
 	end
 end
 
@@ -205,6 +206,8 @@ function private.HookTT()
 	tooltip = AucAdvanced.GetTooltip()
 	tooltip:Activate()
 	tooltip:AddCallback(private.OnTooltip, 600)
+	tooltip:AltChatLinkRegister(private.AltChatLinkTooltipHook)
+	ALTCHATLINKTOOLTIP_OPEN = tooltip:AltChatLinkConstants()
 end
 
 function private.OnLoad(addon)
@@ -217,9 +220,9 @@ function private.OnLoad(addon)
 		hooksecurefunc("ChatFrame_OnHyperlinkShow", private.ClickLinkHook)
 
 		private.HookTT()
-		--updated saved variables format 
+		--updated saved variables format
 		if not AucAdvancedConfig["version"] then AucAdvanced.Settings.upgradeSavedVariables() end
-		
+
 		for pos, module in ipairs(AucAdvanced.EmbeddedModules) do
 			-- These embedded modules have also just been loaded
 			private.OnLoad(module)
@@ -386,4 +389,4 @@ function AucAdvanced.Debug.Assert(test, message)
 	return DebugLib.Assert(addonName, test, message)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Advanced/CoreMain.lua $", "$Rev: 5031 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Advanced/CoreMain.lua $", "$Rev: 5184 $")

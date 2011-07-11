@@ -1,7 +1,7 @@
 --[[
 	Slidebar AddOn for World of Warcraft (tm)
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: SlideMain.lua 272 2010-09-19 03:14:25Z kandoko $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: SlideMain.lua 312 2011-06-14 07:33:25Z brykrys $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -29,52 +29,10 @@
 
 local LIBRARY_VERSION_MAJOR = "SlideBar"
 local LIBRARY_VERSION_MINOR = 10
-
---[[-----------------------------------------------------------------
-
-LibStub is a simple versioning stub meant for use in Libraries.
-See <http://www.wowwiki.com/LibStub> for more info.
-LibStub is hereby placed in the Public Domain.
-Credits:
-    Kaelten, Cladhaire, ckknight, Mikk, Ammo, Nevcairiel, joshborke
-
---]]-----------------------------------------------------------------
-do
-	local LIBSTUB_MAJOR, LIBSTUB_MINOR = "LibStub", 2
-	local LibStub = _G[LIBSTUB_MAJOR]
-
-	if not LibStub or LibStub.minor < LIBSTUB_MINOR then
-		LibStub = LibStub or {libs = {}, minors = {} }
-		_G[LIBSTUB_MAJOR] = LibStub
-		LibStub.minor = LIBSTUB_MINOR
-
-		function LibStub:NewLibrary(major, minor)
-			assert(type(major) == "string", "Bad argument #2 to `NewLibrary' (string expected)")
-			minor = assert(tonumber(strmatch(minor, "%d+")), "Minor version must either be a number or contain a number.")
-
-			local oldminor = self.minors[major]
-			if oldminor and oldminor >= minor then return nil end
-			self.minors[major], self.libs[major] = minor, self.libs[major] or {}
-			return self.libs[major], oldminor
-		end
-
-		function LibStub:GetLibrary(major, silent)
-			if not self.libs[major] and not silent then
-				error(("Cannot find a library instance of %q."):format(tostring(major)), 2)
-			end
-			return self.libs[major], self.minors[major]
-		end
-
-		function LibStub:IterateLibraries() return pairs(self.libs) end
-		setmetatable(LibStub, { __call = LibStub.GetLibrary })
-	end
-end
---[End of LibStub]---------------------------------------------------
-
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/SlideBar/SlideMain.lua $","$Rev: 272 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/SlideBar/SlideMain.lua $","$Rev: 312 $","5.1.DEV.", 'auctioneer', 'libs')
 
 -- Autoconvert existing nSideBar instances to SlideBar
 if LibStub.libs.nSideBar then
@@ -169,9 +127,9 @@ function lib.AddButton(id, texture, priority, globalname, quiet, dataobj)
 			button.icon:SetTexture(dataobj.icon)
 			--check the desaturated method.  true if icon starts in a desaturated state
 			if dataobj.iconDesaturated then
-				button.icon:SetDesaturated(true)	
-			end			
-		end	
+				button.icon:SetDesaturated(true)
+			end
+		end
 	end
 	if priority or not button.priority then
 		button.priority = priority or 200
@@ -408,15 +366,15 @@ else
 			frame:UnregisterEvent("PLAYER_LOGIN")
 		elseif event == "ADDON_LOADED" and arg == "SlideBar" then
 			--removed the needlessly complex string variable system. Were not using Cvar or embeded anymore
-			if not SlideBarConfig or type(SlideBarConfig) == "string" then 
-				SlideBarConfig = {} 
+			if not SlideBarConfig or type(SlideBarConfig) == "string" then
+				SlideBarConfig = {}
 			end
 			frame:UnregisterEvent("ADDON_LOADED")
 		end
 	end)
 	frame:RegisterEvent("PLAYER_LOGIN")
 	frame:RegisterEvent("ADDON_LOADED")
-	
+
 	frame.Tab = frame:CreateTexture()
 	frame.Tab:SetTexture(0.98, 0.78, 0)
 	frame.buttons = {}
@@ -512,25 +470,25 @@ if not lib.tooltip then
 			lib.tooltip.schedule = nil
 			return
 		end
-		
+
 		if not frame.dataobj then return end
-		
+
 		if lib.tooltip:GetAlpha() > 0 then
 			-- Speed up this fade
 			UIFrameFadeOut(lib.tooltip, 0.01, 0, 0)
 			lib.tooltip:SetAlpha(0)
 		end
-		
+
 		lib.tooltip:SetOwner(frame, "ANCHOR_NONE")
 		lib.tooltip:ClearLines()
-		
+
 		if not frame.dataobj.OnTooltipShow then
 			--fake TT
 			lib.tooltip:AddLine(frame.dataobj.name)
 		else
 			frame.dataobj.OnTooltipShow(lib.tooltip)
 		end
-		
+
 		lib.tooltip:Show()
 		lib.tooltip:SetAlpha(0)
 		lib.tooltip:SetBackdropColor(0,0,0, 1)
@@ -812,7 +770,7 @@ end
 --[[Use Blizzards config frame. We do not use the Configator lib]]
 function private.GUI()
 	if frame.config then return end
-	
+
 	frame.config = CreateFrame("Frame", nil, UIParent)
 	frame.config:SetWidth(420)
 	frame.config:SetHeight(400)
@@ -857,7 +815,7 @@ function private.GUI()
 	frame.config.searchBox.help = frame.config:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	frame.config.searchBox.help:SetPoint("LEFT", frame.config.searchBox, "RIGHT", 5, 0)
 	frame.config.searchBox.help:SetText("Number of buttons before a new row is started.")
-							
+
 	frame.config.lockCheck = CreateFrame("CheckButton", "nSlideBarlockCheck", frame.config, "InterfaceOptionsCheckButtonTemplate")
 	nSlideBarlockCheckText:SetText("Lock the Bar's location")
 	frame.config.lockCheck:SetPoint("TOP", frame.config.searchBox, "BOTTOM", 0, -10)
@@ -881,9 +839,9 @@ function private.GUI()
 	frame.config.reset:SetWidth(160)
 	frame.config.reset:SetPoint("TOPLEFT",frame.config.fadeCheck, "BOTTOM", -50,-5)
 	frame.config.reset:SetText("RESET ALL SETTINGS")
-	frame.config.reset:SetScript("OnClick", function() 
-						      SlideBarConfig = {} 
-						      lib.ApplyLayout() 
+	frame.config.reset:SetScript("OnClick", function()
+						      SlideBarConfig = {}
+						      lib.ApplyLayout()
 						end)
 
 
@@ -906,7 +864,7 @@ function private.GUI()
 					end)
 		button.pos = pos
 		button:SetScale(.8)
-		
+
 		--should we use a X texture
 		button.tex = button:CreateTexture()
 		button.tex:SetTexture("Interface\\WorldMap\\X_Mark_64")
@@ -915,14 +873,14 @@ function private.GUI()
 		button.tex:SetTexCoord(0,0.5,0.5,1)
 		button.tex:SetDrawLayer("OVERLAY")
 		button.tex:Hide()
-			
+
 		frame.config.buttons[pos] = button
 		return button
 	end
 	--Was gonna make this dynamic depending on how user resized window. Decided on static for now
 	do
 		for pos = 1, 50 do
-			private.createIconGUI()			
+			private.createIconGUI()
 		end
 
 		local width = frame.config:GetWidth()
@@ -932,7 +890,7 @@ function private.GUI()
 		local column = 0
 		local total = 0
 		local button = frame.config.buttons
-		
+
 		--create 50 slots for our button icons
 		for pos = 1, #button do
 			if total + 45 > width then
@@ -941,17 +899,17 @@ function private.GUI()
 				total = 0
 			end
 			--button[pos]:ClearAllPoints()
-			
+
 			if column == 0 then
 				button[pos]:SetPoint("TOPLEFT", frame.config, "TOPLEFT",  column+20, -row - 20)
 			else
 				button[pos]:SetPoint("TOPLEFT", button[pos-1], "TOPLEFT",  45 + spacer, 0)
 			end
-			
+
 			column = column + 36 + spacer
 			total = total + 36 + spacer
 		end
-		
+
 	end
 
 	--apply GUI layout to match slidebars button order
@@ -962,7 +920,7 @@ function private.GUI()
 			table.insert(layout, button)
 		end
 		table.sort(layout, private.buttonSort)
-		
+
 		local GUI = frame.config.buttons
 		for pos = 1, #GUI do
 			local button = layout[pos]
@@ -985,14 +943,14 @@ function private.GUI()
 			end
 		end
 	end
-	
+
 	--[[LibDataBroker setup Functions]]
 	--core function adds LDB objects to our bar
 	function private:LibDataBroker_DataObjectCreated(event, name, dataobj)
 		if not name or not dataobj or not dataobj.type then return end
 		if dataobj.type == "launcher" then
 			lib.AddButton(name, nil, nil, nil, nil, dataobj)
-		end	
+		end
 	end
 	ldb.RegisterCallback(private, "LibDataBroker_DataObjectCreated")
 	--add any LDB objects created before we loaded. Not all LDB objects initialize everything when they create themselves. So we need to recan after all are loded to get all methods
@@ -1011,7 +969,7 @@ function  private.dragButton(event, self)
 		--switch textures
 		local tex1 = frame.config.start:GetNormalTexture():GetTexture() --gets texture ref then texture path  :GetNormalTexture():GetTexture()
 		local tex2 = self:GetNormalTexture():GetTexture()
-		
+
 		self:SetNormalTexture(tex1)
 		frame.config.start:SetNormalTexture(tex2)
 	end

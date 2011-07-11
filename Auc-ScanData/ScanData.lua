@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - ScanData
-	Version: 5.11.5146 (DangerousDingo)
+	Version: 5.12.5198 (QuirkyKiwi)
 	Revision: $Id: ScanData.lua 4835 2010-07-31 12:02:44Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -542,4 +542,4 @@ function lib.OnUnload()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-ScanData/ScanData.lua $", "$Rev: 4835 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-ScanData/ScanData.lua $", "$Rev: 4835 $")

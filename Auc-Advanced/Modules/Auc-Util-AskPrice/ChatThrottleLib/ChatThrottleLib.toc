@@ -8,7 +8,7 @@
 ## X-Category: Library
 ## X-Website: http://www.wowwiki.com/ChatThrottleLib
 ## X-Build: $Revision: 4154 $
-## X-ReleaseDate: "$Date: 2009-04-14 15:33:21 -0400 (Tue, 14 Apr 2009) $"
+## X-ReleaseDate: "$Date: 2009-04-14 19:33:21 +0000 (Tue, 14 Apr 2009) $"
 ## SavedVariables: 
 ## SavedVariablesPerCharacter: 
 

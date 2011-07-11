@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Outlier Filter
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: OutlierFilter.lua 4828 2010-07-21 22:20:18Z Prowell $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: OutlierFilter.lua 5194 2011-07-04 17:46:21Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -180,47 +180,47 @@ function private.SetupConfigGui(gui)
 	gui:AddControl(id, "Subhead",    0,    _TRANS('OUTL_Interface_SettingsQuality') )--Settings per quality:
 
 	local _,_,_, hex = GetItemQualityColor(0)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.poor.enabled", _TRANS('OUTL_Interface_EnablePoor'):format(hex, "|r") )--Enable filtering %s poor %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.poor.enabled", _TRANS('OUTL_Interface_EnablePoor'):format("|c"..hex, "|r") )--Enable filtering %s poor %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnablePoor') )--Ticking this box will enable outlier filtering on poor quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.poor.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an item's price can grow before being filtered
 
 	local _,_,_, hex = GetItemQualityColor(1)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.common.enabled", _TRANS('OUTL_Interface_EnableCommon'):format(hex, "|r") )--Enable filtering %s common %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.common.enabled", _TRANS('OUTL_Interface_EnableCommon'):format("|c"..hex, "|r") )--Enable filtering %s common %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableCommon') )--Ticking this box will enable outlier filtering on common quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.common.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an item's price can grow before being filtered
 
 	local _,_,_, hex = GetItemQualityColor(2)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.uncommon.enabled", _TRANS('OUTL_Interface_EnableUnCommon'):format(hex, "|r") )--Enable filtering %s uncommon %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.uncommon.enabled", _TRANS('OUTL_Interface_EnableUnCommon'):format("|c"..hex, "|r") )--Enable filtering %s uncommon %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableUnCommon') )--Ticking this box will enable outlier filtering on uncommon quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.uncommon.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an items price can grow before being filtered
 
 	local _,_,_, hex = GetItemQualityColor(3)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.rare.enabled", _TRANS('OUTL_Interface_EnableRare'):format(hex, "|r") )--Enable filtering %s rare %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.rare.enabled", _TRANS('OUTL_Interface_EnableRare'):format("|c"..hex, "|r") )--Enable filtering %s rare %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableRare') )--Ticking this box will enable outlier filtering on rare quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.rare.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an items price can grow before being filtered
 
 	local _,_,_, hex = GetItemQualityColor(4)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.epic.enabled", _TRANS('OUTL_Interface_EnableEpic'):format(hex, "|r") )--Enable filtering %s epic %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.epic.enabled", _TRANS('OUTL_Interface_EnableEpic'):format("|c"..hex, "|r") )--Enable filtering %s epic %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableEpic') )--Ticking this box will enable outlier filtering on epic quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.epic.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an items price can grow before being filtered
 
 	local _,_,_, hex = GetItemQualityColor(5)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.legendary.enabled", _TRANS('OUTL_Interface_EnableLegendary'):format(hex, "|r") )--Enable filtering %s legendary %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.legendary.enabled", _TRANS('OUTL_Interface_EnableLegendary'):format("|c"..hex, "|r") )--Enable filtering %s legendary %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableLegendary') )--Ticking this box will enable outlier filtering on legendary quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.legendary.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an items price can grow before being filtered
 
 	local _,_,_, hex = GetItemQualityColor(6)
-	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.artifact.enabled", _TRANS('OUTL_Interface_EnableArtifact'):format(hex, "|r") )--Enable filtering %s artifact %s quality items
+	gui:AddControl(id, "Checkbox",   0, 1, "filter.outlier.artifact.enabled", _TRANS('OUTL_Interface_EnableArtifact'):format("|c"..hex, "|r") )--Enable filtering %s artifact %s quality items
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableArtifact') )--Ticking this box will enable outlier filtering on artifact quality items
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.artifact.level", 100, 5000, 25, _TRANS('OUTL_Interface_CapGrowth').." %d%%")--Cap growth to:
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_MaximumPct') )--Set the maximum percentage that an items price can grow before being filtered
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Filter-Outlier/OutlierFilter.lua $", "$Rev: 4828 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Filter-Outlier/OutlierFilter.lua $", "$Rev: 5194 $")

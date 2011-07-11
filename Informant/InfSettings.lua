@@ -1,8 +1,8 @@
 --[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: InfSettings.lua 5008 2010-11-10 07:27:46Z Hirsute $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: InfSettings.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	Command handler. Assumes responsibility for allowing the user to set the
@@ -63,7 +63,7 @@ Usage:
 
 
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Informant/InfSettings.lua $", "$Rev: 5008 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Informant/InfSettings.lua $", "$Rev: 5184 $")
 
 local lib = {}
 Informant.Settings = lib
@@ -131,6 +131,7 @@ local settingDefaults = {
 	['auto-update'] = false,
 	['ModTTShow'] = "always",
 	['show-binding'] = false,
+	['altchatlink-tooltip'] = false,
 
 -- leave this option off until we have real data to test with
 -- enable only for dev testing
@@ -390,7 +391,13 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Subhead",     0,	_TRANS('INF_Interface_ModTTShow')) --"Show Tooltip:"
 	gui:AddControl(id, "Selectbox", 0, 1, { { "always", _TRANS('INF_Interface_MTS_Always') }, {"alt", _TRANS('INF_Interface_MTS_Alt') }, { "noalt", _TRANS('INF_Interface_MTS_NoAlt') }, {"shift", _TRANS('INF_Interface_MTS_Shift') }, {"noshift", _TRANS('INF_Interface_MTS_NoShift')}, {"ctrl", _TRANS('INF_Interface_MTS_Ctrl')},{"noctrl", _TRANS('INF_Interface_MTS_NoCtrl')}, { "never", _TRANS('INF_Interface_MTS_Never')} }, "ModTTShow")
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ModTTShow')) --"Determines Tooltip behavior. Always: Show Informant's Tooltip every time. When <mod> is pressed: Only show Informant's tooltip if the specified modifier is pressed. When <mod> is not pressed: Only show Informant's tooltip if the specified modifier is not pressed. Never: Never show Informant's tooltip."
-	-- TODO - localize me!
+
+	-- TODO - activate localizations
+	--gui:AddControl(id, "Checkbox",   0, 1, "altchatlink-tooltip", _TRANS('INF_Interface_AltChatLink')) --"Open tooltips from chat links with Alt left-clicks"
+	--gui:AddTip(id, _TRANS('INF_HelpTooltip_AltChatLink')) --"Enables opening a tooltip by left-clicking on an item link in chat while the Alt key is pressed."
+	gui:AddControl(id, "Checkbox",   0, 1, "altchatlink-tooltip", "Open tooltips from chat links with Alt left-clicks")
+	gui:AddTip(id, "Enables opening a tooltip by left-clicking on an item link in chat while the Alt key is pressed.")
+
 	gui:AddControl(id, "Checkbox",   0, 1, "auto-update", _TRANS('INF_Interface_AutoUpdate')) --"Automatically update item information at merchants"
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_AutoUpdate')) --"Allow Informant to scan your bags and merchant inventory for updates"
 
@@ -405,11 +412,11 @@ function lib.MakeGuiConfig()
 
 	--Copied from ADV
 	id = gui:AddTab("Profiles")
-	
+
 	gui:AddControl(id, "Header",     0,    _TRANS('INF_Interface_SetupProfile')) --"Setup, Configure and Edit Profiles"
-	
+
 	gui:AddControl(id, "Subhead",    0,    _TRANS('INF_Interface_ActivateProfile')) --"Activate a current profile"
-	gui:AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile", "Switch to the given profile") --This string isn't shown? 
+	gui:AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile", "Switch to the given profile") --This string isn't shown?
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ActivateProfile')) --"Select the profile that you wish to use for this character"
 
 	gui:AddControl(id, "Button",     0, 1, "profile.delete", _TRANS('INF_Interface_Delete')) --"Delete"
@@ -417,15 +424,15 @@ function lib.MakeGuiConfig()
 
 	gui:AddControl(id, "Button",     0, 1, "profile.default", _TRANS('INF_Interface_DefaultProfile'))
 	gui:AddTip(id, _TRANS('INF_Helptooltip_DefaultProfile')) -- Reset all settings for the current profile"
-	
+
 	gui:AddControl(id, "Subhead",    0,    _TRANS('INF_Interface_CreateProfile')) --"Create or replace a profile"
-	
+
 	gui:AddControl(id, "Text",       0, 1, "profile.name", _TRANS('INF_Interface_ProfileName')) --"New profile name:"
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ProfileName')) --"Enter the name of the profile that you wish to create"
 
 	gui:AddControl(id, "Button",     0, 1, "profile.save", _TRANS('INF_Interface_SaveProfile')) --"Save"
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ProfileSave')) --"Click this button to create or overwrite the specified profile name")
-	
+
 	-- TODO - localize me!
 	-- these are stolen from EnhTT
 	gui:AddHelp(id, "what is",

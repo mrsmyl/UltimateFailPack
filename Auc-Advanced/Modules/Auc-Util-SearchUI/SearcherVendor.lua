@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Vendor
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: SearcherVendor.lua 4432 2009-08-29 14:55:35Z dinesh $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: SearcherVendor.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -70,12 +70,6 @@ function lib:MakeGuiConfig(gui)
 end
 
 function lib.Search(item)
-	local market, seen, _, pctstring
-
-	if not GetSellValue then
-		return false, "Vendor pricing not available"
-	end
-
 	local bidprice, buyprice = item[Const.PRICE], item[Const.BUYOUT]
 	local maxprice = get("vendor.maxprice.enable") and get("vendor.maxprice")
 	if buyprice <= 0 or not get("vendor.allow.buy") or (maxprice and buyprice > maxprice) then
@@ -88,19 +82,17 @@ function lib.Search(item)
 		return false, "Does not meet bid/buy requirements"
 	end
 
-	local market = GetSellValue(item[Const.ITEMID])
+	local _,_,_,_,_,_,_,_,_,_,market = GetItemInfo(item[Const.ITEMID])
 	-- If there's no price, then we obviously can't sell it, ignore!
 	if not market or market == 0 then
 		return false, "No vendor price"
 	end
 	market = market * item[Const.COUNT]
 
-
-	local pct = get("vendor.profit.pct")
-	local minprofit = get("vendor.profit.min")
-	local value = market * (100-pct) / 100
-	if value > (market - minprofit) then
-		value = market - minprofit
+	local value = market * (100-get("vendor.profit.pct")) / 100
+	local value2 = market - get("vendor.profit.min")
+	if value > value2 then
+		value = value2
 	end
 	if buyprice and buyprice <= value then
 		return "buy", market
@@ -110,4 +102,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-SearchUI/SearcherVendor.lua $", "$Rev: 4432 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-SearchUI/SearcherVendor.lua $", "$Rev: 5184 $")

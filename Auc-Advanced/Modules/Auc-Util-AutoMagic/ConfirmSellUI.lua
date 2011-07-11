@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.11.5146 (DangerousDingo)
-	Revision: $Id: ConfirmSellUI.lua 4895 2010-10-03 21:29:04Z kandoko $
+	Version: 5.12.5198 (QuirkyKiwi)
+	Revision: $Id: ConfirmSellUI.lua 5184 2011-06-24 00:16:48Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -54,22 +54,33 @@ end
 -- lib.vendorlist[key] = { link, sig, count, bag, slot, reason }
 function lib.ASCConfirmContinue()
 	lib.confirmsellui:Hide() --hide gui before selling so our bag update events are not registered
+	ClearCursor() -- Cursor needs to be clear before we can call UseContainerItem
+	if SpellIsTargeting() then
+		-- Spell on the cursor is awaiting target
+		-- We can't clear using SpellStopTargeting (protected function)
+		-- Hack: pickup and drop an item
+		local key, itemdata = next(lib.vendorlist)
+		if itemdata then
+			PickupContainerItem(itemdata[4], itemdata[5])
+			ClearCursor()
+		end
+	end
 	local count = 0
 	for key, itemdata in pairs(lib.vendorlist) do
 		count = count +1
-		--if stop after 12 then recheck whats left to vendor and re-prompt for a new round. 
+		--if stop after 12 then recheck whats left to vendor and re-prompt for a new round.
 		if get("util.automagic.autostopafter12") and count > 12 then --stop after 12 sells so use can buy back a accidental sale
 			lib.vendorAction()
 			return
 		end
-		
+
 		local _, iID = decode( itemdata[1] ) --check if item is to be ignored
 		if not get("util.automagic.vidignored"..iID) then --will be nil if not on ignore list
-			
+
 			if (get("util.automagic.chatspam")) then
 				print("AutoMagic is selling:", itemdata[1], "reason:", itemdata[6])
 			end
-			
+
 			UseContainerItem(itemdata[4], itemdata[5])
 		end
 		lib.vendorlist[key] = nil
@@ -93,7 +104,7 @@ function lib.ASCIgnoreItem()
 		local _, iID = decode(selecteditem)
 		set("util.automagic.vidignored"..iID, true)
 	end
-	
+
 	lib.ASCRefreshSheet()
 end
 
@@ -102,7 +113,7 @@ function lib.ASCUnIgnoreItem()
 		local _, iID = decode(selecteditem)
 		set("util.automagic.vidignored"..iID, nil)
 	end
-	
+
 	lib.ASCRefreshSheet()
 end
 
@@ -134,7 +145,7 @@ function lib.ASCRefreshSheet()
 		style[#ASCtempstorage] = {}
 		style[#ASCtempstorage][5] = {["textColor"] = styleColor}
 	end
-	
+
 	lib.confirmsellui.resultlist.sheet:SetData(ASCtempstorage, style) --Set the GUI scrollsheet
 end
 
@@ -164,7 +175,7 @@ function lib.ASCSelect()
 		selectedappraiser = selecteddata[3]
 		selectedwhy = selecteddata[4]
 		selectedignored = selecteddata[5]
-		
+
 		lib.confirmsellui.ignoreButton:Enable()
 		lib.confirmsellui.removeButton:Enable()
 		lib.confirmsellui.unignoreButton:Enable()
@@ -230,13 +241,13 @@ function lib.makeconfirmsellui()
 	lib.confirmsellheader:SetPoint("TOPLEFT",  lib.confirmsellui, "TOPLEFT", 0, -10)
 	lib.confirmsellheader:SetPoint("TOPRIGHT", lib.confirmsellui, "TOPRIGHT", 0, 0)
 	lib.confirmsellui.confirmsellheader = lib.confirmsellheader
-	
+
 	lib.confirmsellui.help = lib.confirmsellui:CreateFontString(nil, "OVERLAY", "NumberFontNormalYellow")
 	lib.confirmsellui.help:SetText("Drop items here to add to the sell list")
 	lib.confirmsellui.help:SetJustifyH("CENTER")
 	lib.confirmsellui.help:SetWidth(100)
 	lib.confirmsellui.help:SetPoint("LEFT",  lib.confirmsellui, "LEFT", 10, 0)
-	
+
 	-- [name of frame]:SetPoint("[relative to point on my frame]","[frame we want to be relative to]","[point on relative frame]",-left/+right, -down/+up)
 
 	--Create the autosell list results frame
@@ -262,7 +273,7 @@ function lib.makeconfirmsellui()
 	})
 	lib.confirmsellui.resultlist.sheet:EnableVerticalScrollReset(false)
 	lib.confirmsellui.resultlist.sheet:EnableSelect(true)
-	
+
 	--After we have finished creating the scrollsheet and all saved settings have been applied set our event processor
 	function lib.confirmsellui.resultlist.sheet.Processor(callback, self, button, column, row, order, curDir, ...)
 		if (callback == "OnEnterCell")  then
@@ -277,7 +288,7 @@ function lib.makeconfirmsellui()
 	end
 	--use our custom sort method not scrollsheets
 	lib.confirmsellui.resultlist.sheet.CustomSort = lib.CustomSort
-	
+
 	-- Continue with sales button
 	lib.confirmsellui.continueButton = CreateFrame("Button", nil, lib.confirmsellui, "OptionsButtonTemplate")
 	lib.confirmsellui.continueButton:SetPoint("BOTTOMRIGHT", lib.confirmsellui, "BOTTOMRIGHT", -18, 10)
@@ -306,7 +317,7 @@ function lib.makeconfirmsellui()
 	lib.confirmsellui.unignoreButton:SetText(("Un-Ignore"))
 	lib.confirmsellui.unignoreButton:SetScript("OnClick",  lib.ASCUnIgnoreItem)
 	lib.confirmsellui.unignoreButton:Disable()
-	
+
 	--Hide sales window
 	lib.confirmsellui.closeButton = CreateFrame("Button", nil, lib.confirmsellui, "UIPanelCloseButton")
 	lib.confirmsellui.closeButton:SetScript("OnClick", function() lib.confirmsellui:Hide() end)
@@ -314,4 +325,4 @@ function lib.makeconfirmsellui()
 end
 
 lib.makeconfirmsellui()
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.11/Auc-Util-AutoMagic/ConfirmSellUI.lua $", "$Rev: 4895 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.12/Auc-Util-AutoMagic/ConfirmSellUI.lua $", "$Rev: 5184 $")
