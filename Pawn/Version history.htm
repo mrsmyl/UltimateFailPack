@@ -3,6 +3,11 @@
 <head>
 <title>Pawn past and future versions</title>
 <link rel="stylesheet" type="text/css" href="VgerCore/VgerCore.css" />
+<style type="text/css">
+.auto-style1 {
+	text-decoration: underline;
+}
+</style>
 </head>
 <body>
 
@@ -11,6 +16,28 @@
 <p>
 	I got tired of the version history section of the <a href="Readme.htm">
 	readme</a> being longer than the rest of it, so I moved parts here.</p>
+<h2>FAQ</h2>
+<h3>Why doesn't Pawn let me set a cap for a stat (hit, expertise, haste, ...) 
+and then a value above the cap and a value below the cap?</h3>
+<p>The core problem is that Pawn needs a way for you to, for each character, 
+associate a scale with a particular equipment set—something that doesn't change 
+often.&nbsp; Once Pawn has that, I could conceivably set up Pawn to allow caps, 
+sliding values, and all manner of crazy things.</p>
+<p>Until that time, allowing the value of a stat to change based on how much of 
+it you have would have to be based on your current stat values, which can be 
+buffed with spells, elixirs, and food, and which might be for an entirely 
+different gear set.&nbsp; For example, imagine a balance druid who is already 
+way over the hit cap, wants to get rid of some, and values hit at 0 when he's 
+above the cap.&nbsp; But, he's currently healing the raid, so he's in resto gear 
+and has 0 hit.&nbsp; When a necklace for his balance set drops with hit on it, 
+Pawn would see he has 0 hit (way below the cap) so it would give a high value to 
+that necklace's hit rating even though he really, really doesn't want more hit.&nbsp; 
+Instead, to give useful information, Pawn would need to know the amount of hit 
+the druid has <span class="auto-style1">in his balance gear</span>.</p>
+<p>So that's the main thing blocking the feature.&nbsp; I've been working toward 
+making caps possible, but I'm still not quite there. Once a scale can be 
+associated with a single gear set, then I should be able to start work on a way 
+to allow caps and other types of self-adjusting stat values.</p>
 <h2>Future versions</h2>
 <p>There are many features that I&#39;d like to add in future versions of Pawn, 
 besides fixing issues listed in the &quot;known issues&quot; below.</p>
