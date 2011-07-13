@@ -355,7 +355,10 @@ function ItemFrame:Layout()
 	end
 	
 	if Facade then
-		Facade:Group('Bagnon', self:GetFrameID()):ReSkin()
+		local group = Facade:Group('Bagnon', self:GetFrameID())
+		if group then
+			group:ReSkin()
+		end
 	end
 end
 

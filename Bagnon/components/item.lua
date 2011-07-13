@@ -410,7 +410,6 @@ function ItemSlot:SetBorderQuality(quality)
 			local r, g, b = GetItemQualityColor(quality)
 			border:SetVertexColor(r, g, b, self:GetHighlightAlpha())
 			border:Show()
-			return
 		end
 	end
 end

@@ -68,6 +68,9 @@ do
 end
 
 local function AddOwners(frame, link)
+	if (not link) then return end
+	if tonumber(link:match('item:(%d+)')) == HEARTHSTONE_ITEM_ID then return end
+
 	for player in BagnonDB:GetPlayers() do
 		local infoString
 		if player == currentPlayer then
