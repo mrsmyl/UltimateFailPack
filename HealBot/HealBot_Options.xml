@@ -168,7 +168,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="28" y="-25" />
+                      <AbsDimension x="28" y="-18" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -194,7 +194,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_HideOptions" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="0" y="-20" />
+                      <AbsDimension x="0" y="-14" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -216,11 +216,24 @@
                   <OnClick>HealBot_Options_QueryTalents_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
+              <CheckButton name="HealBot_Options_EnableLibQuickHealth" inherits="OptionsCheckButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowMinimapButton" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="58" y="-15" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_OPTIONS_ENABLELIBQH)</OnLoad>
+                  <OnClick>HealBot_Options_EnableLibQuickHealth_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
               <CheckButton name="HealBot_Options_CPUProfiler" inherits="OptionsCheckButtonTemplate">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowMinimapButton" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="32" y="-24" />
+                      <AbsDimension x="58" y="-54" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -236,7 +249,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CPUProfiler" relativePoint="BOTTOMLEFT">>
                     <Offset>
-                      <AbsDimension x="-8" y="-34" />
+                      <AbsDimension x="-32" y="-28" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -249,7 +262,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CPUProfiler" relativePoint="BOTTOMLEFT">>
                     <Offset>
-                      <AbsDimension x="42" y="-70" />
+                      <AbsDimension x="18" y="-58" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -2659,11 +2672,24 @@
                   <OnLoad>HealBot_Options_SkinDefault_OnLoad(self)</OnLoad>
                 </Scripts>
               </Frame>
+              <CheckButton name="HealBot_Options_ActionLocked" inherits="OptionsCheckButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT">
+                    <Offset>
+                      <AbsDimension x="24" y="-68" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_OPTIONS_ACTIONLOCKED)</OnLoad>
+                  <OnClick>HealBot_Options_ActionLocked_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
               <CheckButton name="HealBot_Options_AutoShow" inherits="OptionsCheckButtonTemplate">
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="40" y="-72" />
+                      <AbsDimension x="24" y="-88" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -2674,9 +2700,9 @@
               </CheckButton>
               <CheckButton name="HealBot_Options_PanelSounds" inherits="OptionsCheckButtonTemplate">
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_AutoShow" relativePoint="TOPRIGHT">
+                  <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="150" y="0" />
+                      <AbsDimension x="24" y="-108" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -2685,24 +2711,11 @@
                   <OnClick>HealBot_Options_PanelSounds_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
-              <CheckButton name="HealBot_Options_ActionLocked" inherits="OptionsCheckButtonTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT">
-                    <Offset>
-                      <AbsDimension x="40" y="-128" />
-                    </Offset>
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_OPTIONS_ACTIONLOCKED)</OnLoad>
-                  <OnClick>HealBot_Options_ActionLocked_OnClick(self)</OnClick>
-                </Scripts>
-              </CheckButton>
               <Frame name="HealBot_Options_ActionAnchor" inherits="UIDropDownMenuTemplate" id="1">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ActionLocked" relativePoint="TOPRIGHT">
                     <Offset>
-                      <AbsDimension x="190" y="15" />
+                      <AbsDimension x="230" y="-5" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -2748,14 +2761,52 @@
                   <OnLoad>HealBot_Options_ActionBarsAnchor_OnLoad(self)</OnLoad>
                 </Scripts>
               </Frame>
+              <Frame name="HealBot_Options_ManaIndicator" inherits="UIDropDownMenuTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_PanelSounds" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="158" y="-12" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Layers>
+                  <Layer level="OVERLAY">
+                    <FontString inherits="GameFontNormal" text="HEALBOT_OPTIONS_LOWMANAINDICATOR">
+                      <Anchors>
+                        <Anchor point="RIGHT" relativeTo="HealBot_Options_ManaIndicator" relativePoint="TOPLEFT">
+                          <Offset>
+                            <AbsDimension x="12" y="-12"/>
+                          </Offset>
+                        </Anchor>
+                      </Anchors>
+                    </FontString>
+                  </Layer>
+                </Layers>
+                <Scripts>
+                  <OnLoad>HealBot_Options_ManaIndicator_OnLoad(self)</OnLoad>
+                </Scripts>
+              </Frame>
+              <CheckButton name="HealBot_Options_ManaIndicatorInCombat" inherits="SendMailRadioButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ManaIndicator" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="-105" y="12"/>
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_OPTIONS_MONITORBUFFSC)</OnLoad>
+                  <OnClick>HealBot_Options_ManaIndicatorInCombat_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
               <Slider name="HealBot_FrameScale" inherits="HealBot_Options_SliderTemplate">
                 <Size>
-                  <AbsDimension x="288" y="16" />
+                  <AbsDimension x="320" y="16" />
                 </Size>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ActionLocked" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_PanelSounds" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="40" y="-45" />
+                      <AbsDimension x="42" y="-75" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -2766,9 +2817,9 @@
               </Slider>
               <CheckButton name="HealBot_Options_PartyFrames" inherits="OptionsCheckButtonTemplate">
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ActionLocked" relativePoint="BOTTOMLEFT">>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_PanelSounds" relativePoint="BOTTOMLEFT">>
                     <Offset>
-                      <AbsDimension x="0" y="-92" />
+                      <AbsDimension x="24" y="-112" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -2795,7 +2846,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_PartyFrames" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="0" y="-10" />
+                      <AbsDimension x="0" y="-12" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -4254,34 +4305,6 @@
                 </Anchors>
                 <Scripts>
                   <OnTextChanged>HealBot_Options_NotifyOtherMsg_OnTextChanged(self)</OnTextChanged>
-                </Scripts>
-              </EditBox>
-              <EditBox name="HealBot_Options_NotifyHealMsg" inherits="HealBot_Options_EditBoxTemplate">
-                <Size>
-                  <AbsDimension x="295" y="20"/>
-                </Size>
-                <Layers>
-                  <Layer level="BACKGROUND">
-                    <FontString name="HealBot_Options_NotifyHealMsgText" text="HEALBOT_OPTIONS_NOTIFY_HEAL_MSG" inherits="GameFontNormalSmall">
-                      <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT">
-                          <Offset>
-                            <AbsDimension x="-10" y="-5" />
-                          </Offset>
-                        </Anchor>
-                      </Anchors>
-                    </FontString>
-                  </Layer>
-                </Layers>
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NotifyHealMsg" relativePoint="BOTTOMLEFT">
-                    <Offset>
-                      <AbsDimension x="0" y="-22"/>
-                    </Offset>
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnTextChanged>HealBot_Options_NotifyHealMsg_OnTextChanged(self)</OnTextChanged>
                 </Scripts>
               </EditBox>
             </Frames>

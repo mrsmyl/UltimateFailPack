@@ -475,15 +475,15 @@
                 </Anchor>
               </Anchors>
             </Texture>
-            <Texture name="$parentIcontm1" file="Interface\AddOns\HealBot\Images\indicator_green">
+            <Texture name="$parentIcontm1" file="Interface\AddOns\HealBot\Images\indicator_blue">
               <Size> <AbsDimension x="5" y="5"/> </Size>					
               <Anchors>
                 <Anchor point="TOP" relativePoint="TOP">
-                  <Offset> <AbsDimension x="-9" y="-1"/> </Offset>
+                  <Offset> <AbsDimension x="-11" y="-1"/> </Offset>
                 </Anchor>
               </Anchors>
             </Texture>
-            <Texture name="$parentIcontm2" file="Interface\AddOns\HealBot\Images\indicator_green">
+            <Texture name="$parentIcontm2" file="Interface\AddOns\HealBot\Images\indicator_blue">
               <Size> <AbsDimension x="5" y="5"/> </Size>					
               <Anchors>
                 <Anchor point="TOP" relativePoint="TOP">
@@ -491,11 +491,11 @@
                 </Anchor>
               </Anchors>
             </Texture>
-            <Texture name="$parentIcontm3" file="Interface\AddOns\HealBot\Images\indicator_green">
+            <Texture name="$parentIcontm3" file="Interface\AddOns\HealBot\Images\indicator_blue">
               <Size> <AbsDimension x="5" y="5"/> </Size>					
               <Anchors>
                 <Anchor point="TOP" relativePoint="TOP">
-                  <Offset> <AbsDimension x="9" y="-1"/> </Offset>
+                  <Offset> <AbsDimension x="11" y="-1"/> </Offset>
                 </Anchor>
               </Anchors>
             </Texture>

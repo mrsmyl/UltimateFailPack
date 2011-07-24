@@ -1006,4 +1006,13 @@ HEALBOT_AGGRO3_SET_MSG                  = "Pourcentage de menace du niveau 3 d\'
 HEALBOT_WORD_THREAT                     = "Menace"
 HEALBOT_AGGRO_ERROR_MSG                 = "Niveau d\'aggro non valable - utiliser 2 ou 3"
 
+HEALBOT_OPTIONS_QUERYTALENTS            = "Requ\195\170te infos talent"       
+HEALBOT_OPTIONS_LOWMANAINDICATOR        = "Indicateur de Mana faible"
+HEALBOT_OPTIONS_LOWMANAINDICATOR1       = "Ne pas afficher"
+HEALBOT_OPTIONS_LOWMANAINDICATOR2       = "*10% / **20% / ***30%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR3       = "*15% / **30% / ***45%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR4       = "*20% / **40% / ***60%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR5       = "*25% / **50% / ***75%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR6       = "*30% / **60% / ***90%"
+
 end

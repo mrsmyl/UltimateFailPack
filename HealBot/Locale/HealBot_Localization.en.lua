@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "4.2.0.0";
+HEALBOT_VERSION = "4.2.0.1";
 
 -------------
 -- ENGLISH --
@@ -119,6 +119,8 @@ HEALBOT_FRENZIED_REGEN                  = GetSpellInfo(22842) or "Frenzied Regen
 HEALBOT_INNERVATE                       = GetSpellInfo(29166) or "Innervate";
 HEALBOT_DRUID_CLEARCASTING              = GetSpellInfo(16870) or "Clearcasting";
 HEALBOT_TREE_OF_LIFE                    = GetSpellInfo(33891) or "Tree of Life";
+HEALBOT_EFFLORESCENCE                   = GetSpellInfo(81275) or "Efflorescence";
+HEALBOT_HARMONY                         = GetSpellInfo(77495) or "Efflorescence";
 
 HEALBOT_A_FOX                           = GetSpellInfo(82661) or "Aspect of the Fox"
 HEALBOT_A_HAWK                          = GetSpellInfo(13165) or "Aspect of the Hawk"
@@ -716,7 +718,6 @@ HEALBOT_UNHOLY                          = "Unholy"
 HEALBOT_OPTIONS_NOTIFY_HEAL_MSG         = "Heal Message"
 HEALBOT_OPTIONS_NOTIFY_MSG              = "Message"
 HEALBOT_WORDS_YOU                       = "you";
-HEALBOT_NOTIFYHEALMSG                   = "Casting #s to heal #n for #h";
 HEALBOT_NOTIFYOTHERMSG                  = "Casting #s on #n";
 
 HEALBOT_OPTIONS_HOTPOSITION             = "Icon position"
@@ -738,6 +739,7 @@ HEALBOT_OPTIONS_UNIQUESPEC              = "Save unique spells for each spec"
 HEALBOT_WORDS_ERROR                     = "Error"
 HEALBOT_SPELL_NOT_FOUND	                = "Spell Not Found"
 HEALBOT_OPTIONS_DISABLETOOLTIPINCOMBAT  = "Hide Tooltip in Combat"
+HEALBOT_OPTIONS_ENABLELIBQH             = "Enable libQuickHealth"
 
 HEALBOT_OPTIONS_BUFFNAMED               = "Enter the player names to watch for\n\n"
 HEALBOT_WORD_ALWAYS                     = "Always";
@@ -1025,3 +1027,10 @@ HEALBOT_WORD_THREAT                     = "Threat"
 HEALBOT_AGGRO_ERROR_MSG                 = "Invalid aggro level - use 2 or 3"
 
 HEALBOT_OPTIONS_QUERYTALENTS            = "Query talent data"       
+HEALBOT_OPTIONS_LOWMANAINDICATOR        = "Low Mana indicator"
+HEALBOT_OPTIONS_LOWMANAINDICATOR1       = "Don't show"
+HEALBOT_OPTIONS_LOWMANAINDICATOR2       = "*10% / **20% / ***30%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR3       = "*15% / **30% / ***45%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR4       = "*20% / **40% / ***60%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR5       = "*25% / **50% / ***75%"
+HEALBOT_OPTIONS_LOWMANAINDICATOR6       = "*30% / **60% / ***90%"

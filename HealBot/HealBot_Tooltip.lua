@@ -87,7 +87,7 @@ end
 function HealBot_Tooltip_ReturnMinsSecs(s)
     mins=floor(s/60)
     secs=floor(s-(mins*60))
-    mins=mins+1
+  --  mins=mins+1
     if secs<10 then secs="0"..secs end
     return mins,secs
 end
@@ -254,6 +254,7 @@ function HealBot_Action_RefreshTooltip(unit, state)
             end
             tp,_ = HealBot_CalcThreat(unit)
             if tp>0 or mana then
+                linenum=linenum+1
                 if not mana then
                     HealBot_Tooltip_SetLine(linenum,HEALBOT_WORD_THREAT.." "..tp.."%",1,0.1,0.1,1," ",0,0,0,0)
                 elseif tp==0 then

@@ -400,10 +400,6 @@ function HealBot_Options_SetText(self,vText)
     g:SetText(vText);
 end
 
-function HealBot_Options_NotifyHealMsg_OnTextChanged(self)
-    Healbot_Config_Skins.NotifyHealMsg[Healbot_Config_Skins.Current_Skin] = self:GetText()
-end
-
 function HealBot_Options_NotifyOtherMsg_OnTextChanged(self)
     Healbot_Config_Skins.NotifyOtherMsg[Healbot_Config_Skins.Current_Skin] = self:GetText()
 end
@@ -496,6 +492,7 @@ function HealBot_Options_setNewSkin(newSkinName)
     Healbot_Config_Skins.ShowAggroTextPct[newSkinName] = Healbot_Config_Skins.ShowAggroTextPct[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowAggroInd[newSkinName] = Healbot_Config_Skins.ShowAggroInd[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.LowManaInd[newSkinName] = Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin]
+    Healbot_Config_Skins.LowManaIndIC[newSkinName] = Healbot_Config_Skins.LowManaIndIC[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.AggroIndAlertLevel[newSkinName] = Healbot_Config_Skins.AggroIndAlertLevel[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.HighLightActiveBar[newSkinName] = Healbot_Config_Skins.HighLightActiveBar[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.HighLightActiveBarInCombat[newSkinName] = Healbot_Config_Skins.HighLightActiveBarInCombat[Healbot_Config_Skins.Current_Skin]
@@ -588,7 +585,6 @@ function HealBot_Options_setNewSkin(newSkinName)
     Healbot_Config_Skins.HidePlayerTarget[newSkinName] = Healbot_Config_Skins.HidePlayerTarget[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.CastNotify[newSkinName] = Healbot_Config_Skins.CastNotify[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.NotifyChan[newSkinName] = Healbot_Config_Skins.NotifyChan[Healbot_Config_Skins.Current_Skin]
-    Healbot_Config_Skins.NotifyHealMsg[newSkinName] = Healbot_Config_Skins.NotifyHealMsg[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.NotifyOtherMsg[newSkinName] = Healbot_Config_Skins.NotifyOtherMsg[Healbot_Config_Skins.Current_Skin]   
     Healbot_Config_Skins.CastNotifyResOnly[newSkinName] = Healbot_Config_Skins.CastNotifyResOnly[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.Panel_Anchor[newSkinName] = Healbot_Config_Skins.Panel_Anchor[Healbot_Config_Skins.Current_Skin]
@@ -687,6 +683,7 @@ function HealBot_Options_DeleteSkin_OnClick(self)
         Healbot_Config_Skins.ShowAggroTextPct[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowAggroInd[hbDelSkinName] = nil
         Healbot_Config_Skins.LowManaInd[hbDelSkinName] = nil
+        Healbot_Config_Skins.LowManaIndIC[hbDelSkinName] = nil
         Healbot_Config_Skins.AggroIndAlertLevel[hbDelSkinName] = nil
         Healbot_Config_Skins.HighLightActiveBar[hbDelSkinName] = nil
         Healbot_Config_Skins.HighLightActiveBarInCombat[hbDelSkinName] = nil
@@ -779,7 +776,6 @@ function HealBot_Options_DeleteSkin_OnClick(self)
         Healbot_Config_Skins.HidePlayerTarget[hbDelSkinName] = nil
         Healbot_Config_Skins.CastNotify[hbDelSkinName] = nil
         Healbot_Config_Skins.NotifyChan[hbDelSkinName] = nil
-        Healbot_Config_Skins.NotifyHealMsg[hbDelSkinName] = nil
         Healbot_Config_Skins.NotifyOtherMsg[hbDelSkinName] = nil
         Healbot_Config_Skins.CastNotifyResOnly[hbDelSkinName] = nil
         Healbot_Config_Skins.Panel_Anchor[hbDelSkinName] = nil
@@ -1339,7 +1335,7 @@ function HealBot_Options_BuffTimer_OnValueChanged(self,bufftype)
         HealBot_Config.LongBuffTimer = val;
     end
     mins,secs=HealBot_Tooltip_ReturnMinsSecs(val)
-    if mins<2 then
+    if mins<1 then
         g=_G[self:GetName().."Text"]
         g:SetText(self.text .. ": " .. secs .." secs");
     else
@@ -1513,6 +1509,11 @@ function HealBot_Options_UseFluidBars_OnClick(self)
     HealBot_Action_Set_Timers()
 end
 
+function HealBot_Options_EnableLibQuickHealth_OnClick(self)
+    HealBot_Globals.EnLibQuickHealth = self:GetChecked() or 0;
+    StaticPopup_Show ("HEALBOT_OPTIONS_RELOADUI");
+end
+
 function HealBot_Options_AggroBar_OnClick(self)
     Healbot_Config_Skins.ShowAggroBars[Healbot_Config_Skins.Current_Skin] = self:GetChecked() or 0;
     HealBot_setOptions_Timer(150)
@@ -1592,6 +1593,11 @@ function HealBot_Options_MonitorBuffsInCombat_OnClick(self)
     HealBot_Config.BuffWatchInCombat = self:GetChecked() or 0;
     HealBot_setOptions_Timer(40)
 end
+
+function HealBot_Options_ManaIndicatorInCombat_OnClick(self)
+    Healbot_Config_Skins.LowManaIndIC[Healbot_Config_Skins.Current_Skin] = self:GetChecked() or 0;
+end
+
 
 function HealBot_Options_MonitorDebuffsInCombat_OnClick(self)
     HealBot_Config.DebuffWatchInCombat = self:GetChecked() or 0;
@@ -3702,6 +3708,50 @@ function HealBot_Options_ActionBarsAnchor_OnSelect(self)
     HealBot_Panel_ClearBarArrays()
    -- HealBot_SetResetFlag("SOFT")
 end
+
+
+--------------------------------------------------------------------------------
+
+local HealBot_Options_ManaIndicator_List = {
+    HEALBOT_OPTIONS_LOWMANAINDICATOR1,
+    HEALBOT_OPTIONS_LOWMANAINDICATOR2,
+    HEALBOT_OPTIONS_LOWMANAINDICATOR3,
+    HEALBOT_OPTIONS_LOWMANAINDICATOR4,
+    HEALBOT_OPTIONS_LOWMANAINDICATOR5,
+    HEALBOT_OPTIONS_LOWMANAINDICATOR6,
+}
+
+function HealBot_Options_ManaIndicator_DropDown()
+    for j=1, getn(HealBot_Options_ManaIndicator_List), 1 do
+        for x,_ in pairs(info) do
+            info[x]=nil;
+        end
+        info.text = HealBot_Options_ManaIndicator_List[j];
+        info.func = HealBot_Options_ManaIndicator_OnSelect;
+        UIDropDownMenu_AddButton(info);
+    end
+end
+
+function HealBot_Options_ManaIndicator_Initialize()
+    UIDropDownMenu_Initialize(HealBot_Options_ManaIndicator,HealBot_Options_ManaIndicator_DropDown)
+end
+
+function HealBot_Options_ManaIndicator_Refresh(onselect)
+    if not onselect then HealBot_Options_ManaIndicator_Initialize() end  -- or wrong menu may be used !
+    UIDropDownMenu_SetSelectedID(HealBot_Options_ManaIndicator,Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin])
+end
+
+function HealBot_Options_ManaIndicator_OnLoad(self)
+    UIDropDownMenu_SetWidth(self,170)
+end
+
+function HealBot_Options_ManaIndicator_OnSelect(self)
+    Healbot_Config_Skins.LowManaInd[Healbot_Config_Skins.Current_Skin] = self:GetID()
+    HealBot_Options_ManaIndicator_Refresh(true)
+    HealBot_setOptions_Timer(4910)
+end
+
+
 --------------------------------------------------------------------------------
 HealBot_Options_StorePrev["FilterHoTctlName"]=HEALBOT_DEATHKNIGHT
 
@@ -3776,6 +3826,8 @@ local HealBot_Options_Class_HoTctlName_List = {
     [HEALBOT_ENRAGED_REGEN]=HEALBOT_WARRIOR,
     [HEALBOT_DIVINE_PROTECTION]=HEALBOT_PALADIN,
     [HEALBOT_BARKSKIN]=HEALBOT_DRUID,
+    [HEALBOT_EFFLORESCENCE]=HEALBOT_DRUID,
+    [HEALBOT_HARMONY]=HEALBOT_DRUID,
     [HEALBOT_SURVIVAL_INSTINCTS]=HEALBOT_DRUID,
     [HEALBOT_FRENZIED_REGEN]=HEALBOT_DRUID,
     [HEALBOT_NATURE_SWIFTNESS]=HEALBOT_DRUID,
@@ -4628,7 +4680,7 @@ function HealBot_Options_BuildSkinSendMsg(skinName, partID)
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.NotifyChan[skinName]
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.GroupPetsBy5[skinName]
     elseif partID==5 then
-        ssMsg=Healbot_Config_Skins.NotifyHealMsg[skinName]
+        ssMsg=" "
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.NotifyOtherMsg[skinName]
     elseif partID==6 then
         ssMsg=Healbot_Config_Skins.CastNotifyResOnly[skinName]
@@ -4676,7 +4728,7 @@ function HealBot_Options_BuildSkinSendMsg(skinName, partID)
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.ShowAggroInd[skinName]
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.AggroIndAlertLevel[skinName]
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.LowManaInd[skinName]
-        ssMsg=ssMsg.."!".." "
+        ssMsg=ssMsg.."!"..Healbot_Config_Skins.LowManaIndIC[skinName]
         ssMsg=ssMsg.."!".." "
         ssMsg=ssMsg.."!".." "
         ssMsg=ssMsg.."!"..strsub(Healbot_Config_Skins.AggroColr[skinName],1,4)
@@ -4848,8 +4900,7 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
         Healbot_Config_Skins.NotifyChan[skinName] = tmpMsg[27]
         Healbot_Config_Skins.GroupPetsBy5[skinName] = tmpMsg[28]
     elseif partID==5 then
-        Healbot_Config_Skins.NotifyHealMsg[skinName],
-        Healbot_Config_Skins.NotifyOtherMsg[skinName] = string.split("!", msg)
+        _ , Healbot_Config_Skins.NotifyOtherMsg[skinName] = string.split("!", msg)
     elseif partID==6 then
         tmpMsg[1],   tmpMsg[2],  tmpMsg[3],  tmpMsg[4],  tmpMsg[5],  tmpMsg[6],  tmpMsg[7],  tmpMsg[8],  tmpMsg[9], tmpMsg[10],
         tmpMsg[11], tmpMsg[12], tmpMsg[13], tmpMsg[14], tmpMsg[15], tmpMsg[16], tmpMsg[17], tmpMsg[18], tmpMsg[19], tmpMsg[20],
@@ -4906,7 +4957,7 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
         Healbot_Config_Skins.ShowAggroInd[skinName] = tonumber(tmpMsg[13])
         Healbot_Config_Skins.AggroIndAlertLevel[skinName] = tonumber(tmpMsg[14])
         Healbot_Config_Skins.LowManaInd[skinName] = tonumber(tmpMsg[15])
-        _ = tonumber(tmpMsg[16])
+        Healbot_Config_Skins.LowManaIndIC[skinName] = tonumber(tmpMsg[16])
         _ = tonumber(tmpMsg[17])
         _ = tonumber(tmpMsg[18])
         Healbot_Config_Skins.AggroColr[skinName] = tonumber(tmpMsg[19])
@@ -7955,7 +8006,7 @@ function HealBot_Options_idleInit()
         DoneInitTab[0]=DoneInitTab[0]+1
         if DoneInitTab[0]>102 and DoneInitTab[0]<199 then
             DoneInitTab[0]=300
-        elseif DoneInitTab[0]>307 and DoneInitTab[0]<399 then
+        elseif DoneInitTab[0]>310 and DoneInitTab[0]<399 then
             if HealBot_Config.DebuffWatch==1 then
                 DoneInitTab[0]=400
             elseif HealBot_Config.BuffWatch==1 then
@@ -8010,6 +8061,7 @@ function HealBot_Options_ResetDoInittab(tabNo)
         DoneInitTab[307]=nil
         DoneInitTab[308]=nil
         DoneInitTab[309]=nil
+        DoneInitTab[310]=nil
         DoneInitTab[1001]=nil
         DoneInitTab[1002]=nil
         DoneInitTab[1003]=nil
@@ -8104,6 +8156,7 @@ function HealBot_Options_Init(tabNo)
             HealBot_Options_QueryTalents:SetChecked(HealBot_Globals.QueryTalents)
             HealBot_Options_HideOptions:SetChecked(HealBot_Globals.HideOptions)
             HealBot_Options_RightButtonOptions:SetChecked(HealBot_Globals.RightButtonOptions)
+            HealBot_Options_EnableLibQuickHealth:SetChecked(HealBot_Globals.EnLibQuickHealth)
             HealBot_Options_RangeCheckFreq:SetValue((HealBot_Globals.RangeCheckFreq or 0.2)*10)
             HealBot_Options_EmergencyFClass_Refresh()
             HealBot_Options_EFClass_Reset()
@@ -8271,7 +8324,6 @@ function HealBot_Options_Init(tabNo)
         HealBot_HighlightActiveBarColour:SetStatusBarTexture(LSM:Fetch('statusbar',HealBot_Default_Textures[16].name));
         HealBot_HighlightTargetBarColour:SetStatusBarTexture(LSM:Fetch('statusbar',HealBot_Default_Textures[16].name));
         HealBot_Aggro3Colorpick:SetStatusBarTexture(LSM:Fetch('statusbar',HealBot_Default_Textures[16].name));
-        HealBot_Options_NotifyHealMsg:Hide()
 		if strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
 			HealBot_Options_ShowPowerCounter:Show()
 			HealBot_Options_ShowPowerCounterText:SetText(HEALBOT_OPTIONS_SHOWPOWERCOUNTER_PALA)
@@ -8323,6 +8375,9 @@ function HealBot_Options_InitSub1(subNo)
     elseif subNo==309 and not DoneInitTab[309] then -- dia font
         HealBot_Options_FontOutline_Refresh()
         DoneInitTab[309]=true
+    elseif subNo==310 and not DoneInitTab[310] then -- dia font
+        HealBot_Options_ManaIndicator_Refresh()
+        DoneInitTab[310]=true
     elseif subNo==401 and not DoneInitTab[401] then
         HealBot_Options_UpdateMedia(4)
         DoneInitTab[401]=true
@@ -8507,12 +8562,14 @@ function HealBot_Options_SetSkins()
         HealBot_Options_ActionLocked:SetChecked(Healbot_Config_Skins.ActionLocked[Healbot_Config_Skins.Current_Skin])
         HealBot_Options_AutoShow:SetChecked(Healbot_Config_Skins.AutoClose[Healbot_Config_Skins.Current_Skin])
         HealBot_Options_PanelSounds:SetChecked(Healbot_Config_Skins.PanelSounds[Healbot_Config_Skins.Current_Skin])
+        HealBot_Options_ManaIndicatorInCombat:SetChecked(Healbot_Config_Skins.LowManaIndIC[Healbot_Config_Skins.Current_Skin])
         HealBot_FrameScale:SetValue((Healbot_Config_Skins.FrameScale[Healbot_Config_Skins.Current_Skin] or 1)*10)
         HealBot_Options_UseFluidBars:SetChecked(Healbot_Config_Skins.UseFluidBars[Healbot_Config_Skins.Current_Skin] or 0)
         HealBot_Options_BarUpdateFreq:SetValue((Healbot_Config_Skins.BarFreq[Healbot_Config_Skins.Current_Skin] or 2)*10)
         HealBot_Options_InitSub(301)
         HealBot_Options_InitSub(302)
         HealBot_Options_InitSub(303)
+        HealBot_Options_InitSub(310)
         DoneInitTab[1001]=true
     elseif hbCurSkinSubFrameID==1002 and not DoneInitTab[1002] then
         HealBot_Options_HideBars:SetChecked(Healbot_Config_Skins.HideBars[Healbot_Config_Skins.Current_Skin])
@@ -8623,7 +8680,6 @@ function HealBot_Options_SetSkins()
     elseif hbCurSkinSubFrameID==1008 and not DoneInitTab[1008] then
         HealBot_Options_CastNotify_OnClick(nil,Healbot_Config_Skins.CastNotify[Healbot_Config_Skins.Current_Skin])
         HealBot_Options_NotifyChan:SetText(Healbot_Config_Skins.NotifyChan[Healbot_Config_Skins.Current_Skin])
-        HealBot_Options_NotifyHealMsg:SetText(Healbot_Config_Skins.NotifyHealMsg[Healbot_Config_Skins.Current_Skin])
         HealBot_Options_NotifyOtherMsg:SetText(Healbot_Config_Skins.NotifyOtherMsg[Healbot_Config_Skins.Current_Skin])   
         HealBot_Options_CastNotifyResOnly:SetChecked(Healbot_Config_Skins.CastNotifyResOnly[Healbot_Config_Skins.Current_Skin])
         DoneInitTab[1008]=true
