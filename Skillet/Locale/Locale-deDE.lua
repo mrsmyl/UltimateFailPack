@@ -34,7 +34,7 @@ if not L then return end
 
 L[" days"] = " Tage"
 L["ABOUTDESC"] = "Gibt Informationen über Skillet aus"
-L["APPEARANCEDESC"] = "Einstelungen die das Aussehen von Skillet ändern"
+L["APPEARANCEDESC"] = "Einstellungen, die das Aussehen von Skillet ändern" -- Needs review
 L["About"] = "Über Skillet"
 L["Appearance"] = "Aussehen"
 L["Blizzard"] = "Blizzard"
