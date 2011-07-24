@@ -1072,8 +1072,8 @@
 					<Button name="OutfitterEnableAll" inherits="OutfitterSmallButtonTemplate" text="Outfitter_cEnableNone">
 						<Size x="80" y="18"/>
 						<Anchors>
-							<Anchor point="TOP" relativeTo="PaperDollFrame">
-								<Offset x="-45" y="-40"/>
+							<Anchor point="TOPLEFT" relativeTo="PaperDollFrame">
+								<Offset x="85" y="-40"/>
 							</Anchor>
 						</Anchors>
 						<Scripts>
@@ -1086,8 +1086,8 @@
 					<Button name="OutfitterEnableNone" inherits="OutfitterSmallButtonTemplate" text="Outfitter_cEnableAll">
 						<Size x="80" y="18"/>
 						<Anchors>
-							<Anchor point="TOP" relativeTo="PaperDollFrame">
-								<Offset x="45" y="-40"/>
+							<Anchor point="LEFT" relativeTo="OutfitterEnableAll" relativePoint="RIGHT">
+								<Offset x="10" y="0"/>
 							</Anchor>
 						</Anchors>
 						<Scripts>
@@ -1304,26 +1304,13 @@
 				</Frames>
 				<Scripts>
 					<OnShow>
-						if PlayerTitleFrame then
-							PlayerTitleFrame:Hide()
+						if CharacterLevelText then
+							CharacterLevelText:Hide()
 						end
 					</OnShow>
 					<OnHide>
-						if PlayerTitleFrame then
-							-- Show the title menu if there are two or more titles to choose from
-							-- (I think "no title" counts as one title, which is why it's two or more)
-							
-							local vTitleCount = 0
-							
-							for vIndex = 1, GetNumTitles() do
-								if IsTitleKnown(vIndex) ~= 0 then
-									vTitleCount = vTitleCount + 1
-									if vTitleCount >= 1 then
-										PlayerTitleFrame:Show()
-										return
-									end
-								end
-							end
+						if CharacterLevelText then
+							CharacterLevelText:Show()
 						end
 					</OnHide>
 				</Scripts>

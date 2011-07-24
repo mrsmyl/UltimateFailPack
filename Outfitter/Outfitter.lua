@@ -1072,6 +1072,7 @@ Outfitter.cZoneSpecialIDMap =
 	[Outfitter.LZ["Strand of the Ancients"]] = {"Battleground", "SotA"},
 	[Outfitter.LZ["Isle of Conquest"]] = {"Battleground", "IoC"},
 	[Outfitter.LZ["Wintergrasp"]] = {"Battleground", "Wintergrasp"},
+	[Outfitter.LZ["Battle for Gilneas"]] = {"Battleground", "Gilneas"},
 	[Outfitter.LZ["Dalaran Sewers"]] = {"Battleground", "Arena", "Sewers"},
 	[Outfitter.LZ["The Ring of Valor"]] = {"Battleground", "Arena", "RingOfValor"},
 	
@@ -1080,6 +1081,8 @@ Outfitter.cZoneSpecialIDMap =
 	[Outfitter.LZ["Ruins of Lordaeron"]] = {"Battleground", "LordaeronArena", "Arena"},
 	
 	[Outfitter.LZ["Ironforge"]] = {"City"},
+	["City of Ironforge"] = {"City"},
+	["Miwana's Longhouse"] = {"City"},
 	[Outfitter.LZ["Darnassus"]] = {"City"},
 	[Outfitter.LZ["Stormwind"]] = {"City"},
 	[Outfitter.LZ["Stormwind City"]] = {"City"},
@@ -8009,7 +8012,7 @@ function Outfitter:GenerateItemLink(pItem)
 	local _, _, vQuality = GetItemInfo(pItem.Code)
 	local _, _, _, vQualityColorCode = GetItemQualityColor(vQuality or 1)
 	
-	return string.format("%s|Hitem:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|h[%s]|h|r", vQualityColorCode, pItem.Code, pItem.EnchantCode or 0, pItem.JewelCode1 or 0, pItem.JewelCode2 or 0, pItem.JewelCode3 or 0, pItem.JewelCode4 or 0, pItem.SubCode or 0, pItem.UniqueID or 0, pItem.LinkLevel or 0, pItem.ReforgeID or 0, pItem.Name), vQuality or 1
+	return string.format("|c%s|Hitem:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|h[%s]|h|r", vQualityColorCode, pItem.Code, pItem.EnchantCode or 0, pItem.JewelCode1 or 0, pItem.JewelCode2 or 0, pItem.JewelCode3 or 0, pItem.JewelCode4 or 0, pItem.SubCode or 0, pItem.UniqueID or 0, pItem.LinkLevel or 0, pItem.ReforgeID or 0, pItem.Name), vQuality or 1
 end
 
 function Outfitter:ShowMissingItems()

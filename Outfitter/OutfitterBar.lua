@@ -1206,8 +1206,10 @@ function Outfitter.OutfitBar.TextureSets.Spellbook:Activate()
 			break
 		end
 		
-		table.insert(self.TextureList, vCategoryTexture)
-		vUsedTextures[vCategoryTexture] = true
+		if vCategoryTexture then
+			table.insert(self.TextureList, vCategoryTexture)
+			vUsedTextures[vCategoryTexture] = true
+		end
 	end
 	
 	-- Now insert the icons from each category

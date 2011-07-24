@@ -251,10 +251,33 @@ end
 ]]
 end
 
-function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDelay)
+function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDelay, pIncludeSpecEnables)
 	local vScript
+	local vEventIDs
 	
-	vScript = self:GenerateScriptHeader(pEventID.." NOT_"..pEventID, pDescription)..
+	vEventIDs = pEventID.." NOT_"..pEventID
+	if pIncludeSpecEnables then
+		vEventIDs = vEventIDs.." ACTIVE_TALENT_GROUP_CHANGED"
+	end
+	vScript = self:GenerateScriptHeader(vEventIDs, pDescription)
+	
+	if pIncludeSpecEnables then
+		vScript = vScript ..
+[[
+-- $SETTING Spec1={type="boolean", label="Enable for Primary spec", default=true}
+-- $SETTING Spec2={type="boolean", label="Enable for Secondary spec", default=true}
+
+-- Unequip and return if they're not in an enabled spec
+
+if (not setting.Spec1 and GetActiveTalentGroup() == 1)
+or (not setting.Spec2 and GetActiveTalentGroup() == 2) then
+    equip = false
+    return
+end
+]]
+	end
+	
+	vScript = vScript ..
 [[
 -- If the activation event fires, equip the outfit
 
@@ -272,7 +295,7 @@ if event == "]]..pEventID..[[" then
 
 elseif didEquip then
     equip = false
-    ]]..((pUnequipDelay and ("delay = "..pUnequipDelay)) or "")..[[
+]]..((pUnequipDelay and ("	delay = "..pUnequipDelay)) or "")..[[
 end
 ]]
 	
@@ -877,49 +900,49 @@ end
 		Name = Outfitter.cBattlegroundOutfit,
 		ID = "Battleground",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND", Outfitter.cBattlegroundOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND", Outfitter.cBattlegroundOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cABOutfit,
 		ID = "AB",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_AB", Outfitter.cArathiBasinOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_AB", Outfitter.cArathiBasinOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cAVOutfit,
 		ID = "AV",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_AV", Outfitter.cAlteracValleyOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_AV", Outfitter.cAlteracValleyOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cWSGOutfit,
 		ID = "WSG",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_WSG", Outfitter.cWarsongGulchOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_WSG", Outfitter.cWarsongGulchOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cEotSOutfit,
 		ID = "EotS",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_EOTS", Outfitter.cEotSOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_EOTS", Outfitter.cEotSOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cSotAOutfit,
 		ID = "SotA",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_SOTA", Outfitter.cSotAOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_SOTA", Outfitter.cSotAOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cIoCOutfit,
 		ID = "IoC",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_IOC", Outfitter.cIoCOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_IOC", Outfitter.cIoCOutfitDescription, nil, true),
 	},
 	{
 		Name = Outfitter.cArenaOutfit,
 		ID = "Arena",
 		Category = "PVP",
-		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_ARENA", Outfitter.cArenaOutfitDescription),
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_ARENA", Outfitter.cArenaOutfitDescription, nil, true),
 	},
 	{
 		Name = "Spirit Regen",

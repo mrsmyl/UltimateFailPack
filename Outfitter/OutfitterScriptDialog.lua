@@ -57,7 +57,8 @@ function Outfitter._EditScriptDialog:Open(pOutfit, pShowSource)
 		end
 	end
 	
-	self:SetPresetScriptID(Outfitter:FindMatchingPresetScriptID(vScript))
+	local vScriptID = pOutfit.ScriptID or Outfitter:FindMatchingPresetScriptID(vScript)
+	self:SetPresetScriptID(vScriptID)
 	
 	--
 	

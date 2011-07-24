@@ -9,13 +9,6 @@ if not Addon.DebugColorCode then
 	Addon.DebugColorCode = GREEN_FONT_COLOR_CODE
 end
 
--- Add the /reloadui command if it isn't already installed
-
-if not SLASH_RELOADUI1 then
-	SlashCmdList.RELOADUI = function () if SlashCmdList.SWATTER then SlashCmdList.SWATTER("clear") end ReloadUI() end
-	SLASH_RELOADUI1 = "/reloadui"
-end
-
 if not tern then
 	function tern(a, b, c)
 		if a then return b else return c end

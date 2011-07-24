@@ -1,10 +1,10 @@
 --[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 29 $
+Revision: $Revision: 65 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
-Last Update: $Date: 2010-11-26 17:54:45 +0000 (Fri, 26 Nov 2010) $
+Last Update: $Date: 2011-06-27 01:08:41 +0000 (Mon, 27 Jun 2011) $
 Website:
 Documentation:
 SVN: $URL $
@@ -22,10 +22,13 @@ Features:
   StatMods - Get stat mods from talents and buffs for every class
   BaseStats - for all classes and levels
   ItemStatParser - Fast multi level indexing algorithm instead of calling strfind for every stat
+
+Debug:
+  /sldebug
 ]]
 
 local MAJOR = "LibStatLogic-1.2"
-local MINOR = "$Revision: 29 $"
+local MINOR = "$Revision: 65 $"
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -172,7 +175,7 @@ textTable = {
 --]]
 local PatternLocale = {}
 local DisplayLocale = {}
-PatternLocale.enUS = {
+PatternLocale.enUS = { -- {{{
   ["tonumber"] = tonumber,
   -----------------
   -- Armor Types --
@@ -184,15 +187,21 @@ PatternLocale.enUS = {
   ------------------
   -- Fast Exclude --
   ------------------
+  -- Note to localizers: This is important for reducing lag on mouse over.
+  -- Turn on /sldebug and see if there are any "No Match" strings, any 
+  -- unused strings should be added in the "Exclude" table, because an unmatched 
+  -- string costs a lot of CPU time, and should be prevented whenever possible.
   -- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
   ["ExcludeLen"] = 5, -- using string.utf8len
   ["Exclude"] = {
     [""] = true,
     [" \n"] = true,
+    ["Binds"] = true,
     [ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
     [ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item will be bound when picked up
     [ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
     [ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
+    [ITEM_BIND_TO_ACCOUNT] = true, -- ITEM_BIND_QUEST = "Binds to account";
     [ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
     [ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
     [ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
@@ -251,6 +260,27 @@ PatternLocale.enUS = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    --4.0.6
+    ["Item "] = true, -- ITEM_LEVEL = "Item Level %d"
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
   -----------------------
   -- Whole Text Lookup --
@@ -286,6 +316,8 @@ PatternLocale.enUS = {
     ["Equip: Run speed increased slightly."] = {["RUN_SPEED"] = 8}, -- [Highlander's Plate Greaves] ID: 20048
     ["Minor Speed Increase"] = {["RUN_SPEED"] = 8}, -- EnchantID: 911 Enchant Boots - Minor Speed "Minor Speed Increase"
     ["Minor Speed"] = {["RUN_SPEED"] = 8}, -- EnchantID: 2939 Enchant Boots - Cat's Swiftness "Minor Speed and +6 Agility"
+    ["Minor Run Speed Increase"] = {["RUN_SPEED"] = 8}, -- 
+    ["Minor Movement Speed"] = {["RUN_SPEED"] = 8}, -- 
     --["Surefooted"] = {["MELEE_HIT_RATING"] = 10, ["SPELL_HIT_RATING"] = 10, ["MELEE_CRIT_RATING"] = 10, ["SPELL_CRIT_RATING"] = 10}, -- EnchantID: 2658 Enchant Boots - Surefooted
 
     --["Subtlety"] = {["MOD_THREAT"] = -2}, -- EnchantID: 2621 Enchant Cloak - Subtlety
@@ -294,8 +326,12 @@ PatternLocale.enUS = {
     ["Allows underwater breathing"] = false, --
     ["Equip: Immune to Disarm."] = false, -- [Stronghold Gauntlets] ID: 12639
     ["Immune to Disarm"] = false, --
-    ["Crusader"] = false, -- Enchant Crusader
-    ["Lifestealing"] = false, -- Enchant Crusader
+    ["Crusader"] = false, -- Enchant 
+    ["Lifestealing"] = false, -- Enchant 
+    ["Hurricane"] = false, -- Enchant 
+    ["Mending"] = false, -- Enchant 
+    ["Lightweave Embroidery"] = false, -- Enchant 
+    ["Gnomish X-Ray Scope"] = false, -- Enchant 
 
     --["Tuskar's Vitality"] = {["RUN_SPEED"] = 8, ["STA"] = 15}, -- EnchantID: 3232 +15 Stamina and Minor Speed Increase
     --["Wisdom"] = {["MOD_THREAT"] = -2, ["SPI"] = 10}, -- EnchantID: 3296 +10 Spirit and 2% Reduced Threat
@@ -331,13 +367,14 @@ PatternLocale.enUS = {
   -------------
   -- PreScan --
   -------------
+  -- Its preferable to have as few "PreScanPatterns" as possible, only use this table if all other methods fail.
   -- Special cases that need to be dealt with before deep scan
   ["PreScanPatterns"] = {
     --["^Equip: Increases attack power by (%d+) in Cat"] = "FERAL_AP",
     --["^Equip: Increases attack power by (%d+) when fighting Undead"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
-    ["^Increases attack power by (%d+) in Cat, Bear, Dire Bear, and Moonkin forms only%.$"] = "FERAL_AP", -- 3.0.8 FAP change
-    ["^(%d+) Block$"] = "BLOCK_VALUE",
     ["^(%d+) Armor$"] = "ARMOR",
+    ["Increases your mastery rating by (%d+).-%)$"] = "MASTERY_RATING",
+    ["%d+ secs?[,%.]"] = false, -- Procs
     ["Reinforced %(%+(%d+) Armor%)"] = "ARMOR_BONUS",
     ["Mana Regen (%d+) per 5 sec%.$"] = "COMBAT_MANA_REGEN",
     ["^%+?%d+ %- (%d+) .-Damage$"] = "MAX_DAMAGE",
@@ -350,6 +387,7 @@ PatternLocale.enUS = {
     --["[Cc]hance"] = false, -- [Mark of Defiance] ID:27924 -- [Staff of the Qiraji Prophets] ID:21128 -- Commented out because it was blocking [Insightful Earthstorm Diamond]
     ["[Ss]ometimes"] = false, -- [Darkmoon Card: Heroism] ID:19287
     ["[Ww]hen struck in combat"] = false, -- [Essence of the Pure Flame] ID: 18815
+    ["^Increases attack power by (%d+) in Cat, Bear, Dire Bear, and Moonkin forms only%.$"] = "FERAL_AP", -- 3.0.8 FAP change
   },
   --------------
   -- DeepScan --
@@ -364,6 +402,7 @@ PatternLocale.enUS = {
     " & ", -- "+26 Healing Spells & 2% Reduced Threat": Bracing Earthstorm Diamond ID:25897
     ", ", -- "+6 Spell Damage, +5 Spell Crit Rating": Potent Ornate Topaz ID: 28123
     "%. ", -- "Equip: Increases attack power by 81 when fighting Undead. It also allows the acquisition of Scourgestones on behalf of the Argent Dawn.": Seal of the Dawn
+    "\n", -- Meta Gems
   },
   ["DeepScanWordSeparators"] = {
     " and ", -- "Critical Rating +6 and Dodge Rating +5": Assassin's Fire Opal ID:30565
@@ -414,6 +453,7 @@ PatternLocale.enUS = {
     ["Shadow resistance"] = {"SHADOW_RES",}, -- Demons Blood ID: 10779
     ["All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
     ["Resist All"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
+    ["to All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
 
     ["Fishing"] = {"FISHING",}, -- Fishing enchant ID:846
     ["Fishing Skill"] = {"FISHING",}, -- Fishing lure
@@ -425,10 +465,6 @@ PatternLocale.enUS = {
     ["Armor"] = {"ARMOR_BONUS",},
     ["Defense"] = {"DEFENSE",},
     ["Increased Defense"] = {"DEFENSE",},
-    ["Block"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["Block Value"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["Shield Block Value"] = {"BLOCK_VALUE",}, -- +10% Shield Block Value [Eternal Earthstorm Diamond] http://www.wowhead.com/?item=35501
-    ["Increases the block value of your shield"] = {"BLOCK_VALUE",},
 
     ["Health"] = {"HEALTH",},
     ["HP"] = {"HEALTH",},
@@ -476,6 +512,7 @@ PatternLocale.enUS = {
 
     ["Spell Penetration"] = {"SPELLPEN",}, -- Enchant Cloak - Spell Penetration "+20 Spell Penetration" http://wow.allakhazam.com/db/spell.html?wspell=34003
     ["Increases your spell penetration"] = {"SPELLPEN",},
+    ["Increases spell penetration"] = {"SPELLPEN",},
 
     ["Healing and Spell Damage"] = {"SPELL_DMG", "HEAL",}, -- Arcanum of Focus +8 Healing and Spell Damage http://wow.allakhazam.com/db/spell.html?wspell=22844
     ["Damage and Healing Spells"] = {"SPELL_DMG", "HEAL",},
@@ -581,6 +618,7 @@ PatternLocale.enUS = {
     ["Resilience"] = {"RESILIENCE_RATING",},
     ["Resilience Rating"] = {"RESILIENCE_RATING",}, -- Enchant Chest - Major Resilience "+15 Resilience Rating" http://wow.allakhazam.com/db/spell.html?wspell=33992
     ["Improves your resilience rating"] = {"RESILIENCE_RATING",},
+    ["Increases your resilience rating"] = {"RESILIENCE_RATING",},
     ["Improves critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
     ["Improves melee critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
     ["Improves ranged critical avoidance rating"] = {"RANGED_CRIT_AVOID_RATING",},
@@ -630,9 +668,11 @@ PatternLocale.enUS = {
     ["Slot Quiver"] = false,
     ["Slot Ammo Pouch"] = false,
     ["Increases ranged attack speed"] = false, -- AV quiver
+    ["Experience gained is increased%"] = false, -- Heirlooms
   },
-}
-DisplayLocale.enUS = {
+} -- }}}
+
+DisplayLocale.enUS = { -- {{{
   ----------------
   -- Stat Names --
   ----------------
@@ -642,6 +682,8 @@ DisplayLocale.enUS = {
   ["Stat Multiplier"] = "Stat Multiplier",
   ["Attack Power Multiplier"] = "Attack Power Multiplier",
   ["Reduced Physical Damage Taken"] = "Reduced Physical Damage Taken",
+  ["10% Melee/Ranged Attack Speed"] = "10% Melee/Ranged Attack Speed",
+  ["5% Spell Haste"] = "5% Spell Haste",
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
     ---------------------------------------------------------------------------
@@ -703,10 +745,10 @@ DisplayLocale.enUS = {
 
     ["HEALTH"] = {HEALTH, HP},
     ["MANA"] = {MANA, MP},
-    ["HEALTH_REGEN"] = {HEALTH.." Regen (Out of combat)", "HP5(OC)"},
-    ["MANA_REGEN"] = {MANA.." Regen (Out of casting)", "MP5(OC)"},
-    ["COMBAT_HEALTH_REGEN"] = {HEALTH.." Regen", "HP5"},
-    ["COMBAT_MANA_REGEN"] = {MANA.." Regen", "MP5"},
+    ["HEALTH_REGEN"] = {HEALTH.." Regen (Normal)", "HP5(OC)"},
+    ["MANA_REGEN"] = {MANA.." Regen (Normal)", "MP5(OC)"},
+    ["COMBAT_HEALTH_REGEN"] = {HEALTH.." Regen (Combat)", "HP5"},
+    ["COMBAT_MANA_REGEN"] = {MANA.." Regen (Combat)", "MP5"},
 
     ["MAX_DAMAGE"] = {"Max Damage", "Max Dmg"},
     ["DPS"] = {"Damage Per Second", "DPS"},
@@ -867,13 +909,13 @@ DisplayLocale.enUS = {
     ["OFFHAND_WEAPON_RATING"] = {"Off Hand Weapon "..SKILL.." "..RATING, "OH Weapon"..SKILL.." "..RATING},
     ["RANGED_WEAPON_RATING"] = {"Ranged Weapon "..SKILL.." "..RATING, "Ranged Weapon"..SKILL.." "..RATING},
   },
-}
+} -- }}}
 
 PatternLocale.enGB = PatternLocale.enUS
 DisplayLocale.enGB = DisplayLocale.enUS
 
 -- koKR localization by fenlis, 7destiny, slowhand
-PatternLocale.koKR = {
+PatternLocale.koKR = { -- {{{
   ["tonumber"] = tonumber,
   -----------------
   -- Armor Types --
@@ -952,6 +994,25 @@ PatternLocale.koKR = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
   -----------------------
   -- Whole Text Lookup --
@@ -1032,7 +1093,6 @@ PatternLocale.koKR = {
     --["^Equip: Increases attack power by (%d+) in Cat"] = "FERAL_AP",
     --["^Equip: Increases attack power by (%d+) when fighting Undead"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
     ["^표범, 광포한 곰, 곰, 달빛야수 변신 상태일 때 전투력이 (%d+)만큼 증가합니다%.$"] = "FERAL_AP", -- 3.0.8 FAP change
-    ["^(%d+)의 피해 방어$"] = "BLOCK_VALUE",
     ["^방어도 (%d+)$"] = "ARMOR",
     ["방어도 보강 %(%+(%d+)%)"] = "ARMOR_BONUS",
     ["매 5초마다 (%d+)의 생명력이 회복됩니다.$"] = "COMBAT_HEALTH_REGEN",
@@ -1121,9 +1181,6 @@ PatternLocale.koKR = {
     ["방어도"] = {"ARMOR_BONUS",},
     ["방어 숙련"] = {"DEFENSE",},
     ["방어 숙련 증가"] = {"DEFENSE",},
-    ["피해 방어"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["피해 방어량"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["방패의 피해 방어량이 증가합니다"] = {"BLOCK_VALUE",}, -- +10% Shield Block Value [Eternal Earthstorm Diamond] http://www.wowhead.com/?item=35501
 
     ["생명력"] = {"HEALTH",},
     ["HP"] = {"HEALTH",},
@@ -1277,8 +1334,9 @@ PatternLocale.koKR = {
     ["원거리 공격 속도가%만큼 증가합니다"] = false, -- AV quiver
     ["원거리 무기 공격 속도가%만큼 증가합니다"] = false, -- AV quiver
   },
-}
-DisplayLocale.koKR = {
+} -- }}}
+
+DisplayLocale.koKR = { -- {{{
   ----------------
   -- Stat Names --
   ----------------
@@ -1288,6 +1346,8 @@ DisplayLocale.koKR = {
   ["Stat Multiplier"] = "Stat Multiplier",
   ["Attack Power Multiplier"] = "Attack Power Multiplier",
   ["Reduced Physical Damage Taken"] = "Reduced Physical Damage Taken",
+  ["10% Melee/Ranged Attack Speed"] = "10% Melee/Ranged Attack Speed",
+  ["5% Spell Haste"] = "5% Spell Haste",
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
     ---------------------------------------------------------------------------
@@ -1512,10 +1572,10 @@ DisplayLocale.koKR = {
     ["OFFHAND_WEAPON_RATING"] = {"보조 장비 무기 숙련도", "보조 장비 무기 숙련도"},
     ["RANGED_WEAPON_RATING"] = {"원거리 무기 숙련도", "원거리 무기 숙련도"},
   },
-}
+} -- }}}
 
 -- zhTW localization by CuteMiyu, Ryuji
-PatternLocale.zhTW = {
+PatternLocale.zhTW = { -- {{{
   ["tonumber"] = tonumber,
   -----------------
   -- Armor Types --
@@ -1536,6 +1596,7 @@ PatternLocale.zhTW = {
     [ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
     [ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item wil be bound when picked up
     [ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
+    [ITEM_BIND_TO_ACCOUNT] = true, -- ITEM_BIND_QUEST = "Binds to account";
     [ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
     [ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
     --[EMPTY_SOCKET_BLUE] = true, -- EMPTY_SOCKET_BLUE = "Blue Socket";
@@ -1608,6 +1669,26 @@ PatternLocale.zhTW = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    ["物品等"] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
   --[[
   textTable = {
@@ -1676,8 +1757,10 @@ PatternLocale.zhTW = {
     ["使你可以在水下呼吸"] = false, --
     ["裝備: 免疫繳械。"] = false, -- [Stronghold Gauntlets] ID: 12639
     ["免疫繳械"] = false, --
-    ["十字軍"] = false, -- Enchant Crusader
-    ["生命偷取"] = false, -- Enchant Crusader
+    ["十字軍"] = false, -- Enchant 
+    ["生命偷取"] = false, -- Enchant 
+    ["颶風"] = false, -- Enchant 
+    ["光紋刺繡"] = false, -- Enchant 
 
     ["巨牙活力"] = {["RUN_SPEED"] = 8, ["STA"] = 15}, -- EnchantID: 3232
     ["智慧精進"] = {["MOD_THREAT"] = -2, ["SPI"] = 10}, -- EnchantID: 3296
@@ -1714,13 +1797,14 @@ PatternLocale.zhTW = {
   ["PreScanPatterns"] = {
     --["^Equip: Increases attack power by (%d+) in Cat"] = "FERAL_AP",
     --["^Equip: Increases attack power by (%d+) when fighting Undead"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
-    ["^使你在獵豹、熊、巨熊和梟獸形態下的攻擊強度提高(%d+)點。$"] = "FERAL_AP", -- 3.0.8 FAP change
-    ["^(%d+)格擋$"] = "BLOCK_VALUE",
     ["^(%d+)點護甲$"] = "ARMOR",
+    ["使你的精通等級提高(%d+).-%)$"] = "MASTERY_RATING",
+    ["%d+秒"] = false, -- Procs
     ["強化護甲 %+(%d+)"] = "ARMOR_BONUS",
-    ["^%+?%d+ %- (%d+).-傷害$"] = "MAX_DAMAGE",
+    ["^%+?%d+ ?%- ?(%d+).-傷害$"] = "MAX_DAMAGE",
     ["^%(每秒傷害([%d%.]+)%)$"] = "DPS",
     -- Exclude
+    ["^(%d+)格.-包"] = false, -- # of slots and bag type
     ["^(%d+)格.-包"] = false, -- # of slots and bag type
     ["^(%d+)格.-袋"] = false, -- # of slots and bag type
     ["^(%d+)格容器"] = false, -- # of slots and bag type
@@ -1735,6 +1819,7 @@ PatternLocale.zhTW = {
     ["在你殺死一個敵人"] = false, -- [注入精華的蘑菇] ID:28109
     ["每當你的"] = false, -- [電光相容器] ID: 28785
     ["被擊中時"] = false, --
+    ["^使你在獵豹、熊、巨熊和梟獸形態下的攻擊強度提高(%d+)點。$"] = "FERAL_AP", -- 3.0.8 FAP change
   },
   --------------
   -- DeepScan --
@@ -1815,11 +1900,6 @@ PatternLocale.zhTW = {
     ["強化護甲"] = {"ARMOR_BONUS",},
     ["防禦"] = {"DEFENSE",},
     ["增加防禦"] = {"DEFENSE",},
-    ["格擋"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["格擋值"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["提高格擋值"] = {"BLOCK_VALUE",},
-    ["使你盾牌的格擋值"] = {"BLOCK_VALUE",},
-    ["提高盾牌格擋值"] = {"BLOCK_VALUE",},
 
     ["生命力"] = {"HEALTH",},
     ["法力"] = {"MANA",},
@@ -2014,6 +2094,8 @@ PatternLocale.zhTW = {
     ["熟練等級"] = {"EXPERTISE_RATING"},
     ["護甲穿透等級"] = {"ARMOR_PENETRATION_RATING"},
     ["你的護甲穿透等級提高"] = {"ARMOR_PENETRATION_RATING"},
+    ["精通等級"] = {"MASTERY_RATING",},
+    ["使你的精通等級"] = {"MASTERY_RATING",},
 
     -- Exclude
     ["秒"] = false,
@@ -2023,8 +2105,9 @@ PatternLocale.zhTW = {
     ["格彈藥袋"] = false,
     ["遠程攻擊速度%"] = false, -- AV quiver
   },
-}
-DisplayLocale.zhTW = {
+} -- }}}
+
+DisplayLocale.zhTW = { -- {{{
   ----------------
   -- Stat Names --
   ----------------
@@ -2034,6 +2117,8 @@ DisplayLocale.zhTW = {
   ["Stat Multiplier"] = "總屬性提高%",
   ["Attack Power Multiplier"] = "攻擊強度提高%",
   ["Reduced Physical Damage Taken"] = "物理傷害減少%",
+  ["10% Melee/Ranged Attack Speed"] = "10%物理攻速",
+  ["5% Spell Haste"] = "5%法術加速",
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
     ---------------------------------------------------------------------------
@@ -2137,6 +2222,7 @@ DisplayLocale.zhTW = {
     --["EXPERTISE_RATING"] = {STAT_EXPERTISE.." "..RATING, STAT_EXPERTISE.." "..RATING},
     ["EXPERTISE_RATING"] = {"熟練等級", "熟練等級"},
     ["ARMOR_PENETRATION_RATING"] = {"護甲穿透等級", "護甲穿透等級"},
+    ["MASTERY_RATING"] = {"精通等級", "精通等級"},
 
     ---------------------------------------------------------------------------
     -- Tier2 Stats - Stats that only show up when broken down from a Tier1 stat
@@ -2186,6 +2272,7 @@ DisplayLocale.zhTW = {
     --["EXPERTISE"] = {STAT_EXPERTISE, STAT_EXPERTISE},
     ["EXPERTISE"] = {"熟練", "熟練"},
     ["ARMOR_PENETRATION"] = {"護甲穿透(%)", "護甲穿透(%)"},
+	["MASTERY"] = {"精通", "精通"},
 
     ---------------------------------------------------------------------------
     -- Tier3 Stats - Stats that only show up when broken down from a Tier2 stat
@@ -2249,10 +2336,10 @@ DisplayLocale.zhTW = {
     ["OFFHAND_WEAPON_RATING"] = {"副手武器技能等級", "副手武器技能等級"},
     ["RANGED_WEAPON_RATING"] = {"遠程武器技能等級", "遠程武器技能等級"},
   },
-}
+} -- }}}
 
 -- deDE localization by Gailly, Dleh
-PatternLocale.deDE = {
+PatternLocale.deDE = { -- {{{
   ["tonumber"] = function(s)
     local n = tonumber(s)
     if n then
@@ -2339,6 +2426,25 @@ PatternLocale.deDE = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
   -----------------------
   -- Whole Text Lookup --
@@ -2426,7 +2532,6 @@ PatternLocale.deDE = {
     --["^Equip: Increases attack power by (%d+) in Cat"] = "FERAL_AP",
     --["^Equip: Increases attack power by (%d+) when fighting Undead"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
     ["^Erhöht die Angriffskraft um (%d+) nur in Katzen%-, Bären%-, Terrorbären%- und Mondkingestalt%.$"] = "FERAL_AP", -- 3.0.8 FAP change
-    ["^(%d+) Block$"] = "BLOCK_VALUE",
     ["^(%d+) Rüstung$"] = "ARMOR",
     ["Verstärkte %(%+(%d+) Rüstung%)"] = "ARMOR_BUFF",
     ["Mana Regeneration (%d+) alle 5 Sek%.$"] = "COMBAT_MANA_REGEN",
@@ -2504,10 +2609,6 @@ PatternLocale.deDE = {
     ["Rüstung"] = {"ARMOR_BONUS",},
     ["Verteidigung"] = {"DEFENSE",},
     ["Erhöht die Verteidigungswertung"] = {"DEFENSE",},
-    ["Blocken"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["Blockwert"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["Erhöht den Blockwert Eures Schildes"] = {"BLOCK_VALUE",},
-    ["Erhöht den Blockwert Eures Schilds"] = {"BLOCK_VALUE",},
 
     ["Gesundheit"] = {"HEALTH",},
     ["HP"] = {"HEALTH",},
@@ -2683,8 +2784,9 @@ PatternLocale.deDE = {
     ["Platz Munitionsbeutel"] = false,
     ["Erhöht das Distanzangriffstempo"] = false, -- AV quiver
   },
-}
-DisplayLocale.deDE = {
+} -- }}}
+
+DisplayLocale.deDE = { -- {{{
   ----------------
   -- Stat Names --
   ----------------
@@ -2695,6 +2797,8 @@ DisplayLocale.deDE = {
   ["Stat Multiplier"] = "Wertemultiplikatoren",
   ["Attack Power Multiplier"] = "Angriffskraft-Multiplikatoren",
   ["Reduced Physical Damage Taken"] = "Reduzierter erlittener physischer Schaden",
+  ["10% Melee/Ranged Attack Speed"] = "10% Melee/Ranged Attack Speed",
+  ["5% Spell Haste"] = "5% Spell Haste",
   -- NOTE I left many of the english terms because german players tend to use them and germans are much tooo long
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
@@ -2915,10 +3019,10 @@ DisplayLocale.deDE = {
     ["OFFHAND_WEAPON_RATING"] = {"Schildhandwaffe "..SKILL.." "..RATING, "Schildhand"..SKILL.." "..RATING},
     ["RANGED_WEAPON_RATING"] = {"Fernkampfwaffe "..SKILL.." "..RATING, "Fernkampf"..SKILL.." "..RATING},
   },
-}
+} -- }}}
 
 -- frFR localization by Tixu
-PatternLocale.frFR = {
+PatternLocale.frFR = { -- {{{
   ["tonumber"] = function(s)
     local n = tonumber(s)
     if n then
@@ -3008,6 +3112,25 @@ PatternLocale.frFR = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
 
   -----------------------
@@ -3076,7 +3199,7 @@ PatternLocale.frFR = {
   -----------------------------
   -- Single Equip Stat Check --
   -----------------------------
-  ["SingleEquipStatCheck"] = "^Équipé\194\160: Augmente (.-) ?de (%d+) ?a?u? ?m?a?x?i?m?u?m? ?(.-)%.?$",
+  ["SingleEquipStatCheck"] = "^Équipé\194\160: Augmente (.-) ?de (%d+) ?a?u? ?m?a?x?i?m?u?m? ?(.-)%.?.-$",
 
   -------------
   -- PreScan --
@@ -3084,7 +3207,6 @@ PatternLocale.frFR = {
   -- Special cases that need to be dealt with before deep scan
   ["PreScanPatterns"] = {
     ["^Augmente la puissance d'attaque de (%d+) seulement en forme de félin, ours, ours redoutable ou sélénien%.$"] = "FERAL_AP", -- 3.0.8 FAP change
-    ["Bloquer.- (%d+)"] = "BLOCK_VALUE",
     ["Armure.- (%d+)"] = "ARMOR",
     ["^Équipé\194\160: Rend (%d+) points de vie toutes les 5 seco?n?d?e?s?%.?$"]= "COMBAT_HEALTH_REGEN",
     ["^Équipé\194\160: Rend (%d+) points de mana toutes les 5 seco?n?d?e?s?%.?$"]= "COMBAT_MANA_REGEN",
@@ -3136,7 +3258,7 @@ PatternLocale.frFR = {
     "^(.-) ?([%+%-]%d+) ?(.-)%.?$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 2ed)
     "^(.-) ?([%d%,]+) ?(.-)%.?$", -- 22.22 xxx xxx (scan last)
     "^.-: (.-)([%+%-]%d+) ?(.-)%.?$", --Bonus de sertissage : +3 xxx
-    "^(.-) augmentée?s? de (%d+) ?(.-)%%?%.?$",--sometimes this pattern is needed but not often.
+    "^(.-) augmentée?s? de (%d+) ?(.-)%%?%.?$",--sometimes this pattern is needed but not often
   },
   -----------------------
   -- Stat Lookup Table --
@@ -3195,10 +3317,6 @@ PatternLocale.frFR = {
 
     ["défense"] = {"DEFENSE",},
 
-    ["valeur de blocage"] = {"BLOCK_VALUE",},
-    ["à la valeur de blocage"] = {"BLOCK_VALUE",},
-    ["la valeur de blocage de votre bouclier"] = {"BLOCK_VALUE",},
-
     ["points de vie"] = {"HEALTH",},
     ["aux points de vie"] = {"HEALTH",},
     ["points de mana"] = {"MANA",},
@@ -3206,8 +3324,6 @@ PatternLocale.frFR = {
     ["la puissance d'attaque"] = {"AP",},
     ["à la puissance d'attaque"] = {"AP",},
     ["puissance d'attaque"] = {"AP",},
-
-
 
     --ToDo
     ["Augmente dela puissance d'attaque lorsque vous combattez des morts-vivants"] = {"AP_UNDEAD",},
@@ -3317,6 +3433,12 @@ PatternLocale.frFR = {
     ["le score de toucher"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
     ["votre score de toucher"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
     ["au score de toucher"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
+	
+	--mastery
+    ["score de maîtrise"] = {"MASTERY_RATING",}, -- gems
+    ["votre score de maîtrise"] = {"MASTERY_RATING",},
+	["au score de maîtrise"] = {"MASTERY_RATING",},
+	["le score de maîtrise"] = {"MASTERY_RATING",},
 
     ["score de coup critique"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
     ["score de critique"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
@@ -3346,10 +3468,6 @@ PatternLocale.frFR = {
     ["au score de coup critique de sorts"] = {"SPELL_CRIT_RATING",},
     ["aux score de coup critique des sorts"] = {"SPELL_CRIT_RATING",},--blizzard! faute d'orthographe!!
 
-    --ToDo
-    --["Ranged Hit Rating"] = {"RANGED_HIT_RATING",},
-    --["Improves ranged hit rating"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
-    --["Increases your ranged hit rating"] = {"RANGED_HIT_RATING",},
     ["votre score de coup critique à distance"] = {"RANGED_CRIT_RATING",}, -- Fletcher's Gloves ID:7348
     ["au score de coup critique à distance"] = {"RANGED_CRIT_RATING",}, -- Enchant given by Heartseeker Scope [41167]
 
@@ -3386,23 +3504,10 @@ PatternLocale.frFR = {
     ["le score de la compétence armes de pugilat"] = {"FIST_WEAPON_RATING"},
     ["le score de compétence combat farouche"] = {"FERAL_WEAPON_RATING"},
     ["le score de la compétence mains nues"] = {"FIST_WEAPON_RATING"},
-
-    --ToDo
-    --["Increases gun skill rating"] = {"GUN_WEAPON_RATING"},
-    --["Increases Crossbow skill rating"] = {"CROSSBOW_WEAPON_RATING"},
-    --["Increases Bow skill rating"] = {"BOW_WEAPON_RATING"},
-
-    --ToDo
-    -- Exclude
-    --["sec"] = false,
-    --["to"] = false,
-    --["Slot Bag"] = false,
-    --["Slot Quiver"] = false,
-    --["Slot Ammo Pouch"] = false,
-    --["Increases ranged attack speed"] = false, -- AV quiver
   },
-}
-DisplayLocale.frFR = {
+} -- }}}
+
+DisplayLocale.frFR = { -- {{{
   --ToDo
   ----------------
   -- Stat Names --
@@ -3413,6 +3518,8 @@ DisplayLocale.frFR = {
   ["Stat Multiplier"] = "Stat Multiplier",
   ["Attack Power Multiplier"] = "Attack Power Multiplier",
   ["Reduced Physical Damage Taken"] = "Reduced Physical Damage Taken",
+  ["10% Melee/Ranged Attack Speed"] = "10% Melee/Ranged Attack Speed",
+  ["5% Spell Haste"] = "5% Spell Haste",
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
     ---------------------------------------------------------------------------
@@ -3509,10 +3616,11 @@ DisplayLocale.frFR = {
     ["GUN_WEAPON_RATING"] = {"Arme à feu "..SKILL.." "..RATING, "Arme à feu "..RATING},
     ["CROSSBOW_WEAPON_RATING"] = {"Arbalète "..SKILL.." "..RATING, "Arbalète "..RATING},
     ["BOW_WEAPON_RATING"] = {"Arc "..SKILL.." "..RATING, "Arc "..RATING},
-    ["FERAL_WEAPON_RATING"] = {"Feral "..SKILL.." "..RATING, "Feral "..RATING},
-    ["FIST_WEAPON_RATING"] = {"Unarmed "..SKILL.." "..RATING, "Unarmed "..RATING},
+    ["FERAL_WEAPON_RATING"] = {"Farouche "..SKILL.." "..RATING, "Farouche "..RATING},
+    ["FIST_WEAPON_RATING"] = {"Main nue "..SKILL.." "..RATING, "Main nue "..RATING},
     ["EXPERTISE_RATING"] = {"Expertise".." "..RATING, "Expertise".." "..RATING},
     ["ARMOR_PENETRATION_RATING"] = {"Pénétration d'armure".." "..RATING, "ArP".." "..RATING},
+	["MASTERY_RATING"] = {RATING .. " de maîtrise", RATING .. " de maîtrise"},
 
     ---------------------------------------------------------------------------
     -- Tier2 Stats - Stats that only show up when broken down from a Tier1 stat
@@ -3557,10 +3665,10 @@ DisplayLocale.frFR = {
     ["CROSSBOW_WEAPON"] = {"Compétence d'arbalète", "Arbalète"},
     ["BOW_WEAPON"] = {"Compétence d'arc", "Arc"},
     ["FERAL_WEAPON"] = {"Feral "..SKILL, "Feral"},
-    ["FIST_WEAPON"] = {"Unarmed "..SKILL, "Unarmed"},
+    ["FIST_WEAPON"] = {"Main nue "..SKILL, "Main nue"},
     ["EXPERTISE"] = {"Expertise", "Expertise"},
     ["ARMOR_PENETRATION"] = {"Pénétration d'armure(%)", "PenAr(%)"},
-
+	["MASTERY"] = {"Maîtrise", "Maîtrise"},
     ---------------------------------------------------------------------------
     -- Tier3 Stats - Stats that only show up when broken down from a Tier2 stat
     -- Defense -> Crit Avoidance, Hit Avoidance, Dodge, Parry, Block
@@ -3622,10 +3730,10 @@ DisplayLocale.frFR = {
     ["OFFHAND_WEAPON_RATING"] = {"Off Hand Weapon "..SKILL.." "..RATING, "OH Weapon"..SKILL.." "..RATING},
     ["RANGED_WEAPON_RATING"] = {"Ranged Weapon "..SKILL.." "..RATING, "Ranged Weapon"..SKILL.." "..RATING},
   },
-}
+} -- }}}
 
 -- zhCN localization by iceburn
-PatternLocale.zhCN = {
+PatternLocale.zhCN = { -- {{{
   ["tonumber"] = tonumber,
   -----------------
   -- Armor Types --
@@ -3708,6 +3816,25 @@ PatternLocale.zhCN = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
   --[[
   textTable = {
@@ -3818,7 +3945,6 @@ PatternLocale.zhCN = {
   ["PreScanPatterns"] = {
     ["^装备: 猫形态下的攻击强度增加(%d+)"] = "FERAL_AP",
     ["^装备: 与亡灵作战时的攻击强度提高(%d+)点"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
-    ["^(%d+)格挡$"] = "BLOCK_VALUE",
     ["^(%d+)点护甲$"] = "ARMOR",
     ["强化护甲 %+(%d+)"] = "ARMOR_BONUS",
     ["护甲值提高(%d+)点"] = "ARMOR_BONUS",
@@ -3929,8 +4055,6 @@ PatternLocale.zhCN = {
     ["护甲值提高(%d+)点"] = {"ARMOR_BONUS",},
     ["防御"] = {"DEFENSE",},
     ["增加防御"] = {"DEFENSE",},
-    ["格挡值"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["使你的盾牌格挡值"] = {"BLOCK_VALUE",},
 
     ["生命值"] = {"HEALTH",},
     ["法力值"] = {"MANA",},
@@ -4155,8 +4279,9 @@ PatternLocale.zhCN = {
     ["格弹药袋"] = false,
     ["远程攻击速度%"] = false, -- AV quiver
   },
-}
-DisplayLocale.zhCN = {
+} -- }}}
+
+DisplayLocale.zhCN = { -- {{{
   ----------------
   -- Stat Names --
   ----------------
@@ -4166,6 +4291,8 @@ DisplayLocale.zhCN = {
   ["Stat Multiplier"] = "Stat Multiplier",
   ["Attack Power Multiplier"] = "Attack Power Multiplier",
   ["Reduced Physical Damage Taken"] = "Reduced Physical Damage Taken",
+  ["10% Melee/Ranged Attack Speed"] = "10% Melee/Ranged Attack Speed",
+  ["5% Spell Haste"] = "5% Spell Haste",
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
     ---------------------------------------------------------------------------
@@ -4379,10 +4506,10 @@ DisplayLocale.zhCN = {
     ["OFFHAND_WEAPON_RATING"] = {"副手武器技能等级", "副手武器技能等级"},
     ["RANGED_WEAPON_RATING"] = {"远程武器技能等级", "远程武器技能等级"},
   },
-}
+} -- }}}
 
 -- ruRU localization by Gezz
-PatternLocale.ruRU = {
+PatternLocale.ruRU = { -- {{{
   ["tonumber"] = function(s)
     local n = tonumber(s)
     if n then
@@ -4415,6 +4542,8 @@ PatternLocale.ruRU = {
     [ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
     [ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
     [ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
+    ["Перек"] = true, -- Перековано
+    ["Герои"] = true, -- Героический
     ["Может"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
     -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
     ["Длите"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
@@ -4469,6 +4598,25 @@ PatternLocale.ruRU = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
   -----------------------
   -- Whole Text Lookup --
@@ -4546,7 +4694,8 @@ PatternLocale.ruRU = {
   -- stat1, value, stat2 = strfind
   -- stat = stat1..stat2
   -- "^Equip: (.-) by u?p? ?t?o? ?(%d+) ?(.-)%.?$"
-  ["SingleEquipStatCheck"] = "^Если на персонаже: (.-) ?н?е? ?б?о?л?е?е? ?ч?е?м?,? на (%d+) ?е?д?.? ?(.-)%.?$",
+  --  ["SingleEquipStatCheck"] = "^Если на персонаже: (.-) ?н?е? ?б?о?л?е?е? ?ч?е?м?,? на (%d+) ?е?д?.? ?(.-)%.?$",
+  ["SingleEquipStatCheck"] = "^Если на персонаже: (.-)%s?+?(%d+)%.?%s?%(?.*%)?(.-)$",
   -------------
   -- PreScan --
   -------------
@@ -4554,7 +4703,6 @@ PatternLocale.ruRU = {
   ["PreScanPatterns"] = {
     --["^Если на персонаже: Увеличивает силу атаки на (%d+) ед. в облике кошки"] = "FERAL_AP",
     --["^Если на персонаже: Увеличение силы атаки на (%d+) ед. в битве с нежитью"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
-    ["^Блокирование: (%d+)$"] = "BLOCK_VALUE",
     ["^Броня: (%d+)$"] = "ARMOR",
     ["Доспех усилен %(%+(%d+) к броне%)"] = "ARMOR_BONUS",
     ["Восполнение (%d+) ед%. маны раз в 5 сек%.$"] = "COMBAT_MANA_REGEN",
@@ -4562,6 +4710,7 @@ PatternLocale.ruRU = {
     ["Восполнение (%d+) ед%. маны в 5 секунд%."] = "COMBAT_MANA_REGEN",
     ["^Урон: %+?%d+ %- (%d+)$"] = "MAX_DAMAGE",
     ["^%(([%d%,]+) единицы урона в секунду%)$"] = "DPS",
+    ["^%(([%d%.]+) ед. урона в секунду%)$"] = "DPS",
     -- Exclude
     ["^Комплект %((%d+) предмета%)"] = false, -- Set Name (0/9)
     ["^Комплект"] = false, -- Set Name (0/9)
@@ -4591,7 +4740,7 @@ PatternLocale.ruRU = {
   ["."] = ".",
   ["DeepScanSeparators"] = {
     "/", -- "+10 Defense Rating/+10 Stamina/+15 Block Value": ZG Enchant
-    " & ", -- "+26 Healing Spells & 2% Reduced Threat": Bracing Earthstorm Diamond ID:25897
+    -- " & ", -- "+26 Healing Spells & 2% Reduced Threat": Bracing Earthstorm Diamond ID:25897
   },
   ["DeepScanWordSeparators"] = {
     -- "%. ", -- "Equip: Increases attack power by 81 when fighting Undead. It also allows the acquisition of Scourgestones on behalf of the Argent Dawn.": Seal of the Dawn
@@ -4605,9 +4754,9 @@ PatternLocale.ruRU = {
     ["увеличивает силу заклинаний на (%d+) ед%."] = {{"SPELL_DMG",},{"HEAL",},},
   },
   ["DeepScanPatterns"] = {
-    "^(.-) ?н?е? ?б?о?л?е?е? ?ч?е?м? на (%d+) ?е?д?.? ?(.-)$", -- "xxx by up to 22 xxx" (scan first)
-    "^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 2ed)
-    "^(.-) ?([%d%,]+) ?(.-)$", -- 22.22 xxx xxx (scan last)
+--    "^(.-) ?н?е? ?б?о?л?е?е? ?ч?е?м? на (%d+) ?е?д?.? ?(.-)$", -- "xxx by up to 22 xxx" (scan first)
+    "^(.-)%s?([%+%-]%d+)%s?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 2ed)
+    "^(.-)%s?([%d%,]+)%s(.-)$", -- 22.22 xxx xxx (scan last)
   },
   -----------------------
   -- Stat Lookup Table --
@@ -4746,9 +4895,6 @@ PatternLocale.ruRU = {
     ["Броня"] = {"ARMOR_BONUS",},
     ["Защита"] = {"DEFENSE",},
     ["Повышение защиты"] = {"DEFENSE",},
-    ["Блок"] = {"BLOCK_VALUE",}, -- +22 Block Value
-    ["к блоку"] = {"BLOCK_VALUE",},
-    ["Увеличение показателя блока щитом наед"] = {"BLOCK_VALUE",},
 
     ["к силе"] = {"STR",},
     ["к ловкости"] = {"AGI",},
@@ -4786,7 +4932,8 @@ PatternLocale.ruRU = {
     ["к проникающей способности заклинаний"] = {"SPELLPEN",}, -- Enchant Cloak - Spell Penetration "+20 Spell Penetration" http://wow.allakhazam.com/db/spell.html?wspell=34003
     ["увеличение наед%. проникающей способности заклинаний на"] = {"SPELLPEN",},
 
-         ["Увеличивает силу заклинаний на"] = {"SPELL_DMG", "HEAL",},
+    ["сила заклинаний"] = {"SPELL_DMG", "HEAL",},
+    ["Увеличивает силу заклинаний на"] = {"SPELL_DMG", "HEAL",},
     ["увеличивает силу заклинаний наед"] = {"SPELL_DMG", "HEAL",},
     ["к урону от заклинаний и лечению"] = {"SPELL_DMG", "HEAL",},
     ["к урону от заклинаний"] = {"SPELL_DMG", "HEAL",},
@@ -4832,6 +4979,7 @@ PatternLocale.ruRU = {
     ["к рейтингу устойчивости"] = {"RESILIENCE_RATING",}, -- Enchant Chest - Major Resilience "+15 Resilience Rating" http://wow.allakhazam.com/db/spell.html?wspell=33992
 
     ["рейтинг скорости"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
+    ["к рейтингу скорости"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
     ["рейтинг скорости боя"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
     ["к рейтингу скорости боя"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
     ["к рейтингу скорости заклинаний"] = {"SPELL_HASTE_RATING"},
@@ -4839,12 +4987,21 @@ PatternLocale.ruRU = {
 
     ["рейтинг мастерства"] = {"EXPERTISE_RATING"},
     ["к рейтингу мастерства"] = {"EXPERTISE_RATING"},
+
+    ["к рейтингу искусности"] = {"MASTERY_RATING"},
+    ["рейтинг искусности"] = {"MASTERY_RATING"},
+  },
+} -- }}}
+DisplayLocale.ruRU = { -- {{{
+  ["StatIDToName"] = {
+    --[StatID] = {FullName, ShortName},
+    ["MASTERY_RATING"] = {"Рейтинг искусности", "РИ"},
+    ["MASTERY"] = {"Искусность", "Иск"},
   },
 }
-DisplayLocale.ruRU = DisplayLocale.enUS
 
 -- esES localization by Kaie Estirpe de las Sombras from Minahonda
-PatternLocale.esES = {
+PatternLocale.esES = { -- {{{
   ["tonumber"] = function(s)
     local n = tonumber(s)
     if n then
@@ -4934,6 +5091,25 @@ PatternLocale.esES = {
     [INVTYPE_RELIC] = true,
     [INVTYPE_TABARD] = true,
     [INVTYPE_BAG] = true,
+    [REFORGED] = true,
+    [ITEM_HEROIC] = true,
+    [ITEM_HEROIC_EPIC] = true,
+    [ITEM_HEROIC_QUALITY0_DESC] = true,
+    [ITEM_HEROIC_QUALITY1_DESC] = true,
+    [ITEM_HEROIC_QUALITY2_DESC] = true,
+    [ITEM_HEROIC_QUALITY3_DESC] = true,
+    [ITEM_HEROIC_QUALITY4_DESC] = true,
+    [ITEM_HEROIC_QUALITY5_DESC] = true,
+    [ITEM_HEROIC_QUALITY6_DESC] = true,
+    [ITEM_HEROIC_QUALITY7_DESC] = true,
+    [ITEM_QUALITY0_DESC] = true,
+    [ITEM_QUALITY1_DESC] = true,
+    [ITEM_QUALITY2_DESC] = true,
+    [ITEM_QUALITY3_DESC] = true,
+    [ITEM_QUALITY4_DESC] = true,
+    [ITEM_QUALITY5_DESC] = true,
+    [ITEM_QUALITY6_DESC] = true,
+    [ITEM_QUALITY7_DESC] = true,
   },
 
   -----------------------
@@ -5002,7 +5178,6 @@ PatternLocale.esES = {
   -------------
   -- Special cases that need to be dealt with before deep scan
   ["PreScanPatterns"] = {
-    ["^(%d+) bloqueo$"] = "BLOCK_VALUE",
     ["^(%d+) armadura$"] = "ARMOR",
     ["^Equipar: Restaura (%d+) p. de salud cada 5 s"]= "COMBAT_HEALTH_REGEN",
     ["^Equipar: Restaura (%d+) p. de maná cada 5 s"]= "COMBAT_MANA_REGEN",
@@ -5114,10 +5289,6 @@ PatternLocale.esES = {
     ["armadura"] = {"ARMOR_BONUS",},
 
     ["defensa"] = {"DEFENSE",},
-
-    ["valor de bloqueo"] = {"BLOCK_VALUE",},
-    ["al valor de bloqueo"] = {"BLOCK_VALUE",},
-    ["aumenta el valor de bloqueo de tu escudop"] = {"BLOCK_VALUE",},
 
     ["salud"] = {"HEALTH",},
     ["puntos de vida"] = {"HEALTH",},
@@ -5302,8 +5473,9 @@ PatternLocale.esES = {
     --["Slot Ammo Pouch"] = false,
     --["Increases ranged attack speed"] = false, -- AV quiver
   },
-}
-DisplayLocale.esES = {
+} -- }}}
+
+DisplayLocale.esES = { -- {{{
   --ToDo
   ----------------
   -- Stat Names --
@@ -5314,6 +5486,8 @@ DisplayLocale.esES = {
   ["Stat Multiplier"] = "Stat Multiplier",
   ["Attack Power Multiplier"] = "Attack Power Multiplier",
   ["Reduced Physical Damage Taken"] = "Reduced Physical Damage Taken",
+  ["10% Melee/Ranged Attack Speed"] = "10% Melee/Ranged Attack Speed",
+  ["5% Spell Haste"] = "5% Spell Haste",
   ["StatIDToName"] = {
     --[StatID] = {FullName, ShortName},
     ---------------------------------------------------------------------------
@@ -5523,7 +5697,7 @@ DisplayLocale.esES = {
     ["OFFHAND_WEAPON_RATING"] = {"Off Hand Weapon "..SKILL.." "..RATING, "OH Weapon"..SKILL.." "..RATING},
     ["RANGED_WEAPON_RATING"] = {"Ranged Weapon "..SKILL.." "..RATING, "Ranged Weapon"..SKILL.." "..RATING},
   },
-}
+} -- }}}
 
 PatternLocale.esMX = PatternLocale.esES
 DisplayLocale.esMX = DisplayLocale.esES
@@ -5535,7 +5709,21 @@ if not L then
   noPatternLocale = true
   L = PatternLocale.enUS
 end
-local D = DisplayLocale[locale] or DisplayLocale.enUS
+
+-- Setup DisplayLocale with enUS fallback if current local translation does not exist
+local function SetupDisplayLocale(locale, enUS)
+  for k in pairs(enUS) do
+    if type(enUS[k]) == "table" and type(locale[k]) == "table" then
+      SetupDisplayLocale(locale[k], enUS[k])
+    elseif locale[k] then
+      enUS[k] = locale[k]
+    end
+  end
+end
+if DisplayLocale[locale] then
+  SetupDisplayLocale(DisplayLocale[locale], DisplayLocale.enUS)
+end
+local D = DisplayLocale.enUS
 PatternLocale = nil
 DisplayLocale = nil
 
@@ -5548,7 +5736,7 @@ end
 for k, v in pairs(temp) do
   L.StatIDLookup[k] = v
 end
-
+temp = nil
 
 --[[---------------------------------
   :GetStatNameFromID(stat)
@@ -5587,7 +5775,7 @@ if not tip then
   tip = CreateFrame("GameTooltip", MAJOR.."Tooltip", nil, "GameTooltipTemplate")
   StatLogic.tip = tip
   tip:SetOwner(UIParent, "ANCHOR_NONE")
-  for i = 1, 30 do
+  for i = 1, 40 do
     tip[i] = _G[MAJOR.."TooltipTextLeft"..i]
     if not tip[i] then
       tip[i] = tip:CreateFontString()
@@ -5595,8 +5783,8 @@ if not tip then
       _G[MAJOR.."TooltipTextLeft"..i] = tip[i]
     end
   end
-elseif not _G[MAJOR.."TooltipTextLeft30"] then
-  for i = 1, 30 do
+elseif not _G[MAJOR.."TooltipTextLeft40"] then
+  for i = 1, 40 do
     _G[MAJOR.."TooltipTextLeft"..i] = tip[i]
   end
 end
@@ -5606,7 +5794,7 @@ if not tipMiner then
   tipMiner = CreateFrame("GameTooltip", MAJOR.."MinerTooltip", nil, "GameTooltipTemplate")
   StatLogic.tipMiner = tipMiner
   tipMiner:SetOwner(UIParent, "ANCHOR_NONE")
-  for i = 1, 30 do
+  for i = 1, 40 do
     tipMiner[i] = _G[MAJOR.."MinerTooltipTextLeft"..i]
     if not tipMiner[i] then
       tipMiner[i] = tipMiner:CreateFontString()
@@ -5614,8 +5802,8 @@ if not tipMiner then
       _G[MAJOR.."MinerTooltipTextLeft"..i] = tipMiner[i]
     end
   end
-elseif not _G[MAJOR.."MinerTooltipTextLeft30"] then
-  for i = 1, 30 do
+elseif not _G[MAJOR.."MinerTooltipTextLeft40"] then
+  for i = 1, 40 do
     _G[MAJOR.."MinerTooltipTextLeft"..i] = tipMiner[i]
   end
 end
@@ -6125,7 +6313,7 @@ RatingIDToConvertedStat = {
   "RANGED_HIT_AVOID",
   "SPELL_HIT_AVOID",
   "MELEE_CRIT_AVOID",
-  "PLAYER_DAMAGE_AVOID",
+  "PLAYER_DAMAGE_TAKEN",
   "SPELL_CRIT_AVOID",
   "MELEE_HASTE",
   "RANGED_HASTE",
@@ -6889,6 +7077,14 @@ local StatModInfo = {
     initialValue = 0,
     finalAdjust = 1,
   },
+  ["MOD_MELEE_HASTE"] = {
+    initialValue = 1,
+    finalAdjust = 0,
+  },
+  ["MOD_SPELL_HASTE"] = {
+    initialValue = 1,
+    finalAdjust = 0,
+  },
 }
 StatLogic.StatModInfo = StatModInfo -- so other addons can use this directly
 StatLogic.SpellSchools = {
@@ -6918,13 +7114,14 @@ if playerClass == "DRUID" then
   StatModTable["DRUID"] = {
     -- Druid: Nurturing Instinct (Rank 2) - 2,14
     -- 4.0.1: 2,14: Increases your healing spells by up to 35%/70% of your Agility, and increases healing done to you by 10%/20% while in Cat form.
+    -- 4.0.6: 2,14: Increases your healing spells by up to 50%/100% of your Agility, and increases healing done to you by 10%/20% while in Cat form.
     ["ADD_HEAL_MOD_AGI"] = {
       {
         ["spellid"] = 33873,
         ["tab"] = 2,
         ["num"] = 14,
         ["rank"] = {
-          0.35, 0.7,
+          0.50, 1,
         },
       },
     },
@@ -7016,6 +7213,10 @@ if playerClass == "DRUID" then
     -- 4.0.1: Reduces damage taken while in Bear Form by 6/12%, increases your dodge while in Bear Form by 3/6%, and you generate 1/3 rage every time you dodge while in Bear Form.
     -- Druid: Survival Instincts - Buff
     -- 4.0.1: Damage taken reduced by 60% while in Bear Form or Cat Form.
+    -- 4.0.6: Damage taken reduced by 50% while in Bear Form or Cat Form.
+    -- Druid: Moonkin Form - Buff
+    -- 4.0.1: Armor contribution from items is increased by 120%.
+    -- 4.0.6: All damage reduced by 15%.
     ["MOD_DMG_TAKEN"] = {
       {-- Enrage
         ["MELEE"] = true,
@@ -7078,7 +7279,7 @@ if playerClass == "DRUID" then
         ["SHADOW"] = true,
         ["ARCANE"] = true,
         ["rank"] = {
-          -0.6,
+          -0.5,
         },
         ["buff"] = 61336,		-- ["Survival Instincts"],
         ["buff2"] = 5487,		-- ["Bear Form"],
@@ -7093,18 +7294,30 @@ if playerClass == "DRUID" then
         ["SHADOW"] = true,
         ["ARCANE"] = true,
         ["rank"] = {
-          -0.6,
+          -0.5,
         },
         ["buff"] = 61336,		-- ["Survival Instincts"],
         ["buff2"] = 768,		-- ["Cat Form"],
+      },
+      {-- Moonkin Form - Buff
+        ["MELEE"] = true,
+        ["RANGED"] = true,
+        ["HOLY"] = true,
+        ["FIRE"] = true,
+        ["NATURE"] = true,
+        ["FROST"] = true,
+        ["SHADOW"] = true,
+        ["ARCANE"] = true,
+        ["rank"] = {
+          -0.15,
+        },
+        ["buff"] = 24858,		-- ["Moonkin Form"],
       },
     },
     -- Druid: Thick Hide (Rank 3) - 2,11
     -- 4.0.1: Increases your Armor contribution from cloth and leather items by 4/7/10%, increases armor while in Bear Form by an additional 11/22/33%, and reduces the chance you'll be critically hit by melee attacks by 2/4/6%.
     -- Druid: Bear Form - Buff
     -- 4.0.1: Increases melee attack power by 30, armor contribution from cloth and leather items by 65%/120%, and Stamina by 25%.  Also causes agility to increase attack power.
-    -- Druid: Moonkin Form - Buff
-    -- 4.0.1: Armor contribution from items is increased by 120%.
     -- Druid: Tree of Life - Buff
     -- 4.0.1: Armor increased by 120%.
     ["MOD_ARMOR"] = {
@@ -7135,12 +7348,6 @@ if playerClass == "DRUID" then
         },
         ["buff"] = 5487,		-- ["Bear Form"],
         ["condition"] = "UnitLevel('player') >= 40",
-      },
-      {
-        ["rank"] = {
-          1.2,
-        },
-        ["buff"] = 24858,		-- ["Moonkin Form"],
       },
       {
         ["rank"] = {
@@ -7219,7 +7426,7 @@ if playerClass == "DRUID" then
         ["rank"] = {
           0.25,
         },
-        ["known"] = 84735, -- ["Meditation"]
+        ["known"] = 84735, -- ["Aggression"]
       },
     },
     -- Druid: Leather Specialization - Passive: 86530
@@ -7252,14 +7459,55 @@ if playerClass == "DRUID" then
   }
 elseif playerClass == "DEATHKNIGHT" then
   StatModTable["DEATHKNIGHT"] = {
+    -- Death Knight: Icy Talons - Passive: 50887
+    -- 4.0.6: Your melee attack speed is increased by 20%.
+    -- Death Knight: Improved Icy Talons - Rank 1/1 - 2,13
+    -- 4.0.6: Increases the melee and ranged attack speed of all party and raid 
+	--        members within 100 yards by 10%, and your own attack speed by an additional 5%.
+    -- Death Knight: Unholy Presence - Stance
+    -- 4.0.6: Attack speed and rune regeneration increased 10%.
+    -- Death Knight: Improved Unholy Presence - Rank 2/2 - 3,16
+    -- 4.0.6: Grants you an additional 2/5% haste while in Unholy Presence. 
+    ["MOD_MELEE_HASTE"] = {
+      {-- Icy Talons
+        ["rank"] = {
+          0.2,
+        },
+        ["known"] = 50887,
+      },
+      {-- Improved Icy Talons
+        ["tab"] = 2,
+        ["num"] = 13,
+        ["rank"] = {
+          0.05,
+        },
+      },
+      {-- Unholy Presence and Improved Unholy Presence
+        ["tab"] = 3,
+        ["num"] = 16,
+        ["rank"] = {
+          [0] = 0.1, 0.12, 0.15,
+        },
+        ["stance"] = "Interface\\Icons\\Spell_Deathknight_UnholyPresence",
+      },
+    },
     -- Tanks: Forceful Deflection - Passive
     -- 4.0.1: Increases your Parry Rating by 25% of your total Strength.
+    -- 4.2.0: Increases your Parry Rating by 27% of your total Strength.
     ["ADD_PARRY_RATING_MOD_STR"] = {
       {
         ["spellid"] = 49410,
         ["rank"] = {
           0.25,
         },
+        ["old"] = 14333, -- 4.2.0
+      },
+      {
+        ["spellid"] = 49410,
+        ["rank"] = {
+          0.27,
+        },
+        ["new"] = 14333, -- 4.2.0
       },
     },
     -- Death Knight: Bladed Armor - Rank 3/3 - 1,3
@@ -7291,6 +7539,7 @@ elseif playerClass == "DEATHKNIGHT" then
     -- 4.0.1: 2/4/6% less damage taken.
     -- Death Knight: Icebound Fortitude - Buff: 48792
     -- 4.0.1: Damage taken reduced by 30%.
+    -- 4.0.3: Damage taken reduced by 20%.
     -- Death Knight: Sanguine Fortitude - Rank 2/2 - 1,12 - Buff: 48792
     -- 4.0.1: Icebound Fortitude reduces damage taken by an additional 15/30%
     -- Death Knight: Bone Shield - Buff: 49222
@@ -7336,7 +7585,7 @@ elseif playerClass == "DEATHKNIGHT" then
         ["SHADOW"] = true,
         ["ARCANE"] = true,
         ["rank"] = {
-          -0.30,
+          -0.20,
         },
         ["buff"] = 48792,		-- ["Icebound Fortitude"],
       },
@@ -7536,7 +7785,7 @@ elseif playerClass == "DEATHKNIGHT" then
         ["rank"] = {
           0.09,
         },
-        ["known"] = 84729, -- ["Veteran of the Third War"]
+        ["known"] = 50029, -- ["Veteran of the Third War"]
       },
       {-- Rune of the Stoneskin Gargoyle
         ["rank"] = {
@@ -7564,6 +7813,8 @@ elseif playerClass == "DEATHKNIGHT" then
     -- 4.0.1: Increases your primary attribute by 5% while wearing Plate in all armor slots. Blood specialization grants Stamina, Frost specialization grants Strength, and Unholy specialization grants Strength.
     -- Death Knight: Unholy Might - Passive: 91107
     -- 4.0.1: Dark power courses through your limbs, increasing your Strength by 15%.
+    -- 4.0.6: Dark power courses through your limbs, increasing your Strength by 5%.
+    -- 4.2.0: Dark power courses through your limbs, increasing your Strength by 20%.
     -- Death Knight: Abomination's Might - 1,11
     -- 4.0.1: Also increases your total Strength by 1%/2%.
     -- Death Knight: Pillar of Frost - Buff: 51271
@@ -7589,9 +7840,17 @@ elseif playerClass == "DEATHKNIGHT" then
       },
       {-- Unholy Might
         ["rank"] = {
-          0.15,
+          0.05,
         },
         ["known"] = 91107, -- ["Unholy Might"]
+        ["old"] = 14333, -- 4.2.0
+      },
+      {-- Unholy Might
+        ["rank"] = {
+          0.2,
+        },
+        ["known"] = 91107, -- ["Unholy Might"]
+        ["new"] = 14333, -- 4.2.0
       },
       {-- Abomination's Might
         ["tab"] = 1,
@@ -7623,33 +7882,54 @@ elseif playerClass == "DEATHKNIGHT" then
   }
 elseif playerClass == "HUNTER" then
   StatModTable["HUNTER"] = {
+    -- Hunter: Deterrence - Buff: 19263
+    -- 4.0.6: Chance to be missed by melee attacks increased by 100%, chance for ranged attacks to miss you increased by 100%, 100% chance to deflect spells.
+    ["ADD_HIT_TAKEN"] = {
+      {-- Deterrence
+        ["MELEE"] = true,
+        ["RANGED"] = true,
+        ["HOLY"] = true,
+        ["FIRE"] = true,
+        ["NATURE"] = true,
+        ["FROST"] = true,
+        ["SHADOW"] = true,
+        ["ARCANE"] = true,
+        ["rank"] = {
+          -1,
+        },
+        ["buff"] = 19263,
+      },
+    },
     -- Hunter: Animal Handler - Passive: 87325
     -- 4.0.1: Attack Power increased by 15%.
+    -- 4.0.6: Attack Power increased by 25%.
     ["MOD_AP"] = {
       {-- Animal Handler
         ["rank"] = {
-          0.15,
+          0.25,
         },
-        ["known"] = 87325, -- ["Animal Handler"]x
+        ["known"] = 87325, -- ["Animal Handler"]
       },
     },
     -- Hunter: Hunter vs. Wild - Rank 3/3 - 3,1
     -- 4.0.1: Increases your total Stamina by 4/7/10%.
+    -- 4.0.1: Increases your total Stamina by 5/10/15%.
     ["MOD_STA"] = {
       {-- Hunter vs. Wild
         ["tab"] = 3,
         ["num"] = 1,
         ["rank"] = {
-          0.04, 0.07, 0.1,
+          0.05, 0.1, 0.15,
         },
       },
     },
     -- Hunter: Mail Specialization - Passive: 86528
     -- 4.0.1: Increases your Agility by 5% while wearing Mail in all armor slots
     -- Hunter: Into the Wilderness - Passive: 84729
-    -- 4.0.1: Agility increased by 15%.
+    -- 4.0.1: Agility increased by 10%.
     -- Hunter: Hunting Party - Rank 1/1 - 3,17
     -- 4.0.1: Increases your total Agility by an additional 10%
+    -- 4.0.6: Increases your total Agility by an additional 2%
     ["MOD_AGI"] = {
       {-- Mail Specialization
         ["rank"] = {
@@ -7681,7 +7961,7 @@ elseif playerClass == "HUNTER" then
       },
       {-- Into the Wilderness
         ["rank"] = {
-          0.15,
+          0.1,
         },
         ["known"] = 84729, -- ["Into the Wilderness"]
       },
@@ -7689,7 +7969,7 @@ elseif playerClass == "HUNTER" then
         ["tab"] = 3,
         ["num"] = 17,
         ["rank"] = {
-          0.1,
+          0.02,
         },
       },
     },
@@ -7768,12 +8048,22 @@ elseif playerClass == "MAGE" then
     },
     -- Mage: Mage Armor - Buff: 6117
     -- 4.0.1: Regenerate 3% of your maximum mana every 5 sec.
+    -- Mage: Glyph of Frost Armor - Glyph: 98397 - Buff: 7302
+    -- 4.1.0: Your Frost Armor also causes you to regenerate 2% of your maximum mana every 5 sec.
     ["ADD_COMBAT_MANA_REGEN_MOD_MANA"] = {
-      {
+      {-- Mage Armor
         ["rank"] = {
           0.03,
         },
         ["buff"] = 6117,		-- ["Mage Armor"],
+      },
+      {-- Glyph of Frost Armor
+        ["rank"] = {
+          0.02,
+        },
+        ["buff"] = 7302,		-- ["Frost Armor"],
+        ["glyph"] = 98397,
+        ["new"] = 13914, -- 4.1.0
       },
     },
     -- Mage: Frost Armor - Buff: 7302
@@ -7784,10 +8074,13 @@ elseif playerClass == "MAGE" then
           0.2,
         },
         ["buff"] = 7302,		-- ["Frost Armor"],
+        ["old"] = 13914, -- 4.1.0
       },
     },
     -- Mage: Prismatic Cloak - Rank 3/3 - 1,11
     -- 4.0.1: Reduces all damage taken by 2/4/6%.
+    -- Mage: Frost Armor - Buff: 7302
+    -- 4.1.0: Reduces physical damage taken by 15%
     ["MOD_DMG_TAKEN"] = {
       {
         ["MELEE"] = true,
@@ -7804,6 +8097,15 @@ elseif playerClass == "MAGE" then
           -0.02, -0.04, -0.06,
         },
       },
+      {-- Frost Armor
+        ["MELEE"] = true,
+        ["RANGED"] = true,
+        ["rank"] = {
+          -0.15,
+        },
+        ["buff"] = 7302,		-- ["Frost Armor"],
+        ["new"] = 13914, -- 4.1.0
+      },
     },
   }
 elseif playerClass == "PALADIN" then
@@ -7815,7 +8117,7 @@ elseif playerClass == "PALADIN" then
         ["rank"] = {
           0.50,
         },
-        ["known"] = 85101,
+        ["known"] = 95859,
       },
     },
     -- Paladin: Enlightened Judgements - Rank 2/2 - 1,11
@@ -7831,13 +8133,22 @@ elseif playerClass == "PALADIN" then
       },
     },
     -- Tanks: Forceful Deflection - Passive
-    -- 4.0.1: Increases your Parry Rating by 25% of your total Strength.
+    -- 4.0.1: Increases your Parry Rating by 25% of your total Strength. (No spell, talent, ability or buff. Tanks just get it)
+    -- 4.2.0: Increases your Parry Rating by 27% of your total Strength.
     ["ADD_PARRY_RATING_MOD_STR"] = {
-      {-- Forceful Deflection
+      {
         ["spellid"] = 49410,
         ["rank"] = {
           0.25,
         },
+        ["old"] = 14333, -- 4.2.0
+      },
+      {
+        ["spellid"] = 49410,
+        ["rank"] = {
+          0.27,
+        },
+        ["new"] = 14333, -- 4.2.0
       },
     },
     -- Paladin: Sheath of Light - Passive: 53503
@@ -7982,33 +8293,30 @@ elseif playerClass == "PALADIN" then
   }
 elseif playerClass == "PRIEST" then
   StatModTable["PRIEST"] = {
-    -- Priest: Mysticism - Passive: 89745
-    -- 4.0.1: Increases your Intellect by 5%
-    ["MOD_INT"] = {
-      {-- Mysticism
-        ["rank"] = {
-          0.05,
-        },
-        ["known"] = 89745,
-      },
-    },
     -- Healers: Meditation
     -- 4.0.1: Allows 50% of your mana regeneration from Spirit to continue while in combat.
     -- Priest: Holy Concentration - Rank 2/2 - 2,8
     -- 4.0.1: Increases the amount of mana regeneration from Spirit while in combat by an additional 10/20%.
+    -- 4.0.6: Increases the amount of mana regeneration from Spirit while in combat by an additional 15/30%.
     ["ADD_COMBAT_MANA_REGEN_MOD_MANA_REGEN"] = {
-      {-- Meditation
+      {-- Meditation (Discipline)
         ["rank"] = {
           0.5,
         },
-        ["known"] = 85101,
+        ["known"] = 95860,
+      },
+      {-- Meditation (Holy)
+        ["rank"] = {
+          0.5,
+        },
+        ["known"] = 95861,
       },
       {-- Holy Concentration
         ["spellid"] = 34859,
         ["tab"] = 2,
         ["num"] = 8,
         ["rank"] = {
-          0.1, 0.2,
+          0.15, 0.30,
         },
       },
     },
@@ -8112,6 +8420,8 @@ elseif playerClass == "PRIEST" then
     },
     -- Priest: Enlightenment - Passive: 84732
     -- 4.0.1: Intellect increased by 15%.
+    -- Priest: Mysticism - Passive: 89745
+    -- 4.0.1: Increases your Intellect by 5%
     ["MOD_INT"] = {
       {-- Enlightenment
         ["rank"] = {
@@ -8119,14 +8429,23 @@ elseif playerClass == "PRIEST" then
         },
         ["known"] = 84732,
       },
+      {-- Mysticism
+        ["rank"] = {
+          0.05,
+        },
+        ["known"] = 89745,
+      },
     },
   }
 elseif playerClass == "ROGUE" then
   StatModTable["ROGUE"] = {
     -- Rogue: Savage Combat - Rank 2/2 - 2,16
     -- 4.0.1: Increases your total attack power by 2/4%.
+    -- 4.2.0: Increases your total attack power by 3/6%.
     -- Rogue: Vitality - Passive: 61329
     -- 4.0.1: Increases your Attack Power by 15%.
+    -- 4.0.1: Increases your Attack Power by 25%.
+    -- 4.2.0: Increases your Attack Power by 30%.
     ["MOD_AP"] = {
       {-- Savage Combat
         ["tab"] = 2,
@@ -8134,12 +8453,29 @@ elseif playerClass == "ROGUE" then
         ["rank"] = {
           0.02, 0.04,
         },
+        ["old"] = 14333, -- 4.2.0
+      },
+      {-- Savage Combat
+        ["tab"] = 2,
+        ["num"] = 16,
+        ["rank"] = {
+          0.03, 0.06,
+        },
+        ["new"] = 14333, -- 4.2.0
       },
       {-- Vitality
         ["rank"] = {
-          0.15,
+          0.25,
         },
         ["known"] = 61329,
+        ["old"] = 14333, -- 4.2.0
+      },
+      {-- Vitality
+        ["rank"] = {
+          0.3,
+        },
+        ["known"] = 61329,
+        ["new"] = 14333, -- 4.2.0
       },
     },
     -- Rogue: Reinforced Leather - Rank 2/2 - 2,10
@@ -8197,6 +8533,7 @@ elseif playerClass == "ROGUE" then
     -- 4.0.1: While Cloak of Shadows is active, you take 40% less physical damage.
     -- Rogue: Cheating Death - Buff: 45182
     -- 4.0.1: All damage taken reduced by 90%
+    -- 4.1.0: All damage taken reduced by 80%
     -- Rogue: Deadened Nerves - Rank 3/3 - 1,11
     -- 4.0.1: Reduces all damage taken by 3/7/10%.%
     -- Rogue: Improved Recuperate - Rank 2/2 - 2,1 - Buff: 73651
@@ -8236,6 +8573,22 @@ elseif playerClass == "ROGUE" then
           -0.9,
         },
         ["buff"] = 45182,		-- ["Cheating Death"],
+        ["old"] = 13914, -- 4.1.0
+      },
+      {-- Cheating Death
+        ["MELEE"] = true,
+        ["RANGED"] = true,
+        ["HOLY"] = true,
+        ["FIRE"] = true,
+        ["NATURE"] = true,
+        ["FROST"] = true,
+        ["SHADOW"] = true,
+        ["ARCANE"] = true,
+        ["rank"] = {
+          -0.8,
+        },
+        ["buff"] = 45182,		-- ["Cheating Death"],
+        ["new"] = 13914, -- 4.1.0
       },
       {-- Deadened Nerves
         ["MELEE"] = true,
@@ -8273,6 +8626,7 @@ elseif playerClass == "ROGUE" then
     -- 4.0.1: Increases your Agility by 5% while wearing Leather in all armor slots.
     -- Rogue: Sinister Calling - Passive: 31220
     -- 4.0.1: Increases your total Agility by 25%
+    -- 4.0.6: Increases your total Agility by 30%
     ["MOD_AGI"] = {
       {-- Leather Specialization
         ["rank"] = {
@@ -8304,7 +8658,7 @@ elseif playerClass == "ROGUE" then
       },
       {-- Sinister Calling
         ["rank"] = {
-          0.25,
+          0.3,
         },
         ["known"] = 31220,
       },
@@ -8331,7 +8685,7 @@ elseif playerClass == "SHAMAN" then
         ["rank"] = {
           0.50,
         },
-        ["known"] = 85101,
+        ["known"] = 95862,
       },
     },
     -- Shaman: Mental Quickness - Passive: 30814
@@ -8543,12 +8897,21 @@ elseif playerClass == "WARRIOR" then
   StatModTable["WARRIOR"] = {
     -- Tanks: Forceful Deflection - Passive
     --        Increases your Parry Rating by 25% of your total Strength.
+    -- 4.2.0: Increases your Parry Rating by 27% of your total Strength.
     ["ADD_PARRY_RATING_MOD_STR"] = {
       {
         ["spellid"] = 49410,
         ["rank"] = {
           0.25,
         },
+        ["old"] = 14333, -- 4.2.0
+      },
+      {
+        ["spellid"] = 49410,
+        ["rank"] = {
+          0.27,
+        },
+        ["new"] = 14333, -- 4.2.0
       },
     },
     -- Warrior: Bastion of Defense - Rank 2/2 - 3,10 - Stance: "Interface\\Icons\\Ability_Warrior_DefensiveStance"
@@ -8578,6 +8941,8 @@ elseif playerClass == "WARRIOR" then
     -- 4.0.1: Death Wish no longer increases damage taken.
     -- Warrior: Recklessness - Buff: 1719
     -- 4.0.1: All damage taken is increased by 20%.
+    -- Warrior: Shield Mastery - Rank 3/3 - 3,5 - Spell Block - Buff: 97954
+    -- 4.0.1: Magic damage reduced by 7/14/20%.
     ["MOD_DMG_TAKEN"] = {
       {-- Shield Wall
         ["MELEE"] = true,
@@ -8679,6 +9044,21 @@ elseif playerClass == "WARRIOR" then
         },
         ["buff"] = 1719,		-- ["Recklessness"],
       },
+      {-- Shield Mastery
+        ["HOLY"] = true,
+        ["FIRE"] = true,
+        ["NATURE"] = true,
+        ["FROST"] = true,
+        ["SHADOW"] = true,
+        ["ARCANE"] = true,
+        ["tab"] = 3,
+        ["num"] = 5,
+        ["rank"] = {
+          -0.07, -0.14, -0.2,
+        },
+        ["buff"] = 97954,		-- ["Spell Block"],
+        ["new"] = 13914, -- 4.1.0
+      },
     },
     -- Warrior: Last Stand - Buff: 12976
     -- 4.0.1: Health increased by 30% of maximum.
@@ -8741,6 +9121,64 @@ elseif playerClass == "WARRIOR" then
   }
 end
   StatModTable["ALL"] = {
+    -- Death Knight: Improved Icy Talons - Buff: 55610
+    -- 4.0.6: Melee and Ranged attack speed increased by 10%.
+    -- Hunter: Hunting Party - Buff: 53290
+    -- 4.0.6: Melee and Ranged attack speed increased by 10%.
+    -- Hunter: Windfury Totem - Buff: 8512
+    -- 4.0.6: Melee and Ranged attack speed increased by 10%.
+    ["MOD_MELEE_HASTE"] = {
+      {-- Improved Icy Talons
+        ["rank"] = {
+          0.1,
+        },
+        ["buff"] = 55610,
+        ["group"] = D["10% Melee/Ranged Attack Speed"],
+      },
+      {-- Hunting Party
+        ["rank"] = {
+          0.1,
+        },
+        ["buff"] = 53290,
+        ["group"] = D["10% Melee/Ranged Attack Speed"],
+      },
+      {-- Windfury Totem
+        ["rank"] = {
+          0.1,
+        },
+        ["buff"] = 8512,
+        ["group"] = D["10% Melee/Ranged Attack Speed"],
+      },
+    },
+    -- Druid: Moonkin Aura - Buff: 24907
+    -- 4.0.6: Increases spell haste by 5%.
+    -- Priest: Mind Quickening - Buff: 49868
+    -- 4.0.6: Increases spell haste by 5%.
+    -- Shaman: Wrath of Air Totem - Buff: 3738
+    -- 4.0.6: Increases spell haste by 5%.
+    ["MOD_SPELL_HASTE"] = {
+      {-- Improved Icy Talons
+        ["rank"] = {
+          0.05,
+        },
+        ["buff"] = 24907,
+        ["group"] = D["5% Spell Haste"],
+      },
+      {-- Mind Quickening
+        ["rank"] = {
+          0.05,
+        },
+        ["buff"] = 49868,
+        ["group"] = D["5% Spell Haste"],
+      },
+      {-- Wrath of Air Totem
+        ["rank"] = {
+          0.05,
+        },
+        ["buff"] = 3738,
+        ["group"] = D["5% Spell Haste"],
+      },
+    },
     -- ICC: Chill of the Throne
     --      Chance to dodge reduced by 20%.
     -- 4.0.1: Removed
@@ -8775,11 +9213,18 @@ end
     -- 4.0.1: Absorbs 75% of spell damage.
     -- Warrior: Safeguard - Buff: 46947
     -- 4.0.1: All damage taken reduced by 15/30%
-    -- Warrior: Vigilance - Buff: 50720
-    -- 4.0.1: Damage taken reduced by 3%.
     -- MetaGem: Shielded Skyflare Diamond - 41377
     -- 4.0.1: +32 Stamina and Reduce Spell Damage Taken by 2%
+    -- Dwarf: Stoneform - Buff: 65116
+    -- 4.0.1: Armor increased by 10%.
+    -- 4.0.6: Damage taken reduced by 10%.
     ["MOD_DMG_TAKEN"] = {
+      {-- Stoneform
+        ["rank"] = {
+          -0.1,
+        },
+        ["buff"] = 65116,		-- ["Stoneform"],
+      },
       {-- Inspiration
         ["MELEE"] = true,
         ["RANGED"] = true,
@@ -8851,20 +9296,6 @@ end
           -0.75,
         },
         ["buff"] = 50461,		-- ["Anti-Magic Zone"],
-      },
-      {-- Vigilance
-        ["MELEE"] = true,
-        ["RANGED"] = true,
-        ["HOLY"] = true,
-        ["FIRE"] = true,
-        ["NATURE"] = true,
-        ["FROST"] = true,
-        ["SHADOW"] = true,
-        ["ARCANE"] = true,
-        ["rank"] = {
-          -0.03,
-        },
-        ["buff"] = 50720,		-- ["Vigilance"],
       },
       {-- Effulgent Skyflare Diamond
         ["HOLY"] = true,
@@ -9006,19 +9437,11 @@ end
         ["meta"] = 52293,
       },
     },
-    -- Dwarf: Stoneform - Buff: 65116
-    -- 4.0.1: Armor increased by 10%.
     -- MetaGem: Austere Earthsiege Diamond - Meta: 41380
     -- 4.0.1: 2% Increased Armor Value from Items
     -- MetaGem: Austere Shadowspirit Diamond - Meta: 52294
     -- 4.0.1: 2% Increased Armor Value from Items
     ["MOD_ARMOR"] = {
-      {-- Stoneform
-        ["rank"] = {
-          0.1,
-        },
-        ["buff"] = 65116,		-- ["Stoneform"],
-      },
       {-- Austere Earthsiege Diamond
         ["rank"] = {
           0.02,
@@ -9448,148 +9871,169 @@ Notes:
 Arguments:
   string - The type of stat mod you want to get
   [optional] string - Certain stat mods require an extra school argument
+  [optional] string - Target spec to check
+  [optional] string - modTable to check, "CLASS", "ALL", "BOTH"(default)
 Returns:
   None
 Example:
   StatLogic:GetStatMod("MOD_INT")
 -----------------------------------]]
 local buffGroup = {}
-function StatLogic:GetStatMod(stat, school, talentGroup)
+function StatLogic:GetStatMod(stat, school, talentGroup, modTable)
   local statModInfo = StatModInfo[stat]
-  local mod = statModInfo.initialValue
-  -- if school is required for this statMod but not given
-  if statModInfo.school and not school then return mod + statModInfo.finalAdjust end
-  -- disable for 4.0.1 until we get talent/buffs data implemented
-  --if toc >= 40000 then return mod + statModInfo.finalAdjust end
-  wipe(buffGroup)
-  -- Class specific mods
-  if type(StatModTable[playerClass][stat]) == "table" then
-    for _, case in ipairs(StatModTable[playerClass][stat]) do
-      local ok = true
-      if school and not case[school] then ok = nil end
-      if ok and case.newtoc and toc < case.newtoc then ok = nil end
-      if ok and case.oldtoc and toc >= case.oldtoc then ok = nil end
-      if ok and case.new and wowBuildNo < case.new then ok = nil end
-      if ok and case.old and wowBuildNo >= case.old then ok = nil end
-      if ok and case.condition and not loadstring("return "..case.condition)() then ok = nil end
-      if ok and case.buffName and not PlayerHasAura(case.buffName) then ok = nil end
-      if ok and case.buff2Name and not PlayerHasAura(case.buff2Name) then ok = nil end
-      if ok and case.stance and case.stance ~= GetStanceIcon() then ok = nil end
-      if ok and case.glyph and not PlayerHasGlyph(case.glyph, talentGroup) then ok = nil end
-      if ok and case.enchant and not SlotHasEnchant(case.enchant, case.slot) then ok = nil end
-      if ok and case.itemset and ((not PlayerItemSets[case.itemset[1]]) or PlayerItemSets[case.itemset[1]] < case.itemset[2]) then ok = nil end
-      if ok and case.armorspec and case.armorspec ~= ArmorSpecActive then ok = nil end
-      if ok and case.known and not IsSpellKnown(case.known) then ok = nil end
-      if ok then
-        local r, _
-        local s = 1
-        -- if talent field
-        if case.tab and case.num then
-          _, _, _, _, r = GetTalentInfo(case.tab, case.num, nil, nil, talentGroup)
-          if case.buffName and case.buffStack then
-            _, s = GetPlayerAuraRankStack(case.buffName) -- Gets buff stack count, but use talent as rank
-          end
-        -- no talent but buff is given
-        elseif case.buffName then
-          r, s = GetPlayerAuraRankStack(case.buffName)
-          if not case.buffStack then
-            s = 1
-          end
-        -- no talent but all other given conditions are statisfied
-        else--if case.condition or case.stance then
-          r = 1
-        end
-        if r and r ~= 0 and case.rank[r] then
-          if statModInfo.initialValue == 0 and not case.mul then
-            if not case.group then
-              mod = mod + case.rank[r] * s
-            elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
-              mod = mod + case.rank[r] * s
-              buffGroup[case.group] = case.rank[r] * s
-            elseif (case.rank[r] * s) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
-              mod = mod + case.rank[r] * s - buffGroup[case.group]
-              buffGroup[case.group] = case.rank[r] * s
-            else -- seen before but not better, do nothing
-            end
-          else
-            if not case.group then
-              mod = mod * (case.rank[r] * s + 1)
-            elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
-              mod = mod * (case.rank[r] * s + 1)
-              buffGroup[case.group] = (case.rank[r] * s + 1)
-            elseif (case.rank[r] * s + 1) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
-              mod = mod * (case.rank[r] * s + 1) / buffGroup[case.group]
-              buffGroup[case.group] = (case.rank[r] * s + 1)
-            else -- seen before but not better, do nothing
-            end
-          end
-        end
-      end
-    end
-  end
-  -- Non class specific mods
-  if type(StatModTable["ALL"][stat]) == "table" then
-    for _, case in ipairs(StatModTable["ALL"][stat]) do
-      local ok = true
-      if school and not case[school] then ok = nil end
-      if ok and case.newtoc and toc < case.newtoc then ok = nil end
-      if ok and case.oldtoc and toc >= case.oldtoc then ok = nil end
-      if ok and case.new and wowBuildNo < case.new then ok = nil end
-      if ok and case.old and wowBuildNo >= case.old then ok = nil end
-      if ok and case.condition and not loadstring("return "..case.condition)() then ok = nil end
-      if ok and case.buffName and not PlayerHasAura(case.buffName) then ok = nil end
-      if ok and case.stance and case.stance ~= GetStanceIcon() then ok = nil end
-      if ok and case.race and case.race ~= playerRace then ok = nil end
-      if ok and case.meta and not IsMetaGemActive(case.meta) then ok = nil end
-      if ok then
-        local r, _
-        local s = 1
-        -- if talent field
-        if case.tab and case.num then
-          _, _, _, _, r = GetTalentInfo(case.tab, case.num, nil, nil, talentGroup)
-          if case.buffName and case.buffStack then
-            _, s = GetPlayerAuraRankStack(case.buffName) -- Gets buff rank and stack count
-          end
-        -- no talent but buff is given
-        elseif case.buffName then
-          r, s = GetPlayerAuraRankStack(case.buffName)
-          if not case.buffStack then
-            s = 1
-          end
-        -- no talent but all other given conditions are statisfied
-        else--if case.condition or case.stance then
-          r = 1
-        end
-        if r and r ~= 0 and case.rank[r] then
-          if statModInfo.initialValue == 0 then
-            if not case.group then
-              mod = mod + case.rank[r] * s
-            elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
-              mod = mod + case.rank[r] * s
-              buffGroup[case.group] = case.rank[r] * s
-            elseif (case.rank[r] * s) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
-              mod = mod + case.rank[r] * s - buffGroup[case.group]
-              buffGroup[case.group] = case.rank[r] * s
-            else -- seen before but not better, do nothing
-            end
-          else
-            if not case.group then
-              mod = mod * (case.rank[r] * s + 1)
-            elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
-              mod = mod * (case.rank[r] * s + 1)
-              buffGroup[case.group] = (case.rank[r] * s + 1)
-            elseif (case.rank[r] * s + 1) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
-              mod = mod * (case.rank[r] * s + 1) / buffGroup[case.group]
-              buffGroup[case.group] = (case.rank[r] * s + 1)
-            else -- seen before but not better, do nothing
-            end
-          end
-        end
-      end
-    end
-  end
+  
+	--Check that it wasn't an invalid stat
+	if (statModInfo == nil) then
+		local sError = "StatLogic:GetStatMod() Invalid stat mod requested \""..stat.."\""
+		print(sError)
+		error(sError)
+	end
+		
+	local mod = statModInfo.initialValue
+	-- if school is required for this statMod but not given
+	if statModInfo.school and not school then
+		--print("school is required for this stat, but none given. Returning finalAdjust value")
+		return mod + statModInfo.finalAdjust 
+	end
+	-- disable for 4.0.1 until we get talent/buffs data implemented
+	--if toc >= 40000 then return mod + statModInfo.finalAdjust end
+	wipe(buffGroup)
+  
+  if not modTable then modTable = "BOTH" end
+	
+	-- Class specific mods
+	if type(StatModTable[playerClass][stat]) == "table" and modTable ~= "ALL" then
+	
+		for _, case in ipairs(StatModTable[playerClass][stat]) do
+		
+			local ok = true
+			if school and not case[school] then ok = nil end
+			
+			if ok and case.newtoc and toc < case.newtoc then ok = nil end
+			if ok and case.oldtoc and toc >= case.oldtoc then ok = nil end
+			if ok and case.new and wowBuildNo < case.new then ok = nil end
+			if ok and case.old and wowBuildNo >= case.old then ok = nil end
+			if ok and case.condition and not loadstring("return "..case.condition)() then ok = nil end
+			if ok and case.buffName and not PlayerHasAura(case.buffName) then ok = nil end
+			if ok and case.buff2Name and not PlayerHasAura(case.buff2Name) then ok = nil end
+			if ok and case.stance and case.stance ~= GetStanceIcon() then ok = nil end
+			if ok and case.glyph and not PlayerHasGlyph(case.glyph, talentGroup) then ok = nil end
+			if ok and case.enchant and not SlotHasEnchant(case.enchant, case.slot) then ok = nil end
+			if ok and case.itemset and ((not PlayerItemSets[case.itemset[1]]) or PlayerItemSets[case.itemset[1]] < case.itemset[2]) then ok = nil end
+			if ok and case.armorspec and case.armorspec ~= ArmorSpecActive then ok = nil end
+			if ok and case.known and not IsSpellKnown(case.known) then ok = nil end
+			
+			if ok then
+				local r, _
+				local s = 1
+				-- if talent field
+				if case.tab and case.num then
+					_, _, _, _, r = GetTalentInfo(case.tab, case.num, nil, nil, talentGroup)
+					if case.buffName and case.buffStack then
+						_, s = GetPlayerAuraRankStack(case.buffName) -- Gets buff stack count, but use talent as rank
+					end
+					-- no talent but buff is given
+				elseif case.buffName then
+					r, s = GetPlayerAuraRankStack(case.buffName)
+					if not case.buffStack then
+						s = 1
+					end
+					-- no talent but all other given conditions are statisfied
+				else--if case.condition or case.stance then
+					r = 1
+				end
+				if r and case.rank[r] then
+					if statModInfo.initialValue == 0 and not case.mul then
+						if not case.group then
+							mod = mod + case.rank[r] * s
+						elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
+							mod = mod + case.rank[r] * s
+							buffGroup[case.group] = case.rank[r] * s
+						elseif (case.rank[r] * s) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
+							mod = mod + case.rank[r] * s - buffGroup[case.group]
+							buffGroup[case.group] = case.rank[r] * s
+						else -- seen before but not better, do nothing
+						end
+					else
+						if not case.group then
+							mod = mod * (case.rank[r] * s + 1)
+						elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
+							mod = mod * (case.rank[r] * s + 1)
+							buffGroup[case.group] = (case.rank[r] * s + 1)
+						elseif (case.rank[r] * s + 1) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
+							mod = mod * (case.rank[r] * s + 1) / buffGroup[case.group]
+							buffGroup[case.group] = (case.rank[r] * s + 1)
+						else -- seen before but not better, do nothing
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	-- Non class specific mods
+	if type(StatModTable["ALL"][stat]) == "table" and modTable ~= "CLASS"  then
+		for _, case in ipairs(StatModTable["ALL"][stat]) do
+			local ok = true
+			if school and not case[school] then ok = nil end
+			if ok and case.newtoc and toc < case.newtoc then ok = nil end
+			if ok and case.oldtoc and toc >= case.oldtoc then ok = nil end
+			if ok and case.new and wowBuildNo < case.new then ok = nil end
+			if ok and case.old and wowBuildNo >= case.old then ok = nil end
+			if ok and case.condition and not loadstring("return "..case.condition)() then ok = nil end
+			if ok and case.buffName and not PlayerHasAura(case.buffName) then ok = nil end
+			if ok and case.stance and case.stance ~= GetStanceIcon() then ok = nil end
+			if ok and case.race and case.race ~= playerRace then ok = nil end
+			if ok and case.meta and not IsMetaGemActive(case.meta) then ok = nil end
+			if ok then
+				local r, _
+				local s = 1
+				-- if talent field
+				if case.tab and case.num then
+					_, _, _, _, r = GetTalentInfo(case.tab, case.num, nil, nil, talentGroup)
+					if case.buffName and case.buffStack then
+						_, s = GetPlayerAuraRankStack(case.buffName) -- Gets buff rank and stack count
+					end
+					-- no talent but buff is given
+				elseif case.buffName then
+					r, s = GetPlayerAuraRankStack(case.buffName)
+					if not case.buffStack then
+						s = 1
+					end
+					-- no talent but all other given conditions are statisfied
+				else--if case.condition or case.stance then
+					r = 1
+				end
+				if r and case.rank[r] then
+					if statModInfo.initialValue == 0 then
+						if not case.group then
+							mod = mod + case.rank[r] * s
+						elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
+							mod = mod + case.rank[r] * s
+							buffGroup[case.group] = case.rank[r] * s
+						elseif (case.rank[r] * s) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
+							mod = mod + case.rank[r] * s - buffGroup[case.group]
+							buffGroup[case.group] = case.rank[r] * s
+						else -- seen before but not better, do nothing
+						end
+					else
+						if not case.group then
+							mod = mod * (case.rank[r] * s + 1)
+						elseif not buffGroup[case.group] then -- this mod is part of a group, but not seen before
+							mod = mod * (case.rank[r] * s + 1)
+							buffGroup[case.group] = (case.rank[r] * s + 1)
+						elseif (case.rank[r] * s + 1) > buffGroup[case.group] then -- seen before and this one is better, do upgrade
+							mod = mod * (case.rank[r] * s + 1) / buffGroup[case.group]
+							buffGroup[case.group] = (case.rank[r] * s + 1)
+						else -- seen before but not better, do nothing
+						end
+					end
+				end
+			end
+		end
+	end
 
-  return mod + statModInfo.finalAdjust
+	return mod + statModInfo.finalAdjust
 end
 
 --=====================================--
@@ -9877,6 +10321,27 @@ function StatLogic:GetAvoidanceGainAfterDR(avoidanceType, gainBeforeDR)
 end
 
 
+function StatLogic:GetResilienceEffectAfterDR(damageReductionBeforeDR)
+  -- argCheck for invalid input
+  self:argCheck(damageReductionBeforeDR, 2, "number")
+  return 100 - 100 * 0.99 ^ damageReductionBeforeDR
+end
+
+function StatLogic:GetResilienceEffectGainAfterDR(resAfter, resBefore)
+  -- argCheck for invalid input
+  self:argCheck(resAfter, 2, "number")
+  self:argCheck(resBefore, 2, "nil", "number")
+  local resCurrent = GetCombatRating(16)
+  local drBefore
+  if resBefore then
+    drBefore = self:GetResilienceEffectAfterDR(self:GetEffectFromRating(resCurrent + resBefore, 16))
+  else
+    drBefore = GetCombatRatingBonus(16)
+  end
+  return self:GetResilienceEffectAfterDR(self:GetEffectFromRating(resCurrent + resAfter, 16)) - drBefore
+end
+
+
 --=================--
 -- Stat Conversion --
 --=================--
@@ -9962,20 +10427,21 @@ local MasterySpells = {
   {{77492}, {77494, 77493}, {77495}}, --DRUID
 }
 StatLogic.MasterySpells = MasterySpells
+
 -- MasteryEffect[class][specid]
 local MasteryEffect = {}
 if wowBuildNo >= 13221 then
 MasteryEffect = {
-  {{2},{3.13},{1.25,2.5}},
-  {{1.25},{3},{1}},
-  {{1.7},{2},{1}},
-  {{3.5},{2},{2.5}},
-  {{2.5},{1.25},{4.3}},
-  {{6.25},{2},{4}},
-  {{2},{2.5},{2.5}},
-  {{1.5},{2.5},{2.5}},
-  {{1.63},{1.5},{1.25}},
-  {{1.5},{4,3.1},{1.25}}
+  {{2},   {4.70}, {1.5,1.5}}, --WARRIOR (1) (Strikes of Opportunity 2%, Unshackled Fury 4.70%, Block Chance 1.5% & Critical Block Chance 1.5%)
+  {{1},   {2.25}, {1}      }, --PALADIN (2) (Illuminated Healing 1%, Divine Bulwark 2.25%, Hand of Light 1%)
+  {{1.7}, {2},    {1}      }, --HUNTER (3)
+  {{3.5}, {2},    {2.5}    }, --ROGUE (4)
+  {{2.5}, {1.25}, {4.3}    }, --PRIEST (5)
+  {{6.25},{2},    {4}      }, --DEATHKNIGHT (6)
+  {{2},   {2.5},  {2.5}    }, --SHAMAN (7)
+  {{1.5}, {2.5},  {2.5}    }, --MAGE (8)
+  {{1.63},{1.5},  {1.25}   }, --WARLOCK (9)
+  {{1.5}, {4,3.1},{1.25}   }  --DRUID (10)
 }
 else
 MasteryEffect = {
@@ -10038,15 +10504,16 @@ StatLogic.MasteryEffect = MasteryEffect
   :GetEffectFromMastery(mastery[, specid][, class])
 -------------------------------------
 Notes:
-  * Calculates the effect in percentage from master for given spec and class
+  * Calculates the effect in percentage from mastery for given spec and class
 Arguments:
   number - mastery value.
   [optional] number - talent spec to use. Default: player's talent spec
   [optional] string or number - ClassID or "ClassName". Default: PlayerClass<br>See :GetClassIdOrName(class) for valid class values.
+			1=first, 2=second, 3=third (e.g. Paladin: 1=Holy, 2=Protection, 3=Retribution)
 Returns:
   ; effect : number - 0.04% per effective defense.
 Example:
-  local effect = StatLogic:GetEffectFromDefense(415, 83) -- 0
+  local effect = StatLogic:GetEffectFromMastery(415) -- 0
 -----------------------------------]]
 function StatLogic:GetEffectFromMastery(mastery, specid, class)
   self:argCheck(mastery, 2, "number")
@@ -10218,8 +10685,8 @@ RatingBase = {
   [CR_HIT_TAKEN_MELEE] = 10, -- hit avoidance
   [CR_HIT_TAKEN_RANGED] = 10,
   [CR_HIT_TAKEN_SPELL] = 8,
-  [COMBAT_RATING_RESILIENCE_CRIT_TAKEN] = 10.78125, -- resilience
-  [COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN] = 10.78125,
+  [COMBAT_RATING_RESILIENCE_CRIT_TAKEN] = 9.58333301544189, -- resilience
+  [COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN] = 9.58333301544189,
   [CR_CRIT_TAKEN_SPELL] = 28.75,
   [CR_HASTE_MELEE] = 10, -- changed in 2.2
   [CR_HASTE_RANGED] = 10, -- changed in 2.2
@@ -10231,9 +10698,9 @@ RatingBase = {
   [CR_ARMOR_PENETRATION] = 4.69512176513672 / 1.1, -- still manually calculated cause its still 4.69 in dbc
   [CR_MASTERY] = 14,
 }
-if wowBuildNo >= 13221 then
-RatingBase[COMBAT_RATING_RESILIENCE_CRIT_TAKEN] = 9.58333301544189
-RatingBase[COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN] = 9.58333301544189
+if wowBuildNo >= 13914 then
+RatingBase[COMBAT_RATING_RESILIENCE_CRIT_TAKEN] = 0
+RatingBase[COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN] = 7.96417713165283
 end
 local Level34Ratings
 Level34Ratings = {
@@ -10254,17 +10721,18 @@ local H = {
   [84] = 9.7527236938477,
   [85] = 12.8057159423828,
 }
+local H_Res = {
+  [80] = 3.278999106,
+  [81] = 4.092896174,
+  [82] = 5.108814708,
+  [83] = 6.376899732,
+  [84] = 7.959742271,
+  [85] = 9.935470247,
+}
 --[[
 3.1.0
 - Armor Penetration Rating: All classes now receive 25% more benefit from Armor Penetration Rating.
-- Haste Rating: shamans7, paladins2, druids10, and death knights6 now receive 30% more melee haste from Haste Rating.
 --]]
-local ExtraHasteClasses = {
-  [2] = true, -- PALADIN
-  [6] = true, -- DK
-  [7] = true, -- SHAMAN
-  [10] = true, -- DRUID
-}
 
 -- Formula reverse engineered by Whitetooth (hotdogee [at] gmail [dot] com)
 -- Percentage = Rating / RatingBase / H
@@ -10278,6 +10746,13 @@ local ExtraHasteClasses = {
 --   will now convert these ratings into their corresponding defensive
 --   stats at the same rate as level 34 players.
 --  Dodge Rating too
+
+--[[
+	Note: GetEffectFromRating returns values as percentages, rather than fractions
+	e.g. suppose 871 Parry Rating grants +6.47% Parry
+		
+		GetEffectFromRating(871, CR_PARRY, 84) = 6.47162208
+--]]
 function StatLogic:GetEffectFromRating(rating, id, level, class)
   -- if id is stringID then convert to numberID
   if type(id) == "string" and RatingNameToID[id] then
@@ -10302,12 +10777,12 @@ function StatLogic:GetEffectFromRating(rating, id, level, class)
   if level < 34 and Level34Ratings[id] then
     level = 34
   end
-  -- Haste Rating: shamans, paladins, druids, and death knights now receive 30% more melee haste from Haste Rating.
-  if (id == CR_HASTE_MELEE) and ExtraHasteClasses[class] then
-    rating = rating * 1.3
-  end
   if level >= 80 and level <= 85 then
-    return rating/RatingBase[id]/H[level], RatingIDToConvertedStat[id]
+    if id == 16 then
+      return rating/RatingBase[id]/H_Res[level], RatingIDToConvertedStat[id]
+    else
+      return rating/RatingBase[id]/H[level], RatingIDToConvertedStat[id]
+    end
   elseif level >= 70 then
     return rating/RatingBase[id]/((82/52)*(131/63)^((level-70)/10)), RatingIDToConvertedStat[id]
   elseif level >= 60 then
@@ -10349,6 +10824,21 @@ local APPerStr = {
   --["WARLOCK"] = 2,
   --["DRUID"] = 2,
 }
+if wowBuildNo >= 14333 then -- 4.2.0
+APPerStr = {
+  2, 2, 1, 1, 2, 2, 1, 2, 2, 1,
+  --["WARRIOR"] = 2,
+  --["PALADIN"] = 2,
+  --["HUNTER"] = 1,
+  --["ROGUE"] = 1,
+  --["PRIEST"] = 2,
+  --["DEATHKNIGHT"] = 2,
+  --["SHAMAN"] = 1,
+  --["MAGE"] = 2,
+  --["WARLOCK"] = 2,
+  --["DRUID"] = 1,
+}
+end
 
 function StatLogic:GetAPPerStr(class)
   -- argCheck for invalid input
@@ -10393,84 +10883,6 @@ function StatLogic:GetAPFromStr(str, class)
   end
   -- Calculate
   return str * APPerStr[class], "AP"
-end
-
-
---[[---------------------------------
-  :GetBlockValuePerStr([class])
--------------------------------------
-Notes:
-  * Gets the block value per strength for given class.
-  * Player level does not effect block value per strength.
-Arguments:
-  [optional] string or number - ClassID or "ClassName". Default: PlayerClass<br>See :GetClassIdOrName(class) for valid class values.
-Returns:
-  ; blockValue : number - Block value per strength
-  ; statid : string - "BLOCK_VALUE"
-Example:
-  local blockPerStr = StatLogic:GetBlockValuePerStr()
-  local blockPerStr = StatLogic:GetBlockValuePerStr("WARRIOR")
------------------------------------]]
-
-local BlockValuePerStr = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  --["WARRIOR"] = 0,
-  --["PALADIN"] = 0,
-  --["HUNTER"] = 0,
-  --["ROGUE"] = 0,
-  --["PRIEST"] = 0,
-  --["DEATHKNIGHT"] = 0,
-  --["SHAMAN"] = 0,
-  --["MAGE"] = 0,
-  --["WARLOCK"] = 0,
-  --["DRUID"] = 0,
-}
-
-function StatLogic:GetBlockValuePerStr(class)
-  -- argCheck for invalid input
-  self:argCheck(class, 2, "nil", "string", "number")
-  -- if class is a class string, convert to class id
-  if type(class) == "string" and ClassNameToID[strupper(class)] ~= nil then
-    class = ClassNameToID[strupper(class)]
-  -- if class is invalid input, default to player class
-  elseif type(class) ~= "number" or class < 1 or class > 10 then
-    class = ClassNameToID[playerClass]
-  end
-  return BlockValuePerStr[class], "BLOCK_VALUE"
-end
-
-
---[[---------------------------------
-  :GetBlockValueFromStr(str, [class])
--------------------------------------
-Notes:
-  * Calculates the block value from strength for given class.
-  * Player level does not effect block value per strength.
-Arguments:
-  number - Strength
-  [optional] string or number - ClassID or "ClassName". Default: PlayerClass<br>See :GetClassIdOrName(class) for valid class values.
-Returns:
-  ; blockValue : number - Block value
-  ; statid : string - "BLOCK_VALUE"
-Example:
-  local bv = StatLogic:GetBlockValueFromStr(1) -- GetBlockValuePerStr
-  local bv = StatLogic:GetBlockValueFromStr(10)
-  local bv = StatLogic:GetBlockValueFromStr(10, "WARRIOR")
------------------------------------]]
-
-function StatLogic:GetBlockValueFromStr(str, class)
-  -- argCheck for invalid input
-  self:argCheck(str, 2, "number")
-  self:argCheck(class, 3, "nil", "string", "number")
-  -- if class is a class string, convert to class id
-  if type(class) == "string" and ClassNameToID[strupper(class)] ~= nil then
-    class = ClassNameToID[strupper(class)]
-  -- if class is invalid input, default to player class
-  elseif type(class) ~= "number" or class < 1 or class > 10 then
-    class = ClassNameToID[playerClass]
-  end
-  -- Calculate
-  return str * BlockValuePerStr[class] - 10, "BLOCK_VALUE"
 end
 
 
@@ -10668,6 +11080,21 @@ BaseDodge = {
   --["WARLOCK"] =     2.0350,
   --["DRUID"] =       4.9510,
 }
+if wowBuildNo >= 14333 then -- 4.2.0
+BaseDodge = {
+  5, 5, -5.4499989748001, -0.590, 3.1830, 5, 1.6750, 3.4575, 2.0350, 4.9510,
+  --["WARRIOR"] =     5,
+  --["PALADIN"] =     5,
+  --["HUNTER"] =      -5.450,
+  --["ROGUE"] =       -0.590,
+  --["PRIEST"] =      3.1830,
+  --["DEATHKNIGHT"] = 5,
+  --["SHAMAN"] =      1.6750,
+  --["MAGE"] =        3.4575,
+  --["WARLOCK"] =     2.0350,
+  --["DRUID"] =       4.9510,
+}
+end
 
 function StatLogic:GetBaseDodge(class)
   -- argCheck for invalid input
@@ -10737,18 +11164,44 @@ DodgePerAgiStatic = {
   --["WARLOCK"] =     0.0192366,
   --["DRUID"] =       0.0240458,
 }
+local ZeroDodgePerAgiClasses = {}
+
+if wowBuildNo >= 14333 then
+DodgePerAgiStatic = {
+  0, 0, 0.0133266, 0.0240537, 0.0192366, 0, 0.0192366, 0.0195253, 0.0192366, 0.0240458,
+  --["WARRIOR"] =     0,
+  --["PALADIN"] =     0,
+  --["HUNTER"] =      0.0133266,
+  --["ROGUE"] =       0.0240537,
+  --["PRIEST"] =      0.0192366,
+  --["DEATHKNIGHT"] = 0,
+  --["SHAMAN"] =      0.0192366,
+  --["MAGE"] =        0.0195253,
+  --["WARLOCK"] =     0.0192366,
+  --["DRUID"] =       0.0240458,
+}
+ZeroDodgePerAgiClasses = {
+  ["WARRIOR"] = true,
+  ["PALADIN"] = true,
+  ["DEATHKNIGHT"] = true,
+}
+end
 
 local ModAgiClasses = {
   ["DRUID"] = true,
   ["HUNTER"] = true,
   ["ROGUE"] = true,
+  ["SHAMAN"] = true,
 }
 local BoK = GetSpellInfo(20217)
 function StatLogic:GetDodgePerAgi()
   local level = UnitLevel("player")
   local class = ClassNameToID[playerClass]
   if level == 80 and DodgePerAgiStatic[class] then
-    --return DodgePerAgiStatic[class], "DODGE"
+    return DodgePerAgiStatic[class], "DODGE"
+  end
+  if ZeroDodgePerAgiClasses[playerClass] then
+    return 0, "DODGE"
   end
   -- Collect data
   local D_dr = GetDodgeChance()
@@ -10762,10 +11215,7 @@ function StatLogic:GetDodgePerAgi()
   -- But Kings added AGi will add to posBuff, so we need to check for Kings
   local modAgi = 1
   if ModAgiClasses[playerClass] then
-    modAgi = self:GetStatMod("MOD_AGI")
-    if PlayerHasAura(BoK) then
-      modAgi = modAgi - 0.1
-    end
+    modAgi = self:GetStatMod("MOD_AGI", nil, nil, "CLASS")
   end
   local A = effectiveStat
   local A_b = ceil((stat - posBuff - negBuff) / modAgi)
@@ -10953,6 +11403,38 @@ function StatLogic:GetCritFromAgi(agi, class, level)
   end
   -- Calculate
   return agi * CritPerAgi[level][class], "MELEE_CRIT"
+end
+
+--[[---------------------------------
+  :GetHealthFromSta(sta, [level])
+-------------------------------------
+Notes:
+  * For each level beyond 80, stamina grants an additional 8% health per point. 
+Arguments:
+  number - Stamina
+  [optional] number - Level used in calculations. Default: player's level
+Returns:
+  ; health : number - Health
+  ; statid : string - "HEALTH"
+Example:
+  local health = StatLogic:GetHealthFromSta(1) -- GetHealthPerSta
+  local health = StatLogic:GetHealthFromSta(10)
+  local health = StatLogic:GetCritFromAgi(10, 85)
+-----------------------------------]]
+function StatLogic:GetHealthFromSta(sta, level)
+  -- argCheck for invalid input
+  self:argCheck(sta, 2, "number")
+  self:argCheck(level, 3, "nil", "number")
+  -- if level is invalid input, default to player level
+  if type(level) ~= "number" or level < 1 or level > 100 then
+    level = UnitLevel("player")
+  end
+  local mod = 10
+  if level > 80 then
+    mod = mod + (level - 80) * 0.8
+  end
+  -- Calculate
+  return sta * mod, "HEALTH"
 end
 
 
@@ -11236,6 +11718,49 @@ function StatLogic:GetNormalManaRegenFromSpi(spi, int, level)
   return (0.001 + spi * BaseManaRegenPerSpi[level] * (int ^ 0.5)) * 5, "MANA_REGEN"
 end
 
+-- local Level80BaseMana = {
+  -- 0, 23422, 0, 0, 20590, 0, 23430, 17418, 20553, 18635,
+  -- --["WARRIOR"] = 0,
+  -- --["PALADIN"] = 23422,
+  -- --["HUNTER"] = 0,
+  -- --["ROGUE"] = 0,
+  -- --["PRIEST"] = 20590,
+  -- --["DEATHKNIGHT"] = 0,
+  -- --["SHAMAN"] = 23430,
+  -- --["MAGE"] = 17418,
+  -- --["WARLOCK"] = 20553,
+  -- --["DRUID"] = 18635,
+-- }
+
+-- -- StatLogic:GetNormalManaRegenFromSpi2()
+-- function StatLogic:GetNormalManaRegenFromSpi2(spi, int, level, class)
+  -- -- argCheck for invalid input
+  -- self:argCheck(spi, 2, "number")
+  -- self:argCheck(int, 3, "nil", "number")
+  -- self:argCheck(level, 4, "nil", "number")
+
+  -- -- if level is invalid input, default to player level
+  -- if type(level) ~= "number" or level < 1 or level > 80 then
+    -- level = UnitLevel("player")
+  -- end
+
+  -- -- if int is invalid input, default to player int
+  -- if type(int) ~= "number" then
+    -- local _
+    -- _, int = UnitStat("player",4)
+  -- end
+  
+  -- -- if class is a class string, convert to class id
+  -- if type(class) == "string" and ClassNameToID[strupper(class)] ~= nil then
+    -- class = ClassNameToID[strupper(class)]
+  -- -- if class is invalid input, default to player class
+  -- elseif type(class) ~= "number" or class < 1 or class > 10 then
+    -- class = ClassNameToID[playerClass]
+  -- end
+  
+  -- -- Calculate
+  -- return Level80BaseMana[class] * 0.05 + (0.001 + spi * BaseManaRegenPerSpi[level] * (int ^ 0.5)) * 5, "MANA_REGEN"
+-- end
 
 --[[---------------------------------
   :GetHealthRegenFromSpi(spi, [class])
@@ -11620,11 +12145,11 @@ function StatLogic:GetGemID(item)
   local gemScanLink = "item:6948:0:0:0:%d:%d"
   local gemID
   -- Start GemID scan
-  for gemID = 4000, 1, -1 do
+  for gemID = 4300, 1, -1 do
     local itemLink = gemScanLink:format(gemID, gemID)
     local _, gem1Link = GetItemGem(itemLink, 3)
     --if gem1Link and itemID == gem1Link:match("item:(%d+)") then
-    if gem1Link and strsub(gem1Link, 18, 18+len) == itemID then
+    if gem1Link and strsub(gem1Link, 18, 18 + len) == itemID then
       tipMiner:ClearLines() -- this is required or SetX won't work the second time its called
       tipMiner:SetHyperlink(itemLink)
       if GetCVarBool("colorblindMode") then
@@ -11657,7 +12182,7 @@ function StatLogic:GetEnchantID(spell)
   local scanLink = "item:6948:%d:%d:%d:%d:%d"
   local id
   -- Start EnchantID scan
-  for id = 4000, 5, -5 do
+  for id = 4300, 5, -5 do
     local itemLink = scanLink:format(id, id-1, id-2, id-3, id-4)
     tipMiner:ClearLines() -- this is required or SetX won't work the second time its called
     tipMiner:SetHyperlink(itemLink)
@@ -11766,6 +12291,8 @@ local bonusArmorItemEquipLoc = {
 function StatLogic:GetSum(item, table)
   -- Locale check
   if noPatternLocale then return end
+  -- Clear table values
+  clearTable(table)
   local _
   -- Check item
   if (type(item) == "string") or (type(item) == "number") then -- common case first
@@ -11774,14 +12301,12 @@ function StatLogic:GetSum(item, table)
     _, item = item:GetItem()
     if type(item) ~= "string" then return end
   else
-    return
+    return table
   end
   -- Check if item is in local cache
   local name, link, rarity , ilvl, reqLv, _, armorType, _, itemType = GetItemInfo(item)
-  if not name then return end
+  if not name then return table end
 
-  -- Clear table values
-  clearTable(table)
   -- Initialize table
   table = table or new()
   setmetatable(table, statTableMetatable)
@@ -11882,6 +12407,7 @@ function StatLogic:GetSum(item, table)
             debugPrint(debugText)
           else
             -- pattern match but not found in L.StatIDLookup, keep looking
+            debugPrint("  SinglePlusStatCheck Lookup Fail: |cffffd4d4'"..statText.."'")
           end
         end
       end
@@ -11910,6 +12436,7 @@ function StatLogic:GetSum(item, table)
             debugPrint(debugText)
           else
             -- pattern match but not found in L.StatIDLookup, keep looking
+            debugPrint("  SingleEquipStatCheck Lookup Fail: |cffffd4d4'"..statText.."'")
           end
         end
       end
@@ -11998,6 +12525,13 @@ function StatLogic:GetSum(item, table)
         for i, text in ipairs(text) do
           -- Trim spaces
           text = strtrim(text)
+          -- Strip color codes
+          if strsub(text, -2) == "|r" then
+            text = strsub(text, 1, -3)
+          end
+          if strfind(strsub(text, 1, 10), "|c%x%x%x%x%x%x%x%x") then
+            text = strsub(text, 11)
+          end
           -- Strip trailing "."
           if strutf8sub(text, -1) == L["."] then
             text = strutf8sub(text, 1, -2)
@@ -12018,7 +12552,10 @@ function StatLogic:GetSum(item, table)
               table[id] = (table[id] or 0) + value
               debugPrint("|cffff5959".."  DeepScan WholeText: ".."|cffffc259"..text..", ".."|cffffff59"..tostring(id).."="..tostring(value))
             end
-          else
+          elseif L.Exclude[text] or L.Exclude[strutf8sub(text, 1, L.ExcludeLen)] then
+            foundWholeText = true
+            found = true
+            debugPrint("|cffadadad".."  DeepScan Exclude: "..text)
             -- pattern match but not found in L.WholeTextLookup, keep looking
           end
           -- Scan DualStatPatterns
@@ -12096,6 +12633,13 @@ function StatLogic:GetSum(item, table)
             for j, text in ipairs(text) do
               -- Trim spaces
               text = strtrim(text)
+              -- Strip color codes
+              if strsub(text, -2) == "|r" then
+                text = strsub(text, 1, -3)
+              end
+              if strfind(strsub(text, 1, 10), "|c%x%x%x%x%x%x%x%x") then
+                text = strsub(text, 11)
+              end
               -- Strip trailing "."
               if strutf8sub(text, -1) == L["."] then
                 text = strutf8sub(text, 1, -2)
@@ -12262,7 +12806,7 @@ Notes:
   * Returns a unique identification string of the diff calculation, the identification string is made up of links concatenated together, can be used for cache indexing
   * item:
   :;tooltip : table - The tooltip showing the item
-  :;itemId : number - The numeric ID of the item. ie. 12345
+  :;itemId : number - The numeric ID of the item. e.g. 12345
   :;"itemString" : string - The full item ID in string format, e.g. "item:12345:0:0:0:0:0:0:0".
   :::Also supports partial itemStrings, by filling up any missing ":x" value with ":0", e.g. "item:12345:0:0:0"
   :;"itemName" : string - The Name of the Item, ex: "Hearthstone"
@@ -12466,6 +13010,11 @@ Example:
 
 -- TODO 2.1.0: Use SetHyperlinkCompareItem in StatLogic:GetDiff
 function StatLogic:GetDiff(item, diff1, diff2, ignoreEnchant, ignoreGem, red, yellow, blue, meta, ignorePris)
+	debugPrint("StatLogic:GetDiff");
+	--debugPrint("	item="..item)
+
+	
+
   -- Locale check
   if noPatternLocale then return end
 
