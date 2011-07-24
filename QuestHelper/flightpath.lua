@@ -1,4 +1,4 @@
-QuestHelper_File["flightpath.lua"] = "4.2.0.218r"
+QuestHelper_File["flightpath.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["flightpath.lua"] = GetTime()
 
 local real_TakeTaxiNode = TakeTaxiNode

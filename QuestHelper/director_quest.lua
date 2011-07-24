@@ -1,4 +1,4 @@
-QuestHelper_File["director_quest.lua"] = "4.2.0.218r"
+QuestHelper_File["director_quest.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["director_quest.lua"] = GetTime()
 
 local debug_output = false

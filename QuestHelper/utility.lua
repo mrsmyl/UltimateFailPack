@@ -1,4 +1,4 @@
-QuestHelper_File["utility.lua"] = "4.2.0.218r"
+QuestHelper_File["utility.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
 QuestHelper = CreateFrame("Frame", "QuestHelper", nil)
@@ -132,7 +132,7 @@ end
 function QuestHelper:Error(what)
   --DEFAULT_CHAT_FRAME:AddMessage("QuestHelper Error: "..(what or "Unknown").."\n"..debugstack(2), 1,.5,0)
   QuestHelper_ErrorCatcher_ExplicitError(true, what or "Unknown", nil, nil)
-  error("Abort!")
+  error((what or "") .. " Abort!")
 end
 
 function QuestHelper:HighlightText(text)

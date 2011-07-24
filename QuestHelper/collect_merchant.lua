@@ -1,4 +1,4 @@
-QuestHelper_File["collect_merchant.lua"] = "4.2.0.218r"
+QuestHelper_File["collect_merchant.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["collect_merchant.lua"] = GetTime()
 
 -- http://www.penny-arcade.com/comic/2005/01/05/

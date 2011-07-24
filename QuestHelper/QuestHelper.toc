@@ -7,7 +7,7 @@
 ## Notes-esES: Calcula la mejor ruta a seguir para usted.
 ## Notes-esMX: Calcula la mejor ruta a seguir para usted.
 ## Notes-koKR: 노선에 대한 계산을 수행합니다.
-## Version: 4.2.0.218r
+## Version: 4.2.0.224r
 ## Dependencies: QHData-base
 ## OptionalDeps: Cartographer_Waypoints, TomTom, Cartographer_InstanceMaps, !Swatter, tekticles, UnicodeFont, ClearFont2
 ## SavedVariables: QuestHelper_Pref QuestHelper_UID QuestHelper_SaveDate QuestHelper_Errors QuestHelper_Collector QuestHelper_Collector_Version QHDB_Export

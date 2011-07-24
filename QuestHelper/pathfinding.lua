@@ -1,4 +1,4 @@
-QuestHelper_File["pathfinding.lua"] = "4.2.0.218r"
+QuestHelper_File["pathfinding.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["pathfinding.lua"] = GetTime()
 
 -- Update flying for Mount Up guild achievement.
@@ -179,7 +179,8 @@ local static_shared_routes =
     -- Portals
         {{67, 0.268, 0.447}, {67, 0.240, 0.394}, 5}, -- Dalaran (Violet Citadel) <--> Dalaran (Purple Parlor)
         
-        {{67, 0.559, 0.468}, {66, 0.158, 0.428}, 5, false, level_limit = 68}, -- Dalaran <--> Crystalsong Forest
+        {{67, 0.559, 0.468}, {66, 0.158, 0.428}, 5}, -- Dalaran <--> Crystalsong Forest
+        --{{67, 0.559, 0.468}, {66, 0.158, 0.428}, 5, false, level_limit = 68}, -- Dalaran <--> Crystalsong Forest
 
         {{24, 0.551, 0.885}, {21, 0.369, 0.584}, 5}, -- Rut'Theran Village <--> Darnassus
         

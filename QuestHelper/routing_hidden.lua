@@ -1,4 +1,4 @@
-QuestHelper_File["routing_hidden.lua"] = "4.2.0.218r"
+QuestHelper_File["routing_hidden.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["routing_hidden.lua"] = GetTime()
 
 local NodeChainIgnored = {

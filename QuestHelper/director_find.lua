@@ -1,5 +1,7 @@
-QuestHelper_File["director_find.lua"] = "4.2.0.218r"
+QuestHelper_File["director_find.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["director_find.lua"] = GetTime()
+
+if not QH_API then QH_API = {} end
 
 local function getitall(name)
   local segments = {}
@@ -56,27 +58,36 @@ local function getitall(name)
   return found
 end
 
-local function generate_objective(dbi)
-  local clooster = {}
+local custom_find = {}
 
-  local why = {desc = dbi.name, tracker_desc = dbi.name}
-  for _, v in ipairs(dbi.loc) do
-    QuestHelper: Assert(QuestHelper_ParentLookup)
-    QuestHelper: Assert(QuestHelper_ParentLookup[v.p], v.p)
+local function generate_objective(dbi)
+  if not custom_find[dbi.name] then
+    local clooster = {}
+
+    local why = {desc = dbi.name, tracker_desc = dbi.name}
+    for _, v in ipairs(dbi.loc) do
+      QuestHelper: Assert(QuestHelper_ParentLookup)
+      QuestHelper: Assert(QuestHelper_ParentLookup[v.p], v.p)
 -- Ugly database hack
-    if v.p == 26 then v.p = 48 end
-    if v.p == 38 then v.p = 168 end
+      if v.p == 26 then v.p = 48 end
+      if v.p == 38 then v.p = 168 end
 -- end hack    
-    table.insert(clooster, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, cluster = clooster, tracker_hidden = true, why = why, map_desc = {QuestHelper:HighlightText(dbi.name)}, tracker_desc = dbi.name, map_suppress_ignore = true, map_custom_menu = function (menu) QuestHelper:CreateMenuItem(menu, QHText("FIND_REMOVE")):SetFunction(function () QH_Route_ClusterRemove(clooster) end) end})
-  end
+      table.insert(clooster, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, cluster = clooster, tracker_hidden = true, why = why, map_desc = {QuestHelper:HighlightText(dbi.name)}, tracker_desc = dbi.name, map_suppress_ignore = true, map_custom_menu = function (menu) QuestHelper:CreateMenuItem(menu, QHText("FIND_REMOVE")):SetFunction(function () QH_Route_ClusterRemove(clooster) end) end})
+    end
   
-  QH_Route_ClusterAdd(clooster)
+    QH_Route_ClusterAdd(clooster)
+    custom_find[dbi.name] = clooster
+  else
+    QH_Route_ClusterRemove(custom_find[dbi.name])
+    custom_find[dbi.name] = nil
+  end
 end
 
 local msfires = {desc = QHText("FIND_CUSTOM_LOCATION"), tracker_desc = QHText("FIND_CUSTOM_LOCATION")}
 
 local function QH_FindCoord(locx, locy, locz, label)
-  if not type(locz) == "number" then -- If it is a number, we are probably doing an elder right now.
+  if type(locz) ~= "number" then -- If it is a number, we are probably doing an elder right now.
+    label = locz .. " (" .. locx .. ", " .. locy .. ")"
     for z, nam in pairs(QuestHelper_NameLookup) do
       if nam:lower():find(locz:lower()) then
         locz = z
@@ -86,16 +97,22 @@ local function QH_FindCoord(locx, locy, locz, label)
   end
     
   if type(locz) == "number" then
-    local ec, ez = unpack(QuestHelper_ZoneLookup[locz])
-    local c, x, y = QuestHelper.Astrolabe:GetAbsoluteContinentPosition(ec, ez, locx / 100, locy / 100)
-    local node = {loc = {x = x, y = y, p = locz, c = QuestHelper_ParentLookup[locz]}, why = {desc = label, tracker_desc = label}, map_desc = {label}, tracker_desc = label, tracker_hidden = true}
-    local cluster = {node}
-    node.cluster = cluster
+    if not custom_find[label] then 
+      local ec, ez = unpack(QuestHelper_ZoneLookup[locz])
+      local c, x, y = QuestHelper.Astrolabe:GetAbsoluteContinentPosition(ec, ez, locx / 100, locy / 100)
+      local node = {loc = {x = x, y = y, p = locz, c = QuestHelper_ParentLookup[locz]}, why = {desc = label, tracker_desc = label}, map_desc = {label}, tracker_desc = label, tracker_hidden = true}
+      local cluster = {node}
+      node.cluster = cluster
+
+	  custom_find[label] = cluster        
+      node.map_suppress_ignore = true
+      node.map_custom_menu = function (menu) QuestHelper:CreateMenuItem(menu, QHText("FIND_REMOVE")):SetFunction(function () QH_Route_ClusterRemove(cluster); custom_find[cluster.tracker_desc] = nil end) end
         
-    node.map_suppress_ignore = true
-    node.map_custom_menu = function (menu) QuestHelper:CreateMenuItem(menu, QHText("FIND_REMOVE")):SetFunction(function () QH_Route_ClusterRemove(cluster) end) end
-        
-    QH_Route_ClusterAdd(cluster)
+      QH_Route_ClusterAdd(cluster)
+    else
+      QH_Route_ClusterRemove(custom_find[label])
+      custom_find[label] = nil
+    end
   end
 end
 
@@ -296,4 +313,14 @@ function QH_FindName(name)
     
     mennix:ShowAtCursor()
   end
+end
+
+QH_API.ARCHY_ADD = function (locx, locy, localizedZoneName, displayText)
+  QH_FindCoord(locx, locy, localizedZoneName, displayText)
+end
+
+QH_API.ARCHY_REMOVE = function (displayText)
+  if not custom_find[displayText] then return end
+  QH_Route_ClusterRemove(custom_find[displayText])
+  custom_find[displayText] = nil  
 end

@@ -1,4 +1,4 @@
-QuestHelper_File["teleport.lua"] = "4.2.0.218r"
+QuestHelper_File["teleport.lua"] = "4.2.0.224r"
 QuestHelper_Loadtime["teleport.lua"] = GetTime()
 
 function QuestHelper:CreateTeleportInfo()
