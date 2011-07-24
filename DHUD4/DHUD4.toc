@@ -1,4 +1,4 @@
-﻿## Interface: 40100
+﻿## Interface: 40200
 ## Title: DHUD|cff7fff7f 4|r
 ## Author: Horacio (Arcanefoam)
 ## X-eMail: arcanefoam AT gmail DOT com
@@ -12,10 +12,6 @@
 ## SavedVariables: DHUD4DB
 ## X-Embeds: Ace3
 ## X-Category: Combat
-## X-Curse-Packaged-Version: 1.6.3
-## X-Curse-Project-Name: DHUD4
-## X-Curse-Project-ID: dhud4
-## X-Curse-Repository-ID: wow/dhud4/mainline
 
 ## Ace Libraries
 embeds.xml
@@ -45,3 +41,7 @@ Abilities\DHUD4_Rogue.lua
 Abilities\DHUD4_Warrior.lua
 Abilities\DHUD4_DeathKnight.lua
 Abilities\DHUD4_Paladin.lua
+-- X-Curse-Packaged-Version: 1.6.4
+-- X-Curse-Project-Name: DHUD4
+-- X-Curse-Project-ID: dhud4
+-- X-Curse-Repository-ID: wow/dhud4/mainline
