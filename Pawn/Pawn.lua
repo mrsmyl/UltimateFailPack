@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.11: updated for patch 4.2
+-- Version 1.5.13: minor updates
 ------------------------------------------------------------
 
 
-PawnVersion = 1.511
+PawnVersion = 1.513
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -753,7 +753,6 @@ function PawnRecalculateScaleTotal(ScaleName)
 	BestBlue, PawnScaleBestGems[ScaleName].BlueSocket = PawnFindBestGems(ScaleName, false, false, true)
 	BestCogwheel, PawnScaleBestGems[ScaleName].CogwheelSocket = PawnFindBestGems(ScaleName, false, false, false, false, true)
 	BestMeta, PawnScaleBestGems[ScaleName].MetaSocket = PawnFindBestGems(ScaleName, false, false, false, true, false)
-	ThisScale.Values.PrismaticSocket = BestPrismatic
 	if ThisScale.SmartGemSocketing then
 		ThisScale.Values.RedSocket = BestRed
 		ThisScale.Values.YellowSocket = BestYellow
@@ -762,7 +761,7 @@ function PawnRecalculateScaleTotal(ScaleName)
 		ThisScale.Values.CogwheelSocket = BestCogwheel
 	end
 	if ThisScale.SmartMetaGemSocketing then
-		ThisScale.Values.MetaSocket = BestMeta
+		ThisScale.Values.MetaSocket = BestMeta - (ThisScale.Values.MetaSocketEffect or 0)
 	end
 	
 	-- Finally, find which gem colors have the highest raw values.
@@ -3339,10 +3338,10 @@ end
 -- is equal to or less than this number, this item is always considered superior to other items that don't meet
 -- these same requirements.
 function PawnGetMaxLevelItemIsUsefulHeirloom(Item)
-	if Item.UnenchantedStats.XpBoost and Item.UnenchantedStats.MaxScalingLevel then
+	if Item.UnenchantedStats and Item.UnenchantedStats.XpBoost and Item.UnenchantedStats.MaxScalingLevel then
 		-- This item provides an XP boost through MaxScalingLevel inclusive.
 		return Item.UnenchantedStats.MaxScalingLevel
-	elseif Item.UnenchantedStats.MaxScalingLevel then
+	elseif Item.UnenchantedStats and Item.UnenchantedStats.MaxScalingLevel then
 		-- This item scales until you reach MaxScalingLevel.
 		return Item.UnenchantedStats.MaxScalingLevel - 1
 	else
