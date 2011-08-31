@@ -1088,8 +1088,6 @@ function ArkInventory.BagType( blizzard_id )
 	
 	if blizzard_id == BACKPACK_CONTAINER then
 		return ArkInventory.Const.Slot.Type.Bag
-	elseif blizzard_id == KEYRING_CONTAINER then
-		return ArkInventory.Const.Slot.Type.Key
 	elseif blizzard_id == BANK_CONTAINER then
 		return ArkInventory.Const.Slot.Type.Bag
 	end
@@ -1897,9 +1895,9 @@ function ArkInventory.ScanMail( )
 		local _, _, _, _, _, _, daysLeft, hasItem, _, wasReturned, _, canReply, _ = GetInboxHeaderInfo( msg_id )
 		
 		--if ( daysLeft >= 1 ) then
---			daysLeft = GREEN_FONT_COLOR_CODE..format(DAYS_ABBR, floor(daysLeft)).." "..FONT_COLOR_CODE_CLOSE;
+--			daysLeft = string.format( "%s%s%s%s", GREEN_FONT_COLOR_CODE, string.format( DAYS_ABBR, floor(daysLeft) ), " ", FONT_COLOR_CODE_CLOSE )
 		--else
---			daysLeft = RED_FONT_COLOR_CODE..SecondsToTime(floor(daysLeft * 24 * 60 * 60))..FONT_COLOR_CODE_CLOSE;
+--			daysLeft = string.format( "%s%s%s", RED_FONT_COLOR_CODE, SecondsToTime( floor( daysLeft * 24 * 60 * 60 ) ), FONT_COLOR_CODE_CLOSE )
 		--end
 		
 		--local expires_d = floor( daysLeft )
@@ -3155,7 +3153,7 @@ function ArkInventory.ObjectCountGet( search_id, just_me, ignore_vaults, ignore_
 	
 	if ( cp.info.name and not d[cp.info.name] ) or ( cp.info.guild_id and not d[cp.info.guild_id] ) then
 		
-		local search_alt = ArkInventory.Const.CompanionTranslation[search_id]
+		local search_alt = ArkInventory.Const.ItemSpellCrossReference[search_id]
 		
 		-- build raw
 		for pn, pd in pairs( ArkInventory.db.realm.player.data ) do

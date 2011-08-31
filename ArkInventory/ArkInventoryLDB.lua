@@ -295,12 +295,25 @@ function ArkInventory.LDB.Pets:OnClick( button )
 		
 		local companionType = "CRITTER"
 		
-		if GetNumCompanions( companionType ) == 0 then return end
+		local n = GetNumCompanions( companionType )
+		if n == 0 then return end
+		
+		for creatureIndex = 1, n do
+			
+			local companionID, companionName, companionSpellID, texture, active = GetCompanionInfo( companionType, creatureIndex )
+			
+			if active then
+				DismissCompanion( companionType )
+				return
+			end
+			
+		end
+		
 		
 		ArkInventory.LDB.Companion.GetUsable( companionType, true )
 		
 		if #companionTable == 0 then
-			ArkInventory.Output( "no usable pets" )
+			--ArkInventory.Output( "no usable pets" )
 		elseif #companionTable == 1 then
 			CallCompanion( companionType, companionTable[1] )
 		else
@@ -349,6 +362,7 @@ function ArkInventory.LDB.Mounts:Update( useMapZone )
 	local companionType = "MOUNT"
 	
 	ArkInventory.LDB.Mounts.Cleanup( )
+	
 	ArkInventory.LDB.Mounts.IsFlyable( useMapZone )
 	
 	local mountType = ArkInventory.LDB.Companion.GetUsable( companionType, true )
@@ -453,7 +467,12 @@ function ArkInventory.LDB.Mounts:OnClick( button )
 		
 	else
 		
+		if ArkInventory.Global.Mode.Combat then return end
+		
 		local companionType = "MOUNT"
+		
+		local forceAlternative = IsModifiedClick( "CHATLINK" )
+		local limitZone = IsModifiedClick( "DRESSUP" )
 		
 		if GetNumCompanions( companionType ) == 0 then return end
 		
@@ -463,39 +482,63 @@ function ArkInventory.LDB.Mounts:OnClick( button )
 				if not ArkInventory.db.char.option.ldb.mounts.flying.dismount then
 					ArkInventory.OutputWarning( ArkInventory.Localise["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] )
 				else
-					Dismount( )
+					DismissCompanion( companionType )
 				end
 			else
-				Dismount( )
+				DismissCompanion( companionType )
 			end
 			
 			return
 			
 		end
 		
-		ArkInventory.LDB.Mounts:Update( )
+		ArkInventory.LDB.Mounts:Update( true )
 		
-		ArkInventory.LDB.Companion.GetUsable( companionType, true )
+		ArkInventory.LDB.Companion.GetUsable( companionType, false, forceAlternative, limitZone )
+		
+		
+		if limitZone and forceAlternative and #companionTable == 0 then
+			
+			-- if both are true and no results then ignore limitZone
+			ArkInventory.LDB.Companion.GetUsable( companionType, false, forceAlternative )
+				
+			if #companionTable == 0 then
+				-- if there are still no results then ignore forceAlternative as well
+				ArkInventory.LDB.Companion.GetUsable( companionType )
+			end
+			
+		elseif ( limitZone or forceAlternative ) and #companionTable == 0 then
+			
+			ArkInventory.LDB.Companion.GetUsable( companionType )
+			
+		end
+		
 		
 		--ArkInventory.Output( #companionTable, " available mounts" )
 		
 		if #companionTable == 0 then
 			-- no mounts
+			--ArkInventory.Output( "no usable mounts" )
 			return
 		end
 		
-		-- remove auras
-		for i = 40, 1, -1 do
-			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitAura( "player", i, "CANCELABLE" )
-			if spellId and ArkInventory.db.char.option.ldb.mounts.aura[spellId] then
-				CancelUnitBuff( "player", name, nil )
-			end
-		end
+		-- remove auras, except shapeshifts cannot be removed via code
+--		for i = 40, 1, -1 do
+--			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitAura( "player", i, "CANCELABLE" )
+--			if spellId and ArkInventory.db.char.option.ldb.mounts.aura[spellId] then
+--				CancelUnitBuff( "player", name, nil )
+--			end
+--		end
+		
+--		local sf = GetShapeshiftForm( true )
+--		if not ok and sf > 0 and ArkInventory.db.global.option.message.shapeshift.warning then
+--			ArkInventory.OutputWarning( "You are currently shapeshifted (id=", sf, "). Mount summon may fail until you manually remove the shapeshift" )
+--			return
+--		end
 		
 		if #companionTable == 1 then
 			CallCompanion( companionType, companionTable[1] )
 		else
-			ArkInventory.LDB.Companion.GetUsable( companionType )
 			CallCompanion( companionType, companionTable[random( 1, #companionTable )] )
 		end
 		
@@ -648,7 +691,7 @@ function ArkInventory.LDB.Mounts.IsFlyable( useMapZone )
 	
 end
 
-function ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, mountType )
+function ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, mountType, limitZone )
 	
 	-- gather all usable companions
 	
@@ -677,13 +720,80 @@ function ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, m
 		
 		if ( not active or ignoreActive ) and ( ( selectedCount == 0 and selected[companionSpellID] ~= false ) or ( selectedCount > 0 and selected[companionSpellID] == true ) ) then
 			
-			--ArkInventory.Output( creatureIndex, " / ", companionName )
+			--ArkInventory.Output( creatureIndex, " / ", companionName, " / ", limitZone )
 			
 			local companionData = ArkInventory.Const.CompanionData[companionSpellID]
 			local ok = IsUsableSpell( companionSpellID )
 			
 			if ok and mountType then
 				ok = companionData.usable[mountType] 
+			end
+			
+			if ok and limitZone and ( not companionData.r or not companionData.r.zone ) then
+				ok = false
+			end
+			
+			if ok and companionData.r then
+				
+				if ok and companionData.r.zone then
+					
+					-- has a zone restriction
+					ok = false
+					
+					for r in string.gmatch( companionData.r.zone, "[^,]+" ) do
+						if GetRealZoneText( ) == ArkInventory.Localise[string.upper( string.format( "WOW_ZONE_%s", r ) )] then
+							ok = true
+							break
+						end
+					end
+					
+--					if not ok then
+--						ArkInventory.Output( companionName, " failed zone restrictions of ", companionData.r.zone )
+--					end
+					
+				end
+				
+				if ok and companionData.r.item then
+					
+					-- requires specific item(s)
+					
+					-- blizzard seem to be handling this part ok but it cant hurt to code for it now.
+					-- its only for snowballs so far as i can tell
+					
+					for r in string.gmatch( companionData.r.item, "[^,]+" ) do
+						local id, count = string.match( r, "(%d+)x(%d+)" )
+						--ArkInventory.Output( r, " = ", id, " / ", count )
+						if GetItemCount( tonumber( id ) ) < tonumber( count ) then
+							ok = false
+							break
+						end
+					end
+					
+--					if not ok then
+--						ArkInventory.Output( companionName, " failed item restrictions of ", companionData.r.item )
+--					end
+					
+				end
+				
+				if ok and companionData.r.event then
+					
+					-- has an event/holiday restriction
+					ok = false
+					
+--					for r in string.gmatch( companionData.r.event, "[^,]+" ) do
+						
+						-- figure out how to check for holidays?  probably look at the calendar.
+						-- not urgent as no spells currently have this, only items, and we cant use items yet
+						
+--					end
+					
+--					if not ok then
+--						ArkInventory.Output( companionName, " failed event restrictions of ", companionData.r.event )
+--					end
+					
+				end
+				
+				
 			end
 			
 			if ok then
@@ -705,7 +815,7 @@ function ArkInventory.LDB.Companion.GetSelectedCount( selected )
 	return count
 end
 
-function ArkInventory.LDB.Companion.GetUsable( companionType, ignoreActive )
+function ArkInventory.LDB.Companion.GetUsable( companionType, ignoreActive, forceAlternative, limitZone )
 	
 	table.wipe( companionTable )
 	
@@ -713,12 +823,10 @@ function ArkInventory.LDB.Companion.GetUsable( companionType, ignoreActive )
 		return ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive )
 	end
 	
-	local forceAlternative = IsModifiedClick( )
-	
 	if IsSwimming( ) then
 		if ( not forceAlternative ) then
 			--ArkInventory.Output( "check water" )
-			ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, "water" )
+			ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, "water", limitZone )
 			if #companionTable > 0 then return "water" end
 		else
 			--ArkInventory.Output( "ignore water" )
@@ -729,7 +837,7 @@ function ArkInventory.LDB.Companion.GetUsable( companionType, ignoreActive )
 		--ArkInventory.Output( "can fly here" )
 		if ( not forceAlternative ) or ( forceAlternative and IsSwimming( ) ) then
 			--ArkInventory.Output( "checking flying" )
-			ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, "flying" )
+			ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, "flying", limitZone )
 			if #companionTable > 0 then return "flying" end
 		else
 			--ArkInventory.Output( "ignore flying" )
@@ -737,7 +845,7 @@ function ArkInventory.LDB.Companion.GetUsable( companionType, ignoreActive )
 	end
 	
 	--ArkInventory.Output( "ground" )
-	ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, "ground" )
+	ArkInventory.LDB.Companion.GetAvailable( companionType, ignoreActive, "ground", limitZone )
 	if #companionTable > 0 then return "ground" end
 	
 end

@@ -229,22 +229,18 @@
 	</Frame>
 	
 	<Button virtual="true" name="ARKINV_TemplateButtonItem" inherits="ContainerFrameItemButtonTemplate" hidden="true">
-	
-		<NormalTexture name="$parentNormalTexture" file="" />
+		
+		<NormalTexture name="$parentNormalTexture" urgency="5" file="" />
 		
 		<Frames>
-		
+			
 			<Frame name="$parentArkBorder" inherits="ARKINV_Border" />
 			
 			<Frame name="$parentArkHighlight">
 			
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-						<Offset x="-1" y="1" />
-					</Anchor>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
-						<Offset x="1" y="-1" />
-					</Anchor>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
 				</Anchors>
 				
 				<Layers>
@@ -413,7 +409,7 @@
 			</OnMouseUp>
 		
 			<OnShow>
-				_G[self:GetName( ) .. "EditText"]:SetText( self:GetID( ) )
+				_G[string.format( "%s%s", self:GetName( ), "EditText" )]:SetText( self:GetID( ) )
 			</OnShow>
 			
 			<OnClick>
@@ -444,7 +440,7 @@
 		<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
 		<Scripts>
 			<OnClick>
-				local filter = _G[self:GetParent( ):GetName( ) .. "Filter"]
+				local filter = _G[string.format( "%s%s", self:GetParent( ):GetName( ), "Filter" )]
 				if filter then
 					filter:SetText( "" )
 					filter:ClearFocus( )
@@ -1019,7 +1015,7 @@
 				<FontString inherits="ARKINV_TableRowFont" JustifyH="LEFT" />
 				<Scripts>
 					<OnHyperlinkClick>
-						SetItemRef( arg1, arg2, arg3 )
+						SetItemRef( link, text, button, chatFrame )
 					</OnHyperlinkClick>
 					<OnMouseWheel>
 						ArkInventory.ScrollingMessageFrame_ScrollWheel( self:GetParent( ), "List", delta )
@@ -1491,12 +1487,12 @@
 			</OnLoad>
 
 			<OnEnter>
-				_G[self:GetName( ) .. "Highlight"]:Show( )
+				_G[string.format( "%s%s", self:GetName( ), "Highlight" )]:Show( )
 				self.ArkTableRowOnEnter( )
 			</OnEnter>
 
 			<OnLeave>
-				_G[self:GetName( ) .. "Highlight"]:Hide( )
+				_G[string.format( "%s%s", self:GetName( ), "Highlight" )]:Hide( )
 				self.ArkTableRowOnLeave( )
 			</OnLeave>
 
@@ -1511,7 +1507,7 @@
 					
 					local parent = self:GetParent( ):GetName( )
 					
-					local cs = _G[parent .. "ArkSelectedRow"]:GetText( )
+					local cs = _G[string.format( parent, "ArkSelectedRow" )]:GetText( )
 					local ns = tostring( self:GetID( ) )
 					
 					if ns == "0" then
@@ -1522,16 +1518,16 @@
 					
 					-- show/hide the "selected" background
 					if cs ~= "-1" then
-						_G[parent .. "Row" .. cs .. "Selected"]:Hide( )
+						_G[string.format( "%s%s%s%s", parent, "Row", cs, "Selected" )]:Hide( )
 					end
 					
 					if cs == ns then
-						_G[parent .. "ArkSelectedRow"]:SetText( "-1" )
-						_G[parent .. "ArkSelectedId"]:SetText( "-1" )
+						_G[string.format( "%s%s", parent, "ArkSelectedRow" )]:SetText( "-1" )
+						_G[string.format( "%s%s", parent, "ArkSelectedId" )]:SetText( "-1" )
 					else
-						_G[parent .. "ArkSelectedRow"]:SetText( ns )
-						_G[parent .. "ArkSelectedId"]:SetText( _G[f .. "Id"]:GetText( ) )
-						_G[f .. "Selected"]:Show( )
+						_G[string.format( "%s%s", parent, "ArkSelectedRow" )]:SetText( ns )
+						_G[string.format( "%s%s", parent, "ArkSelectedId" )]:SetText( _G[string.format( "%s%s", f, "Id" )]:GetText( ) )
+						_G[string.format( "%s%s", f, "Selected" )]:Show( )
 					end
 					
 				end

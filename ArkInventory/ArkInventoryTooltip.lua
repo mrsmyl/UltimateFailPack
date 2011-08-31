@@ -1,7 +1,7 @@
 function ArkInventory.TooltipInit( name )
 	
 	local tooltip = _G[name]
-	assert( tooltip, "XML Frame [" .. name .. "] not found" )
+	assert( tooltip, string.format( "XML Frame [%s] not found", name ) )
 	
 	return tooltip
 	
@@ -57,10 +57,6 @@ function ArkInventory.TooltipSetItem( tooltip, bag_id, slot_id )
 		
 		ArkInventory.TooltipSetInventoryItem( tooltip, BankButtonIDToInvSlotID( slot_id ) )
 		
-	elseif bag_id == KEYRING_CONTAINER then
-		
-		ArkInventory.TooltipSetInventoryItem( tooltip, KeyRingButtonIDToInvSlotID( slot_id ) )
-		
 	else
 		
 		ArkInventory.TooltipSetBagItem( tooltip, bag_id, slot_id )
@@ -71,7 +67,7 @@ end
 
 function ArkInventory.TooltipGetMoneyFrame( tooltip )
 	
-	return _G[tooltip:GetName( ) .. "MoneyFrame1"]
+	return _G[string.format( "%s%s", tooltip:GetName( ), "MoneyFrame1" )]
 	
 end
 
@@ -176,7 +172,11 @@ function ArkInventory.TooltipCanUse( tooltip )
 
 	local l = { "TextLeft", "TextRight" }
 	
-	for i = 2, ArkInventory.TooltipNumLines( tooltip ) do
+	local n = ArkInventory.TooltipNumLines( tooltip )
+	if n > 5 then n = 5 end
+	-- only go down to line 5, recipies and patterns may contain red text
+	
+	for i = 2, n do
 		for _, v in pairs( l ) do
 			local obj = _G[string.format( "%s%s%s", tooltip:GetName( ), v, i )]
 			if obj and obj:IsShown( ) then
@@ -266,17 +266,6 @@ function ArkInventory.TooltipAddItemCount( tooltip, h )
 
 end
 
-function ArkInventory.TooltipAddItemLevel_old( tooltip, h )
-	
-	local tt = select( 6, ArkInventory.ObjectInfo( h ) )
-	if tt then
-		ArkInventory.TooltipAddEmptyLine( tooltip )
-		tt = string.format( ArkInventory.Localise["TOOLTIP_ITEMLEVEL"], tt )
-		tooltip:AddLine( tt, 1, 1, 1, 0 )
-	end
-
-end
-
 function ArkInventory.TooltipAddItemAge( tooltip, h, blizzard_id, slot_id )
 	
 	if type( blizzard_id ) == "number" and type( slot_id ) == "number" then
@@ -285,71 +274,6 @@ function ArkInventory.TooltipAddItemAge( tooltip, h, blizzard_id, slot_id )
 		tooltip:AddLine( tt, 1, 1, 1, 0 )
 	end
 
-end
-
-function ArkInventory.TooltipAddVendor_old( tooltip, h )
-
-	if ArkInventory.Global.Mode.Merchant then
-		return
-	end
-	
-	local class, id = ArkInventory.ObjectStringDecode( h )
-	
-	if class ~= "item" then
-		return
-	end
-
-	local price_per = select( 11, GetItemInfo( h ) )
-	
-	local tc = ArkInventory.db.global.option.tooltip.colour.vendor
-	
-	if price_per == nil then
-	
-		--tooltip:AddDoubleLine( ArkInventory.Localise["TOOLTIP_VENDOR"], ArkInventory.Localise["STATUS_NO_DATA"], tc.r, tc.g, tc.b, tc.r, tc.g, tc.b )
-		return
-		
-	elseif price_per == 0 then
-	
-		if not ArkInventory.Global.Mode.Merchant then
-			--tooltip:AddLine( ITEM_UNSELLABLE, tc.r, tc.g, tc.b )
-			ArkInventory.TooltipAddEmptyLine( tooltip )
-			ArkInventory.TooltipSetMoneyText( tooltip, 0, string.format( "%s:", ArkInventory.Localise["TOOLTIP_VENDOR"] ), tc.r, tc.g, tc.b )
-		end
-		
-	elseif price_per > 0 then
-	
-		local count = 1
-		
-		if tooltip:GetOwner( ) and tooltip:GetOwner( ).count ~= nil then
-			
-			count = tonumber( tooltip:GetOwner( ).count )
-			
-			if type( count ) ~= "number" then
-				count = 1
-			end
-			
-			if count < 1 then
-				count = 1
-			end
-			
-		end
-		
-		local price = price_per * count
-		
-		if count == 1 then
-			ArkInventory.TooltipAddEmptyLine( tooltip )
-			ArkInventory.TooltipSetMoneyText( tooltip, price, string.format( "%s:", ArkInventory.Localise["TOOLTIP_VENDOR"], count ), tc.r, tc.g, tc.b )
-		else
-			ArkInventory.TooltipAddEmptyLine( tooltip )
-			ArkInventory.TooltipSetMoneyText( tooltip, price, string.format( "%s: (%d @ %s)", ArkInventory.Localise["TOOLTIP_VENDOR"], count, ArkInventory.MoneyText( price_per ) ), tc.r, tc.g, tc.b )
-		end
-		
-	else
-
-		return
-	
-	end
-	
 end
 
 function ArkInventory.TooltipObjectCountGet( search_id )
@@ -363,7 +287,7 @@ function ArkInventory.TooltipObjectCountGet( search_id )
 	local paint = ArkInventory.db.global.option.tooltip.colour.class
 	local colour = ""
 	if paint then
-		colour = "|cffffffff"
+		colour = HIGHLIGHT_FONT_COLOR_CODE
 	end
 	
 	local n = UnitName( "player" )
@@ -490,7 +414,7 @@ function ArkInventory.TooltipSetMoneyCoin( frame, amount, txt, r, g, b )
 		frame.shownMoneyFrames = 0
 	end
 	
-	local name = frame:GetName( ) .. "MoneyFrame" .. frame.shownMoneyFrames + 1
+	local name = string.format( "%s%s%s", frame:GetName( ), "MoneyFrame", frame.shownMoneyFrames + 1 )
 	local moneyFrame = _G[name]
 	if not moneyFrame then
 		frame.numMoneyFrames = frame.numMoneyFrames + 1
@@ -499,7 +423,7 @@ function ArkInventory.TooltipSetMoneyCoin( frame, amount, txt, r, g, b )
 		ArkInventory.MoneyFrame_SetType( moneyFrame, "STATIC" )
 	end
 	
-	moneyFrame:SetPoint( "RIGHT", frame:GetName( ) .. "TextRight" .. numLines, "RIGHT", 15, 0 )
+	moneyFrame:SetPoint( "RIGHT", string.format( "%s%s%s", frame:GetName( ), "TextRight", numLines ), "RIGHT", 15, 0 )
 	
 	moneyFrame:Show( )
 	

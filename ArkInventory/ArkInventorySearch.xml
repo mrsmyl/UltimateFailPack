@@ -77,20 +77,20 @@
 			</OnLoad>
 			
 			<OnUpdate>
-				if _G[self:GetName( ) .. "Highlight"]:IsShown( ) then
-					h = _G[self:GetName( ) .. "Id"]:GetText( )
+				if _G[string.format( "%s%s", self:GetName( ), "Highlight" )]:IsShown( ) then
+					h = _G[string.format( "%s%s", self:GetName( ), "Id" )]:GetText( )
 					ArkInventory.GameTooltipSetHyperlink( self, h )
 				end
 			</OnUpdate>
 			
 			<OnEnter>
-				_G[self:GetName( ) .. "Highlight"]:Show( )
-				h = _G[self:GetName( ) .. "Id"]:GetText( )
+				_G[string.format( "%s%s", self:GetName( ), "Highlight" )]:Show( )
+				h = _G[string.format( "%s%s", self:GetName( ), "Id" )]:GetText( )
 				ArkInventory.GameTooltipSetHyperlink( self, h )
 			</OnEnter>
 			
 			<OnLeave>
-				_G[self:GetName( ) .. "Highlight"]:Hide( )
+				_G[string.format( "%s%s", self:GetName( ), "Highlight" )]:Hide( )
 				ArkInventory.GameTooltipHide( )
 			</OnLeave>
 
@@ -257,7 +257,7 @@
 				<Scripts>
 
 					<OnVerticalScroll>
-						local h = _G[self:GetParent( ):GetName( ) .. "RowHeight"]:GetText( )
+						local h = _G[string.format( "%s%s", self:GetParent( ):GetName( ), "RowHeight" )]:GetText( )
 						FauxScrollFrame_OnVerticalScroll( self, offset, h, ArkInventory.Frame_Search_Table_Scroll )
 					</OnVerticalScroll>
 
@@ -307,7 +307,7 @@
 		<Scripts>
 
 			<OnShow>
-				_G[self:GetName( ) .. "TableScroll"]:Show( )
+				_G[string.format( "%s%s", self:GetName( ), "TableScroll" )]:Show( )
 			</OnShow>
 
 		</Scripts>

@@ -53,7 +53,6 @@ L["PT_SKILL_ARCHAEOLOGY"] = ""
 L["PT_CATEGORY_CONSUMABLE_FOOD"] = "Consumable.Food.Edible"
 L["PT_CATEGORY_CONSUMABLE_DRINK"] = "Consumable.Water"
 L["PT_CATEGORY_CONTAINER"] = "Misc.Bag"
-L["PT_CATEGORY_KEY"] = "Misc.Key"
 L["PT_CATEGORY_MOUNT"] = "Misc.Mount"
 L["PT_CATEGORY_POTION"] = "Consumable.Potion"
 L["PT_CATEGORY_POTION_HEAL"] = "Consumable.Potion.Recovery.Healing,Consumable.Warlock.Healthstone"
@@ -64,7 +63,7 @@ L["PT_CATEGORY_PET"] = "Misc.Minipet"
 
 
 -- skills that we dont need to lookup, but can if they dont exist
-L["WOW_SKILL_ARCHAEOLOGY"] = PROFESSIONS_ARCHAEOLOGY or "Archaeology"
+L["WOW_SKILL_ARCHAEOLOGY"] = PROFESSIONS_ARCHAEOLOGY
 L["WOW_SKILL_COOKING"] = PROFESSIONS_COOKING
 L["WOW_SKILL_FIRST_AID"] = PROFESSIONS_FIRST_AID
 L["WOW_SKILL_FISHING"] = PROFESSIONS_FISHING
@@ -119,9 +118,6 @@ text = string.gsub( text, "%%d", "%(%%d+%)", 1 ) -- replace %d with (%d+)
 L["WOW_TOOLTIP_SKILL"] = string.format( "^%s", text )
 
 L["WOW_TOOLTIP_CLASS"] = string.format( "^%s", string.gsub( ITEM_CLASSES_ALLOWED, "%%s", "(.+)", 1 ) )
-
-L["WOW_ZONE_WINTERGRASP"] = string.match( PVPBATTLEGROUND_WINTERGRASPTIMER, "^(.-)|" )
-
 
 
 -- generated from auction house categories

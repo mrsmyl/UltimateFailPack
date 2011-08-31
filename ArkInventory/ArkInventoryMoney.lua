@@ -314,7 +314,7 @@ function ArkInventory.MoneyFrame_OnEnter( moneyFrame )
 		b = "LEFT"
 	end
 
-	GameTooltip:SetOwner( moneyFrame, "ANCHOR_" .. a )
+	GameTooltip:SetOwner( moneyFrame, string.format( "ANCHOR_%s", a ) )
 	GameTooltip:ClearLines( )
 	
 	ArkInventory.MoneyFrame_Tooltip( GameTooltip )
@@ -360,13 +360,13 @@ function ArkInventory.MoneyFrame_SetType( moneyFrame, moneyType )
 	
 	local frameName = moneyFrame:GetName( )
 	if info.canPickup then
-		_G[frameName .. "GoldButton"]:EnableMouse( true )
-		_G[frameName .. "SilverButton"]:EnableMouse( true )
-		_G[frameName .. "CopperButton"]:EnableMouse( true )
+		_G[string.format( "%s%s", frameName, "GoldButton" )]:EnableMouse( true )
+		_G[string.format( "%s%s", frameName, "SilverButton" )]:EnableMouse( true )
+		_G[string.format( "%s%s", frameName, "CopperButton" )]:EnableMouse( true )
 	else
-		_G[frameName .. "GoldButton"]:EnableMouse( false )
-		_G[frameName .. "SilverButton"]:EnableMouse( false )
-		_G[frameName .. "CopperButton"]:EnableMouse( false )
+		_G[string.format( "%s%s", frameName, "GoldButton" )]:EnableMouse( false )
+		_G[string.format( "%s%s", frameName, "SilverButton" )]:EnableMouse( false )
+		_G[string.format( "%s%s", frameName, "CopperButton" )]:EnableMouse( false )
 	end
 
 	ArkInventory.MoneyFrame_UpdateMoney( moneyFrame )

@@ -17,6 +17,14 @@ if not L then return end
 
 
 
+--	wow zone names - must match exactly what is in game
+--	L["WOW_ZONE_AHNQIRAJ"] = ""
+--	L["WOW_ZONE_VASHJIR"] = ""
+	L["WOW_ZONE_KELPTHAR_FOREST"] = "Tang'tharwald"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Schimmernde Weiten"
+	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Abyssische Tiefen"
+	
+	
 --	wow skill headers - must match exactly what is in game
 	L["WOW_SKILL_HEADER_PRIMARY"] = "Berufe"
 	L["WOW_SKILL_HEADER_SECONDARY"] = "Sekund\195\164re Fertigkeiten"
@@ -101,6 +109,7 @@ if not L then return end
 	L["STATUS_NAME_MINING"] = "Bergbau"
 	L["STATUS_NAME_MOUNT"] = "Reittier"
 	L["STATUS_NAME_TOKEN"] = "Abzeichen"
+--	L["STATUS_NAME_TACKLE"] = ""
 	
 	
 --	main menu
@@ -217,11 +226,6 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = "Legt die Farbe des Textes, der die Anzahl der Gegenst\195\164nde anzeigt, fest."
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = ""
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD"] = "Kaufpreis des H\195\164ndlers anzeigen"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD_TEXT"] = "Bestimmt, ob der Kaufpreis des H\195\164ndlers angezeigt wird."
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_COLOUR_TEXT"] = "Legt fest, in welcher Farbe der Kaufpreis des H\195\164ndlers angezeigt wird."
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = ""
 	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = "nur eigene"
@@ -525,8 +529,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_VENDOR"] = "H\195\164ndler"
---	L["TOOLTIP_ITEMLEVEL"] = ""
 	L["TOOLTIP_TOTAL"] = "Gesamt"
 --	L["TOOLTIP_COUNT_ME"] = ""
 --	L["TOOLTIP_VAULT_TABS"] = ""
@@ -566,7 +568,6 @@ if not L then return end
 --	L["REALM"] = ""
 	L["VIEW"] = "Anzeige"
 	L["EDIT"] = "Bearbeiten"
---	L["OK"] = ""
 	L["DIRECTION"] = "Richtung"
 	L["ASCENDING"] = "aufsteigend"
 	L["DECENDING"] = "absteigend"
@@ -615,8 +616,18 @@ if not L then return end
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
 --	L["LDB_MOUNTS_WATER"] = ""
 --	L["LDB_MOUNTS_SUMMON"] = ""
+--	L["LDB_MOUNTS_NODATA"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_SELECTION"] = ""
 --	L["LDB_COMPANION_MISSING"] = ""
 --	L["LDB_COMPANION_NONE"] = ""
 --	L["LDB_COMPANION_RESTRICTED"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ZONE"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ITEM"] = ""
+--	L["LDB_COMPANION_RESTRICTED_EVENT"] = ""
+--	L["LDB_COMPANION_RESTRICTED_UNKNOWN"] = ""
 --	L["LDB_COMPANION_NODATA"] = ""
 --	L["LDB_COMPANION_NODATA_TEXT"] = ""
+--	L["LDB_COMPANION_SELECT"] = ""
+--	L["LDB_COMPANION_DESELECT"] = ""
+--	L["LDB_COMPANION_IGNORE"] = ""

@@ -17,6 +17,14 @@ if not L then return end
 
 
 
+--	wow zone names - must match exactly what is in game
+--	L["WOW_ZONE_AHNQIRAJ"] = ""
+--	L["WOW_ZONE_VASHJIR"] = ""
+	L["WOW_ZONE_KELPTHAR_FOREST"] = "Forêt de Varech'thar"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Étendues Chatoyantes"
+	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Profondeurs Abyssales"
+	
+	
 --	wow skill headers - must match exactly what is in game
 	L["WOW_SKILL_HEADER_PRIMARY"] = "Professions"
 	L["WOW_SKILL_HEADER_SECONDARY"] = "Professions secondaires"
@@ -101,6 +109,7 @@ if not L then return end
 	L["STATUS_NAME_MINING"] = "Minerai"
 	L["STATUS_NAME_MOUNT"] = "Monture"
 	L["STATUS_NAME_TOKEN"] = "Insigne"
+--	L["STATUS_NAME_TACKLE"] = ""
 	
 	
 --	main menu
@@ -217,11 +226,6 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = "Définir la couleur du texte pour la quantité d'objets"
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = ""
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD"] = "Prix de revente"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD_TEXT"] = "Montrer le prix de revente des objets dans la bulle d'information"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_COLOUR_TEXT"] = "Définir la couleur du texte du prix de revente"
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = ""
 	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = "Personnage seul"
@@ -525,8 +529,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_VENDOR"] = "Vendeur"
---	L["TOOLTIP_ITEMLEVEL"] = "iLvl: %s"
 --	L["TOOLTIP_TOTAL"] = ""
 --	L["TOOLTIP_COUNT_ME"] = ""
 --	L["TOOLTIP_VAULT_TABS"] = ""
@@ -566,7 +568,6 @@ if not L then return end
 	L["REALM"] = "Serveur"
 	L["VIEW"] = "Voir"
 	L["EDIT"] = "Editer"
---	L["OK"] = ""
 	L["DIRECTION"] = "Sens"
 	L["ASCENDING"] = "Ascendant"
 	L["DECENDING"] = "Descendant"
@@ -615,8 +616,18 @@ if not L then return end
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
 --	L["LDB_MOUNTS_WATER"] = ""
 --	L["LDB_MOUNTS_SUMMON"] = ""
+--	L["LDB_MOUNTS_NODATA"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_SELECTION"] = ""
 --	L["LDB_COMPANION_MISSING"] = ""
 --	L["LDB_COMPANION_NONE"] = ""
 --	L["LDB_COMPANION_RESTRICTED"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ZONE"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ITEM"] = ""
+--	L["LDB_COMPANION_RESTRICTED_EVENT"] = ""
+--	L["LDB_COMPANION_RESTRICTED_UNKNOWN"] = ""
 --	L["LDB_COMPANION_NODATA"] = ""
 --	L["LDB_COMPANION_NODATA_TEXT"] = ""
+--	L["LDB_COMPANION_SELECT"] = ""
+--	L["LDB_COMPANION_DESELECT"] = ""
+--	L["LDB_COMPANION_IGNORE"] = ""

@@ -105,7 +105,7 @@ function ArkInventory.MediaSetFontAll( fontName )
 	end
 	
 	for z in pairs( ArkInventory.Global.Location ) do
-		local frame = _G[ArkInventory.Const.Frame.Main.Name .. z]
+		local frame = _G[string.format( "%s%s", ArkInventory.Const.Frame.Main.Name, z )]
 		ArkInventory.MediaSetFontFrame( frame, fontName )
 	end
 	

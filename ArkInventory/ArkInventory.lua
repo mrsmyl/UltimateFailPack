@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 713 $
--- $Date: 2011-06-29 18:29:08 +1000 (Wed, 29 Jun 2011) $
+-- $Revision: 730 $
+-- $Date: 2011-08-08 19:31:12 +1000 (Mon, 08 Aug 2011) $
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
 
@@ -31,8 +31,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0280,
-		UIVersion = "3.2.80",
+		Version = 3.0282,
+		UIVersion = "3.2.82",
 		--Beta = "ALPHA",
 	},
 	
@@ -1225,7 +1225,6 @@ ArkInventory.Config = {
 BINDING_HEADER_ARKINV = ArkInventory.Const.Program.Name
 BINDING_NAME_ARKINV_TOGGLE_BAG = ArkInventory.Localise["LOCATION_BAG"]
 BINDING_NAME_ARKINV_TOGGLE_BANK = ArkInventory.Localise["LOCATION_BANK"]
-BINDING_NAME_ARKINV_TOGGLE_KEY = KEYRING
 BINDING_NAME_ARKINV_TOGGLE_VAULT = GUILD_BANK
 BINDING_NAME_ARKINV_TOGGLE_MAIL = MAIL_LABEL
 BINDING_NAME_ARKINV_TOGGLE_WEARING = ArkInventory.Localise["LOCATION_WEARING"]
@@ -2390,7 +2389,7 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 		s["itemuselevel"] = string.format( "%04i", t or 0 )
 		
 		
-		-- item (use) level
+		-- item age
 		t = 0
 		if i.h and sorting.active.itemage then
 			t = i.age
@@ -2610,14 +2609,14 @@ end
 
 function ArkInventory.NewItemIndicator( loc_id )
 --[[
-	c = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Container.Name]
+	c = _G[string.format( "%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Container.Name )]
 	if c and c:IsVisible( ) then
 	
 		local cp = ArkInventory.LocationPlayerInfoGet( loc_id )
 		for _, bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
 		
 			for slot_id in pairs( cp.location[loc_id].bag[bag_id].slot ) do
-				s = _G[c:GetName( ) .. "Bag" .. bag_id .. "Item" .. slot_id]
+				s = _G[string.format( "%s%s%s%s%s", c:GetName( ), "Bag", bag_id, "Item", slot_id )]
 				if s and s:IsVisible( ) then
 					ArkInventory.Frame_Item_Update_NewIndicator( s )
 				end
@@ -3317,14 +3316,6 @@ function ArkInventory.ItemCategoryGetDefaultEmpty( loc_id, bag_id )
 		end
 	end
 
-	if bt == ArkInventory.Const.Slot.Type.Key then
-		if clump then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_KEY" )
-		else
-			return ArkInventory.CategoryGetSystemID( "EMPTY_KEY" )
-		end
-	end
-	
 	if bt == ArkInventory.Const.Slot.Type.Leatherworking then
 		if clump then
 			return ArkInventory.CategoryGetSystemID( "SKILL_LEATHERWORKING" )
@@ -5007,7 +4998,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 		-- create (if required) the bags and their item buttons, and hide any that are not currently needed
 		local placeframename = string.format( "%s%s", frame:GetName( ), "Bag" )
 		local placeframe = _G[placeframename]
-		assert( placeframe, "xml element '" .. placeframename .. "' could not be found" )
+		assert( placeframe, string.format( "xml element '%s' could not be found", placeframename ) )
 		
 		--~~~~ need to fix this for when the cache is reset
 		for bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
@@ -5901,21 +5892,21 @@ function ArkInventory.Frame_Item_Update_Count( frame )
 end
 
 function ArkInventory.Frame_Item_Update_Fade( frame )
-
+	
 	if ArkInventory.ValidFrame( frame, true ) == false then
 		return
 	end
-
+	
 	local loc_id = frame.ARK_Data.loc_id
 	local action = false
 	local fade = 1
-
+	
 	if ArkInventory.Global.Location[loc_id].isOffline and ArkInventory.LocationOptionGet( loc_id, "slot", "offline", "fade" ) then
 		
 		fade = 0.6
 		
 	else
-	
+		
 		if loc_id == ArkInventory.Const.Location.Vault then
 		
 			local bag_id = frame.ARK_Data.bag_id
@@ -6139,9 +6130,9 @@ function ArkInventory.Frame_Item_OnEnter( frame )
 	
 	local usedmycode = false
 	
-	if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline or blizzard_id == BANK_CONTAINER or blizzard_id == KEYRING_CONTAINER or loc_id == ArkInventory.Const.Location.Vault or loc_id == ArkInventory.Const.Location.Wearing or loc_id == ArkInventory.Const.Location.Mail or loc_id == ArkInventory.Const.Location.Pet or loc_id == ArkInventory.Const.Location.Mount or loc_id == ArkInventory.Const.Location.Token  or loc_id == ArkInventory.Const.Location.Auction or loc_id == ArkInventory.Const.Location.Spellbook or loc_id == ArkInventory.Const.Location.Tradeskill then
+	if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline or blizzard_id == BANK_CONTAINER or loc_id == ArkInventory.Const.Location.Vault or loc_id == ArkInventory.Const.Location.Wearing or loc_id == ArkInventory.Const.Location.Mail or loc_id == ArkInventory.Const.Location.Pet or loc_id == ArkInventory.Const.Location.Mount or loc_id == ArkInventory.Const.Location.Token  or loc_id == ArkInventory.Const.Location.Auction or loc_id == ArkInventory.Const.Location.Spellbook or loc_id == ArkInventory.Const.Location.Tradeskill then
 		
-		usedmycode = true -- edit mode, offline, bank, keyring, vault, mail, pet, token
+		usedmycode = true -- edit mode, offline, bank, vault, mail, pet, token
 		
 		if i.h then
 			
@@ -6154,10 +6145,6 @@ function ArkInventory.Frame_Item_OnEnter( frame )
 			elseif blizzard_id == BANK_CONTAINER then
 				
 				GameTooltip:SetInventoryItem( "player", BankButtonIDToInvSlotID( i.slot_id ) )
-				
-			elseif blizzard_id == KEYRING_CONTAINER then
-				
-				GameTooltip:SetInventoryItem( "player", KeyRingButtonIDToInvSlotID( i.slot_id ) )
 				
 			elseif loc_id == ArkInventory.Const.Location.Vault then
 				
@@ -6299,7 +6286,7 @@ function ArkInventory.Frame_Item_Update_Cooldown( frame, arg1 )
 end
 
 function ArkInventory.Frame_Item_Update_Lock( frame )
-
+	
 	if ArkInventory.ValidFrame( frame, true ) == false then
 		return
 	end
@@ -6328,7 +6315,6 @@ function ArkInventory.Frame_Item_Update_Lock( frame )
 		local use = true
 		
 		if ArkInventory.LocationOptionGet( loc_id, "slot", "unusable", "tint" ) then
-			ArkInventory.TooltipSetHyperlink( ArkInventory.Global.Tooltip.Vendor, i.h )
 			ArkInventory.TooltipSetHyperlink( ArkInventory.Global.Tooltip.Vendor, i.h )
 			use = ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Vendor )
 		end
@@ -6618,7 +6604,7 @@ function ArkInventory.Frame_Status_Update_Empty( loc_id, cp, ldb )
 		
 		for t, e in ArkInventory.spairs( empty, function(a,b) return empty[a].type < empty[b].type end ) do
 			
-			local c = "|cffffffff"
+			local c = HIGHLIGHT_FONT_COLOR_CODE
 			local n = string.format( " %s", ArkInventory.Const.Slot.Data[t].name )
 			
 			if ldb then
@@ -6756,7 +6742,7 @@ function ArkInventory.Frame_Changer_Update( loc_id )
 	
 		for bag_id in ipairs( ArkInventory.Global.Location[loc_id].Bags ) do
 		
-			local frame = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Changer.Name .. "WindowBag" .. bag_id]
+			local frame = _G[string.format( "%s%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, "WindowBag", bag_id )]
 	
 			if bag_id == 1 then
 				ArkInventory.Frame_Changer_Primary_Update( frame )
@@ -6777,7 +6763,7 @@ function ArkInventory.Frame_Changer_Update( loc_id )
 	end
 	
 	
-	local frame = _G[ArkInventory.Const.Frame.Main.Name .. loc_id]
+	local frame = _G[string.format( "%s%s", ArkInventory.Const.Frame.Main.Name, loc_id )]
 	ArkInventory.Frame_Status_Update( frame )
 	
 end
@@ -6801,13 +6787,13 @@ function ArkInventory.Frame_Changer_Primary_OnLoad( frame )
 	
 	ArkInventory.SetItemButtonTexture( frame, ArkInventory.Global.Location[loc_id].Texture )
 	
-	local obj = _G[framename .. "Count"]
+	local obj = _G[string.format( "%s%s", framename, "Count" )]
 	if obj ~= nil then
 		obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 2 )
 		obj:SetPoint( "LEFT", frame, "LEFT", 0, 0 )
 	end
 
-	local obj = _G[framename .. "Stock"]
+	local obj = _G[string.format( "%s%s", framename, "Stock" )]
 	if obj ~= nil then
 		obj:SetPoint( "TOPLEFT", frame, "TOPLEFT", 0, -2 )
 		obj:SetPoint( "RIGHT", frame, "RIGHT", 0, 0 )
@@ -6919,7 +6905,7 @@ function ArkInventory.Frame_Changer_Update_Bank( )
 
 	local loc_id = ArkInventory.Const.Location.Bank
 
-	local parent = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Changer.Name .. "Window"]
+	local parent = _G[string.format( "%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, "Window" )]
 	
 	if not parent:IsVisible( ) then
 		return
@@ -6927,7 +6913,7 @@ function ArkInventory.Frame_Changer_Update_Bank( )
 	
 	for x = 1, ArkInventory.Global.Location[loc_id].bagCount do
 	
-		local frame = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Changer.Name .. "WindowBag" .. x]
+		local frame = _G[string.format( "%s%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, "WindowBag", x )]
 		
 		if x == 1 then
 			ArkInventory.Frame_Changer_Primary_Update( frame )
@@ -6937,7 +6923,7 @@ function ArkInventory.Frame_Changer_Update_Bank( )
 		
 	end
 
-	local purchaseFrame = _G[parent:GetName( ) .. "PurchaseInfo"]
+	local purchaseFrame = _G[string.format( "%s%s", parent:GetName( ), "PurchaseInfo" )]
 	
 	if ArkInventory.Global.Location[loc_id].isOffline then
 		purchaseFrame:Hide( )
@@ -6949,8 +6935,8 @@ function ArkInventory.Frame_Changer_Update_Bank( )
 	UpdateBagSlotStatus( )
 
 	-- now mimic that frame
-	local moneyFrame = purchaseFrame:GetName( ) .. "DetailMoneyFrame"
-	local purchaseButton = _G[purchaseFrame:GetName( ) .. "PurchaseButton"]
+	local moneyFrame = string.format( "%s%s", purchaseFrame:GetName( ), "DetailMoneyFrame" )
+	local purchaseButton = _G[string.format( "%s%s", purchaseFrame:GetName( ), "PurchaseButton" )]
 	
 	local numSlots, full = GetNumBankSlots( )
 
@@ -7096,7 +7082,7 @@ end
 function ArkInventory.Frame_Changer_Update_Vault( )
 
 	local loc_id = ArkInventory.Const.Location.Vault
-	local parent = ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Changer.Name .. "Window"
+	local parent = string.format( "%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, "Window" )
 	local cp = ArkInventory.LocationPlayerInfoGet( loc_id )
 	
 	if not _G[parent]:IsVisible( ) then
@@ -7111,16 +7097,16 @@ function ArkInventory.Frame_Changer_Update_Vault( )
 			ArkInventory.db.realm.player.data[cp.info.player_id].display[loc_id].bag[bag_id] = false
 		end
 
-		local frame = _G[parent .. "Bag" .. bag_id]
+		local frame = _G[string.format( "%s%s%s", parent, "Bag", bag_id )]
 		ArkInventory.Frame_Changer_Secondary_Update( frame )
 		
 	end
 	
 	
-	local moneyDeposit = parent .. "GoldTotal"
-	local buttonDeposit = parent .. "DepositButton"
-	local moneyWithdraw = parent .. "GoldAvailable"
-	local buttonWithdraw = parent .. "WithdrawButton"
+	local moneyDeposit = string.format( "%s%s", parent, "GoldTotal" )
+	local buttonDeposit = string.format( "%s%s", parent, "DepositButton" )
+	local moneyWithdraw = string.format( "%s%s", parent, "GoldAvailable" )
+	local buttonWithdraw = string.format( "%s%s", parent, "WithdrawButton" )
 	
 	if ArkInventory.Global.Location[loc_id].isOffline then
 		
@@ -7157,7 +7143,7 @@ function ArkInventory.Frame_Changer_Update_Vault( )
 	
 	
 	-- purchase frame
-	local purchaseFrame = _G[parent .. "PurchaseInfo"]
+	local purchaseFrame = _G[string.format( "%s%s", parent, "PurchaseInfo" )]
 	
 	if ArkInventory.Global.Location[loc_id].isOffline or not IsGuildLeader( ) then
 		
@@ -7165,8 +7151,8 @@ function ArkInventory.Frame_Changer_Update_Vault( )
 		
 	else
 		
-		local moneyFrame = purchaseFrame:GetName( ) .. "DetailMoneyFrame"
-		local purchaseButton = _G[purchaseFrame:GetName( ) .. "PurchaseButton"]
+		local moneyFrame = string.format( "%s%s", purchaseFrame:GetName( ), "DetailMoneyFrame" )
+		local purchaseButton = _G[string.format( "%s%s", purchaseFrame:GetName( ), "PurchaseButton" )]
 		local numSlots = GetNumGuildBankTabs( )
 		local cost = GetGuildBankTabCost( )
 		
@@ -7218,13 +7204,13 @@ function ArkInventory.Frame_Changer_Secondary_OnLoad( frame )
 
 	ArkInventory.SetItemButtonTexture( frame, ArkInventory.Const.Texture.Empty.Bag )
 
-	local obj = _G[framename .. "Count"]
+	local obj = _G[string.format( "%s%s", framename, "Count" )]
 	if obj ~= nil then
 		obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 2 )
 		obj:SetPoint( "LEFT", frame, "LEFT", 0, 0 )
 	end
 
-	local obj = _G[framename .. "Stock"]
+	local obj = _G[string.format( "%s%s", framename, "Stock" )]
 	if obj ~= nil then
 		obj:SetPoint( "TOPLEFT", frame, "TOPLEFT", 0, -2 )
 		obj:SetPoint( "RIGHT", frame, "RIGHT", 0, 0 )
@@ -7442,7 +7428,7 @@ end
 
 function ArkInventory.Frame_Changer_Secondary_Update_Lock( loc_id, bag_id )
 
-	local frame = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Changer.Name .. "WindowBag" .. bag_id]
+	local frame = _G[string.format( "%s%s%sWindowBag%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, bag_id )]
 	if not frame then
 		return
 	end
@@ -7492,7 +7478,7 @@ function ArkInventory.BagHighlight( frame, show )
 			return
 		end
 		
-		local name = ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Container.Name .. "Bag" .. bag_id
+		local name = string.format( "%s%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Container.Name, "Bag", bag_id )
 		local frame = _G[name]
 		if not frame then
 			return
@@ -7502,7 +7488,7 @@ function ArkInventory.BagHighlight( frame, show )
 		local colour = ArkInventory.LocationOptionGet( loc_id, "changer", "highlight", "colour" )
 		
 		for slot_id in pairs( b.slot ) do
-			local obj = _G[name .. "Item" .. slot_id .. "ArkHighlightBag"]
+			local obj = _G[string.format( "%s%s%s%s", name, "Item", slot_id, "ArkHighlightBag" )]
 			if obj then
 				if enabled then
 					if show then
@@ -7680,7 +7666,7 @@ function ArkInventory.BlizzardAPIHooks( disable )
 			GuildBankFrame:Hide( )
 			
 			-- anchor popup to AI frame
-			local frame = _G[ArkInventory.Const.Frame.Main.Name .. ArkInventory.Const.Location.Vault]
+			local frame = _G[string.format( ArkInventory.Const.Frame.Main.Name, ArkInventory.Const.Location.Vault )]
 			if frame then
 				GuildBankPopupFrame:Hide( )
 				GuildBankPopupFrame:ClearAllPoints( )
@@ -7842,13 +7828,11 @@ function ArkInventory.HookOpenAllBags( self, forceOpen )
 	
 	for i = 1, NUM_CONTAINER_FRAMES do
 		
-		local containerFrame = _G["ContainerFrame" .. i]
+		local containerFrame = _G[string.format( "%s%s", "ContainerFrame", i )]
 		
 		if containerFrame and containerFrame:IsShown( ) then
-			if containerFrame:GetID() ~= KEYRING_CONTAINER then
-				bagsShown = bagsShown + 1
-				containerFrame:Hide( )
-			end
+			bagsShown = bagsShown + 1
+			containerFrame:Hide( )
 		end
 		
 	end
@@ -7960,7 +7944,7 @@ end
 
 function ArkInventory.ContainerNameGet( loc_id, bag_id )
 	if loc_id ~= nil and bag_id ~= nil then
-		local x = ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Container.Name .. "Bag" .. bag_id
+		local x = string.format( "%s%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Container.Name, "Bag", bag_id )
 		return x
 	end
 end
@@ -7968,7 +7952,7 @@ end
 function ArkInventory.ContainerItemNameGet( loc_id, bag_id, slot_id )
 	--if loc_id ~= nil and type( loc_id ) == "number" and bag_id ~= nil and type( bag_id ) == "number" and slot_id ~= nil and type( slot_id ) == "number" then
 	if loc_id ~= nil and bag_id ~= nil and slot_id ~= nil and type( slot_id ) == "number" then
-		local x = ArkInventory.ContainerNameGet( loc_id, bag_id ) .. "Item" .. slot_id
+		local x = string.format( "%s%s%s", ArkInventory.ContainerNameGet( loc_id, bag_id ), "Item", slot_id )
 		return x
 	end
 end
@@ -8243,15 +8227,20 @@ function ArkInventory.Frame_Vault_Log_Update( )
 	elseif GuildBankFrame.mode == "moneylog" then
 		numTransactions = GetNumGuildBankMoneyTransactions( ) or 0
 	end
-	
+		
 	if numTransactions == 0 then
 		return
 	end
 	
 	local loc_id = ArkInventory.Const.Location.Vault
+	local maxLines = numTransactions
 	
-	local obj = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Log.Name .. ArkInventory.Const.Frame.Scrolling.List]
-	obj:SetMaxLines( numTransactions )
+	if GuildBankFrame.mode == "moneylog" then
+		maxLines = maxLines + 2
+	end
+
+	local obj = _G[string.format( "%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Log.Name, ArkInventory.Const.Frame.Scrolling.List )]
+	obj:SetMaxLines( maxLines )
 	obj:ScrollToTop( )
 	
 	local tab = GetCurrentGuildBankTab( )
@@ -8273,19 +8262,19 @@ function ArkInventory.Frame_Vault_Log_Update( )
 			name = UNKNOWN
 		end
 		
-		name = NORMAL_FONT_COLOR_CODE..name..FONT_COLOR_CODE_CLOSE
+		name = string.format( "%s%s%s", NORMAL_FONT_COLOR_CODE, name, FONT_COLOR_CODE_CLOSE )
 		
 		if GuildBankFrame.mode == "log" then
 			
 			if type == "deposit" then
 				msg = format( GUILDBANK_DEPOSIT_FORMAT, name, itemLink )
 				if count > 1 then
-					msg = msg .. format( GUILDBANK_LOG_QUANTITY, count )
+					msg = string.format( "%s%s", msg, string.format( GUILDBANK_LOG_QUANTITY, count ) )
 				end
 			elseif type == "withdraw" then
-				msg = format( GUILDBANK_WITHDRAW_FORMAT, name, itemLink )
+				msg = string.format( GUILDBANK_WITHDRAW_FORMAT, name, itemLink )
 				if count > 1 then
-					msg = msg .. format( GUILDBANK_LOG_QUANTITY, count )
+					msg = string.format( "%s%s", msg, format( GUILDBANK_LOG_QUANTITY, count ) )
 				end
 			elseif type == "move" then
 				msg = format( GUILDBANK_MOVE_FORMAT, name, itemLink, count, GetGuildBankTabInfo(tab1), GetGuildBankTabInfo(tab2) )
@@ -8310,9 +8299,14 @@ function ArkInventory.Frame_Vault_Log_Update( )
 		end
 		
 		if msg then
-			obj:AddMessage( msg .. GUILD_BANK_LOG_TIME_PREPEND .. format( GUILD_BANK_LOG_TIME, RecentTimeDate( year, month, day, hour ) ) )
+			obj:AddMessage( string.format( "%s%s%s", msg, GUILD_BANK_LOG_TIME_PREPEND, string.format( GUILD_BANK_LOG_TIME, RecentTimeDate( year, month, day, hour ) ) ) )
 		end
 		
+	end
+	
+	if GuildBankFrame.mode == "moneylog" then
+		obj:AddMessage( " " )
+		obj:AddMessage( string.format( "%s %s", GUILDBANK_CASHFLOW, GetDenominationsFromCopper( GetGuildBankBonusDepositMoney( ) ) ) )
 	end
 	
 	ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
@@ -8323,7 +8317,7 @@ function ArkInventory.Frame_Vault_Info_Update( )
 	
 	local loc_id = ArkInventory.Const.Location.Vault
 	local tab = GetCurrentGuildBankTab( )
-	local obj = _G[ArkInventory.Const.Frame.Main.Name .. loc_id .. ArkInventory.Const.Frame.Info.Name .. "ScrollInfo"]
+	local obj = _G[string.format( "%s%s%s%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Info.Name, "ScrollInfo" )]
 	local text = GetGuildBankText( tab )
 	
 	if text then
@@ -8357,7 +8351,7 @@ function ArkInventory.ScrollingMessageFrame_Scroll( parent, name, direction )
 		return
 	end
 	
-	local obj = _G[parent:GetName( ) .. name]
+	local obj = _G[string.format( "%s%s", parent:GetName( ), name )]
 	if not obj then
 		return
 	end
@@ -8544,7 +8538,7 @@ end
 
 function ArkInventory.UiSetEditBoxLabel( frame, label )
 	assert( frame and label, "code error: argument is missing" )
-	_G[frame:GetName( ) .. "Label"]:SetText( label )
+	_G[string.format( "%s%s", frame:GetName( ), "Label" )]:SetText( label )
 end
 
 function ArkInventory.UiTabToNext( frame, c, p, n )
@@ -8555,9 +8549,9 @@ function ArkInventory.UiTabToNext( frame, c, p, n )
 	f = string.sub( f, 1, string.len( f ) - string.len( c ) )
 	
 	if IsShiftKeyDown( ) then
-		f = f .. p
+		f = string.format( "%s%s", f, p )
 	else
-		f = f .. n
+		f = string.format( "%s%s", f, n )
 	end
 	
 	local w = _G[f]

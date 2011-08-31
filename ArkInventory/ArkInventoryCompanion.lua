@@ -15,7 +15,7 @@ ArkInventory.Const.CompanionData = {
 ]]--
  }
 
-ArkInventory.Const.CompanionTranslation = {
+ArkInventory.Const.ItemSpellCrossReference = {
 --[[
 	["item:xxxx"] = { "spell:yyyy" = true }
 	["spell:yyyy"] = { "item:xxxx" = true }
@@ -31,6 +31,45 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 -- r = { restrictions }
 -- only zone and item based restrictions can be checked
 -- sg (ground) | sf (flying) | sw (water) = speed %, 0 = max known
+
+[71387] = { id = 101424 }, -- Brilliant Kaliri
+[70099] = { id = 99578 }, -- Cenarion Hatchling
+[71076] = { id = 100684 }, -- The Creepy Crate
+[70160] = { id = 99668 }, -- Crimson Lasher
+[70908] = { id = 100330 }, -- Feline Familiar
+[69847] = { id = 98736 }, -- Guardian Cub
+[72068] = { id = 98736 }, -- Guardian Cub
+[70140] = { id = 99663 }, -- Hyjal Bear Cub
+[68840] = { id = 96817 }, -- Landro's Lichling
+['XS-93461'] = { id = 93461 }, -- Landro's Lil' XT
+[69251] = { id = 97779 }, -- Lashtail Hatchling
+[69648] = { id = 98079 }, -- Legs
+[71033] = { id = 100576 }, -- Lil' Tarecgosa
+[71726] = { id = 101606 }, -- Murkablo
+[68841] = { id = 96819 }, -- Nightsaber Cub
+[71140] = { id = 100970 }, -- Nuts' Acorn / Nuts
+[68833] = { id = 96571 }, -- Panther Cub
+[69821] = { id = 98571 }, -- Pterrordax Hatchling
+[72042] = { id = 101986 }, -- Alliance Balloon
+[72045] = { id = 101989 }, -- Horde Balloon
+[69824] = { id = 98587 }, -- Voodoo Figurine
+[69239] = { id = 97638 }, -- Winterspring Cub
+
+[69747] = { id = 98204, sg = true }, -- Amani Battle Bear
+[68825] = { id = 96503, sf = true }, -- Amani Dragonhawk
+[68823] = { id = 96491, sg = true }, -- Armored Razzashi Raptor
+[69230] = { id = 97560, sf = true }, -- Corrupted Egg of Millagazor / Corrupted Fire Hawk
+[71665] = { id = 101542, sf = true }, -- Flametalon of Alyzrazor
+[69213] = { id = 97359, sf = true }, -- Flameward Hippogryph
+[69226] = { id = 97501, sf = true }, -- Green Fire Hawk Mount / Green Fire Hawk
+[69224] = { id = 97493, sf = true }, -- Smoldering Egg of Millagazor / Pureblood Fire Hawk
+[69228] = { id = 97581, sg = true }, -- Savage Raptor
+[67151] = { id = 98718, sw = true }, -- Reins of Poseidus / Subdued Seahorse
+[68824] = { id = 96499, sg = true }, -- Swift Zulian Panther
+[71339] = { id = 101282, sf = true }, -- Vicious Gladiator's Twilight Drake
+[70909] = { id = 100332, sg = true }, -- Vicious War Steed
+[70910] = { id = 100333, sg = true }, -- Vicious War Wolf
+[69846] = { id = 98727, sf = true }, -- Winged Guardian
 
 [66075] = { id = 93815 }, -- Bubbles
 -- item 67600 Lil' Alexstrasza / Removed from game
@@ -56,7 +95,7 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [62900] = { id = 88331, sf = true }, -- Reins of the Volcanic Stone Drake / Volcanic Stone Drake
 [65891] = { id = 93326, sf = true }, -- Vial of the Sands / Sandstone Drake
 
-[54465] = { id = 75207, sw = 450, r = 'zone' }, -- Abyssal Seahorse / Abyssal Seahorse
+[54465] = { id = 75207, sw = 450, r = { zone = "VASHJIR,KELPTHAR_FOREST,SHIMMERING_EXPANSE,ABYSSAL_DEPTHS" } }, -- Abyssal Seahorse / Abyssal Seahorse
 ['XS-73629'] = { id = 73629, sg = true }, -- Exarch's Elekk / Draenai Paladin
 [60954] = { id = 84751, sg = true }, -- Fossilized Raptor
 ['XS-89520'] = { id = 89520, sg = true }, -- Goblin Mini Hotrod
@@ -550,7 +589,7 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [12353] = { id = 16083, sg = 100 }, -- White Stallion Bridle / White Stallion
 [2411] = { id = 470, sg = 60 }, -- Black Stallion Bridle
 [8595] = { id = 10969, sg = 60 }, -- Blue Mechanostrider
-[21218] = { id = 25953, sg = 100, r = 'zone' }, -- Blue Qiraji Resonating Crystal / Blue Qiraji Battle Tank
+[21218] = { id = 25953, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Blue Qiraji Resonating Crystal / Blue Qiraji Battle Tank
 [13332] = { id = 17463, sg = 60 }, -- Blue Skeletal Horse
 [37827] = { id = 50869, sg = 60 }, -- Brewfest Kodo
 [5656] = { id = 458, sg = 60 }, -- Brown Horse Bridle / Brown Horse
@@ -561,13 +600,13 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [15277] = { id = 18989, sg = 60 }, -- Gray Kodo
 [5864] = { id = 6777, sg = 60 }, -- Gray Ram
 [13321] = { id = 17453, sg = 60 }, -- Green Mechanostrider
-[21323] = { id = 26056, sg = 100, r = 'zone' }, -- Green Qiraji Resonating Crystal / Green Qiraji Battle Tank
+[21323] = { id = 26056, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Green Qiraji Resonating Crystal / Green Qiraji Battle Tank
 [5668] = { id = 6654, sg = 60 }, -- Horn of the Brown Wolf / Brown Wolf
 [5665] = { id = 6653, sg = 60 }, -- Horn of the Dire Wolf / Dire Wolf
 [1132] = { id = 580, sg = 60 }, -- Horn of the Timber Wolf / Timber Wolf
 [2414] = { id = 472, sg = 60 }, -- Pinto Bridle / Pinto
 [8563] = { id = 10873, sg = 60 }, -- Red Mechanostrider
-[21321] = { id = 26054, sg = 100, r = 'zone' }, -- Red Qiraji Resonating Crystal / Red Qiraji Battle Tank
+[21321] = { id = 26054, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Red Qiraji Resonating Crystal / Red Qiraji Battle Tank
 [13331] = { id = 17462, sg = 60 }, -- Red Skeletal Horse
 [8632] = { id = 10789, sg = 60 }, -- Reins of the Spotted Frostsaber / Spotted Frostsaber
 [8631] = { id = 8394, sg = 60 }, -- Reins of the Striped Frostsaber / Striped Frostsaber
@@ -577,7 +616,7 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [8591] = { id = 10796, sg = 60 }, -- Whistle of the Turquoise Raptor / Turquoise Raptor
 [8592] = { id = 10799, sg = 60 }, -- Whistle of the Violet Raptor / Violet Raptor
 [5873] = { id = 6898, sg = 60 }, -- White Ram
-[21324] = { id = 26055, sg = 100, r = 'zone' }, -- Yellow Qiraji Resonating Crystal / Yellow Qiraji Battle Tank
+[21324] = { id = 26055, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Yellow Qiraji Resonating Crystal / Yellow Qiraji Battle Tank
 
 [8494] = { id = 10682 }, -- Parrot Cage (Hyacinth Macaw) / Hyacinth Macaw
 [20371] = { id = 24696 }, -- Blue Murloc Egg / Murky
@@ -602,9 +641,9 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [10822] = { id = 10695 }, -- Dark Whelpling
 [20769] = { id = 25162 }, -- Disgusting Oozeling
 [8500] = { id = 10707 }, -- Great Horned Owl
-[21301] = { id = 26533, r = 'item' }, -- Green Helper Box / Father Winter's Helper
+[21301] = { id = 26533, r = { item = "17202x1" } }, -- Green Helper Box / Father Winter's Helper
 [8501] = { id = 10706 }, -- Hawk Owl
-[21308] = { id = 26529, r = 'item' }, -- Jingling Bell / Winter Reindeer
+[21308] = { id = 26529, r = { item = "17202x1" } }, -- Jingling Bell / Winter Reindeer
 [15996] = { id = 19772 }, -- Lifelike Mechanical Toad / Lifelike Toad
 [11826] = { id = 15049 }, -- Lil' Smoky
 [10398] = { id = 12243 }, -- Mechanical Chicken
@@ -617,10 +656,10 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [10394] = { id = 10709 }, -- Prairie Dog Whistle / Brown Prairie Dog
 [8497] = { id = 10711 }, -- Rabbit Crate (Snowshoe) / Snowshoe Rabbit
 [23015] = { id = 28740 }, -- Rat Cage / Whiskers the Rat
-[21305] = { id = 26541, r = 'item' }, -- Red Helper Box / Winter's Little Helper
+[21305] = { id = 26541, r = { item = "17202x1" } }, -- Red Helper Box / Winter's Little Helper
 -- item 22200 Silver Shafted Arrow
 [12529] = { id = 16450 }, -- Smolderweb Carrier / Smolderweb Hatchling
-[21309] = { id = 26045, r = 'item' }, -- Snowman Kit / Tiny Snowman
+[21309] = { id = 26045, r = { item = "17202x1" } }, -- Snowman Kit / Tiny Snowman
 [11474] = { id = 15067 }, -- Sprite Darter Egg / Sprite Darter Hatchling
 [8499] = { id = 10697 }, -- Tiny Crimson Whelpling / Crimson Whelpling
 [8498] = { id = 10698 }, -- Tiny Emerald Whelpling / Emerald Whelpling
@@ -644,17 +683,17 @@ for item, spell in pairs( ArkInventory.Const.CompanionTranslationData ) do
 		
 		-- item to spell
 		key = string.format( "item:%s", item )
-		if not ArkInventory.Const.CompanionTranslation[key] then
-			ArkInventory.Const.CompanionTranslation[key] = { }
+		if not ArkInventory.Const.ItemSpellCrossReference[key] then
+			ArkInventory.Const.ItemSpellCrossReference[key] = { }
 		end
-		ArkInventory.Const.CompanionTranslation[key][string.format( "spell:%s", spell.id )] = true
+		ArkInventory.Const.ItemSpellCrossReference[key][string.format( "spell:%s", spell.id )] = true
 		
 		-- spell to item(s)
 		key = string.format( "spell:%s", spell.id )
-		if not ArkInventory.Const.CompanionTranslation[key] then
-			ArkInventory.Const.CompanionTranslation[key] = { }
+		if not ArkInventory.Const.ItemSpellCrossReference[key] then
+			ArkInventory.Const.ItemSpellCrossReference[key] = { }
 		end
-		ArkInventory.Const.CompanionTranslation[key][string.format( "item:%s", item )] = true
+		ArkInventory.Const.ItemSpellCrossReference[key][string.format( "item:%s", item )] = true
 		
 	end
 	

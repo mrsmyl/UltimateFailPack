@@ -17,6 +17,14 @@ if not L then return end
 
 
 
+--	wow zone names - must match exactly what is in game
+	L["WOW_ZONE_AHNQIRAJ"] = "Ahn'Qiraj"
+	L["WOW_ZONE_VASHJIR"] = "Vashj'ir"
+	L["WOW_ZONE_KELPTHAR_FOREST"] = "Kelp'thar Forest"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Shimmering Expanse"
+	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Abyssal Depths"
+	
+	
 --	wow skill headers - must match exactly what is in game (wrath only)
 	L["WOW_SKILL_HEADER_PRIMARY"] = "Professions"
 	L["WOW_SKILL_HEADER_SECONDARY"] = "Secondary Skills"
@@ -218,11 +226,6 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = "set the colour of the item count tooltip text"
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = "Show tabs"
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = "show tab numbers for items found in a %1$s" -- %1$s = vault
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD"] = "Vendor prices"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD_TEXT"] = "show vendor prices for items in tooltips"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_COLOUR_TEXT"] = "set the colour of the vendor price tooltip text"
-	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD"] = "Item level"
-	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD_TEXT"] = "show the item level for items in tooltips"
 	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = "scales the game, reference and comparison tooltips (game wide)"
 	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = "use class colours to colour player names"
 	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = "Self only"
@@ -526,8 +529,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_VENDOR"] = "Vendor"
-	L["TOOLTIP_ITEMLEVEL"] = "iLvl: %s"
 	L["TOOLTIP_TOTAL"] = "Total"
 	L["TOOLTIP_COUNT_ME"] = ">"
 	L["TOOLTIP_VAULT_TABS"] = "Tab"
@@ -603,9 +604,6 @@ if not L then return end
 	L["LDB_BAGS_STYLE_TEXT"] = "Displays both used and total slot counts"
 	L["LDB_BAGS_INCLUDE_TYPE"] = "Bag type"
 	L["LDB_BAGS_INCLUDE_TYPE_TEXT"] = "Displays the type of bag in the text"
-	L["LDB_AMMO_INCLUDE_DURABILITY"] = "Include durability"
-	L["LDB_AMMO_WEAPON_NONE"] = "No ranged weapon equipped"
-	L["LDB_AMMO_WEAPON_BROKEN"] = "Broken"
 	L["LDB_TRACKING"] = "Tracking"
 	L["LDB_TRACKING_CURRENCY"] = "Currencies / Tokens"
 	L["LDB_TRACKING_ITEM"] = "Items"
@@ -624,9 +622,10 @@ if not L then return end
 	L["LDB_COMPANION_MISSING"] = "You seem to have misplaced your selected companion, resetting to random"
 	L["LDB_COMPANION_NONE"] = "None available"
 	L["LDB_COMPANION_RESTRICTED"] = "%s\n%s\n\nYou may or may not meet the requirements to summon this companion|r"
-	L["LDB_COMPANION_RESTRICTED_ZONE"] = "Requires a specific location to summon"
-	L["LDB_COMPANION_RESTRICTED_ITEM"] = "Requires a reagent to summon"
-	L["LDB_COMPANION_RESTRICTED_EVENT"] = "Requires a specific event to summon"
+	L["LDB_COMPANION_RESTRICTED_ZONE"] = "Requires you to be in a specific zone"
+	L["LDB_COMPANION_RESTRICTED_ITEM"] = "Requires certain reagents"
+	L["LDB_COMPANION_RESTRICTED_EVENT"] = "Requires a specific event to be in progress"
+	L["LDB_COMPANION_RESTRICTED_UNKNOWN"] = "Unknown restriction"
 	L["LDB_COMPANION_NODATA"] = "No Data"
 	L["LDB_COMPANION_NODATA_TEXT"] = "\nNo data for companion %s [%s] was found.\n\nPlease let the author know both of the above values so they can update the code."
 	L["LDB_COMPANION_SELECT"] = "\nAdds the %s to the selected pool, limiting the companions that can be randomly summoned.\n\nIf all companions are selected then random mode will become enabled"

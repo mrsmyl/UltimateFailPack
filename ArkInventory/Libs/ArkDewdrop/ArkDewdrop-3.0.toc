@@ -1,4 +1,8 @@
 ﻿## Interface: 40001
+## X-Curse-Packaged-Version: 3.02.82
+## X-Curse-Project-Name: ArkInventory
+## X-Curse-Project-ID: ark-inventory
+## X-Curse-Repository-ID: wow/ark-inventory/mainline
 
 ## Title: ArkDewdrop [3.0]
 ## Author: Arkayenro
@@ -15,7 +19,3 @@
 LibStub.lua
 
 ArkDewdrop-3.0.lua
--- X-Curse-Packaged-Version: 3.02.80
--- X-Curse-Project-Name: ArkInventory
--- X-Curse-Project-ID: ark-inventory
--- X-Curse-Repository-ID: wow/ark-inventory/mainline

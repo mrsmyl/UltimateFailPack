@@ -15,6 +15,18 @@
 
  
 
+*3.02.82 (08-AUG-2011)*
+ * added - cash flow contribution amount is now listed at the bottom of the money log list
+
+*3.02.81 (03-AUG-2011)*
+ * added - more pets and mounts
+ * added - holding the dressup (control) button while summoning a mount will attempt to use a zone specific mount, if no zone specific mount is found it will revert to a non zone specific mount
+ * added - holding the chatlink (shift) button while summoning a mount will attempt to use an alternative mode mount, ie if you can fly then a ground mount will be summoned, if you are swimming then a flying mount will be summoned
+ * changed - clicking on the summon pet button with a pet out will now dismiss that pet, not summon a different pet
+ * fixed - issue with clicking on hyperlinks in guildbank item logs
+ * fixed - cosmetic issue with item menu text colouring
+ * fixed - tint unusable item should work better for patterns/recipies you can learn but makes an item you cannot use
+
 *3.02.80 (29-JUN-2011)*
  * fixed - bug in erase code
  * changed - TOC updated to 4.2

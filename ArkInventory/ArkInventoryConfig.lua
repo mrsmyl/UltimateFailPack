@@ -68,7 +68,7 @@ function ArkInventory.ConfigBlizzard( )
 		notes = {
 			order = 200,
 			name = function( )
-				local t = GetAddOnMetadata( ArkInventory.Const.Program.Name, "Notes-" .. GetLocale( ) ) or ""
+				local t = GetAddOnMetadata( ArkInventory.Const.Program.Name, string.format( "Notes-%s", GetLocale( ) ) ) or ""
 				if t == "" then
 					t = GetAddOnMetadata( ArkInventory.Const.Program.Name, "Notes" ) or ""
 				end
@@ -294,7 +294,7 @@ function ArkInventory.ConfigInternal( )
 			cmdHidden = true,
 			order = 200,
 			name = function( ) 
-				local t = GetAddOnMetadata( ArkInventory.Const.Program.Name, "Notes-" .. GetLocale( ) ) or ""
+				local t = GetAddOnMetadata( ArkInventory.Const.Program.Name, string.format( "Notes-%s", GetLocale( ) ) ) or ""
 				if t == "" then
 					t = GetAddOnMetadata( ArkInventory.Const.Program.Name, "Notes" ) or ""
 				end
@@ -3505,11 +3505,11 @@ function ArkInventory.ConfigInternalSortingCustom( path )
 				local id = ConfigGetNodeArg( info, #info - 3 )
 				local key = ConfigGetNodeArg( info, #info - 1 )
 				local checked = ArkInventory.db.global.option.sort.data[id].active[key]
-				local n = ArkInventory.Localise["CONFIG_SORTMETHOD_INCLUDE_" .. string.upper( key )]
+				local n = ArkInventory.Localise[string.upper( string.format( "CONFIG_SORTMETHOD_INCLUDE_%s", key ) )]
 				if checked then
-					n = GREEN_FONT_COLOR_CODE .. n .. FONT_COLOR_CODE_CLOSE
+					n = string.format( "%s%s%s", GREEN_FONT_COLOR_CODE, n, FONT_COLOR_CODE_CLOSE )
 				else
-					n = RED_FONT_COLOR_CODE .. n .. FONT_COLOR_CODE_CLOSE
+					n = string.format( "%s%s%s", RED_FONT_COLOR_CODE, n, FONT_COLOR_CODE_CLOSE )
 				end
 				return n
 			end,
@@ -3517,9 +3517,9 @@ function ArkInventory.ConfigInternalSortingCustom( path )
 				local id = ConfigGetNodeArg( info, #info - 3 )
 				local key = ConfigGetNodeArg( info, #info - 1 )
 				local checked = ArkInventory.db.global.option.sort.data[id].active[key]
-				local n = ArkInventory.Localise["CONFIG_SORTMETHOD_INCLUDE_" .. string.upper( key ) .. "_TEXT"]
+				local n = ArkInventory.Localise[string.upper( string.format( "CONFIG_SORTMETHOD_INCLUDE_%s_TEXT", key ) )]
 				if not checked then
-					n = n .. "\n\n" .. RED_FONT_COLOR_CODE .. ArkInventory.Localise["CONFIG_SORTMETHOD_NOT_INCLUDED"]
+					n = string.format( "%s%s%s%s%s", n, "\n\n", RED_FONT_COLOR_CODE, ArkInventory.Localise["CONFIG_SORTMETHOD_NOT_INCLUDED"], FONT_COLOR_CODE_CLOSE )
 				end
 				return n
 			end,
@@ -3542,7 +3542,7 @@ function ArkInventory.ConfigInternalSortingCustom( path )
 			name = ArkInventory.Localise["MOVE_UP"],
 			desc = function( info )
 				local key = ConfigGetNodeArg( info, #info - 1 )
-				return string.format( ArkInventory.Localise["CONFIG_SORTMETHOD_MOVE_UP_TEXT"], LIGHTYELLOW_FONT_COLOR_CODE .. ArkInventory.Localise["CONFIG_SORTMETHOD_INCLUDE_" .. string.upper( key )] .. FONT_COLOR_CODE_CLOSE )
+				return string.format( ArkInventory.Localise["CONFIG_SORTMETHOD_MOVE_UP_TEXT"], string.format( "%s%s%s", LIGHTYELLOW_FONT_COLOR_CODE, ArkInventory.Localise[string.upper( string.format( "CONFIG_SORTMETHOD_INCLUDE_%s", key ) )], FONT_COLOR_CODE_CLOSE ) )
 			end,
 			type = "execute",
 			disabled = function( info )
@@ -3563,7 +3563,7 @@ function ArkInventory.ConfigInternalSortingCustom( path )
 			name = ArkInventory.Localise["MOVE_DOWN"],
 			desc = function( info )
 				local key = ConfigGetNodeArg( info, #info - 1 )
-				return string.format( ArkInventory.Localise["CONFIG_SORTMETHOD_MOVE_DOWN_TEXT"], LIGHTYELLOW_FONT_COLOR_CODE .. ArkInventory.Localise["CONFIG_SORTMETHOD_INCLUDE_" .. string.upper( key )] .. FONT_COLOR_CODE_CLOSE )
+				return string.format( ArkInventory.Localise["CONFIG_SORTMETHOD_MOVE_DOWN_TEXT"], string.format( "%s%s%s", LIGHTYELLOW_FONT_COLOR_CODE, ArkInventory.Localise[string.upper( string.format( "CONFIG_SORTMETHOD_INCLUDE_%s", key ) )], FONT_COLOR_CODE_CLOSE ) )
 			end,
 			type = "execute",
 			disabled = function( info )

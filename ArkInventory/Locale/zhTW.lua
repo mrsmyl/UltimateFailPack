@@ -17,6 +17,14 @@ if not L then return end
 
 
 
+--	wow zone names - must match exactly what is in game
+	L["WOW_ZONE_AHNQIRAJ"] = "安其拉"
+	L["WOW_ZONE_VASHJIR"] = "瓦許伊爾"
+	L["WOW_ZONE_KELPTHAR_FOREST"] = "凱波薩爾森林"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "閃光瀚洋"
+	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "地獄深淵"
+	
+	
 --	wow skill headers - must match exactly what is in game
 	L["WOW_SKILL_HEADER_PRIMARY"] = "專業技能"
 	L["WOW_SKILL_HEADER_SECONDARY"] = "第二專長"
@@ -101,6 +109,7 @@ if not L then return end
 	L["STATUS_NAME_MINING"] = "礦石"
 	L["STATUS_NAME_MOUNT"] = "坐騎"
 --	L["STATUS_NAME_TOKEN"] = ""
+--	L["STATUS_NAME_TACKLE"] = ""
 
 
 --	main menu
@@ -217,11 +226,6 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = "設定物品數量的文字顏色"
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = ""
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD"] = "顯示商店價格"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD_TEXT"] = "設定是否在工具提示上顯示物品的商店價格"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_COLOUR_TEXT"] = "設定商店價格的文字顏色"
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = ""
 	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = "只有目前角色"
@@ -525,8 +529,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_VENDOR"] = "商店"
---	L["TOOLTIP_ITEMLEVEL"] = "iLvl: %s"
 	L["TOOLTIP_TOTAL"] = "總計"
 	L["TOOLTIP_COUNT_ME"] = " > "
 --	L["TOOLTIP_VAULT_TABS"] = ""
@@ -566,7 +568,6 @@ if not L then return end
 	L["REALM"] = "伺服器"
 	L["VIEW"] = "查看"
 	L["EDIT"] = "編輯"
-	L["OK"] = "確定"
 	L["DIRECTION"] = "排列方向"
 	L["ASCENDING"] = "遞增"
 	L["DECENDING"] = "遞減"
@@ -615,16 +616,18 @@ if not L then return end
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "您目前正在飛行，請選擇一個降落地點"
 	L["LDB_MOUNTS_WATER"] = "水"
 	L["LDB_MOUNTS_SUMMON"] = "召喚坐騎"
+--	L["LDB_MOUNTS_NODATA"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_SELECTION"] = ""
 --	L["LDB_COMPANION_MISSING"] = ""
 	L["LDB_COMPANION_NONE"] = "無可用的"
 --	L["LDB_COMPANION_RESTRICTED"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ZONE"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ITEM"] = ""
+--	L["LDB_COMPANION_RESTRICTED_EVENT"] = ""
+--	L["LDB_COMPANION_RESTRICTED_UNKNOWN"] = ""
 	L["LDB_COMPANION_NODATA"] = "無數據"
 --	L["LDB_COMPANION_NODATA_TEXT"] = ""
-
-
-
-
-
-
-
-
+--	L["LDB_COMPANION_SELECT"] = ""
+--	L["LDB_COMPANION_DESELECT"] = ""
+--	L["LDB_COMPANION_IGNORE"] = ""

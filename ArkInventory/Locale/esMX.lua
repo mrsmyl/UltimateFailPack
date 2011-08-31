@@ -17,6 +17,14 @@ if not L then return end
 
 
 
+--	wow zone names - must match exactly what is in game
+--	L["WOW_ZONE_AHNQIRAJ"] = ""
+--	L["WOW_ZONE_VASHJIR"] = ""
+	L["WOW_ZONE_KELPTHAR_FOREST"] = "Bosque Kelp'thar"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Extensión Bruñida"
+	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Profundidades Abisales"
+	
+	
 --	wow skill headers - must match exactly what is in game
 	L["WOW_SKILL_HEADER_PRIMARY"] = "Profesiones"
 	L["WOW_SKILL_HEADER_SECONDARY"] = "Habilidades secundarias"
@@ -101,6 +109,7 @@ if not L then return end
 	L["STATUS_NAME_MINING"] = "Mine"
 --	L["STATUS_NAME_MOUNT"] = ""
 --	L["STATUS_NAME_TOKEN"] = ""
+--	L["STATUS_NAME_TACKLE"] = ""
 	
 	
 --	main menu
@@ -217,11 +226,6 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_COLOUR_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = ""
@@ -525,8 +529,6 @@ if not L then return end
 	
 	
 --	item count tooltip
---	L["TOOLTIP_VENDOR"] = ""
---	L["TOOLTIP_ITEMLEVEL"] = "iLvl: %s"
 --	L["TOOLTIP_TOTAL"] = ""
 --	L["TOOLTIP_COUNT_ME"] = ""
 --	L["TOOLTIP_VAULT_TABS"] = ""
@@ -566,7 +568,6 @@ if not L then return end
 --	L["REALM"] = ""
 --	L["VIEW"] = ""
 --	L["EDIT"] = ""
---	L["OK"] = ""
 --	L["DIRECTION"] = ""
 --	L["ASCENDING"] = ""
 --	L["DECENDING"] = ""
@@ -615,8 +616,18 @@ if not L then return end
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
 --	L["LDB_MOUNTS_WATER"] = ""
 --	L["LDB_MOUNTS_SUMMON"] = ""
+--	L["LDB_MOUNTS_NODATA"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_SELECTION"] = ""
 --	L["LDB_COMPANION_MISSING"] = ""
 --	L["LDB_COMPANION_NONE"] = ""
 --	L["LDB_COMPANION_RESTRICTED"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ZONE"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ITEM"] = ""
+--	L["LDB_COMPANION_RESTRICTED_EVENT"] = ""
+--	L["LDB_COMPANION_RESTRICTED_UNKNOWN"] = ""
 --	L["LDB_COMPANION_NODATA"] = ""
 --	L["LDB_COMPANION_NODATA_TEXT"] = ""
+--	L["LDB_COMPANION_SELECT"] = ""
+--	L["LDB_COMPANION_DESELECT"] = ""
+--	L["LDB_COMPANION_IGNORE"] = ""

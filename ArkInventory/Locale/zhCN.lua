@@ -17,6 +17,14 @@ if not L then return end
 
 
 
+--	wow zone names - must match exactly what is in game
+	L["WOW_ZONE_AHNQIRAJ"] = "安其拉"
+	L["WOW_ZONE_VASHJIR"] = "瓦丝琪尔"
+	L["WOW_ZONE_KELPTHAR_FOREST"] = "柯尔普萨之森"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "烁光海床"
+	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "无底海渊"
+	
+	
 --	wow skill headers - must match exactly what is in game
 	L["WOW_SKILL_HEADER_PRIMARY"] = "专业技能"
 	L["WOW_SKILL_HEADER_SECONDARY"] = "第二专业"
@@ -101,6 +109,7 @@ if not L then return end
 	L["STATUS_NAME_MINING"] = "矿石"
 	L["STATUS_NAME_MOUNT"] = "坐骑"
 	L["STATUS_NAME_TOKEN"] = "牌子"
+--	L["STATUS_NAME_TACKLE"] = ""
 	
 	
 --	main menu
@@ -217,11 +226,6 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = "设定物品数量文字颜色"
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = ""
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD"] = "显示售价"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_ADD_TEXT"] = "设定提示中是否显示售价"
-	L["CONFIG_SYSTEM_TOOLTIP_VENDOR_COLOUR_TEXT"] = "设定物品售价文字颜色"
-	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD"] = "物品等级"
-	L["CONFIG_SYSTEM_TOOLTIP_ITEMLEVEL_ADD_TEXT"] = "设定提示中是否显示物品等级"
 --	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = ""
 	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = "当前角色"
@@ -525,8 +529,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_VENDOR"] = "商人"
-	L["TOOLTIP_ITEMLEVEL"] = "物品等级: %s"
 	L["TOOLTIP_TOTAL"] = "总数"
 	L["TOOLTIP_COUNT_ME"] = ">"
 --	L["TOOLTIP_VAULT_TABS"] = ""
@@ -566,7 +568,6 @@ if not L then return end
 	L["REALM"] = "范围"
 	L["VIEW"] = "查看"
 	L["EDIT"] = "编辑"
-	L["OK"] = "确定"
 	L["DIRECTION"] = "排列方向"
 	L["ASCENDING"] = "升序"
 	L["DECENDING"] = "降序"
@@ -603,9 +604,6 @@ if not L then return end
 --	L["LDB_BAGS_STYLE_TEXT"] = ""
 	L["LDB_BAGS_INCLUDE_TYPE"] = "包括背包类型"
 --	L["LDB_BAGS_INCLUDE_TYPE_TEXT"] = ""
-	L["LDB_AMMO_INCLUDE_DURABILITY"] = "包含耐久度"
-	L["LDB_AMMO_WEAPON_NONE"] = "没有装备合适的武器"
-	L["LDB_AMMO_WEAPON_BROKEN"] = "损坏"
 --	L["LDB_TRACKING"] = ""
 --	L["LDB_TRACKING_CURRENCY"] = ""
 --	L["LDB_TRACKING_ITEM"] = ""
@@ -618,8 +616,18 @@ if not L then return end
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
 --	L["LDB_MOUNTS_WATER"] = ""
 --	L["LDB_MOUNTS_SUMMON"] = ""
+--	L["LDB_MOUNTS_NODATA"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""
+--	L["LDB_MOUNTS_TOOLTIP_SELECTION"] = ""
 --	L["LDB_COMPANION_MISSING"] = ""
 --	L["LDB_COMPANION_NONE"] = ""
 --	L["LDB_COMPANION_RESTRICTED"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ZONE"] = ""
+--	L["LDB_COMPANION_RESTRICTED_ITEM"] = ""
+--	L["LDB_COMPANION_RESTRICTED_EVENT"] = ""
+--	L["LDB_COMPANION_RESTRICTED_UNKNOWN"] = ""
 --	L["LDB_COMPANION_NODATA"] = ""
 --	L["LDB_COMPANION_NODATA_TEXT"] = ""
+--	L["LDB_COMPANION_SELECT"] = ""
+--	L["LDB_COMPANION_DESELECT"] = ""
+--	L["LDB_COMPANION_IGNORE"] = ""
