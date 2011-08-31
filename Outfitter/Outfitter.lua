@@ -116,6 +116,10 @@ Outfitter.CreditPlayersByRealm =
 	{
 		["Y C\n<Blurred Reality>"] = 3,
 	},
+	["Defias Brotherhood"] =
+	{
+		["Maelmoor"] = 3,
+	},
 	["Draenor"] =
 	{
 		["Emmerald\n<Adept>"] = 3,
@@ -925,6 +929,8 @@ Outfitter.cSpecialIDEvents =
 	IoC = {Equip = "BATTLEGROUND_IOC", Unequip = "NOT_BATTLEGROUND_IOC"},
 	Wintergrasp = {Equip = "BATTLEGROUND_WG", Unequip = "NOT_BATTLEGROUND_WG"},
 	Sewers = {Equip = "BATTLEGROUND_SEWERS", Unequip = "NOT_BATTLEGROUND_SEWERS"},
+	Gilneas = {Equip = "BATTLEGROUND_GILNEAS", Unequip = "NOT_BATTLEGROUND_GILNEAS"},
+	TwinPeaks = {Equip = "BATTLEGROUND_TWINPEAKS", Unequip = "NOT_BATTLEGROUND_TWINPEAKS"},
 	RingOfValor = {Equip = "BATTLEGROUND_ROV", Unequip = "NOT_BATTLEGROUND_ROV"},
 	Arena = {Equip = "BATTLEGROUND_ARENA", Unequip = "NOT_BATTLEGROUND_ARENA"},
 	BladesEdgeArena = {Equip = "BATTLEGROUND_BLADESEDGE", Unequip = "NOT_BATTLEGROUND_BLADESEDGE"},
@@ -1073,6 +1079,7 @@ Outfitter.cZoneSpecialIDMap =
 	[Outfitter.LZ["Isle of Conquest"]] = {"Battleground", "IoC"},
 	[Outfitter.LZ["Wintergrasp"]] = {"Battleground", "Wintergrasp"},
 	[Outfitter.LZ["Battle for Gilneas"]] = {"Battleground", "Gilneas"},
+	[Outfitter.LZ["Twin Peaks"]] = {"Battleground", "TwinPeaks"},
 	[Outfitter.LZ["Dalaran Sewers"]] = {"Battleground", "Arena", "Sewers"},
 	[Outfitter.LZ["The Ring of Valor"]] = {"Battleground", "Arena", "RingOfValor"},
 	

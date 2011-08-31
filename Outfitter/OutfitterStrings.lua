@@ -1,4 +1,4 @@
-﻿Outfitter.cVersion = "5.3.1"
+﻿Outfitter.cVersion = "5.3.2"
 
 Outfitter.cTitle = "Outfitter"
 Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
@@ -49,6 +49,10 @@ Outfitter.cEotSOutfit = "Battleground: Eye of the Storm"
 Outfitter.cWSGOutfit = "Battleground: Warsong Gulch"
 Outfitter.cSotAOutfit = "Battleground: Strand of the Ancients"
 Outfitter.cIoCOutfit = "Battleground: Isle of Conquest"
+Outfitter.cWintergraspOutfit = "Battleground: Wintergrasp"
+Outfitter.cSewersOutfit = "Battleground: Sewers"
+Outfitter.cGilneasOutfit = "Battleground: Battle for Gilneas"
+Outfitter.cTwinPeaksOutfit = "Battleground: Twin Peaks"
 Outfitter.cDiningOutfit = "Dining"
 Outfitter.cFishingOutfit = "Fishing"
 Outfitter.cHerbalismOutfit = "Herbalism"

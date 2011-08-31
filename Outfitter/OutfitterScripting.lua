@@ -939,6 +939,30 @@ end
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_IOC", Outfitter.cIoCOutfitDescription, nil, true),
 	},
 	{
+		Name = Outfitter.cWintergraspOutfit,
+		ID = "Wintergrasp",
+		Category = "PVP",
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_WG", nil, nil, true),
+	},
+	{
+		Name = Outfitter.cSewersOutfit,
+		ID = "Sewers",
+		Category = "PVP",
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_SEWERS", nil, nil, true),
+	},
+	{
+		Name = Outfitter.cGilneasOutfit,
+		ID = "Gilneas",
+		Category = "PVP",
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_GILNEAS", nil, nil, true),
+	},
+	{
+		Name = Outfitter.cTwinPeaksOutfit,
+		ID = "TwinPeaks",
+		Category = "PVP",
+		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_TWINPEAKS", nil, nil, true),
+	},
+	{
 		Name = Outfitter.cArenaOutfit,
 		ID = "Arena",
 		Category = "PVP",
