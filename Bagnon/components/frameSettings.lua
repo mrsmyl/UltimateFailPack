@@ -511,12 +511,3 @@ end
 function FrameSettings:GetPlayerFilter()
 	return self.playerFilter or UnitName('player')
 end
-
-
---[[ ButtonFacade Settings ]]--
-
-if Facade then
-	function FrameSettings:GetFacade()
-		self:GetDB():GetFacade()
-	end
-end

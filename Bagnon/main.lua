@@ -467,9 +467,9 @@ if Facade then
 	function Bagnon:FacadeGroup(frameID)
 		-- It's hacky, but the simplest way to do it
 		local frameSets = BagnonFrameSettings.frames[frameID]
-		local sets = frameSets and frameSets[frameID] or BagnonFrameSettings.facade
+		local sets = frameSets and frameSets.facade or BagnonFrameSettings.facade
 		
-		Facade:Group('Bagnon', frameID):Skin(sets and unpack(sets))
+		Facade:Group('Bagnon', frameID):Skin(unpack(sets or {}))
 	end
 	
 	function Bagnon:OnFacadeChanged(skin, glossAlpha, gloss, frameID, _, colors)
