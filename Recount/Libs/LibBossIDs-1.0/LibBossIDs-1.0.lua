@@ -1,6 +1,6 @@
 --[[
 Name: LibBossIDs-1.0
-Revision: $Revision: 64 $
+Revision: $Revision: 69 $
 Author: Elsia
 Website: http://www.wowace.com/addons/libbossids-1-0/
 Documentation:
@@ -10,7 +10,7 @@ Dependencies: LibStub
 License: Public Domain, Absolutely no Warranty.
 ]]
 
-local MAJOR, MINOR = "LibBossIDs-1.0", "$Revision: 64 $"
+local MAJOR, MINOR = "LibBossIDs-1.0", "$Revision: 69 $"
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not lib then return end
@@ -113,6 +113,7 @@ local BossIDs = {
    -- Baradin Hold
    -------------------------------------------------------------------------------
    [47120]	= true,	-- Argaloth
+   [52363]	= true, -- Occu'thar
 
    -------------------------------------------------------------------------------
    -- Blackfathom Deeps

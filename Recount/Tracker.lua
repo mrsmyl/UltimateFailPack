@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1154 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1172 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -997,6 +997,17 @@ function Recount:CombatLogEvent(_,timestamp, eventtype, hideCaster, srcGUID, src
 	
 	srcRetention = Recount:CheckRetentionFromFlags(srcFlags,srcName,srcGUID)
 	dstRetention = Recount:CheckRetentionFromFlags(dstFlags,dstName,dstGUID)
+
+	if eventtype == "SPELL_SUMMON" then -- Hacky fix for broken summon sequence and flags since 4.0.6 for chained guardian summons (greater elementals+totems). This will cause unnecessary computation and memory usage. Needs blizzard fix.
+	  if type(srcFlags)=="string" then Recount:DPrint(".."..srcFlags) end
+      if bit_band(srcFlags, (COMBATLOG_OBJECT_TYPE_NPC+COMBATLOG_OBJECT_CONTROL_NPC))~=0 then -- Keep broken flag sources around
+      	srcRetention = true
+      end
+	  if type(dstFlags)=="string" then Recount:DPrint(".."..dstFlags) end
+      if bit_band(dstFlags, (COMBATLOG_OBJECT_TYPE_NPC+COMBATLOG_OBJECT_CONTROL_NPC))~=0 then -- Keep broken flag destinations around
+      	dstRetention = true
+      end
+	end      
  	
 	if not srcRetention and not dstRetention then
 		return
@@ -1463,9 +1474,9 @@ function Recount:DetectPet(name, nGUID, nFlags)
 	if not owner then
 		owner, ownerID = Recount:FindOwnerPetFromGUID(name,nGUID)
 
-		if not owner then
-		   Recount:DPrint("NoOwner: "..name.." "..(nGUID or "nil"))
-		end
+--		if not owner then
+--		   Recount:DPrint("NoOwner: "..name.." "..(nGUID or "nil"))
+--		end
 	end
 	if owner then
 		name = name.." <"..owner..">"
@@ -1494,9 +1505,19 @@ function Recount:DetectPet(name, nGUID, nFlags)
 				if not owner then
 					owner, ownerID = Recount:FindOwnerPetFromGUID(name,nGUID)
 			
-					if not owner then
-					   Recount:DPrint("NoOwner: "..name.." "..(nGUID or "nil"))
-					end
+--[[					if not owner then
+						local tipname = Recount:FindGuardianFromTooltip(nGUID)
+						if tipname then
+							local tippetname , tipowner = tipname:match("(.-) <(.*)>")
+							if dbCombatants[tippetowner] then
+								owner = tippetowner
+								ownerID = dbCombatants[tippetowner].GUID
+								Recount:DPrint("Found Pet from Tooltip: "..name.." "..owner)
+							else
+								Recount:DPrint("NoOwner2: "..name.." "..(nGUID or "nil"))
+							end
+						end
+					end --]]
 				end
 				if owner then name = name.." <"..owner..">" end
 	--			Recount:DPrint("Party guardian: "..name.." "..(nGUID or "nil").." "..(owner or "nil").." "..(ownerID or "nil"))
@@ -1509,6 +1530,7 @@ function Recount:DetectPet(name, nGUID, nFlags)
 			end
 		end
 	end
+
 	return name, owner, ownerID
 end
 

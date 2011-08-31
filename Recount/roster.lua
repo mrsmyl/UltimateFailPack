@@ -1,6 +1,6 @@
 -- A quick replacement for what RosterLib-2.1 used to do for us.
 
-local revision = tonumber(string.sub("$Revision: 1123 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1173 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -42,6 +42,8 @@ function Recount:CheckPartyCombatWithPets()
 end
 
 function Recount:GetUnitIDFromName(name)
+
+	if type(name)~="string" then return nil end -- Bandaid for raid frame issues
 
 	local realm = name:match("-(.-)")
 	if realm then

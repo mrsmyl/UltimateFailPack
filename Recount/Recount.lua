@@ -13,7 +13,7 @@ local FilterSize	= 20
 local RampUp		= 5
 local RampDown		= 10
       
-Recount.Version = tonumber(string.sub("$Revision: 1124 $", 12, -3))
+Recount.Version = tonumber(string.sub("$Revision: 1172 $", 12, -3))
 
 local UnitLevel = UnitLevel
 local UnitClass = UnitClass
@@ -1179,6 +1179,20 @@ function Recount:AddGreaterElemental(opts)
 	end
 end
 
+function Recount:FindGuardianFromTooltip(nameGUID)
+	
+	RecountTempTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+	RecountTempTooltip:ClearLines()
+	RecountTempTooltip:SetHyperlink("unit:" .. nameGUID)	
+
+	if RecountTempTooltip:NumLines() > 0 then
+		local petName = getglobal("RecountTempTooltipTextLeft1"):GetText()
+		return petName
+	else
+		return nil
+	end
+end
+ 
 function Recount:ScanGUIDTooltip(nameGUID)
 	local newguid1 = tonumber(nameGUID:sub(-1-5,-1),16)
 	local mobid = tonumber(nameGUID:sub(3+6,3+9),16)
@@ -1219,6 +1233,13 @@ end
 
 function Recount:GetGuardianOwnerByGUID(nameGUID)
 	return Recount.GuardianOwnerGUIDs and Recount.GuardianOwnerGUIDs[nameGUID]
+end
+
+function Recount:GetInheritGuardian(owner)
+	local latestGuardian = owner.GuardianReverseGUIDs[name].LatestGuardian
+	local petName = owner.Pet
+	local petGUID = owner.GuardianReverseGUIDs and owner.GuardianReverseGUIDs[petName] and owner.GuardianReverseGUIDs[petName].GUIDs[latestGuardian]
+	return petName, petGUID
 end
 
 function Recount:TrackGuardianOwnerByGUID(owner, name, nameGUID)
@@ -1287,11 +1308,27 @@ function Recount:IsFriendlyFire(srcFlags,dstFlags)
 
 --	return (Recount:IsFriend(srcFlags)==Recount:IsFriend(dstFlags)) and ((Recount:IsPlayer(srcFlags) or Recount:IsPet(srcFlags)) and (Recount:IsPlayer(dstFlags) or Recount:IsPet(dstFlags))) -- We only care for friendly fire between players now Edit: and pets
 end
+
+local lastSummonPetName
+local lastSummonPetGUID
+local lastSummonOwnerName
+local lastSummonOwnerGUID
 	
 function Recount:AddPetCombatant(nameGUID, petName, nameFlags, ownerGUID, owner, ownerFlags)
+	if lastSummonOwnerGUID and lastSummonOwnerGUID == nameGUID then
+		Recount:DPrint("Inheriting Pet: ".. lastSummonPetName.." from ".. petName)
+		petName = lastSummonPetName
+		nameGUID = lastSummonPetGUID
+	else
+		lastSummonPetName = petName
+		lastSummonPetGUID = nameGUID
+		lastSummonOwnerName = owner
+		lastSummonOwnerGUID = ownerGUID
+	end
+	
 	local name=petName.." <"..owner..">"
 	local combatant=dbCombatants[name] or {}
-	
+
 	if bit_band(ownerFlags, COMBATLOG_OBJECT_AFFILIATION_MINE+COMBATLOG_OBJECT_AFFILIATION_PARTY+COMBATLOG_OBJECT_AFFILIATION_RAID+COMBATLOG_OBJECT_REACTION_FRIENDLY)==0 then
 		--return -- Elsia: We only keep affiliated or friendly pets. These flags can be horribly wrong unfortunately
 	end
@@ -1326,10 +1363,24 @@ function Recount:AddPetCombatant(nameGUID, petName, nameFlags, ownerGUID, owner,
 			Recount:SetOwner(combatant,name,owner,ownerGUID,ownerFlags)
 			if dbCombatants[owner] then -- We have a valid stored owner.
 				Recount:TrackGuardianOwnerByGUID(dbCombatants[owner], petName, nameGUID)
+--[[			else
+				Recount.tempGuards = Recount.tempGuards or {}
+				Recount.tempGuards[ownerGUID] = {}
+				Recount.tempGuards[ownerGUID].name = owner
+				Recount:TrackGuardianOwnerByGUID(Recount.tempGuards[ownerGUID], petName, nameGUID)
+				Recount:DPrint("special guardian tracking: "..owner.." "..petName)
+				end --]]
 			end
 		end
 --	end
 
+--[[	if Recount.tempGuards[petGUID] and dbCombatants[owner] then -- This propagates temporary guardians forward. Note that this ignores flags
+		petName,nameGUID = Recount:GetInheritGuardian(Recount.tempGuards[petGUID])
+		name=petName.." <"..owner..">"
+		Recount:DPrint("special guardian tracking: "..name.." "..nameGUID)
+		Recount.tempGuards = nil -- Get rid of it to avoid accummulation
+	end --]]
+		
 	combatant.GUID=nameGUID
 	combatant.LastFlags=nameFlags
 	
@@ -2009,7 +2060,6 @@ function Recount:OnEnable(first)
 
 	Recount:RegisterEvent("ZONE_CHANGED_NEW_AREA","DetectInstanceChange") -- Elsia: This is needed for zone change deletion and collection
 	Recount:RegisterEvent("PLAYER_ENTERING_WORLD","DetectInstanceChange") -- Attempt to fix Onyxia instance entrance which isn't a new zone.
---	Recount:RegisterEvent("WORLD_MAP_NAME_UPDATE","DetectInstanceChange")
 	
 	Recount:DetectInstanceChange() -- Elsia: We need to do this regardless for Zone filtering.
 
