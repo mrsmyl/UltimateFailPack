@@ -1,4 +1,4 @@
-﻿## Interface: 40100
+﻿## Interface: 40200
 ## Title: Minimalist
 ## Author: whizkid
 ## Notes: A Collection of Automations and Interface Tweaks.
@@ -6,11 +6,15 @@
 ## X-Category: Interface Enhancements
 ## SavedVariables: MinimalistDB
 ## X-Embeds: Ace3, LibAbacus-3.0
-## X-Curse-Packaged-Version: r114
+## X-Curse-Packaged-Version: r117
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline
-## X-Curse-Packaged-Version: r115
+## X-Curse-Packaged-Version: r117
+## X-Curse-Project-Name: Minimalist
+## X-Curse-Project-ID: minimalist
+## X-Curse-Repository-ID: wow/minimalist/mainline
+## X-Curse-Packaged-Version: r117
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline
