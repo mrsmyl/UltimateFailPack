@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibDogTag-Unit-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 205 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + tonumber(("$Revision: 216 $"):match("%d+")) or 0
 
 if MINOR_VERSION > _G.DogTag_Unit_MINOR_VERSION then
 	_G.DogTag_Unit_MINOR_VERSION = MINOR_VERSION
@@ -15,12 +15,15 @@ local afkTimes = {}
 local deadTimes = {}
 
 -- Parnic: support for cataclysm; Divine Intervention was removed
-local wow_400 = select(4, GetBuildInfo()) >= 40000
+local wow_ver = select(4, GetBuildInfo())
+local wow_400 = wow_ver >= 40000
 local petHappinessEvent = "UNIT_HAPPINESS"
 if wow_400 then
 	petHappinessEvent = "UNIT_POWER"
 end
 
+-- Parnic: pet happiness removed in 4.1
+local wow_401 = wow_ver >= 40100
 
 local iterateGroupMembers
 local iterateGroupMembers__t = {}
@@ -37,11 +40,11 @@ local function PARTY_MEMBERS_CHANGED(event)
 	if max == 0 then
 		prefix, min, max = "party", 0, GetNumPartyMembers()
 	end
-	
+
 	for k in pairs(iterateGroupMembers__t) do
 		iterateGroupMembers__t[k] = nil
 	end
-	
+
 	for i = min, max do
 		local unit
 		if i == 0 then
@@ -49,23 +52,23 @@ local function PARTY_MEMBERS_CHANGED(event)
 		else
 			unit = prefix .. i
 		end
-		
+
 		if not UnitExists(unit) then
 			break
 		end
-		
+
 		iterateGroupMembers__t[unit] = UnitGUID(unit)
 	end
-	
+
 	for unit, guid in iterateGroupMembers() do
 		tmp[guid] = true
-		
+
 		if not UnitIsConnected(unit) then
 			if not offlineTimes[guid] then
 				offlineTimes[guid] = GetTime()
 			end
 			afkTimes[guid] = nil
-		else	
+		else
 			offlineTimes[guid] = nil
 			if UnitIsAFK(unit) then
 				if not afkTimes[guid] then
@@ -83,7 +86,7 @@ local function PARTY_MEMBERS_CHANGED(event)
 			deadTimes[guid] = nil
 		end
 	end
-	
+
 	for guid in pairs(offlineTimes) do
 		if not tmp[guid] then
 			offlineTimes[guid] = nil
@@ -143,7 +146,7 @@ DogTag:AddTimerHandler("Unit", function(currentTime, num)
 				end
 			end
 		end
-		
+
 		if UnitIsAFK(unit) then
 			if not afkTimes[guid] then
 				afkTimes[guid] = GetTime()
@@ -331,8 +334,8 @@ DogTag:AddTag("Unit", "PvPIcon", {
 		elseif UnitIsPVP(unit) then
 			has = UnitFactionGroup(unit)
 		end
-		if has then --because the textures for these icons are much larger than the actual icon, and we have no texcoords in font strings, this bit of math helps make it look "right" next to other icons
-			return "|TInterface\\TargetingFrame\\UI-PVP-" .. has .. ":" .. size * 2 .. ":" .. size * 2 .. ":" .. size * 3 / 4 .. ":" .. size / 12 .. "|t"
+		if has then
+			return "|TInterface\\TargetingFrame\\UI-PVP-" .. has .. ":" .. size .. ":".. size .. ":0:0:64:64:3:38:1:36|t"
 		else
 			return nil
 		end
@@ -344,7 +347,7 @@ DogTag:AddTag("Unit", "PvPIcon", {
 	ret = "string;nil",
 	events = "UNIT_FACTION#$unit",
 	doc = L["Display the appropriate PvP icon if the unit is PvP flagged"],
-	example = '[PvPIcon] => "|TInterface\\TargetingFrame\\UI-PVP-Horde:24:24:18:2|t"; [PvPIcon] => ""',
+	example = '[PvPIcon] => "|TInterface\\TargetingFrame\\UI-PVP-Horde:24:24:0:0:64:64:3:38:1:36|t"; [PvPIcon] => ""',
 	category = L["Status"]
 })
 
@@ -379,6 +382,8 @@ DogTag:AddTag("Unit", "IsFeignedDeath", {
 	category = L["Status"]
 })
 
+-- Parnic: pet happiness removed in 4.1
+if not wow_401 then
 DogTag:AddTag("Unit", "HappyNum", {
 	code = function()
 		return GetPetHappiness() or 0
@@ -423,6 +428,7 @@ DogTag:AddTag("Unit", "HappyIcon", {
 	example = ('[HappyIcon] => ":D"; [HappyIcon] => ":I"; [HappyIcon] => "B("'),
 	category = L["Status"]
 })
+end
 
 DogTag:AddTag("Unit", "RaidIcon", {
 	code = function(size, unit)
@@ -573,13 +579,13 @@ DogTag:AddTag("Unit", "IsMainTank", {
 		if s and s ~= "" then
 			n = n .. "-" .. s
 		end
-		
+
 		local maintanktable
 		if oRA then
 			maintanktable = oRA.maintanktable
 		else
 			maintanktable = CT_RA_MainTanks
-		end	
+		end
 		if maintanktable then
 			for i = 1, 10 do
 				if maintanktable[i] == name then
@@ -838,6 +844,8 @@ DogTag:AddTag("Unit", "StatusColor", {
 	category = L["Status"]
 })
 
+-- Parnic: pet happiness removed in 4.1
+if not wow_401 then
 DogTag:AddTag("Unit", "HappyColor", {
 	code = function(value)
 		local x = GetPetHappiness()
@@ -868,6 +876,7 @@ DogTag:AddTag("Unit", "HappyColor", {
 	example = '["Hello":HappyColor] => "|cff00ff00Hello|r"; [HappyColor "Hello"] => "|cff00ff00Hello"',
 	category = L["Status"]
 })
+end
 
 -- Parnic: DI removed in Cataclysm
 if not wow_400 then

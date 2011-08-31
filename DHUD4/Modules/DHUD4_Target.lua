@@ -24,7 +24,7 @@ local DogTag = LibStub("LibDogTag-3.0")
 
 local MODNAME = "DHUD4_Target"
 local DHUD4_Target = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 85 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 102 $"):match("%d+"))
 
 local unpack = unpack
 local _G = _G
@@ -183,12 +183,15 @@ local defaults = {
         range = true,
         rangeBar = "h",
         rangeColors = {
-			["0"] = {r=0,g=1,b=0},
-            ["1"] = {r=0,g=0.96,b=1},
-            ["2"] = {r=1,g=0.54,b=0},
-            ["3"] = {r=0.92,g=0,b=0},
-            ["4"] = {r=0.5,g=0.54,b=0.54},
+			["0"] = {r=0,g=1,b=0},--0,255,0
+            ["1"] = {r=0,g=0.6,b=0.6},--0,153,153
+            ["2"] = {r=0.8,g=1,b=0},--204,255,0
+            ["3"] = {r=0.8,g=0.4,b=0.6},--204,102,153
+            ["4"] = {r=0.6,g=0,b=0},--153,0,0
         },
+        -- Class
+        class = true,
+        classBar = "p",
     }
 }
 --FIN
@@ -583,7 +586,7 @@ local function GetOptions()
                             order = 2,
                             type = 'select',
                             name = L["Side"],
-                            desc = L["Side to show the cast bar, Player bar has presedence"],
+                            desc = L["Side to show the cast bar, Player bar has precedence"],
                             values = function ()
                                     if ( DHUD4:GetModuleEnabled("DHUD4_Player") ) then
                                         local player = DHUD4:GetModule("DHUD4_Player")
@@ -607,7 +610,7 @@ local function GetOptions()
                             order = 3,
                             type = 'select',
                             name = L["Position"],
-                            desc = L["Position of the cast bar, Player bar has presedence"],
+                            desc = L["Position of the cast bar, Player bar has precedence"],
                             values = function ()
                                     if ( DHUD4:GetModuleEnabled("DHUD4_Player") ) then
                                         local player = DHUD4:GetModule("DHUD4_Player")
@@ -774,13 +777,13 @@ local function GetOptions()
                         info = {
                             order = 0,
                             type = "description",
-                            name = L["Ranges are aproximate and can vary according to class, race, spec, etc."],
+                            name = L["Ranges are approximate and can vary according to class, race, spec, etc."],
                         },
                         range = {
                             order = 1,
                             type = 'toggle',
                             name = L["Range"],
-                            desc = L["Use bar border to display rango information"],
+                            desc = L["Use bar border to display range information"],
                         },
                         rangeBar = {
                             order = 2,
@@ -801,7 +804,7 @@ local function GetOptions()
                                     db[key1][key2].r = r
                                     db[key1][key2].g = g
                                     db[key1][key2].b = b
-                                    mod:Refresh()
+                                    DHUD4_Target:Refresh()
                                 end,
                             hidden = BarsHidden,
                             disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
@@ -809,13 +812,13 @@ local function GetOptions()
                                 ["0"] = {
                                     type = 'color',
                                     name = L["Breath you"],
-                                    desc = L["Roughly 0 ~ 5 yards"],
+                                    desc = L["Roughly 0 ~ 8 yards"],
                                     order = 1,
                                 },
                                 ["1"] = {
                                     type = 'color',
                                     name = L["Hear you"],
-                                    desc = L["Roughly 5 ~ 25 yards"],
+                                    desc = L["Roughly 8 ~ 25 yards"],
                                     order = 2,
                                 },
                                 ["2"] = {
@@ -826,20 +829,46 @@ local function GetOptions()
                                 },
                                 ["3"] = {
                                     type = 'color',
-                                    name = L["Lost you"],
-                                    desc = L["Roughly 45 ~ 80 yards"],
+                                    name = L["Feel you"],
+                                    desc = L["Roughly 45 ~ 60 yards"],
                                     order = 4,
                                 },
                                 ["4"] = {
                                     type = 'color',
-                                    name = L["Out of range"],
-                                    desc = L["Out of range or unavailable"],
+                                    name = L["Lost you"],
+                                    desc = L["Roughly 60 ~ 80 yards"],
                                     order = 5,
                                 },
                             },
                         },
                     }
-                }
+                },
+                class = {
+                    order = 9,
+                    type = 'group',
+                    name = L["Class Color"],
+                    hidden = BarsHidden,
+                    disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
+                    args = {
+                        info = {
+                            order = 0,
+                            type = "description",
+                            name = L["Color the bar border according to the class"],
+                        },
+                        class = {
+                            order = 1,
+                            type = 'toggle',
+                            name = L["Enabled"],
+                            desc = L["Use bar border to display class color"],
+                        },
+                        classBar = {
+                            order = 2,
+                            type = 'select',
+                            name = L["Bar"],
+                            values = {["h"] = L["Health"], ["p"] = L["Power"]}
+                        },
+                    },
+                },--]]
             },
         }
         options.args.barText.args.barText.get = SelectGetter
@@ -1051,6 +1080,33 @@ do
             castBar:InitCastBar(bar, parent, db.castRev)
             castBar:InitCastBarText(bar, db.castTimer, db.castSpell, db.castDelay, db.colors.spell, db.colors.delay)
             castBar:ConfigBarText(DHUD4:GetFont(), db.castTextSize * DHUD4.GetScale())
+        end
+
+        -- Range
+        if (db.range) then
+            if (db.rangeBar == "h") then
+                healthBar:TrackUnitRange(db.rangeColors, "target")
+            elseif (db.rangeBar == "p") then
+                powerBar:TrackUnitRange(db.rangeColors, "target")
+            end
+        else
+            healthBar:TrackUnitRange()
+            powerBar:TrackUnitRange()
+        end
+
+        -- Class
+        if (db.class) then
+            if (db.classBar == "h") then
+                healthBar:TrackUnitClass("target")
+                DHUD4_Target.class = healthBar
+            elseif (db.classBar == "p") then
+                powerBar:TrackUnitClass("target")
+                DHUD4_Target.class = powerBar
+            end
+        else
+            healthBar:TrackUnitClass()
+            powerBar:TrackUnitClass()
+            self.class = nil
         end
     end
 
@@ -1550,13 +1606,6 @@ function DHUD4_Target:PLAYER_TARGET_CHANGED()
             healthBar:TrackUnitHealth("target", db.colors[tostring(7)])
             powerBar:TrackUnitPower("target", db.colors[tostring(UnitPowerType("target"))], UnitPowerType("target"))
 		end
-        if (db.range) then
-            if (db.rangeBar == "h") then
-                healthBar:TrackUnitRange(db.rangeColors)
-            elseif (db.rangeBar == "p") then
-                powerBar:TrackUnitRange(db.rangeColors)
-            end
-        end
         if(db.tName) then
             UpdateTargetAuras()
         end
@@ -1575,6 +1624,9 @@ function DHUD4_Target:PLAYER_TARGET_CHANGED()
             PlaySound("igCharacterNPCSelect")
         else
             PlaySound("igCreatureNeutralSelect")
+        end
+        if(db.class)then
+            self.class:SetClassColor();
         end
     else
         tnp:SetAlpha(0)
@@ -1727,4 +1779,9 @@ function DHUD4_Target:EndLayout()
         end
     end
     self:Refresh()
+end
+
+function DHUD4_Target:GetBars()
+    --DHUD4:Debug("DHUD4_Player:GetBars()", healthBar.bar, powerBar.bar)
+    return healthBar.frame:IsVisible(),healthBar.frame.bar, powerBar.frame.bar
 end

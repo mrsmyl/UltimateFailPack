@@ -23,7 +23,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 
 local MODNAME = "DHUD4_Auras";
 local DHUD4_Auras = DHUD4:NewModule(MODNAME, "AceEvent-3.0");
-local VERSION = tonumber(("$Rev: 85 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 103 $"):match("%d+"));
 
 local _G = _G
 local math_ceil = math.ceil
@@ -185,7 +185,7 @@ local function getOptions()
                         colDesc = {
 							order = 8,
 							type = "description",
-							name = L["By default the buff border starts changing towards <Expiration> when there are 20 seconds remaining."],
+							name = L["By default the buff border starts changing toward <Expiration> when there are 20 seconds remaining."],
 						},
 						colors = {
 							type = 'group',
@@ -433,7 +433,6 @@ do
 	        parentFrame.buffTimerOn = false
 	        parentFrame:SetScript("OnUpdate", nil)
 	    end
-       
 	end
 
 	function HidePlayerBuffs()
@@ -482,31 +481,38 @@ function DHUD4_Auras:OnDisable()
 		frame:SetScript("OnUpdate", nil)
 		frame:Hide()
 	end
-    parentFrame:SetScript("OnUpdate", nil)
+    if( parentFrame ) then
+        parentFrame:SetScript("OnUpdate", nil)
+        parentFrame:Hide()
+    end
 end
 
 function DHUD4_Auras:Refresh()
 
-	--DHUD4:Debug(MODNAME, "Refresh");
+	--DHUD4:Debug(MODNAME, "Refresh")
 	db = self.db.profile
     if (parentFrame) then
         parentFrame:Hide()
     end
-    local newParentFrame = (db.side == "r") and DHUD4_RightAura or DHUD4_LeftAura
+    local newParentFrame
+    if(db.side == "r") then
+        newParentFrame = DHUD4_RightAura
+    else
+        newParentFrame = DHUD4_LeftAura
+    end
     if (not newParentFrame) then
         local name = (db.side == "r") and "DHUD4_RightAura" or "DHUD4_LeftAura"
         newParentFrame = CreateFrame("Frame", name, DHUD4_MainFrame)
         newParentFrame:SetHeight(256)
         newParentFrame:SetWidth(128)
     end
+    parentFrame = newParentFrame
     for j = 1, 16 do
         local frameName = "DHUD4_PB"..j
         local frame = _G[frameName]
         if (frame) then
             frame:SetScale(db.scale)
-            if (parentFrame ~= newParentFrame) then
-                frame:SetParent(newParentFrame)
-            end
+            frame:SetParent(newParentFrame)
             self:SetAuraPosition(frame, j)
             frame:EnableMouse(db.tips)
         end
@@ -515,7 +521,6 @@ function DHUD4_Auras:Refresh()
             frameCooldown:SetFont(DHUD4:GetFont(), db.fontSize * DHUD4.GetScale())
         end
     end
-    parentFrame = newParentFrame
     if DHUD4:GetModuleEnabled("DHUD4_Player") then
         local player = DHUD4:GetModule("DHUD4_Player")
         local health, power = player:GetBars()
@@ -523,13 +528,28 @@ function DHUD4_Auras:Refresh()
         visibleBars[power] = true
     end
     self:PlaceAurasFrame()
-    parentFrame:Show()
-
     if (self.layout) then
         DHUD4_Auras:SetLayout()
     else
         UpdatePlayerAuras()
         self:RegisterEvent("UNIT_AURA")
+    end
+    parentFrame:Show()
+    -- Since the abilities layout depends on the Auras, refresh the Abilities module if enabled
+    if(DHUD4:GetModule("DHUD4_Warrior"):IsEnabled()) then
+        DHUD4:GetModule("DHUD4_Warrior"):Refresh()
+    end
+    if(DHUD4:GetModule("DHUD4_Paladin"):IsEnabled()) then
+        DHUD4:GetModule("DHUD4_Paladin"):Refresh()
+    end
+    if(DHUD4:GetModule("DHUD4_Rogue"):IsEnabled()) then
+        DHUD4:GetModule("DHUD4_Rogue"):Refresh()
+    end
+    if(DHUD4:GetModule("DHUD4_DeathKnight"):IsEnabled()) then
+        DHUD4:GetModule("DHUD4_DeathKnight"):Refresh()
+    end
+    if(DHUD4:GetModule("DHUD4_Druid"):IsEnabled()) then
+        DHUD4:GetModule("DHUD4_Druid"):Refresh()
     end
 end
 

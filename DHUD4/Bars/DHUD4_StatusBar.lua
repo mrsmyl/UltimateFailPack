@@ -408,21 +408,75 @@ end
 
 --[[
     TrackUnitRange: Set a bar to track a unit's range. Range is tracked using
-                    the bar's border
+                    the bar's range border
         Use:
             TO-DO
         arguments:
             who = unit to track
             colors = colors to use
 ]]
-function statusBar:TrackUnitRange(colors)
+function statusBar:TrackUnitRange(colors, unit)
 
-    --DHUD4:Debug("TrackUnitRange", self.frame.bar)
-    self.maxBorderVal = 80
-    self.borderColors = colors
-    self.range = true
+    --DHUD4:Debug("TrackUnitRange", self.frame.bar, colors)
+     -- Create the range border
+    if (colors) then
+        local position, _, borderTexture, _ = unpack(STATUSBARS[self.frame.bar])
+        local range = _G["DHUD4_"..self.frame.bar.."_Range"]
+        borderTexture = borderTexture:gsub("b", "r")
+        if(not range)then
+            range  = self.frame:CreateTexture("DHUD4_"..self.frame.bar.."_Range", "ARTWORK")
+            range:SetAllPoints()
+            range:SetTexCoord(unpack(position))
+            range:SetBlendMode("BLEND")
+            self.rangeFrame = range
+            self.maxRangeVal = 80
+        end
+        self.rangeVal = -2
+        self.rangeColors = colors
+        range:SetTexture(DHUD4:GetCurrentTexture().."Bars\\"..borderTexture)
+        if ( not range:GetTexture() ) then
+            range:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Bars\\"..borderTexture)
+        end
+        self.range = true
+        self.unit = unit
+    else
+        if (self.rangeFrame) then
+            self.rangeFrame:Hide()
+        end
+        self.range = false
+    end
 end
 
+function statusBar:TrackUnitClass(unit)
+
+    --DHUD4:Debug("TrackUnitClass", self.frame.bar, colors)
+     -- Create the class border
+    if (unit) then
+        local position, _, borderTexture, _ = unpack(STATUSBARS[self.frame.bar])
+        local class = _G["DHUD4_"..self.frame.bar.."_Class"]
+        borderTexture = borderTexture:gsub("b", "r")
+        if(not class)then
+            class  = self.frame:CreateTexture("DHUD4_"..self.frame.bar.."_Class", "ARTWORK")
+            class:SetAllPoints()
+            class:SetTexCoord(unpack(position))
+            class:SetBlendMode("BLEND")
+            class.classFrame = class
+        end
+        class:SetTexture(DHUD4:GetCurrentTexture().."Bars\\"..borderTexture)
+        if ( not class:GetTexture() ) then
+            class:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Bars\\"..borderTexture)
+        end
+        self.classFrame = class
+        self.class = true
+        self.unit = unit
+        --self.classFrame:Show()
+    else
+        if (self.classFrame) then
+            self.classFrame:Hide()
+        end
+        self.class = false
+    end
+end
 
 --[[
     SetMaxHealth: Sets the maximun value of the bar
@@ -458,7 +512,7 @@ function statusBar:SetMaxHealth(val)
                         self.owner:SetVal(UnitHealth(self.owner.unit))
                         if (self.owner.range) then
                             local minRange, maxRange = rc:GetRange(self.owner.unit)
-                            self.owner:SetBorderValRange(minRange, maxRange)
+                            self.owner:SetRangeVal(minRange, maxRange)
                         end
                     else
                         self:SetScript("OnUpdate", nil)
@@ -501,6 +555,7 @@ function statusBar:SetMaxPower(val)
             self.text:Hide()
         end
     else
+        --DHUD4:Debug("TrackUnitRange", self.range, self.frame.bar, self.unit, rc:GetRange(self.unit))
         self.frame:SetScript("OnUpdate", function(self, elapsed)
                 self.auraTimer = self.auraTimer + elapsed
                 if self.auraTimer >= self.owner.updateInterval then
@@ -508,7 +563,7 @@ function statusBar:SetMaxPower(val)
                         self.owner:SetVal(UnitPower(self.owner.unit, self.owner.display))
                         if (self.owner.range) then
                             local minRange, maxRange = rc:GetRange(self.owner.unit)
-                            self.owner:SetBorderValRange(minRange, maxRange)
+                        --    self.owner:SetRangeVal(minRange, maxRange)
                         end
                     else
                         self:SetScript("OnUpdate", nil)
@@ -629,9 +684,8 @@ function statusBar:Disable(skipText)
         end
         self.val = -1
         self.maxVal = 0
-        self.borderVal = -1
-        self.maxBorderVal = 0
-        self.range = false
+        self.rangeVal = -2
+        self.class = nil
         self.background:SetVertexColor(1, 1, 1, 1)
         self.frame:Hide()
     end
@@ -649,4 +703,71 @@ function statusBar:ConfigBarText(font, size, tagCode, who)
     --DHUD4:Debug("statusBar:ConfigBarText", self.text.bar, tagCode, who)
     self:ConfigText(font, size, 200)
     DogTag:AddFontString(self.text.text, self.text, tagCode, "Unit", { unit = who } )
+end
+
+
+--[[
+    SetRangeVal: Sets the current value of the range bar border when the values are
+                  a range, if the value has changed the bar border color changes
+        Use:
+            TO-DO
+        Arguments:
+            valLow = low value
+            valHigh = high value
+]]
+function statusBar:SetRangeVal(valLow, valHigh)
+
+    local val
+    if (valHigh == nil) then
+        valHigh = self.maxRangeVal + 1
+    end
+    if (valLow == nil) then
+        val = -1
+    else
+        if((valLow >= 0) and (valHigh <=8)) then
+            val = 0
+        elseif((valLow >= 8) and (valHigh <=25)) then
+            val = 1
+        elseif((valLow >= 25) and (valHigh <=45)) then
+            val = 2
+        elseif((valLow >= 45) and (valHigh <=60)) then
+            val = 3
+        elseif((valLow >= 60) and (valHigh <=80)) then
+            val = 4
+        else
+            val = -1
+        end
+    end
+    if ( self.rangeVal ~= val ) then
+        self.rangeVal = val
+        -- Out of range, hide range border
+        if (val == -1) then
+            self.rangeFrame:Hide()
+        else
+            local pos = string.format("%i", self.rangeVal)
+            local r, g, b = self.rangeColors[pos].r, self.rangeColors[pos].g, self.rangeColors[pos].b
+            self.rangeFrame:SetVertexColor(r, g, b)
+            self.rangeFrame:Show()
+        end
+    end
+end
+
+--[[
+    ColorizeBorder: Colorize the bar border according to the unit class
+]]
+function statusBar:ColorizeBorder()
+
+    --DHUD4:Debug("ColorizeBorder", self.borderVal)
+    local r, g, b
+    local pos = string.format("%i", self.borderVal)
+    r, g, b = self.borderColors[pos].r, self.borderColors[pos].g, self.borderColors[pos].b
+    --self:Debug("colorize", r, g, b)
+    self.borderFrame:SetVertexColor(r, g, b)
+end
+
+local defaultColour = {r = 0.5, g = 0.5, b = 1}
+function statusBar:SetClassColor()
+    local color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2, UnitClass(self.unit))] or defaultColour
+    self.classFrame:SetVertexColor(color.r, color.g, color.b)
+    self.classFrame:Show()    
 end

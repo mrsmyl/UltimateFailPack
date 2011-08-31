@@ -27,11 +27,11 @@ DHUD4 = LibStub("AceAddon-3.0"):NewAddon("DHUD4", "AceEvent-3.0", "AceConsole-3.
 
 
 --ACE Version
-local VERSION = tonumber(("$Rev: 85 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 103 $"):match("%d+"));
 DHUD4.revision = "r" .. VERSION;
 DHUD4.versionstring = "1.6.3-%s";
 DHUD4.version = DHUD4.versionstring:format(VERSION);
-DHUD4.date = ("$Date: 2011-06-04 18:57:05 +0000 (Sat, 04 Jun 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
+DHUD4.date = ("$Date: 2011-07-30 17:14:22 +0000 (Sat, 30 Jul 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
 local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 local LSM3 = LibStub("LibSharedMedia-3.0");
 
@@ -98,7 +98,11 @@ local defaults = {
         scale = 1,
         positions = {},
         modules = {
-            ['*'] = true,
+            DHUD4_Target = true,
+            DHUD4_Player = true,
+            DHUD4_Outer = true,
+            DHUD4_Pet = true,
+            DHUD4_Auras = true,
         },
     }
 };
@@ -632,7 +636,7 @@ function DHUD4:GetModuleEnabled(modname)
     
     --self:Debug("GetModuleEnabled", modname, db.modules[modname]);
     if(db.modules[modname] == nil) then
-        return true;
+        return false;
     else
         return db.modules[modname]
     end
@@ -712,9 +716,9 @@ function DHUD4:Refresh()
     DHUD4_MainFrame:Show();
     -- Center Spacing
     DHUD4_LeftFrame:ClearAllPoints()
-	DHUD4_LeftFrame:SetPoint("CENTER", DHUD4_MainFrame, "CENTER", -db.frameSpacing - 192, 0)
+	DHUD4_LeftFrame:SetPoint("CENTER", DHUD4_MainFrame, "CENTER", -db.frameSpacing - 162, 0)
 	DHUD4_RightFrame:ClearAllPoints()
-	DHUD4_RightFrame:SetPoint("CENTER", DHUD4_MainFrame, "CENTER", db.frameSpacing + 192, 0)
+	DHUD4_RightFrame:SetPoint("CENTER", DHUD4_MainFrame, "CENTER", db.frameSpacing + 162, 0)
     if ( db.miniMap ) then
         self.Minimap:UpdatePosition()
         self.Minimap:Show()

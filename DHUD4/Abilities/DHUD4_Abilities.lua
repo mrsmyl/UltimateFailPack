@@ -1,5 +1,5 @@
 --[[
-DHUD4_Abilities.lua $Rev: 83 $
+DHUD4_Abilities.lua $Rev: 103 $
 Copyright (c) 2006 by Markus Inger, 2006 by Caeryn Dryad, 2007-2010 by Horacio Hoyos
 
 This file is part of DHUD4.
@@ -232,7 +232,6 @@ function Abilities:PlaceAbilitiesFrame()
 
     local b3, b4, b5 = "f"..self.side.."3", "f"..self.side.."4", "f"..self.side.."5"
     local dis = 156 + math.max((visibleBars[b3] and 15 or 0), (visibleBars[b4] and 30 or 0),  (visibleBars[b5] and 45 or 0)) + DHUD4:GetFrameSpacing()
-    --dis = dis/self.scale + 25*self.scale
     local anchorPoint = "RIGHT"
     if (self.side == "l") then
         dis = dis * -1
@@ -244,10 +243,27 @@ end
 
 function Abilities:_Refresh()
 
+    if DHUD4:GetModuleEnabled("DHUD4_Auras") then
+        local auras = DHUD4:GetModule("DHUD4_Auras")
+        local side  = auras:GetSide()
+        -- Switch sides, since we are reading the player layout
+        if (side == "r" ) then
+            self.db.profile.side = "l"
+            self.side = "l"
+        elseif (side == "l") then
+            self.db.profile.side = "r"
+            self.side = "r"
+        end
+    end
     if (self.parent) then
         self.parent:Hide()
     end
-    local newParentFrame = (self.side == "r") and DHUD4_RightAbilities or DHUD4_LeftAbilities
+    local newParentFrame
+    if (self.side == "r") then
+        newParentFrame = DHUD4_RightAbilities
+    else
+        newParentFrame = DHUD4_LeftAbilities
+    end
     if (not newParentFrame) then
         local name = (self.side == "r") and "DHUD4_RightAbilities" or "DHUD4_LeftAbilities"
         newParentFrame = CreateFrame("Frame", name, DHUD4_MainFrame)
@@ -270,10 +286,15 @@ function Abilities:_Refresh()
     end
     self.parent = newParentFrame
     if DHUD4:GetModuleEnabled("DHUD4_Player") then
-        local player = DHUD4:GetModule("DHUD4_Player")
-        local health, power = player:GetBars()
+        local visible
+        local health, power = DHUD4:GetModule("DHUD4_Player"):GetBars()
         visibleBars[health] = true
         visibleBars[power] = true
+        visible, health, power = DHUD4:GetModule("DHUD4_Target"):GetBars()
+        if(visible)then
+            visibleBars[health] = true
+            visibleBars[power] = true
+        end
     end
     self:PlaceAbilitiesFrame()
     self.parent:Show()
@@ -655,6 +676,7 @@ function Abilities:SetUpRunes(runeLayout, timer)
         local _, duration = GetRuneCooldown(i)
         frame.left = duration
         frame.duration = duration
+        frame.auraTimer = 0
         Abilities:Colorize(i)
         frame.rune = i
         frame.id = i

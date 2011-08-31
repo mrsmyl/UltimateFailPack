@@ -23,7 +23,7 @@ local DogTag = LibStub("LibDogTag-3.0");
 
 local MODNAME = "DHUD4_Pet";
 local DHUD4_Pet = DHUD4:NewModule(MODNAME, "AceEvent-3.0");
-local VERSION = tonumber(("$Rev: 79 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 102 $"):match("%d+"));
 
 local unpack = unpack
 local _G = _G
@@ -154,7 +154,7 @@ local function GetOptions()
     		args = {
                 header = {
                     type = 'description',
-                    name = L["The pet module manages pet bars and text and happines icon. The pet bars can track druid mana and vehicle status"],
+                    name = L["The pet module manages pet bars and text and happiness icon. The pet bars can track druid mana and vehicle status"],
                     order = 1,
                 },
                 enabled = {

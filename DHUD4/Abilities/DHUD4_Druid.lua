@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Druid"
 local DHUD4_Druid = DHUD4:NewModule(MODNAME, DHUD4.Abilities, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 62 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 103 $"):match("%d+"))
 
 
 local string_match = string.match
@@ -379,7 +379,6 @@ function DHUD4_Druid:Refresh()
     manaBar:Disable()
     --eclipseBar:Disable()
     ConfigLayout()
-
 
     if (self.layout) then
         self:SetLayout()

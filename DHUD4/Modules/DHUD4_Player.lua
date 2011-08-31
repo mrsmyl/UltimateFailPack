@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Player"
 local DHUD4_Player = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 85 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 103 $"):match("%d+"))
 
 local unpack = unpack
 local pairs = pairs
@@ -319,7 +319,7 @@ local function GetOptions()
                             get = function() return db.blizCast; end,
                             set = function(info, value) db.blizCast = value; end,
                             name = L["Blizz Cast Bar"],
-                            desc = L["Show/Hide Blizzard's PLayer Cast Bar."],
+                            desc = L["Show/Hide Blizzard's Player Cast Bar."],
                         },
                         cast = {
                             order = 1,
@@ -331,7 +331,7 @@ local function GetOptions()
                             order = 2,
                             type = 'select',
                             name = L["Side"],
-                            desc = L["Side to show the cast bar, Player bar has presedence"],
+                            desc = L["Side to show the cast bar, Player bar has precedence"],
                             values = {["l"] = L["Left"], ["r"] = L["Right"]},
                             disabled  = function() return not db.cast end,
                         },
@@ -339,7 +339,7 @@ local function GetOptions()
                             order = 3,
                             type = 'select',
                             name = L["Position"],
-                            desc = L["Position of the cast bar, Player bar has presedence"],
+                            desc = L["Position of the cast bar, Player bar has precedence"],
                             values = {["i"] = L["Inner"], ["m"] = L["Middle"]},
                             disabled = function() return not db.cast end,
                         },
@@ -393,7 +393,7 @@ local function GetOptions()
                                     db[key1][key2].r = r
                                     db[key1][key2].g = g
                                     db[key1][key2].b = b
-                                    mod:Refresh()
+                                    DHUD4_Player:Refresh()
                                 end,
                             args = {
                                 spell = {
@@ -550,7 +550,6 @@ do
         powerBar.frame:SetScript("OnHide", function (this)
                 DHUD4:SendMessage("DHUD4_BAR", this.bar, false)
             end)
-
         powerBar:TrackUnitPower("player", db.colors[tostring(UnitPowerType("player"))], UnitPowerType("player"))
 
         -- Icons
@@ -742,7 +741,7 @@ function DHUD4_Player:OnInitialize()
     --DHUD4:Debug(MODNAME..":OnInitialize");
     self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults)
     db = self.db.profile
-    self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME))
+    self:SetEnabledState(true)
     DHUD4:RegisterModuleOptions(MODNAME, GetOptions, L["Player"])
     self.layout = false
 
@@ -771,7 +770,6 @@ function DHUD4_Player:OnDisable()
     self:DisableIcon(leaderIcon)
     self:DisableIcon(lootIcon)
     self:DisableIcon(pvpIcon)
-
 end
 
 function DHUD4_Player:Refresh()
