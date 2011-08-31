@@ -1608,6 +1608,19 @@ function HealBot_Options_CDCCol_ShowOnHealthBar_OnClick(self)
     HealBot_Config.CDCshownHB = self:GetChecked() or 0;
 end
 
+function HealBot_Options_CDCCol_OnOff_OnClick(self)
+    if HealBot_Options_StorePrev["CDebuffcustomName"] then
+        x= self:GetChecked() or 0
+        if x==1 then
+            HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]] = nil
+        else
+            HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]] = x
+        end
+    else
+        HealBot_Options_CDCCol_OnOff:SetChecked(HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]] or 1)
+    end
+end
+
 function HealBot_Options_CDCCol_ShowOnAggroBar_OnClick(self)
     HealBot_Config.CDCshownAB = self:GetChecked() or 0;
     if HealBot_Config.CDCshownAB==0 then
@@ -6555,6 +6568,7 @@ function HealBot_Options_CDebuffTxt1_Refresh(onselect)
     if not onselect then HealBot_Options_CDebuffTxt1_Initialize() end
     UIDropDownMenu_SetSelectedID(HealBot_Options_CDebuffTxt1,HealBot_Options_StorePrev["CDebuffcustomID"])
     HealBot_Options_CDCReverseDurC:SetChecked(HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] or 0)
+    HealBot_Options_CDCCol_OnOff:SetChecked(HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]] or 1)
 end
 
 function HealBot_Options_CDebuffTxt1_OnSelect(self)
@@ -6650,17 +6664,24 @@ function HealBot_Options_DeleteCDebuffBtn_OnClick(self)
     HealBot_Globals.Custom_Debuff_Categories[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil;
     HealBot_Globals.HealBot_Custom_Debuffs[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil;
     if HealBot_Globals.CDCBarColour[HealBot_Options_StorePrev["CDebuffcustomName"]] then HealBot_Globals.CDCBarColour[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil end
+    HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil
+    HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil
+    HealBot_clearDebuffTexture(HealBot_Options_StorePrev["CDebuffcustomName"])
     HealBot_Options_CDebuffTxt1_Refresh()
     HealBot_Options_CDCPriorityC_Refresh()
     HealBot_SetCDCBarColours();
 end
 
 function HealBot_Options_RevDurCDebuffBtn_OnClick(self)
-    x= self:GetChecked() or 0
-    if x==0 then
-        HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] = nil
+    if HealBot_Options_StorePrev["CDebuffcustomName"] then
+        x= self:GetChecked() or 0
+        if x==0 then
+            HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] = nil
+        else
+            HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] = x
+        end
     else
-        HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] = x
+        HealBot_Options_CDCReverseDurC:SetChecked(HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] or 0)
     end
 end
 

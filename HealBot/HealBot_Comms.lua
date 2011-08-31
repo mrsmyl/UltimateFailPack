@@ -230,6 +230,12 @@ function HealBot_Comms_OnShow(self)
     HealBot_Error_Clientx:SetText(HEALBOT_WORD_CLIENT.."="..GetLocale())
     HealBot_Error_Versionx:SetText(HEALBOT_WORD_VERSION.."="..HEALBOT_VERSION)
     HealBot_Error_Classx:SetText(HEALBOT_SORTBY_CLASS.."="..HealBot_PlayerClassEN)
+    HealBot_Comms_AcceptSkins()
+    HealBot_Comms_MacroSuppressError()
+    HealBot_Comms_MacroSuppressSound()
+end
+
+function HealBot_Comms_AcceptSkins()
     if HealBot_Globals.AcceptSkins==1 then
         HealBot_Info_AcceptSkinsVal:SetText("ON")
         HealBot_Info_AcceptSkinsVal:SetTextColor(0.1,1,0.1)
@@ -237,6 +243,9 @@ function HealBot_Comms_OnShow(self)
         HealBot_Info_AcceptSkinsVal:SetText("OFF")
         HealBot_Info_AcceptSkinsVal:SetTextColor(0.88,0.1,0.1)
     end
+end
+
+function HealBot_Comms_MacroSuppressError()
     if HealBot_Globals.MacroSuppressError==1 then
         HealBot_Info_SuppressErrorsVal:SetText("ON")
         HealBot_Info_SuppressErrorsVal:SetTextColor(0.1,1,0.1)
@@ -244,6 +253,9 @@ function HealBot_Comms_OnShow(self)
         HealBot_Info_SuppressErrorsVal:SetText("OFF")
         HealBot_Info_SuppressErrorsVal:SetTextColor(0.88,0.1,0.1)
     end
+end
+
+function HealBot_Comms_MacroSuppressSound()
     if HealBot_Globals.MacroSuppressSound==1 then
         HealBot_Info_SuppressSoundsVal:SetText("ON")
         HealBot_Info_SuppressSoundsVal:SetTextColor(0.1,1,0.1)
@@ -251,8 +263,8 @@ function HealBot_Comms_OnShow(self)
         HealBot_Info_SuppressSoundsVal:SetText("OFF")
         HealBot_Info_SuppressSoundsVal:SetTextColor(0.88,0.1,0.1)
     end
-end
-
+end    
+    
 function HealBot_Comms_OnHide(self)
     HealBot_StopMoving(self);
 end

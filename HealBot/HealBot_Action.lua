@@ -523,7 +523,7 @@ function HealBot_HealthColor(unit,hlth,maxhlth,tooltipcol,hbGUID,UnitDead,Member
         if UnitDead then
             HealBot_UnitStatus[unit]=8
         elseif Member_Debuff and UnitIsConnected(unit) then
-            if HealBot_Config.CDCshownHB==1 and HealBot_UnitInRange(HealBot_dSpell, unit)>(HealBot_Config.HealBot_CDCWarnRange_Bar-3) then
+            if HealBot_Config.CDCshownHB==1 and HealBot_UnitInRange(HealBot_dSpell, unit)>(HealBot_Config.HealBot_CDCWarnRange_Bar-3) and (HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_UnitDebuff[hbGUID]["name"]] or 1)==1  then
                 if HealBot_Globals.CDCBarColour[HealBot_UnitDebuff[hbGUID]["name"]] then
                     hcr = HealBot_Globals.CDCBarColour[HealBot_UnitDebuff[hbGUID]["name"]].R
                     hcg = HealBot_Globals.CDCBarColour[HealBot_UnitDebuff[hbGUID]["name"]].G

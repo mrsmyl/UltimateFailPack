@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "4.2.0.1";
+HEALBOT_VERSION = "4.2.0.3";
 
 -------------
 -- ENGLISH --
@@ -739,7 +739,7 @@ HEALBOT_OPTIONS_UNIQUESPEC              = "Save unique spells for each spec"
 HEALBOT_WORDS_ERROR                     = "Error"
 HEALBOT_SPELL_NOT_FOUND	                = "Spell Not Found"
 HEALBOT_OPTIONS_DISABLETOOLTIPINCOMBAT  = "Hide Tooltip in Combat"
-HEALBOT_OPTIONS_ENABLELIBQH             = "Enable libQuickHealth"
+HEALBOT_OPTIONS_ENABLELIBQH             = "Enable HealBot fastHealth"
 
 HEALBOT_OPTIONS_BUFFNAMED               = "Enter the player names to watch for\n\n"
 HEALBOT_WORD_ALWAYS                     = "Always";

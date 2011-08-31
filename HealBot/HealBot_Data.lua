@@ -188,6 +188,7 @@ HealBot_GlobalsDefaults = {
         [HEALBOT_CUSTOM_en] = { R = 0.45, G = 0, B = 0.26, }, -- added by Diacono
     },
     HealBot_Custom_Debuffs_RevDur={},
+    HealBot_Custom_Debuffs_ShowBarCol={},
     HealBot_Custom_Debuffs = {
         -- Karazhan
         [HEALBOT_DEBUFF_ICE_TOMB]         = 10, -- Karazhan - Ice Tomb
@@ -1580,7 +1581,7 @@ HealBot_Config_SkinsDefaults = {
                         [HEALBOT_SKIN_SQUARE] = 0, [HEALBOT_MAGIC] = 0, [HEALBOT_CLASSES_RANGES]=0, },
   GroupPetsBy5 = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,
                   [HEALBOT_SKIN_SQUARE] = 1, [HEALBOT_MAGIC] = 1, [HEALBOT_CLASSES_RANGES]=1, },
-  AlertLevel = {[HEALBOT_SKINS_STD] = 0.98, [HEALBOT_OPTIONS_GROUPHEALS] = 0.92, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.88, [HEALBOT_ZONE_AV] = 0.75,
+  AlertLevel = {[HEALBOT_SKINS_STD] = 0.99, [HEALBOT_OPTIONS_GROUPHEALS] = 0.92, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.88, [HEALBOT_ZONE_AV] = 0.75,
                 [HEALBOT_SKIN_SQUARE] = 0.88, [HEALBOT_MAGIC] = 0.88, [HEALBOT_CLASSES_RANGES]=1, },
   HidePartyFrames = {[HEALBOT_SKINS_STD] = 0, [HEALBOT_OPTIONS_GROUPHEALS] = 0, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0, [HEALBOT_ZONE_AV] = 0,
                      [HEALBOT_SKIN_SQUARE] = 0, [HEALBOT_MAGIC] = 0, [HEALBOT_CLASSES_RANGES]=0, },

@@ -6923,15 +6923,6 @@
                         </Anchor>
                       </Anchors>
                     </FontString>
-                    <FontString name="HealBot_CustomBar_TextCol" text="HEALBOT_SKIN_HEADERBARCOL" inherits="GameFontNormal">
-                      <Anchors>
-                        <Anchor point="CENTER">
-                          <Offset>
-                            <AbsDimension x="0" y="22" />
-                          </Offset>
-                        </Anchor>
-                      </Anchors>
-                    </FontString>
                   </Layer>
                 </Layers>
                 <Scripts>
@@ -6940,6 +6931,19 @@
                 <BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
                 <BarColor r="0" g="1" b="0"/>
               </StatusBar>
+              <CheckButton name="HealBot_Options_CDCCol_OnOff" inherits="OptionsCheckButtonTemplate">
+                <Anchors>
+                  <Anchor point="CENTER" relativeTo="HealBot_CustomColorpick" relativePoint="CENTER">
+                    <Offset>
+                      <AbsDimension x="-35" y="22" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_SKIN_HEADERBARCOL)</OnLoad>
+                  <OnClick>HealBot_Options_CDCCol_OnOff_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
               <Button name="HealBot_Options_ResetCDebuffBtn" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_RESET">
                 <Size>
                   <AbsDimension x="100" y="22"/>
