@@ -46,6 +46,12 @@ local STATUSBARS = {
         "2b",
         {11, 11},
     },
+    fl2d = {
+        {0,1,0,1},
+        "2",
+        "2b",
+        {11, 11},
+    },
     fl3 = {
         {0,1,0,1},
         "3",
@@ -71,6 +77,12 @@ local STATUSBARS = {
         {11, 11},
     },
     fr2 = {
+        {1,0,0,1},
+        "2",
+        "2b",
+        {11, 11},
+    },
+    fr2d = {
         {1,0,0,1},
         "2",
         "2b",
@@ -108,6 +120,11 @@ local BARTEXT = {
         -110,
         "LEFT",
     },
+    fl2d = {
+        151,
+        -110,
+        "LEFT",
+    },
     fl3 = {
         136,
         -125,
@@ -129,6 +146,11 @@ local BARTEXT = {
         "RIGHT",
     },
     fr2 = {
+        -151,
+        -110,
+        "RIGHT",
+    },
+    fr2d = {
         -151,
         -110,
         "RIGHT",
@@ -369,11 +391,15 @@ function statusBar:TrackAgroStatus(unit, against, bar, colors)
                         else
                             self.owner.borderFrame:Hide()
                         end
+                        if(self.owner.text)then
+                            self.owner.text:Show()
+                        end
                         self:Show()
-                        self.text:Show()
                     else
                         self.val = 0
-                        self.owner.text:Hide()
+                        if(self.owner.text)then
+                            self.owner.text:Hide()
+                        end
                         self:Hide()
                     end
                     if (self.owner.useBorders) then
@@ -499,10 +525,14 @@ function statusBar:SetMaxHealth(val)
                 self.borderFrame:Hide()
             end
             self.frame:Show()
-            self.text:Show()
+            if(self.text)then
+                self.text:Show()
+            end
         else
             self.frame:Hide()
-            self.text:Hide()
+            if(self.text)then
+                self.text:Hide()
+            end
         end
     else
         self.frame:SetScript("OnUpdate", function (self, elapsed)
@@ -522,7 +552,9 @@ function statusBar:SetMaxHealth(val)
                     self.auraTimer = 0
                 end
             end)
-        self.text:Show()
+        if(self.text)then
+            self.text:Show()
+        end
         self.frame:Show()
     end
 end
@@ -549,10 +581,14 @@ function statusBar:SetMaxPower(val)
                 self.borderFrame:Hide()
             end
             self.frame:Show()
-            self.text:Show()
+            if(self.text)then
+                self.text:Show()
+            end
         else
             self.frame:Hide()
-            self.text:Hide()
+            if(self.text)then
+                self.text:Hide()
+            end
         end
     else
         --DHUD4:Debug("TrackUnitRange", self.range, self.frame.bar, self.unit, rc:GetRange(self.unit))
@@ -573,7 +609,9 @@ function statusBar:SetMaxPower(val)
                     self.auraTimer = 0
                 end
             end)
-        self.text:Show()
+        if(self.text)then
+            self.text:Show()
+        end
         self.frame:Show()
     end
 end
@@ -641,27 +679,30 @@ function statusBar:SetLayout(caption, maxVal, val)
     self.val = val
     self:Colorize()
     self:Fill()
-    self.text.text:SetText(caption)
-    self.text:Show()
     self.frame:Show()
-    self.text:SetScript("OnDragStart", function(self)
-            if ( IsAltKeyDown() ) then
-                self:StartMoving()
-                self.isMoving = true
-            end
-        end)
-    self.text:SetScript("OnDragStop", function(self)
-            if ( self.isMoving ) then
-                self.isMoving = false
-                self:StopMovingOrSizing()
-                local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint(1)
-                self:SetUserPlaced(false)
-                --DHUD4:Debug("SavePosition", self.bar, xOfs, yOfs)
-                DHUD4:SavePosition(self.bar, {xOfs, yOfs})
-            end
-        end)
-    self.text:EnableMouse(true)
-    self.text:SetMovable(true)
+    if (self.text) then
+        self.text.text:SetText(caption)
+        self.text:Show()
+
+        self.text:SetScript("OnDragStart", function(self)
+                if ( IsAltKeyDown() ) then
+                    self:StartMoving()
+                    self.isMoving = true
+                end
+            end)
+        self.text:SetScript("OnDragStop", function(self)
+                if ( self.isMoving ) then
+                    self.isMoving = false
+                    self:StopMovingOrSizing()
+                    local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint(1)
+                    self:SetUserPlaced(false)
+                    --DHUD4:Debug("SavePosition", self.bar, xOfs, yOfs)
+                    DHUD4:SavePosition(self.bar, {xOfs, yOfs})
+                end
+            end)
+        self.text:EnableMouse(true)
+        self.text:SetMovable(true)
+    end
 end
 
 --[[
@@ -701,8 +742,10 @@ end
 function statusBar:ConfigBarText(font, size, tagCode, who)
 
     --DHUD4:Debug("statusBar:ConfigBarText", self.text.bar, tagCode, who)
-    self:ConfigText(font, size, 200)
-    DogTag:AddFontString(self.text.text, self.text, tagCode, "Unit", { unit = who } )
+    if(self.text)then
+        self:ConfigText(font, size, 200)
+        DogTag:AddFontString(self.text.text, self.text, tagCode, "Unit", { unit = who } )
+    end
 end
 
 

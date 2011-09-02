@@ -129,7 +129,6 @@ function DHUD4_Paladin:Refresh()
 
     --DHUD4:Debug(MODNAME, "Refresh")
     if not self:IsEnabled() then return end
-    db = self.db.profile
     self.side = db.side
     self.scale = db.scale
     self.fontSize = db.fontSize

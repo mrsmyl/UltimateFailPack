@@ -178,7 +178,6 @@ end
 function DHUD4_DeathKnight:Refresh()
 
     if not self:IsEnabled() then return end
-    db = self.db.profile
     self.side = db.side
     self.scale = db.scale
     self.fontSize = db.fontSize

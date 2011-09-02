@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Player"
 local DHUD4_Player = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 103 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"))
 
 local unpack = unpack
 local pairs = pairs
@@ -304,9 +304,9 @@ local function GetOptions()
                         },
                     },
                 },
-                barText = DHUD4:StatusBarMenuOptions(5, not DHUD4:GetModuleEnabled(MODNAME), db),
+                barText = DHUD4:StatusBarMenuOptions(4, not DHUD4:GetModuleEnabled(MODNAME), db),
                 cast = {
-                    order = 6,
+                    order = 5,
                     type = "group",
                     name = L["Cast Bar"],
                     disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
@@ -436,7 +436,7 @@ local function GetOptions()
                 },
                 colors = {
                     type = 'group',
-                    order = 7,
+                    order = 6,
                     name = L["Bar Colors"],
                     get = ColorGetter,
                     set = ColorSetter,
@@ -741,7 +741,7 @@ function DHUD4_Player:OnInitialize()
     --DHUD4:Debug(MODNAME..":OnInitialize");
     self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults)
     db = self.db.profile
-    self:SetEnabledState(true)
+    self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME))
     DHUD4:RegisterModuleOptions(MODNAME, GetOptions, L["Player"])
     self.layout = false
 
@@ -775,8 +775,7 @@ end
 function DHUD4_Player:Refresh()
 
     --DHUD4:Debug(MODNAME, "Refresh", DHUD4_Player:IsEnabled())
-    db = self.db.profile
-
+    
     --BlizzFrames
     if ( not db.blizPlayer and PlayerFrame:IsShown() ) then
         PlayerFrame:UnregisterAllEvents()
@@ -977,4 +976,23 @@ end
 function DHUD4_Player:GetBars()
     --DHUD4:Debug("DHUD4_Player:GetBars()", healthBar.bar, powerBar.bar)
     return healthBar.frame.bar, powerBar.frame.bar
+end
+
+function DHUD4_Player:LoadRenaitreProfile()
+
+    self.db.profile.barTextSize = 14
+    self.db.profile.powerTextStyle = "[MP]"
+    self.db.profile.combatIcon = false
+    self.db.profile.restIcon = false
+    self.db.profile.castTextSize = 14
+    self.db.profile.pvpIcon = false
+    self.db.profile.healthTextStyle = "[HP] ([PercentHP:Percent])"
+    self.db.profile.colors.spell = {
+							["b"] = 0.7019607843137254,
+							["g"] = 0.7019607843137254,
+							["r"] = 0,
+						}
+    self.db.profile.castSide = "l"
+    self.db.profile.healthCustomTextStyle = "[HP:Short:Green] [PercentHP:Percent:Paren:HPColor]"
+    db = self.db.profile
 end

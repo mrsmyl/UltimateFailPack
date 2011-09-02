@@ -1,5 +1,5 @@
 --[[
-DHUD4_Abilities.lua $Rev: 103 $
+DHUD4_Abilities.lua $Rev: 106 $
 Copyright (c) 2006 by Markus Inger, 2006 by Caeryn Dryad, 2007-2010 by Horacio Hoyos
 
 This file is part of DHUD4.
@@ -587,8 +587,8 @@ function Abilities:SetUpCombos()
         local frame = _G[frameName]
         if ( not frame ) then
             frame = self:CreateFrame(i)
-            self:SetAbilitiesPosition(frame, i)
         end
+        self:SetAbilitiesPosition(frame, i)
         local frameTexture = _G[frameName.."Texture"]
         frameTexture:SetTexture(DHUD4:GetCurrentTexture().."Abilities\\c"..i)
         if ( not frameTexture:GetTexture() ) then

@@ -23,7 +23,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 
 local MODNAME = "DHUD4_Auras";
 local DHUD4_Auras = DHUD4:NewModule(MODNAME, "AceEvent-3.0");
-local VERSION = tonumber(("$Rev: 103 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"));
 
 local _G = _G
 local math_ceil = math.ceil
@@ -458,7 +458,7 @@ end
 function DHUD4_Auras:OnInitialize()
 
     self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults)
-	db = self.db.profile
+    db = self.db.profile
 	self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME))
 	DHUD4:RegisterModuleOptions(MODNAME, getOptions, L["Auras"])
     self.layout = false
@@ -490,7 +490,6 @@ end
 function DHUD4_Auras:Refresh()
 
 	--DHUD4:Debug(MODNAME, "Refresh")
-	db = self.db.profile
     if (parentFrame) then
         parentFrame:Hide()
     end
@@ -725,4 +724,11 @@ function DHUD4_Auras:EndLayout()
 
     self.layout = false
     self:Refresh()
+end
+
+function DHUD4_Auras:LoadRenaitreProfile()
+
+    self.db.profile.fontSize = 14
+	self.db.profile.scale = 0.8
+    db = self.db.profile
 end

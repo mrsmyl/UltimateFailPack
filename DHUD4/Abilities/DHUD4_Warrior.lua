@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Warrior"
 local DHUD4_Warrior = DHUD4:NewModule(MODNAME, DHUD4.Abilities, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 60 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"))
 
 local _G = _G
 local MAX_SUNDER_ARMOR = 3;
@@ -144,7 +144,6 @@ end
 function DHUD4_Warrior:Refresh()
 
     --DHUD4:Debug(MODNAME, "Refresh")
-    db = self.db.profile
     self.side = db.side
     self.scale = db.scale
     self.fontSize = db.fontSize

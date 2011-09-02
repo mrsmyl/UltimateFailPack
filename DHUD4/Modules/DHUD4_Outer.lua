@@ -22,7 +22,7 @@ local DogTag = LibStub("LibDogTag-3.0");
 
 local MODNAME = "DHUD4_Outer";
 local DHUD4_Outer = DHUD4:NewModule(MODNAME, "AceEvent-3.0");
-local VERSION = tonumber(("$Rev: 74 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"));
 
 local string_len = string.len;
 local string_gsub = string.gsub;
@@ -935,8 +935,8 @@ do
 
 	function SetBarAgro(who, bar)
 
-		_G["DHUD4_"..bar]:RegisterEvent("UNIT_TARGET");
-		_G["DHUD4_"..bar]:SetScript("OnEvent", OnUnitThreat);
+		_G["DHUD4_"..bar]:RegisterEvent("UNIT_TARGET")
+		_G["DHUD4_"..bar]:SetScript("OnEvent", OnUnitThreat)
 	end
 
 	
@@ -945,10 +945,10 @@ end
 function DHUD4_Outer:OnInitialize()
 
     --DHUD4:Debug("DHUD4_Player:OnInitialize");
-	self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults);
-	db = self.db.profile;
-	self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME));
-	DHUD4:RegisterModuleOptions(MODNAME, GetOptions, L["Outer"]);
+	self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults)
+    db = self.db.profile
+	self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME))
+	DHUD4:RegisterModuleOptions(MODNAME, GetOptions, L["Outer"])
 
     -- Bars
     rightBar = DHUD4:CreateStatusBar()
@@ -973,7 +973,6 @@ function DHUD4_Outer:Refresh()
 
 	--DHUD4:Debug(MODNAME, "Refresh");
     if not self:IsEnabled() then return end
-	db = self.db.profile
 	
 	-- Remove all registered events and text tags
     self:UnregisterAllEvents();
@@ -1252,4 +1251,32 @@ function DHUD4_Outer:EndLayout()
 
     self.layout = false
     self:Refresh()
+end
+
+function DHUD4_Outer:LoadRenaitreProfile()
+
+    self.db.profile.ro.track = 5
+	self.db.profile.ro.colors.agro.h = {
+									["r"] = 0.5019607843137255,
+									["g"] = 0.00392156862745098,
+									["b"] = 1,
+								}
+    self.db.profile.ro.colors.agro.l = {
+									["r"] = 0.1411764705882353,
+									["g"] = 0.3490196078431372,
+									["b"] = 1,
+								}
+	self.db.profile.ro.aStyle = "[ThreatStatus]"
+    self.db.profile.lo.track = 5
+    self.db.profile.lo.colors.agro.h = {
+									["r"] = 0.5019607843137255,
+									["g"] = 0.00392156862745098,
+									["b"] = 1,
+								}
+	self.db.profile.lo.colors.agro.l = {
+									["r"] = 0.1411764705882353,
+									["g"] = 0.3490196078431372,
+									["b"] = 1,
+								}
+    db = self.db.profile
 end

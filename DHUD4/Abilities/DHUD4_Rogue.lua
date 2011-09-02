@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Rogue"
 local DHUD4_Rogue = DHUD4:NewModule(MODNAME, DHUD4.Abilities, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 60 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"))
 
 local db
 local OptGetter, OptSetter, ColorGetter, ColorSetter, WeaponHidden, WeaponBuff
@@ -131,7 +131,6 @@ end
 function DHUD4_Rogue:Refresh()
 
     --DHUD4:Debug(MODNAME, "Refresh")
-    db = self.db.profile
     self.side = db.side
     self.scale = db.scale
     self:_Refresh()
@@ -187,4 +186,10 @@ function DHUD4_Rogue:EndLayout()
 
     self.layout = false
     self:Refresh()
+end
+
+function DHUD4_Rogue:LoadRenaitreProfile()
+
+    self.db.profile.scale = 0.8
+    db = self.db.profile
 end

@@ -22,15 +22,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Druid"
 local DHUD4_Druid = DHUD4:NewModule(MODNAME, DHUD4.Abilities, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 103 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"))
 
 
 local string_match = string.match
 local string_len = string.len
 local string_find = string.find
-
---MAX_HOLY_POWER = 3;
---PALADINPOWERBAR_SHOW_LEVEL = 9
 
 local db
 local OptGetter, OptSetter, ColorGetter, ColorSetter, druidTags
@@ -78,18 +75,17 @@ local defaults = {
         lifeblooms  = true,
         lifebloomsTimer  = true,
         mana = false,
-		manaBar = "fr2",
+		manaBar = "fr2d",
 		manaBarText = true,
         manaTextSize = 10,
 		manaTextStyle = "[FractionalDruidMP] ([PercentDruidMP:Percent])",
 		manaCustomTextStyle = "",
         eclipse  = true,
-        eclipseBar = "fl2",
+        eclipseBar = "fl2d",
 		eclipseBarText = true,
         eclipseTextSize = 10,
-		eclipseTextStyle = "[FractionalDruidMP] ([PercentDruidMP:Percent])",
-		eclipseCustomTextStyle = "",
-        colors = {
+        eclipseShowPercent = true,
+		colors = {
             mana = {
                 f = {r=0,g=1,b=1},
                 h = {r=0,g=0,b=1},
@@ -194,10 +190,8 @@ local function getOptions()
                     name = L["Side"],
                     desc = L["Bar to track mana (pet bars are used)"],
                     disabled = function () return not db.mana end,
-                    values = {["fr1"] = L["Right Inner"],
-                              ["fr2"] = L["Right Outer"],
-                              ["fl1"] = L["Left Inner"],
-                              ["fl2"] = L["Left Outer"]},
+                    values = {["fr2b"] = L["Right Outer"],
+                              ["fl2b"] = L["Left Outer"]},
                 },
                 manaBarText = {
                     type = 'toggle',
@@ -210,7 +204,7 @@ local function getOptions()
                     order = 10,
                     type = 'range',
                     name = L["Font size"],
-                    hidden = function() return not (db.healthBarText or db.powerBarText) end,
+                    hidden = function() return not db.manaTextSize end,
                     min = MINFONT,
                     max = MAXFONT,
                     step = 1,
@@ -245,7 +239,7 @@ local function getOptions()
                             order = 1,
                             args = DHUD4.colorOptions,
                         },
-                        ["lunar"] = {
+                        --[[["lunar"] = {
                             type = 'group',
                             name = L["Eclipse Lunar Phase"],
                             args = DHUD4.colorOptions,
@@ -254,8 +248,46 @@ local function getOptions()
                             type = 'group',
                             name = L["Eclipse Solar Phase"],
                             args = DHUD4.colorOptions,
-                        },
+                        },--]]
                     },
+                },
+                eclipse = {
+                    type = 'toggle',
+                    order = 14,
+                    name = L["Druid Eclipse"],
+                    desc = L["Track druid's Eclipse"],
+                },
+                eclipseBar = {
+                    type = 'select',
+                    order = 15,
+                    name = L["Bar"],
+                    desc = L["Bar to track eclipse"],
+                    disabled = function () return not db.eclipse end,
+                    values = {["fr2d"] = L["Right Outer"],
+                              ["fl2d"] = L["Left Outer"]},
+                },
+                eclipseBarText = {
+                    type = 'toggle',
+                    order = 16,
+                    name = L["Eclipse Bar Values"],
+                    disabled = function () return not db.eclipse end,
+                    desc = L["Show/Hide"],
+                },
+                eclipseShowPercent = {
+                    type = 'toggle',
+                    order = 17,
+                    disabled = function () return not db.eclipse end,
+                    name = L["Eclipse percent"],
+                    desc = L["Show Eclipse as percent"],
+                },
+                eclipseTextSize = {
+                    order = 18,
+                    type = 'range',
+                    name = L["Eclipse Bar Font size"],
+                    hidden = function() return not db.eclipseBarText end,
+                    min = MINFONT,
+                    max = MAXFONT,
+                    step = 1,
                 },
             },
         }
@@ -263,7 +295,30 @@ local function getOptions()
 	return options
 end
 
-local manaBar, eclipseBar
+local moonColors = {
+                    f = { r=0.59,g=0.92,b=0.99},
+                    h = { r=0,g=0.29,b=0.96},
+                    l = { r=0.31,g=0,b=0.94}
+                }
+local sunColors = {
+                    f = { r=1,g=0.99,b=0.73},
+                    h = { r=0.89,g=0.96,b=0},
+                    l = { r=1,g=0.89,b=0}
+                }
+
+ECLIPSE_ICONS =  {};
+ECLIPSE_ICONS["moon"] = {
+                            norm = { x=23, y=23, left=0.55859375, right=0.64843750, top=0.57031250, bottom=0.75000000 } ,
+                            dark  = { x=23, y=23, left=0.55859375, right=0.64843750, top=0.37500000, bottom=0.55468750 } ,
+                            big    = { x=43, y=45, left=0.73437500, right=0.90234375, top=0.00781250, bottom=0.35937500 } ,
+                        }
+ECLIPSE_ICONS["sun"] = {
+                            norm = { x=23, y=23, left=0.65625000, right=0.74609375, top=0.37500000, bottom=0.55468750 } ,
+                            dark  = { x=23, y=23, left=0.55859375, right=0.64843750, top=0.76562500, bottom=0.94531250 } ,
+                            big    = { x=43, y=45, left=0.55859375, right=0.72656250, top=0.00781250, bottom=0.35937500 } ,
+                        }
+
+local manaBar, eclipseBar, eclipseIcon
 local ConfigLayout
 do
 	-- Config Bars and Icons
@@ -281,44 +336,108 @@ do
             manaBar:InitStatusBar(db.manaBar, manaParent, 0.5)
             manaBar:PlaceTextures(DHUD4:GetCurrentTexture())
             if db.manaBarText then
-                manaBar:InitStatusBarText(db.manaBar, DHUD4:GetPosition(hbar))
+                manaBar:InitStatusBarText(db.manaBar, DHUD4:GetPosition(db.manaBar))
                 local textTag = (string_len(db.manaCustomTextStyle) > 0) and db.manaCustomTextStyle or db.manaTextStyle
                 manaBar:ConfigBarText(DHUD4:GetFont(), db.manaTextSize * DHUD4.GetScale(), textTag, "player")
             end
         end
 
         -- Eclipse bar
-        --[[powerBar:InitStatusBar(pbar, ppar, 0.5)
-        powerBar:PlaceTextures(DHUD4:GetCurrentTexture())
-        if db.powerBarText then
-            powerBar:InitStatusBarText(pbar, DHUD4:GetPosition(pbar))
-        end
-        powerBar:SetDisplayOptions(DHUD4:GetDisplayOptions())
-        --]]
-        --Eclipse Icon
-        --[[if ( db.icon and not happIcon) then
-            local parent, x = DHUD4_LeftFrame, 40
-            if iconSide == "r" then
-                x = -x
-                parent = DHUD4_RightFrame
+        local eclipseParent
+        if (db.eclipse) then
+            if (string_find(db.eclipseBar, "r")) then
+                eclipseParent = DHUD4_RightFrame
+            else
+                eclipseParent = DHUD4_LeftFrame
             end
-            happIcon = CreateFrame("Button", "DHUD4_happ", parent)
-            happIcon:ClearAllPoints()
-            happIcon:SetPoint("CENTER", parent, "CENTER", x, 12)
-            happIcon:SetHeight(20)
-            happIcon:SetWidth(20)
-            local texture = happIcon:CreateTexture("DHUD4_happ_Texture", "BACKGROUND")
+            eclipseBar:SetDisplayOptions(DHUD4:GetDisplayOptions())
+            eclipseBar:InitStatusBar(db.eclipseBar, eclipseParent, 0.5)
+            eclipseBar:PlaceTextures(DHUD4:GetCurrentTexture())
+            eclipseBar.unit = "player"
+            if db.eclipseBarText then
+                eclipseBar:InitStatusBarText(db.eclipseBar, DHUD4:GetPosition(db.eclipseBar))
+                eclipseBar:ConfigText(DHUD4:GetFont(), db.eclipseTextSize * DHUD4.GetScale(), 200)
+                eclipseBar.showPercent = db.eclipseShowPercent
+            end
+            -- Bar Flash texture
+            local flash  = eclipseBar.frame:CreateTexture("DHUD4_"..eclipseBar.frame.bar.."Flash", "BORDER")
+            flash:SetAllPoints()
+            flash:SetBlendMode("BLEND")
+            eclipseBar.frame.flash = flash
+            --Eclipse Icon
+            local parent, x = eclipseBar, 40
+            if (string_find(db.eclipseBar, "r")) then
+                x = -x
+            end
+            eclipseIcon = _G["DHUD4_EclipseIcon"]
+            if(not eclipseIcon) then
+                eclipseIcon = CreateFrame("Button", "DHUD4_EclipseIcon", eclipseParent)
+                eclipseIcon:SetHeight(20)
+                eclipseIcon:SetWidth(20)
+            end
+            eclipseIcon:ClearAllPoints()
+            eclipseIcon:SetPoint("CENTER", eclipseParent, "CENTER", x, 12)
+            local texture = eclipseIcon:CreateTexture("DHUD4_EclipseIcon_Texture", "BACKGROUND")
             texture:ClearAllPoints()
-			texture:SetAllPoints()
-            --texture:SetPoint("TOPLEFT", happIcon, "TOPLEFT", 0, 0)
-            --texture:SetPoint("BOTTOMRIGHT", happIcon , "BOTTOMRIGHT", 0, 0)
+            texture:SetAllPoints()
             texture:SetHeight(20)
             texture:SetWidth(20)
-			texture:Show()
-            happIcon.texture = texture
+            eclipseIcon.texture = texture
+            -- Icon flash
+            local iconFlash = eclipseIcon:CreateTexture("DHUD4_EclipseIcon_FlashTexture", "BORDER")
+            iconFlash:ClearAllPoints()
+            iconFlash:SetAllPoints()
+            iconFlash:SetHeight(20)
+            iconFlash:SetWidth(20)
+            eclipseIcon.flash = iconFlash
+            -- Animations
+            local iconPulse = iconFlash:CreateAnimationGroup("DHUD4_EclipseIconGlow")
+            local eclipseIconActivate =  iconPulse:CreateAnimation("Alpha", "DHUD4_eclipseIconActivate")
+            eclipseIconActivate:SetChange(1)
+            eclipseIconActivate:SetDuration(0.6)
+            eclipseIconActivate:SetOrder(1)
+            eclipseIconActivate:SetScript("OnPlay", function(self)
+                self:GetParent():GetParent():SetAlpha(1)
+            end)
+            eclipseIconActivate:SetScript("OnStop", function(self)
+                self:GetParent():GetParent():SetAlpha(0)
+            end)
+            local eclipseIconDeactivate =  iconPulse:CreateAnimation("Alpha", "DHUD4_eclipseIconDeactivate")
+            eclipseIconDeactivate:SetChange(-1)
+            eclipseIconDeactivate:SetDuration(0.6)
+            eclipseIconDeactivate:SetOrder(1)
+            eclipseIconDeactivate:SetScript("OnPlay", function(self)
+                self:GetParent():GetParent():SetAlpha(1)
+            end)
+            eclipseIconDeactivate:SetScript("OnStop", function(self)
+                self:GetParent():GetParent():SetAlpha(0)
+            end)
+            eclipseIcon.activate = eclipseIconActivate
+            eclipseIcon.deactivate = eclipseIconDeactivate
+            local barPulse = eclipseBar.frame:CreateAnimationGroup("DHUD4_EclipseBarGlow")
+            local eclipseBarActivate =  barPulse:CreateAnimation("Alpha", "DHUD4_eclipseBarActivate")
+            eclipseBarActivate:SetChange(1)
+            eclipseBarActivate:SetDuration(0.6)
+            eclipseBarActivate:SetOrder(1)
+            eclipseBarActivate:SetScript("OnPlay", function(self)
+                self:GetParent():GetParent().flash:SetAlpha(1)
+            end)
+            eclipseBarActivate:SetScript("OnStop", function(self)
+                self:GetParent():GetParent().flash:SetAlpha(0)
+            end)
+            local eclipseBarDeactivate =  barPulse:CreateAnimation("Alpha", "DHUD4_eclipseBarDeactivate")
+            eclipseBarDeactivate:SetChange(-1)
+            eclipseBarDeactivate:SetDuration(0.6)
+            eclipseBarDeactivate:SetOrder(1)
+            eclipseBarDeactivate:SetScript("OnPlay", function(self)
+                self:GetParent():GetParent().flash:SetAlpha(1)
+            end)
+            eclipseBarDeactivate:SetScript("OnStop", function(self)
+                self:GetParent():GetParent().flash:SetAlpha(0)
+            end)
+            eclipseBar.activate = eclipseBarActivate
+            eclipseBar.deactivate = eclipseBarDeactivate
         end
-        --]]
-
     end
 
 end
@@ -336,10 +455,9 @@ function DHUD4_Druid:OnInitialize()
         DHUD4:RegisterModuleOptions(MODNAME, getOptions, L["Druid Abilities"])
         -- Bars
         manaBar = DHUD4:CreateStatusBar()
-        --eclipseBar = DHUD4:CreateStatusBar()
+        eclipseBar = DHUD4:CreateStatusBar()
     else
         self:SetEnabledState(false)
-        --DHUD4:SetModuleEnabled(MODNAME, false)
     end
 end
 
@@ -360,8 +478,7 @@ function DHUD4_Druid:OnDisable()
 
 	self:UnregisterAllEvents()
     manaBar:Disable()
-    --eclipseBar:Disable()
-    --self:DisableIcon(eclipseIcon)
+    self:UntrackDruidEclipse()
     self:HideAll()
 end
 
@@ -370,7 +487,6 @@ function DHUD4_Druid:Refresh()
 
     --DHUD4:Debug(MODNAME, "Refresh")
     if not self:IsEnabled() then return end
-    db = self.db.profile
     self.side = db.side
     self.scale = db.scale
     self.fontSize = db.fontSize
@@ -429,7 +545,8 @@ end
 
 function DHUD4_Druid:UPDATE_SHAPESHIFT_FORM(event)
 	
-    local form  = GetShapeshiftFormID();
+    local form  = GetShapeshiftFormID()
+    if(db.eclipse) then  self:UntrackDruidEclipse() end
     if ( form == 0 ) then
         -- Is Druid
         if (db.lifeblooms) then
@@ -445,7 +562,7 @@ function DHUD4_Druid:UPDATE_SHAPESHIFT_FORM(event)
         self:UpdateCombos("player")
         if (db.mana) then self:TrackDruidMana() end
     elseif ( db.eclipse and (form == MOONKIN_FORM) ) then
-        --self:UpdateEclipse()
+        if(db.eclipse) then self:TrackDruidEclipse() end
         if (db.mana) then self:UntrackDruidMana() end
     else
         if (db.mana) then self:UntrackDruidMana() end
@@ -464,14 +581,20 @@ function DHUD4_Druid:UNIT_AURA(event, who)
             self:UpdateDebuff("Lacerate", db.laceratesTimer, db.tips)
         end
     elseif (who == "player") then
-        --DHUD4_Druid:CheckEclipse()
+        DHUD4_Druid:CheckEclipse()
     end
 end
 
 function DHUD4_Druid:PLAYER_TALENT_UPDATE(event)
 end
 
-function DHUD4_Druid:ECLIPSE_DIRECTION_CHANGE(event)
+function DHUD4_Druid:ECLIPSE_DIRECTION_CHANGE(event, ...)
+    local isLunar = ...;
+    if isLunar then
+        eclipseBar.baseColors = moonColors
+    else
+        eclipseBar.baseColors = sunColors
+    end
 end
 
 function DHUD4_Druid:TrackDruidMana()
@@ -501,64 +624,73 @@ function DHUD4_Druid:CheckEclipse()
 		j=j+1;
 		name, _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, j);
 	end
-
+    DHUD4:Debug("CheckEclipse", hasLunarEclipse, hasSolarEclipse)
 	if hasLunarEclipse then
-        if (DHUD4:GetModuleEnabled("DHUD4_Pet")) then
-            DHUD4_Pet:TrackDruidEclipse(db.lunarColors, db.eclipseText, db.eclipseTextStyle)
+        eclipseBar.baseColors = moonColors
+        eclipseBar.frame.flash:SetTexture(DHUD4:GetCurrentTexture().."Eclipse\\BarMoonGlow")
+        if ( not eclipseBar.frame.flash:GetTexture() ) then
+            eclipseBar.frame.flash.texture:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Eclipse\\BarMoonGlow")
         end
-		self.glow:ClearAllPoints();
-		local glowInfo = ECLIPSE_ICONS["moon"].big;
-		self.glow:SetPoint("CENTER", self.moon, "CENTER", 0, 0);
-		self.glow:SetWidth(glowInfo.x);
-		self.glow:SetHeight(glowInfo.y);
-		self.glow:SetTexCoord(glowInfo.left, glowInfo.right, glowInfo.top, glowInfo.bottom);
-
-		if self.moonDeactivate:IsPlaying() then
-			self.moonDeactivate:Stop();
+        if eclipseBar.deactivate:IsPlaying() then
+			eclipseBar.deactivate:Stop()
 		end
-
-		if not self.moonActivate:IsPlaying() and hasLunarEclipse ~= self.hasLunarEclipse then
-			self.moonActivate:Play();
+		if not eclipseBar.activate:IsPlaying() and hasLunarEclipse ~= self.hasLunarEclipse then
+			eclipseBar.activate:Play()
+		end
+        eclipseIcon.texture:SetTexture(DHUD4:GetCurrentTexture().."Eclipse\\Moon")
+        if ( not eclipseIcon.texture:GetTexture() ) then
+            eclipseIcon.texture:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Eclipse\\Moon")
+        end
+        eclipseIcon.flash:SetTexture(DHUD4:GetCurrentTexture().."Eclipse\\MoonGlow")
+        if ( not eclipseIcon.flash:GetTexture() ) then
+            eclipseIcon.flash:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Eclipse\\MoonGlow")
+        end
+        if eclipseIcon.deactivate:IsPlaying() then
+			eclipseIcon.deactivate:Stop()
+		end
+		if not eclipseIcon.activate:IsPlaying() and hasLunarEclipse ~= self.hasLunarEclipse then
+			eclipseIcon.activate:Play()
+		end
+	elseif hasSolarEclipse then
+        eclipseBar.baseColors = sunColors
+        eclipseBar.frame.flash:SetTexture(DHUD4:GetCurrentTexture().."Eclipse\\BarSunGlow")
+        if ( not eclipseBar.frame.flash:GetTexture() ) then
+            eclipseBar.frame.flash.texture:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Eclipse\\BarMoonGlow")
+        end
+        if eclipseBar.deactivate:IsPlaying() then
+			eclipseBar.deactivate:Stop()
+		end
+		if not eclipseBar.activate:IsPlaying() and hasSolarEclipse ~= self.hasSolarEclipse then
+			eclipseBar.activate:Play()
+		end
+        eclipseIcon.texture:SetTexture(DHUD4:GetCurrentTexture().."Eclipse\\Sun")
+        if ( not eclipseIcon:GetTexture() ) then
+            eclipseIcon.texture:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Eclipse\\Sun")
+        end
+        eclipseIcon.flash:SetTexture(DHUD4:GetCurrentTexture().."Eclipse\\SunGlow")
+        if ( not eclipseIcon.flash:GetTexture() ) then
+            eclipseIcon.flash:SetTexture("Interface\\AddOns\\DHUD4\\textures\\DHUD\\Eclipse\\SunGlow")
+        end
+        if eclipseIcon.deactivate:IsPlaying() then
+			eclipseIcon.deactivate:Stop()
+		end
+		if not eclipseIcon.activate:IsPlaying() and hasSolarEclipse ~= self.hasSolarEclipse then
+			eclipseIcon.activate:Play()
 		end
 	else
-		if self.moonActivate:IsPlaying() then
-			self.moonActivate:Stop();
+		if eclipseBar.activate:IsPlaying() then
+			eclipseBar.activate:Stop();
 		end
-
-		if not self.moonDeactivate:IsPlaying() and hasLunarEclipse ~= self.hasLunarEclipse then
-			self.moonDeactivate:Play();
+		if not eclipseBar.deactivate:IsPlaying() and ((hasLunarEclipse ~= self.hasLunarEclipse) or (hasSolarEclipse ~= self.hasSolarEclipse)) then
+			eclipseBar.deactivate:Play();
 		end
-	end
-
-	if hasSolarEclipse then
-        if (DHUD4:GetModuleEnabled("DHUD4_Pet")) then
-            DHUD4_Pet:TrackDruidEclipse(db.solarColors, db.eclipseText, db.eclipseTextStyle)
-        end
-
-		self.glow:ClearAllPoints();
-		local glowInfo = ECLIPSE_ICONS["sun"].big;
-		self.glow:SetPoint("CENTER", self.sun, "CENTER", 0, 0);
-		self.glow:SetWidth(glowInfo.x);
-		self.glow:SetHeight(glowInfo.y);
-		self.glow:SetTexCoord(glowInfo.left, glowInfo.right, glowInfo.top, glowInfo.bottom);
-
-		if self.sunDeactivate:IsPlaying() then
-			self.sunDeactivate:Stop();
+        if eclipseIcon.activate:IsPlaying() then
+			eclipseIcon.activate:Stop();
 		end
-
-		if not self.sunActivate:IsPlaying() and hasSolarEclipse ~= self.hasSolarEclipse then
-			self.sunActivate:Play();
-		end
-	else
-		if self.sunActivate:IsPlaying() then
-			self.sunActivate:Stop();
-		end
-
-		if not self.sunDeactivate:IsPlaying() and hasSolarEclipse ~= self.hasSolarEclipse then
-			self.sunDeactivate:Play();
+		if not eclipseIcon.deactivate:IsPlaying() and ((hasLunarEclipse ~= self.hasLunarEclipse) or (hasSolarEclipse ~= self.hasSolarEclipse)) then
+			eclipseIcon.deactivate:Play();
 		end
 	end
-
 	self.hasLunarEclipse = hasLunarEclipse;
 	self.hasSolarEclipse = hasSolarEclipse;
 
@@ -578,6 +710,68 @@ function DHUD4_Druid:EndLayout()
 
     self.layout = false
     self:Refresh()
+end
+
+
+function DHUD4_Druid:TrackDruidEclipse()
+    -- Based on the code from EclipseBarFrame.lua
+    local unit = eclipseBar.unit
+    eclipseBar.maxVal = UnitPowerMax( unit, SPELL_POWER_ECLIPSE )
+    local direction = GetEclipseDirection()
+    if ( direction == "moon") then
+        eclipseBar.baseColors = moonColors
+    else
+        eclipseBar.baseColors = sunColors
+    end
+    local hasLunarEclipse = false
+	local hasSolarEclipse = false
+	local j = 1;
+	local name, _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, j);
+	while name do
+		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
+			hasSolarEclipse = true;
+		elseif spellID == ECLIPSE_BAR_LUNAR_BUFF_ID then
+			hasLunarEclipse = true;
+		end
+		j=j+1;
+		name, _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, j);
+	end
+    --[[if hasLunarEclipse or hasSolarEclipse then
+        eclipseBar.frame:SetAlpha(1)
+		eclipseIcon:SetAlpha(1)
+	else
+		eclipseBar.frame:SetAlpha(0)
+        eclipseIcon:SetAlpha(0)
+	end--]]
+    self.hasLunarEclipse = hasLunarEclipse;
+	self.hasSolarEclipse = hasSolarEclipse;
+    eclipseBar.frame:SetScript("OnUpdate", DHUD4_Druid.EclipseUpdate)
+    eclipseBar.frame:Show()
+    eclipseBar.text:Show()
+    DHUD4_Druid:EclipseUpdate(self)
+end
+
+function DHUD4_Druid:EclipseUpdate(self)
+    -- Taken from EclipseBarFrame.lua
+    local power = UnitPower( eclipseBar.unit, SPELL_POWER_ECLIPSE )
+    if eclipseBar.showPercent then
+        eclipseBar.text.text:SetText(abs(power/eclipseBar.maxVal*100).."%");
+    else
+        eclipseBar.text.text:SetText(abs(power));
+    end
+    eclipseBar.val = power
+    eclipseBar:Colorize()
+    eclipseBar:Fill()
+end
+
+function DHUD4_Druid:UntrackDruidEclipse()
+
+    if (eclipseBar) then
+        eclipseBar:Disable()
+    end
+    if (eclipseIcon) then
+        eclipseIcon:Hide()
+    end
 end
 --[[
 function DHUD4_Druid:SetLayout()
@@ -599,101 +793,5 @@ end
 ]]
 
 --[[
-function DHUD4_Pet:SetupDruidEclipse(eclipseBar, eclipseBarText)
 
-    if (not druidEclipseBar or (druidEclipseBar.frame.bar ~= eclipseBar)) then
-        if (druidEclipseBar) then
-            druidEclipseBar:Disable()
-        end
-        if ( healthBar.frame.bar == eclipseBar) then
-            druidEclipseBar = healthBar
-        elseif ( powerBar.frame.bar == eclipseBar) then
-            druidEclipseBar = powerBar
-        elseif (druidManaBar.frame.bar == eclipseBar) then
-            druidEclipseBar =  druidManaBar
-        else
-            druidEclipseBar = DHUD4:CreateStatusBar()
-            if string_match(eclipseBar, "r") then
-                druidEclipseBar:InitStatusBar(eclipseBar, _G["DHUD4_RightFrame"], 0.5)
-            else
-                druidEclipseBar:InitStatusBar(eclipseBar, _G["DHUD4_LeftFrame"], 0.5)
-            end
-            druidEclipseBar:PlaceTextures(DHUD4:GetCurrentTexture())
-            druidEclipseBar:SetDisplayOptions(DHUD4:GetDisplayOptions())
-        end
-        -- Create Eclipse Icon and Glow animation
-        eclipseIcon = CreateFrame("Button", "DHUD4_Eclipse", druidEclipseBar)
-        eclipseIcon:SetHeight(23)
-        eclipseIcon:SetWidth(23)
-        eclipseIcon:ClearAllPoints()
-        if string_match(eclipseBar, "r") then
-            eclipseIcon:SetPoint("CENTER", druidEclipseBar.frame, "TOP", -5, 12)
-        else
-            eclipseIcon:SetPoint("CENTER", druidEclipseBar.frame, "TOP", 5, 12)
-        end
-        local texture = eclipseIcon:CreateTexture("DHUD4_Eclipse_Texture", "BACKGROUND")
-        texture:ClearAllPoints()
-        texture:SetAllPoints()
-        texture:SetHeight(23)
-        texture:SetWidth(23)
-        texture:Show()
-        eclipseIcon.texture = texture
-        druidEclipseBar.frame.glow = texture
-        local glow = texture:CreateAnimationGroup("pulse")
-        glow:SetLooping("repeat")
-        local grow = glow:CreateAnimation("Scale", "grow")
-        glow:SetOrder(1)
-        glow:SetScale(1.08, 1.08)
-        glow:SetDuration(0.5)
-        glow:SetSmoothing("IN_OUT")
-        local shrink =glow: CreateAnimation("Scale", "shrink")
-        shrink:SetOrder(2)
-        shrink:SetScale(1.08, 1.08)
-        shrink:SetDuration(0.5)
-        shrink:SetSmoothing("IN_OUT")
-        local eclipseAG = druidEclipseBar.frame:CreateAnimationGroup("eclipseActivate")
-        local barAlpha =  alphaAG:CreateAnimation("Alpha", "barAlpha")
-        barAlpha:SetOrder(1)
-        barAlpha:SetDuration(0.6)
-        barAlpha:SetChange(1)
-        local glowAlpha =  alphaAG:CreateAnimation("Alpha", "glowAlpha")
-        glowAlpha:SetOrder(1)
-        glowAlpha:SetDuration(0.6)
-        glowAlpha:SetChange(1)
-        glowAlpha:SetTarget(texture)
-        eclipseAG:SetScript("OnFinished", function (self, event)
-                self:GetParent():SetAlpha(1)
-                self:GetParent().glow:SetAlpha(1)
-                self:GetParent().glow.pulse:Play()
-            end)
-        --druidEclipseBar:CreateAnimationGroup("sunDeactivate")
-        --local moonActivateAG = druidEclipseBar.frame:CreateAnimationGroup("moonActivate")
-        --druidEclipseBar:CreateAnimationGroup("moonDeactivate")
-    end
-    if eclipseBarText then
-        druidEclipseBar:InitStatusBarText(eclipseBar, DHUD4:GetPosition(eclipseBar))
-    end
-end
-
-function DHUD4_Pet:TrackDruidEclipse(colors, useText, textTag)
-
-    druidTrackEclipse = true
-    --DHUD4:Debug("TrackDruidEclipse")
-    druidEclipseBar:TrackUnitPower("player", colors, 8)
-    if (useText and textTag) then
-        druidEclipseBar:ConfigBarText(DHUD4:GetFont(), db.barTextSize * DHUD4.GetScale(), textTag, "player")
-    end
-    --
-    --eclipseIcon.texture
-end
-
-
-function DHUD4_Pet:UntrackDruidEclipse()
-
-    if (falsedruidEclipseBar) then
-        falsedruidEclipseBar:Disable()
-    end
-    druidTrackEclipse = false
-
-end
 --]]

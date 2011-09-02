@@ -23,7 +23,7 @@ local DogTag = LibStub("LibDogTag-3.0");
 
 local MODNAME = "DHUD4_Pet";
 local DHUD4_Pet = DHUD4:NewModule(MODNAME, "AceEvent-3.0");
-local VERSION = tonumber(("$Rev: 102 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"));
 
 local unpack = unpack
 local _G = _G
@@ -145,116 +145,118 @@ local function GetOptions()
         --Options table
     	options = {
     		type = "group",
-			name = L["Pet Module"],
-			arg = MODNAME,
-            order = 3,
-			get = OptGetter,
-			set = OptSetter,
-            --childGroups = "tab",
+        name = L["Pet Module"],
+        arg = MODNAME,
+              order = 3,
+        get = OptGetter,
+        set = OptSetter,
+        --childGroups = "tab",
     		args = {
-                header = {
-                    type = 'description',
-                    name = L["The pet module manages pet bars and text and happiness icon. The pet bars can track druid mana and vehicle status"],
-                    order = 1,
-                },
-                enabled = {
-                    order = 2,
-                    type = "toggle",
-                    name = L["Enable Pet Module"],
-                    get = function() return DHUD4:GetModuleEnabled(MODNAME) end,
-                    set = function(info, value) DHUD4:SetModuleEnabled(MODNAME, value) end,
-                },
-				layout = {
-					type = 'group',
-					order = 3,
-					name = L["Layout"],
-					disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
-					args = {
-                        blizPet = {
-                            type ='toggle',
-                            order = 1,
-                            name = L["Pet Frame"],
-                            desc = L["Show Blizzard's pet frame. If you hide the Player's frame no matter your choice here the Pet Frame will be hidden"],
-                        },
-						pet = {
-							type = 'select',
-							order = 2,
-							name = L["PetBars"],
-							desc = L["Place the Pet's bars"],
-							set = function (info, value)
-									db[info[#info]] = value
-									if string_match(value, "c") then
-										db.layout = "HLPR";
-									else
-										db.layout = "HIPO";
-									end
-									DHUD4_Pet:Refresh();
-								end,
-							values = DHUD4.layoutType,
-						},
-						layout = {
-							type = 'select',
-							order = 3,
-							name = L["Bar Layout"],
-							values = function ()
-									if string_match(db.pet, "c") then
-										return { ["HLPR"] = L["Health Left/Power Right"], ["HRPL"] = L["Health Right/Power Left"] }
-									else
-										return { ["HIPO"] = L["Health Inner/Power Outer"], ["HOPI"] = L["Health Outer/Power Inner"] }
-									end
-								end,
-						},
-                        vehicle = {
-                            type = 'toggle',
-                            order = 5,
-                            name = L["In Vehicle"],
-                            desc = L["Use pet bars to track vehicle/player stats"],
-                        },
-					},
-				},
-				barText = DHUD4:StatusBarMenuOptions(4, not DHUD4:GetModuleEnabled(MODNAME), db),
-				colors = {
-					type = 'group',
-					order = 5,
-					name = L["Colors"],
-                    disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
-					get = ColorGetter,
-					set = ColorSetter,
-					args = {
-						["0"] = {
-                            type = 'group',
-                            name = L["Mana"],
-                            args = DHUD4.colorOptions,
-                        },
-                        ["1"] = {
-                            type = 'group',
-                            name = L["Rage"],
-                            args = DHUD4.colorOptions,
-                        },
-                        ["2"] = {
-                            type = 'group',
-                            name = L["Focus"],
-                            args = DHUD4.colorOptions,
-                        },
-                        ["3"] = {
-                            type = 'group',
-                            name = L["Energy"],
-                            args = DHUD4.colorOptions,
-                        },
-                        ["6"] = {
-                            type = 'group',
-                            name = L["Runic Power"],
-                            args = DHUD4.colorOptions,
-                        },
-                        ["7"] = {
-                            type = 'group',
-                            name = L["Health"],
-                            args = DHUD4.colorOptions,
-                        },
-					},
-				},
-			},
-		}
+          header = {
+              type = 'description',
+              name = L["The pet module manages pet bars and text and happiness icon. The pet bars can track druid mana and vehicle status"],
+              order = 1,
+          },
+          enabled = {
+              order = 2,
+              type = "toggle",
+              name = L["Enable Pet Module"],
+              get = function() return DHUD4:GetModuleEnabled(MODNAME) end,
+              set = function(info, value) DHUD4:SetModuleEnabled(MODNAME, value) end,
+          },
+          layout = {
+            type = 'group',
+            order = 3,
+            name = L["Layout"],
+            disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
+            args = {
+              blizPet = {
+                  type ='toggle',
+                  order = 1,
+                  name = L["Pet Frame"],
+                  desc = L["Show Blizzard's pet frame. If you hide the Player's frame no matter your choice here the Pet Frame will be hidden"],
+              },
+              pet = {
+                type = 'select',
+                order = 2,
+                name = L["PetBars"],
+                desc = L["Place the Pet's bars"],
+                set = function (info, value)
+                    db[info[#info]] = value
+                    if string_match(value, "c") then
+                      db.layout = "HLPR";
+                    else
+                      db.layout = "HIPO";
+                    end
+                    DHUD4_Pet:Refresh();
+                  end,
+                values = DHUD4.layoutType,
+              },
+              layout = {
+                type = 'select',
+                order = 3,
+                name = L["Bar Layout"],
+                values = function ()
+                    if string_match(db.pet, "c") then
+                      return { ["HLPR"] = L["Health Left/Power Right"], ["HRPL"] = L["Health Right/Power Left"] }
+                    else
+                      return { ["HIPO"] = L["Health Inner/Power Outer"], ["HOPI"] = L["Health Outer/Power Inner"] }
+                    end
+                  end,
+              },
+              vehicle = {
+                  type = 'toggle',
+                  order = 5,
+                  name = L["In Vehicle"],
+                  desc = L["Use pet bars to track vehicle/player stats"],
+              },
+            },
+          },
+          barText = DHUD4:StatusBarMenuOptions(4, not DHUD4:GetModuleEnabled(MODNAME), db),
+          colors = {
+            type = 'group',
+            order = 5,
+            name = L["Colors"],
+            disabled = function() return not DHUD4:GetModuleEnabled(MODNAME); end,
+            get = ColorGetter,
+            set = ColorSetter,
+            args = {
+              ["0"] = {
+                  type = 'group',
+                  name = L["Mana"],
+                  args = DHUD4.colorOptions,
+              },
+              ["1"] = {
+                  type = 'group',
+                  name = L["Rage"],
+                  args = DHUD4.colorOptions,
+              },
+              ["2"] = {
+                  type = 'group',
+                  name = L["Focus"],
+                  args = DHUD4.colorOptions,
+              },
+              ["3"] = {
+                  type = 'group',
+                  name = L["Energy"],
+                  args = DHUD4.colorOptions,
+              },
+              ["6"] = {
+                  type = 'group',
+                  name = L["Runic Power"],
+                  args = DHUD4.colorOptions,
+              },
+              ["7"] = {
+                  type = 'group',
+                  name = L["Health"],
+                  args = DHUD4.colorOptions,
+              },
+            },
+          },
+        },
+      }
+      options.args.barText.args.barText.get = SelectGetter
+      options.args.barText.args.barText.set = SelectSetter
 	end
 	return options;
 end
@@ -316,7 +318,7 @@ end
 function DHUD4_Pet:OnInitialize()
 
 	self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults)
-	db = self.db.profile
+    db = self.db.profile
 	self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME))
 	DHUD4:RegisterModuleOptions(MODNAME, GetOptions, L["Pet"])
     self.layout = false
@@ -347,7 +349,6 @@ end
 function DHUD4_Pet:Refresh()
 
 	--DHUD4:Debug(MODNAME, "Refresh");
-	db = self.db.profile
 	if not self:IsEnabled() then return end
 
     --BlizzFrames
@@ -456,4 +457,11 @@ function DHUD4_Pet:EndLayout()
 
     self.layout = false
     self:Refresh()
+end
+
+function DHUD4_Pet:LoadRenaitreProfile()
+    self.db.profile.powerTextStyle = "[MP]"
+    self.db.profile.healthCustomTextStyle = "[HP:Short:Green] [PercentHP:Percent:Paren:HPColor]"
+    self.db.profile.barTextSize = 12
+    db = self.db.profile
 end

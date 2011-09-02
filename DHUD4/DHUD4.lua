@@ -27,11 +27,11 @@ DHUD4 = LibStub("AceAddon-3.0"):NewAddon("DHUD4", "AceEvent-3.0", "AceConsole-3.
 
 
 --ACE Version
-local VERSION = tonumber(("$Rev: 103 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 105 $"):match("%d+"));
 DHUD4.revision = "r" .. VERSION;
 DHUD4.versionstring = "1.6.3-%s";
 DHUD4.version = DHUD4.versionstring:format(VERSION);
-DHUD4.date = ("$Date: 2011-07-30 17:14:22 +0000 (Sat, 30 Jul 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
+DHUD4.date = ("$Date: 2011-08-19 01:08:20 +0000 (Fri, 19 Aug 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
 local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 local LSM3 = LibStub("LibSharedMedia-3.0");
 
@@ -49,35 +49,9 @@ local settingLayout = false
 local currentAlphaValue = { false, false, false, false, false }
 local regenAlphaVotes = {false, false}
 
-local OptGetter, OptSetter;
-do
-    --[[
-        OptGetter: Get the current option setting in the DB
-        arguments:
-            info: option to query
-        returns:
-            option setting in DB
-    ]]
-    function OptGetter(info)
-        local key = info[#info]
-        return DHUD4.db.profile[key]
-    end
-
-    --[[
-        OptSetter: Set the option new value in the DB. The HUD is refreshed after the setting is done
-        arguments:
-            info: option to chagne value
-            value: new value
-    ]]
-    function OptSetter(info, value)
-        local key = info[#info]
-        DHUD4.db.profile[key] = value
-        DHUD4:Refresh()
-    end
-end
 
 --Local Defaults
-local db;
+local db
 local defaults = {
     profile = {
         blizPet = false,
@@ -96,6 +70,7 @@ local defaults = {
         frameVertical = 0,
         font = "Arial Narrow",
         scale = 1,
+        customTexture = "",
         positions = {},
         modules = {
             DHUD4_Target = true,
@@ -105,7 +80,34 @@ local defaults = {
             DHUD4_Auras = true,
         },
     }
-};
+}
+
+local OptGetter, OptSetter;
+do
+    --[[
+        OptGetter: Get the current option setting in the DB
+        arguments:
+            info: option to query
+        returns:
+            option setting in DB
+    ]]
+    function OptGetter(info)
+        local key = info[#info]
+        return db[key]
+    end
+
+    --[[
+        OptSetter: Set the option new value in the DB. The HUD is refreshed after the setting is done
+        arguments:
+            info: option to chagne value
+            value: new value
+    ]]
+    function OptSetter(info, value)
+        local key = info[#info]
+        db[key] = value
+        DHUD4:Refresh()
+    end
+end
 
 --Local Options
 local options, moduleOptions = nil, {}
@@ -137,6 +139,22 @@ local function GetOptions()
                                         DHUD4:SetLayout()
                                     end
                                 end
+                        },
+                        renaitre = {
+                            order = 0,
+                            type = "execute",
+                            name = L["Load Renaitre profile"],
+                            func = function()
+                                    DHUD4:LoadRenaitreProfile()
+                                   end,
+                            --[[disabled = function()
+                                        local profiles = DHUD4.db:GetProfiles()
+                                        for _, value in pairs(profiles) do
+                                            if value == "Renaitre" then
+                                                return true
+                                            end
+                                        end
+                                       end]]
                         },
                         miniMap = {
                             order = 1,
@@ -532,8 +550,8 @@ function DHUD4:OnInitialize()
     ref:Show()
 
     --Manage the Database
-    self.db = LibStub("AceDB-3.0"):New("DHUD4DB", defaults, "Default");
-    self.db.RegisterCallback( DHUD4, "OnProfileChanged", "Refresh" );
+    self.db = LibStub("AceDB-3.0"):New("DHUD4DB", defaults, "DHUD");
+    --self.db.RegisterCallback( DHUD4, "OnProfileChanged", "Refresh" );
     self.db.RegisterCallback( DHUD4, "OnProfileCopied", "Refresh" );
     self.db.RegisterCallback( DHUD4, "OnProfileReset", "Refresh" );
     db = self.db.profile;
@@ -613,15 +631,6 @@ function DHUD4:OnDisable()
     DHUD4:UnregisterAllEvents()
     DHUD4_MainFrame:Hide()
 
-end
-
---[[
-    OnProfileChanged: Called when the user changes the profile
-]]
-function DHUD4:OnProfileChanged()
-
-    --self:Debug("OnProfileChanged");
-    self:Refresh()
 end
 
 --[[
@@ -706,14 +715,13 @@ end
 ]]
 function DHUD4:Refresh()
 
-    db = self.db.profile;
-    if (not settingLayout) then
-        DHUD4_MainFrame:SetAlpha(db["oocAlpha"]);
-    end
     DHUD4_MainFrame:ClearAllPoints()
     DHUD4_MainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, db.frameVertical)
-    DHUD4_MainFrame:SetScale(db.scale);
-    DHUD4_MainFrame:Show();
+    DHUD4_MainFrame:Show()
+    if (not settingLayout) then
+        DHUD4_MainFrame:SetAlpha(db["oocAlpha"])
+    end
+    DHUD4_MainFrame:SetScale(db.scale)
     -- Center Spacing
     DHUD4_LeftFrame:ClearAllPoints()
 	DHUD4_LeftFrame:SetPoint("CENTER", DHUD4_MainFrame, "CENTER", -db.frameSpacing - 162, 0)
@@ -767,7 +775,9 @@ end
 
 function DHUD4:GetCurrentTexture()
 
-    if (db.texture) then
+    if(string_len(db.customTexture)> 0)then
+        return "Interface\\AddOns\\DHUD4\\textures\\".. db.customTexture.."\\"
+    else
         return "Interface\\AddOns\\DHUD4\\textures\\".. db.texture.."\\"
     end
 end
@@ -859,7 +869,7 @@ function DHUD4:GetMinimapButtonPosition()
 end
 
 --[[
-    SaveTextPosition: Saved the position of a bar's text moved by the user
+    SavePosition: Saved the position of a bar's text moved by the user
         Arguments:
             name = identifier of the text to save the position
             position = the new position
@@ -870,7 +880,7 @@ function DHUD4:SavePosition(name, position)
 end
 
 --[[
-    SaveTextPosition: Saved the position of a bar's text moved by the user
+    GetPosition: Saved the position of a bar's text moved by the user
         Arguments:
             name = identifier of the text to save the position
             position = the new position
@@ -910,4 +920,25 @@ function DHUD4:TableMerge(t1, t2)
         end
     end
     return t1
+end
+
+function DHUD4:LoadRenaitreProfile()
+
+    self.db:SetProfile("Renaitre")
+    self.db:ResetProfile(false, true)
+    self.db.profile.showEmpty = false
+    self.db.profile.texture = "Renaitre"
+    self.db.profile.font = "Black Chancery"
+    self.db.profile.miniMap = false
+    self.db.profile.modules.DHUD4_Auras = false
+    -- Circle all the modules and set the profile??
+    for k,v in self:IterateModules() do
+        if v:IsEnabled() then
+            if type(v.LoadRenaitreProfile) == "function" then
+                v:LoadRenaitreProfile()
+            end
+        end
+    end
+    db = self.db.profile
+    self:Refresh()
 end

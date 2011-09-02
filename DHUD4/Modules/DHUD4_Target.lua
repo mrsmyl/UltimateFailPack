@@ -24,7 +24,7 @@ local DogTag = LibStub("LibDogTag-3.0")
 
 local MODNAME = "DHUD4_Target"
 local DHUD4_Target = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 102 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 106 $"):match("%d+"))
 
 local unpack = unpack
 local _G = _G
@@ -1484,11 +1484,10 @@ function DHUD4_Target:OnInitialize()
 
     --DHUD4:Debug("DHUD4_Target:OnInitialize")
 	self.db = DHUD4.db:RegisterNamespace(MODNAME, defaults)
-	db = self.db.profile
 	self:SetEnabledState(DHUD4:GetModuleEnabled(MODNAME))
 	DHUD4:RegisterModuleOptions(MODNAME, GetOptions, L["Target"])
     self.layout = false
-
+    db = self.db.profile
     -- Bars
     healthBar = DHUD4:CreateStatusBar()
     powerBar = DHUD4:CreateStatusBar()
@@ -1524,9 +1523,6 @@ function DHUD4_Target:OnDisable()
 end
 
 function DHUD4_Target:Refresh()
-
-    --DHUD4:Debug(MODNAME, "Refresh");
-    db = self.db.profile
 
     --BlizzFrames
     if ( not db.blizTarget ) then
@@ -1784,4 +1780,39 @@ end
 function DHUD4_Target:GetBars()
     --DHUD4:Debug("DHUD4_Player:GetBars()", healthBar.bar, powerBar.bar)
     return healthBar.frame:IsVisible(),healthBar.frame.bar, powerBar.frame.bar
+end
+
+function DHUD4_Target:LoadRenaitreProfile()
+    self.db.profile.auras = false
+	self.db.profile.castTextSize = 14
+    self.db.profile.pvpIcon = false
+    self.db.profile.healthCustomTextStyle = "[HP:Short:Green] [PercentHP:Percent:Paren:HPColor]"
+    self.db.profile.totName = false
+    self.db.profile.castSide = "r"
+    self.db.profile.barTextSize = 14
+    self.db.profile.powerTextStyle = "[MP]"
+    self.db.profile.rangeColors["1"] = {
+							["b"] = 1,
+							["g"] = 0,
+							["r"] = 0.6,
+						}
+    self.db.profile.rangeColors["3"] = {
+							["b"] = 0,
+							["g"] = 0.8196078431372549,
+							["r"] = 1,
+						}
+    self.db.profile.rangeColors["2"] = {
+                            ["b"] = 0,
+							["g"] = 0.5019607843137255,
+							["r"] = 1,
+						}
+	self.db.profile.tName = false
+    self.db.profile.healthTextStyle = "[HP] ([PercentHP:Percent])"
+    self.db.profile.colors.spell = {
+							["b"] = 0.7019607843137254,
+							["g"] = 0.7019607843137254,
+							["r"] = 0,
+						}
+    self.db.profile.eliteIcon = false
+    db = self.db.profile
 end

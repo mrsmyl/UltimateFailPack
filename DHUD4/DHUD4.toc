@@ -41,7 +41,7 @@ Abilities\DHUD4_Rogue.lua
 Abilities\DHUD4_Warrior.lua
 Abilities\DHUD4_DeathKnight.lua
 Abilities\DHUD4_Paladin.lua
--- X-Curse-Packaged-Version: 1.7
+-- X-Curse-Packaged-Version: 1.7.1
 -- X-Curse-Project-Name: DHUD4
 -- X-Curse-Project-ID: dhud4
 -- X-Curse-Repository-ID: wow/dhud4/mainline
