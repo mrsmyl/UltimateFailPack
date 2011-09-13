@@ -1,5 +1,5 @@
 --[[
-DHUD4_Abilities.lua $Rev: 106 $
+DHUD4_Abilities.lua $Rev: 113 $
 Copyright (c) 2006 by Markus Inger, 2006 by Caeryn Dryad, 2007-2010 by Horacio Hoyos
 
 This file is part of DHUD4.
@@ -290,7 +290,13 @@ function Abilities:_Refresh()
         local health, power = DHUD4:GetModule("DHUD4_Player"):GetBars()
         visibleBars[health] = true
         visibleBars[power] = true
-        visible, health, power = DHUD4:GetModule("DHUD4_Target"):GetBars()
+        if(visible)then
+            visibleBars[health] = true
+            visibleBars[power] = true
+        end
+    end
+    if DHUD4:GetModuleEnabled("DHUD4_Target") then
+        local visible, health, power = DHUD4:GetModule("DHUD4_Target"):GetBars()
         if(visible)then
             visibleBars[health] = true
             visibleBars[power] = true

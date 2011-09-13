@@ -1,0 +1,60 @@
+------------------------------------------------------------------------
+r114 | arcanefoam | 2011-09-04 20:02:39 +0000 (Sun, 04 Sep 2011) | 7 lines
+Changed paths:
+   A /tags/1.7.2 (from /trunk:113)
+
+- Fixed "Config Layout" button from moving when selecting it
+- Fixed Player menu to limit text size to 6-25 range
+- Fixed bug causing the Abilities module to stop working when the target module was disabled
+- Changed the cast bar text's frame so long casting names will fit.
+- Changed the cast bar text's position so bigger fonts will not overlap
+- Fixed a bug in the Druid module preventing Lifebloom tracking to work
+- Removed eclipse code and options from the druid module till it is functional
+------------------------------------------------------------------------
+r113 | arcanefoam | 2011-09-04 20:01:23 +0000 (Sun, 04 Sep 2011) | 7 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Abilities/DHUD4_Druid.lua
+   M /trunk/Bars/DHUD4_CastBar.lua
+   M /trunk/DHUD4.lua
+   M /trunk/Modules/DHUD4_Player.lua
+
+- Fixed "Config Layout" button from moving when selecting it
+- Fixed Player menu to limit text size to 6-25 range
+- Fixed bug causing the Abilities module to stop working when the target module was disabled
+- Changed the cast bar text's frame so long casting names will fit.
+- Changed the cast bar text's position so bigger fonts will not overlap
+- Fixed a bug in the Druid module preventing Lifebloom tracking to work
+- Removed eclipse ode and options from the druid module till it is functional
+------------------------------------------------------------------------
+r106 | arcanefoam | 2011-08-31 21:46:36 +0000 (Wed, 31 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_Abilities.lua
+   M /trunk/Modules/DHUD4_Target.lua
+
+- Fixed the combo points bug
+- Removed Debug messages
+------------------------------------------------------------------------
+r105 | arcanefoam | 2011-08-19 01:08:20 +0000 (Fri, 19 Aug 2011) | 4 lines
+Changed paths:
+   M /trunk/Abilities/DHUD4_DeathKnight.lua
+   M /trunk/Abilities/DHUD4_Druid.lua
+   M /trunk/Abilities/DHUD4_Paladin.lua
+   M /trunk/Abilities/DHUD4_Rogue.lua
+   M /trunk/Abilities/DHUD4_Warrior.lua
+   M /trunk/Bars/DHUD4_StatusBar.lua
+   M /trunk/DHUD4.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Modules/DHUD4_Auras.lua
+   M /trunk/Modules/DHUD4_Outer.lua
+   M /trunk/Modules/DHUD4_Pet.lua
+   M /trunk/Modules/DHUD4_Player.lua
+   M /trunk/Modules/DHUD4_Target.lua
+   D /trunk/Textures/Renaitre/Bars/cb.tga
+   D /trunk/Textures/Renaitre/Bars/cbh.tga
+
+- Added the "Load Renaitre Profile" button
+- Fixed the DeathKnight bug
+- Fixed the bug when disabling bar's text, the bar will bug out and not show
+- Added coming Druid eclipse locales
+------------------------------------------------------------------------

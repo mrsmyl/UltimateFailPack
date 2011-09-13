@@ -27,11 +27,11 @@ DHUD4 = LibStub("AceAddon-3.0"):NewAddon("DHUD4", "AceEvent-3.0", "AceConsole-3.
 
 
 --ACE Version
-local VERSION = tonumber(("$Rev: 105 $"):match("%d+"));
+local VERSION = tonumber(("$Rev: 113 $"):match("%d+"));
 DHUD4.revision = "r" .. VERSION;
 DHUD4.versionstring = "1.6.3-%s";
 DHUD4.version = DHUD4.versionstring:format(VERSION);
-DHUD4.date = ("$Date: 2011-08-19 01:08:20 +0000 (Fri, 19 Aug 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
+DHUD4.date = ("$Date: 2011-09-04 20:01:23 +0000 (Sun, 04 Sep 2011) $"):match("%d%d%d%d%-%d%d%-%d%d");
 local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4");
 local LSM3 = LibStub("LibSharedMedia-3.0");
 
@@ -141,7 +141,7 @@ local function GetOptions()
                                 end
                         },
                         renaitre = {
-                            order = 0,
+                            order = 1,
                             type = "execute",
                             name = L["Load Renaitre profile"],
                             func = function()
@@ -157,7 +157,7 @@ local function GetOptions()
                                        end]]
                         },
                         miniMap = {
-                            order = 1,
+                            order = 2,
                             type = 'toggle',
                             name = L["Show Minimap Button"],
                         },

@@ -51,27 +51,27 @@ local CASTBARS = {
 
 local BARTEXT = {
     cl3 = {
-        {115, 115},
-        {115, 125},
-        {115, 135},
+        {60, 115},--115
+        {60, 130},
+        {60, 145},
         "LEFT",
     },
     cl4 = {
-        {60, 150},
-        {60, 160},
-        {60, 170},
+        {10, 150},
+        {10, 165},
+        {10, 180},
         "LEFT",
     },
     cr3 = {
-        {-115, 115},
-        {-115, 125},
-        {-115, 135},
+        {-45, 115},
+        {-45, 130},
+        {-45, 145},
         "RIGHT",
     },
     cr4 = {
-        {-60, 150},
-        {-60, 160},
-        {-60, 170},
+        {-10, 150},
+        {-10, 165},
+        {-10, 180},
         "RIGHT",
     },
 }
@@ -166,17 +166,17 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
         -- Test if the name frame has allready been created
         if((not self.nameText) or (self.nameText:GetName() ~= "DHUD4_"..bar.."NameText")) then
             local frame = CreateFrame("Frame", "DHUD4_"..bar.."NameText", self.frame)
-            frame:SetWidth(100)
+            frame:SetWidth(200)
             frame:SetHeight(14)
             frame:ClearAllPoints()
-            frame:SetPoint("CENTER", self.frame, "CENTER", x, y)
+            frame:SetPoint(justify, self.frame, "CENTER", x, y)
             frame.name = bar.."Name"
             local font = frame:CreateFontString("DHUD4_"..bar.."NameTextFont", "OVERLAY")
             font:SetFontObject(GameFontHighlightSmall)
             font:ClearAllPoints()
             font:SetPoint("CENTER", frame, "CENTER", 0, 0)
             font:SetTextColor(nameColor.r, nameColor.g, nameColor.b)
-            font:SetWidth(100)
+            font:SetWidth(200)
             font:SetJustifyH(justify)
             font:Show()
             self.nameText = frame
@@ -186,7 +186,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             frame:Hide()
         elseif (self.nameText) then
             self.nameText:ClearAllPoints()
-            self.nameText:SetPoint("CENTER", self.frame, "CENTER", x, y)
+            self.nameText:SetPoint(justify, self.frame, "CENTER", x, y)
             self.nameText.text:SetJustifyH(justify)
         end
     end
@@ -207,7 +207,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             frame:SetWidth(100)
             frame:SetHeight(14)
             frame:ClearAllPoints()
-            frame:SetPoint("CENTER", self.frame, "CENTER", x, y)
+            frame:SetPoint(justify, self.frame, "CENTER", x, y)
             frame.name = bar.."Timer"
             local font = frame:CreateFontString("DHUD4_"..bar.."TextFont", "OVERLAY")
             font:SetFontObject(GameFontHighlightSmall)
@@ -223,7 +223,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             frame:Hide()
         elseif(self.text) then
             self.text:ClearAllPoints()
-            self.text:SetPoint("CENTER", self.frame, "CENTER", x, y)
+            self.text:SetPoint(justify, self.frame, "CENTER", x, y)
             self.text.text:SetJustifyH(justify)
         end
     end
@@ -244,7 +244,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             frame:SetWidth(100)
             frame:SetHeight(14)
             frame:ClearAllPoints()
-            frame:SetPoint("CENTER", self.frame, "CENTER", x, y)
+            frame:SetPoint(justify, self.frame, "CENTER", x, y)
             frame.name = bar.."Delay"
             local font = frame:CreateFontString("DHUD4_"..bar.."DelayTextFont", "OVERLAY")
             font:SetFontObject(GameFontHighlightSmall)
@@ -261,7 +261,7 @@ function castBar:InitCastBarText(bar, showTimer, showName, showDelay, nameColor,
             frame:Hide()
         elseif(self.delayText) then
             self.delayText:ClearAllPoints()
-            self.delayText:SetPoint("CENTER", self.frame, "CENTER", x, y)
+            self.delayText:SetPoint(justify, self.frame, "CENTER", x, y)
             self.delayText.text:SetJustifyH(justify)
         end
     end

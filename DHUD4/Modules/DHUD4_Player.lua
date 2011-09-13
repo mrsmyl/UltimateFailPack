@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Player"
 local DHUD4_Player = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 105 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 113 $"):match("%d+"))
 
 local unpack = unpack
 local pairs = pairs
@@ -31,6 +31,10 @@ local _G = _G
 local string_match = string.match
 local string_len = string.len
 
+--Fonts
+local MAXFONT = 25
+local MINFONT = 6
+--FIN
 
 local ICONS = {
     rest = {
