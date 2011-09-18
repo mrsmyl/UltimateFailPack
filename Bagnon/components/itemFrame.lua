@@ -5,7 +5,6 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemFrame = Bagnon.Classy:New('Frame')
-local Facade = LibStub('LibButtonFacade', true)
 
 ItemFrame:Hide()
 Bagnon.ItemFrame = ItemFrame
@@ -352,13 +351,6 @@ function ItemFrame:Layout()
 		self:Layout_BagBreak()
 	else
 		self:Layout_Default()
-	end
-	
-	if Facade then
-		local group = Facade:Group('Bagnon', self:GetFrameID())
-		if group then
-			group:ReSkin()
-		end
 	end
 end
 

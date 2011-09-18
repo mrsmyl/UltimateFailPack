@@ -1,14 +1,14 @@
 --[[
-	THIS FILE IS ENCODED IN UTF-8
+THIS FILE IS ENCODED IN UTF-8
 
-	Bagnon Localization Information: Chinese Traditional
-	        2007/11/17 by matini< yiting.jheng <at> gmail <dot> com
-	        2008/12/01 by yleaf@cwdg(yaroot@gmail.com)
-	        2009/04/23 by youngway@水晶之刺
-			2009/06/19 by 狂飆@cwdg(networm@qq.com)
-            2011/07/06 by Seraveegd@鬼霧峰
+Bagnon Localization Information: Chinese Traditional
+2007/11/17 by matini< yiting.jheng <at> gmail <dot> com
+2008/12/01 by yleaf@cwdg(yaroot@gmail.com)
+2009/04/23 by youngway@水晶之刺
+2009/06/19 by 狂飆@cwdg(networm@qq.com)
+2011/07/06 by Seraveegd@鬼霧峰
 
-	Last Update: 2011/07/06 by Seraveegd@鬼霧峰
+Last Update: 2011/07/06 by Seraveegd@鬼霧峰
 
 --]]
 

@@ -5,7 +5,6 @@
 
 Bagnon = LibStub('AceAddon-3.0'):NewAddon('Bagnon', 'AceEvent-3.0', 'AceConsole-3.0')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-local Facade = LibStub('LibButtonFacade', true)
 
 --[[
 	Binding Setup
@@ -30,9 +29,18 @@ function Bagnon:OnInitialize()
 	self:CreateLDBLauncher()
 	self:CreateGuildBankLoader()
 	
-	if Facade then
-		self:StartupFacade()
+	
+	--------- TEMP!! REMOVE NEXT WOW PATCH!! --------
+	if BagnonGlobalSettings then
+		BagnonGlobalSettings.facade = nil
+		
+		if BagnonGlobalSettings.frames then
+			for name, sets in pairs(BagnonGlobalSettings.frames) do
+				sets.facade = nil
+			end
+		end
 	end
+	------------------------------------------------
 end
 
 --create a loader for the options menu
@@ -445,43 +453,4 @@ function Bagnon:ShowOptions()
 		return true
 	end
 	return false
-end
-
-
---[[
-	ButtonFacade Support
---]]
-
-if Facade then
-	function Bagnon:StartupFacade()
-		Facade:RegisterSkinCallback('Bagnon', self.OnFacadeChanged, self)
-		self:FacadeGroup('inventory')
-		self:FacadeGroup('bank')
-		
-		local enabled, loadable = select(4, GetAddOnInfo('Bagnon_GuildBank'))
-		if enabled and loadable then
-			self:FacadeGroup('guildbank')
-		end
-	end
-	
-	function Bagnon:FacadeGroup(frameID)
-		-- It's hacky, but the simplest way to do it
-		local frameSets = BagnonFrameSettings.frames[frameID]
-		local sets = frameSets and frameSets.facade or BagnonFrameSettings.facade
-		
-		Facade:Group('Bagnon', frameID):Skin(unpack(sets or {}))
-	end
-	
-	function Bagnon:OnFacadeChanged(skin, glossAlpha, gloss, frameID, _, colors)
-		-- It's hacky, but the simplest way to do it
-		local target
-		if not frameID then
-			target = BagnonFrameSettings
-		else
-			BagnonFrameSettings.frames[frameID] =  BagnonFrameSettings.frames[frameID] or {}
-			target = BagnonFrameSettings.frames[frameID]
-		end
-		
-		target.facade = {skin, glossAlpha, gloss, colors}
-	end
 end

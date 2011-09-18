@@ -8,7 +8,6 @@ local ItemSlot = Bagnon.Classy:New('Button')
 ItemSlot:Hide()
 Bagnon.ItemSlot = ItemSlot
 
-local Facade = LibStub('LibButtonFacade', true)
 local ItemSearch = LibStub('LibItemSearch-1.0')
 local Unfit = LibStub('Unfit-1.0')
 
@@ -34,27 +33,6 @@ function ItemSlot:New(bag, slot, frameID, parent)
 		item:Update()
 	else
 		item:Show()
-	end
-	
-	if Facade then
-		local name = item:GetName()
-		
-		Facade:Group('Bagnon', frameID):AddButton(item, {
-			Count = _G[name .. 'Count'],
-			Icon = _G[name .. 'IconTexture'],
-			Normal = _G[name .. 'NormalTexture'],
-			
-			Highlight = item:GetHighlightTexture(),
-			Pushed = item:GetPushedTexture(),
-			
-			Cooldown = item.cooldown,
-			Border = item.border,
-			
-			AutoCastable = false, AutoCast = false,
-			HotKey = false, Name = false, Duration = false,
-			Disabled = false, Checked = false,
-			Flash = false,
-		})
 	end
 
 	return item
@@ -152,10 +130,6 @@ function ItemSlot:Free()
 
 	ItemSlot.unused = ItemSlot.unused or {}
 	ItemSlot.unused[self] = true
-	
-	if Facade then
-		Facade:Group('Bagnon', frameID):RemoveButton(item, true)
-	end
 end
 
 
@@ -333,11 +307,7 @@ end
 --item slot color
 function ItemSlot:UpdateSlotColor()
 	if (not self:GetItem()) and self:ColoringBagSlots() then
-		if self:IsTradeBagSlot() then
-			self:SetSlotColor(self:GetTradeSlotColor())
-		else
-			self:SetSlotColor(self:GetNormalSlotColor())
-		end
+		self:SetSlotColor(self:GetBagColor(self:GetBagType()))
 	else 
 		self:SetSlotColor(1, 1, 1)
 	end
@@ -600,16 +570,12 @@ end
 
 --[[ Item Slot Coloring ]]--
 
-function ItemSlot:IsTradeBagSlot()
-	return Bagnon.BagSlotInfo:IsTradeBag(self:GetPlayer(), self:GetBag())
+function ItemSlot:GetBagType()
+	return Bagnon.BagSlotInfo:GetBagType(self:GetPlayer(), self:GetBag())
 end
 
-function ItemSlot:GetNormalSlotColor()
-	return Bagnon.Settings:GetItemSlotColor('normal')
-end
-
-function ItemSlot:GetTradeSlotColor()
-	return Bagnon.Settings:GetItemSlotColor('trade')
+function ItemSlot:GetBagColor(bagType)
+	return Bagnon.Settings:GetItemSlotColor(bagType)
 end
 
 function ItemSlot:ColoringBagSlots()
