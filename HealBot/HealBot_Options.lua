@@ -1641,6 +1641,15 @@ function HealBot_Options_DisableHealBot_OnClick(self)
     HealBot_Options_DisableHealBot(self:GetChecked() or 0)
 end
 
+function HealBot_Options_NoAuraWhenRested_OnClick(self)
+    HealBot_Config.NoAuraWhenRested = self:GetChecked() or 0;
+    if HealBot_Config.NoAuraWhenRested==0 then 
+        HealBot_setOptions_Timer(30) 
+    else
+        HealBot_SetResetFlag("SOFT")
+    end
+end
+
 function HealBot_Options_DisableHealBot(checkval)
     HealBot_Config.DisableHealBot=checkval
     HealBot_Options_DisableCheck()
@@ -6569,6 +6578,7 @@ function HealBot_Options_CDebuffTxt1_Refresh(onselect)
     UIDropDownMenu_SetSelectedID(HealBot_Options_CDebuffTxt1,HealBot_Options_StorePrev["CDebuffcustomID"])
     HealBot_Options_CDCReverseDurC:SetChecked(HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]] or 0)
     HealBot_Options_CDCCol_OnOff:SetChecked(HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]] or 1)
+    HealBot_Options_SetEnableDisableCDBtn()
 end
 
 function HealBot_Options_CDebuffTxt1_OnSelect(self)
@@ -6670,6 +6680,38 @@ function HealBot_Options_DeleteCDebuffBtn_OnClick(self)
     HealBot_Options_CDebuffTxt1_Refresh()
     HealBot_Options_CDCPriorityC_Refresh()
     HealBot_SetCDCBarColours();
+end
+
+function HealBot_Options_EnableDisableCDBtn_OnClick(self)
+    local InstName=HealBot_rethbInsName()
+    if HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]] and HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]][InstName] then
+        HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]][InstName]=nil
+    else
+        if not HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]] then
+            HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]]={}
+        end
+        HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]][InstName]=true
+    end
+    HealBot_Options_SetEnableDisableCDBtn()
+end
+
+function HealBot_Options_SetEnableDisableCDBtn()
+    local InstName=HealBot_rethbInsName()
+    HealBot_Options_EnableDisableCDBtn:Enable()
+    if HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]] and HealBot_Globals.IgnoreCustomDebuff[HealBot_Options_StorePrev["CDebuffcustomName"]][InstName] then
+        HealBot_Options_EnableDisableCDText:SetTextColor(0.88,0.1,0.1)
+        HealBot_Options_EnableDisableCDText:SetText(InstName..": "..HealBot_Options_StorePrev["CDebuffcustomName"].." "..HEALBOT_SKIN_DISTEXT)
+        HealBot_Options_EnableDisableCDBtn:SetText(HEALBOT_WORD_ENABLE)
+    elseif HealBot_Options_StorePrev["CDebuffcustomName"] then
+        HealBot_Options_EnableDisableCDText:SetTextColor(0.1,1,0.1)
+        HealBot_Options_EnableDisableCDText:SetText(InstName..": "..HealBot_Options_StorePrev["CDebuffcustomName"].." "..HEALBOT_SKIN_ENTEXT)
+        HealBot_Options_EnableDisableCDBtn:SetText(HEALBOT_WORD_DISABLE)
+    else
+        HealBot_Options_EnableDisableCDText:SetTextColor(0.7,0.7,0)
+        HealBot_Options_EnableDisableCDText:SetText(HEALBOT_WORDS_NONE)
+        HealBot_Options_EnableDisableCDBtn:SetText(HEALBOT_WORDS_NONE)
+        HealBot_Options_EnableDisableCDBtn:Disable()
+    end
 end
 
 function HealBot_Options_RevDurCDebuffBtn_OnClick(self)
@@ -8173,6 +8215,7 @@ end
 function HealBot_Options_Init(tabNo)
     if tabNo==1 then
         if not DoneInitTab[1] then
+            HealBot_Options_NoAuraWhenRested:SetChecked(HealBot_Config.NoAuraWhenRested)
             HealBot_Options_ShowMinimapButton:SetChecked(HealBot_Globals.ButtonShown)
             HealBot_Options_QueryTalents:SetChecked(HealBot_Globals.QueryTalents)
             HealBot_Options_HideOptions:SetChecked(HealBot_Globals.HideOptions)
@@ -8416,6 +8459,7 @@ function HealBot_Options_InitSub1(subNo)
         DoneInitTab[405]=true
     elseif subNo==406 and not DoneInitTab[406] then
         HealBot_Options_CDebuffTxt1_Refresh()
+        HealBot_Options_SetEnableDisableCDBtn()
         DoneInitTab[406]=true
     elseif subNo==407 and not DoneInitTab[407] then
         HealBot_Options_CDebuffCat_Refresh()

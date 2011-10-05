@@ -287,9 +287,9 @@ end
 
 local hbMountsReported={}
 function HealBot_ReportMissingMount(mountName, mountID)
-    if not hbMountsReported[mountID] then
+    if not HealBot_Config.hbMountsReported[mountID] then
         HealBot_AddChat("HealBot: Missing Mount: "..mountName.." ("..mountID..")");
-        hbMountsReported[mountID]=mountName
+        HealBot_Config.hbMountsReported[mountID]=mountName
     end
 end
 

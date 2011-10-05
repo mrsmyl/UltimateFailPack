@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "4.2.0.3";
+HEALBOT_VERSION = "4.2.2.1";
 
 -------------
 -- ENGLISH --
@@ -1034,3 +1034,8 @@ HEALBOT_OPTIONS_LOWMANAINDICATOR3       = "*15% / **30% / ***45%"
 HEALBOT_OPTIONS_LOWMANAINDICATOR4       = "*20% / **40% / ***60%"
 HEALBOT_OPTIONS_LOWMANAINDICATOR5       = "*25% / **50% / ***75%"
 HEALBOT_OPTIONS_LOWMANAINDICATOR6       = "*30% / **60% / ***90%"
+
+HEALBOT_OPTION_IGNORE_AURA_RESTED       = "Ignore aura events when resting"
+
+HEALBOT_WORD_ENABLE                     = "Enable"
+HEALBOT_WORD_DISABLE                    = "Disable"

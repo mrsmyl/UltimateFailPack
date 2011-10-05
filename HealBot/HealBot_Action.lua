@@ -3704,13 +3704,16 @@ local HealBot_Mounts = {
     [72808]="F", 
     [72807]="F", 
     [72808]="F",
-    [73313]="G",     
+    [73313]="G",
+    [73629]="G", 
+    [73630]="G",        
     [74856]="F", 
     [74918]="G", 
     [75207]="V", 
     [75596]="F", 
     [75614]="GF", 
     [75973]="F", 
+    [84751]="G",
     [87090]="G",
     [87091]="G", 
     [88331]="F", 
@@ -3725,8 +3728,13 @@ local HealBot_Mounts = {
     [88750]="G", 
     [88990]="F", 
     [92155]="A", 
-    [92231]="G",    
+    [92231]="G",
+    [92232]="G",        
     [93623]="F",
+    [93644]="G",
+    [97359]="F",
+    [98204]="G",
+    [98727]="G",
 };
 -- Codes
 --
@@ -3798,7 +3806,6 @@ function HealBot_Action_InitMount()
             HealBot_mountData["IncVashjir"]=false
         end
     end
-    HealBot_mountData["#Flying"]=0
     HealBot_mountData["#Ground"]=0
     HealBot_mountData["OculusID"]=nil
     for z,_ in pairs(HealBot_GMount) do
@@ -3825,7 +3832,6 @@ function HealBot_Action_InitMount()
             if HealBot_Mounts[sID]=="F" then
                 if HealBot_mountData["IncFlying"] then
                     table.insert(HealBot_FMount, sName);
-                    HealBot_mountData["#Flying"]=HealBot_mountData["#Flying"]+1
                 end
             elseif HealBot_Mounts[sID]=="G" then
                 if HealBot_mountData["IncGround"]=="grd" then
@@ -3835,7 +3841,6 @@ function HealBot_Action_InitMount()
             elseif HealBot_Mounts[sID]=="GF" then
                 if HealBot_mountData["IncFlying"] then
                     table.insert(HealBot_FMount, sName);
-                    HealBot_mountData["#Flying"]=HealBot_mountData["#Flying"]+1
                 end
                 if HealBot_mountData["IncGround"]=="grd" then
                     table.insert(HealBot_GMount, sName);
@@ -3864,19 +3869,19 @@ function HealBot_Action_InitMount()
         end
 	end   
     
-    if HealBot_mountData["#Flying"]<3 then
+    if #HealBot_FMount<3 then
         HealBot_mountData["PrevFlying#"]=0
-    elseif HealBot_mountData["#Flying"]<5 then
+    elseif #HealBot_FMount<5 then
         HealBot_mountData["PrevFlying#"]=1
-    elseif HealBot_mountData["#Flying"]<7 then
+    elseif #HealBot_FMount<7 then
         HealBot_mountData["PrevFlying#"]=2
-    elseif HealBot_mountData["#Flying"]<9 then
+    elseif #HealBot_FMount<9 then
         HealBot_mountData["PrevFlying#"]=3
-    elseif HealBot_mountData["#Flying"]<12 then
+    elseif #HealBot_FMount<12 then
         HealBot_mountData["PrevFlying#"]=4
-    elseif HealBot_mountData["#Flying"]<15 then
+    elseif #HealBot_FMount<15 then
         HealBot_mountData["PrevFlying#"]=5
-    elseif HealBot_mountData["#Flying"]<19 then
+    elseif #HealBot_FMount<19 then
         HealBot_mountData["PrevFlying#"]=6
     else
         HealBot_mountData["PrevFlying#"]=7
@@ -3899,7 +3904,7 @@ function HealBot_Action_InitMount()
         HealBot_mountData["PrevGround#"]=7
     end
 
-    if HealBot_mountData["#Ground"]==0 and HealBot_mountData["#Flying"]==0 then
+    if HealBot_mountData["#Ground"]==0 and #HealBot_FMount==0 then
         HealBot_mountData["ValidUse"]=false
     else
         HealBot_mountData["ValidUse"]=true
@@ -3925,13 +3930,18 @@ function HealBot_Action_ToggelMount(mountType)
                     HealBot_Globals.dislikeMount[sName]=HealBot_Globals.dislikeMount[sName]-1
                     z = math.random(1, #HealBot_FMount);
                     if z==i then 
-                        i = math.random(1, #HealBot_FMount); 
+                        z = math.random(1, #HealBot_FMount); 
+                        if z==i then 
+                            i = math.random(1, #HealBot_FMount); 
+                        else
+                            i=z
+                        end
                     else
                         i=z
                     end
                     sName = HealBot_FMount[i];
                 else
-                    HealBot_Globals.dislikeMount[sName]=5
+                    HealBot_Globals.dislikeMount[sName]=25
                 end
             end
             if HealBot_mountData["PrevFlying#"]>0 then
@@ -3951,22 +3961,20 @@ function HealBot_Action_ToggelMount(mountType)
             if HealBot_Globals.dislikeMount[sName] then
                 if HealBot_Globals.dislikeMount[sName]>0 then
                     HealBot_Globals.dislikeMount[sName]=HealBot_Globals.dislikeMount[sName]-1
-                    z = math.random(1, #HealBot_FMount);
-                    if z==i and  #HealBot_FMount>2 then 
-                        y = math.random(1, 2);
-                        if y>1 and z<#HealBot_FMount then
-                            i=z+1
-                        elseif i>1 then
-                            i=z-1
+                    z = math.random(1, #HealBot_GMount);
+                    if z==i then 
+                        z = math.random(1, #HealBot_GMount);
+                        if z==i then 
+                            i = math.random(1, #HealBot_GMount);
                         else
-                            i = math.random(1, #HealBot_FMount);
+                            i=z
                         end
                     else
                         i=z
                     end
-                    sName = HealBot_FMount[i];
+                    sName = HealBot_GMount[i];
                 else
-                    HealBot_Globals.dislikeMount[sName]=9
+                    HealBot_Globals.dislikeMount[sName]=29
                 end
             end
             if HealBot_mountData["PrevGround#"]>0 then
@@ -3983,6 +3991,7 @@ function HealBot_Action_ToggelMount(mountType)
 end
 
 function HealBot_Action_DislikeMount(clear)
+    z = GetNumCompanions("MOUNT");
 	for i=1,z do
  		_, x, _, _, y = GetCompanionInfo("MOUNT", i);
  		if y then

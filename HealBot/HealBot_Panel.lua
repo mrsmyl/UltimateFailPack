@@ -1838,7 +1838,10 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                     end
                 end
             end
-        
+            if i==0 then 
+                Delay_RecalcParty=1 
+                HealBot_AddDebug("Self not found in HealBot_Panel_PanelChanged - Retry")
+            end
         end
         
         for xGUID,xUnit in pairs(HealBot_TrackGUID) do

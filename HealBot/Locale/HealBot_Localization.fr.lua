@@ -1015,4 +1015,9 @@ HEALBOT_OPTIONS_LOWMANAINDICATOR4       = "*20% / **40% / ***60%"
 HEALBOT_OPTIONS_LOWMANAINDICATOR5       = "*25% / **50% / ***75%"
 HEALBOT_OPTIONS_LOWMANAINDICATOR6       = "*30% / **60% / ***90%"
 
+HEALBOT_OPTION_IGNORE_AURA_RESTED       = "Ignorer les  Buffs/D\195\169buffs... pendant le repos"
+
+HEALBOT_WORD_ENABLE                     = "Activer"
+HEALBOT_WORD_DISABLE                    = "D\195\169sactiver"
+
 end

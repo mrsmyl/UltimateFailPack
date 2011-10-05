@@ -22,7 +22,7 @@
 		  <FontString name="HealBot_Error_Header" inherits="GameFontNormalLarge" text="HealBot">
 			<Anchors><Anchor point="TOP" relativePoint="TOP"><Offset><AbsDimension x="0" y="-15"/></Offset></Anchor></Anchors>
 		  </FontString>
-		  <FontString name="HealBot_Error_Header2" inherits="GameFontNormal" text="http://healbot.alturl.com">
+		  <FontString name="HealBot_Error_Header2" inherits="GameFontNormal" text="http://www.healbot.info/">
 			<Anchors><Anchor point="TOP" relativePoint="TOP"><Offset><AbsDimension x="0" y="-40"/></Offset></Anchor></Anchors>
 		  </FontString>
             <FontString name="HBIncHealsHeader" inherits="ChatFontNormal" text="HEALBOT_INFO_INCHEALINFO">

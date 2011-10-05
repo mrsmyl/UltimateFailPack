@@ -1,8 +1,8 @@
 ## Interface: 40200
-## Title: Titan Panel [|cffeda55fHealBot|r] |cff00aa004.2.0.3|r
+## Title: Titan Panel [|cffeda55fHealBot|r] |cff00aa004.2.2.1|r
 ## Notes: Adds a small icon and options for Healbot.
 ## Author: Strife
 ## RequiredDeps: Titan, HealBot
-## Version: 4.2.0.3
+## Version: 4.2.2.1
 
 HealBot_Titan.xml

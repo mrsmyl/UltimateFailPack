@@ -66,6 +66,8 @@ HealBot_ConfigDefaults = {
   DisableHealBot=0,
   DisableSolo=0,
   DisabledNow=0,
+  NoAuraWhenRested=0,
+  hbMountsReported={},
   CDCBarColour = {
     [HEALBOT_DISEASE_en] = { R = 0.55, G = 0.19, B = 0.7, },
     [HEALBOT_MAGIC_en] = { R = 0.26, G = 0.33, B = 0.83, },
@@ -189,6 +191,7 @@ HealBot_GlobalsDefaults = {
     },
     HealBot_Custom_Debuffs_RevDur={},
     HealBot_Custom_Debuffs_ShowBarCol={},
+    IgnoreCustomDebuff={},
     HealBot_Custom_Debuffs = {
         -- Karazhan
         [HEALBOT_DEBUFF_ICE_TOMB]         = 10, -- Karazhan - Ice Tomb

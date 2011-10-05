@@ -220,7 +220,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowMinimapButton" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="58" y="-15" />
+                      <AbsDimension x="58" y="-10" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -233,7 +233,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowMinimapButton" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="58" y="-54" />
+                      <AbsDimension x="58" y="-72" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -242,27 +242,24 @@
                   <OnClick>HealBot_Options_CPUProfiler_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
-              <Slider name="HealBot_Options_RangeCheckFreq" inherits="HealBot_Options_SliderTemplate">
-                <Size>
-                  <AbsDimension x="345" y="16" />
-                </Size>
+              <CheckButton name="HealBot_Options_NoAuraWhenRested" inherits="OptionsCheckButtonTemplate">
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CPUProfiler" relativePoint="BOTTOMLEFT">>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowMinimapButton" relativePoint="BOTTOMLEFT">>
                     <Offset>
-                      <AbsDimension x="-32" y="-28" />
+                      <AbsDimension x="58" y="-40" />
                     </Offset>
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_val2_OnLoad(self,HEALBOT_OPTIONS_RANGECHECKFREQ,0.5,8.0,0.5,10)</OnLoad>
-                  <OnValueChanged>HealBot_Options_RangeCheckFreq_OnValueChanged(self)</OnValueChanged>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_OPTION_IGNORE_AURA_RESTED)</OnLoad>
+                  <OnClick>HealBot_Options_NoAuraWhenRested_OnClick(self)</OnClick>
                 </Scripts>
-              </Slider>
+              </CheckButton>
               <CheckButton name="HealBot_Options_DisableHealBotOpt" inherits="OptionsCheckButtonTemplate">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CPUProfiler" relativePoint="BOTTOMLEFT">>
                     <Offset>
-                      <AbsDimension x="18" y="-58" />
+                      <AbsDimension x="18" y="-8" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -284,6 +281,22 @@
                   <OnClick>HealBot_Options_DisableHealBotSolo_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
+              <Slider name="HealBot_Options_RangeCheckFreq" inherits="HealBot_Options_SliderTemplate">
+                <Size>
+                  <AbsDimension x="345" y="16" />
+                </Size>
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CPUProfiler" relativePoint="BOTTOMLEFT">>
+                    <Offset>
+                      <AbsDimension x="-32" y="-55" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_val2_OnLoad(self,HEALBOT_OPTIONS_RANGECHECKFREQ,0.5,8.0,0.5,10)</OnLoad>
+                  <OnValueChanged>HealBot_Options_RangeCheckFreq_OnValueChanged(self)</OnValueChanged>
+                </Scripts>
+              </Slider>
             </Frames>
           </Frame>
           <Frame name="HealBot_Options_hbCommands" inherits="UIDropDownMenuTemplate" id="1">
@@ -6784,7 +6797,7 @@
                       <Anchors>
                         <Anchor point="TOPLEFT">
                           <Offset>
-                            <AbsDimension x="-45" y="-8" />
+                            <AbsDimension x="-40" y="-8" />
                           </Offset>
                         </Anchor>
                       </Anchors>
@@ -6794,7 +6807,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CustomCureFrame" relativePoint="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="90" y="-62" />
+                      <AbsDimension x="90" y="-82" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6809,7 +6822,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="TOPRIGHT">
                     <Offset>
-                      <AbsDimension x="7" y="-1"/>
+                      <AbsDimension x="-4" y="-3"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6819,7 +6832,7 @@
               </Button>
               <EditBox name="HealBot_Options_NewCDebuff" inherits="HealBot_Options_EditBoxTemplate">
                 <Size>
-                  <AbsDimension x="140" y="20"/>
+                  <AbsDimension x="142" y="20"/>
                 </Size>
                 <Layers>
                   <Layer level="BACKGROUND">
@@ -6827,7 +6840,7 @@
                       <Anchors>
                         <Anchor point="TOPLEFT">
                           <Offset>
-                            <AbsDimension x="-80" y="-2" />
+                            <AbsDimension x="-78" y="-4" />
                           </Offset>
                         </Anchor>
                       </Anchors>
@@ -6835,9 +6848,9 @@
                   </Layer>
                 </Layers>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CustomCureFrame" relativePoint="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="25" y="-1"/>
+                      <AbsDimension x="115" y="-55" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6853,12 +6866,40 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NewCDebuff" relativePoint="TOPRIGHT">
                     <Offset>
-                      <AbsDimension x="32" y="2"/>
+                      <AbsDimension x="20" y="1"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
                 <Scripts>
                   <OnClick>HealBot_Options_ConfirmNewCDebuff()</OnClick>
+                </Scripts>
+              </Button>
+              <Button name="HealBot_Options_EnableDisableCDBtn" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_ENABLE">
+                <Layers>
+                  <Layer level="BACKGROUND">
+                    <FontString name="HealBot_Options_EnableDisableCDText" text="HEALBOT_WORD_PRIORITY" inherits="GameFontNormal">
+                      <Anchors>
+                        <Anchor point="LEFT" relativeTo="HealBot_Options_EnableDisableCDBtn" relativePoint="RIGHT">
+                          <Offset>
+                            <AbsDimension x="5" y="1"/>
+                          </Offset>
+                        </Anchor>
+                      </Anchors>
+                    </FontString>
+                  </Layer>
+                </Layers>
+                <Size>
+                  <AbsDimension x="90" y="22"/>
+                </Size>
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="-55" y="-2"/>
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick>HealBot_Options_EnableDisableCDBtn_OnClick(self)</OnClick>
                 </Scripts>
               </Button>
               <Frame name="HealBot_Options_CDCPriorityC" inherits="UIDropDownMenuTemplate">
@@ -6876,9 +6917,9 @@
                   </Layer>
                 </Layers>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NewCDebuff" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="-90" y="-24"/>
+                      <AbsDimension x="-70" y="-52"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6891,9 +6932,9 @@
                   <AbsDimension x="140" y="22"/>
                 </Size>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NewCDebuff" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="40" y="-27"/>
+                      <AbsDimension x="60" y="-55"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6906,9 +6947,9 @@
                   <AbsDimension x="140" y="22"/>
                 </Size>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NewCDebuff" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="BOTTOMLEFT">
                     <Offset>
-                      <AbsDimension x="40" y="-27"/>
+                      <AbsDimension x="60" y="-55"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6944,26 +6985,11 @@
                   <OnClick>HealBot_Options_CDCCol_OnOff_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
-              <Button name="HealBot_Options_ResetCDebuffBtn" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_RESET">
-                <Size>
-                  <AbsDimension x="100" y="22"/>
-                </Size>
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NewCDebuff" relativePoint="BOTTOMLEFT">
-                    <Offset>
-                      <AbsDimension x="190" y="-27"/>
-                    </Offset>
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnClick>HealBot_Options_ResetCDebuff()</OnClick>
-                </Scripts>
-              </Button>
               <CheckButton name="HealBot_Options_CDCReverseDurC" inherits="SendMailRadioButtonTemplate">
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDCPriorityC" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDCCol_OnOff" relativePoint="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="142" y="-2"/>
+                      <AbsDimension x="122" y="-5"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6972,6 +6998,21 @@
                   <OnClick>HealBot_Options_RevDurCDebuffBtn_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
+              <Button name="HealBot_Options_ResetCDebuffBtn" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_RESET">
+                <Size>
+                  <AbsDimension x="100" y="22"/>
+                </Size>
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="210" y="-55"/>
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick>HealBot_Options_ResetCDebuff()</OnClick>
+                </Scripts>
+              </Button>
             </Frames>
           </Frame>
           <Frame name="HealBot_Options_WarningCureFrame">
