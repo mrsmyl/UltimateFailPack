@@ -1024,6 +1024,5 @@ XPERL_CONF_RAID_CUSTOM_NEW				= NEW
 XPERL_CONF_RAID_CUSTOM_NEW_DESC			= "Erstelle einen neuen Debuff, der beobachtet werden soll"
 XPERL_CONF_RAID_CUSTOM_ZONE				= ZONE
 XPERL_CONF_RAID_CUSTOM_SEARCH			= SEARCH
-XPERL_CONF_RAID_BLIZZ_RAIDPULLOUT       = "Hide default raid pullout"
 
 end

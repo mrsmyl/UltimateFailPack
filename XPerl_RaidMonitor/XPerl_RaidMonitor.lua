@@ -8,7 +8,7 @@ local TableUnits = {}			-- Dynamic list of units indexed by raid id, changed on 
 XPerlRaidMonConfig = {}
 local config = XPerlRaidMonConfig
 
-XPerl_SetModuleRevision("$Revision: 509 $")
+XPerl_SetModuleRevision("$Revision: 576 $")
 
 XPERL_RAIDMON_UNIT_WIDTH_MIN = 50
 XPERL_RAIDMON_UNIT_WIDTH_MAX = 150
@@ -402,13 +402,37 @@ function cast:HealthTotals()
 
 	local totalHealth = 0
 	local total = 0
-	for i = 1,GetNumRaidMembers() do
-		local id = "raid"..i
-		if (UnitIsConnected(id)) then
-			local hp, hpMax = UnitHealth(id), UnitHealthMax(id)
-			totalHealth = totalHealth + (100 * hp / hpMax)
-			total = total + 1
+	if GetNumRaidMembers() > 0 then--actually check if we are in a raid
+		for i = 1,GetNumRaidMembers() do
+			local id = "raid"..i
+			if (UnitIsConnected(id)) then
+				local hp, hpMax = UnitHealth(id), UnitHealthMax(id)
+				if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
+				totalHealth = totalHealth + (100 * hp / hpMax)
+				total = total + 1
+			end
 		end
+	elseif GetNumPartyMembers() > 0 then--if not a raid see if it's a party
+		for i = 1,GetNumPartyMembers() do
+			local id = "party"..i
+			if (UnitIsConnected(id)) then
+				local hp, hpMax = UnitHealth(id), UnitHealthMax(id)
+				if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
+				totalHealth = totalHealth + (100 * hp / hpMax)
+				total = total + 1
+			end
+		end
+		--GetNumPartyMembers() doesn't return player, unlike GetNumRaidMembers which does, so we have to manually add player in for 5 mans
+		local hp, hpMax = UnitHealth("player"), UnitHealthMax("player")
+		if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
+		totalHealth = totalHealth + (100 * hp / hpMax)
+		total = total + 1
+	end
+	if total == 0 then --something fucked up, this shoudln't happen, or you weren't in a raid or party and for some dumb reason raid admin is checking this while solo.
+		local hp, hpMax = UnitHealth("player"), UnitHealthMax("player")-- so lets just add player again to make sure it's not 0
+		if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
+		totalHealth = totalHealth + (100 * hp / hpMax)
+		total = total + 1
 	end
 	totalHealth = totalHealth / total
 

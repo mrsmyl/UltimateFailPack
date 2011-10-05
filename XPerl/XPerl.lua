@@ -5,9 +5,10 @@
 local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
-XPerl_SetModuleRevision("$Revision: 540 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 540 $")
 
+XPerl_SetModuleRevision("$Revision: 573 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 573 $")
+ 
 --Some local copies for speed 
 local strsub = strsub
 local format = format
@@ -697,7 +698,12 @@ function XPerl_SetHealthBar(self, hp, Max)
 	local bar = self.statsFrame.healthBar
 
 	bar:SetMinMaxValues(0, Max)
-    local percent = max(0, hp / Max) -- Fix for SetFormatted text displaying -21474... for 0 / 0			
+	local percent
+	if Max == 0 then--For some dumb reason max HP is 0, this should never happen, but it does, prevent any division by 0.
+		percent = 0
+	else
+		percent = max(0, hp / Max) -- Fix for SetFormatted text displaying -21474... for 0 / 0	
+	end		
     if percent > 100 then percent = 100 end -- percent only goes to 100        
     if (conf.bar.inverse) then
 

@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 518 $")
+XPerl_SetModuleRevision("$Revision: 575 $")
 
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
@@ -725,7 +725,11 @@ function XPerl_Check_UpdateItemList()
 				if (v.link == "res") then
 					nameFrame:SetText(RESISTANCE_LABEL)
 					countFrame:SetText(XPerl_ResistResults.count)
-					div = XPerl_ResistResults.count / onlineCount
+					if onlineCount == 0 then
+						div = 1
+					else
+						div = XPerl_ResistResults.count / onlineCount
+					end
 
 				elseif (v.link == "dur") then
 					local dur,c = string.gsub(DURABILITY_TEMPLATE, " %%d / %%d", "")
@@ -734,12 +738,20 @@ function XPerl_Check_UpdateItemList()
 					end
 					nameFrame:SetText(dur)
 					countFrame:SetText(XPerl_DurResults.count)
-					div = XPerl_DurResults.count / onlineCount
+					if onlineCount == 0 then
+						div = 1
+					else
+						div = XPerl_DurResults.count / onlineCount
+					end
 
 				elseif (v.link == "reg") then
 					nameFrame:SetText(XPERL_CHECK_REAGENTS)
 					countFrame:SetText(XPerl_RegResults.count)
-					div = XPerl_RegResults.count / reagentCount
+					if reagentCount == 0 then
+						div = 1
+					else
+						div = XPerl_RegResults.count / reagentCount
+					end
 				end
 				nameFrame:SetTextColor(1, 1, 0.7)
 

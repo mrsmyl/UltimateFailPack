@@ -12,10 +12,10 @@
 ## X-License: GNU GPL v3, 29 June 2007
 ## SavedVariablesPerCharacter: XPerl_Admin, XPerl_CheckItems
 ## RequiredDeps: XPerl
+## X-Curse-Packaged-Version: r579
+## X-Curse-Project-Name: X-Perl UnitFrames
+## X-Curse-Project-ID: xperl
+## X-Curse-Repository-ID: wow/xperl/mainline
 XPerl_RaidAdmin.xml
 XPerl_Check.xml
 XPerl_RosterText.xml
--- X-Curse-Packaged-Version: 3.1.5
--- X-Curse-Project-Name: X-Perl UnitFrames
--- X-Curse-Project-ID: xperl
--- X-Curse-Repository-ID: wow/xperl/mainline

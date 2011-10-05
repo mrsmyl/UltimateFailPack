@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:   ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 534 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 566 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -637,8 +637,8 @@ function XPerl_Raid_Single_OnLoad(self)
 	self:SetAttribute("*type1", "target")
 	self:SetAttribute("type2", "menu")
 	self.menu = XPerl_Raid_ShowPopup
-
 	-- Does AllowAttributeChange work for children?
+	-- This taints the UI if done in combat. there a fix?
 	self.nameFrame:SetAttribute("useparent-unit", true)
 	self.nameFrame:SetAttribute("*type1", "target")
 	self.nameFrame:SetAttribute("type2", "menu")
@@ -1123,9 +1123,6 @@ function XPerl_Raid_HideShowRaid()
 			end
 		end
 	end
-	if not InCombatLockdown() then
-		XPerl_Raid_HideBlizzRaid()
-	end
 end
 
 -------------------
@@ -1190,9 +1187,6 @@ function XPerl_Raid_Events:PLAYER_ENTERING_WORLD()
 	rosterUpdated = nil
 
 	if (GetNumRaidMembers() > 0) then
-		if not InCombatLockdown() then
-			XPerl_Raid_HideBlizzRaid()
-		end
 		XPerl_Raid_Frame:Show()
 	end
 
@@ -1233,9 +1227,6 @@ do
 		rosterUpdated = true		-- Many roster updates can occur during 1 video frame, so we'll check everything at end of last one
 		BuildGuidMap()
 		if (GetNumRaidMembers() > 0) then
-			if not InCombatLockdown() then
-				XPerl_Raid_HideBlizzRaid()
-			end
 			XPerl_Raid_Frame:Show()
 		end
 	end
@@ -1657,9 +1648,6 @@ local function SetRaidRoster()
 	end
 
 	if (GetNumRaidMembers() > 0) then
-		if not InCombatLockdown() then
-			XPerl_Raid_HideBlizzRaid()
-		end
 		XPerl_Raid_Frame:Show()
 	else
 		XPerl_Raid_Frame:Hide()
@@ -2222,15 +2210,13 @@ function XPerl_Raid_Set_Bits(self)
 	if rconf then
 		if (not rconf.hideframemanager) then
 			rconf.hideframemanager = { --messy fix for missing config
-				enable = 1, 
+				enable = 0, 
 			}
 		end
-		if rconf and rconf.hideframemanager.enable then 
-			_G["CompactRaidFrameManager"]:Hide()
-		else
-			if GetNumRaidMembers() > 0 then --let's not show stuff when not in raid  
-				_G["CompactRaidFrameManager"]:Show() --show the frame again so that the option can be changed withouth /reloadui
-			end 
+		if (not rconf.hideframecontainer) then
+			rconf.hideframecontainer = { --messy fix for missing config
+				enable = 1, 
+			}
 		end
 	end
 	
@@ -2263,17 +2249,6 @@ function XPerl_Raid_Set_Bits(self)
 	end
 
 	if (GetNumRaidMembers() > 0) then
-		if not InCombatLockdown() then
-			XPerl_Raid_HideBlizzRaid()
-		end
 		XPerl_Raid_Frame:Show()
-	end
-end
-
---hide those pesky default raidframe and friend
-function XPerl_Raid_HideBlizzRaid()
-	_G["CompactRaidFrameContainer"]:Hide() --be paranoid and hide this one as well
-	if rconf and rconf.hideframemanager and rconf.hideframemanager.enable then 
-		_G["CompactRaidFrameManager"]:Hide() --this is the sliding panel to the left
 	end
 end

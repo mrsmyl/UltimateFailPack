@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 532 $")
+		end, "$Revision: 579 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -638,7 +638,11 @@ local function XPerl_Party_UpdateMana(self)
 	if (UnitPowerType(self.partyid)>=1) then
 		self.statsFrame.manaBar.percent:SetText(Partymana)
 	else
-		self.statsFrame.manaBar.percent:SetFormattedText(percD, 100 * max(0, Partymana / Partymanamax))
+		if Partymanamax == 0 then--4.3 Divide by 0 workaround
+			self.statsFrame.manaBar.percent:SetFormattedText(percD, 100 * max(0, 0))		
+		else
+			self.statsFrame.manaBar.percent:SetFormattedText(percD, 100 * max(0, Partymana / Partymanamax))
+		end
 	end
 
 	--if (pconf.values) then
@@ -718,7 +722,11 @@ local function XPerl_Party_TargetUpdateHealth(self)
 
 	tf.healthBar:SetMinMaxValues(0, hpMax)
 	tf.healthBar:SetValue(hp)
-	tf.healthBar.text:SetFormattedText(percD, 100 * hp / hpMax)	-- XPerl_Percent[floor(100 * hp / hpMax)])
+	if hpMax == 0 then--4.3 divide by 0 Workaround
+		tf.healthBar.text:SetFormattedText(percD, 0)	-- XPerl_Percent[floor(100 * hp / hpMax)])
+	else
+		tf.healthBar.text:SetFormattedText(percD, 100 * hp / hpMax)	-- XPerl_Percent[floor(100 * hp / hpMax)])
+	end
 	tf.healthBar.text:Show()
 
 	if (UnitIsDeadOrGhost(self.targetid)) then
@@ -731,7 +739,11 @@ local function XPerl_Party_TargetUpdateHealth(self)
 		end
 	else
 		--XPerl_ColourHealthBar(self.targetFrame, hp / hpMax, self.targetid)
-		XPerl_SetSmoothBarColor(self.targetFrame.healthBar, hp / hpMax)
+		if hpMax == 0 then--4.3 divide by 0 Workaround
+			XPerl_SetSmoothBarColor(self.targetFrame.healthBar, 0)
+		else
+			XPerl_SetSmoothBarColor(self.targetFrame.healthBar, hp / hpMax)
+		end
 	end
 
 	if (UnitAffectingCombat(self.targetid)) then

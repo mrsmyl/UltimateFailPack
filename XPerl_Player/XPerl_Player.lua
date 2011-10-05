@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 539 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 579 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -493,10 +493,18 @@ local function XPerl_Player_UpdateMana(self)
 	if (pType >= 1 or UnitPowerMax(self.partyid, pType) < 1) then
 		mb.percent:SetText(playermana)
 	else
-		mb.percent:SetFormattedText(percD, (playermana * 100.0) / playermanamax)
+		if playermanamax == 0 then--4.3 Divide by 0 workaround
+			mb.percent:SetFormattedText(percD, 0)		
+		else
+			mb.percent:SetFormattedText(percD, (playermana * 100.0) / playermanamax)
+		end
 	end
 	
-	mb.tex:SetTexCoord(0, max(0, (playermana / playermanamax)), 0, 1)
+	if playermanamax == 0 then--4.3 Divide by 0 workaround
+		mb.tex:SetTexCoord(0, max(0, (0)), 0, 1)
+	else
+		mb.tex:SetTexCoord(0, max(0, (playermana / playermanamax)), 0, 1)
+	end
 	
 	if (not self.statsFrame.greyMana) then
 		if (pconf.values) then
@@ -512,6 +520,7 @@ local function XPerl_Player_UpdateMana(self)
 	end
 end
 
+--[[
 local origUnitPowerBarAlt_OnUpdate = _G.UnitPowerBarAlt_OnUpdate
 local function XPerl_UnitPowerBarAlt_OnUpdate(self, elapsed)
 	origUnitPowerBarAlt_OnUpdate(self, elapsed)
@@ -556,6 +565,7 @@ function XPerl_Player_Events:UNIT_POWER_BAR_HIDE()
 		self.altPower:Hide()
 	end
 end
+--]]
 
 local spiritOfRedemption = GetSpellInfo(27827)
 
@@ -666,7 +676,7 @@ function XPerl_Player_OnUpdate(self, elapsed)
 	        XPerl_Player_UpdateHealth(self)
 	-- end	
 
-	if (IsResting() and UnitLevel("player") < MAX_PLAYER_LEVEL) then
+	if (IsResting() and UnitLevel("player") < 85) then
 		self.restingDelay = (self.restingDelay or 2) - elapsed
 		if (self.restingDelay <= 0) then
 			self.restingDelay = 2
@@ -809,7 +819,7 @@ function XPerl_Player_Events:VARIABLES_LOADED()
 			"PARTY_LOOT_METHOD_CHANGED", "RAID_ROSTER_UPDATE", "PLAYER_UPDATE_RESTING", "PLAYER_REGEN_ENABLED",
 			"PLAYER_REGEN_DISABLED", "PLAYER_ENTER_COMBAT", "PLAYER_LEAVE_COMBAT", "PLAYER_DEAD",
 			"UPDATE_FACTION", "UNIT_AURA", "PLAYER_CONTROL_LOST", "PLAYER_CONTROL_GAINED",
-			"UNIT_COMBAT", "UNIT_POWER_BAR_SHOW", "UNIT_POWER_BAR_HIDE"}
+			"UNIT_COMBAT"}--, "UNIT_POWER_BAR_SHOW", "UNIT_POWER_BAR_HIDE"
 
 	for i,eventE in pairs(events) do
 		self:RegisterEvent(eventE)
@@ -1400,7 +1410,6 @@ function XPerl_PaladinPowerBar_OnEvent(self, event, arg1, arg2)
 		if level >= PALADINPOWERBAR_SHOW_LEVEL then
 			PaladinPowerBar:Show()
 			PaladinPowerBar:SetAlpha(1)
-			self:UnregisterEvent("PLAYER_LEVEL_UP")
 			self.showAnim:Play()
 			XPerl_PaladinPowerBar_Update(self)
 		end

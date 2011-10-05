@@ -10014,7 +10014,6 @@
 									XPerl_Options_EnableSibling(self, "Groups_ByClass")
 									XPerl_Options_EnableSibling(self, "Groups_Alphabetical")
 									XPerl_Options_EnableSibling(self, "Groups_VSpacing")
-									XPerl_Options_EnableSibling(self, "Blizz_RaidPullout")
 								end
 								self.configBase = "XPerlDB.raid"
 								self.configIndex = "enable"
@@ -10444,22 +10443,6 @@
 								self.configBase = "XPerlDB.raid.healerMode"
 								self.configIndex = "enable"
 								self.configClick = XPerl_Raid_OptionActions
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-					<CheckButton name="$parent_Blizz_RaidPullout" inherits="XPerlCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Healer" relativePoint="BOTTOMLEFT">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_RAID_BLIZZ_RAIDPULLOUT")
-								self.configBase = "XPerlDB.raid.hideframemanager"
-								self.configIndex = "enable"
-								self.configClick = XPerl_Raid_OptionActions
-								XPerl_Options_RegisterProtected(self)
 							</OnLoad>
 						</Scripts>
 					</CheckButton>

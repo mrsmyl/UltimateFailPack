@@ -45,6 +45,7 @@ if (GetLocale() == "esES" or GetLocale() == "esMX") then
 	XPERL_LOC_ZONE_BLACKWING_DECENT = "Descenso de Alanegra"
 	XPERL_LOC_ZONE_BASTION_OF_TWILIGHT = "El Bastión del Crepúsculo"
 	XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS = "Trono de los Cuatro Vientos"
+	XPERL_LOC_ZONE_FIRELANDS			= "Tierras de Fuego"
 
 	-- Status
 	XPERL_LOC_DEAD		= "Muerto"

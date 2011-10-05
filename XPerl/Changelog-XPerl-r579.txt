@@ -1,0 +1,115 @@
+------------------------------------------------------------------------
+r579 | mysticalos | 2011-09-30 21:57:56 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+couple more divide by 0s in party frame health and mana returning 0, have to wonder why the UnitMaxMana and UnitMaxHealth both return 0 so much on first query then correct value onupdate. if the api worked right to begin with we wouldn't have to account for 0 returns in every dang health and unit power function imaginable. :\
+------------------------------------------------------------------------
+r578 | mysticalos | 2011-09-30 21:44:30 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+fix one too many ( in last
+------------------------------------------------------------------------
+r577 | mysticalos | 2011-09-30 21:24:10 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+i'ms ure they are a lot more places with /0 but i'm just gonna fix em as reported i do not want to look through this mess manually. find more errors report em.
+------------------------------------------------------------------------
+r576 | mysticalos | 2011-09-30 19:28:59 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
+
+sigh, more bad code that doesn't use sanity checks. Zek, why is HealthTotals calulating raid health when not in a raid? it's no wonder there is a divide by 0 error here. Rewrote function to actually check for raid party or solo and sanity checks if UnitHealthMax() return 0 for some dumb reason
+------------------------------------------------------------------------
+r575 | mysticalos | 2011-09-30 18:14:47 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
+
+Fix more possible cases of divide by 0
+------------------------------------------------------------------------
+r574 | mysticalos | 2011-09-30 13:34:03 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+Bump minor version
+------------------------------------------------------------------------
+r573 | mysticalos | 2011-09-30 13:29:49 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+More division by 0 sanity checks that only come up in rare situations. (Seriously, how do you target a mob that has 0 max hp?)
+------------------------------------------------------------------------
+r572 | mysticalos | 2011-09-30 05:49:59 +0000 (Fri, 30 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Fix divide by 0 problem this way instead. since not everyone uses macs. :p
+------------------------------------------------------------------------
+r570 | mysticalos | 2011-09-28 21:19:45 +0000 (Wed, 28 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Use math.huge and math.log instead of /0 so xperl is functional on 4.3 PTR. also works on live.
+------------------------------------------------------------------------
+r569 | mysticalos | 2011-09-01 19:19:03 +0000 (Thu, 01 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Some fixes to level on player frame so it doesn't unregister tracking level ups if you're a paladin above level 9.
+Also fix a bug with player rested experience checking a global that doesn't exist
+------------------------------------------------------------------------
+r568 | mysticalos | 2011-09-01 05:37:27 +0000 (Thu, 01 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.koKR.lua
+   M /trunk/XPerl_Options/localization.zhCN.lua
+   M /trunk/XPerl_Options/localization.zhTW.lua
+
+hopefully fix prayer of mending errors on some non english locals that had no value set.
+------------------------------------------------------------------------
+r567 | mysticalos | 2011-08-30 07:44:53 +0000 (Tue, 30 Aug 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+
+missed a line from last removal in options
+------------------------------------------------------------------------
+r566 | mysticalos | 2011-08-30 01:50:29 +0000 (Tue, 30 Aug 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+oops meant to get rid of all of it not half of it :)
+------------------------------------------------------------------------
+r565 | mysticalos | 2011-08-30 01:49:00 +0000 (Tue, 30 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Options/localization.deDE.lua
+   M /trunk/XPerl_Options/localization.lua
+   M /trunk/XPerl_Options/localization.ruRU.lua
+   M /trunk/XPerl_Options/localization.zhTW.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/localization.lua
+
+Remove the buggy raidframe options. if you want these use http://wow.curse.com/downloads/wow-addons/details/hideraidframe.aspx
+patch 4.2.2 tomorrow for most part is fixing this annoyance anyways.
+------------------------------------------------------------------------
+r564 | mysticalos | 2011-08-26 01:56:01 +0000 (Fri, 26 Aug 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.lua
+   M /trunk/localization.deDE.lua
+   M /trunk/localization.esES.lua
+   M /trunk/localization.frFR.lua
+   M /trunk/localization.koKR.lua
+   M /trunk/localization.lua
+   M /trunk/localization.ruRU.lua
+   M /trunk/localization.zhCN.lua
+   M /trunk/localization.zhTW.lua
+
+Custom highlights update
+------------------------------------------------------------------------

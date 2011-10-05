@@ -7,7 +7,7 @@ if (not XPerl_RequestConfig) then
 end
 
 local conf
-XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 539 $")
+XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 564 $")
 
 local ch = CreateFrame("Frame", "XPerl_Custom")
 ch.active = {}
@@ -69,7 +69,7 @@ function ch:DefaultZoneData()
 				[45855] = true,								-- Gas Nova (Felmyst)
 				[45342] = true,								-- Conflagration (Grand Warlock Alythess)
 				[45641] = true,								-- Fire Bloom (Kil'Jaeden)
-			},--]]
+			},
 		[XPERL_LOC_ZONE_NAXXRAMAS] =
 			{
 				[29213] = true,								-- Curse of the Plaguebringer (Noth the Plaguebringer)
@@ -203,7 +203,7 @@ function ch:DefaultZoneData()
 
 				[74792] = true,								-- Shadow Consumption (Halion)
 				[74562] = true,								-- Fiery Combustion (Halion)
-			},
+			},--]]
 		[XPERL_LOC_ZONE_BARADIN_HOLD] =
 			{
 				[88954] = true,								-- Consuming Darkness (Argaloth)
@@ -256,6 +256,25 @@ function ch:DefaultZoneData()
 				[93123] = true,								-- Wind Chill (Conclave of Wind)
 
 				[89668] = true,								-- Lightning Rod (Al'Akir)
+			},
+		[XPERL_LOC_ZONE_FIRELANDS] =
+			{
+				[99837] = true,								-- Crystal Prison Trapped (Shannox)
+				[101210] = true,							-- Immo Trap Debuff (Shannox)
+
+				[99476] = true,								-- Widows Kiss (Beth'tilac)		
+				[99559] = true,								-- Fixate (Beth'tilac Heroic)
+
+				[101296] = true,							-- Fieroblast(Alysrazor)
+
+				[99402] = true,								-- Tormented (Baloroc)
+				[99516] = true,								-- Countdown (Baloroc Heroic)
+
+				[98450] = true,								-- Searing Seed (Staghelm)
+
+				[100460] = true,							-- Blazing Heat(Ragnaros)
+				[99849] = true,								-- Fixate (Ragnaros)
+				[100292] = true,							-- Lava Wave (Ragnaros)
 			},
 		}
 end
