@@ -809,6 +809,7 @@ PawnRegexes =
 	{"^Hyjal Summit$"}, -- Tears of the Goddess
 	{"^Icecrown$"}, -- (Argent Tournament dailies)
 	{"^Karazhan$"}, -- Torment of the Worgen
+	{"^Molten Front$"}, -- Eternal Sunfruit
 	{"^Old Hillsbrad Foothills$"}, -- Pack of Incendiary Bombs
 	{"^Serpentshrine Cavern$"}, -- Tainted Core
 	{"^Shadowmoon Valley$"}, -- Enchanted Illidari Tabard

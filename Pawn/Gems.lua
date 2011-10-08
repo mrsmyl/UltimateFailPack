@@ -683,7 +683,7 @@ PawnGemData85Uncommon =
 { 52122, false, true, true, "CritRating", 15, "HitRating", 15 }, -- Piercing Jasper
 { 52123, false, true, true, "ResilienceRating", 15, "Stamina", 23 }, -- Steady Jasper
 { 52124, false, true, true, "HasteRating", 15, "Stamina", 23 }, -- Forceful Jasper
-{ 52125, false, true, true, "HasteRating", 15, "Stamina", 23 }, -- Lightning Jasper
+{ 52125, false, true, true, "HasteRating", 15, "HitRating", 15 }, -- Lightning Jasper
 { 52126, false, true, true, "Stamina", 23, "MasteryRating", 15 }, -- Puissant Jasper
 { 52127, false, true, true, "Spirit", 15, "MasteryRating", 15 }, -- Zen Jasper
 { 52128, false, true, true, "HitRating", 15, "MasteryRating", 15 }, -- Sensei's Jasper
@@ -775,7 +775,7 @@ PawnGemData85Rare =
 ------------------------------------------------------------
 
 { 52218, false, true, true, "HasteRating", 20, "Stamina", 30 }, -- Forceful Dream Emerald
-{ 52223, false, true, true, "CritRating", 20, "Stamina", 20 }, -- Jagged Dream Emerald
+{ 52223, false, true, true, "CritRating", 20, "Stamina", 30 }, -- Jagged Dream Emerald
 { 52225, false, true, true, "HasteRating", 20, "HitRating", 20 }, -- Lightning Dream Emerald
 { 52227, false, true, true, "DodgeRating", 20, "HitRating", 20 }, -- Nimble Dream Emerald
 { 52228, false, true, true, "CritRating", 20, "HitRating", 20 }, -- Piercing Dream Emerald
@@ -805,13 +805,123 @@ PawnGemData85Rare =
 { 52213, true, false, true, "Strength", 20, "HitRating", 20 }, -- Etched Demonseye
 { 52217, true, false, true, "Intellect", 20, "HitRating", 20 }, -- Veiled Demonseye
 { 52220, true, false, true, "Agility", 20, "HitRating", 20 }, -- Glinting Demonseye
-{ 52221, true, false, true, "ExpertiseRating", 20, "Stamina", 20 }, -- Guardian's Demonseye
+{ 52221, true, false, true, "ExpertiseRating", 20, "Stamina", 30 }, -- Guardian's Demonseye
 { 52234, true, false, true, "HitRating", 20, "ParryRating", 20 }, -- Retaliating Demonseye
 { 52236, true, false, true, "Intellect", 20, "Spirit", 20 }, -- Purified Demonseye
 { 52238, true, false, true, "Stamina", 30, "Agility", 20 }, -- Shifting Demonseye
 { 52243, true, false, true, "Strength", 20, "Stamina", 30 }, -- Sovereign Demonseye
 { 52248, true, false, true, "Intellect", 20, "Stamina", 30 }, -- Timeless Demonseye
 
+
+}
+
+
+--========================================
+-- Colored level 85 epic-quality gems
+--========================================
+PawnGemData85Epic =
+{
+
+------------------------------------------------------------
+-- Red gems
+------------------------------------------------------------
+
+{ 71879, true, false, false, "Agility", 50 }, -- Delicate Queen's Garnet
+{ 71880, true, false, false, "ExpertiseRating", 50 }, -- Precise Queen's Garnet
+{ 71881, true, false, false, "Intellect", 50 }, -- Brilliant Queen's Garnet
+{ 71882, true, false, false, "ParryRating", 50 }, -- Flashing Queen's Garnet
+{ 71883, true, false, false, "Strength", 50 }, -- Bold Queen's Garnet
+
+
+------------------------------------------------------------
+-- Orange gems
+------------------------------------------------------------
+
+{ 71840, true, true, false, "CritRating", 25, "Agility", 25 }, -- Deadly Lava Coral
+{ 71841, true, true, false, "ExpertiseRating", 25, "CritRating", 25 }, -- Crafty Lava Coral
+{ 71842, true, true, false, "Intellect", 25, "CritRating", 25 }, -- Potent Lava Coral
+{ 71843, true, true, false, "Strength", 25, "CritRating", 25 }, -- Inscribed Lava Coral
+{ 71844, true, true, false, "DodgeRating", 25, "Agility", 25 }, -- Polished Lava Coral
+{ 71845, true, true, false, "ExpertiseRating", 25, "DodgeRating", 25 }, -- Resolute Lava Coral
+{ 71846, true, true, false, "DodgeRating", 25, "ParryRating", 25 }, -- Stalwart Lava Coral
+{ 71847, true, true, false, "Strength", 25, "DodgeRating", 25 }, -- Champion's Lava Coral
+{ 71848, true, true, false, "HasteRating", 25, "Agility", 25 }, -- Deft Lava Coral
+{ 71849, true, true, false, "ExpertiseRating", 25, "HasteRating", 25 }, -- Wicked Lava Coral
+{ 71850, true, true, false, "Intellect", 25, "HasteRating", 25 }, -- Reckless Lava Coral
+{ 71851, true, true, false, "Strength", 25, "HasteRating", 25 }, -- Fierce Lava Coral
+{ 71852, true, true, false, "MasteryRating", 25, "Agility", 25 }, -- Adept Lava Coral
+{ 71853, true, true, false, "ExpertiseRating", 25, "MasteryRating", 25 }, -- Keen Lava Coral
+{ 71854, true, true, false, "Intellect", 25, "MasteryRating", 25 }, -- Artful Lava Coral
+{ 71855, true, true, false, "MasteryRating", 25, "ParryRating", 25 }, -- Fine Lava Coral
+{ 71856, true, true, false, "Strength", 25, "MasteryRating", 25 }, -- Skillful Lava Coral
+{ 71857, true, true, false, "ResilienceRating", 25, "Agility", 25 }, -- Lucent Lava Coral
+{ 71858, true, true, false, "ExpertiseRating", 25, "ResilienceRating", 25 }, -- Tenuous Lava Coral
+{ 71859, true, true, false, "Intellect", 25, "ResilienceRating", 25 }, -- Willful Lava Coral
+{ 71860, true, true, false, "ResilienceRating", 25, "ParryRating", 25 }, -- Splendid Lava Coral
+{ 71861, true, true, false, "Strength", 25, "ResilienceRating", 25 }, -- Resplendent Lava Coral
+
+
+------------------------------------------------------------
+-- Yellow gems
+------------------------------------------------------------
+
+{ 71874, false, true, false, "CritRating", 50 }, -- Smooth Lightstone
+{ 71875, false, true, false, "DodgeRating", 50 }, -- Subtle Lightstone
+{ 71876, false, true, false, "HasteRating", 50 }, -- Quick Lightstone
+{ 71877, false, true, false, "MasteryRating", 50 }, -- Fractured Lightstone
+{ 71878, false, true, false, "ResilienceRating", 50 }, -- Mystic Lightstone
+
+
+------------------------------------------------------------
+-- Green gems
+------------------------------------------------------------
+
+{ 71822, false, true, true, "Spirit", 25, "CritRating", 25 }, -- Misty Elven Peridot
+{ 71823, false, true, true, "CritRating", 25, "HitRating", 25 }, -- Piercing Elven Peridot
+{ 71824, false, true, true, "HasteRating", 25, "HitRating", 25 }, -- Lightning Elven Peridot
+{ 71825, false, true, true, "HitRating", 25, "MasteryRating", 25 }, -- Sensei's Elven Peridot
+{ 71826, false, true, true, "SpellPenetration", 32, "MasteryRating", 25 }, -- Infused Elven Peridot
+{ 71827, false, true, true, "Spirit", 25, "MasteryRating", 25 }, -- Zen Elven Peridot
+{ 71828, false, true, true, "HitRating", 25, "ResilienceRating", 25 }, -- Balanced Elven Peridot
+{ 71829, false, true, true, "SpellPenetration", 32, "ResilienceRating", 25 }, -- Vivid Elven Peridot
+{ 71830, false, true, true, "Spirit", 25, "ResilienceRating", 25 }, -- Turbid Elven Peridot
+{ 71831, false, true, true, "CritRating", 25, "SpellPenetration", 32 }, -- Radiant Elven Peridot
+{ 71832, false, true, true, "HasteRating", 25, "SpellPenetration", 32 }, -- Shattered Elven Peridot
+{ 71833, false, true, true, "HasteRating", 25, "Spirit", 25 }, -- Energized Elven Peridot
+{ 71834, false, true, true, "CritRating", 25, "Stamina", 37 }, -- Jagged Elven Peridot
+{ 71835, false, true, true, "DodgeRating", 25, "Stamina", 37 }, -- Regal Elven Peridot
+{ 71836, false, true, true, "HasteRating", 25, "Stamina", 37 }, -- Forceful Elven Peridot
+{ 71837, false, true, true, "HitRating", 25, "DodgeRating", 25 }, -- Nimble Elven Peridot
+{ 71838, false, true, true, "Stamina", 37, "MasteryRating", 25 }, -- Puissant Elven Peridot
+{ 71839, false, true, true, "Stamina", 37, "ResilienceRating", 25 }, -- Steady Elven Peridot
+
+
+------------------------------------------------------------
+-- Blue gems
+------------------------------------------------------------
+
+{ 71817, false, false, true, "HitRating", 50 }, -- Rigid Deepholm Iolite
+{ 71820, false, false, true, "Stamina", 75 }, -- Solid Deepholm Iolite
+{ 71819, false, false, true, "Spirit", 50 }, -- Sparkling Deepholm Iolite
+{ 71818, false, false, true, "SpellPenetration", 63 }, -- Stormy Deepholm Iolite
+
+
+------------------------------------------------------------
+-- Purple gems
+------------------------------------------------------------
+
+{ 71862, true, false, true, "HitRating", 25, "Agility", 25 }, -- Glinting Shadow Spinel
+{ 71863, true, false, true, "ExpertiseRating", 25, "HitRating", 25 }, -- Accurate Shadow Spinel
+{ 71864, true, false, true, "Intellect", 25, "HitRating", 25 }, -- Veiled Shadow Spinel
+{ 71865, true, false, true, "HitRating", 25, "ParryRating", 25 }, -- Retaliating Shadow Spinel
+{ 71866, true, false, true, "Strength", 25, "HitRating", 25 }, -- Etched Shadow Spinel
+{ 71867, true, false, true, "Intellect", 25, "SpellPenetration", 32 }, -- Mysterious Shadow Spinel
+{ 71868, true, false, true, "Intellect", 25, "Spirit", 25 }, -- Purified Shadow Spinel
+{ 71869, true, false, true, "Stamina", 37, "Agility", 25 }, -- Shifting Shadow Spinel
+{ 71870, true, false, true, "ExpertiseRating", 25, "Stamina", 37 }, -- Guardian's Shadow Spinel
+{ 71871, true, false, true, "Intellect", 25, "Stamina", 37 }, -- Timeless Shadow Spinel
+{ 71872, true, false, true, "Stamina", 37, "ParryRating", 25 }, -- Defender's Shadow Spinel
+{ 71873, true, false, true, "Strength", 25, "Stamina", 37 }, -- Sovereign Shadow Spinel
 
 }
 
@@ -835,7 +945,7 @@ PawnCogwheelData85Rare =
 { 59491, false, false, false, "ParryRating", 208 }, -- Flashing Cogwheel
 { 59493, false, false, false, "HitRating", 208 }, -- Rigid Cogwheel
 { 59496, false, false, false, "Spirit", 208 }, -- Sparkling Cogwheel
---{ 68660, false, false, false, "ResilienceRating", 208 }, -- Mystic Cogwheel -- *** new in 4.0.6
+{ 68660, false, false, false, "ResilienceRating", 208 }, -- Mystic Cogwheel
 
 
 }
@@ -888,6 +998,7 @@ PawnGemQualityLevels =
 	{ 82, PawnLocal.GemQualityLevel80Epic },
 	{ 85, PawnLocal.GemQualityLevel85Uncommon },
 	{ 86, PawnLocal.GemQualityLevel85Rare },
+	--{ 87, PawnLocal.GemQualityLevel85Epic }, -- ***
 }
 PawnGemQualityTables =
 {
@@ -900,6 +1011,7 @@ PawnGemQualityTables =
 	[82] = PawnGemData80Epic,
 	[85] = PawnGemData85Uncommon,
 	[86] = PawnGemData85Rare,
+	[87] = PawnGemData85Epic,
 }
 PawnDefaultGemQualityLevel = 86
 
@@ -926,3 +1038,9 @@ PawnCogwheelQualityTables =
 	[86] = PawnCogwheelData85Rare,
 }
 PawnDefaultCogwheelGemQualityLevel = 86
+
+
+-- *** Patch 4.3 stuff
+if TRANSMOGRIFY then
+	tinsert(PawnGemQualityLevels, { 87, PawnLocal.GemQualityLevel85Epic } )
+end
