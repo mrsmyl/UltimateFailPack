@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 579 $")
+		end, "$Revision: 581 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -628,9 +628,21 @@ local function XPerl_Party_UpdateMana(self)
 	local Partymana = UnitMana(self.partyid)
 	local Partymanamax = UnitManaMax(self.partyid)
 
+	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
+	local percent
+	if Partymana > 0 and Partymanamax == 0 then--We have current mana but max mana failed.
+		Partymanamax = Partymana--Make max mana at least equal to current health
+		percent = 100--And percent 100% cause a number divided by itself is 1, duh.
+	elseif Partymana == 0 and Partymanamax == 0 then--Probably doesn't use mana or is oom?
+		percent = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
+	else
+		percent = Partymana / Partymanamax--Everything is dandy, so just do it right way.
+	end
+	--end division by 0 check
+--[[
 	if (Partymanamax == 1 and Partymana > Partymanamax) then
 		Partymanamax = Partymana
-	end
+	end--]]
 
 	self.statsFrame.manaBar:SetMinMaxValues(0, Partymanamax)
 	self.statsFrame.manaBar:SetValue(Partymana)
@@ -638,11 +650,7 @@ local function XPerl_Party_UpdateMana(self)
 	if (UnitPowerType(self.partyid)>=1) then
 		self.statsFrame.manaBar.percent:SetText(Partymana)
 	else
-		if Partymanamax == 0 then--4.3 Divide by 0 workaround
-			self.statsFrame.manaBar.percent:SetFormattedText(percD, 100 * max(0, 0))		
-		else
-			self.statsFrame.manaBar.percent:SetFormattedText(percD, 100 * max(0, Partymana / Partymanamax))
-		end
+		self.statsFrame.manaBar.percent:SetFormattedText(percD, 100 * percent)
 	end
 
 	--if (pconf.values) then
@@ -722,11 +730,18 @@ local function XPerl_Party_TargetUpdateHealth(self)
 
 	tf.healthBar:SetMinMaxValues(0, hpMax)
 	tf.healthBar:SetValue(hp)
-	if hpMax == 0 then--4.3 divide by 0 Workaround
-		tf.healthBar.text:SetFormattedText(percD, 0)	-- XPerl_Percent[floor(100 * hp / hpMax)])
+	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
+	local percent
+	if UnitIsDeadOrGhost(self.targetid) or (hp == 0 and hpMax == 0) then--Probably dead target
+		percent = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
+	elseif hp > 0 and hpMax == 0 then--We have current ho but max hp failed.
+		hpMax = hp--Make max hp at least equal to current health
+		percent = 100--And percent 100% cause a number divided by itself is 1, duh.
 	else
-		tf.healthBar.text:SetFormattedText(percD, 100 * hp / hpMax)	-- XPerl_Percent[floor(100 * hp / hpMax)])
+		percent = hp / hpMax--Everything is dandy, so just do it right way.
 	end
+	--end division by 0 check
+	tf.healthBar.text:SetFormattedText(percD, 100 * percent)	-- XPerl_Percent[floor(100 * hp / hpMax)])
 	tf.healthBar.text:Show()
 
 	if (UnitIsDeadOrGhost(self.targetid)) then
@@ -739,11 +754,7 @@ local function XPerl_Party_TargetUpdateHealth(self)
 		end
 	else
 		--XPerl_ColourHealthBar(self.targetFrame, hp / hpMax, self.targetid)
-		if hpMax == 0 then--4.3 divide by 0 Workaround
-			XPerl_SetSmoothBarColor(self.targetFrame.healthBar, 0)
-		else
-			XPerl_SetSmoothBarColor(self.targetFrame.healthBar, hp / hpMax)
-		end
+		XPerl_SetSmoothBarColor(self.targetFrame.healthBar, percent)
 	end
 
 	if (UnitAffectingCombat(self.targetid)) then

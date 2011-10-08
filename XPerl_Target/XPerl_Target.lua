@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 573 $")
+			end, "$Revision: 581 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -694,16 +694,24 @@ function XPerl_Target_SetMana(self)
 	local targetmana, targetmanamax = UnitMana(self.partyid), UnitManaMax(self.partyid)
 	local mb = self.statsFrame.manaBar
 
-	if (targetmanamax == 1 and targetmana > targetmanamax) then
-		targetmanamax = targetmana
+	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
+	local pmanaPct
+	if targetmana > 0 and targetmanamax == 0 then--We have current mana but max mana failed.
+		targetmanamax = targetmana--Make max mana at least equal to current health
+		pmanaPct = 100--And percent 100% cause a number divided by itself is 1, duh.
+	elseif targetmana == 0 and targetmanamax == 0 then--Probably doesn't use mana or is oom?
+		pmanaPct = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
+	else
+		pmanaPct = targetmana / targetmanamax--Everything is dandy, so just do it right way.
 	end
+	--end division by 0 check
 
 	mb:SetMinMaxValues(0, targetmanamax)
 	mb:SetValue(targetmana)
 
 	local p = UnitPowerType(self.partyid)
 	if (p == 0) then
-		mb.percent:SetFormattedText(percD, 100 * (targetmana / targetmanamax))	--	XPerl_Percent[floor(100 * (targetmana / targetmanamax))])
+		mb.percent:SetFormattedText(percD, 100 * pmanaPct)	--	XPerl_Percent[floor(100 * (targetmana / targetmanamax))])
 	else
 		mb.percent:SetText(targetmana)
 	end
@@ -721,71 +729,6 @@ end
 function XPerl_Target_GetHealth(self)
 	local hp, hpMax = XPerl_Unit_GetHealth(self)
 	return hp, hpMax, hpMax == 100
-end
-
--- XPerl_Target_GetHealthMH3
-local function XPerl_Target_GetHealthMH3(self)
-	local hp, hpMax = XPerl_Unit_GetHealth(self)
-	local percent
-	if (hpMax == 100) then
-		local current, max, found = mobhealth:GetUnitHealth(self.partyid)
-		if (current and max and found) then
-			if (max ~= 100) then
-				hp, hpMax = current, max
-			else
-				percent = true
-			end
-		else
-			percent = true
-		end
-	end
-	return hp, hpMax, percent
-end
-
--- XPerl_Target_GetHealthMI2
-local function XPerl_Target_GetHealthMI2(self)
-	local partyid = self.partyid
-	local hp, hpMax = XPerl_Unit_GetHealth(self)
-
-	local percent
-	if (hpMax == 100) then
-		local index, current, max, table
-		if (UnitIsPlayer(partyid)) then
-			index = UnitName(partyid)
-			table = MobHealthPlayerDB or MobHealthDB
-		else
-			index = UnitName(partyid)..":"..UnitLevel(partyid)
-			table = MobHealthDB or MobHealthPlayerDB
-		end
-
-		if (table and type(table[index]) == "string") then
-			local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$")
-
-			if (pts and pct) then
-				pts = pts + 0
-				pct = pct + 0
-				if( pct ~= 0 ) then
-					pointsPerPct = pts / pct
-				else
-					pointsPerPct = 0
-				end
-
-				local currentPct = hp
-				if (pointsPerPct > 0) then
-					current = (currentPct * pointsPerPct) + 0.5
-					max = (100 * pointsPerPct) + 0.5
-				end
-			end
-		end
-
-		if (current) then
-			hp, hpMax = current, max
-		else
-			percent = true
-		end
-	end
-
-	return hp, hpMax, percent
 end
 
 -- XPerl_Target_SetHealth
@@ -814,8 +757,8 @@ function XPerl_Target_SetHealth(self)
 	XPerl_SetHealthBar(self, hp, hpMax)
 
 	if (percent) then
-		if hpMax == 0 then--For some dumb reason max HP is 0, this should never happen, but it does, prevent any division by 0.
-			hbt:SetFormattedText(percD, 100 * 0)
+		if UnitIsDeadOrGhost(partyid) or hpMax == 0 then--4.3+ fix so if for some dumb reason max HP is 0, prevent any division by 0.
+			hbt:SetFormattedText(percD, 0)
 		else
 			hbt:SetFormattedText(percD, 100 * hp / hpMax)
 		end	
@@ -1091,25 +1034,7 @@ end
 
 -- VARIABLES_LOADED
 function XPerl_Target_Events:VARIABLES_LOADED()
---[[	if (XPerl_Target_GetHealthMH3) then
-		local mh4 = AceLibrary and AceLibrary:HasInstance("LibMobHealth-4.0") and AceLibrary("LibMobHealth-4.0")
 
-		if (mh4) then
-			mobhealth = mh4
-			XPerl_Target_GetHealth = XPerl_Target_GetHealthMH3
-		elseif (MobHealth3) then
-			mobhealth = MobHealth3
-			XPerl_Target_GetHealth = XPerl_Target_GetHealthMH3
-		elseif (MobHealthDB) then
-			XPerl_Target_GetHealth = XPerl_Target_GetHealthMI2
-		end
-
-		XPerl_Target_GetHealthMH3 = nil
-		XPerl_Target_GetHealthMI2 = nil
-
-		XPerl_Target_Events.VARIABLES_LOADED = nil
-	end
-]]
 end
 
 function XPerl_Target_Events:PLAYER_REGEN_ENABLED()

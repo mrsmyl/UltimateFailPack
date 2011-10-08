@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 579 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 580 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -487,24 +487,26 @@ local function XPerl_Player_UpdateMana(self)
 	local playermanamax = UnitManaMax(self.partyid)
 	mb:SetMinMaxValues(0, playermanamax)
 	mb:SetValue(playermana)
-
+	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
+	local percent
+	if playermana > 0 and playermanamax == 0 then--We have current mana but max mana failed.
+		playermanamax = playermana--Make max mana at least equal to current health
+		percent = 100--And percent 100% cause a number divided by itself is 1, duh.
+	elseif playermana == 0 and playermanamax == 0 then--Probably doesn't use mana or is oom?
+		percent = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
+	else
+		percent = playermana / playermanamax--Everything is dandy, so just do it right way.
+	end
+	--end division by 0 check
 	mb.text:SetFormattedText("%d/%d", playermana, playermanamax)
 	local pType = UnitPowerType(self.partyid)
 	if (pType >= 1 or UnitPowerMax(self.partyid, pType) < 1) then
 		mb.percent:SetText(playermana)
 	else
-		if playermanamax == 0 then--4.3 Divide by 0 workaround
-			mb.percent:SetFormattedText(percD, 0)		
-		else
-			mb.percent:SetFormattedText(percD, (playermana * 100.0) / playermanamax)
-		end
+		mb.percent:SetFormattedText(percD, percent * 100)
 	end
 	
-	if playermanamax == 0 then--4.3 Divide by 0 workaround
-		mb.tex:SetTexCoord(0, max(0, (0)), 0, 1)
-	else
-		mb.tex:SetTexCoord(0, max(0, (playermana / playermanamax)), 0, 1)
-	end
+	mb.tex:SetTexCoord(0, max(0, (percent)), 0, 1)
 	
 	if (not self.statsFrame.greyMana) then
 		if (pconf.values) then

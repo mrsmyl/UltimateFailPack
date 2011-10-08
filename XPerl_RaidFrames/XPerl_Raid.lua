@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:   ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 566 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 580 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -529,7 +529,17 @@ function XPerl_Raid_UpdateHealth(self)
 			end
 			self.dead = nil
 
-			local percentHp = health / healthmax
+			--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
+			local percentHp
+			if health > 0 and healthmax == 0 then--We have current ho but max hp failed.
+				healthmax = health--Make max hp at least equal to current health
+				percentHp = 100--And percent 100% cause a number divided by itself is 1, duh.
+			elseif health == 0 and healthmax == 0 then--Probably dead target
+				percentHp = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
+			else
+				percentHp = health / healthmax--Everything is dandy, so just do it right way.
+			end
+			--end division by 0 check
 			if (rconf.healerMode.enable) then
 				self.statsFrame.healthBar.text:SetText(-(healthmax - health))
 			else
@@ -584,8 +594,18 @@ local function XPerl_Raid_UpdateMana(self)
 			if (rconf.values) then			-- TODO rconf.manavalues
 			 	self.statsFrame.manaBar.text:SetFormattedText("%d/%d", mana, manamax)
 		 	else
-		 		local pmanaPct = (mana * 100.0) / manamax
-				self.statsFrame.manaBar.text:SetFormattedText(percD, pmanaPct)	-- XPerl_Percent[floor(pmanaPct)])
+				--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
+				local pmanaPct
+				if mana > 0 and manamax == 0 then--We have current mana but max mana failed.
+					manamax = mana--Make max mana at least equal to current health
+					pmanaPct = 100--And percent 100% cause a number divided by itself is 1, duh.
+				elseif mana == 0 and manamax == 0 then--Probably doesn't use mana or is oom?
+					pmanaPct = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
+				else
+					pmanaPct = mana / manamax--Everything is dandy, so just do it right way.
+				end
+				--end division by 0 check
+				self.statsFrame.manaBar.text:SetFormattedText(percD, pmanaPct * 100)	-- XPerl_Percent[floor(pmanaPct)])
 			end
 		else
 			self.statsFrame.manaBar.text:SetText("")

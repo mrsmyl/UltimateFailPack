@@ -8,7 +8,7 @@ local TableUnits = {}			-- Dynamic list of units indexed by raid id, changed on 
 XPerlRaidMonConfig = {}
 local config = XPerlRaidMonConfig
 
-XPerl_SetModuleRevision("$Revision: 576 $")
+XPerl_SetModuleRevision("$Revision: 582 $")
 
 XPERL_RAIDMON_UNIT_WIDTH_MIN = 50
 XPERL_RAIDMON_UNIT_WIDTH_MAX = 150
@@ -407,8 +407,18 @@ function cast:HealthTotals()
 			local id = "raid"..i
 			if (UnitIsConnected(id)) then
 				local hp, hpMax = UnitHealth(id), UnitHealthMax(id)
-				if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
-				totalHealth = totalHealth + (100 * hp / hpMax)
+				--Begin 4.3 anti /0 fix.
+				local percent
+				if UnitIsDeadOrGhost(id) or (hp == 0 and hpMax == 0) then--They are dead
+					percent = 0
+				elseif hp > 0 and hpMax == 0 then--They have more then 1 HP so they have to be alive, so we need to fix hpmax being wrong.
+					hpMax = hp--Make max hp equal to current HP
+					percent = 100
+				else
+					percent = hp / hpMax
+				end
+				--end /0 fix.
+				totalHealth = totalHealth + (100 * percent)
 				total = total + 1
 			end
 		end
@@ -417,28 +427,48 @@ function cast:HealthTotals()
 			local id = "party"..i
 			if (UnitIsConnected(id)) then
 				local hp, hpMax = UnitHealth(id), UnitHealthMax(id)
-				if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
-				totalHealth = totalHealth + (100 * hp / hpMax)
+				--Begin 4.3 anti /0 fix.
+				local percent
+				if UnitIsDeadOrGhost(id) or (hp == 0 and hpMax == 0) then--They are dead
+					percent = 0
+				elseif hp > 0 and hpMax == 0 then--They have more then 1 HP so they have to be alive, so we need to fix hpmax being wrong.
+					hpMax = hp--Make max hp equal to current HP
+					percent = 100
+				else
+					percent = hp / hpMax
+				end
+				--end /0 fix.
+				totalHealth = totalHealth + (100 * percent)
 				total = total + 1
 			end
 		end
 		--GetNumPartyMembers() doesn't return player, unlike GetNumRaidMembers which does, so we have to manually add player in for 5 mans
 		local hp, hpMax = UnitHealth("player"), UnitHealthMax("player")
-		if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
-		totalHealth = totalHealth + (100 * hp / hpMax)
+		--Begin 4.3 anti /0 fix.
+		local percent
+		if UnitIsDeadOrGhost("player") or (hp == 0 and hpMax == 0) then--They are dead
+			percent = 0
+		elseif hp > 0 and hpMax == 0 then--They have more then 1 HP so they have to be alive, so we need to fix hpmax being wrong.
+			hpMax = hp--Make max hp equal to current HP
+			percent = 100
+		else
+			percent = hp / hpMax
+		end
+		--end /0 fix.
+		totalHealth = totalHealth + (100 * percent)
 		total = total + 1
 	end
-	if total == 0 then --something fucked up, this shoudln't happen, or you weren't in a raid or party and for some dumb reason raid admin is checking this while solo.
-		local hp, hpMax = UnitHealth("player"), UnitHealthMax("player")-- so lets just add player again to make sure it's not 0
-		if hpMax == 0 then hpMax = 1 end--If for some reason someones max hp was 0 lets make it 1 so UI doesn't fuck up over it in 4.3
-		totalHealth = totalHealth + (100 * hp / hpMax)
-		total = total + 1
+	if totalHealth ~= 0 and total ~= 0 then--Make sure neither is 0, if they are don't bother division, no one is alive.
+		totalHealth = totalHealth / total
 	end
-	totalHealth = totalHealth / total
 
 	self.totals.RaidHealth:SetValue(totalHealth)
 	self.totals.RaidHealth.name:SetFormattedText("%d%%", totalHealth)
-	ScaleBarColour(self.totals.RaidHealth, totalHealth / 100)
+	if totalHealth ~= 0 then
+		ScaleBarColour(self.totals.RaidHealth, totalHealth / 100)
+	else--don't divide 0 by 100, if total health is 0 then that's all we need to put in.
+		ScaleBarColour(self.totals.RaidHealth, 0)	
+	end
 end
 
 -- cast:UNIT_MANA
