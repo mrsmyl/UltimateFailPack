@@ -1,0 +1,15 @@
+tag v40200-1.4.3
+dc4ff38bed3b72985fee9c4df7d72be7e31e9bd1
+James Whitehead II <jnwhiteh@gmail.com>
+2011-10-20 16:52:32 +0100
+
+tagging v40200-1.4.2
+
+
+--------------------
+
+James Whitehead II:
+	- Added an option to hide the 'distance' portion of the waypoint arrow.
+	This option is disabled by default.
+	- Add an option to use waypoints outside zone to find closest
+	It will still restrict the search to the current continent, but will now lead you outside the zone, if that waypoint is closer. This option is disabled by default.
