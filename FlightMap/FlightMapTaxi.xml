@@ -1,0 +1,67 @@
+<?xml-stylesheet type="text/xsl" href="/css/wowui.xsl"?>
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+  <Script file="FlightMapTaxi.lua"/>
+
+  <!-- FlightMapPathTemplate is defined in FlightMap.xml -->
+
+  <Button name="FlightMapTaxiButtonTemplate" parent="FlightMapTaxiFrame"
+          hidden="true" virtual="true">
+    <Size>
+      <AbsDimension x="16" y="16"/>
+    </Size>
+    <Anchors>
+      <Anchor point="BOTTOMRIGHT"/>
+    </Anchors>
+    <Scripts>
+      <OnEnter>
+        FlightMapTaxiButton_OnEnter(self, motion);
+      </OnEnter>
+      <OnLeave>
+        FlightMapTaxiButton_OnLeave(self, motion);
+      </OnLeave>
+    </Scripts>
+    <NormalTexture file="Interface\TaxiFrame\UI-Taxi-Icon-Gray"/>
+    <HighlightTexture file="Interface\TaxiFrame\UI-Taxi-Icon-Highlight">
+      <Size x="32" y="32"/>
+      <Anchors>
+        <Anchor point="CENTER"/>
+      </Anchors>
+    </HighlightTexture>
+  </Button>
+
+  <!-- FlightMapTaxiFrame is overlaid onto TaxiRouteMap; it draws in the
+       flights between distant nodes -->
+  <Frame name="FlightMapTaxiFrame" parent="TaxiFrame" hidden="false">
+    <Anchors>
+      <Anchor point="TOPLEFT" relativeTo="TaxiRouteMap"/>
+    </Anchors>
+    <Frames>
+      <!-- Continent select -->
+      <Frame name="FlightMapTaxiContinents" inherits="UIDropDownMenuTemplate"
+             id="1" hidden="false">
+        <Anchors>
+          <Anchor point="BOTTOM" relativeTo="TaxiRouteMap" relativePoint="TOP">
+            <Offset>
+              <AbsDimension x="0" y="2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            FlightMapTaxiContinents_OnShow(self);
+          </OnShow>
+        </Scripts>
+      </Frame>
+    </Frames>
+    <Scripts>
+      <OnLoad>
+        FlightMapTaxiFrame_OnLoad(self);
+      </OnLoad>
+      <OnEvent>
+        FlightMapTaxiFrame_OnEvent(self, event, ...);
+      </OnEvent>
+    </Scripts>
+  </Frame>
+</Ui>

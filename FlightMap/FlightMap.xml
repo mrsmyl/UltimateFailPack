@@ -1,0 +1,140 @@
+<?xml-stylesheet type="text/xsl" href="/css/wowui.xsl"?>
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+  <Script file="Defaults.lua"/>
+  <Script file="Default-Flights.lua"/>
+  <Script file="FlightMap.lua"/>
+
+  <!-- Hook OnLoad and OnEvent -->
+  <Frame name="FlightMapFrame" parent="UIParent" hidden="true">
+    <Scripts>
+      <OnLoad>
+        FlightMap_OnLoad(self);
+      </OnLoad>
+      <OnEvent>
+        FlightMap_OnEvent(self, event, ...);
+      </OnEvent>
+    </Scripts>
+  </Frame>
+
+  <!-- Create a new tooltip for this AddOn, so the original WorldMap tip
+       still works -->
+  <GameTooltip name="FlightMapTooltip" parent="WorldMapFrame" hidden="true"
+               frameStrata="TOOLTIP" inherits="GameTooltipTemplate">
+    <Scripts>
+      <OnLoad>
+          self:SetBackdropBorderColor(
+              TOOLTIP_DEFAULT_COLOR.r,
+              TOOLTIP_DEFAULT_COLOR.g,
+              TOOLTIP_DEFAULT_COLOR.b,
+              0
+          );
+          self:SetBackdropColor(
+              TOOLTIP_DEFAULT_BACKGROUND_COLOR.r,
+              TOOLTIP_DEFAULT_BACKGROUND_COLOR.g,
+              TOOLTIP_DEFAULT_BACKGROUND_COLOR.b,
+              0
+          );
+      </OnLoad>
+    </Scripts>
+  </GameTooltip>
+
+  <!-- Flight path lines; thanks to MapNotes! -->
+  <Texture name="FlightMapPathTemplate" hidden="true" virtual="true"
+           file="Interface\AddOns\FlightMap\FlightMapUp">
+    <Size>
+      <AbsDimension x="512" y="512"/>
+    </Size>
+    <Anchors>
+      <Anchor point="TOPLEFT"/>
+    </Anchors>
+  </Texture>
+
+  <!-- Extra POI icons for flight masters -->
+  <Button name="FlightMapPOITemplate" hidden="true" virtual="true">
+    <Size>
+      <AbsDimension x="16" y="16"/>
+    </Size>
+    <NormalTexture file="Interface\TaxiFrame\UI-Taxi-Icon-Green"/>
+    <HighlightTexture file="Interface\TaxiFrame\UI-Taxi-Icon-Highlight">
+      <Size x="32" y="32"/>
+      <Anchors>
+        <Anchor point="CENTER">
+          <Offset>
+            <AbsDimension x="0" y="0"/>
+          </Offset>
+        </Anchor>
+      </Anchors>
+    </HighlightTexture>
+    <Scripts>
+      <OnEnter>
+          FlightMapPOIButton_OnEnter(self, motion);
+      </OnEnter>
+      <OnLeave>
+          WorldMapTooltip:Hide();
+      </OnLeave>
+    </Scripts>
+  </Button>
+  
+  <Texture name="FlightMapIconTemplate" hidden="true" virtual="true"
+           file="Interface\TaxiFrame\UI-Taxi-Icon-Green">
+    <Size>
+      <AbsDimension x="16" y="16"/>
+    </Size>
+    <Anchors>
+      <Anchor point="CENTER"/>
+    </Anchors>
+  </Texture>
+
+  <Frame name="FlightMapPathFrame" parent="WorldMapDetailFrame" hidden="false"/>
+
+  <!-- Configuration panel -->
+  <Frame name="InterfaceOptionsFlightMapPanel" hidden="true"
+         parent="InterfaceOptionsFramePanelContainer">
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTitle" text="FlightMap" justifyH="LEFT"
+                    justifyV="TOP" inherits="GameFontNormalLarge">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="16" y="-16"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentSubText" text="FLIGHTMAP_DESCRIPTION"
+                    inherits="GameFontHighlightSmall" nonspacewrap="true"
+                    maxLines="2" justifyH="LEFT" justifyV="TOP">
+          <Size>
+            <AbsDimension y="32" x="0"/>
+          </Size>
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parentTitle"
+                    relativePoint="BOTTOMLEFT">
+              <Offset>
+                <AbsDimension x="0" y="-8"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="RIGHT">
+              <Offset>
+                <AbsDimension x="-32" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+
+    <Frames>
+    </Frames>
+
+    <Scripts>
+      <OnLoad>
+        FlightMapOptionsFrame_OnLoad(self)
+      </OnLoad>
+    </Scripts>
+  </Frame>
+
+</Ui>

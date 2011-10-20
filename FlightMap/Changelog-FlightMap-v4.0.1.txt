@@ -1,0 +1,54 @@
+------------------------------------------------------------------------
+r3 | moncai | 2010-11-13 13:57:23 +0000 (Sat, 13 Nov 2010) | 1 line
+Changed paths:
+   A /tags/v4.0.1 (from /trunk:2)
+
+Tagging as v4.0.1
+------------------------------------------------------------------------
+r2 | moncai | 2010-11-13 13:47:05 +0000 (Sat, 13 Nov 2010) | 4 lines
+Changed paths:
+   M /trunk
+   A /trunk/.pkgmeta
+   A /trunk/Bindings.xml
+   A /trunk/Default-Flights.lua
+   A /trunk/Defaults.lua
+   A /trunk/FlightMap.lua
+   A /trunk/FlightMap.toc
+   A /trunk/FlightMap.xml
+   A /trunk/FlightMapDown.tga
+   A /trunk/FlightMapTaxi.lua
+   A /trunk/FlightMapTaxi.xml
+   A /trunk/FlightMapTimes.lua
+   A /trunk/FlightMapTimes.xml
+   A /trunk/FlightMapUp.tga
+   A /trunk/FlightMapUtil.lua
+   A /trunk/UI-Taxi-Icon-Blue.tga
+   A /trunk/changes.txt
+   A /trunk/embeds.xml
+   A /trunk/locale.xml
+   A /trunk/localization
+   A /trunk/localization/deDE.lua
+   A /trunk/localization/enUS.lua
+   A /trunk/localization/esES.lua
+   A /trunk/localization/esMX.lua
+   A /trunk/localization/finalize.lua
+   A /trunk/localization/frFR.lua
+   A /trunk/localization/koKR.lua
+   A /trunk/localization/ruRU.lua
+   A /trunk/localization/zhCN.lua
+   A /trunk/localization/zhTW.lua
+   A /trunk/readme.txt
+
+* Switched to mainline repo
+* Re-integrated zone-info
+* Updated localization
+* Ready for release
+------------------------------------------------------------------------
+r1 | root | 2008-10-01 17:01:44 +0000 (Wed, 01 Oct 2008) | 1 line
+Changed paths:
+   A /branches
+   A /tags
+   A /trunk
+
+"flight-map/mainline: Initial Import"
+------------------------------------------------------------------------

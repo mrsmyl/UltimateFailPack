@@ -1,0 +1,60 @@
+4.0.1	November 13, 2010
+	* Re-integrated zone-info
+	* Updated localization
+	* Switched to mainline repo
+	* Ready for release
+
+4.0.1b	November 7, 2010
+	* WoW 4.0 compatability
+	* Integrated contributions by Brad Morgan and Urbin
+	* Added commands repair and hardreset
+
+3.3.3b2	April 26, 2010
+	* New: Optionally larger timer frame, see options.
+	* Options window now shows on /fmap
+	* Minor bug fixes
+	* Brought to you by Moncai
+
+3.3.3b	April 21, 2010
+	* Version update
+	* New flightpaths added
+	* Fix for long destination names
+	* Restructuring for maintainability
+	* Brought to you by the author of Moncai Compare and Moncai Quest Tracker
+
+3.3	Dec 30, 2009
+	* WoW 3.3 version change
+
+3.1	May 17, 2009
+	* WoW 3.1 compatibility
+	* Fixed icons on worldmap, partly based on work by blankstare2
+	* Fixed config error, contribution by stevenlamberson
+
+3.0.3	December 2, 2008
+	* Attempted to fix the problem reported by Maischter and Jzar preventing certain types of gossip dialog from working.
+
+3.0-1	December 01, 2008
+	* Use LibBabble for up to date zone translations
+	* Extracted full set of flight data from MPQs
+
+2.4-1	April 09, 2008
+	* TOC and version bump
+
+2.2-1	October 08, 2007
+	* TOC and version bump
+
+2.1-1	May 28, 2007
+	* TOC and version bump
+
+2.0-3	February 6, 2007
+	* Add Neutral zone type
+	* Disable auto-dismount (default UI seems to do it now)
+	* Disable default data for non-enUS locales
+	* Add Burning Crusade zones, with level information
+
+2.0-2	December 19, 2006
+	* Compatible with ChatBar (and other Sea embedding mods)
+	* Don't reset timers when World Map is shown or UI hidden
+
+2.0-1	December 06, 2006
+	* WoW 2.0 compatibility
