@@ -1,0 +1,305 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="FlightMapEnhanced.lua"/>
+	<Button name="FlightMapEnhancedButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="250" y="17"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentStripe">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="1" y="0"/>
+						<Anchor point="BOTTOMRIGHT" x="-1" y="0"/>
+					</Anchors>
+					<Color a=".08" r="1" g="1" b="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<FontString name="$parentName" inherits="GameFontHighlightLeft">
+					<Size>
+						<AbsDimension x="230" y="11"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset x="11" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+							
+				<Texture name="$parentCategoryLeft" file="Interface\Buttons\CollapsibleHeader" parentKey="categoryLeft">
+					<Size x="76" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT" x="0" y="0"/>
+					</Anchors>
+					<TexCoords left="0.17578125" right="0.47265625" top="0.29687500" bottom="0.54687500"/>	
+				</Texture>
+				<Texture name="$parentCategoryRight" file="Interface\Buttons\CollapsibleHeader" parentKey="categoryRight">
+					<Size x="76" y="16"/>
+					<Anchors>
+						<Anchor point="RIGHT" x="0" y="0"/>
+					</Anchors>
+					<TexCoords left="0.17578125" right="0.47265625" top="0.01562500" bottom="0.26562500"/>	
+				</Texture>
+				<Texture name="$parentCategoryMiddle" file="Interface\Buttons\CollapsibleHeader" parentKey="categoryMiddle">
+					<Size x="0" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentCategoryLeft" relativePoint="RIGHT" x="-20" y="0"/>
+						<Anchor point="RIGHT" relativeTo="$parentCategoryRight" relativePoint="LEFT" x="20" y="0"/>
+					</Anchors>
+					<TexCoords left="0.48046875" right="0.98046875" top="0.01562500" bottom="0.26562500"/>	
+				</Texture>
+				
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentExpandIcon" file="Interface\Buttons\UI-PlusMinus-Buttons">
+					<Size>
+						<AbsDimension x="7" y="7"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset x="8" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		
+		<Scripts>
+			<OnLoad>
+				FlightMapEnhancedTaxiChoiceButton_OnLoad(self);
+			</OnLoad>
+			<OnClick>
+				FlightMapEnhancedTaxiChoiceButton_OnClick(self, button, down);
+			</OnClick>
+			<OnEnter>
+				FlightMapEnhancedTaxiChoiceButton_OnEnter(self);
+			</OnEnter>
+			<OnLeave>
+				FlightMapEnhancedTaxiChoiceButton_OnLeave(self);
+			</OnLeave>
+		</Scripts>
+		<ButtonText>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormal"/>
+		<HighlightTexture name="$parentHighlight" file="Interface\TokenFrame\UI-TokenFrame-CategoryButton" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="3" y="-2"/>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT">
+					<Offset x="-3" y="2"/>
+				</Anchor>
+			</Anchors>
+			<TexCoords left="0" right="1" top="0.609375" bottom="0.796875"/>
+		</HighlightTexture>
+	</Button>
+	<Frame name="FlightMapEnhancedResize" toplevel="true" enableMouse="true" parent="TaxiFrame" hidden="false">
+		<Frames>
+			<Button name="$parentResizeButton" parentKey="resizeButton">
+				<Size x="24" y="24"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="TaxiFrame">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						TaxiFrame:StartSizing("BOTTOMRIGHT");
+					</OnMouseDown>
+					<OnMouseUp>
+						TaxiFrame:StopMovingOrSizing();
+						FlightMapEnhanced_SavePosSize("TaxiFrame");
+						if not (FlightMapEnhanced_Config.vconf.DetachAddon) then
+							FlightMapEnhancedTaxiChoice:SetHeight(TaxiFrame:GetHeight());
+							FlightMapEnhancedTaxiChoiceContainer:SetHeight(TaxiFrame:GetHeight()-30);
+							FlightMapEnhancedTaxiChoice:ClearAllPoints();
+							FlightMapEnhancedTaxiChoice:SetPoint("TOPLEFT",TaxiFrame,"BOTTOMRIGHT",0,TaxiFrame:GetHeight());
+							HybridScrollFrame_CreateButtons(FlightMapEnhancedTaxiChoiceContainer, "FlightMapEnhancedButtonTemplate");
+							FlightMapEnhancedTaxiChoiceContainer_Update();
+						end
+						TAXI_MAP_WIDTH = TaxiFrame:GetWidth()-10;
+						TAXI_MAP_HEIGHT = TaxiFrame:GetHeight()-28;
+						TaxiFrame_OnEvent(TaxiFrame,"TAXIMAP_OPENED");
+						DrawOneHopLines();
+						
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+				<HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+			</Button>
+		</Frames>	
+	</Frame>
+	
+	<Frame name="FlightMapEnhancedTaxiChoice"  resizable="true" movable="true" toplevel="true" parent="UIParent" inherits="BasicFrameTemplateWithInset" hidden="true">
+		
+		<Scripts>
+			<OnLoad function="FlightMapEnhanced_OnLoad"/>
+			<OnEvent function="FlightMapEnhanced_OnEvent"/>
+			<OnShow function="FlightMapEnhanced_Show"/>
+			<OnDragStart>
+				FlightMapEnhancedTaxiChoice:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				FlightMapEnhancedTaxiChoice:StopMovingOrSizing()
+				FlightMapEnhanced_SavePosSize("FlightMapEnhancedTaxiChoice");
+			</OnDragStop>
+		</Scripts>	
+		 <Frames>
+			<CheckButton name="$parentCollapseOnShow" inherits="OptionsSmallCheckButtonTemplate" >
+				<Size>
+					<AbsDimension x="32" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="FlightMapEnhancedTaxiChoice" relativePoint="TOPLEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall" text="">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT"/>
+							</Anchors>
+							
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						FlightMapEnhanced_Config.alwayscollapse = self:GetChecked();
+						if not (FlightMapEnhanced_Config.alwayscollapse) then
+							FlightMapEnhanced_Config.notexpanded = {};
+						end
+					</OnClick>
+					<OnEnter>
+						FlightMapEnhancedShowToolTip(self,"flightmapcollapse");
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</CheckButton>			
+			<ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="FlightMapEnhancedTaxiChoice" x="4" y="-25"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="FlightMapEnhancedTaxiChoice" x="-23" y="25"/>
+				</Anchors>
+				<Frames>
+					<Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0" y="-12"/>
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="0" y="11"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Slider>
+				</Frames>
+			</ScrollFrame>
+			<Button name="$parentResizeButton" parentKey="resizeButton">
+				<Size x="24" y="24"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent">
+						<Offset>
+							<AbsDimension x="12" y="-16"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						FlightMapEnhancedTaxiChoice:StartSizing("BOTTOMRIGHT");
+					</OnMouseDown>
+					<OnMouseUp>
+						FlightMapEnhancedTaxiChoice:StopMovingOrSizing();
+						FlightMapEnhanced_SavePosSize("FlightMapEnhancedTaxiChoice");
+						HybridScrollFrame_CreateButtons(FlightMapEnhancedTaxiChoiceContainer, "FlightMapEnhancedButtonTemplate");
+						FlightMapEnhancedTaxiChoiceContainer_Update();
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+				<HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+			</Button>
+		</Frames>
+	</Frame>
+	<Button name="FlightMapEnhancedMinimapButton" parent="Minimap" enableMouse="true" movable="true" hidden="false">
+		<Size>
+			<AbsDimension x="33" y="33"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentIcon" file="Interface\MINIMAP\TRACKING\FlightMaster">
+					<Size>
+						<AbsDimension x="21" y="21"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="7" y="-6"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+					<Size>
+						<AbsDimension x="56" y="56"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentDraggingFrame" hidden="true">
+				<Scripts>
+					<OnUpdate>
+						FlightMapEnhanced_MinimapButton_DraggingFrame_OnUpdate()
+					</OnUpdate>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp","RightButtonUp")
+				self:RegisterForDrag("RightButton")
+			</OnLoad>
+			<OnDragStart>
+				self:LockHighlight()
+				FlightMapEnhancedMinimapButtonDraggingFrame:Show()
+			</OnDragStart>
+			<OnDragStop>
+				self:UnlockHighlight()
+				FlightMapEnhancedMinimapButtonDraggingFrame:Hide()
+			</OnDragStop>
+			<OnClick>
+				FlightMapEnhancedMinimapButton_OnClick() -- do your thing in here, arg1 is mouse button clicked
+			</OnClick>
+			<OnEnter>
+				FlightMapEnhancedShowToolTip(self,"minimap");
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide"/>
+		</Scripts>
+	</Button>
+</Ui>
