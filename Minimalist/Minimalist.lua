@@ -106,7 +106,7 @@ local ui_options = {
 		REPUTATION = {
 			name = "Better Reputation",
 			type = "toggle",
-			desc = "Display Reputation gains & losses in the Chat Frame.",
+			desc = "Display Reputation Amounts numerically and detailed Information in the Chat Frame.",
 			get = function() return db.REPUTATION end,
 			set = function(i, switch)
 				db.REPUTATION = switch
@@ -136,7 +136,7 @@ local ui_options = {
 		QUESTLEVEL = {
 			name = "Display Quest Levels",
 			type = "toggle",
-			desc = "Display numeric Quest Level in Quest Frames and NPC Quest Dialog.",
+			desc = "Display numeric Quest Level in Quest Frame, Quest completion Frame, and NPC Quest Dialog.",
 			get = function() return db.QUESTLEVEL end,
 			set = function(i, switch)
 				db.QUESTLEVEL = switch
@@ -335,6 +335,20 @@ local minimap_options = {
 					MiniMapTracking:Show()
 				end
 			end
+		},
+		MAPHIDEBORDER = {
+			name = "Minimap Border",
+			type = "toggle",
+			desc = "Hide the Minimap border.",
+			get = function() return db.MAPHIDEBORDER end,
+			set = function(i, switch)
+				db.MAPHIDEBORDER = switch
+				if switch then
+					MinimapBorder:Hide()
+				else
+					MinimapBorder:Show()
+				end
+			end
 		}
 	}
 }
@@ -346,7 +360,7 @@ local combat_options = {
 		AUTOLOOT = {
 			name = "Better Auto Loot",
 			type = "toggle",
-			desc = "Automatically loot all Items and confirm BoP and Disenchant Notification. Does not roll on Items while in a group or raid. This overrides the standard UI Auto Loot setting.",
+			desc = "Automatically loot all Items and confirm BoP and Disenchant Notification. It does not roll on Items while in a group or raid. This overrides the standard UI Auto Loot setting.",
 			get = function() return db.AUTOLOOT end,
 			set = function(i, switch)
 				db.AUTOLOOT = switch
@@ -374,6 +388,34 @@ local combat_options = {
 				else
 					mod:UnregisterEvent("PLAYER_REGEN_DISABLED")
 					mod:UnregisterEvent("PLAYER_REGEN_ENABLED")
+				end
+			end
+		},
+		BLOATTEST = {
+			name = "Bloat Test",
+			type = "toggle",
+			desc = "Might make nameplates larger but it fixes the disappearing ones.",
+			get = function() return db.BLOATTEST end,
+			set = function(i, switch)
+				db.BLOATTEST = switch
+				if switch then
+					SetCVar("bloatTest", 1);
+				else
+					SetCVar("bloatTest", 0);
+				end
+			end
+		},
+		BLOATPLATES = {
+			name = "Bloat Plates",
+			type = "toggle",
+			desc = "Makes nameplates larger depending on threat percentage.",
+			get = function() return db.BLOATPLATES end,
+			set = function(i, switch)
+				db.BLOATPLATES = switch
+				if switch then
+					SetCVar("bloatNamePlates", 1);
+				else
+					SetCVar("bloatNamePlates", 0);
 				end
 			end
 		},
@@ -429,7 +471,10 @@ local defaults = {
 		MAPSCROLL = false,
 		MAPHIDEWORLDMAPBTN = false,
 		MAPHIDETRACKINGBTN = false,
+		MAPHIDEBORDER = false,
 		AUTOPLATES = false,
+		BLOATTEST = false,
+		BLOATPLATES = false,
 		BLOATTHREAT = false,
 		SPREADPLATES = false,
 		AUTOLOOT = false,
@@ -480,7 +525,7 @@ function Minimalist:OnInitialize()
 		--Clamp the toast frame to screen to prevent it cutting out
 		BNToastFrame:SetClampedToScreen(true)
 	end
-	
+
 	--# Slash Commands
 	--# /min or /minimlalist: Open Options Panel
 	SlashCmdList["MINIMALIST"] = function() InterfaceOptionsFrame_OpenToCategory("Minimalist") end
@@ -493,7 +538,6 @@ function Minimalist:OnInitialize()
 
 	--# /rg: Restart GFX Subsystem
 	SlashCmdList["RESTARTGX"] = function() RestartGx() end
-	SLASH_RESTARTGX1 = "/rg"
 end
 
 function Minimalist:OnEnable()
@@ -525,7 +569,8 @@ function Minimalist:OnEnable()
 end
 
 function Minimalist:AcceptQuest()
-	ERR_QUEST_ACCEPTED_S = "|cFF33FF99Minimalist:|cFFFFFFFF Accepted:           |Hquest:"..quest_link..":"..UnitLevel("player").."|h[%s]|h|r"
+	--ERR_QUEST_ACCEPTED_S = "|cFF33FF99Minimalist:|cFFFFFFFF Accepted:           |Hquest:"..quest_link..":"..UnitLevel("player").."|h[%s]|h|r"
+	ERR_QUEST_ACCEPTED_S = ORIG_ERR_QUEST_ACCEPTED_S
 end
 
 function Minimalist:QUEST_DETAIL()
@@ -729,10 +774,8 @@ function Minimalist:RepairHandler()
 			RepairAllItems(1) 
 			self:Print("Total repair Costs (Guild): "..self.abacus:FormatMoneyExtended(equipcost))
 		else
-			if db.AUTOREPAIR == 2 then 
-				RepairAllItems() 
-				self:Print("Total repair Costs: "..self.abacus:FormatMoneyExtended(equipcost))
-			end
+			RepairAllItems() 
+			self:Print("Total repair Costs: "..self.abacus:FormatMoneyExtended(equipcost))
 		end
 	end
 end
