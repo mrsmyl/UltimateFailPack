@@ -3866,6 +3866,7 @@ function HealBot_Action_InitMount()
             end
         elseif HealBot_mountData["FuncUsed"] and HealBot_mountData["FuncUsed"]=="YES" then
             HealBot_ReportMissingMount(sName, sID)
+            HealBot_Mounts[sID]="G"
         end
 	end   
     
@@ -3877,14 +3878,18 @@ function HealBot_Action_InitMount()
         HealBot_mountData["PrevFlying#"]=2
     elseif #HealBot_FMount<9 then
         HealBot_mountData["PrevFlying#"]=3
-    elseif #HealBot_FMount<12 then
+    elseif #HealBot_FMount<11 then
         HealBot_mountData["PrevFlying#"]=4
-    elseif #HealBot_FMount<15 then
+    elseif #HealBot_FMount<14 then
         HealBot_mountData["PrevFlying#"]=5
-    elseif #HealBot_FMount<19 then
+    elseif #HealBot_FMount<17 then
         HealBot_mountData["PrevFlying#"]=6
-    else
+    elseif #HealBot_FMount<21 then
         HealBot_mountData["PrevFlying#"]=7
+    elseif #HealBot_FMount<25 then
+        HealBot_mountData["PrevFlying#"]=8
+    else
+        HealBot_mountData["PrevFlying#"]=9
     end
     if HealBot_mountData["#Ground"]<3 then
         HealBot_mountData["PrevGround#"]=0
@@ -3894,14 +3899,18 @@ function HealBot_Action_InitMount()
         HealBot_mountData["PrevGround#"]=2
     elseif HealBot_mountData["#Ground"]<9 then
         HealBot_mountData["PrevGround#"]=3
-    elseif HealBot_mountData["#Ground"]<12 then
+    elseif HealBot_mountData["#Ground"]<11 then
         HealBot_mountData["PrevGround#"]=4
-    elseif HealBot_mountData["#Ground"]<15 then
+    elseif HealBot_mountData["#Ground"]<14 then
         HealBot_mountData["PrevGround#"]=5
-    elseif HealBot_mountData["#Ground"]<19 then
+    elseif HealBot_mountData["#Ground"]<17 then
         HealBot_mountData["PrevGround#"]=6
-    else
+    elseif HealBot_mountData["#Ground"]<21 then
         HealBot_mountData["PrevGround#"]=7
+    elseif HealBot_mountData["#Ground"]<25 then
+        HealBot_mountData["PrevGround#"]=8
+    else
+        HealBot_mountData["PrevGround#"]=9
     end
 
     if HealBot_mountData["#Ground"]==0 and #HealBot_FMount==0 then

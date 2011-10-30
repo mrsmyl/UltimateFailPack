@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "4.2.2.1";
+HEALBOT_VERSION = "4.2.2.2";
 
 -------------
 -- ENGLISH --
@@ -248,6 +248,7 @@ HEALBOT_ENRAGED_REGEN                   = GetSpellInfo(55694) or "Enraged Regene
 
 -- Res Spells
 HEALBOT_RESURRECTION                    = GetSpellInfo(2006) or "Resurrection";
+HEALBOT_MASS_RESURRECTION               = GetSpellInfo(83968) or "Mass Resurrection";
 HEALBOT_REDEMPTION                      = GetSpellInfo(7328) or "Redemption";
 HEALBOT_REBIRTH                         = GetSpellInfo(20484) or "Rebirth";
 HEALBOT_REVIVE                          = GetSpellInfo(50769) or "Revive";

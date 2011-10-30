@@ -195,6 +195,7 @@ local HealBot_CustomDebuff_RevDurLast={}
 local hbManaPlayers={}
 local hbCurLowMana={}
 local mana,maxmana=0,0
+local calibrateHBScale, hbScale = 0,0
 
 function HealBot_UpdTargetUnitID(unit)
     HealBot_luVars["TargetUnitID"]=unit
@@ -741,6 +742,12 @@ function HealBot_SlashCmd(HBcmd)
         else
             HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_AGGRO_ERROR_MSG)
         end
+    elseif (HBcmd=="calistats") then
+        local hbcaliSoft, hbcaliCount, hbcaliReset, hbcaliPtc = HealBot_Range_calibrateStats()
+        HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - SoftCount = "..hbcaliSoft)
+        HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - Count = "..hbcaliCount)
+        HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - Reset = "..hbcaliReset)
+        HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - %Calibrated = "..hbcaliPtc)
     elseif (HBcmd=="test") then
         HealBot_AddDebug("test")
     else
@@ -1001,37 +1008,37 @@ local aSwitch=0
 function HealBot_Set_Timers()
     if HealBot_Config.DisabledNow==0 then
         if HealBot_luVars["qaFR"]<10 then
-            HB_Timer1=2
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/3, 4)  
-            HB_Timer3=1
+            HB_Timer1=3
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/1.5, 4)  
+            HB_Timer3=1.5
         elseif HealBot_luVars["qaFR"]<20 then
-            HB_Timer1=1.5
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/4, 4)   
-            HB_Timer3=1
+            HB_Timer1=2
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/2, 4)   
+            HB_Timer3=1.25
         elseif HealBot_luVars["qaFR"]<30 then
-            HB_Timer1=1.2
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/5, 4)   
+            HB_Timer1=1.5
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/3, 4)   
             HB_Timer3=1
         elseif HealBot_luVars["qaFR"]<40 then
-            HB_Timer1=1
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/7, 4)   
-            HB_Timer3=0.5
+            HB_Timer1=1.25
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/4, 4)   
+            HB_Timer3=0.75
         elseif HealBot_luVars["qaFR"]<60 then
-            HB_Timer1=0.9
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/9, 4)   
-            HB_Timer3=0.333
+            HB_Timer1=1
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/5, 4)   
+            HB_Timer3=0.5
         elseif HealBot_luVars["qaFR"]<80 then
-            HB_Timer1=0.8
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/10, 4)   
-            HB_Timer3=0.25
+            HB_Timer1=0.75
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/7, 4)   
+            HB_Timer3=0.333
         elseif HealBot_luVars["qaFR"]<200 then
-            HB_Timer1=0.7
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/11, 4)   
-            HB_Timer3=0.2
-        else
             HB_Timer1=0.5
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/9, 4)   
+            HB_Timer3=0.25
+        else
+            HB_Timer1=0.25
             HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/12, 4)   
-            HB_Timer3=0.1
+            HB_Timer3=0.2
         end
         HealBot_AddDebug("qaFR="..HealBot_luVars["qaFR"])
     else
@@ -1186,6 +1193,7 @@ function HealBot_OnUpdate(self)
                             Ti=Ti+1
                         end
                     end
+                --    if calibrateHBScale and Ti<1 and UnitExists("party2") then HealBot_Range_softCalibrateScale("party1", "party2") end
                     if HealBot_RequestVer then
                         HealBot_Comms_SendAddonMsg("HealBot", "S:"..HEALBOT_VERSION, HealBot_AddonMsgType, HealBot_PlayerName)
                         HealBot_RequestVer=nil;
@@ -1380,6 +1388,8 @@ function HealBot_OnUpdate(self)
                             else
                                 hbInsName=HEALBOT_WORD_OUTSIDE
                             end
+                            hbScale=(HealBot_Globals.mapScale[hbInsName] or 0) 
+                            calibrateHBScale=0
                             HealBot_Options_SetEnableDisableCDBtn()
                             if z=="pvp" or z == "arena" then inBG=true end
                             HealBot_SetAddonComms(inBG)
@@ -1659,6 +1669,9 @@ function HealBot_OnEvent_VariablesLoaded(self)
             HealBot_Action_HealUnit_Wheel(delta)
         end)
     end
+    HealBot_Globals.scaleCaliStats["Resets"]=0
+    HealBot_Globals.scaleCaliStats["Count"]=0
+    HealBot_Globals.scaleCaliStats["SoftCount"]=0
     HealBot_Update_Skins()    
     HealBot_PlayerClass, HealBot_PlayerClassEN=UnitClass("player")
     HealBot_PlayerRace, HealBot_PlayerRaceEN=UnitRace("player")
@@ -4918,7 +4931,7 @@ function HealBot_OnEvent_UnitSpellcastSent(self,caster,spellName,spellRank,unitN
     uscGUID=nil
     uscName = HealBot_UnitNameOnly(unitName)
     if uscName=="" then
-        if spellName==HEALBOT_PRAYER_OF_HEALING or spellName==HEALBOT_WILD_GROWTH or spellName==HEALBOT_TRANQUILITY then 
+        if spellName==HEALBOT_MASS_RESURRECTION or spellName==HEALBOT_PRAYER_OF_HEALING or spellName==HEALBOT_WILD_GROWTH or spellName==HEALBOT_TRANQUILITY then 
             uscName=HealBot_PlayerName 
             uscGUID=HealBot_PlayerGUID
         elseif spellName==HEALBOT_MENDPET then
@@ -4942,14 +4955,20 @@ function HealBot_OnEvent_UnitSpellcastSent(self,caster,spellName,spellRank,unitN
     xUnit = HealBot_UnitID[uscGUID];
     if caster=="player" and uscGUID and UnitExists(xUnit) then
         uscSpell=spellName
-        if spellName==HEALBOT_RESURRECTION or spellName==HEALBOT_ANCESTRALSPIRIT or spellName==HEALBOT_REBIRTH or spellName==HEALBOT_REDEMPTION or spellName==HEALBOT_REVIVE then
-            HealBot_IamRessing = uscName;
-            if HealBot_IamRessing then
-                HealBot_Comms_SendAddonMsg("CTRA", "RES "..HealBot_IamRessing, HealBot_AddonMsgType, HealBot_PlayerName)
+        if spellName==HEALBOT_MASS_RESURRECTION or spellName==HEALBOT_RESURRECTION or spellName==HEALBOT_ANCESTRALSPIRIT or spellName==HEALBOT_REBIRTH or spellName==HEALBOT_REDEMPTION or spellName==HEALBOT_REVIVE then
+            if spellName~=HEALBOT_MASS_RESURRECTION then
+                HealBot_IamRessing = uscName;
+                if HealBot_IamRessing then
+                    HealBot_Comms_SendAddonMsg("CTRA", "RES "..HealBot_IamRessing, HealBot_AddonMsgType, HealBot_PlayerName)
+                end
+                HealBot_CastingTarget = xUnit;
             end
-            HealBot_CastingTarget = xUnit;
             if Healbot_Config_Skins.CastNotify[Healbot_Config_Skins.Current_Skin]>1 and Healbot_Config_Skins.CastNotifyResOnly[Healbot_Config_Skins.Current_Skin]==1 then
-                HealBot_CastNotify(uscSpell,uscName,spellName,xUnit)
+                if spellName==HEALBOT_MASS_RESURRECTION then           
+                    HealBot_CastNotify(uscSpell,HEALBOT_OPTIONS_GROUPHEALS,spellName,xUnit)
+                else
+                    HealBot_CastNotify(uscSpell,uscName,spellName,xUnit)
+                end
             end
         elseif HealBot_Spells[uscSpell] then
             HealBot_CastingTarget = xUnit;
@@ -5589,6 +5608,89 @@ function HealBot_UnitInRange(spellName, unit) -- added by Diacono of Ursin
         uRange=-1 
     end
     return uRange
+end
+
+function HealBot_Range_Check(srcUnit, trgUnit, range) 
+    local inRange, hbDist = 0,0
+    local tx, ty, sx, sy, px, py = 0,0,0,0,0,0
+    local hbresetScale=0
+    if (UnitIsVisible(trgUnit) == 1) and (UnitIsVisible(srcUnit) == 1) then
+        tx, ty = GetPlayerMapPosition(trgUnit)
+        sx, sy = GetPlayerMapPosition(srcUnit)
+        
+        if not range then range=40; end
+
+        if calibrateHBScale then
+            px, py = GetPlayerMapPosition("player")
+            if (CheckInteractDistance(trgUnit, 4)) then
+                hbDist = sqrt((px - tx)^2 + (py - ty)^2)
+                hbresetScale=1
+                if hbDist > hbScale and (px > 0 or py > 0) then
+                    HealBot_Range_newScale(hbDist)
+                    hbresetScale=9
+                end
+            end
+            if (CheckInteractDistance(srcUnit, 4)) then
+                hbDist = sqrt((px - sx)^2 + (py - sy)^2)
+                if hbresetScale<1 then hbresetScale=1 end
+                if hbDist > hbScale and (px > 0 or py > 0) then
+                    HealBot_Range_newScale(hbDist)
+                    hbresetScale=9
+                end
+            end
+            if hbresetScale==1 then HealBot_Range_ticScale() end
+        end
+
+        if (tx > 0 or ty > 0) and (sx > 0 or sy > 0) then
+            hbDist = sqrt((sx - tx)^2 + (sy - ty)^2)
+            if hbDist <=(hbScale*range/27) then inRange=1 end
+        end
+    end
+    return inRange;
+end
+
+function HealBot_Range_softCalibrateScale(srcUnit, trgUnit)
+    local hbDist = 0
+    local tx, ty, sx, sy, px, py = 0,0,0,0,0,0
+    local hbresetScale=0
+    px, py = GetPlayerMapPosition("player")
+    if CheckInteractDistance(trgUnit, 4) then
+        tx, ty = GetPlayerMapPosition(trgUnit)
+        hbDist = sqrt((px - tx)^2 + (py - ty)^2)
+        hbresetScale=1
+        if hbDist > hbScale and (px > 0 or py > 0) then 
+            HealBot_Range_newScale(hbDist)
+            hbresetScale=9
+        end
+    end
+    if CheckInteractDistance(srcUnit, 4) then
+        sx, sy = GetPlayerMapPosition(srcUnit)
+        hbDist = sqrt((px - sx)^2 + (py - sy)^2)
+        if hbresetScale<1 then hbresetScale=1 end
+        if hbDist > hbScale and (px > 0 or py > 0) then 
+            HealBot_Range_newScale(hbDist)
+            hbresetScale=9
+        end
+    end
+    if hbresetScale==1 then HealBot_Globals.scaleCaliStats["SoftCount"]=HealBot_Globals.scaleCaliStats["SoftCount"]+1 end
+end
+
+function HealBot_Range_newScale(sDist)
+    hbScale = sDist
+    HealBot_Globals.mapScale[hbInsName]=hbScale
+    HealBot_Globals.scaleCaliStats["Count"]=HealBot_Globals.scaleCaliStats["Count"]+calibrateHBScale
+    HealBot_Globals.scaleCaliStats["Resets"]=HealBot_Globals.scaleCaliStats["Resets"]+1
+    calibrateHBScale=0
+end
+
+function HealBot_Range_ticScale()
+    calibrateHBScale=calibrateHBScale+1
+    if calibrateHBScale>(500*HealBot_Globals.rangeCalibrationWeight) then calibrateHBScale=nil end
+end
+
+function HealBot_Range_calibrateStats()
+    local cPct=floor(calibrateHBScale/(500*HealBot_Globals.rangeCalibrationWeight))
+    return HealBot_Globals.scaleCaliStats["SoftCount"], HealBot_Globals.scaleCaliStats["Count"]+calibrateHBScale, HealBot_Globals.scaleCaliStats["Resets"], cPct;
 end
 
 function HealBot_ClearLocalArr(hbGUID, getTime)
