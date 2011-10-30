@@ -1,0 +1,13 @@
+tag v1.5.26
+ef60a3c5e6a626835e320a8571f5dfc0e40460c1
+Dorwido <darkz@gmx.de>
+2011-10-21 13:27:23 +0200
+
+version 1.5.26 -more flight times added
+
+
+--------------------
+
+Dorwido:
+	- more flight times added
+	- initial commit
