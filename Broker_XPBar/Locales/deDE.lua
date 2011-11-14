@@ -85,6 +85,16 @@ L["Percentage only"] = "Nur Prozentwert"
 L["Show percentage only"] = "Nur Prozentwert anzeigen"
 L["Show faction name"] = "Zeige Fraktionsnamen"
 L["Show faction name when reputation is selected as label text."] = "Zeige Fraktionsnamen, wenn wenn Ruf als Textoption gewählt wurde."
+L["Colored Label"] = "Beschriftung färben"
+L["Color label text based on percentages"] = "Beschriftung basierend auf Prozentwerten färben"
+
+L["Faction Tracking"] = "Fraktion verfolgen"
+L["Auto-switch watched faction on reputation gains/losses."] = "Beobachtete Fraktion folgt automatisch Rufänderungen"
+
+L["Switch on rep gain"] = "Wechsel bei Rufgewinn"
+L["Auto-switch watched faction on reputation gain."] = "Automatischer Wechsel der beobachteten Fraktion bei Rufgewinn."
+L["Switch on rep loss"] = "Wechsel bei Rufverlust"
+L["Auto-switch watched faction on reputation loss."] = "Automatischer Wechsel der beobachteten Fraktion bei Rufverlust."
 
 L["Leveling"] = "Leveln"
 L["Leveling Properties"] = "Einstellungen beim Leveln"

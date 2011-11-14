@@ -1,6 +1,6 @@
 --[[
 Name: LibCrayon-3.0
-Revision: $Rev: 43 $
+Revision: $Rev: 48 $
 Author(s): ckknight (ckknight@gmail.com)
 Website: http://ckknight.wowinterface.com/
 Documentation: http://wiki.wowace.com/index.php/LibCrayon-3.0
@@ -11,7 +11,7 @@ Description: A library to provide coloring tools.
 --Theondry (theondry@gmail.com) added the purple.  yell at me if it's wrong, please
 
 local MAJOR_VERSION = "LibCrayon-3.0"
-local MINOR_VERSION = tonumber(("$Revision: 43 $"):match("(%d+)")) + 90000
+local MINOR_VERSION = tonumber(("$Revision: 48 $"):match("(%d+)")) + 90000
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub") end
 
@@ -49,7 +49,7 @@ function Crayon:Blue(text) return self:Colorize(self.COLOR_HEX_BLUE, text) end
 function Crayon:Cyan(text) return self:Colorize(self.COLOR_HEX_CYAN, text) end
 function Crayon:Black(text) return self:Colorize(self.COLOR_HEX_BLACK, text) end
 
-local inf = 1/0
+local inf = math.huge
 
 local function GetThresholdPercentage(quality, ...)
 	local n = select('#', ...)

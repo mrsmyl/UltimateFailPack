@@ -85,6 +85,16 @@ L["Percentage only"] = true
 L["Show percentage only"] = true
 L["Show faction name"] = true
 L["Show faction name when reputation is selected as label text."] = true
+L["Colored Label"] = true
+L["Color label text based on percentages"] = true
+
+L["Faction Tracking"] = true
+L["Auto-switch watched faction on reputation gains/losses."] = true
+
+L["Switch on rep gain"] = true
+L["Auto-switch watched faction on reputation gain."] = true
+L["Switch on rep loss"] = true
+L["Auto-switch watched faction on reputation loss."] = true
 
 L["Leveling"] = true
 L["Leveling Properties"] = true

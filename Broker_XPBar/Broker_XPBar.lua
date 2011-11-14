@@ -1,3 +1,8 @@
+-- TODO: use inactive group (options)
+-- TODO: hasRep to fill in factions that have rep and subfactions (i.e. Alliance Vanguard)
+-- TODO: zone specific faction tracking?
+-- TODO: handle collapsed header?
+
 local _G = getfenv(0)
 
 -- addon constants
@@ -7,7 +12,7 @@ local DIRNAME   = "Broker_XPBar"
 
 -- local functions
 local tinsert, tremove, tgetn = table.insert, table.remove, table.getn
-local tonumber, time, gsub, sfind =  tonumber, time, string.gsub, string.find
+local tonumber, time, gsub, smatch =  tonumber, time, string.gsub, string.match
 local sqrt, floor, ceil = math.sqrt, math.floor, math.ceil
 
 -- setup libs
@@ -216,6 +221,7 @@ local atmaxrep         = false
 
 local lookupFactions   = {}
 local lookupIndexes    = {}
+local lookupNames      = {}
 
 local blizz_rep_colors = {
 	[1] = {r=0.80, g=0.13, b=0.13, a=1}, -- hated
@@ -266,61 +272,63 @@ local XPGAIN_RAID_PENALTY
 do
 -- NOTE: russian and korean clients use POSIX position indicators in COMBATLOG_XPGAIN_ patterns, 
 -- which LUAs functions like string.find() or string.format() do not support
+-- thx to Lua 5 for kicking them out of the language: "The format option %n$ is obsolete."
 -- apparently argument 3 and 4 are always exchanged in those localizations
 -- so we get rid of the position indicators and manually switch back the args after matching
-local temp
--- "%s dies, you gain %d experience."
-temp                  = gsub(COMBATLOG_XPGAIN_FIRSTPERSON,      "(%%[0-9]$)([ds])", "%%%2") -- position indicators
-temp                  = gsub(temp,                              "%%s",   "(.+)")   -- string pattern
-XPGAIN_SINGLE         = gsub(temp,                              "%%d",   "(%%d+)") -- number pattern
+	local temp
+	
+	-- "%s dies, you gain %d experience."
+	temp                  = gsub(COMBATLOG_XPGAIN_FIRSTPERSON,      "(%%[0-9]$)([ds])", "%%%2") -- position indicators
+	temp                  = gsub(temp,                              "%%s",   "(.+)")   -- string pattern
+	XPGAIN_SINGLE         = gsub(temp,                              "%%d",   "(%%d+)") -- number pattern
 
--- "%s dies, you gain %d experience. (%s exp %s bonus)"
-temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION1,      "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                              "[()+-]", "[%0]")  -- mask '(', ')', '+', '-'
-temp                  = gsub(temp,                              "%%s",    "(.+)")
-XPGAIN_SINGLE_RESTED  = gsub(temp,                              "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (%s exp %s bonus)"
+	temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION1,      "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                              "[()+-]", "[%0]")  -- mask '(', ')', '+', '-'
+	temp                  = gsub(temp,                              "%%s",    "(.+)")
+	XPGAIN_SINGLE_RESTED  = gsub(temp,                              "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (%s exp %s penalty)"
-temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION4,      "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                              "[()+-]", "[%0]")
-temp                  = gsub(temp,                              "%%s",    "(.+)")
-XPGAIN_SINGLE_PENALTY = gsub(temp,                              "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (%s exp %s penalty)"
+	temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION4,      "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                              "[()+-]", "[%0]")
+	temp                  = gsub(temp,                              "%%s",    "(.+)")
+	XPGAIN_SINGLE_PENALTY = gsub(temp,                              "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (+%d group bonus)"
-temp                  = gsub(COMBATLOG_XPGAIN_FIRSTPERSON_GROUP, "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                               "[()+-]", "[%0]")
-temp                  = gsub(temp,                               "%%s",    "(.+)")
-XPGAIN_GROUP          = gsub(temp,                               "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (+%d group bonus)"
+	temp                  = gsub(COMBATLOG_XPGAIN_FIRSTPERSON_GROUP, "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                               "[()+-]", "[%0]")
+	temp                  = gsub(temp,                               "%%s",    "(.+)")
+	XPGAIN_GROUP          = gsub(temp,                               "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (%s exp %s bonus, +%d group bonus)"
-temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION1_GROUP, "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                               "[()+-]", "[%0]")
-temp                  = gsub(temp,                               "%%s",    "(.+)")
-XPGAIN_GROUP_RESTED   = gsub(temp,                               "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (%s exp %s bonus, +%d group bonus)"
+	temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION1_GROUP, "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                               "[()+-]", "[%0]")
+	temp                  = gsub(temp,                               "%%s",    "(.+)")
+	XPGAIN_GROUP_RESTED   = gsub(temp,                               "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (%s exp %s penalty, +%d group bonus)"
-temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION4_GROUP, "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                               "[()+-]", "[%0]")
-temp                  = gsub(temp,                               "%%s",    "(.+)")
-XPGAIN_GROUP_PENALTY  = gsub(temp,                               "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (%s exp %s penalty, +%d group bonus)"
+	temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION4_GROUP, "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                               "[()+-]", "[%0]")
+	temp                  = gsub(temp,                               "%%s",    "(.+)")
+	XPGAIN_GROUP_PENALTY  = gsub(temp,                               "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (-%d raid penalty)"
-temp                  = gsub(COMBATLOG_XPGAIN_FIRSTPERSON_RAID,  "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                               "[()+-]", "[%0]")
-temp                  = gsub(temp,                               "%%s",    "(.+)")
-XPGAIN_RAID           = gsub(temp,                               "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (-%d raid penalty)"
+	temp                  = gsub(COMBATLOG_XPGAIN_FIRSTPERSON_RAID,  "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                               "[()+-]", "[%0]")
+	temp                  = gsub(temp,                               "%%s",    "(.+)")
+	XPGAIN_RAID           = gsub(temp,                               "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (%s exp %s bonus, -%d raid penalty)"
-temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION1_RAID,  "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                               "[()+-]", "[%0]")
-temp                  = gsub(temp,                               "%%s",    "(.+)")
-XPGAIN_RAID_RESTED    = gsub(temp,                               "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (%s exp %s bonus, -%d raid penalty)"
+	temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION1_RAID,  "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                               "[()+-]", "[%0]")
+	temp                  = gsub(temp,                               "%%s",    "(.+)")
+	XPGAIN_RAID_RESTED    = gsub(temp,                               "%%d",    "(%%d+)")
 
--- "%s dies, you gain %d experience. (%s exp %s penalty, -%d raid penalty)"
-temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION4_RAID,  "(%%[0-9]$)([ds])", "%%%2")
-temp                  = gsub(temp,                               "[()+-]", "[%0]")
-temp                  = gsub(temp,                               "%%s",    "(.+)")
-XPGAIN_RAID_PENALTY   = gsub(temp,                               "%%d",    "(%%d+)")
+	-- "%s dies, you gain %d experience. (%s exp %s penalty, -%d raid penalty)"
+	temp                  = gsub(COMBATLOG_XPGAIN_EXHAUSTION4_RAID,  "(%%[0-9]$)([ds])", "%%%2")
+	temp                  = gsub(temp,                               "[()+-]", "[%0]")
+	temp                  = gsub(temp,                               "%%s",    "(.+)")
+	XPGAIN_RAID_PENALTY   = gsub(temp,                               "%%d",    "(%%d+)")
 end
 
 -- options
@@ -390,6 +398,7 @@ local defaults = {
 		ShowValues      = true,
 		ShowPercentage  = true,
 		ShowFactionName = true,
+		ColoredText     = true,
 		ShowBlizzBars   = false,
 		HideHint        = false,
 		Location        = "Bottom",
@@ -404,6 +413,8 @@ local defaults = {
         MaxHideXPBar    = false,
         MaxHideRepText  = false,
         MaxHideRepBar   = false,
+        AutoTrackOnGain = false,
+        AutoTrackOnLoss = false,
 		XP              = {r=0.0, g=0.4, b=0.9, a=1},
 		Rest            = {r=1.0, g=0.2, b=1.0, a=1},
 		None            = {r=0.0, g=0.0, b=0.0, a=1},
@@ -411,7 +422,7 @@ local defaults = {
 		NoRep           = {r=0.0, g=0.0, b=0.0, a=1},
 		Weight          = 0.8,
 		TimeFrame       = 30
-	},
+	}
 }
 
 -- frame selector
@@ -802,6 +813,46 @@ function BrokerXPBar:SetupOptions()
 						end,
 						order = 5
 					},
+					colored = {
+						type = 'toggle',
+						name = L["Colored Label"],
+						desc = L["Color label text based on percentages"],
+						get  = function() return BrokerXPBar.db.profile.ColoredText end,
+						set  = function()
+							BrokerXPBar.db.profile.ColoredText = not BrokerXPBar.db.profile.ColoredText
+							BrokerXPBar:UpdateLabel() 
+						end,
+						order = 6
+					},
+				},
+			},
+			autotrack = {
+				type = 'group',
+				name = L["Faction Tracking"],
+				desc = L["Auto-switch watched faction on reputation gains/losses."],
+				args = {
+					gain = {
+						type = 'toggle',
+						name = L["Switch on rep gain"],
+						desc = L["Auto-switch watched faction on reputation gain."],
+						get  = function() return BrokerXPBar.db.profile.AutoTrackOnGain end,
+						set  = function()
+							BrokerXPBar.db.profile.AutoTrackOnGain = not BrokerXPBar.db.profile.AutoTrackOnGain
+							BrokerXPBar:UpdateAutoTrack() 
+						end,
+						order = 1
+					},
+					loss = {
+						type = 'toggle',
+						name = L["Switch on rep loss"],
+						desc = L["Auto-switch watched faction on reputation loss."],
+						get  = function() return BrokerXPBar.db.profile.AutoTrackOnLoss end,
+						set  = function()
+							BrokerXPBar.db.profile.AutoTrackOnLoss = not BrokerXPBar.db.profile.AutoTrackOnLoss
+							BrokerXPBar:UpdateAutoTrack() 
+						end,
+						order = 2
+					},
 				},
 			},
 			level = {
@@ -1080,6 +1131,8 @@ function BrokerXPBar:OnEnable()
 		self:RegisterEvent("PLAYER_LEVEL_UP")
 	end
 	
+	self:UpdateAutoTrack()
+	
 	self:UpdateIcon()	
 
 	-- if we don't want to show the bars we hide them else we leave them as they are
@@ -1112,9 +1165,15 @@ function BrokerXPBar:OnDisable()
 		self:UnregisterEvent("CHAT_MSG_COMBAT_XP_GAIN")
 		self:UnregisterEvent("PLAYER_LEVEL_UP")
 	end
+
+	self:UpdateAutoTrack(false)
 	
 	self:UnregisterAllBuckets()
 	self:UnhookAll()
+	
+	if BrokerXPBar.db.profile.ShowText == "TTL" then
+		self:CancelTimer(self.timer)
+	end		
 end
 
 function BrokerXPBar:ChatCommand(input)
@@ -1481,6 +1540,18 @@ function BrokerXPBar:UpdateStanding()
 	BrokerXPBar:Update()
 end
 
+function BrokerXPBar:UpdateAutoTrack(register)
+	if register == nil then
+		register = BrokerXPBar.db.profile.AutoTrackOnLoss or BrokerXPBar.db.profile.AutoTrackOnLoss
+	end
+	
+	if register then
+		self:RegisterEvent("COMBAT_TEXT_UPDATE")
+	else
+		self:UnregisterEvent("COMBAT_TEXT_UPDATE")
+	end
+end
+
 function BrokerXPBar:Update()
 	self:UpdateData()
 	self:UpdateLabel()
@@ -1626,16 +1697,22 @@ function BrokerXPBar:UpdateLabel()
 			local toGo        = max - current
 			local percentToGo = floor(toGo / max * 100)
 			
-			if Crayon then
+			if Crayon and BrokerXPBar.db.profile.ColoredText then
 				values     = "|cff"..Crayon:GetThresholdHexColor(toGo, max, max * 0.75, max * 0.5, max * 0.25, 1) .. toGo .. "|r"
 				percentage = "|cff"..Crayon:GetThresholdHexColor(percentToGo, 100, 75, 50, 1) .. percentToGo .. "|r"
+			else
+				values     = toGo
+				percentage = percentToGo
 			end			
         else 
 			local percent = floor(current/max * 100)
 			
-			if Crayon then
+			if Crayon and BrokerXPBar.db.profile.ColoredText then
 				values     = "|cff"..Crayon:GetThresholdHexColor(current, 1, max * 0.25, max * 0.5, max * 0.75, max) .. current .. "|r"
 				percentage = "|cff"..Crayon:GetThresholdHexColor(percent, 1, 25, 50, 75, 100) .. percent .. "|r"
+			else
+				values     = current
+				percentage = percent
 			end
 			
 			values = values .. "/" .. max
@@ -1883,38 +1960,38 @@ function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, combat_string)
 	local mob
 	
 	if GetNumRaidMembers() > 0 then
-		_, _, mob, kxp, rpxp = sfind(combat_string, XPGAIN_RAID)
+		mob, kxp, rpxp = smatch(combat_string, XPGAIN_RAID)
 		
 		if not mob then
-			_, _, mob, kxp, rxp, bonustype, rpxp = sfind(combat_string, XPGAIN_RAID_RESTED)
+			mob, kxp, rxp, bonustype, rpxp = smatch(combat_string, XPGAIN_RAID_RESTED)
 		end
 		
 		if not mob then
-			_, _, mob, kxp, pxp, bonustype, rpxp = sfind(combat_string, XPGAIN_RAID_PENALTY)
+			mob, kxp, pxp, bonustype, rpxp = smatch(combat_string, XPGAIN_RAID_PENALTY)
 		end
 	elseif GetNumPartyMembers() > 0 then
-		_, _, mob, kxp, gxp = sfind(combat_string, XPGAIN_GROUP)
+		mob, kxp, gxp = smatch(combat_string, XPGAIN_GROUP)
 		
 		if not mob then
-			_, _, mob, kxp, rxp, bonustype, gxp = sfind(combat_string, XPGAIN_GROUP_RESTED)
+			mob, kxp, rxp, bonustype, gxp = smatch(combat_string, XPGAIN_GROUP_RESTED)
 		end
 		
 		if not mob then
-			_, _, mob, kxp, pxp, bonustype, gxp = sfind(combat_string, XPGAIN_GROUP_PENALTY)
+			mob, kxp, pxp, bonustype, gxp = smatch(combat_string, XPGAIN_GROUP_PENALTY)
 		end
 	end
 
 	-- raid penalty not always applies it seems
 	if not mob then
-		_, _, mob, kxp, rxp, bonustype = sfind(combat_string, XPGAIN_SINGLE_RESTED)
+		mob, kxp, rxp, bonustype = smatch(combat_string, XPGAIN_SINGLE_RESTED)
 	end
 	
 	if not mob then
-		_, _, mob, kxp, pxp, bonustype = sfind(combat_string, XPGAIN_SINGLE_PENALTY)
+		mob, kxp, pxp, bonustype = smatch(combat_string, XPGAIN_SINGLE_PENALTY)
 	end
 
 	if not mob then
-		_, _, mob, kxp = sfind(combat_string, XPGAIN_SINGLE)
+		mob, kxp = smatch(combat_string, XPGAIN_SINGLE)
 	end
 	
 	if mob then 
@@ -1986,6 +2063,23 @@ function BrokerXPBar:PLAYER_LEVEL_UP(_, newlevel)
 	end
 end
 
+function BrokerXPBar:COMBAT_TEXT_UPDATE(_, msg_type, faction, amount)
+    if msg_type ~= "FACTION" then
+		return
+	end
+	
+	if (amount < 0 and BrokerXPBar.db.profile.AutoTrackOnLoss) or 
+	   (amount > 0 and BrokerXPBar.db.profile.AutoTrackOnGain) then
+		if faction then
+			if not lookupNames[faction] then
+				BrokerXPBar:QueryFactions()
+			end
+	
+			BrokerXPBar:SetFaction(lookupNames[faction])
+		end
+	end	
+end
+
 -- faction functions
 function BrokerXPBar:QueryFactions(info)
 	local factionTable = {  }
@@ -1994,6 +2088,7 @@ function BrokerXPBar:QueryFactions(info)
 	-- reset lookup table
 	lookupFactions = {}
 	lookupIndexes  = {}
+	lookupNames    = {}
 	
 	for factionIndex = 1, GetNumFactions() do
 		local name, _, standing, _, _ , _ ,_ , _, isHeader = GetFactionInfo(factionIndex)
@@ -2005,6 +2100,7 @@ function BrokerXPBar:QueryFactions(info)
 			b = blizz_rep_colors[standing].b;
 			
 			table.insert(sortingTable, {factionIndex, name, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..name.."|r"})
+			lookupNames[name] = factionIndex
 		end
 	end
 	
@@ -2037,8 +2133,8 @@ function BrokerXPBar:UpdateWatchedFactionIndex()
 
 	if currentname ~= watchedname then
 		for i = 1, GetNumFactions() do
-			local name = GetFactionInfo(i)		
-			if name == watchedname then
+			local name, _, _, _, _, _, _,  _, isHeader  = GetFactionInfo(i)			
+			if name == watchedname and not isHeader then
 				index = i
 				break
 			end
@@ -2356,19 +2452,19 @@ function BrokerXPBar:SetThickness(thickness)
 end
 
 function BrokerXPBar:SetFaction(index)
-	if faction == index then
+	if not index or faction == index then
 		return
 	end
 	
 	faction  = index
 	atmaxrep = false
 	
-	SetWatchedFactionIndex(index)
-	
 	if faction == 0 then
 		watchedstanding = 0
 	end
 
+	SetWatchedFactionIndex(index)
+	
 	self:Reanchor()
 end
 
