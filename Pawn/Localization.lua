@@ -444,7 +444,7 @@ PawnLocal =
 	["TooltipUpgradeFor2H"] = " for 2H",
 	["TooltipBestAnnotation"] = "%s  " .. VgerCore.Color.Blue .. "(best)",
 	["TooltipSecondBestAnnotation"] = "%s  " .. VgerCore.Color.Blue .. "(second best)",
-	["TooltipVersusLine"] = "%s|n  vs. %s%s|r", -- vs. Relentless Gladiator's Mail Helm
+	["TooltipVersusLine"] = "%s|n  vs. |c%s%s|r", -- vs. Relentless Gladiator's Mail Helm
 	
 	-- Loot Upgrade Advisor
 	["LootUpgradeAdvisorHeader"] = "Click to compare with your items.|n",

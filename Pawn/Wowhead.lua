@@ -412,6 +412,13 @@ if not PawnWowheadScaleProviderOptions then PawnWowheadScaleProviderOptions = { 
 if not PawnWowheadScaleProviderOptions.LastAdded then PawnWowheadScaleProviderOptions.LastAdded = 0 end
 
 local _, Class = UnitClass("player")
+if PawnWowheadScaleProviderOptions.LastClass ~= nil and Class ~= PawnWowheadScaleProviderOptions.LastClass then
+	-- If the character has changed class since last time, let's start over.
+	PawnSetAllScaleProviderScalesVisible(ScaleProviderName, false)
+	PawnWowheadScaleProviderOptions.LastAdded = 0
+end
+PawnWowheadScaleProviderOptions.LastClass = Class
+
 if PawnWowheadScaleProviderOptions.LastAdded < 1 then
 	-- Enable round one of scales based on the player's class.
 	if Class == "WARRIOR" then

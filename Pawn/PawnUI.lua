@@ -1047,8 +1047,6 @@ function PawnUI_SetCompareItem(Index, ItemLink)
 	local Label = getglobal("PawnUICompareItemName" .. Index)
 	local Texture = getglobal("PawnUICompareItemIconTexture" .. Index)
 	Label:SetText(ItemName)
-	-- Workaround: ITEM_QUALITY_COLORS does not have a [7].  :(
-	if ItemRarity == 7 then ItemRarity = 6 end
 	local Color = ITEM_QUALITY_COLORS[ItemRarity]
 	if Color then Label:SetVertexColor(Color.r, Color.g, Color.b) end
 	Texture:SetTexture(ItemTexture)

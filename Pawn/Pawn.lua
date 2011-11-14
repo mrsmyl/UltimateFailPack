@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.13: minor updates
+-- Version 1.5.15: reset Wowhead scales if character changes class
 ------------------------------------------------------------
 
 
-PawnVersion = 1.513
+PawnVersion = 1.515
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -3860,6 +3860,29 @@ function PawnImportScale(ScaleTag, Overwrite)
 	return PawnImportScaleResultSuccess, ScaleName
 end
 
+-- Sets the visibility of all scales from a particular scale provider to be visible or hidden in a single operation.
+function PawnSetAllScaleProviderScalesVisible(ProviderInternalName, Visible)
+	if (not ProviderInternalName) or (ProviderInternalName == "") then
+		VgerCore.Fail("ProviderInternalName cannot be empty.  Usage: PawnSetAllScaleProviderScalesVisible(\"ProviderInternalName\", Visible)")
+		return nil
+	end
+	
+	-- Using the provider internal name provided, produce a prefix that we'll search for in the list of scales.  This works because
+	-- the format of a provider scale is "ProviderName":ScaleName.
+	local ScaleNamePrefix = PawnGetProviderScaleName(ProviderInternalName, "")
+	local ScaleNamePrefixLength = strlen(ScaleNamePrefix)
+	
+	-- Loop through all scales and turn them on or off.
+	local ScaleName, Scale
+	for ScaleName, Scale in pairs(PawnCommon.Scales) do
+		if strsub(ScaleName, 1, ScaleNamePrefixLength) == ScaleNamePrefix then
+			Scale.PerCharacterOptions[PawnPlayerFullName].Visible = Visible
+			PawnResetTooltips()
+		end
+	end
+	return true
+end
+
 -- Sets whether or not a scale is visible.  If Visible is nil, it will be considered as false.
 function PawnSetScaleVisible(ScaleName, Visible)
 	if (not ScaleName) or (ScaleName == "") then
@@ -3878,7 +3901,7 @@ function PawnSetScaleVisible(ScaleName, Visible)
 	return true
 end
 
--- Sets true if a given scale is visible in tooltips.
+-- Returns true if a given scale is visible in tooltips.
 function PawnIsScaleVisible(ScaleName)
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: x = PawnIsScaleVisible(\"ScaleName\")")
