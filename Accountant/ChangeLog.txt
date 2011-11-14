@@ -1,0 +1,99 @@
+-- Change Log:
+
+v3.11.40000: 2010-10-19
+- Updated TOC.
+- Small change to prevent errors when selecting session/day/week tabs.
+
+v3.10.30300: 2010-06-05
+- Added check for gold change on new session. Changes are put in "Unknown".
+For example you use the web AH or you use another system to play WoW.
+- Changed server lookup to allow "(" in server name. e.i. "Blizz_Server (US)"
+- Updated Ace libraries to lastest from Curse
+- Updated LDB Accountant names (for Titan and other LDB display addons)
+- Added several X- in the toc. Matched X-Category for Titan
+- Added license
+
+v3.9.30300: 2009-12-12
+- Updated toc version because the zip was not right
+- First time using the WoWInterface project features - have more learning to do...
+
+v3.8.30300: 2009-12-12
+- Updated toc for 3.3 patch
+- Changed naming convention to reflect WoW patch version
+
+v3.6.00: 2009-09-13
+- Updated toc for 3.2 patch
+- Add new option to show total on LDB button.
+- Added a 'cache box' to 'hide' money from the total. Only the total in
+the Accountant frame or Accountant LDB button is affected.
+Note: You are allowed to cache more money than you have resulting in a 
+negative amount being shown.
+- Resized window to show more gold (for those lucky few!)
+
+v3.5.00: 2009-05-02
+- Fixed library dependencies that caused a lot of errors.
+- Moved options to the Blizzard options for addons.
+- Added the option to 'remove' Accountant data for a character. The character could have been deleted.
+- Added the option to 'merge' Accountant data of two characters. The character could have been renamed.
+- Cleaned up parts of the code.
+- Fixed an error when user had selected 'All Chars' tab and used a LDB addon - the tooltip threw an error.
+- Made the numbers shown 'stack' better vertically
+- Fixed an error where the Accountant title was no showing.
+
+v3.4.02: 2009-01-21
+- Added some German translation thanks to ylarion.
+
+v3.4.01: 2008-10-19
+- Removed a debug statement that was appearing in chat.
+
+v3.4.00:
+- Fixed error popping up when opening Accountant.
+- Now allow gold to transfer between characters via mail instead of ignoring
+
+v3.3.01:
+- Fixed typo causing the Data Broker icon to not be shown.
+
+v3.3:
+- Now has a Lib Data Broker component. If you have a Data Broker display addon
+it will display the net profit/loss of the session / day / week / total tabs.
+Or the Total of all characters if the 'All Chars' tab is selected.
+Note: This has been tested with Titan Panel only.
+- The last tab and character(s) selected are now remembered, by character, across logins.
+- If you use the Titan Accountant addon, it will display the same value as 
+the Data Broker component. This is redundant - the Titan Addon should be removed.
+- Net loss (negative) is shown as gold with "()" around it. This is in line with
+accounting practice.
+- Data Broker button tooltip gives the break down (net) into categories
+
+v3.2:
+- Changes to allow Accountant to run in Lich King (Beta)
+
+v3.1:
+NOTE: You MUST log into each character you want see in Accountant!
+There is new data saved for each character that is needed by the recent changes. 
+The current data is NOT lost.
+- New look and feel. The older UI was too hard to change and maintain for what I needed.
+- Added the ability to choose all Alliance and / or all Horde. 
+- Added a character pull down to see a single character. (suggested by Inwe Anwame)
+
+v3.01:
+- Removed realm name from all character tab. 
+Thanks to LadySilverwolf for letting me know long realm names 
+wrap to the next row.
+
+v3.0:
+- Fixed the 'repair' account section
+- Cleaner code (less global variables)
+- Added a couple routines for AccountTitan
+- Changed the NiceCash to return 0 gold
+- Moved the minimap button slighty off the map
+
+
+Prior to 3.0:
+This was updated at the request of a friend. Accountant appears to be currently unsupported so a new version was required.
+
+
+(that I can glean from posted versions)
+Accountant By Sabaki, Shadow, and Rophy
+Accountant Continued by Quel (this was the version I started with)
+Accountant Classic by Arith

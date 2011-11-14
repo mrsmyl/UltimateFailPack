@@ -1,0 +1,26 @@
+## Interface: 40200
+## Title: Accountant 3.11.40200
+## Version: 3.11.40200
+## Author: urnati
+## Description: Logs where your WoW gold goes
+## DefaultState: enabled
+## RequiredDeps: 
+## SavedVariables: Accountant_SaveData,Accountant_Options
+## X-Embeds: 
+## X-Credits: urnati
+## X-Category: Information
+## X-Website: http://code.google.com/p/accountant-wow/
+## X-Email: accountant-wow@googlegroups.com
+## X-License: All rights reserved (See license.txt)
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceConfig-3.0\AceConfigDialog-3.0\AceConfigDialog-3.0.xml
+
+AccountantData.lua
+localization.lua
+Accountant.lua
+Accountant.xml
