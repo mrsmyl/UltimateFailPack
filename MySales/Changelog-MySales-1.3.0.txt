@@ -1,0 +1,16 @@
+------------------------------------------------------------------------
+r42 | cyprias | 2011-09-15 07:19:46 +0000 (Thu, 15 Sep 2011) | 2 lines
+Changed paths:
+   A /tags/1.3.0 (from /trunk:41)
+
+Tagged as 1.3.0
+- Updated for cata (40200). 
+------------------------------------------------------------------------
+r41 | cyprias | 2011-09-15 07:17:16 +0000 (Thu, 15 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/MySales.toc
+   M /trunk/core.lua
+   M /trunk/locales/enUS.lua
+
+- Updated toc to 40200.
+------------------------------------------------------------------------

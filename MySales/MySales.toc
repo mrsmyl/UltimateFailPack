@@ -1,0 +1,29 @@
+## Interface: 40200
+## Title: My Sales
+## Version: 1.3.0
+## Notes: Tells you who bought your auctions.
+## Author: Cyprias@gmail.com
+## SavedVariables: MS_DB
+## OptionalDeps: LibStub, Ace3, lib-st
+## X-Website: http://wow.curse.com/downloads/wow-addons/details/mysales.aspx
+## X-Donate: https://www.paypal.com/cgi-bin/webscr?hosted_button_id=VG3UNPDU69AG6&item_name=MySales+%28from+in+game%29&cmd=_s-xclick
+## X-License: GNU General Public License version 3 (GPLv3)
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: true
+## X-Bitcoin: 13mvJMp8Z38SUAnZ4PgGpio5L2inqWQGsP
+## X-Curse-Packaged-Version: 1.3.0
+## X-Curse-Project-Name: MySales
+## X-Curse-Project-ID: mysales
+## X-Curse-Repository-ID: wow/mysales/mainline
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: true
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+ 
+locales.xml
+func.lua
+core.lua
+options.lua
