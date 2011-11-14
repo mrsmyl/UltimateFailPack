@@ -1,0 +1,469 @@
+<!--
+
+(C) Copyright 2007,2008 Bethink (bethink at naef dot com)
+See LICENSE.txt for license terms.
+
+-->
+<Ui
+	xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<!-- Script -->
+	<Script file="EconomyFrame.lua" />
+
+	<!-- Large stats templates -->
+	<Frame name="EconomyFrameLargeStatTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="288" y="13" /> 
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="Label">
+					<Anchors>
+						<Anchor point="LEFT" /> 
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentStat">
+				<Size>
+					<AbsDimension x="30" y="13" /> 
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" /> 
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="RIGHT" text="Text">
+							<Anchors>
+								<Anchor point="RIGHT" /> 
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnEnter>Analyst:OnStatEnter(self)</OnEnter> 
+			<OnLeave>Analyst:OnStatLeave(self)</OnLeave> 
+		</Scripts>
+	</Frame>
+	<Frame name="EconomyFrameLargeStatsTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="310" y="120" /> 
+		</Size>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="16" /> 
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16" /> 
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5" /> 
+			</BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<Frame name="$parent1" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-8" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent2" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent1" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent3" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent2" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent4" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent3" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent5" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent4" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent6" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent5" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent7" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent6" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent8" inherits="EconomyFrameLargeStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent7" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropBorderColor(
+					TOOLTIP_DEFAULT_COLOR.r,
+					TOOLTIP_DEFAULT_COLOR.g,
+					TOOLTIP_DEFAULT_COLOR.b)
+				self:SetBackdropColor(
+					TOOLTIP_DEFAULT_BACKGROUND_COLOR.r,
+					TOOLTIP_DEFAULT_BACKGROUND_COLOR.g,
+					TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	
+	<!-- Small stats templates -->
+	<Frame name="EconomyFrameSmallStatTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="130" y="13" /> 
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="Label">
+					<Anchors>
+						<Anchor point="LEFT" /> 
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentStat">
+				<Size>
+					<AbsDimension x="30" y="13" /> 
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" /> 
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="RIGHT" text="Text">
+							<Anchors>
+								<Anchor point="RIGHT" /> 
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnEnter>Analyst:OnStatEnter(self)</OnEnter> 
+			<OnLeave>Analyst:OnStatLeave(self)</OnLeave> 
+		</Scripts>
+	</Frame>
+	<Frame name="EconomyFrameSmallStatsTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="152" y="196" /> 
+		</Size>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="16" /> 
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16" /> 
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5" /> 
+			</BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<Frame name="$parentReportDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-16" y="24" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent1" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-8" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent2" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent1" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent3" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent2" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent4" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent3" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent5" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent4" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent6" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent5" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent7" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent6" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent8" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent7" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent9" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent8" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent10" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent9" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent11" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent10" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent12" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent11" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent13" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent12" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent14" inherits="EconomyFrameSmallStatTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent13" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropBorderColor(
+					TOOLTIP_DEFAULT_COLOR.r,
+					TOOLTIP_DEFAULT_COLOR.g,
+					TOOLTIP_DEFAULT_COLOR.b)
+				self:SetBackdropColor(
+					TOOLTIP_DEFAULT_BACKGROUND_COLOR.r,
+					TOOLTIP_DEFAULT_BACKGROUND_COLOR.g,
+					TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	
+	<!-- Economy frame -->
+	<Frame name="EconomyFrame" toplevel="true" movable="true" parent="UIParent" enableMouse="true" hidden="true">
+		<Size> 
+			<AbsDimension x="384" y="512"/> 
+		</Size> 
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-104" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<HitRectInsets>
+			<AbsInset left="0" right="30" top="0" bottom="45" /> 
+		</HitRectInsets>
+		<Layers> 
+			<!-- Background layer -->
+			<Layer level="BACKGROUND"> 
+				<Texture name="EconomyFramePortrait">
+					<Size>
+						<AbsDimension x="60" y="60" /> 
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="7" y="-6" /> 
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			
+			<!-- Artwork layer -->
+			<Layer level="ARTWORK">
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-TopLeft">
+					<Size>
+						<AbsDimension x="256" y="256" /> 
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="2" y="-1" /> 
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-TopRight">
+					<Size>
+						<AbsDimension x="128" y="256" /> 
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="258" y="-1" /> 
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-BottomLeft">
+					<Size>
+						<AbsDimension x="256" y="256" /> 
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="2" y="-257" /> 
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-BottomRight">
+					<Size>
+						<AbsDimension x="128" y="256" /> 
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="258" y="-257" /> 
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<!-- Title bar -->
+			<Frame name="EconomyFrameTitleFrame">
+				<Size>
+					<AbsDimension x="109" y="12" /> 
+				</Size>
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset>
+							<AbsDimension x="6" y="232" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="EconomyFrameTitleText" inherits="GameFontNormal" text="TITLE">
+							<Size>
+								<AbsDimension x="300" y="12" /> 
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" /> 
+							</Anchors>
+							<Color r="1.0" g="1.0" b="1.0" /> 
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button name="EconomyFrameCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="EconomyFrame" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-44" y="-25" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			
+			<!-- Period selection -->
+			<Frame name="EconomyFramePeriodDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-25" y="-48" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+
+			<!-- All characters -->
+			<CheckButton name="EconomyFrameAllCharacters" inherits="UICheckButtonTemplate">
+				<Size>
+					<AbsDimension x="24" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="72" y="-52" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<HitRectInsets>
+					<AbsInset left="0" right="-75" top="0" bottom="0" />
+				</HitRectInsets>
+				<Scripts>
+					<OnClick>Analyst:OnAllCharactersClick(self)</OnClick>
+					<OnEnter>Analyst:OnAllCharactersEnter(self)</OnEnter>
+					<OnLeave>Analyst:OnAllCharactersLeave(self)</OnLeave> 
+				</Scripts>
+			</CheckButton>
+			
+			<!-- Top stats -->
+			<Frame name="EconomyFrameTopStats" inherits="EconomyFrameLargeStatsTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="28" y="-84" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+				
+			<!-- Left & right stats -->
+			<Frame name="EconomyFrameLeftStats" inherits="EconomyFrameSmallStatsTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="28" y="-232" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="EconomyFrameRightStats" inherits="EconomyFrameSmallStatsTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="184" y="-232" /> 
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnShow>Analyst:OnShowEconomyFrame(self)</OnShow>
+			<OnHide>Analyst:OnHideEconomyFrame(self)</OnHide>
+		</Scripts>
+ 	</Frame>
+</Ui>

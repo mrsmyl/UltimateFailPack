@@ -1,0 +1,13 @@
+<!--
+
+(C) Copyright 2007,2008 Bethink (bethink at naef dot com)
+See LICENSE.txt for license terms.
+
+-->
+<Bindings>
+	<Binding
+		name="ECONOMY"
+		header="ANALYST">
+		Analyst:ToggleEconomyFrame()
+	</Binding>
+</Bindings>

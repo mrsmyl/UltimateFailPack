@@ -1,0 +1,16 @@
+<!--
+
+(C) Copyright 2008 Bethink (bethink at naef dot com)
+See LICENSE.txt for license terms.
+
+-->
+<Ui
+	xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<Script file="Locale-enUS.lua" />
+	<Script file="Locale-deDE.lua" />
+	<Script file="Locale-zhCN.lua" />
+	<Script file="Locale-zhTW.lua" />
+	<Script file="Locale-ruRU.lua" />
+</Ui>
