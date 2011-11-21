@@ -1,0 +1,13 @@
+## Interface: 40000
+## Title: QuestAnnouncer4
+## Notes: Sends a party message as you advance in a quest.
+## Author: Jason Olivarez
+## Version: 1.2
+## SavedVariables: QuestAnnouncer4DB
+## OptionalDeps: Ace3
+
+embeds.xml
+
+CRC32Lib.lua
+Core.lua
+Config.lua
