@@ -1,0 +1,11 @@
+## Interface: 40200
+## Title: Comix
+## Notes: A plain fun addon
+## Author: Si 		thanks to Furryrock for helping test
+## URL: 
+## Version: 1.85
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariablesPerCharacter: Comix_Max_Scale , ComixAniSpeed , ComixMaxCrits , Comix_AddOnEnabled , Comix_SoundEnabled , Comix_BSEnabled , Comix_DemoShoutEnabled , Comix_ZoneEnabled, Comix_DeathSoundEnabled ,  Comix_KillCountEnabled , Comix_CritPercent, Comix_FinishHimGap, Comix_SpecialsEnabled, Comix_BamEnabled, Comix_ImagesEnabled,Comix_FinishhimEnabled,Comix_CritGapEnabled,Comix_CritGap, Comix_ShakeEnabled, Comix_CritSoundsEnabled, Comix_CritHealsEnabled, Comix_CritFlashEnabled, Comix_HealFlashEnabled, Comix_BSSounds, Comix_DSSounds, Comix_BounceSoundEnabled, Comix_JumpCount, Comix_AbilitySoundsEnabled, Comix_ResSoundEnabled, Comix_ReadySoundEnabled, Comix_Overkill, Comix_OverkillEnabled, Comix_ShakeOffset, Comix_ObjectionSoundsEnabled, Comix_ObjectionImagesEnabled, Comix_PublicObjections
+Comix.xml
+Comix_options.xml
