@@ -1,0 +1,13 @@
+tag v40300-1.4.4
+6c9bb8ce5ff91e2a7c8d27a0b835e0974f159ae5
+James Whitehead II <jnwhiteh@gmail.com>
+2011-11-30 21:23:46 +0000
+
+40300
+
+
+--------------------
+
+James Whitehead II:
+	- Update TOC for 4.3
+	- Update LibMapData to 0.20
