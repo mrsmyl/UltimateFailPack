@@ -1,6 +1,6 @@
 --[[
 Name: Bazooka
-Revision: $Revision: 207 $
+Revision: $Revision: 216 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/bazooka/
 SVN: svn://svn.wowace.com/wow/bazooka/mainline/trunk
@@ -8,9 +8,12 @@ Description: Bazooka is a FuBar like broker display
 License: Public Domain
 ]]
 
-local AppName = "Bazooka"
+local AppName, Bazooka = ...
 local OptionsAppName = AppName .. "_Options"
-local VERSION = AppName .. "-r" .. ("$Revision: 207 $"):match("%d+")
+local VERSION = AppName .. "-v2.1.4"
+--[===[@debug@
+local VERSION = AppName .. "-r" .. ("$Revision: 216 $"):match("%d+")
+--@end-debug@]===]
 
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
 local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true)
@@ -153,6 +156,7 @@ local PluginDefaults = {
     overrideTooltipScale = false,
     tooltipScale = 1.0,
     iconBorderClip = 0.07,
+    alignment = "LEFT",
 }
 
 local Icon = [[Interface\AddOns\]] .. AppName .. [[\bzk_locked.tga]]
@@ -164,13 +168,12 @@ local MinDropPlaceHLDX = 3
 local BzkDialogDisablePlugin = 'BAZOOKA_DISABLE_PLUGIN'
 local MaxTweakPts = 5
 
-Bazooka = LibStub("AceAddon-3.0"):NewAddon(AppName, "AceEvent-3.0")
-local Bazooka = Bazooka
+Bazooka = LibStub("AceAddon-3.0"):NewAddon(Bazooka, AppName, "AceEvent-3.0")
+_G.Bazooka = Bazooka
 Bazooka:SetDefaultModuleState(false)
 
 Bazooka.version = VERSION
 Bazooka.AppName = AppName
-Bazooka.OptionsAppName = OptionsAppName
 Bazooka.Defaults = Defaults
 
 Bazooka.draggedFrame = nil
@@ -1523,17 +1526,21 @@ function Plugin:createIcon()
     local iconSize = BarDefaults.iconSize
     self.icon:SetWidth(iconSize)
     self.icon:SetHeight(iconSize)
-    self.icon:SetPoint("LEFT", self.frame, "LEFT", 0, 0)
 end
 
 function Plugin:createText()
     self.text = self.frame:CreateFontString("BazookaPluginText_" .. self.name, "ARTWORK", "GameFontNormal")
     self.text:SetFont(Defaults.fontPath, BarDefaults.fontSize, BarDefaults.fontOutline)
     self.text:SetWordWrap(false)
-    self.text:SetJustifyH('LEFT');
 end
 
 function Plugin:updateLayout(forced)
+    local align = self.db.alignment or "LEFT"
+    if self.icon then
+        self.icon:ClearAllPoints()
+        self.icon:SetPoint(align, self.frame, align, 0, 0)
+    end
+
     local w = 0
     if self.db.showText or self.db.showValue or self.db.showLabel then
         local tw = self.text:GetStringWidth()
@@ -1543,7 +1550,13 @@ function Plugin:updateLayout(forced)
                 tw = self.db.maxTextWidth
             end
             local offset = (iw > 0) and (iw + self.iconTextSpacing) or 0
-            self.text:SetPoint("LEFT", self.frame, "LEFT", offset, 0)
+            self.text:ClearAllPoints()
+            if align == "LEFT" then
+                self.text:SetPoint(align, self.frame, align, offset, 0)
+            else
+                self.text:SetPoint(align, self.frame, align, -offset, 0)
+            end
+            self.text:SetJustifyH(align)
             w = offset + tw
         elseif iw > 0 then
             w = iw
