@@ -148,7 +148,7 @@ end
 
 function Outfitter:AddOutfitStatItemIfBetter(pOutfit, pSlotName, pItemInfo, pStat, pScore)
 	local vCurrentItem = pOutfit:GetItem(pSlotName)
-	local vAlternateSlotName = Outfitter.cHalfAlternateStatSlot[pSlotName]
+	local vAlternateSlotName = self.cHalfAlternateStatSlot[pSlotName]
 	
 	local vCurrentScore = vCurrentItem and pStat:GetItemScore(vCurrentItem)
 	
@@ -162,16 +162,16 @@ function Outfitter:AddOutfitStatItemIfBetter(pOutfit, pSlotName, pItemInfo, pSta
 		
 		if vCurrentScore
 		and vAlternateSlotName then
-			Outfitter:AddOutfitStatItemIfBetter(pOutfit, vAlternateSlotName, vCurrentItem, pStat, vCurrentScore)
+			self:AddOutfitStatItemIfBetter(pOutfit, vAlternateSlotName, vCurrentItem, pStat, vCurrentScore)
 		end
 		
-		Outfitter:AddOutfitStatItem(pOutfit, pSlotName, pItemInfo, pStat, pScore)
+		self:AddOutfitStatItem(pOutfit, pSlotName, pItemInfo, pStat, pScore)
 	else
 		if not vAlternateSlotName then
 			return
 		end
 		
-		return Outfitter:AddOutfitStatItemIfBetter(pOutfit, vAlternateSlotName, pItemInfo, pStat, pScore)
+		return self:AddOutfitStatItemIfBetter(pOutfit, vAlternateSlotName, pItemInfo, pStat, pScore)
 	end
 end
 
@@ -687,6 +687,10 @@ function Outfitter._OutfitIterator:Construct(pName, pInventoryCache, pFilterStat
 	self.Slots = {}
 	self.NumCombinations = 1
 	
+	if Outfitter.Debug.Optimize then
+		print(pFilterStats)
+	end
+	
 	for vInventorySlot, vItems in pairs(pInventoryCache.ItemsBySlot) do
 		local vNumSlotItems = 0
 		local vNumItems = #vItems
@@ -736,7 +740,9 @@ function Outfitter._OutfitIterator:Construct(pName, pInventoryCache, pFilterStat
 				end
 			end
 			
-			Outfitter:DebugMessage("%s has %s items", vInventorySlot, vNumSlotItems)
+			if Outfitter.Debug.Optimize then
+				Outfitter:DebugMessage("%s has %s items", vInventorySlot, vNumSlotItems)
+			end
 		end
 	end
 end
