@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1172 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1179 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -381,6 +381,8 @@ Recount.SpellSchoolName = {
 	[SPELLSCHOOL_SHADOW] = "Shadow",  -- Elsia: Do NOT localize this, it breaks functionality!!! If you need this localized contact me on WowAce or Curse.
 	[SPELLSCHOOL_ARCANE] = "Arcane",  -- Elsia: Do NOT localize this, it breaks functionality!!! If you need this localized contact me on WowAce or Curse.
 }
+
+local Epsilon=0.000000000000000001
 
 function Recount:MatchGUID(nName,nGUID,nFlags)
 	if not Recount.PlayerName or not Recount.PlayerGUID then
@@ -1099,10 +1101,10 @@ function Recount:AddCurrentEvent(who, eventType, incoming, number, event)
 		if who.unit then
 			if UnitHealthMax(who.unit)~=100 then
 				who.LastEventHealth = who.LastEventHealth or {}
-				who.LastEventHealth[who.NextEventNum]=UnitHealth(who.unit).." ("..math_floor(100*UnitHealth(who.unit)/UnitHealthMax(who.unit)).."%)"
+				who.LastEventHealth[who.NextEventNum]=UnitHealth(who.unit).." ("..math_floor(100*UnitHealth(who.unit)/(UnitHealthMax(who.unit)+Epsilon)).."%)"
 				if number then
 					who.LastEventNum = who.LastEventNum or {}
-					who.LastEventNum[who.NextEventNum]=100*number/UnitHealthMax(who.unit)
+					who.LastEventNum[who.NextEventNum]=100*number/(UnitHealthMax(who.unit)+Epsilon)
 				elseif who.LastEventNum then
 					who.LastEventNum[who.NextEventNum]=nil
 				end
@@ -1114,7 +1116,7 @@ function Recount:AddCurrentEvent(who, eventType, incoming, number, event)
 				end
 			end
 			who.LastEventHealthNum = who.LastEventHealthNum or {}
-			who.LastEventHealthNum[who.NextEventNum]=100*UnitHealth(who.unit)/UnitHealthMax(who.unit)
+			who.LastEventHealthNum[who.NextEventNum]=100*UnitHealth(who.unit)/(UnitHealthMax(who.unit)+Epsilon)
 		else
 			who.LastEventHealth = who.LastEventHealth or {}
 			who.LastEventHealthNum = who.LastEventHealthNum or {}

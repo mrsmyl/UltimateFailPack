@@ -1,4 +1,4 @@
-﻿## Interface: 40200
+﻿## Interface: 40300
 ## Title: X-Perl |cffeda55fRaid Monitor|r by |cFFFF8080Zek|r
 ## Title-ruRU: X-Perl |cffeda55fМонитор|r
 ## Title-deDE: X-Perl |cffeda55fSchlachtzugsmonitor|r
@@ -13,7 +13,7 @@
 ## SavedVariablesPerCharacter: XPerlRaidMonConfig
 ## RequiredDeps: XPerl
 ## DefaultState: Disabled
-## X-Curse-Packaged-Version: r589
+## X-Curse-Packaged-Version: 3.2.0
 ## X-Curse-Project-Name: X-Perl UnitFrames
 ## X-Curse-Project-ID: xperl
 ## X-Curse-Repository-ID: wow/xperl/mainline

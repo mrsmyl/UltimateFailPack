@@ -6,7 +6,7 @@ XPerl_ProductName		= "|cFFD00000X-Perl|r UnitFrames"
 XPerl_ShortProductName	= "|cFFD00000X-Perl|r"
 XPerl_Author			= "|cFFFF8080Zek|r"
 XPerl_Description		= XPerl_ProductName.." by "..XPerl_Author
-XPerl_VersionNumber 	= "3.1.64"
+XPerl_VersionNumber 	= "3.2.0"
 XPerl_Version			= XPerl_Description.." - "..XPerl_VersionNumber
 XPerl_LongDescription	= "UnitFrame replacement for new look Player, Pet, Party, Target, Target's Target, Focus, Raid"
 XPerl_ModMenuIcon		= "Interface\\Icons\\INV_Misc_Gem_Pearl_02"
@@ -149,7 +149,7 @@ XPERL_HIGHLIGHT_SPELLS = {
 	shieldSpells = {
 		[GetSpellInfo(17)] = 30,			-- Power Word: Shield
 		[GetSpellInfo(76669)] = 6,			-- Illuminated Healing
-		[GetSpellInfo(974)] = 600			-- Earth Shield	(old id32594)
+		[GetSpellInfo(974)] = 600			-- Earth Shield	(old id 32594)
 	},
 	healSpells = {
 		[GetSpellInfo(2061)] = 1.5,			-- Flash of Light (old id 25235)
@@ -160,7 +160,7 @@ XPERL_HIGHLIGHT_SPELLS = {
 		[GetSpellInfo(331)] = 3,			-- Healing Wave (old id 25396)
 		[GetSpellInfo(8004)] = 1.5,			-- Lesser Healing Wave (old id 25420)
 		[GetSpellInfo(19750)] = 1.5,		-- Flash Heal (old id 27137)
-		[GetSpellInfo(635)] = 2.5,			-- Holy Light (old id 27136))
+		[GetSpellInfo(635)] = 2.5,			-- Holy Light (old id 27136)
 		[GetSpellInfo(50464)] = 3.0			-- Nourish
 	},
 	buffSpells = {

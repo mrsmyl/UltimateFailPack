@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 580 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 591 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -223,6 +223,10 @@ function XPerl_Player_UpdateLeader(self)
 
 	nf.group:Hide()
 	self.groupFrame:Hide()
+end
+
+local function XPerl_Player_UpdateRaidTarget(self)
+	XPerl_Update_RaidIcon(self.nameFrame.raidIcon, self.partyid)
 end
 
 -- XPerl_Player_UpdateCombat
@@ -718,6 +722,7 @@ function XPerl_Player_UpdateDisplay (self)
 	XPerl_Player_UpdatePVP(self)
 	XPerl_Player_UpdateCombat(self)
 	XPerl_Player_UpdateLeader(self)
+	XPerl_Player_UpdateRaidTarget(self)
 	XPerl_Player_UpdateMana(self)
 	XPerl_Player_UpdateHealth(self)
 	XPerl_Player_UpdateBuffs(self)
@@ -759,7 +764,7 @@ function XPerl_Player_Events:PLAYER_ENTERING_WORLD()
 	local events = {"UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_MAXENERGY", "UNIT_MAXMANA", "UNIT_MAXRUNIC_POWER",
 			"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
 			"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE", "UNIT_FLAGS", "PLAYER_FLAGS_CHANGED",
-			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "MASTERY_UPDATE", "UPDATE_SHAPESHIFT_FORM",
+			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "MASTERY_UPDATE", "RAID_TARGET_UPDATE", "UPDATE_SHAPESHIFT_FORM",
 			"RUNE_TYPE_UPDATE", "RUNE_POWER_UPDATE"}
 
 
@@ -918,6 +923,11 @@ function XPerl_Player_Events:MASTERY_UPDATE()
 	if (playerClass == "DRUID") then
 		XPerl_Player_DruidBarUpdate(self)
 	end
+end
+
+-- RAID_TARGET_UPDATE
+function XPerl_Player_Events:RAID_TARGET_UPDATE()
+	XPerl_Player_UpdateRaidTarget(XPerl_Player)
 end
 
 -- PLAYER_TALENT_UPDATE

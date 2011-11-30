@@ -2,7 +2,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale( "Recount" )
 local Epsilon=0.000000000000000001
 
-local revision = tonumber(string.sub("$Revision: 1167 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1178 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -451,9 +451,15 @@ function Recount:AddSortedTooltipData(title,data,num)
 
 	table_sort(SortedData,RecountSortFunc)
 
+	local percent
 	for i=1,num do
 		if SortedData[i] then
-			GameTooltip:AddDoubleLine(i..". "..SortedData[i][1],SortedData[i][2].." ("..math_floor(100*SortedData[i][2]/total).."%)",1,1,1,1,1,1)
+			if total ~= 0 then
+				percent = math_floor(100*SortedData[i][2]/total)
+			else
+				percent = 100
+			end
+			GameTooltip:AddDoubleLine(i..". "..SortedData[i][1],SortedData[i][2].." ("..percent.."%)",1,1,1,1,1,1)
 		end
 	end
 
@@ -480,7 +486,7 @@ function TooltipFuncs:Damage(name,data)
 			
 			petindex = petindex + 1
 			
-			if Damage then
+			if Damage and Damage ~= 0 then
 				Damage=Damage/(Damage+(data.Fights[Recount.db.profile.CurDataSet].Damage or 0))
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddDoubleLine(L["Pet"]..":",data.Pet[petindex].." ("..math_floor(Damage*100+0.5).."%)",nil,nil,nil,1,1,1)
@@ -530,7 +536,7 @@ function TooltipFuncs:Healing(name,data)
 			
 			petindex = petindex + 1
 			
-			if Healing then
+			if Healing and Healing ~= 0 then
 				Healing=Healing/(Healing+(data.Fights[Recount.db.profile.CurDataSet].Healing or 0))
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddDoubleLine(L["Pet"]..":",data.Pet[petindex].." ("..math_floor(Healing*100+0.5).."%)",nil,nil,nil,1,1,1)

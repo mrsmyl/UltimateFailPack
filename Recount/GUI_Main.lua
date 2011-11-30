@@ -5,7 +5,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale( "Recount" )
 local LD = LibStub("LibDropdown-1.0")
 
-local revision = tonumber(string.sub("$Revision: 1169 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1177 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -1073,7 +1073,10 @@ function Recount:RefreshMainWindow(datarefresh)
 		local v=dispTable[i+offset]
 		
 		if v then
-			local percent=100*v[2]/Total
+			local percent=100
+			if Total ~= 0 then
+				percent=100*v[2]/Total
+			end
 			if v[5] then
 				if type(v[5])=="number" then
 					PerSec=string_format("%.1f",v[5])
@@ -1096,7 +1099,11 @@ function Recount:RefreshMainWindow(datarefresh)
 				righttext = string_format("%s (%.1f%%)", righttext, percent)
 			end
 			
-			me:SetBar(i,lefttext,righttext,100*v[2]/MaxValue,"Class",v[3],v[1],me.MainWindowSelectPlayer,v[4])
+			percent = 100
+			if MaxValue ~= 0 then
+				percent = 100*v[2]/MaxValue
+			end
+			me:SetBar(i,lefttext,righttext,percent,"Class",v[3],v[1],me.MainWindowSelectPlayer,v[4])
 			me:FixRow(i)
 			rows[i].name=v[1]
 		else
@@ -1461,7 +1468,12 @@ function Recount:ReportData(amount,loc,loc2)
 			else
 				PerSec=""
 			end
-			SendChatMessage(i..". "..reportTable[i][1].."  "..(math_floor(10*reportTable[i][2])/10).." ("..PerSec..(math_floor(1000*reportTable[i][2]/Total)/10).."%)",loc,nil,loc2)
+			
+			local percentage = 100
+			if Total ~= 0 then
+				percentage = (math_floor(1000*reportTable[i][2]/Total)/10)
+			end
+			SendChatMessage(i..". "..reportTable[i][1].."  "..(math_floor(10*reportTable[i][2])/10).." ("..PerSec..percentage.."%)",loc,nil,loc2)
 		end
 	end
 end

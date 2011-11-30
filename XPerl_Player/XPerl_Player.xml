@@ -344,6 +344,20 @@
 						</Texture>
 					</Layer -->
 					<Layer level="ARTWORK">
+						<!-- Raid Target Icon -->
+						<Texture name="$parentraidIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
+							<Size>
+								<AbsDimension x="20" y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="5" y="-4"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+						</Texture>
 						<!-- Leader Icon -->
 						<Texture name="$parentleaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>

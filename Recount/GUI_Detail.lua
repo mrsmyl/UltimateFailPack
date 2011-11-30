@@ -6,7 +6,7 @@ local Epsilon=0.000000000000000001
 
 local _
 
-local revision = tonumber(string.sub("$Revision: 1136 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1180 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -172,8 +172,12 @@ function Recount:FillUpperDetailTable(Data)
 	local MaxNum=table.maxn(UpperTable)
 
 	for k,v in ipairs(UpperTable) do
-		v[4]=100*v[2]/total
-
+		if total == 0 then
+			v[4]=100
+		else
+			v[4]=100*v[2]/total
+		end
+		
 		if k~=MaxNum then
 			v[5]=PieChart:AddPie(v[4])
 		else
@@ -259,12 +263,12 @@ function Recount:FillLowerDetailTable(Data)
 	for k,v in pairs(Data) do
 		local avg
 
-		if v.amount then
-			avg=math.floor(v.amount/v.count+0.5)
-		end
-
 		if v.count and v.count > 0 then
 				
+			if v.amount then
+				avg=math.floor(v.amount/v.count+0.5)
+			end
+
 			if FreeTables[#FreeTables] then
 				dispTable[#dispTable+1]=FreeTables[#FreeTables]
 				FreeTables[#FreeTables]=nil
@@ -290,7 +294,11 @@ function Recount:FillLowerDetailTable(Data)
 	local MaxNum=table.maxn(dispTable)
 
 	for k,v in ipairs(dispTable) do
-		v[6]=100*v[2]/total
+		if total == 0 then
+			v[6]=100
+		else
+			v[6]=100*v[2]/total
+		end
 		v[7]=HitTypeColors[v[1]]
 
 		if k~=MaxNum then
@@ -863,7 +871,11 @@ function me:LoadSummaryData(damage,resisted,hitData,blocked,absorbed)
 				for k2, v2 in pairs(v.Details) do
 					if damageFrame[k2] then
 						damageFrame[k2]:SetText(v2.count)
-						damageFrame[k2.."P"]:SetText((math.floor(1000*v2.count/Total+0.5)/10).."%")
+						local percent = 0
+						if Total ~= 0 then
+							percent = math.floor(1000*v2.count/Total+0.5)/10
+						end
+						damageFrame[k2.."P"]:SetText(percent.."%")
 						SummaryActive[k]=true
 						
 					end
@@ -1259,13 +1271,20 @@ function me:CalculateFocus(t)
 		for _,v in pairs(t) do
 			Total=Total+v.amount
 		end
-		for _,v in pairs(t) do
-			Temp=v.amount/Total
-			Focus=Focus+Temp*Temp
+		
+		if Total ~= 0 then
+			for _,v in pairs(t) do
+				Temp=v.amount/Total
+				Focus=Focus+Temp*Temp
+			end
 		end
 	end
-	
-	return math.floor(10/Focus+0.5)/10, math.floor(Focus*100+0.5)
+
+	if Total ~= 0 and Focus ~= 0 then
+		return math.floor(10/Focus+0.5)/10, math.floor(Focus*100+0.5)
+	else
+		return 0,0
+	end
 end
 
 function Recount:UpdateSummaryMode(name)
@@ -1291,8 +1310,8 @@ function Recount:UpdateSummaryMode(name)
 	theFrame.Damage.Total:SetValue(damage)
 	theFrame.Damage.Taken:SetValue(damagetaken)
 	theFrame.Damage.PerSec:SetValue((math.floor(10*damage/(activetime)+0.5)/10))	
-	theFrame.Damage.Time:SetValue(timedamage.."s ("..math.floor(100*timedamage/TotalTime+0.5).."%)")
-	theFrame.Damage.Misc:SetValue(math.floor(10*dot_time/(activetime)+0.5)/10)
+	theFrame.Damage.Time:SetValue(timedamage.."s ("..math.floor(100*timedamage/(TotalTime+Epsilon)+0.5).."%)")
+	theFrame.Damage.Misc:SetValue(math.floor(10*dot_time/(activetime+Epsilon)+0.5)/10)
 
 	--Set Pet Data
 	if data.Pet and #data.Pet>0 then
@@ -1355,8 +1374,8 @@ function Recount:UpdateSummaryMode(name)
 	theFrame.Healing.Total:SetValue(healing.." ("..(math.floor(10*healing/(activetime)+0.5)/10)..")")
 	theFrame.Healing.Taken:SetValue(healingtaken)
 	theFrame.Healing.Overhealing:SetValue(overhealing.." ("..(math.floor(1000*overhealing/(overhealing+healing+Epsilon)+0.5)/10).."%)")
-	theFrame.Healing.Time:SetValue(timeheal.."s ("..math.floor(100*timeheal/TotalTime+0.5).."%)")
-	theFrame.Healing.Misc:SetValue(math.floor(10*hot_time/(activetime)+0.5)/10)
+	theFrame.Healing.Time:SetValue(timeheal.."s ("..math.floor(100*timeheal/(TotalTime+Epsilon)+0.5).."%)")
+	theFrame.Healing.Misc:SetValue(math.floor(10*hot_time/(activetime+Epsilon)+0.5)/10)
 
 	
 

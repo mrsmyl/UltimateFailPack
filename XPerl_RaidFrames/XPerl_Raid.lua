@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:   ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 580 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 591 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -196,6 +196,7 @@ end
 
 -- XPerl_RaidFrameDropDown_Initialize
 function XPerl_RaidFrameDropDown_Initialize(self, ct)
+--[[
 	if (type(ct) ~= "table") then
 		ct = nil
 	end
@@ -273,7 +274,7 @@ function XPerl_RaidFrameDropDown_Initialize(self, ct)
 		info.value = self.id					-- Must be 'this'
 		info.func = CT_RATab_AutoPromote_OnClick
 		UIDropDownMenu_AddButton(info)
-	end
+	end--]]
 end
 
 -- ShowPopup
@@ -663,6 +664,8 @@ function XPerl_Raid_Single_OnLoad(self)
 	self.nameFrame:SetAttribute("*type1", "target")
 	self.nameFrame:SetAttribute("type2", "menu")
 	self.nameFrame.menu = XPerl_Raid_ShowPopup
+	XPerl_SecureUnitButton_OnLoad(self.nameFrame, partyid, nil, TargetFrameDropDown, XPerl_ShowGenericMenu)		--TargetFrame.menu)
+	XPerl_SecureUnitButton_OnLoad(self, partyid, nil, TargetFrameDropDown, XPerl_ShowGenericMenu)
 end
 
 -- XPerl_Raid_CombatFlash

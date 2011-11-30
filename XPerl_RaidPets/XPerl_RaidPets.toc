@@ -1,4 +1,4 @@
-﻿## Interface: 40200
+﻿## Interface: 40300
 ## Title: X-Perl |cffeda55fRaid Pets|r by |cFFFF8080Zek|r
 ## Title-ruRU: X-Perl |cffeda55fПитомцы рейда|r
 ## Title-deDE: X-Perl |cffeda55fSchlachtzugsbegleiter|r
@@ -11,7 +11,7 @@
 ## Author: Zek
 ## X-License: GNU GPL v3, 29 June 2007
 ## Dependencies: XPerl_RaidFrames
-## X-Curse-Packaged-Version: r589
+## X-Curse-Packaged-Version: 3.2.0
 ## X-Curse-Project-Name: X-Perl UnitFrames
 ## X-Curse-Project-ID: xperl
 ## X-Curse-Repository-ID: wow/xperl/mainline

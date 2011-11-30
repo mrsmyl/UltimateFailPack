@@ -4,7 +4,7 @@
 
 local playerClass, playerName, playerGUID
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 543 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 590 $")
 
 local GetNumPartyMembers = GetNumPartyMembers
 local GetNumRaidMembers = GetNumRaidMembers
@@ -1475,7 +1475,7 @@ function xpHigh:Damage(guid, absorbed)
 	local list = self.shields[guid]
 	if (list) then
 		local s = list[1]
-		if (s) then
+		if (s) and absorbed then
 			local update
 			if (absorbed >= s.amount) then
 				absorbed = absorbed - s.amount
