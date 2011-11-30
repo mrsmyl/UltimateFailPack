@@ -1,25 +1,21 @@
-## Interface: 40200
-## X-Curse-Packaged-Version: 3.02.82
+## Interface: 40300
+## X-Curse-Packaged-Version: 3.02.84
 ## X-Curse-Project-Name: ArkInventory
 ## X-Curse-Project-ID: ark-inventory
 ## X-Curse-Repository-ID: wow/ark-inventory/mainline
 
 ## Title: ArkInventory
 ## Title-zhCN: [背包]ArkInventory 整合背包银行
-## Author: Arkayenro
+## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
 ## Version: 3.02
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: ARKINVDB
 
-## Notes: Allows viewing of your (and all your toons on that realm) Bags, Bank, Guild Bank, Inventory, Mail, Pet, Mount, Currency and Auction items when-ever and where-ever you want.
-## Notes-deDE: Ermöglicht das Anzeigen der Taschen, des Bankfachs, des Schlüsselbundes und des Gildentresors aller Charaktere zu jedem beliebigen Zeitpunkt.
-## Notes-zhCN: 整合并分类显示你的背包、钥匙链、银行、工会银行，支持离线查看
-## Notes-zhTW: 以分類方式顯示你的背包。
+## Notes: Allows you to view all items from all your characters on the same realm, when-ever and where-ever you want.
 
-## RequiredDeps: Blizzard_GuildBankUI
-## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
+## OptionalDeps: Blizzard_GuildBankUI, Blizzard_VoidStorageUI, Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
 ## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
 
 ## X-Category: Inventory

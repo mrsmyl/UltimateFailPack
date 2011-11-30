@@ -1435,9 +1435,9 @@ function ArkInventory.MenuSwitchCharacter( frame, level, value, offset )
 		)
 		
 		local fc = 0
-		
+			
 			local count = 0
-		
+			
 			for n, tp in ArkInventory.spairs( ArkInventory.db.realm.player.data, function(a,b) return a < b end ) do
 				
 				local show = false

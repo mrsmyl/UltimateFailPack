@@ -12,7 +12,7 @@ function ArkInventory.EraseSavedData( player_id, loc_id, silent )
 					
 					ArkInventory.Frame_Main_Hide( l )
 					
-					ld["slot_count"] = 0
+					ld.slot_count = 0
 					
 					for b, bd in pairs( ld.bag ) do
 						ArkInventory.Table.Clean( bd )
@@ -180,65 +180,74 @@ function ArkInventory.PlayerInfoSet( )
 	
 	local p = ArkInventory.Global.Me.info
 	
-	p["player_id"] = n
+	p.player_id = n
 	
-	p["realm"] = r
-	p["faction"] = f
-	p["faction_local"] = f2
-	p["name"] = n
+	p.realm = r
+	p.faction = f
+	p.faction_local = f2
+	p.name = n
 	
 	
 	-- WARNING, most of this stuff is not available upon first login, even when the mod gets to OnEnabled (ui reloads are fine), and some are not available on logout
 	
-	p["class_local"], p["class"] = UnitClass( "player" )
-	p["level"] = UnitLevel( "player" )
-	p["race_local"], p["race"] = UnitRace( "player" )
-	p["gender"] = UnitSex( "player" )
+	p.class_local, p.class = UnitClass( "player" )
+	p.level = UnitLevel( "player" )
+	p.race_local, p.race = UnitRace( "player" )
+	p.gender = UnitSex( "player" )
+	
+	local m = GetMoney( )
+	if m > 0 then  -- returns 0 on logout so dont wipe the current value
+		p.money = m
+	end
 	
 	if p.class == "WARLOCK" then
 		ArkInventory.db.global.option.tracking.items[6265] = true
 	end
 	
-	--ArkInventory.Output( "IsInGuild=[", IsInGuild( ), "], g=[", p.guild, "]" )
-	p["guild"] = GetGuildInfo( "player" )
-	if p.guild then
-		p["guild_id"] = string.format( "%s%s", ArkInventory.Const.GuildTag, p.guild )
+	
+	if not ArkInventory.LocationIsMonitored( ArkInventory.Const.Location.Vault ) then
+		
+		p.guild = nil
+		p.guild_id = nil
+		
 	else
-		p["guild"] = nil
-		p["guild_id"] = nil
-	end
-	
-	local m = GetMoney( )
-	if m > 0 then  -- returns 0 on logout so dont wipe the current value
-		p["money"] = m
-	end
-
-	
-	if p.guild then
-	
-		local n = string.format( "%s%s", ArkInventory.Const.GuildTag, p.guild )
-		local g = ArkInventory.db.realm.player.data[n].info
 		
-		g["player_id"] = n
+		--ArkInventory.Output( "IsInGuild=[", IsInGuild( ), "], g=[", p.guild, "]" )
+		p.guild = GetGuildInfo( "player" )
 		
-		g["realm"] = p.realm
-		g["faction"] = p.faction
-		g["faction_local"] = p.faction_local
-		g["name"] = p.guild
-		
-		g["guild"] = p.guild
-		g["guild_id"] = p.guild_id
-		
-		g["level"] = 0
-		
-		g["money"] = GetGuildBankMoney( )
-		
-		g["class_local"], g["class"] = GUILD, "GUILD"
+		if not p.guild then
+			
+			p.guild = nil
+			p.guild_id = nil
+			
+		else
+			
+			p.guild_id = string.format( "%s%s", ArkInventory.Const.GuildTag, p.guild )
+			
+			local n = string.format( "%s%s", ArkInventory.Const.GuildTag, p.guild )
+			local g = ArkInventory.db.realm.player.data[n].info
+			
+			g.player_id = n
+			g.class_local, g.class = GUILD, "GUILD"
+			
+			g.realm = p.realm
+			g.faction = p.faction
+			g.faction_local = p.faction_local
+			g.name = p.guild
+			
+			g.guild = p.guild
+			g.guild_id = p.guild_id
+			
+			g.level = GetGuildLevel( )
+			
+			g.money = GetGuildBankMoney( )
+			
+		end
 		
 	end
 	
 	return p
-
+	
 end
 
 function ArkInventory.PlayerInfoGet( id )
@@ -685,6 +694,30 @@ function ArkInventory:LISTEN_VAULT_INFO( event, ... )
 end
 
 
+function ArkInventory:LISTEN_VOID_UPDATE_BUCKET( )
+	
+	--ArkInventory.Output( "LISTEN_VOID_UPDATE_BUCKET" )
+	
+	local loc_id = ArkInventory.Const.Location.Void
+
+	ArkInventory.ScanVoidStorage( )
+	
+ 	-- instant sorting enabled
+	if ArkInventory.LocationOptionGet( loc_id, "sort", "instant" ) then
+		ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
+	end
+	
+end
+
+function ArkInventory:LISTEN_VOID_UPDATE( event, ... )
+	
+	--ArkInventory.Output( "LISTEN_VOID_UPDATE: ", arg1, ", ", arg2, ", ", arg3 )
+	
+	ArkInventory:SendMessage( "LISTEN_VOID_UPDATE_BUCKET" )
+	
+end
+
+
 function ArkInventory:LISTEN_INVENTORY_CHANGE_BUCKET( )
 	
 	--ArkInventory.Output( "LISTEN_INVENTORY_CHANGE_BUCKET" )
@@ -1114,6 +1147,8 @@ function ArkInventory.BagType( blizzard_id )
 		return ArkInventory.Const.Slot.Type.Spellbook
 	elseif loc_id == ArkInventory.Const.Location.Tradeskill then
 		return ArkInventory.Const.Slot.Type.Tradeskill
+	elseif loc_id == ArkInventory.Const.Location.Void then
+		return ArkInventory.Const.Slot.Type.Void
 	end
 	
 	
@@ -1240,6 +1275,10 @@ function ArkInventory.Scan( bagTable )
 		elseif loc_id == ArkInventory.Const.Location.Tradeskill then
 			if not processed[loc_id] then
 				ArkInventory.ScanTradeskill( )
+			end
+		elseif loc_id == ArkInventory.Const.Location.Void then
+			if not processed[loc_id] then
+				ArkInventory.ScanVoidStorage( )
 			end
 		else
 			error( string.format( "code failure: uncoded location [%s] for bag [%s]", loc_id, blizzard_id ) )
@@ -1585,6 +1624,8 @@ function ArkInventory.ScanVault( )
 		end
 		
 		local i = bag.slot[slot_id]
+		i.display_id = 14 * ( ( slot_id - 1 ) % 7 ) + math.floor( ( slot_id - 1 ) / 7 ) + 1
+		
 		local item_to_reset = i.h
 		
 		local texture, count = GetGuildBankItemInfo( bag_id, slot_id )
@@ -1616,7 +1657,6 @@ function ArkInventory.ScanVault( )
 			i.loc_id = loc_id
 			i.bag_id = bag_id
 			i.slot_id = slot_id
-			i.display_id = 14 * ( ( slot_id - 1 ) % 7 ) + math.floor( ( slot_id - 1 ) / 7 ) + 1
 			
 			i.h = h
 			i.count = count
@@ -1687,7 +1727,7 @@ function ArkInventory.ScanVaultHeader( )
 		
 		local bag = cp.location[loc_id].bag[bag_id]
 	
-		bag["type"] = ArkInventory.Const.Slot.Type.Bag
+		bag.type = ArkInventory.Const.Slot.Type.Bag
 	
 		if bag_id <= GetNumGuildBankTabs( ) then
 			
@@ -1695,9 +1735,9 @@ function ArkInventory.ScanVaultHeader( )
 			
 			--ArkInventory.Output( "tab = ", bag_id, ", icon = ", icon )
 			
-			bag["name"] = name
-			bag["texture"] = icon
-			bag["status"] = ArkInventory.Const.Bag.Status.Active
+			bag.name = name
+			bag.texture = icon
+			bag.status = ArkInventory.Const.Bag.Status.Active
 			
 			-- from Blizzard_GuildBankUI.lua - GuildBankFrame_UpdateTabs( )
 			local access = GUILDBANK_TAB_FULL_ACCESS
@@ -1710,7 +1750,7 @@ function ArkInventory.ScanVaultHeader( )
 			elseif ( numWithdrawals == 0 ) then
 				access = GUILDBANK_TAB_DEPOSIT_ONLY
 			end
-			bag["access"] = access
+			bag.access = access
 			
 			local stackString = nil
 			if bag_id == GetCurrentGuildBankTab( ) then
@@ -1722,7 +1762,7 @@ function ArkInventory.ScanVaultHeader( )
 					stackString = UNLIMITED
 				end
 			end
-			bag["withdraw"] = stackString
+			bag.withdraw = stackString
 			
 			if bag.access == ArkInventory.Localise["VAULT_TAB_ACCESS_NONE"] then
 				bag.status = ArkInventory.Const.Bag.Status.NoAccess
@@ -1731,13 +1771,13 @@ function ArkInventory.ScanVaultHeader( )
 			
 		else
 			
-			bag["name"] = string.format( GUILDBANK_TAB_NUMBER, bag_id )
-			bag["texture"] = ArkInventory.Const.Texture.Empty.Bag
-			bag["count"] = 0
-			bag["empty"] = 0
-			bag["access"] = ArkInventory.Localise["STATUS_PURCHASE"]
-			bag["withdraw"] = nil
-			bag["status"] = ArkInventory.Const.Bag.Status.Purchase
+			bag.name = string.format( GUILDBANK_TAB_NUMBER, bag_id )
+			bag.texture = ArkInventory.Const.Texture.Empty.Bag
+			bag.count = 0
+			bag.empty = 0
+			bag.access = ArkInventory.Localise["STATUS_PURCHASE"]
+			bag.withdraw = nil
+			bag.status = ArkInventory.Const.Bag.Status.Purchase
 			
 		end
 		
@@ -1789,12 +1829,10 @@ function ArkInventory.ScanWearing( )
 		local inv_id = GetInventorySlotInfo( v )
 		local h = GetInventoryItemLink( "player", inv_id )
 		local sb = false
-		local count = 0
+		local count = 1
 		
 		if h then
 		
-			count = 1 --GetInventoryItemCount( "player", inv_id )
-
 			-- check for soulbound
 			ArkInventory.TooltipSetInventoryItem( ArkInventory.Global.Tooltip.Scan, inv_id )
 			for _, v in pairs( ArkInventory.Const.Soulbound ) do
@@ -2308,6 +2346,109 @@ function ArkInventory.ScanCurrency( )
 	bag.empty = 0
 	bag.type = ArkInventory.Const.Slot.Type.Token
 	bag.status = ArkInventory.Const.Bag.Status.NoAccess
+	
+end
+
+local CanUseVoidStorage = CanUseVoidStorage or ArkInventory.HookDoNothing
+
+function ArkInventory.ScanVoidStorage( )
+	
+	--ArkInventory.Output( "ScanVoidStorage" )
+	
+	if not CanUseVoidStorage( ) then
+		--ArkInventory.Output( RED_FONT_COLOR_CODE, "aborted scan of void storage, storage not active" )
+		return
+	end
+	
+	if ArkInventory.Global.Mode.Void == false then
+		--ArkInventory.Output( RED_FONT_COLOR_CODE, "aborted scan of void storage, not at npc" )
+		return
+	end
+	
+	local blizzard_id = ArkInventory.Const.Offset.Void + 1
+	local loc_id, bag_id = ArkInventory.BagID_Internal( blizzard_id )
+	
+	if not ArkInventory.LocationIsMonitored( loc_id ) then
+		--ArkInventory.Output( RED_FONT_COLOR_CODE, "aborted scan of bag id [", blizzard_id, "], location ", loc_id, " [", ArkInventory.Global.Location[loc_id].Name, "] is not being monitored" )
+		return
+	end
+
+	--ArkInventory.Output( GREEN_FONT_COLOR_CODE, "scaning: ", ArkInventory.Global.Location[loc_id].Name, " [", loc_id, ".", bag_id, "] - [", blizzard_id, "]" )
+	
+	local cp = ArkInventory.Global.Me
+	
+	local bag = cp.location[loc_id].bag[bag_id]
+	
+	bag.count = 80
+	bag.empty = 0
+	bag.type = ArkInventory.BagType( blizzard_id )
+	bag.status = ArkInventory.Const.Bag.Status.Active
+	
+	for slot_id = 1, bag.count do
+		
+		if not bag.slot[slot_id] then
+			bag.slot[slot_id] = { }
+		end
+		
+		local i = bag.slot[slot_id]
+		i.display_id = 10 * ( ( slot_id - 1 ) % 8 ) + math.floor( ( slot_id - 1 ) / 8 ) + 1
+		
+		local item_to_reset = i.h
+		
+		local item_id, texture, locked = GetVoidItemInfo( slot_id )
+		local h = GetVoidItemHyperlinkString( slot_id )
+		local count = 1
+		local sb = true
+		
+		if h then
+			
+		else
+			
+			bag.empty = bag.empty + 1
+			
+		end
+		
+		
+		local changed_item, new, reset_count = ArkInventory.ScanChanged( i, h, sb, count )
+
+		if changed_item or i.loc_id == nil then
+			
+			i.age = ArkInventory.ItemAgeUpdate( )
+			
+			i.loc_id = loc_id
+			i.bag_id = bag_id
+			i.slot_id = slot_id
+			
+			i.h = h
+			i.count = count
+			i.sb = sb
+			
+			i.q = ArkInventory.ObjectInfoQuality( h )
+			i.new = new
+			
+			i.cat = nil
+			i.catdef = nil
+			
+			if h then
+				item_to_reset = h
+			end
+			
+			ArkInventory.Frame_Item_Update( loc_id, bag_id, slot_id )
+			ArkInventory:SendMessage( "LISTEN_CHANGER_UPDATE_BUCKET", loc_id )
+			
+			ArkInventory.Frame_Main_DrawStatus( loc_id, ArkInventory.Const.Window.Draw.Refresh )
+			
+		end
+		
+		if item_to_reset and reset_count then
+			--ArkInventory.Output( "clear item count for ", item_to_reset )
+			ArkInventory.ObjectCountClear( item_to_reset )
+			ArkInventory.LDB.Tracking_Item:Update( )
+		end
+		
+	end
+	
+	cp.location[loc_id].slot_count = bag.count
 	
 end
 
@@ -3032,7 +3173,7 @@ function ArkInventory.ObjectIDInternal( h )
 	elseif class == "token" then
 		return string.format( "%s:%s:%s", class, id, suffix )
 	else
-		error( string.format( "code failure: unknown object class [%s]", class ) )
+		error( string.format( "code failure: unknown class [%s] for object %s", class, h ) )
 	end
 	
 end
@@ -3094,7 +3235,8 @@ function ArkInventory.ObjectIDCacheRule( i )
 	
 	local internalString = ArkInventory.ObjectIDInternal( i.h )
 	
-	return string.format( "%i:%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, i.slot_id or 0, soulbound, internalString )
+	--return string.format( "%i:%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, i.slot_id or 0, soulbound, internalString )
+	return string.format( "%i:%i:%s", i.loc_id or 0, soulbound, internalString )
 	
 end
 

@@ -267,6 +267,7 @@ if not L then return end
 	L["CONFIG_AUTO_OPEN_MERCHANT"] = "open a merchant/vendor"
 	L["CONFIG_AUTO_OPEN_TRADE"] = "open a trade"
 	L["CONFIG_AUTO_OPEN_AUCTION"] = "open the auction house"
+	L["CONFIG_AUTO_OPEN_VOID"] = "open the void storage"
 	
 	L["CONFIG_AUTO_CLOSE"] = "Close the %1$s %2$s when you %3$s" -- %1$s = program, %2$s = bag, %3$s = action
 	L["CONFIG_AUTO_CLOSE_BANK"] = "close the bank"
@@ -274,7 +275,8 @@ if not L then return end
 	L["CONFIG_AUTO_CLOSE_MAIL"] = "close the mailbox"
 	L["CONFIG_AUTO_CLOSE_MERCHANT"] = "close a merchant/vendor"
 	L["CONFIG_AUTO_CLOSE_TRADE"] = "close a trade"
-	L["CONFIG_AUTO_CLOSE_AUCTION"] = "close auction house"
+	L["CONFIG_AUTO_CLOSE_AUCTION"] = "close the auction house"
+	L["CONFIG_AUTO_CLOSE_VOID"] = "close the void storage"
 	L["CONFIG_AUTO_CLOSE_COMBAT"] = "enter combat"
 	
 	

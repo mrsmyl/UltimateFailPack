@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2010, all rights reserved.
--- $Revision: 709 $
--- $Date: 2011-06-29 17:50:14 +1000 (Wed, 29 Jun 2011) $
+-- $Revision: 745 $
+-- $Date: 2011-11-04 02:15:23 +1100 (Fri, 04 Nov 2011) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -132,7 +132,7 @@ end
 
 function ArkInventoryRules.System.soulbound( )
 	
-	if ArkInventoryRules.Object.sb then --or ArkInventoryRules.System.tooltip( ITEM_SOULBOUND, ITEM_BIND_ON_PICKUP ) then
+	if ArkInventoryRules.Object.sb then
 		return true
 	end
 	
@@ -523,29 +523,60 @@ function ArkInventoryRules.System.periodictable( ... )
 	
 end
 
-function ArkInventoryRules.System.tooltip( ... )
+function ArkInventoryRules.System.tooltipgeneric( ... )
 	
 	if not ArkInventoryRules.Object or not ArkInventoryRules.Object.h or ArkInventoryRules.Object.bag_id == nil or ArkInventoryRules.Object.slot_id == nil then
 		return false
 	end
 	
---	if ArkInventoryRules.Object.test_rule then
-	
-		ArkInventory.TooltipSetHyperlink( ArkInventoryRules.Tooltip, ArkInventoryRules.Object.h )
-	
---	else
-		
-		-- tooltip is also used offline mode
---		if ArkInventory.Global.Location[ArkInventoryRules.Object.loc_id].isOffline then
---			ArkInventory.TooltipSetHyperlink( ArkInventoryRules.Tooltip, ArkInventoryRules.Object.h )
---		else
---			local bliz_id = ArkInventory.BagID_Blizzard( ArkInventoryRules.Object.loc_id, ArkInventoryRules.Object.bag_id )
---			ArkInventory.TooltipSetItem( ArkInventoryRules.Tooltip, bliz_id, ArkInventoryRules.Object.slot_id )
---		end
-		
---	end
+	ArkInventory.TooltipSetHyperlink( ArkInventoryRules.Tooltip, ArkInventoryRules.Object.h )
 	
 	local fn = "tooltip"
+	
+	local ac = select( '#', ... )
+	
+	if ac == 0 then
+		error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"], fn ), 0 )
+	end
+
+	for ax = 1, ac do
+		
+		local arg = select( ax, ... )
+		
+		if not arg then
+			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_NIL"], fn, ax ), 0 )
+		end
+		
+		if type( arg ) ~= "string" then
+			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
+		end
+		
+		if ArkInventory.TooltipContains( ArkInventoryRules.Tooltip, strtrim( arg ) ) then
+			return true
+		end
+	
+	end
+	
+	return false
+
+end
+
+function ArkInventoryRules.System.tooltipslot( ... )
+	
+	if not ArkInventoryRules.Object or not ArkInventoryRules.Object.h or ArkInventoryRules.Object.bag_id == nil or ArkInventoryRules.Object.slot_id == nil then
+		return false
+	end
+	
+	if ArkInventoryRules.Object.test_rule or ArkInventory.Global.Location[ArkInventoryRules.Object.loc_id].isOffline then
+		-- offline/test mode uses generic item hyperlink tooltip
+		ArkInventory.TooltipSetHyperlink( ArkInventoryRules.Tooltip, ArkInventoryRules.Object.h )
+	else
+		-- online mode uses specific item tooltip
+		local bliz_id = ArkInventory.BagID_Blizzard( ArkInventoryRules.Object.loc_id, ArkInventoryRules.Object.bag_id )
+		ArkInventory.TooltipSetItem( ArkInventoryRules.Tooltip, bliz_id, ArkInventoryRules.Object.slot_id )
+	end
+	
+	local fn = "tooltipslot"
 	
 	local ac = select( '#', ... )
 	
@@ -996,6 +1027,7 @@ function ArkInventoryRules.System.characterlevelrange( ... )
 	
 end
 
+--[[
 function ArkInventoryRules.System.bag( ... )
 	
 	-- note, this rule is now just which *internal* bag an item is in, ie its just a number from 1 to x
@@ -1029,6 +1061,7 @@ function ArkInventoryRules.System.bag( ... )
 	return false
 	
 end
+]]--
 
 function ArkInventoryRules.System.location( ... )
 	
@@ -1197,8 +1230,8 @@ ArkInventoryRules.Environment = {
 	periodictable = ArkInventoryRules.System.periodictable,
 	pt = ArkInventoryRules.System.periodictable,
 	
-	tooltip = ArkInventoryRules.System.tooltip,
-	tt = ArkInventoryRules.System.tooltip,
+	tooltip = ArkInventoryRules.System.tooltipgeneric,
+	tt = ArkInventoryRules.System.tooltipgeneric,
 	
 	outfit = ArkInventoryRules.System.outfit,
 	
@@ -1215,7 +1248,7 @@ ArkInventoryRules.Environment = {
 	
 	vpo = ArkInventoryRules.System.vendorpriceover,
 	
-	bag = ArkInventoryRules.System.bag,
+	--bag = ArkInventoryRules.System.bag,
 	
 	location = ArkInventoryRules.System.location,
 	loc = ArkInventoryRules.System.location,

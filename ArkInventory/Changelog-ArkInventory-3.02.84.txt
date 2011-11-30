@@ -1,0 +1,55 @@
+------------------------------------------------------------------------
+r320 | arkayenro | 2011-11-29 22:26:01 +0000 (Tue, 29 Nov 2011) | 7 lines
+Changed paths:
+   A /tags/3.02.84 (from /trunk:319)
+
+*3.02.84 (30-NOV-2011)*
+ * changed - TOC updated to 4.3
+ * changed - void storage icon
+ * fixed - void storage online/offline status
+ * added - slash command /ai summon pet
+ * added - slash command /ai summon mount
+
+------------------------------------------------------------------------
+r319 | arkayenro | 2011-11-29 22:21:41 +0000 (Tue, 29 Nov 2011) | 7 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventoryConfig.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.toc
+   M /trunk/Modules/ArkInventoryRulesExample/ArkInventoryRulesExample.toc
+   M /trunk/VersionHistory.txt
+
+*3.02.84 (30-NOV-2011)*
+ * changed - TOC updated to 4.3
+ * changed - void storage icon
+ * fixed - void storage online/offline status
+ * added - slash command /ai summon pet
+ * added - slash command /ai summon mount
+
+------------------------------------------------------------------------
+r317 | arkayenro | 2011-11-10 23:14:22 +0000 (Thu, 10 Nov 2011) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryMenu.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/Bindings.xml
+   M /trunk/Libs/ArkDewdrop/ArkDewdrop-3.0.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+*3.02.83 BETA 11-11-01-50 (11-NOV-2011)*
+ * added - support for void storage
+ * removed - rule function - bag( )
+
+------------------------------------------------------------------------
+r316 | arkayenro | 2011-11-10 23:10:19 +0000 (Thu, 10 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+
+ArkInventory:
+- test upload
+------------------------------------------------------------------------

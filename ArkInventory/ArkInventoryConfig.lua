@@ -242,7 +242,30 @@ function ArkInventory.ConfigBlizzard( )
 			end,
 		},
 		
-		
+		summon = {
+			guiHidden = true,
+			order = 9000,
+			name = "summon a pet or mount",
+			type = "group",
+			args = {
+				mount = {
+					order = 100,
+					name = ArkInventory.Localise["LDB_MOUNTS_SUMMON"],
+					type = "execute",
+					func = function( )
+						ArkInventory.LDB.Mounts.OnClick( )
+					end,
+				},
+				pet = {
+					order = 100,
+					name = ArkInventory.Localise["LDB_PETS_SUMMON"],
+					type = "execute",
+					func = function( )
+						ArkInventory.LDB.Pets.OnClick( )
+					end,
+				},
+			},
+		},
 		
 --[[
 		db = {
@@ -916,6 +939,18 @@ function ArkInventory.ConfigInternal( )
 								ArkInventory.db.global.option.auto.open.auction = v
 							end,
 						},
+						void = {
+							order = 700,
+							name = ArkInventory.Localise["CONFIG_AUTO_OPEN_VOID"],
+							desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN"], ArkInventory.Const.Program.Name, ArkInventory.Localise["LOCATION_BAG"], ArkInventory.Localise["CONFIG_AUTO_OPEN_VOID"] ), 
+							type = "toggle",
+							get = function( info )
+								return ArkInventory.db.global.option.auto.open.void
+							end,
+							set = function( info, v )
+								ArkInventory.db.global.option.auto.open.void = v
+							end,
+						},
 					},
 				},
 				auto_close = {
@@ -996,8 +1031,20 @@ function ArkInventory.ConfigInternal( )
 								ArkInventory.db.global.option.auto.close.auction = v
 							end,
 						},
-						combat = {
+						void = {
 							order = 700,
+							name = ArkInventory.Localise["CONFIG_AUTO_CLOSE_VOID"],
+							desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE"], ArkInventory.Const.Program.Name, ArkInventory.Localise["LOCATION_BAG"], ArkInventory.Localise["CONFIG_AUTO_CLOSE_VOID"] ), 
+							type = "toggle",
+							get = function( info )
+								return ArkInventory.db.global.option.auto.close.void
+							end,
+							set = function( info, v )
+								ArkInventory.db.global.option.auto.close.void = v
+							end,
+						},
+						combat = {
+							order = 800,
 							name = ArkInventory.Localise["CONFIG_AUTO_CLOSE_COMBAT"],
 							desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE"], ArkInventory.Const.Program.Name, ArkInventory.Localise["LOCATION_BAG"], ArkInventory.Localise["CONFIG_AUTO_CLOSE_COMBAT"] ), 
 							type = "toggle",

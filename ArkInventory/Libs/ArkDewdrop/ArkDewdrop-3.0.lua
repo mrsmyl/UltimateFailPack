@@ -21,6 +21,12 @@ if not Dewdrop then
 	return -- already loaded and no upgrade necessary
 end
 
+local STANDARD_TEXT_FONT = STANDARD_TEXT_FONT
+
+function Dewdrop:SetStandardFont( fontpath )
+	STANDARD_TEXT_FONT = fontpath
+end
+
 local function new( ... )
 	local t = { }
 	for i = 1, select( '#', ... ), 2 do

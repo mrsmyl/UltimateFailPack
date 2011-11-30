@@ -1,4 +1,5 @@
 *to-do*
+ * bag / slot filter - assign specific bags or slots to a bar
  * mail items expiry date/time
  * disable rules icon/action if rules not loaded
 
@@ -14,6 +15,16 @@
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
  
+*3.02.84 (30-NOV-2011)*
+ * changed - TOC updated to 4.3
+ * changed - void storage icon
+ * fixed - void storage online/offline status
+ * added - slash command /ai summon pet
+ * added - slash command /ai summon mount
+ 
+*3.02.83 BETA (11-NOV-2011)*
+ * added - support for void storage
+ * removed - rule function - bag( )
 
 *3.02.82 (08-AUG-2011)*
  * added - cash flow contribution amount is now listed at the bottom of the money log list

@@ -1989,6 +1989,8 @@
 	
 	<Frame name="ARKINV_Frame12" inherits="ARKINV_TemplateFrameMain" id="12" /> <!-- tradeskill -->
 	
+	<Frame name="ARKINV_Frame13" inherits="ARKINV_TemplateFrameMain" id="13" /> <!-- void storage -->
+	
 <!-- END OF ADD ON FRAME -->
 	
 	<GameTooltip name="ARKINV_ScanTooltip" inherits="ArkScanTooltipTemplate" />
