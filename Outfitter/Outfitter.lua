@@ -8481,8 +8481,15 @@ function Outfitter:GetIconIndex(pTexture)
 	if not pTexture then
 		return
 	end
+	Outfitter:TestMessage("GetIconIndex(%s)", tostring(pTexture))
+	if type(pTexture) == "number" then
+		Outfitter:TestMessage("GetIconIndex(): Returning number")
+		return pTexture
+	end
 	
 	local _, _, vTexture = pTexture:find("([^\\]*)$")
+	vTexture = vTexture:lower()
+	Outfitter:TestMessage("GetIconIndex(%s): searching for texture", tostring(vTexture))
 
 	for vIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
 		local vTexture2 = GetInventoryItemTexture("player", vIndex)
@@ -8490,22 +8497,28 @@ function Outfitter:GetIconIndex(pTexture)
 		if vTexture2 then
 			_, _, vTexture2 = vTexture2:find("([^\\]*)$")
 			
-			if vTexture2 == vTexture then
+			if vTexture2:lower() == vTexture then
+				Outfitter:TestMessage("GetIconIndex(%s): Returning %s", pTexture, -vIndex)
 				return -vIndex
 			end
 		end
 	end
 	
-	local vNumIcons = GetNumMacroIcons()
+	local vMacroIcons = {INV_MISC_QUESTIONMARK}
+	GetMacroItemIcons(vMacroIcons)
+	GetMacroIcons(vMacroIcons)
+	local vNumIcons = #vMacroIcons
 	
 	for vIndex = 1, vNumIcons do
-		local vTexture2 = GetMacroIconInfo(vIndex)
+		local vTexture2 = vMacroIcons[vIndex]
 		_, _, vTexture2 = vTexture2:find("([^\\]*)$")
-		
-		if vTexture2 == vTexture then
+		--Outfitter:TestMessage("%s %s", tostring(vTexture), tostring(vTexture2))
+		if vTexture2:lower() == vTexture then
+			Outfitter:TestMessage("GetIconIndex(%s): Returning %s", pTexture, vIndex)
 			return vIndex
 		end
 	end
+	Outfitter:TestMessage("GetIconIndex(%s): Returning nil", pTexture)
 end
 
 function Outfitter:SummonCompanionByName(pName, pDelay)

@@ -342,11 +342,6 @@ function Outfitter._OutfitMethods:StoreOnServer()
 	-- Remember the selected icon
 	
 	local vTexture = Outfitter.OutfitBar:GetOutfitTexture(self)
-	local vIconIndex = Outfitter:GetIconIndex(vTexture)
-	
-	if not vIconIndex then
-		vIconIndex = -1 -- Use the helm icon, better would be to pick the first enabled slot
-	end
 	
 	-- Create the outfit object
 	
@@ -366,7 +361,7 @@ function Outfitter._OutfitMethods:StoreOnServer()
 	-- Create the new outfit in the EM
 	
 	vOutfitEM:MarkEnabledSlots()
-	vOutfitEM:SaveEquipmentSet(vOutfitEM.Name, vIconIndex)
+	vOutfitEM:SaveEquipmentSet(vOutfitEM.Name, vTexture)
 	
 	-- Copy the script
 	
@@ -461,14 +456,8 @@ function Outfitter._OutfitMethodsEM:SetIcon(pTexture)
 end
 
 function Outfitter._OutfitMethodsEM:SetIcon2(pTexture)
-	local vIndex = Outfitter:GetIconIndex(pTexture)
-	
-	if not vIndex then
-		return
-	end
-	
 	self:MarkSlotsToIgnore()
-	self:SaveEquipmentSet(self.Name, vIndex)
+	self:SaveEquipmentSet(self.Name, pTexture)
 end
 
 function Outfitter._OutfitMethodsEM:IsFullyEquipped()
@@ -493,6 +482,11 @@ function Outfitter._OutfitMethodsEM:IsFullyEquipped()
 	return true
 end
 
+function Outfitter._OutfitMethodsEM:GetIconTexture()
+	local vTexture = GetEquipmentSetInfoByName(self.Name)
+	return vTexture
+end
+
 function Outfitter._OutfitMethodsEM:GetIconIndex()
 	local vTexture = GetEquipmentSetInfoByName(self.Name)
 	
@@ -513,7 +507,7 @@ function Outfitter._OutfitMethodsEM:SetToCurrentInventory()
 	Outfitter:DebugMessage("OutfitMethodsEM:SetToCurrentInventory()")
 	
 	self:MarkSlotsToIgnore()
-	self:SaveEquipmentSet(self.Name, self:GetIconIndex())
+	self:SaveEquipmentSet(self.Name, self:GetIconTexture())
 end
 
 function Outfitter._OutfitMethodsEM:AddNewItems(pNewItems)
@@ -539,7 +533,7 @@ function Outfitter._OutfitMethodsEM:AddNewItems(pNewItems)
 		Outfitter.ExpectedOutfit:SetItem(vInventorySlot, vNewItem)
 	end
 	
-	self:SaveEquipmentSet(self.Name, self:GetIconIndex())
+	self:SaveEquipmentSet(self.Name, self:GetIconTexture())
 end
 
 function Outfitter._OutfitMethodsEM:MarkEnabledSlots()
@@ -602,9 +596,7 @@ function Outfitter._OutfitMethodsEM:SetInventoryItem(pSlotName)
 	self:MarkSlotsToIgnore()
 	EquipmentManagerUnignoreSlotForSave(Outfitter.cSlotIDs[pSlotName])
 	
-	local vIconIndex = self:GetIconIndex()
-	
-	self:SaveEquipmentSet(self.Name, vIconIndex)
+	self:SaveEquipmentSet(self.Name, self:GetIconTexture())
 	Outfitter.DisplayIsDirty = true
 end
 
@@ -613,7 +605,7 @@ function Outfitter._OutfitMethodsEM:EnableAllSlots()
 	
 	EquipmentManagerClearIgnoredSlotsForSave()
 	
-	self:SaveEquipmentSet(self.Name, self:GetIconIndex())
+	self:SaveEquipmentSet(self.Name, self:GetIconTexture())
 	
 	Outfitter.DisplayIsDirty = true
 end
@@ -627,7 +619,7 @@ function Outfitter._OutfitMethodsEM:DisableAllSlots()
 		EquipmentManagerIgnoreSlotForSave(Outfitter.cSlotIDs[vSlotName])
 	end
 	
-	self:SaveEquipmentSet(self.Name, self:GetIconIndex())
+	self:SaveEquipmentSet(self.Name, self:GetIconTexture())
 	
 	Outfitter.DisplayIsDirty = true
 end
@@ -636,7 +628,7 @@ function Outfitter._OutfitMethodsEM:RemoveItem(pSlotName)
 	self:MarkSlotsToIgnore()
 	EquipmentManagerIgnoreSlotForSave(Outfitter.cSlotIDs[pSlotName])
 	
-	self:SaveEquipmentSet(self.Name, self:GetIconIndex())
+	self:SaveEquipmentSet(self.Name, self:GetIconTexture())
 	Outfitter.DisplayIsDirty = true
 end
 
@@ -957,9 +949,9 @@ function Outfitter._OutfitMethodsEM:OutfitUsesItem(pItemInfo)
 	    or (vItemInfo2 and vInventoryCache:ItemsAreSame(vItemInfo2, pItemInfo))
 end
 
-function Outfitter._OutfitMethodsEM:SaveEquipmentSet(pName, pIconIndex)
+function Outfitter._OutfitMethodsEM:SaveEquipmentSet(pName, pIconTexture)
 	if Outfitter.Debug.NewItems then
-		Outfitter:TestMessage("%s:SaveEquipmentSet()", pName)
+		Outfitter:TestMessage("%s:SaveEquipmentSet(%s)", pName, tostring(pIconIndex))
 		Outfitter:DebugStack()
 	end
 	
@@ -968,7 +960,8 @@ function Outfitter._OutfitMethodsEM:SaveEquipmentSet(pName, pIconIndex)
 	end
 	
 	Outfitter.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", Outfitter.SynchronizeEM, Outfitter)
-	SaveEquipmentSet(pName, pIconIndex)
+	local _, _, vTexture = pIconTexture:find("([^\\]*)$")
+	SaveEquipmentSet(pName, vTexture:upper())
 	Outfitter.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", Outfitter.SynchronizeEM, Outfitter)
 end
 
