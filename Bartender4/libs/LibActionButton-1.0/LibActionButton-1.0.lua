@@ -447,6 +447,14 @@ function Generic:AddToButtonFacade(group)
 	self.LBFSkinned = true
 end
 
+function Generic:AddToMasque(group)
+	if type(group) ~= "table" or type(group.AddButton) ~= "function" then
+		error("LibActionButton-1.0:AddToMasque: You need to supply a proper group to use!", 2)
+	end
+	group:AddButton(self)
+	self.MasqueSkinned = true
+end
+
 -----------------------------------------------------------
 --- frame scripts
 
@@ -917,7 +925,7 @@ function Update(self)
 		self.icon:Show()
 		self.rangeTimer = - 1
 		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
-		if not self.LBFSkinned then
+		if not self.LBFSkinned and not self.MasqueSkinned then
 			self.normalTexture:SetTexCoord(0, 0, 0, 0)
 		end
 	else
@@ -930,7 +938,7 @@ function Update(self)
 		else
 			self.hotkey:SetVertexColor(0.6, 0.6, 0.6)
 		end
-		if not self.LBFSkinned then
+		if not self.LBFSkinned and not self.MasqueSkinned then
 			self.normalTexture:SetTexCoord(-0.15, 1.15, -0.15, 1.17)
 		end
 	end
@@ -1094,8 +1102,20 @@ function UpdateFlyout(self)
 			-- Update arrow
 			self.FlyoutArrow:Show()
 			self.FlyoutArrow:ClearAllPoints()
-			self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, arrowDistance)
-			SetClampedTextureRotation(self.FlyoutArrow, 0)
+			local direction = self:GetAttribute("flyoutDirection");
+			if direction == "LEFT" then
+				self.FlyoutArrow:SetPoint("LEFT", self, "LEFT", -arrowDistance, 0)
+				SetClampedTextureRotation(self.FlyoutArrow, 270)
+			elseif direction == "RIGHT" then
+				self.FlyoutArrow:SetPoint("RIGHT", self, "RIGHT", arrowDistance, 0)
+				SetClampedTextureRotation(self.FlyoutArrow, 90)
+			elseif direction == "DOWN" then
+				self.FlyoutArrow:SetPoint("BOTTOM", self, "BOTTOM", 0, -arrowDistance)
+				SetClampedTextureRotation(self.FlyoutArrow, 180)
+			else
+				self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, arrowDistance)
+				SetClampedTextureRotation(self.FlyoutArrow, 0)
+			end
 
 			-- return here, otherwise flyout is hidden
 			return
@@ -1155,7 +1175,8 @@ Action.GetSpellId              = function(self)
 	if actionType == "spell" then
 		return id
 	elseif actionType == "macro" then
-		return GetSpellIdByName(GetMacroSpell(id))
+		local _, _, spellId = GetMacroSpell(id)
+		return spellId
 	end
 end
 

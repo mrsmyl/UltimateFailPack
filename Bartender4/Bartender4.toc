@@ -1,5 +1,5 @@
-## Interface: 40200
-## X-Curse-Packaged-Version: 4.4.19
+## Interface: 40300
+## X-Curse-Packaged-Version: 4.4.20.1
 ## X-Curse-Project-Name: Bartender4
 ## X-Curse-Project-ID: bartender4
 ## X-Curse-Repository-ID: wow/bartender4/mainline
@@ -7,7 +7,7 @@
 ## Title: Bartender4
 ## Notes: Simple and Advanced combined - Bartender4 ActionBar AddOn
 
-## Version: 4.4.19
+## Version: 4.4.20.1
 
 ## Author: Nevcairiel
 ## X-Email: h.leppkes at gmail dot com
@@ -17,7 +17,7 @@
 ## X-License: All rights reserved.
 
 ## SavedVariables: Bartender4DB
-## OptionalDeps: Ace3, ButtonFacade, LibActionButton-1.0, LibKeyBound-1.0, LibDBIcon-1.0, LibWindow-1.1
+## OptionalDeps: Ace3, ButtonFacade, Masque, LibActionButton-1.0, LibKeyBound-1.0, LibDBIcon-1.0, LibWindow-1.1
 
 #@no-lib-strip@
 libs\LibStub\LibStub.lua
@@ -70,6 +70,7 @@ RepXPBar.lua
 VehicleBar.lua
 MultiCastBar.lua
 BlizzardArt.lua
+ExtraActionBar.lua
 
 ## Options ##
 Options\AceGUIWidget-NumberEditBox.lua
@@ -88,6 +89,7 @@ Options\RepXPBar.lua
 Options\VehicleBar.lua
 Options\MultiCastBar.lua
 Options\BlizzardArt.lua
+Options\ExtraActionBar.lua
 
 ## Presets -- needs to be the last ##
 Options\Presets.lua
