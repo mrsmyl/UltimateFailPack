@@ -998,7 +998,7 @@ PawnGemQualityLevels =
 	{ 82, PawnLocal.GemQualityLevel80Epic },
 	{ 85, PawnLocal.GemQualityLevel85Uncommon },
 	{ 86, PawnLocal.GemQualityLevel85Rare },
-	--{ 87, PawnLocal.GemQualityLevel85Epic }, -- ***
+	{ 87, PawnLocal.GemQualityLevel85Epic },
 }
 PawnGemQualityTables =
 {
@@ -1038,9 +1038,3 @@ PawnCogwheelQualityTables =
 	[86] = PawnCogwheelData85Rare,
 }
 PawnDefaultCogwheelGemQualityLevel = 86
-
-
--- *** Patch 4.3 stuff
-if TRANSMOGRIFY then
-	tinsert(PawnGemQualityLevels, { 87, PawnLocal.GemQualityLevel85Epic } )
-end

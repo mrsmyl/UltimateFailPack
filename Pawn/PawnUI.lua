@@ -140,15 +140,6 @@ function PawnUI_AddInventoryTotalsToTooltip(Tooltip, Unit)
 		Tooltip:AddLine(" ")
 		Tooltip:AddLine(PawnUI_InventoryPawnButton_Subheader, 1, 1, 1, 1)
 		PawnAddValuesToTooltip(Tooltip, ItemValues, nil, nil, nil, nil, true)
-		if not TRANSMOGRIFY then -- *** This value isn't useful in patch 4.3.
-			if PawnCommon.AlignNumbersRight then
-				Tooltip:AddDoubleLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine,  AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
-				Tooltip:AddDoubleLine(PawnLocal.AverageItemLevelTooltipLine,  EpicItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
-			else
-				Tooltip:AddLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine .. ":  " .. AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
-				Tooltip:AddLine(PawnLocal.AverageItemLevelTooltipLine .. ":  " .. EpicItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
-			end
-		end
 	end
 end
 

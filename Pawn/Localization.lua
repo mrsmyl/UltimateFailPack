@@ -631,6 +631,7 @@ PawnRegexes =
 	{PawnGameConstant(ITEM_QUALITY7_DESC)}, -- Heirloom
 	{PawnGameConstant(ITEM_HEROIC)}, -- Heroic (Thrall's Chestguard of Triumph, level 258 version)
 	{PawnGameConstant(ITEM_HEROIC_EPIC)}, -- Heroic Epic (Thrall's Chestguard of Triumph, level 258 version, with colorblind mode on)
+	{PawnGameConstant(RAID_FINDER)}, -- Raid Finder
 	{"^" .. ITEM_LEVEL}, -- Item Level 200
 	{PawnGameConstant(ITEM_UNSELLABLE)}, -- No sell price
 	{PawnGameConstant(ITEM_SOULBOUND)}, -- Soulbound
