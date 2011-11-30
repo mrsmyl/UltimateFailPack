@@ -1,0 +1,20 @@
+------------------------------------------------------------------------
+r218 | mitch0 | 2011-11-30 12:12:09 +0000 (Wed, 30 Nov 2011) | 1 line
+Changed paths:
+   A /tags/v2.1.4 (from /trunk:217)
+
+Tagging as v2.1.4
+------------------------------------------------------------------------
+r217 | mitch0 | 2011-11-30 09:52:52 +0000 (Wed, 30 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/Bazooka.toc
+   M /trunk/Bazooka_Options/Bazooka_Options.toc
+
+toc bump
+------------------------------------------------------------------------
+r216 | mitch0 | 2011-07-25 12:15:25 +0000 (Mon, 25 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+fix right-aligned text offset
+------------------------------------------------------------------------

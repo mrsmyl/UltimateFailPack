@@ -1,8 +1,8 @@
-## Interface: 40200
+## Interface: 40300
 ## Title: Bagnon Guild Bank
 ## Author: Tuller & Jaliborc (João Libório)
 ## Notes: Single window display for your guild bank
-## Version: 4.2.9
+## Version: 4.3.0
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
 

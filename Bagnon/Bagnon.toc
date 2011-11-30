@@ -1,11 +1,11 @@
-## Interface: 40200
+## Interface: 40300
 ## Title: Bagnon
 ## Author: Tuller & Jaliborc (João Libório)
 ## Notes: Single window displays for your inventory and bank
 ## SavedVariables: BagnonGlobalSettings
 ## SavedVariablesPerCharacter: BagnonFrameSettings
 
-## Version: 4.2.9
+## Version: 4.3.0
 ## OptionalDeps: LibStub, Ace3, Bagnon_Forever, Bagnon_Armory, LibItemSearch, Unfit-1.0
 
 embeds.xml
