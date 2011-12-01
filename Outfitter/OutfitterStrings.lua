@@ -1,4 +1,4 @@
-﻿Outfitter.cVersion = "5.3.4"
+﻿Outfitter.cVersion = "5.3.6"
 
 Outfitter.cTitle = "Outfitter"
 Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
@@ -180,7 +180,7 @@ Outfitter.cUnequipOutfitMessageFormat = "Outfitter: %s unequipped"
 
 Outfitter.cAboutTitle = "About Outfitter %s"
 Outfitter.cAboutAuthor = "Designed and written by John Stephen"
-Outfitter.cAboutCopyright = "Copyright 2009, 2010, 2011 John Stephen, wobbleworks.com"
+Outfitter.cAboutCopyright = "Copyright 2006 - 2011 John Stephen, wobbleworks.com"
 Outfitter.cAboutThanks = "Many thanks to all fans and supporters."
 
 Outfitter.cGermanLocalization = "German Localization"
@@ -319,6 +319,11 @@ Outfitter.cDepositUniqueToBank = "Deposit unique items to bank"
 Outfitter.cDepositOthersToBank = "Deposit other outfits to bank"
 Outfitter.cWithdrawFromBank = "Withdraw items from bank"
 Outfitter.cWithdrawOthersFromBank = "Withdraw other outfits from bank"
+
+Outfitter.cVoidStorageCategoryTitle = "Void Storage"
+Outfitter.cDepositToVoidStorage = "Deposit all items to Void Storage"
+Outfitter.cDepositUniqueToVoidStorage = "Deposit unique items to Void Storage"
+Outfitter.cWithdrawFromVoidStorage = "Withdraw items from Void Storage"
 
 Outfitter.cMissingItemsLabel = "Missing items: "
 Outfitter.cBankedItemsLabel = "Banked items: "

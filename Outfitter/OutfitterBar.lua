@@ -678,15 +678,11 @@ function Outfitter.OutfitBar.IconSetDropdown_OnLoad(pMenuFrame)
 end
 
 function Outfitter.OutfitBar.IconSetDropdown_Initialize(pFrame)
-	local vStoredInEM = pFrame.Dialog.Outfit and pFrame.Dialog.Outfit.StoredInEM
-	
 	Outfitter:AddMenuItem(pFrame, Outfitter.cSuggestedIcons, "Recommend")
 	Outfitter:AddMenuItem(pFrame, Outfitter.cSpellbookIcons, "Spellbook")
-	if not vStoredInEM then
-		Outfitter:AddMenuItem(pFrame, Outfitter.cYourItemIcons, "Inventory")
-		Outfitter:AddMenuItem(pFrame, Outfitter.cEveryIcon, "All")
-		Outfitter:AddMenuItem(pFrame, Outfitter.cItemIcons, "Items")
-	end
+	Outfitter:AddMenuItem(pFrame, Outfitter.cYourItemIcons, "Inventory")
+	Outfitter:AddMenuItem(pFrame, Outfitter.cEveryIcon, "All")
+	Outfitter:AddMenuItem(pFrame, Outfitter.cItemIcons, "Items")
 	Outfitter:AddMenuItem(pFrame, Outfitter.cAbilityIcons, "Abilities")
 end
 
@@ -1149,17 +1145,14 @@ Outfitter.OutfitBar.TextureSets.All = {}
 ----------------------------------------
 
 function Outfitter.OutfitBar.TextureSets.All:GetNumTextures()
-	return GetNumMacroItemIcons() + GetNumMacroIcons()
+	self.icons = {}
+	GetMacroItemIcons(self.icons)
+	GetMacroIcons(self.icons)
+	return #self.icons
 end
 
 function Outfitter.OutfitBar.TextureSets.All:GetIndexedTexture(pIndex)
-	local vNumMacroItemIcons = GetNumMacroItemIcons()
-	
-	if pIndex <= vNumMacroItemIcons then
-		return GetMacroItemIconInfo(pIndex)
-	else
-		return GetMacroIconInfo(pIndex - vNumMacroItemIcons)
-	end
+	return Outfitter.OutfitBar.cBlizzardIconPath .. self.icons[pIndex]
 end
 
 ----------------------------------------
@@ -1167,11 +1160,13 @@ Outfitter.OutfitBar.TextureSets.Items = {}
 ----------------------------------------
 
 function Outfitter.OutfitBar.TextureSets.Items:GetNumTextures()
-	return GetNumMacroItemIcons()
+	self.icons = {}
+	GetMacroItemIcons(self.icons)
+	return #self.icons
 end
 
 function Outfitter.OutfitBar.TextureSets.Items:GetIndexedTexture(pIndex)
-	return GetMacroItemIconInfo(pIndex)
+	return Outfitter.OutfitBar.cBlizzardIconPath .. self.icons[pIndex]
 end
 
 ----------------------------------------
@@ -1179,11 +1174,13 @@ Outfitter.OutfitBar.TextureSets.Abilities = {}
 ----------------------------------------
 
 function Outfitter.OutfitBar.TextureSets.Abilities:GetNumTextures()
-	return GetNumMacroIcons()
+	self.icons = {}
+	GetMacroIcons(self.icons)
+	return #self.icons
 end
 
 function Outfitter.OutfitBar.TextureSets.Abilities:GetIndexedTexture(pIndex)
-	return GetMacroIconInfo(pIndex)
+	return Outfitter.OutfitBar.cBlizzardIconPath .. self.icons[pIndex]
 end
 
 ----------------------------------------

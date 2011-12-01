@@ -1,5 +1,5 @@
 ----------------------------------------
--- Outfitter Copyright 2009, 2010, 2011 John Stephen, wobbleworks.com
+-- Outfitter Copyright 2006 - 2011 John Stephen, wobbleworks.com
 -- All rights reserved, unauthorized redistribution is prohibited
 ----------------------------------------
 
@@ -304,6 +304,7 @@ Outfitter.IsDead = false
 Outfitter.IsFeigning = false
 
 Outfitter.BankFrameIsOpen = false
+Outfitter.VoidStorageIsOpen = false
 
 Outfitter.HasHWEvent = false
 
@@ -1377,6 +1378,14 @@ function Outfitter:BankFrameClosed()
 	self:BankSlotsChanged()
 end
 
+function Outfitter:VoidStorageFrameOpened()
+	self.VoidStorageIsOpen = true
+end
+
+function Outfitter:VoidStorageFrameClosed()
+	self.VoidStorageIsOpen = false
+end
+
 function Outfitter:RegenDisabled(pEvent)
 	self.InCombat = true
 	
@@ -2040,6 +2049,9 @@ function Outfitter:InitializeOutfitMenu(pFrame, pOutfit)
 		self:AddSubmenuItem(pFrame, self.cKeyBinding, "BINDING")
 		self:AddSubmenuItem(pFrame, self.cOutfitDisplay, "DISPLAY")
 		self:AddSubmenuItem(pFrame, self.cBankCategoryTitle, "BANKING")
+		if self.Settings.Options.EnableBeta then
+			self:AddSubmenuItem(pFrame, self.cVoidStorageCategoryTitle, "VOIDSTORAGE")
+		end
 		if pOutfit.CategoryID ~= "Complete" then
 			self:AddMenuItem(pFrame, self.cUnequipOthers, "UNEQUIP_OTHERS", pOutfit.UnequipOthers)
 		end
@@ -2102,6 +2114,10 @@ function Outfitter:InitializeOutfitMenu(pFrame, pOutfit)
 			self:AddDividerMenuItem()
 			self:AddMenuItem(pFrame, self.cDepositOthersToBank, "DEPOSITOTHERS", nil, UIDROPDOWNMENU_MENU_LEVEL, nil, not self.BankFrameIsOpen)
 			self:AddMenuItem(pFrame, self.cWithdrawOthersFromBank, "WITHDRAWOTHERS", nil, UIDROPDOWNMENU_MENU_LEVEL, nil, not self.BankFrameIsOpen)
+		elseif UIDROPDOWNMENU_MENU_VALUE == "VOIDSTORAGE" then
+			self:AddMenuItem(pFrame, self.cDepositToVoidStorage, "DEPOSITVOID", nil, UIDROPDOWNMENU_MENU_LEVEL, nil, not self.VoidStorageIsOpen or not CanUseVoidStorage())
+			self:AddMenuItem(pFrame, self.cDepositUniqueToVoidStorage, "DEPOSITUNIQUEVOID", nil, UIDROPDOWNMENU_MENU_LEVEL, nil, not self.VoidStorageIsOpen or not CanUseVoidStorage())
+			self:AddMenuItem(pFrame, self.cWithdrawFromVoidStorage, "WITHDRAWVOID", nil, UIDROPDOWNMENU_MENU_LEVEL, nil, not self.VoidStorageIsOpen or not CanUseVoidStorage())
 		elseif UIDROPDOWNMENU_MENU_VALUE == "BINDING" then
 			self:AddMenuItem(pFrame, self.cNone, "BINDING_NONE", not pOutfit.BindingIndex, UIDROPDOWNMENU_MENU_LEVEL)
 			
@@ -3775,7 +3791,7 @@ function Outfitter:SortBagsThread()
 	if true then
 		self:SortBagRange(NUM_BAG_SLOTS, 0)
 		
-		if self.BankFrameOpened then
+		if self.BankFrameIsOpen then
 			for vBankSlot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
 				self:SortBagRange(vBankSlot, vBankSlot)
 			end
@@ -5313,6 +5329,11 @@ function Outfitter:Initialize()
 	self.EventLib:RegisterEvent("BANKFRAME_OPENED", self.BankFrameOpened, self)
 	self.EventLib:RegisterEvent("BANKFRAME_CLOSED", self.BankFrameClosed, self)
 	
+	-- For monitoring void storage
+	
+	self.EventLib:RegisterEvent("VOID_STORAGE_OPEN", self.VoidStorageFrameOpened, self)
+	self.EventLib:RegisterEvent("VOID_STORAGE_CLOSE", self.VoidStorageFrameClosed, self)
+	
 	-- For unequipping the dining outfit
 	
 	self.EventLib:RegisterEvent("UNIT_MANA", self.UnitHealthOrManaChanged, self, true) -- Register as a blind event handler (no event id param)
@@ -6369,16 +6390,28 @@ function Outfitter.OutfitMenuActions:DEPOSITUNIQUE(pOutfit)
 	self:DepositOutfit(pOutfit, true)
 end
 
-function Outfitter.OutfitMenuActions:DEPOSITOTHERS(pOutfit)
-	self:DepositOtherOutfits(pOutfit)
-end
-
 function Outfitter.OutfitMenuActions:WITHDRAW(pOutfit)
 	self:WithdrawOutfit(pOutfit)
 end
 
+function Outfitter.OutfitMenuActions:DEPOSITOTHERS(pOutfit)
+	self:DepositOtherOutfits(pOutfit)
+end
+
 function Outfitter.OutfitMenuActions:WITHDRAWOTHERS(pOutfit)
 	self:WithdrawOtherOutfits(pOutfit)
+end
+
+function Outfitter.OutfitMenuActions:DEPOSITVOID(pOutfit)
+	self:DepositOutfitToVoidStorage(pOutfit)
+end
+
+function Outfitter.OutfitMenuActions:DEPOSITUNIQUEVOID(pOutfit)
+	self:DepositOutfitToVoidStorage(pOutfit, true)
+end
+
+function Outfitter.OutfitMenuActions:WITHDRAWVOID(pOutfit)
+	self:WithdrawOutfitFromVoidStorage(pOutfit)
 end
 
 function Outfitter.OutfitMenuActions:OUTFITBAR_SHOW(pOutfit)
@@ -7204,7 +7237,7 @@ function Outfitter:GetPlayerStat(pStatIndex)
 	return vEffectiveValue - vPosValue - vNegValue, vPosValue + vNegValue
 end
 
-function Outfitter:DepositOutfit(pOutfit, pUniqueItemsOnly)
+function Outfitter:GetDepositList(pOutfit, pUniqueItemsOnly)
 	-- Deselect any outfits to avoid them from being updated when
 	-- items get put away
 	
@@ -7242,6 +7275,12 @@ function Outfitter:DepositOutfit(pOutfit, pUniqueItemsOnly)
 			end -- for vOutfitIndex
 		end -- for vCategoryID
 	end -- if pUniqueItemsOnly
+	
+	return vUnequipOutfit, vInventoryCache
+end
+
+function Outfitter:DepositOutfit(pOutfit, pUniqueItemsOnly)
+	local vUnequipOutfit, vInventoryCache = self:GetDepositList(pOutfit, pUniqueItemsOnly)
 	
 	-- Build the change list
 	
@@ -7413,6 +7452,70 @@ function Outfitter:WithdrawOtherOutfits(pOutfit)
 	-- Execute the changes
 	
 	self:ExecuteEquipmentChangeList2(vEquipmentChangeList, vEmptyBagSlots, self.cWithdrawBagsFullError, vExpectedInventoryCache)
+	
+	self:DispatchOutfitEvent("EDIT_OUTFIT", pOutfit:GetName(), pOutfit)
+end
+
+local VOID_DEPOSIT_MAX = 8
+
+function Outfitter:DepositOutfitToVoidStorage(pOutfit, pUniqueItemsOnly)
+	local vUnequipOutfit, vInventoryCache = self:GetDepositList(pOutfit, pUniqueItemsOnly)
+	
+	-- Get a list of the deposit slot contents
+	
+	local vItemIDByDepositSlot = {}
+	local vDepositSlotByItemID = {}
+	for vIndex = 1, VOID_DEPOSIT_MAX do
+		local vItemID, vTextureName = GetVoidTransferDepositInfo(vIndex)
+		if vItemID then
+			vItemIDByDepositSlot[vIndex] = vItemID
+			vDepositSlotByItemID[vItemID] = vIndex
+		end
+	end
+	
+	-- Eliminate items which are already in the deposit area
+	
+	local vItems = vUnequipOutfit:GetItems()
+	for vInventorySlot, vOutfitItem in pairs(vItems) do
+		if vDepositSlotByItemID[vOutfitItem.Code] then
+			vItems[vInventorySlot] = nil
+		end
+	end
+	
+	-- Get a list of items which are available to move
+	
+	vInventoryCache:ResetIgnoreItemFlags()
+	local vEquipmentChangeList = self:BuildUnequipChangeList(vUnequipOutfit, vInventoryCache)
+	if not vEquipmentChangeList then
+		Outfitter:TestMessage("No items to store")
+		return
+	end
+	
+	-- Move the items to the deposit slots
+	
+	for _, vEquipmentChange in ipairs(vEquipmentChangeList) do
+		-- Find an empty slot
+		local vDepositIndex
+		for vIndex = 1, VOID_DEPOSIT_MAX do
+			if not vItemIDByDepositSlot[vIndex] then
+				vDepositIndex = vIndex
+				break
+			end
+		end
+		
+		-- No more slots
+		if not vDepositIndex then
+			Outfitter:TestMessage("No empty void storage slots")
+			break
+		end
+		
+		-- Move the item
+		Outfitter:TestMessage("Moving item to deposit slot %s", tostring(vDepositIndex))
+		self:PickupItemLocation(vEquipmentChange.FromLocation)
+		ClickVoidTransferDepositSlot(vDepositIndex, false)
+		vItemIDByDepositSlot[vDepositIndex] = vEquipmentChange.Item.Code
+		vDepositSlotByItemID[vEquipmentChange.Item.Code] = vDepositIndex
+	end
 	
 	self:DispatchOutfitEvent("EDIT_OUTFIT", pOutfit:GetName(), pOutfit)
 end
@@ -7872,8 +7975,6 @@ end
 function Outfitter:CalcItemUseDuration(pItemLink)
 	-- Set the tooltip
 	
-	self:TestMessage("CalcItemUseDuration:%s", pItemLink)
-	
 	OutfitterTooltip:SetOwner(OutfitterFrame, "ANCHOR_BOTTOMRIGHT", 0, 0)
 	OutfitterTooltip:SetHyperlink(pItemLink)
 	
@@ -7895,19 +7996,13 @@ function Outfitter:CalcItemUseDuration(pItemLink)
 				vStartIndex, vEndIndex, vSeconds = vLeftText:find(Outfitter.cUseDurationTooltipLineFormat2)
 			end
 		
-			if vStartIndex then
-				self:TestMessage("CalcItemUseDuration:Found pattern")
-			end
-		
 			if vSeconds then
-				self:TestMessage("CalcItemUseDuration:Duration is %d seconds", vSeconds)
 				OutfitterTooltip:Hide()
 				return tonumber(vSeconds)
 			end
 		end
 	end -- for vLineIndex
 	
-	self:TestMessage("CalcItemUseDuration:Use not found", pItemLink)
 	OutfitterTooltip:Hide()
 	return 0
 end
@@ -8481,15 +8576,12 @@ function Outfitter:GetIconIndex(pTexture)
 	if not pTexture then
 		return
 	end
-	Outfitter:TestMessage("GetIconIndex(%s)", tostring(pTexture))
 	if type(pTexture) == "number" then
-		Outfitter:TestMessage("GetIconIndex(): Returning number")
 		return pTexture
 	end
 	
 	local _, _, vTexture = pTexture:find("([^\\]*)$")
 	vTexture = vTexture:lower()
-	Outfitter:TestMessage("GetIconIndex(%s): searching for texture", tostring(vTexture))
 
 	for vIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
 		local vTexture2 = GetInventoryItemTexture("player", vIndex)
@@ -8498,7 +8590,6 @@ function Outfitter:GetIconIndex(pTexture)
 			_, _, vTexture2 = vTexture2:find("([^\\]*)$")
 			
 			if vTexture2:lower() == vTexture then
-				Outfitter:TestMessage("GetIconIndex(%s): Returning %s", pTexture, -vIndex)
 				return -vIndex
 			end
 		end
@@ -8512,13 +8603,10 @@ function Outfitter:GetIconIndex(pTexture)
 	for vIndex = 1, vNumIcons do
 		local vTexture2 = vMacroIcons[vIndex]
 		_, _, vTexture2 = vTexture2:find("([^\\]*)$")
-		--Outfitter:TestMessage("%s %s", tostring(vTexture), tostring(vTexture2))
 		if vTexture2:lower() == vTexture then
-			Outfitter:TestMessage("GetIconIndex(%s): Returning %s", pTexture, vIndex)
 			return vIndex
 		end
 	end
-	Outfitter:TestMessage("GetIconIndex(%s): Returning nil", pTexture)
 end
 
 function Outfitter:SummonCompanionByName(pName, pDelay)

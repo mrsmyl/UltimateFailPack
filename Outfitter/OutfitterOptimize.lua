@@ -341,9 +341,9 @@ function Outfitter:FindGeneticCombination(pName, pInventoryCache, pFilterStats, 
 	
 	if not vResult then
 		self:ErrorMessage(vMessage)
+	elseif self.FindGeneticCombinationCoroutineRef then
+		self.SchedulerLib:ScheduleRepeatingTask(0, self.RunGeneticThread, self)
 	end
-	
-	self.SchedulerLib:ScheduleRepeatingTask(0, self.RunGeneticThread, self)
 end
 
 function Outfitter:RunGeneticThread()
@@ -477,6 +477,7 @@ function Outfitter:FindGeneticCombinationThread(pName, pInventoryCache, pFilterS
 	--
 	
 	local vStartTime = GetTime()
+	local vLoopCountYieldFactor = 5000
 	
 	if pStat.Begin then
 		pStat:Begin(pInventoryCache)
@@ -501,6 +502,7 @@ function Outfitter:FindGeneticCombinationThread(pName, pInventoryCache, pFilterS
 	--
 	
 	local vYieldTime = GetTime() + vMaxYieldTime
+	local vLoopCount = vLoopCountYieldFactor * vMaxYieldTime
 	local vPreviousBestScore, vBestScore
 	local vNoChangeCount = 0
 	local vPreviousNoChangeCount
@@ -526,9 +528,11 @@ function Outfitter:FindGeneticCombinationThread(pName, pInventoryCache, pFilterS
 			
 			vNumOutfitsGenerated = vNumOutfitsGenerated + 1
 			
-			if GetTime() >= vYieldTime then
+			vLoopCount = vLoopCount - 1
+			if GetTime() >= vYieldTime or vLoopCount <= 0 then
 				coroutine.yield()
 				vYieldTime = GetTime() + vMaxYieldTime
+				vLoopCount = vLoopCountYieldFactor * vMaxYieldTime
 			end
 			
 			if vCancel then
@@ -585,15 +589,15 @@ function Outfitter:FindGeneticCombinationThread(pName, pInventoryCache, pFilterS
 	--
 	
 	self:EndCombiProgress()
-	
 	self.FindGeneticCombinationCoroutineRef = nil
 	
 	if not vCancel then
+		local vElapsedTime = vEndTime - vStartTime
 		Outfitter:NoteMessage(
 			"Checked %s outfits in %s seconds (%s outfits per second)",
 			Outfitter:FormatThousands(vNumOutfitsGenerated),
-			math.floor(vEndTime - vStartTime),
-			Outfitter:FormatThousands(vNumOutfitsGenerated / (vEndTime - vStartTime)))
+			math.floor(vElapsedTime),
+			Outfitter:FormatThousands(vNumOutfitsGenerated / vElapsedTime))
 		
 		Outfitter:NoteMessage("Best outfit score: %s", tostring(vBestScore))
 		

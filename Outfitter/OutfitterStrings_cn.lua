@@ -179,7 +179,6 @@ if GetLocale() == "zhCN" then
 
 	Outfitter.cAboutTitle = "关于 Outfitter"
 	Outfitter.cAboutAuthor = "John Stephen 设计编写"
-	Outfitter.cAboutCopyright = "Copyright 2009, 2010, 2011 John Stephen, wobbleworks.com"
 	Outfitter.cAboutThanks = "非常感谢所有玩家及支持者！"
 
 	Outfitter.cGermanLocalization = "德语译者"

@@ -425,11 +425,32 @@ function Outfitter:GetSlotIDItemInfo(pSlotID)
 end
 
 function Outfitter:GetNumBags()
-	if self.BankFrameOpened then
+	if self.BankFrameIsOpen then
 		return NUM_BAG_SLOTS + NUM_BANKBAGSLOTS, -1
 	else
 		return NUM_BAG_SLOTS, 0
 	end
+end
+
+function Outfitter:GetBagList()
+	local vBagList = {}
+	if self.BankFrameIsOpen then
+		for vIndex = -1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+			vBagList[vIndex] = true
+		end
+	else
+		for vIndex = 0, NUM_BAG_SLOTS do
+			vBagList[vIndex] = true
+		end
+	end
+	--[[
+	if self.VoidStorageIsOpen then
+		vBagList["VOID_DEPOSIT"] = true
+		vBagList["VOID_WITHDRAW"] = true
+		vBagList["VOID_STORAGE"] = true
+	end
+	]]
+	return vBagList
 end
 
 function Outfitter:GetInventorySlotIDLink(pSlotID)

@@ -756,8 +756,10 @@ function Outfitter._OutfitMethodsEM:GetItems()
 end
 
 function Outfitter._OutfitMethodsEM:SlotIsEnabledEM(pSlotName, pItemLocations)
+	if not pItemLocations then
+		return false
+	end
 	local vLocation = pItemLocations[Outfitter.cSlotIDs[pSlotName]]
-	
 	return vLocation and vLocation ~= 1
 end
 
