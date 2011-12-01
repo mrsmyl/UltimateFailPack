@@ -1,5 +1,5 @@
 QuestAnnouncer4 = LibStub("AceAddon-3.0"):NewAddon("QuestAnnouncer4", "AceConsole-3.0", "AceComm-3.0", "AceEvent-3.0", "AceSerializer-3.0", "AceTimer-3.0");
-QuestAnnouncer4.version = "1.2";
+QuestAnnouncer4.version = "1.3";
 QuestAnnouncer4.author = "Jason Olivarez (Svetlania, Ragu, and Pyroclastic of Garrosh-US)";
 
 -- Local variables
@@ -116,36 +116,51 @@ function QuestAnnouncer4:QUEST_LOG_UPDATE()
 		return true;
 	end
 	questLogUpdating = true;
-	local QuestID=1;
-	while (GetQuestLogTitle(QuestID) ~= nil) do
-		local questTitle, _, _, _, isHeader, _, isComplete = GetQuestLogTitle(QuestID);
-		local questCRC = 0;
-		if (not isHeader) then
-			SelectQuestLogEntry(QuestID);
+	local QuestLogID=1;
+	while (GetQuestLogTitle(QuestLogID) ~= nil) do
+		local questTitle, _, _, _, isHeader, _, isComplete = GetQuestLogTitle(QuestLogID);
+		local QuestID = self:GetQuestID(GetQuestLink(QuestLogID));
 
-			-- Get CRC32 value of current quest's description.  This allows for better tracking of quests with the same name.
-			local questDescription, _ = GetQuestLogQuestText();
-			if (questDescription) then
-				questCRC = CRC32Lib.Compute(questDescription);
-				local status = 0;
-				if (isComplete) then status = isComplete end;
-				-- Check for Quest changes
-				if questLog[questCRC] and questLog[questCRC] ~= status then
-					local sendDelayed = function(typ, msg)
-							self:ScheduleTimer(function() self:ProcessAnnouncement(typ, msg) end, 1)
-						end
-					if questLog[questCRC] == 0 and status == 1 then
-						sendDelayed("completed", questTitle);
-					elseif (questLog[questCRC] == 0 or questLog[questCRC] == 1) and status == -1 then
-						sendDelayed("failed", questTitle);						
+
+
+		
+		if (not isHeader and QuestID) then
+
+
+
+
+			local status = 0;
+			local prev_status = questLog[QuestID];
+			if (isComplete) then status = isComplete end;
+			-- Check for Quest changes
+			if prev_status and prev_status ~= status then
+				local sendDelayed = function(typ, msg)
+						self:ScheduleTimer(function() self:ProcessAnnouncement(typ, msg) end, 1)
 					end
+				if prev_status == 0 and status == 1 then
+					sendDelayed("completed", questTitle);
+				elseif (prev_status == 0 or prev_status == 1) and status == -1 then
+					sendDelayed("failed", questTitle);						
 				end
-				questLog[questCRC] = status;
 			end
+			questLog[QuestID] = status;
 		end
-		QuestID = QuestID + 1;
+		QuestLogID = QuestLogID + 1;
 	end
+
+
 	
 	-- Unlock the thread
 	questLogUpdating = false;
+end
+
+
+
+function QuestAnnouncer4:GetQuestID(link)
+	local questpattern = "|c(%x+)|Hquest:(%d+):(-?%d+)|h%[(.+)%]|h|r";
+	if link then
+		for color, id, level, name in string.gmatch(link, questpattern) do
+			return id;
+		end
+	end
 end
