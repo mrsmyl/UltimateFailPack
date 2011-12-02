@@ -1,0 +1,11 @@
+## Title: Auctioneer:Util:Example
+## Interface: 40300
+## Dependancies: Auc-Advanced
+##
+## Version: 5.13.5241 (BoldBandicoot)
+## Revision: $Id: Auc-Util-Example.toc 5241 2011-11-30 19:05:41Z Nechckn $
+## URL: http://auctioneeraddon.com/
+## Author: Norganna's AddOns
+## X-Part-Of: Auctioneer
+##
+Embed.xml

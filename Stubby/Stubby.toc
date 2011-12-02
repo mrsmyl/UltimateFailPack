@@ -1,0 +1,21 @@
+## Title: Stubby |cff224477(lib)
+## Notes: Allows AddOns to load automatically, when called, based upon simple event notification hooks. [5.13.5241] This AddOn is licensed under the GNU GPL, see GPL.txt for details.
+##
+## Interface: 40300
+## OptionalDeps: !nLog, DebugLib
+## SavedVariables: StubbyConfig
+##
+## Version: 5.13.5241 (BoldBandicoot)
+## Revision: $Id: Stubby.toc 317 2011-11-24 05:01:39Z Nechckn $
+## Author: Norganna's AddOns
+## X-Part-Of: Libraries
+## X-Category: Library
+## X-Max-Interface: 40300
+## X-URL: http://zip.norganna.org/libs/Stubby/
+## X-Feedback: http://forums.norganna.org
+##
+Support\Load.xml
+
+Libs\Load.xml
+Stubby.lua
+Stubby.xml

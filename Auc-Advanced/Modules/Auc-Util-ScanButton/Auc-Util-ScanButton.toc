@@ -1,0 +1,14 @@
+## Title: Auc:Util:Scan Button
+## Interface: 40300
+## Dependancies: Auc-Advanced
+##
+## Version: 5.13.5241 (BoldBandicoot)
+## Revision: $Id: Auc-Util-ScanButton.toc 5241 2011-11-30 19:05:41Z Nechckn $
+## Author: Norganna's AddOns
+## X-Part-Of: Auctioneer
+## X-Category: Auction House
+## X-Max-Interface: 40300
+## X-URL: http://auctioneeraddon.com/
+## X-Feedback: http://forums.norganna.org
+##
+Embed.xml
