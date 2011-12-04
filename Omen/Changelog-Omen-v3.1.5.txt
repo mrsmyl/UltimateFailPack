@@ -1,0 +1,14 @@
+tag v3.1.5
+7a86a49e27fd793b07b8963f2e58aa53bf85714e
+Xinhuan <xinhuan@pacific.net.sg>
+2011-12-03 22:30:05 +0800
+
+Tag release v3.1.5
+
+
+--------------------
+
+Xinhuan:
+	- Update Interface to 40300, version to 3.1.5.
+	- Show the "Hide Minimap Button" option if the button is ever registered with LDB instead of trying to check whether FuBar or FuBar2Broker is loaded.
+	- Remove code that causes divide by 0 for future WoW updates/PTRs.

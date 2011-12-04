@@ -178,6 +178,7 @@ local inRaid, inParty       -- boolean variables indicating if the player is in 
 local testMode = false      -- boolean: Are we in test mode?
 local manualToggle = false  -- boolean: Did we manually toggle Omen?
 local moduleOptions = {}    -- Table for LoD module options registration
+local LDBIconRegistered = false  -- Registered icon?
 
 Omen.GuidNameLookup = guidNameLookup
 Omen.GuidClassLookup = guidClassLookup
@@ -552,6 +553,7 @@ function Omen:PLAYER_LOGIN()
 		})
 		if LDBIcon and not LibStub:GetLibrary("LibFuBarPlugin-3.0", true) then
 			LDBIcon:Register("Omen", OmenLauncher, db.MinimapIcon)
+			LDBIconRegistered = true
 		end
 	end
 
@@ -1048,8 +1050,6 @@ do
 
 	-- function to start bar animations
 	local function AnimateTo(self, val, val2)
-		if val == 1/0 or val == -1/0 then return end -- infinity, do nothing
-		if val2 == 1/0 or val2 == -1/0 then return end -- infinity, do nothing
 		if val == 0 then val = 1 end -- at least 1 pixel width
 		if val2 == 0 then val2 = 1 end -- at least 1 pixel width
 		local animData = self.animData
@@ -2005,7 +2005,12 @@ function Omen:UpdateBarsReal()
 		threatTable = delTable(threatTable)
 	elseif myGUID then
 		local myClass = guidClassLookup[myGUID]
-		local myThreatPercent = threatTable[myGUID] / tankThreat * 100
+		local myThreatPercent
+		if tankThreat == 0 then
+			myThreatPercent = math.huge
+		else
+			myThreatPercent = threatTable[myGUID] / tankThreat * 100
+		end
 		local t = db.Warnings
 		if lastWarn.mobGUID == mobGUID and myThreatPercent >= t.Threshold and t.Threshold > lastWarn.threatpercent then
 			if not t.DisableWhileTanking or not (myClass == "WARRIOR" and GetBonusBarOffset() == 2 or
@@ -2435,7 +2440,7 @@ Omen.Options = {
 						db.MinimapIcon.hide = not value
 						if value then LDBIcon:Show("Omen") else LDBIcon:Hide("Omen") end
 					end,
-					hidden = function() return not LDBIcon or IsAddOnLoaded("Broker2FuBar") or IsAddOnLoaded("FuBar") end,
+					hidden = function() return not LDBIconRegistered end,
 				},
 				IgnorePlayerPets = {
 					type = "toggle",
