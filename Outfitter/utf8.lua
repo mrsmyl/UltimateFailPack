@@ -1,4 +1,4 @@
--- $Id: utf8.lua 147 2007-01-04 00:57:00Z pasta $
+-- $Id: utf8.lua 184 2008-10-09 21:54:37Z nevcairiel $
 --
 -- Provides UTF-8 aware string functions implemented in pure lua:
 -- * string.utf8len(s)
@@ -206,7 +206,7 @@ local function utf8sub (s, i, j)
 	local len = 0
 
 	-- only set l if i or j is negative
-	local l = (i >= 0 and j >= 0) or utf8len(s)
+	local l = (i >= 0 and j >= 0) or s:utf8len()
 	local startChar = (i >= 0) and i or l + i + 1
 	local endChar   = (j >= 0) and j or l + j + 1
 

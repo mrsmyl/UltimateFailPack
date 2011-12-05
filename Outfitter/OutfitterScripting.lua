@@ -704,6 +704,20 @@ equip = GetActiveTalentGroup() == 2
 ]],
 	},
 	{
+		Name = "Talent Tree",
+		ID = "TalentTree",
+		Category = "GENERAL",
+		Script = Outfitter:GenerateScriptHeader("ACTIVE_TALENT_GROUP_CHANGED PLAYER_TALENT_UPDATE", "Equips the outfit when you activate specs for the selected talent tree")..
+[[
+-- $SETTING Tree1={type="boolean", label=Outfitter:GetTalentTreeName(1), default=false}
+-- $SETTING Tree2={type="boolean", label=Outfitter:GetTalentTreeName(2), default=false}
+-- $SETTING Tree3={type="boolean", label=Outfitter:GetTalentTreeName(3), default=false}
+if GetPrimaryTalentTree() == 1 then equip = setting.Tree1
+elseif GetPrimaryTalentTree() == 2 then equip = setting.Tree2
+elseif GetPrimaryTalentTree() == 3 then equip = setting.Tree3 end
+]],
+	},
+	{
 		Name = Outfitter.cRidingOutfit,
 		ID = "Riding",
 		Category = "TRADE",
@@ -1321,7 +1335,7 @@ end
 [[
 if IsFalling() then
     equip = true
-    delay = 5
+    delay = 4
 elseif didEquip then
     equip = false
 end
@@ -1388,6 +1402,56 @@ if event == "GAMETOOLTIP_SHOW" then
 		
 		self.MountIDs[33870] = "Stabled Argent Warhorse"
 		self.MountIDs[34125] = "Stabled Campaign Warhorse"
+	end
+	
+	if self.MountIDs[npcID] then
+        equip = true
+    end
+elseif event == "GAMETOOLTIP_HIDE"
+and didEquip
+and not UnitInVehicle("player") then
+    equip = false
+    self.unequipTime = time
+    delay = 1 -- The tooltip disappears briefly when you click a mount, so wait a sec before unequipping
+elseif event == "UNIT_ENTERED_VEHICLE"
+and didUnequip
+and self.unequipTime
+and time - self.unequipTime < 3 then
+    equip = true -- Cancel the unequip
+elseif event == "UNIT_EXITED_VEHICLE"
+and didEquip
+and not UnitInVehicle("player") then
+    equip = false
+end
+]],
+	},
+	{
+		Name = "Vigilance on Wings",
+		ID = "VIGILANCE_ON_WINGS",
+		Category = "QUEST",
+		Script = Outfitter:GenerateScriptHeader("GAMETOOLTIP_SHOW GAMETOOLTIP_HIDE UNIT_ENTERED_VEHICLE UNIT_EXITED_VEHICLE", "")..
+[[
+if event == "GAMETOOLTIP_SHOW" then
+	local unitGUID = UnitGUID("mouseover")
+	
+	if not unitGUID then
+		return
+	end
+	
+	local unitType = unitGUID:sub(5, 5)
+	
+	if unitType ~= "3" and unitType ~= "5" then
+        return
+    end
+	
+	local npcID = tonumber(unitGUID:sub(7, 10), 16)
+	
+	if not self.MountIDs then
+		self.MountIDs = {}
+		self.MountIDs[39710] = "Aviana's Guardian"
+		self.MountIDs[40719] = "Aviana's Guardian"
+		self.MountIDs[40720] = "Aviana's Guardian"
+		self.MountIDs[40723] = "Aviana's Guardian"
 	end
 	
 	if self.MountIDs[npcID] then
@@ -1541,6 +1605,7 @@ end
 		Script =
 [[
 -- $DESC Equips the outfit whenever your Cooking window is open
+-- $SETTING Ragnaros = {type = "boolean", label = "Summon Lil' Ragnaros", default = false}
 -- $EVENTS TRADE_SKILL_SHOW TRADE_SKILL_CLOSE
 
 if event == "TRADE_SKILL_SHOW" then
@@ -1556,6 +1621,16 @@ elseif event == "TRADE_SKILL_UPDATE" then
         equip = true
     elseif didEquip then
         equip = false
+    end
+end
+if setting.Ragnaros and equip ~= nil and not IsFlying() then
+    if equip then
+        self.savedCompanionID = Outfitter:GetSummonedCompanionID()
+        Outfitter:SummonCompanionByID(51600, 0.2)
+    elseif self.savedCompanionID then
+        Outfitter:SummonCompanionByID(self.savedCompanionID, 0.2)
+    else
+        Outfitter:DismissCompanionByID(51600)
     end
 end
 ]],
@@ -1585,6 +1660,9 @@ or name == Outfitter.LZ["The Vortex Pinnacle"]
 or name == Outfitter.LZ["Grim Batol"]
 or name == Outfitter.LZ["Halls of Origination"]
 or name == Outfitter.LZ["Lost City of the Tol'vir"]
+or name == Outfitter.LZ["End Time"]
+or name == Outfitter.LZ["Well of Eternity"]
+or name == Outfitter.LZ["Hour of Twilight"]
 or (difficulty == 2
     and (name == Outfitter.LZ["Ahn'kahet: The Old Kingdom"]
       or name == Outfitter.LZ["Azjol-Nerub"]
@@ -1955,15 +2033,15 @@ function Outfitter._ScriptContext:PostProcess(pEquip, pImmediate, pLayer, pDelay
 		local vChanged
 		
 		Outfitter:BeginEquipmentUpdate()
-		
+		local vWearing = Outfitter:WearingOutfit(self.Outfit)
 		if pEquip then
-			if not Outfitter:WearingOutfit(self.Outfit)
+			if not vWearing
 			or self.Outfit.CategoryID == "Complete" then -- Always equip Completes so that the stack clears
 				Outfitter:WearOutfit(self.Outfit, pLayer, true)
-				vChanged = true
+				vChanged = not vWearing
 			end
 		else
-			if Outfitter:WearingOutfit(self.Outfit) then
+			if vWearing then
 				Outfitter:RemoveOutfit(self.Outfit, true)
 				vChanged = true
 			end

@@ -8630,6 +8630,71 @@ function Outfitter:SummonCompanionByName(pName, pDelay)
 	end
 end
 
+function Outfitter:GetCompanionIDByName(pName)
+	local vNumCompanions = GetNumCompanions("CRITTER")
+	local vLowerName = pName:lower()
+	for vIndex = 1, vNumCompanions do
+		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
+		if vName:lower() == vLowerName then
+			return vCreatureID
+		end
+	end
+end
+
+function Outfitter:GetSummonedCompanionID()
+	local vNumCompanions = GetNumCompanions("CRITTER")
+	for vIndex = 1, vNumCompanions do
+		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
+		if vIsSummoned then
+			return vCreatureID
+		end
+	end
+end
+
+function Outfitter:SummonCompanionByID(pID, pDelay)
+	if not pID then return end
+	local vNumCompanions = GetNumCompanions("CRITTER")
+	for vIndex = 1, vNumCompanions do
+		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
+		
+		if vCreatureID == pID then
+			if not vIsSummoned then
+				if pDelay then
+					Outfitter.SchedulerLib:ScheduleTask(2, function () CallCompanion("CRITTER", vIndex) end)
+				else
+					CallCompanion("CRITTER", vIndex)
+				end
+			end
+			
+			return true
+		end
+	end
+end
+
+function Outfitter:DismissCompanionByID(pID, pDelay)
+	local vNumCompanions = GetNumCompanions("CRITTER")
+	for vIndex = 1, vNumCompanions do
+		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
+		
+		if vCreatureID == pID then
+			if vIsSummoned then
+				if pDelay then
+					Outfitter.SchedulerLib:ScheduleTask(2, function () CallCompanion("CRITTER", vIndex) end)
+				else
+					CallCompanion("CRITTER", vIndex)
+				end
+			end
+			
+			return true
+		end
+	end
+end
+
+function Outfitter:GetTalentTreeName(pIndex)
+	local _, vName = GetTalentTabInfo(pIndex)
+	return vName
+end
+
 function Outfitter:Run(pText)
 	local vCommand = pText:match("^(/[^%s]+)") or ""
 	local vMessage
