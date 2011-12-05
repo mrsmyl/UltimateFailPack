@@ -87,6 +87,14 @@ L["Show faction name"] = true
 L["Show faction name when reputation is selected as label text."] = true
 L["Colored Label"] = true
 L["Color label text based on percentages"] = true
+L["Separators"] = true
+L["Use separators for numbers to improve readability"] = true
+L["Abbreviations"] = true
+L["Use abbreviations to shorten numbers"] = true
+L["Tip Abbreviations"] = true
+L["Use abbreviations in tooltip"] = true
+L["Decimal Places"] = true
+L["Number of decimal places when using abbreviations"] = true
 
 L["Faction Tracking"] = true
 L["Auto-switch watched faction on reputation gains/losses."] = true
@@ -177,3 +185,10 @@ L["Kills to Level"] = true
 L["Time to Level"] = true
 L["XP over Rep"] = true
 L["Rep over XP"] = true
+
+L[","] = true
+L["."] = true
+
+L["k"] = true
+L["m"] = true
+L["bn"] = true

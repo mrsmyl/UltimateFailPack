@@ -1,8 +1,3 @@
--- TODO: use inactive group (options)
--- TODO: hasRep to fill in factions that have rep and subfactions (i.e. Alliance Vanguard)
--- TODO: zone specific faction tracking?
--- TODO: handle collapsed header?
-
 local _G = getfenv(0)
 
 -- addon constants
@@ -26,7 +21,7 @@ local Crayon	= LibStub:GetLibrary("LibCrayon-3.0")
 -- tooltip library
 local QT		= LibStub:GetLibrary("LibQTip-1.0")
 
--- get translationss
+-- get translations
 local L         = LibStub:GetLibrary("AceLocale-3.0"):GetLocale( MODNAME )
 
 -- config libraries
@@ -80,6 +75,51 @@ local function format_time(stamp)
 	else
 		return string.format("%02d:%02d", hours, minutes)
 	end
+end
+
+local abbreviations = {
+		[0]  = "", 
+		[1]  = L["k"], 
+		[2]  = L["m"], 
+		[3]  = L["bn"], 
+}
+	
+local function format_number(number, sep, abbrev, decimals)
+	local lvl    = 0
+	
+	if abbrev then
+		while number >= 1000 do
+			number = number / 1000
+			lvl = lvl + 1
+			
+			if lvl == #abbreviations - 1 then
+				break
+			end
+		end				
+	end
+	
+	number = string.format("%." .. decimals .. "f", number)
+	
+	local num, decimal = string.match(number,'^(%d*)(.-)$')
+	
+	if sep then
+		num = num:reverse():gsub('(%d%d%d)', "%1"..L[","]):reverse()
+		-- remove leading separator if necessary
+		-- TODO: move into regexp pattern above
+		num = num:gsub('^([^%d])(.*)', "%2")
+	end	
+	
+	-- trim right zeros
+	decimal = decimal:gsub('^(%p%d-)(0*)$', "%1")
+	
+	if decimal == "." then 
+		decimal = ""
+	else
+		-- localize decimal seperator
+		decimal = decimal:gsub('^(%p)(%d*)$', L["."].."%2")
+	end
+	
+	return num .. decimal .. abbreviations[lvl]
 end
 
 -- addon and locals
@@ -383,7 +423,7 @@ local showtext = {
 		XPFirst  = 7, 
 	}
 }
-	
+
 local options  = {}
 local defaults = {
 	profile = {
@@ -399,6 +439,10 @@ local defaults = {
 		ShowPercentage  = true,
 		ShowFactionName = true,
 		ColoredText     = true,
+		Separators		= false,
+		Abbreviations	= false,
+		TTAbbreviations	= false,
+		DecimalPlaces	= 2,
 		ShowBlizzBars   = false,
 		HideHint        = false,
 		Location        = "Bottom",
@@ -482,13 +526,13 @@ function BrokerXPBar:SetupOptions()
 						type = 'range',
 						name = L["Spark intensity"],
 						desc = L["Brightness level of Spark"],
-						get = function() return BrokerXPBar.db.profile.Spark end,
+						get = function() return self.db.profile.Spark end,
 						set = function(info, v) 
-							BrokerXPBar.db.profile.Spark = v
-							BrokerXPBar.Spark:SetAlpha(v)
-							BrokerXPBar.Spark2:SetAlpha(v)
-							BrokerXPBar.RepSpark:SetAlpha(v)
-							BrokerXPBar.RepSpark2:SetAlpha(v)
+							self.db.profile.Spark = v
+							self.Spark:SetAlpha(v)
+							self.Spark2:SetAlpha(v)
+							self.RepSpark:SetAlpha(v)
+							self.RepSpark2:SetAlpha(v)
 						end,
 						min = 0,
 						max = 1,
@@ -500,9 +544,9 @@ function BrokerXPBar:SetupOptions()
 						type = 'range',
 						name = L["Thickness"],
 						desc = L["Set thickness of the Bars"],
-						get = function() return BrokerXPBar.db.profile.Thickness end,
+						get = function() return self.db.profile.Thickness end,
 						set = function(info, v)
-							BrokerXPBar:SetThickness(v)
+							self:SetThickness(v)
 						end,
 						min = 1.5,
 						max = 8,
@@ -513,10 +557,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Show XP Bar"],
 						desc = L["Show the XP Bar"],
-						get = function() return BrokerXPBar.db.profile.ShowXP end,
+						get = function() return self.db.profile.ShowXP end,
 						set = function()
-							BrokerXPBar.db.profile.ShowXP = not BrokerXPBar.db.profile.ShowXP
-							BrokerXPBar:Reanchor()
+							self.db.profile.ShowXP = not self.db.profile.ShowXP
+							self:Reanchor()
 						end,
 						order = 3
 					},
@@ -524,10 +568,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Show Rep Bar"],
 						desc = L["Show the Reputation Bar"],
-						get = function() return BrokerXPBar.db.profile.ShowRep end,
+						get = function() return self.db.profile.ShowRep end,
 						set = function()
-							BrokerXPBar.db.profile.ShowRep = not BrokerXPBar.db.profile.ShowRep
-							BrokerXPBar:Reanchor()
+							self.db.profile.ShowRep = not self.db.profile.ShowRep
+							self:Reanchor()
 						end,
 						order = 4
 					},
@@ -535,10 +579,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Shadow"],
 						desc = L["Toggle Shadow"],
-						get = function() return BrokerXPBar.db.profile.Shadow end,
+						get = function() return self.db.profile.Shadow end,
 						set = function()
-							BrokerXPBar.db.profile.Shadow = not BrokerXPBar.db.profile.Shadow
-							BrokerXPBar:Reanchor()
+							self.db.profile.Shadow = not self.db.profile.Shadow
+							self:Reanchor()
 						end,
 						order = 5
 					},
@@ -546,10 +590,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Inverse Order"],
 						desc = L["Place reputation bar before XP bar"],
-						get = function() return BrokerXPBar.db.profile.Inverse end,
+						get = function() return self.db.profile.Inverse end,
 						set = function()
-							BrokerXPBar.db.profile.Inverse = not BrokerXPBar.db.profile.Inverse
-							BrokerXPBar:Reanchor()
+							self.db.profile.Inverse = not self.db.profile.Inverse
+							self:Reanchor()
 						end,
 						order = 6,
 					},
@@ -565,11 +609,11 @@ function BrokerXPBar:SetupOptions()
 						name = L["Frame to attach to"],
 						desc = L["The exact name of the frame to attach to"],
 						get = function()
-								return BrokerXPBar.db.profile.Frame
+								return self.db.profile.Frame
 							end,
 						set = function(info, key)
-							BrokerXPBar.db.profile.Frame = key
-							BrokerXPBar:Reanchor()
+							self.db.profile.Frame = key
+							self:Reanchor()
 						end,
 						order = 1,
 					},
@@ -585,11 +629,11 @@ function BrokerXPBar:SetupOptions()
 						name = L["Attach to side"],
 						desc = L["Select side to attach the bars to"],
 						get = function()
-								return BrokerXPBar.db.profile.Location
+								return self.db.profile.Location
 							end,
 						set = function(info, key)
-							BrokerXPBar.db.profile.Location = key
-							BrokerXPBar:Reanchor()
+							self.db.profile.Location = key
+							self:Reanchor()
 						end,
 						values = { Top = L["Top"], Bottom = L["Bottom"], Left = L["Left"], Right = L["Right"] },
 						order = 3,
@@ -598,10 +642,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'range',
 						name = L["X-Offset"],
 						desc = L["Set x-Offset of the bars"],
-						get = function() return BrokerXPBar.db.profile.xOffset end,
+						get = function() return self.db.profile.xOffset end,
 						set = function(info, v)
-							BrokerXPBar.db.profile.xOffset = v
-							BrokerXPBar:Reanchor()
+							self.db.profile.xOffset = v
+							self:Reanchor()
 						end,
 						min = -250,
 						max =  250,
@@ -612,10 +656,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'range',
 						name = L["Y-Offset"],
 						desc = L["Set y-Offset of the bars"],
-						get = function() return BrokerXPBar.db.profile.yOffset end,
+						get = function() return self.db.profile.yOffset end,
 						set = function(info, v)
-							BrokerXPBar.db.profile.yOffset = v
-							BrokerXPBar:Reanchor()
+							self.db.profile.yOffset = v
+							self:Reanchor()
 						end,
 						min = -250,
 						max =  250,
@@ -626,12 +670,12 @@ function BrokerXPBar:SetupOptions()
 						type = "select", 
 						name = L["Strata"],
 						desc = L["Select the strata of the bars"],
-						get = function() return BrokerXPBar.db.profile.Strata end,
+						get = function() return self.db.profile.Strata end,
 						set = function(info, key)
-							BrokerXPBar.db.profile.Strata = key
-							BrokerXPBar.XPBar:SetFrameStrata(key)
-							BrokerXPBar.RepBar:SetFrameStrata(key)
-							BrokerXPBar.Border:SetFrameStrata(key)
+							self.db.profile.Strata = key
+							self.XPBar:SetFrameStrata(key)
+							self.RepBar:SetFrameStrata(key)
+							self.Border:SetFrameStrata(key)
 						end,
 						values = strata,
 						order = 6,
@@ -640,10 +684,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Inside"],
 						desc = L["Attach bars to the inside of the frame"],
-						get = function() return BrokerXPBar.db.profile.Inside end,
+						get = function() return self.db.profile.Inside end,
 						set = function()
-							BrokerXPBar.db.profile.Inside = not BrokerXPBar.db.profile.Inside
-							BrokerXPBar:Reanchor()
+							self.db.profile.Inside = not self.db.profile.Inside
+							self:Reanchor()
 						end,
 						order = 7,
 					},
@@ -651,10 +695,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Jostle"],
 						desc = L["Jostle Blizzard Frames"],
-						get = function() return BrokerXPBar.db.profile.Jostle end,
+						get = function() return self.db.profile.Jostle end,
 						set = function()
-							BrokerXPBar.db.profile.Jostle = not BrokerXPBar.db.profile.Jostle
-							BrokerXPBar:Reanchor()
+							self.db.profile.Jostle = not self.db.profile.Jostle
+							self:Reanchor()
 						end,
 						order = 8,
 					},
@@ -662,7 +706,7 @@ function BrokerXPBar:SetupOptions()
 						type = 'execute',
 						name = L["Refresh"],
 						desc = L["Refresh Bar Position"],
-						func = function() BrokerXPBar:Reanchor() end,
+						func = function() self:Reanchor() end,
 						order = 9,
 					},
 				},
@@ -678,10 +722,10 @@ function BrokerXPBar:SetupOptions()
 						desc = L["Set the color of the XP Bar"],
 						hasAlpha = true,
 						get = function ()
-							return BrokerXPBar:GetColor("XP")
+							return self:GetColor("XP")
 						end,
 						set = function (info, r, g, b, a)
-							BrokerXPBar:SetColor("XP", r, g, b, a, BrokerXPBar.XPBarTex, BrokerXPBar.Spark)
+							self:SetColor("XP", r, g, b, a, self.XPBarTex, self.Spark)
 						end,
 						order = 1,
 					},
@@ -691,10 +735,10 @@ function BrokerXPBar:SetupOptions()
 						desc = L["Set the color of the Rested Bar"],
 						hasAlpha = true,
 						get = function ()
-							return BrokerXPBar:GetColor("Rest")
+							return self:GetColor("Rest")
 						end,
 						set = function (info, r, g, b, a)
-							BrokerXPBar:SetColor("Rest", r, g, b, a, BrokerXPBar.RestedXPTex)
+							self:SetColor("Rest", r, g, b, a, self.RestedXPTex)
 						end,
 						order = 2,
 					},
@@ -704,10 +748,10 @@ function BrokerXPBar:SetupOptions()
 						desc = L["Set the empty color of the XP Bar"],
 						hasAlpha = true,
 						get = function ()
-							return BrokerXPBar:GetColor("None")
+							return self:GetColor("None")
 						end,
 						set = function (info, r, g, b, a)
-							BrokerXPBar:SetColor("None", r, g, b, a, BrokerXPBar.NoXPTex)
+							self:SetColor("None", r, g, b, a, self.NoXPTex)
 						end,
 						order = 3,
 					},
@@ -717,11 +761,11 @@ function BrokerXPBar:SetupOptions()
 						desc = L["Set the color of the Rep Bar"],
 						hasAlpha = true,
 						get = function ()
-							return BrokerXPBar:GetColor("Rep")
+							return self:GetColor("Rep")
 						end,
 						set = function (info, r, g, b, a)
-							BrokerXPBar:SetColor("Rep", r, g, b, a)
-							BrokerXPBar:UpdateReputationColor()
+							self:SetColor("Rep", r, g, b, a)
+							self:UpdateReputationColor()
 						end,
 						order = 4,
 					},
@@ -731,10 +775,10 @@ function BrokerXPBar:SetupOptions()
 						desc = L["Set the empty color of the Reputation Bar"],
 						hasAlpha = true,
 						get = function ()
-							return BrokerXPBar:GetColor("NoRep")
+							return self:GetColor("NoRep")
 						end,
 						set = function (info, r, g, b, a)
-							BrokerXPBar:SetColor("NoRep", r, g, b, a, BrokerXPBar.NoRepTex)
+							self:SetColor("NoRep", r, g, b, a, self.NoRepTex)
 						end,
 						order = 5,
 					},
@@ -742,10 +786,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Blizzard Rep Colors"],
 						desc = L["Toggle Blizzard Reputation Colors"],
-						get = function() return BrokerXPBar.db.profile.BlizzRep end,
+						get = function() return self.db.profile.BlizzRep end,
 						set = function()
-							BrokerXPBar.db.profile.BlizzRep = not BrokerXPBar.db.profile.BlizzRep
-							BrokerXPBar:UpdateReputationColor()
+							self.db.profile.BlizzRep = not self.db.profile.BlizzRep
+							self:UpdateReputationColor()
 						end,
 						order = 6
 					},
@@ -761,10 +805,10 @@ function BrokerXPBar:SetupOptions()
 						name = L["Select Label Text"],
 						desc = L["Select label text for Broker display"],
 						get  = function() 
-							return showtext.val2opt[BrokerXPBar.db.profile.ShowText]
+							return showtext.val2opt[self.db.profile.ShowText]
 						end,
 						set  = function(info, key)
-							BrokerXPBar:SetShowText(key)
+							self:SetShowText(key)
 						end,
 						values = showtext.opt2txt,
 						order = 1
@@ -773,10 +817,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["XP/Rep to go"],
 						desc = L["Show XP/Rep to go in label"],
-						get  = function() return BrokerXPBar.db.profile.ToGo end,
+						get  = function() return self.db.profile.ToGo end,
 						set  = function()
-							BrokerXPBar.db.profile.ToGo = not BrokerXPBar.db.profile.ToGo
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.ToGo = not self.db.profile.ToGo
+							self:UpdateLabel() 
 						end,
 						order = 2
 					},
@@ -784,10 +828,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Show faction name"],
 						desc = L["Show faction name when reputation is selected as label text."],
-						get  = function() return BrokerXPBar.db.profile.ShowFactionName end,
+						get  = function() return self.db.profile.ShowFactionName end,
 						set  = function()
-							BrokerXPBar.db.profile.ShowFactionName = not BrokerXPBar.db.profile.ShowFactionName
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.ShowFactionName = not self.db.profile.ShowFactionName
+							self:UpdateLabel() 
 						end,
 						order = 3
 					},
@@ -795,10 +839,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Show Values"],
 						desc = L["Show values in label text"],
-						get  = function() return BrokerXPBar.db.profile.ShowValues end,
+						get  = function() return self.db.profile.ShowValues end,
 						set  = function()
-							BrokerXPBar.db.profile.ShowValues = not BrokerXPBar.db.profile.ShowValues
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.ShowValues = not self.db.profile.ShowValues
+							self:UpdateLabel() 
 						end,
 						order = 4
 					},
@@ -806,10 +850,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Show Percentage"],
 						desc = L["Show percentage in label text"],
-						get  = function() return BrokerXPBar.db.profile.ShowPercentage end,
+						get  = function() return self.db.profile.ShowPercentage end,
 						set  = function()
-							BrokerXPBar.db.profile.ShowPercentage = not BrokerXPBar.db.profile.ShowPercentage
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.ShowPercentage = not self.db.profile.ShowPercentage
+							self:UpdateLabel() 
 						end,
 						order = 5
 					},
@@ -817,12 +861,56 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Colored Label"],
 						desc = L["Color label text based on percentages"],
-						get  = function() return BrokerXPBar.db.profile.ColoredText end,
+						get  = function() return self.db.profile.ColoredText end,
 						set  = function()
-							BrokerXPBar.db.profile.ColoredText = not BrokerXPBar.db.profile.ColoredText
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.ColoredText = not self.db.profile.ColoredText
+							self:UpdateLabel() 
 						end,
 						order = 6
+					},
+					separators = {
+						type = 'toggle',
+						name = L["Separators"],
+						desc = L["Use separators for numbers to improve readability"],
+						get  = function() return self.db.profile.Separators end,
+						set  = function()
+							self.db.profile.Separators = not self.db.profile.Separators
+							self:UpdateLabel() 
+						end,
+						order = 7
+					},
+					abbreviations = {
+						type = 'toggle',
+						name = L["Abbreviations"],
+						desc = L["Use abbreviations to shorten numbers"],
+						get  = function() return self.db.profile.Abbreviations end,
+						set  = function()
+							self.db.profile.Abbreviations = not self.db.profile.Abbreviations
+							self:UpdateLabel() 
+						end,
+						order = 8
+					},
+					tooltipabbrev = {
+						type = 'toggle',
+						name = L["Tip Abbreviations"],
+						desc = L["Use abbreviations in tooltip"],
+						get  = function() return self.db.profile.TTAbbreviations end,
+						set  = function()
+							self.db.profile.TTAbbreviations = not self.db.profile.TTAbbreviations
+						end,
+						order = 9
+					},
+					decimalplaces = {
+						type = 'select',
+						name = L["Decimal Places"],
+						desc = L["Number of decimal places when using abbreviations"],
+						get  = function() return self.db.profile.DecimalPlaces end,
+						set  = function(info, key)
+							self.db.profile.DecimalPlaces = key
+							self:UpdateLabel() 
+						end,
+						values = { [0] = "0", [1] = "1", [2] = "2", [3] = "3" },
+						order = 10
 					},
 				},
 			},
@@ -835,10 +923,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Switch on rep gain"],
 						desc = L["Auto-switch watched faction on reputation gain."],
-						get  = function() return BrokerXPBar.db.profile.AutoTrackOnGain end,
+						get  = function() return self.db.profile.AutoTrackOnGain end,
 						set  = function()
-							BrokerXPBar.db.profile.AutoTrackOnGain = not BrokerXPBar.db.profile.AutoTrackOnGain
-							BrokerXPBar:UpdateAutoTrack() 
+							self.db.profile.AutoTrackOnGain = not self.db.profile.AutoTrackOnGain
+							self:UpdateAutoTrack() 
 						end,
 						order = 1
 					},
@@ -846,10 +934,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["Switch on rep loss"],
 						desc = L["Auto-switch watched faction on reputation loss."],
-						get  = function() return BrokerXPBar.db.profile.AutoTrackOnLoss end,
+						get  = function() return self.db.profile.AutoTrackOnLoss end,
 						set  = function()
-							BrokerXPBar.db.profile.AutoTrackOnLoss = not BrokerXPBar.db.profile.AutoTrackOnLoss
-							BrokerXPBar:UpdateAutoTrack() 
+							self.db.profile.AutoTrackOnLoss = not self.db.profile.AutoTrackOnLoss
+							self:UpdateAutoTrack() 
 						end,
 						order = 2
 					},
@@ -864,11 +952,11 @@ function BrokerXPBar:SetupOptions()
 						type = 'range',
 						name = L["Time Frame"],
 						desc = L["Time frame for dynamic TTL calculation."],
-						get = function() return BrokerXPBar.db.profile.TimeFrame end,
+						get = function() return self.db.profile.TimeFrame end,
 						set = function(info, v) 
-							BrokerXPBar.db.profile.TimeFrame = v
+							self.db.profile.TimeFrame = v
 							tainted_xp = true
-							BrokerXPBar:ProcessXPHistory()
+							self:ProcessXPHistory()
 						end,
 						min = 0,
 						max = 120,
@@ -879,11 +967,11 @@ function BrokerXPBar:SetupOptions()
 						type = 'range',
 						name = L["Weight"],
 						desc = L["Weight time frame vs. session average for dynamic TTL calculation."],
-						get = function() return BrokerXPBar.db.profile.Weight end,
+						get = function() return self.db.profile.Weight end,
 						set = function(info, v) 
-							BrokerXPBar.db.profile.Weight = v
+							self.db.profile.Weight = v
 							tainted_xp = true
-							BrokerXPBar:ProcessXPHistory()
+							self:ProcessXPHistory()
 						end,
 						min = 0,
 						max = 1,
@@ -901,10 +989,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["No XP label"],
 						desc = L["Don't show XP label text at maximum level. Affects XP, TTL and KTL option only."],
-						get  = function() return BrokerXPBar.db.profile.MaxHideXPText end,
+						get  = function() return self.db.profile.MaxHideXPText end,
 						set  = function()
-							BrokerXPBar.db.profile.MaxHideXPText = not BrokerXPBar.db.profile.MaxHideXPText
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.MaxHideXPText = not self.db.profile.MaxHideXPText
+							self:UpdateLabel() 
 						end,
 						order = 1
 					},
@@ -912,10 +1000,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["No XP bar"],
 						desc = L["Don't show XP bar at maximum level."],
-						get  = function() return BrokerXPBar.db.profile.MaxHideXPBar end,
+						get  = function() return self.db.profile.MaxHideXPBar end,
 						set  = function()
-							BrokerXPBar.db.profile.MaxHideXPBar = not BrokerXPBar.db.profile.MaxHideXPBar
-							BrokerXPBar:Reanchor() 
+							self.db.profile.MaxHideXPBar = not self.db.profile.MaxHideXPBar
+							self:Reanchor() 
 						end,
 						order = 2
 					},
@@ -923,10 +1011,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["No Rep label"],
 						desc = L["Don't show label text at maximum Reputation. Affects Rep option only."],
-						get  = function() return BrokerXPBar.db.profile.MaxHideRepText end,
+						get  = function() return self.db.profile.MaxHideRepText end,
 						set  = function()
-							BrokerXPBar.db.profile.MaxHideRepText = not BrokerXPBar.db.profile.MaxHideRepText
-							BrokerXPBar:UpdateLabel() 
+							self.db.profile.MaxHideRepText = not self.db.profile.MaxHideRepText
+							self:UpdateLabel() 
 						end,
 						order = 3
 					},
@@ -934,10 +1022,10 @@ function BrokerXPBar:SetupOptions()
 						type = 'toggle',
 						name = L["No Rep bar"],
 						desc = L["Don't show Rep bar at maximum Reputation."],
-						get  = function() return BrokerXPBar.db.profile.MaxHideRepBar end,
+						get  = function() return self.db.profile.MaxHideRepBar end,
 						set  = function()
-							BrokerXPBar.db.profile.MaxHideRepBar = not BrokerXPBar.db.profile.MaxHideRepBar
-							BrokerXPBar:Reanchor() 
+							self.db.profile.MaxHideRepBar = not self.db.profile.MaxHideRepBar
+							self:Reanchor() 
 						end,
 						order = 4
 					},
@@ -948,10 +1036,10 @@ function BrokerXPBar:SetupOptions()
 				name = L["Faction"],
 				desc = L["Select Faction"],
 				get = function()
-					return lookupIndexes[BrokerXPBar:GetFaction()] or 1
+					return lookupIndexes[self:GetFaction()] or 1
 				end,
 				set = function(info, key)
-					BrokerXPBar:SetFaction(lookupFactions[key] or 0)
+					self:SetFaction(lookupFactions[key] or 0)
 				end,
 				handler = BrokerXPBar,
 				values = "QueryFactions", 
@@ -961,10 +1049,10 @@ function BrokerXPBar:SetupOptions()
 				type = 'toggle',
 				name = L["Blizzard Bars"],
 				desc = L["Show default Blizzard Bars"],
-				get  = function() return BrokerXPBar.db.profile.ShowBlizzBars end,
+				get  = function() return self.db.profile.ShowBlizzBars end,
 				set  = function()
-					BrokerXPBar.db.profile.ShowBlizzBars = not BrokerXPBar.db.profile.ShowBlizzBars
-					BrokerXPBar:ShowBlizzardBars(BrokerXPBar.db.profile.ShowBlizzBars) 
+					self.db.profile.ShowBlizzBars = not self.db.profile.ShowBlizzBars
+					self:ShowBlizzardBars(self.db.profile.ShowBlizzBars) 
 				end,
 				order = 2
 			},
@@ -972,11 +1060,11 @@ function BrokerXPBar:SetupOptions()
 				type = 'toggle',
 				name = L["Minimap Button"],
 				desc = L["Show Minimap Button"],
-				get  = function() return BrokerXPBar.db.profile.Minimap end,
+				get  = function() return self.db.profile.Minimap end,
 				set  = function()
-					BrokerXPBar.db.profile.Minimap = not BrokerXPBar.db.profile.Minimap
+					self.db.profile.Minimap = not self.db.profile.Minimap
 					
-					BrokerXPBar:ShowMinimapButton(BrokerXPBar.db.profile.Minimap)
+					self:ShowMinimapButton(self.db.profile.Minimap)
 				end,
 				order = 3
 			},
@@ -984,9 +1072,9 @@ function BrokerXPBar:SetupOptions()
 				type = 'toggle',
 				name = L["Hide Hint"],
 				desc = L["Hide usage hint in tooltip"],
-				get  = function() return BrokerXPBar.db.profile.HideHint end,
+				get  = function() return self.db.profile.HideHint end,
 				set  = function()
-					BrokerXPBar.db.profile.HideHint = not BrokerXPBar.db.profile.HideHint
+					self.db.profile.HideHint = not self.db.profile.HideHint
 				end,
 				order = 4
 			},
@@ -1144,7 +1232,7 @@ function BrokerXPBar:OnEnable()
 	
 	self:Update()
 
-	if BrokerXPBar.db.profile.ShowText == "TTL" then
+	if self.db.profile.ShowText == "TTL" then
 		self.timer = self:ScheduleRepeatingTimer("UpdateLabel", 1)
 	end	
 end
@@ -1171,7 +1259,7 @@ function BrokerXPBar:OnDisable()
 	self:UnregisterAllBuckets()
 	self:UnhookAll()
 	
-	if BrokerXPBar.db.profile.ShowText == "TTL" then
+	if self.db.profile.ShowText == "TTL" then
 		self:CancelTimer(self.timer)
 	end		
 end
@@ -1180,20 +1268,20 @@ function BrokerXPBar:ChatCommand(input)
     if input then  
 		args = GetArgs(input, "^ *([^%s]+) *")
 		
-		BrokerXPBar:TriggerAction(args[1])
+		self:TriggerAction(args[1])
 	else
-		BrokerXPBar:TriggerAction("help")
+		self:TriggerAction("help")
 	end
 end
 
 function BrokerXPBar:OnProfileChanged(event, database, newProfileKey)
 	self.db.profile = database.profile
 	
-	BrokerXPBar:UpdateColor("XP",    BrokerXPBar.XPBarTex, BrokerXPBar.Spark)
-	BrokerXPBar:UpdateColor("Rest",  BrokerXPBar.RestedXPTex)
-	BrokerXPBar:UpdateColor("None",  BrokerXPBar.NoXPTex)
-	BrokerXPBar:UpdateReputationColor()
-	BrokerXPBar:UpdateColor("NoRep", BrokerXPBar.NoRepTex)
+	self:UpdateColor("XP",    self.XPBarTex, self.Spark)
+	self:UpdateColor("Rest",  self.RestedXPTex)
+	self:UpdateColor("None",  self.NoXPTex)
+	self:UpdateReputationColor()
+	self:UpdateColor("NoRep", self.NoRepTex)
 
 	self:UpdateStanding()
 	self:Reanchor()
@@ -1209,19 +1297,19 @@ function BrokerXPBar:OnClick(button)
 			-- unused
 		else
 			-- open options menu
-			BrokerXPBar:TriggerAction("menu")
+			self:TriggerAction("menu")
 		end
 	elseif ( button == "LeftButton" ) then 
 		if IsShiftKeyDown() then
 			-- reputation to open edit box
-			BrokerXPBar:TriggerAction("reputation")
+			self:TriggerAction("reputation")
 		elseif IsControlKeyDown() then
 			-- unused
 		elseif IsAltKeyDown() then
 			-- unused
 		else
 			-- xp to open edit box
-			BrokerXPBar:TriggerAction("xp")
+			self:TriggerAction("xp")
 		end
 	end
 end
@@ -1229,16 +1317,16 @@ end
 function BrokerXPBar:TriggerAction(action)
 	if action == "xp" then
 		-- xp to open edit box
-		BrokerXPBar:OutputExperience()
+		self:OutputExperience()
 	elseif action == "reputation" then
 		-- reputation to open edit box
-		BrokerXPBar:OutputReputation()
+		self:OutputReputation()
 	elseif action == "menu" then
 		-- open options menu
 		InterfaceOptionsFrame_OpenToCategory(FULLNAME)
 	elseif action == "version" then
 		-- print version information
-		BrokerXPBar:PrintVersionInfo()
+		self:PrintVersionInfo()
 	else -- if action == "help" then
 		-- display help
 		Output(L["Usage:"])
@@ -1496,11 +1584,11 @@ end
 function BrokerXPBar:IsBarRequired(bar)
 	if bar == "XP" then
 		if self.db.profile.ShowXP then
-			return playerlvl < MAX_LEVEL or not BrokerXPBar.db.profile.MaxHideXPBar
+			return playerlvl < MAX_LEVEL or not self.db.profile.MaxHideXPBar
 		end
 	elseif bar == "Rep" then
 		if self.db.profile.ShowRep and faction ~= 0 then
-			return not atmaxrep or not BrokerXPBar.db.profile.MaxHideRepBar
+			return not atmaxrep or not self.db.profile.MaxHideRepBar
 		end
 	end
 	
@@ -1523,7 +1611,7 @@ function BrokerXPBar:UpdateStanding()
 	local standing = 0
 	
 	-- check for changes in watched faction
-	BrokerXPBar:UpdateWatchedFactionIndex()
+	self:UpdateWatchedFactionIndex()
 	
 	if faction ~= 0 then
 		_, _, standing = GetFactionInfo(faction)
@@ -1533,16 +1621,16 @@ function BrokerXPBar:UpdateStanding()
 		watchedstanding = standing
 		
 		if self.db.profile.BlizzRep then
-			BrokerXPBar:UpdateReputationColor()
+			self:UpdateReputationColor()
 		end
 	end
 
-	BrokerXPBar:Update()
+	self:Update()
 end
 
 function BrokerXPBar:UpdateAutoTrack(register)
 	if register == nil then
-		register = BrokerXPBar.db.profile.AutoTrackOnLoss or BrokerXPBar.db.profile.AutoTrackOnLoss
+		register = self.db.profile.AutoTrackOnLoss or self.db.profile.AutoTrackOnLoss
 	end
 	
 	if register then
@@ -1665,7 +1753,7 @@ function BrokerXPBar:UpdateLabel()
 		end
 	end
 	
-	if show == "Rep" and atmaxrep and BrokerXPBar.db.profile.MaxHideRepText then
+	if show == "Rep" and atmaxrep and self.db.profile.MaxHideRepText then
 		dataobj.text = ""
 		return
 	end
@@ -1697,25 +1785,25 @@ function BrokerXPBar:UpdateLabel()
 			local toGo        = max - current
 			local percentToGo = floor(toGo / max * 100)
 			
-			if Crayon and BrokerXPBar.db.profile.ColoredText then
-				values     = "|cff"..Crayon:GetThresholdHexColor(toGo, max, max * 0.75, max * 0.5, max * 0.25, 1) .. toGo .. "|r"
+			if Crayon and self.db.profile.ColoredText then
+				values     = "|cff"..Crayon:GetThresholdHexColor(toGo, max, max * 0.75, max * 0.5, max * 0.25, 1) .. self:FormatNumberLabel(toGo) .. "|r"
 				percentage = "|cff"..Crayon:GetThresholdHexColor(percentToGo, 100, 75, 50, 1) .. percentToGo .. "|r"
 			else
-				values     = toGo
+				values     = self:FormatNumberLabel(toGo)
 				percentage = percentToGo
 			end			
         else 
 			local percent = floor(current/max * 100)
 			
-			if Crayon and BrokerXPBar.db.profile.ColoredText then
-				values     = "|cff"..Crayon:GetThresholdHexColor(current, 1, max * 0.25, max * 0.5, max * 0.75, max) .. current .. "|r"
+			if Crayon and self.db.profile.ColoredText then
+				values     = "|cff"..Crayon:GetThresholdHexColor(current, 1, max * 0.25, max * 0.5, max * 0.75, max) .. self:FormatNumberLabel(current) .. "|r"
 				percentage = "|cff"..Crayon:GetThresholdHexColor(percent, 1, 25, 50, 75, 100) .. percent .. "|r"
 			else
-				values     = current
+				values     = self:FormatNumberLabel(current)
 				percentage = percent
 			end
 			
-			values = values .. "/" .. max
+			values = values .. "/" .. self:FormatNumberLabel(max)
         end
 		
 		if self.db.profile.ShowValues then
@@ -1732,13 +1820,13 @@ function BrokerXPBar:UpdateLabel()
 		
 		dataobj.text = label
     elseif show == "TTL" then		
-		BrokerXPBar:ProcessHistory()
+		self:ProcessHistory()
 			
-		dataobj.text = L["TTL"] .. ": " .. BrokerXPBar:GetTimeToLevel()
+		dataobj.text = L["TTL"] .. ": " .. self:GetTimeToLevel()
     elseif show == "KTL" then
-		BrokerXPBar:ProcessHistory()
+		self:ProcessHistory()
 			
-		dataobj.text = L["KTL"] .. ": " .. Red( BrokerXPBar:GetKillsToLevel() )
+		dataobj.text = L["KTL"] .. ": " .. Red( self:GetKillsToLevel() )
     else
         dataobj.text = MODNAME
     end
@@ -1753,7 +1841,7 @@ function BrokerXPBar:UpdateReputationColor()
 		b = blizz_rep_colors[watchedstanding].b;
 		a = blizz_rep_colors[watchedstanding].a;
 	else
-		r, g, b, a = BrokerXPBar:GetColor("Rep")
+		r, g, b, a = self:GetColor("Rep")
 	end
 	
 	self.RepBarTex:SetVertexColor(r, g, b, a)
@@ -1812,8 +1900,11 @@ function BrokerXPBar:DrawTooltip()
 			if Crayon then
 				-- Scale: 1 - 100
 				-- ExXP:  1 - toLevelXP
-				xpEx = "|cff"..Crayon:GetThresholdHexColor(xpEx, 1, toLevelXP * 0.25, toLevelXP * 0.5, toLevelXP * 0.75, toLevelXP) .. xpEx .. "|r"
-				xpExPercent = "|cff"..Crayon:GetThresholdHexColor(xpExPercent, 1, 25, 50, 75, 100) .. xpExPercent .. "|r"
+				xpEx = "|cff"..Crayon:GetThresholdHexColor(xpEx, 1, toLevelXP * 0.25, toLevelXP * 0.5, toLevelXP * 0.75, toLevelXP) .. self:FormatNumberTip(xpEx) .. "|r"
+				xpExPercent = "|cff"..Crayon:GetThresholdHexColor(xpExPercent, 1, 25, 50, 75, 100) .. self:FormatNumberTip(xpExPercent) .. "|r"
+			else
+				xpEx = self:FormatNumberTip(xpEx, true)
+				xpExPercent = self:FormatNumberTip(xpExPercent, true)
 			end
 			if GetXPExhaustion() - toLevelXP > 0 then
 				xpExPercent = "100% + "..xpExPercent
@@ -1823,13 +1914,16 @@ function BrokerXPBar:DrawTooltip()
 			tooltip:SetCell( lineNum, 2, string.format("%s (%s%%)", xpEx, xpExPercent), "LEFT" )
 		end
 		if Crayon then
-			currentXP = "|cff"..Crayon:GetThresholdHexColor(currentXP, 1, totalXP * 0.25, totalXP * 0.5, totalXP * 0.75, totalXP) .. currentXP .. "|r"
-			toLevelXP = "|cff"..Crayon:GetThresholdHexColor(toLevelXP, totalXP, totalXP * 0.75, totalXP * 0.5, totalXP * 0.25, 1) .. toLevelXP .. "|r"
+			currentXP = "|cff"..Crayon:GetThresholdHexColor(currentXP, 1, totalXP * 0.25, totalXP * 0.5, totalXP * 0.75, totalXP) .. self:FormatNumberTip(currentXP) .. "|r"
+			toLevelXP = "|cff"..Crayon:GetThresholdHexColor(toLevelXP, totalXP, totalXP * 0.75, totalXP * 0.5, totalXP * 0.25, 1) .. self:FormatNumberTip(toLevelXP) .. "|r"
 			toLevelXPPercent = "|cff"..Crayon:GetThresholdHexColor(toLevelXPPercent, 1, 25, 50, 75, 100) .. toLevelXPPercent .. "|r"
+		else
+			currentXP = self:FormatNumberTip(currentXP, true)
+			toLevelXP = self:FormatNumberTip(toLevelXP, true)
 		end
 		lineNum = tooltip:AddLine( " " )
 		tooltip:SetCell( lineNum, 1, L["Current XP"], "LEFT" )
-		tooltip:SetCell( lineNum, 2, string.format("%s/%s (%s%%)", currentXP, totalXP, toLevelXPPercent), "LEFT" )
+		tooltip:SetCell( lineNum, 2, string.format("%s/%s (%s%%)", currentXP, self:FormatNumberTip(totalXP), toLevelXPPercent), "LEFT" )
 		lineNum = tooltip:AddLine( " " )
 		tooltip:SetCell( lineNum, 1, L["To Level"], "LEFT" )
 		tooltip:SetCell( lineNum, 2, toLevelXP, "LEFT" )
@@ -1846,7 +1940,11 @@ function BrokerXPBar:DrawTooltip()
 		local toLevelRep   = maxRep - currentRep
 		local atLevelRep   = fullLevelRep - toLevelRep
 
-		toLevelRep = "|cff"..Crayon:GetThresholdHexColor(atLevelRep, 1, fullLevelRep * 0.25, fullLevelRep * 0.5, fullLevelRep * 0.75, fullLevelRep) .. toLevelRep .. "|r"
+		if Crayon then
+			toLevelRep = "|cff"..Crayon:GetThresholdHexColor(atLevelRep, 1, fullLevelRep * 0.25, fullLevelRep * 0.5, fullLevelRep * 0.75, fullLevelRep) .. self:FormatNumberTip(toLevelRep) .. "|r"
+		else
+			toLevelRep = self:FormatNumberTip(toLevelRep)
+		end
 
 		lineNum = tooltip:AddLine( " " )
 		tooltip:SetCell( lineNum, 1, L["Faction"], "LEFT" )
@@ -1862,10 +1960,10 @@ function BrokerXPBar:DrawTooltip()
 	end
 
 	if self.db.profile.ShowXP and playerlvl < MAX_LEVEL then
-		BrokerXPBar:ProcessHistory()
+		self:ProcessHistory()
 		
-		local kph  = BrokerXPBar:GetKillsPerHour()
-		local xpph = BrokerXPBar:GetXPPerHour()
+		local kph  = self:GetKillsPerHour()
+		local xpph = self:GetXPPerHour()
 		
 		if kph then
 			kph = string.format("%.0f", kph)
@@ -1896,11 +1994,11 @@ function BrokerXPBar:DrawTooltip()
 		tooltip:AddLine( " " )
 		lineNum = tooltip:AddLine( " " )
 		tooltip:SetCell( lineNum, 1, L["Time to level"], "LEFT" )
-		tooltip:SetCell( lineNum, 2, BrokerXPBar:GetTimeToLevel(), "LEFT" )
+		tooltip:SetCell( lineNum, 2, self:GetTimeToLevel(), "LEFT" )
 		
 		lineNum = tooltip:AddLine( " " )
 		tooltip:SetCell( lineNum, 1, L["Kills to level"], "LEFT" )
-		tooltip:SetCell( lineNum, 2, Red( BrokerXPBar:GetKillsToLevel() ), "LEFT" )		
+		tooltip:SetCell( lineNum, 2, Red( self:GetKillsToLevel() ), "LEFT" )		
 	end
 	
 	if not self.db.profile.HideHint then
@@ -1923,9 +2021,9 @@ function BrokerXPBar:PLAYER_XP_UPDATE()
 	
 	-- check for lvl up
 	if lvlmaxxp < UnitXPMax("player") then
-		bucket = BrokerXPBar:GetWriteBucket()
+		bucket = self:GetWriteBucket()
 	
-		leftxp = lvlmaxxp - (totalxp + startxp)
+		local leftxp = lvlmaxxp - (totalxp + startxp)
 		totalxp = totalxp + leftxp
 		bucket.totalxp = bucket.totalxp + leftxp
 		donelvlxp = totalxp
@@ -1938,7 +2036,7 @@ function BrokerXPBar:PLAYER_XP_UPDATE()
 	local delta    = lvltotal - (totalxp - donelvlxp)
 	
 	-- track activity
-	bucket = BrokerXPBar:GetWriteBucket()
+	bucket = self:GetWriteBucket()
 	
 	totalxp = lvltotal + donelvlxp
 	bucket.totalxp = bucket.totalxp + delta
@@ -1949,7 +2047,7 @@ function BrokerXPBar:PLAYER_XP_UPDATE()
 
 	tainted_xp = true
 	
-	BrokerXPBar:Update()
+	self:Update()
 end
 
 function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, combat_string)
@@ -2027,7 +2125,7 @@ function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, combat_string)
 	end
 	
 	-- track activity	
-	local bucket = BrokerXPBar:GetWriteBucket()
+	local bucket = self:GetWriteBucket()
 	
 	totalkills   = totalkills + kill
 	bucket.kills = bucket.kills + kill
@@ -2049,7 +2147,7 @@ function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, combat_string)
 	tainted_mobs = true
 	
 	if self.db.profile.ShowText == "KTL" then
-		BrokerXPBar:UpdateLabel()
+		self:UpdateLabel()
 	end
 end
 
@@ -2068,14 +2166,14 @@ function BrokerXPBar:COMBAT_TEXT_UPDATE(_, msg_type, faction, amount)
 		return
 	end
 	
-	if (amount < 0 and BrokerXPBar.db.profile.AutoTrackOnLoss) or 
-	   (amount > 0 and BrokerXPBar.db.profile.AutoTrackOnGain) then
+	if (amount < 0 and self.db.profile.AutoTrackOnLoss) or 
+	   (amount > 0 and self.db.profile.AutoTrackOnGain) then
 		if faction then
 			if not lookupNames[faction] then
-				BrokerXPBar:QueryFactions()
+				self:QueryFactions()
 			end
 	
-			BrokerXPBar:SetFaction(lookupNames[faction])
+			self:SetFaction(lookupNames[faction])
 		end
 	end	
 end
@@ -2140,7 +2238,7 @@ function BrokerXPBar:UpdateWatchedFactionIndex()
 			end
 		end
 
-		BrokerXPBar:SetFaction(index)
+		self:SetFaction(index)
 	end
 
 	return faction
@@ -2289,8 +2387,8 @@ function BrokerXPBar:GetXPPerHour()
 end
 
 function BrokerXPBar:ProcessHistory()
-	BrokerXPBar:ProcessXPHistory()
-	BrokerXPBar:ProcessMobHistory()
+	self:ProcessXPHistory()
+	self:ProcessMobHistory()
 end
 
 function BrokerXPBar:ProcessXPHistory()
@@ -2374,6 +2472,15 @@ function BrokerXPBar:ProcessMobHistory()
 	end
 
 	tainted_mobs = false	
+end
+
+-- auxillary functions
+function BrokerXPBar:FormatNumberLabel(number)
+	return format_number(number, self.db.profile.Separators, self.db.profile.Abbreviations, self.db.profile.DecimalPlaces)
+end
+
+function BrokerXPBar:FormatNumberTip(number)
+	return format_number(number, self.db.profile.Separators, self.db.profile.TTAbbreviations, self.db.profile.DecimalPlaces)
 end
 
 -- user functions
@@ -2469,17 +2576,17 @@ function BrokerXPBar:SetFaction(index)
 end
 
 function BrokerXPBar:SetShowText(key)
-	if BrokerXPBar.db.profile.ShowText == "TTL" then
+	if self.db.profile.ShowText == "TTL" then
 		self:CancelTimer(self.timer)
 	end
 
-	BrokerXPBar.db.profile.ShowText = showtext.opt2val[key]
+	self.db.profile.ShowText = showtext.opt2val[key]
 	
-	if BrokerXPBar.db.profile.ShowText == "TTL" then
+	if self.db.profile.ShowText == "TTL" then
 		self.timer = self:ScheduleRepeatingTimer("UpdateLabel", 1)
 	end
 	
-	BrokerXPBar:UpdateLabel()
+	self:UpdateLabel()
 end
 
 function BrokerXPBar:GetColor(id)
@@ -2492,11 +2599,11 @@ function BrokerXPBar:SetColor(id, r, g, b, a, tex, spark)
 	self.db.profile[id].b = b
 	self.db.profile[id].a = a
 	
-	BrokerXPBar:UpdateColor(id, tex, spark)
+	self:UpdateColor(id, tex, spark)
 end
 
 function BrokerXPBar:UpdateColor(id, tex, spark)
-	local r, g, b, a = BrokerXPBar:GetColor(id)
+	local r, g, b, a = self:GetColor(id)
 
 	if tex ~= nil then
 		tex:SetVertexColor(r, g, b, a)

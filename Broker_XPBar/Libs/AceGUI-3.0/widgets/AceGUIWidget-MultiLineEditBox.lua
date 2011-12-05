@@ -1,4 +1,4 @@
-local Type, Version = "MultiLineEditBox", 25
+local Type, Version = "MultiLineEditBox", 24
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -61,7 +61,6 @@ end
 
 local function OnEditFocusLost(self)                                             -- EditBox
 	self:HighlightText(0, 0)
-	self.obj:Fire("OnEditFocusLost")
 end
 
 local function OnEnter(self)                                                     -- EditBox / ScrollFrame
@@ -128,16 +127,6 @@ local function OnVerticalScroll(self, offset)                                   
 	editBox:SetHitRectInsets(0, 0, offset, editBox:GetHeight() - offset - self:GetHeight())
 end
 
-local function OnShowFocus(frame)
-	frame.obj.editBox:SetFocus()
-	frame:SetScript("OnShow", nil)
-end
-
-local function OnEditFocusGained(frame)
-	AceGUI:SetFocus(frame.obj)
-	frame.obj:Fire("OnEditFocusGained")
-end
-
 --[[-----------------------------------------------------------------------------
 Methods
 -------------------------------------------------------------------------------]]
@@ -152,9 +141,7 @@ local methods = {
 		self:SetMaxLetters(0)
 	end,
 
-	["OnRelease"] = function(self)
-		self:ClearFocus()
-	end,
+	-- ["OnRelease"] = nil,
 
 	["SetDisabled"] = function(self, disabled)
 		local editBox = self.editBox
@@ -215,29 +202,7 @@ local methods = {
 			self.button:Show()
 		end
 		Layout(self)
-	end,
-	
-	["ClearFocus"] = function(self)
-		self.editBox:ClearFocus()
-		self.frame:SetScript("OnShow", nil)
-	end,
-
-	["SetFocus"] = function(self)
-		self.editBox:SetFocus()
-		if not self.frame:IsShown() then
-			self.frame:SetScript("OnShow", OnShowFocus)
-		end
-	end,
-	
-	["GetCursorPosition"] = function(self)
-		return self.editBox:GetCursorPosition()
-	end,
-	
-	["SetCursorPosition"] = function(self, ...)
-		return self.editBox:SetCursorPosition(...)
-	end,
-	
-	
+	end
 }
 
 --[[-----------------------------------------------------------------------------
@@ -317,8 +282,6 @@ local function Constructor()
 	editBox:SetScript("OnReceiveDrag", OnReceiveDrag)
 	editBox:SetScript("OnTextChanged", OnTextChanged)
 	editBox:SetScript("OnTextSet", OnTextSet)
-	editBox:SetScript("OnEditFocusGained", OnEditFocusGained)
-	
 
 	scrollFrame:SetScrollChild(editBox)
 
