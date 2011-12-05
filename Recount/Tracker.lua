@@ -4,10 +4,20 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1179 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1188 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
+ 
+-- Pre-4.1 CLEU compat start
+local TOC
+local dummyTable = {}
+local loopprevent
+do
+	-- Because GetBuildInfo() still returns 40000 on the PTR
+	local major, minor, rev = strsplit(".", (GetBuildInfo()))
+	TOC = major*10000 + minor*100
+end
 
 --Data for Recount is tracked within this file
 local Tracking={}
@@ -546,7 +556,11 @@ function Recount:FixCaps(capsstr)
 	end
 end
 
-function Recount:SwingMissed(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, missType, missAmount)
+function Recount:SwingMissed(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, missType, missAmount, missAmountNew)
+
+	if TOC > 40200 then
+		missAmount = missAmountNew
+	end
 	
 	local blocked
 	local absorbed
@@ -563,7 +577,11 @@ function Recount:SwingMissed(timestamp, eventtype, srcGUID, srcName, srcFlags, d
 	Recount:AddDamageData(srcName, dstName, L["Melee"], nil, Recount:FixCaps(missType),nil,nil, srcGUID, srcFlags, dstGUID, dstFlags, spellId, blocked, absorbed)  -- Elsia: Do NOT localize this, it breaks functionality!!! If you need this localized contact me on WowAce or Curse.
 end
 
-function Recount:SpellMissed(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags,spellId, spellName, spellSchool, missType, missAmount)
+function Recount:SpellMissed(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags,spellId, spellName, spellSchool, missType, missAmount, missAmountNew)
+
+	if TOC > 40200 then
+		missAmount = missAmountNew
+	end
 
 	local blocked
 	local absorbed
@@ -967,15 +985,7 @@ Recount.dstRetention = false
 local srcRetention = Recount.srcRetention
 local dstRetention = Recount.dstRetention
 local parsefunc
--- Pre-4.1 CLEU compat start
-local TOC
-local dummyTable = {}
-local loopprevent
-do
-	-- Because GetBuildInfo() still returns 40000 on the PTR
-	local major, minor, rev = strsplit(".", (GetBuildInfo()))
-	TOC = major*10000 + minor*100
-end
+
 -- Pre-4.1 CLEU compat end
 function Recount:CombatLogEvent(_,timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstName, dstFlags, dstRaidFlags, ...)
 	if not Recount.db.profile.GlobalDataCollect or not Recount.CurrentDataCollect then
