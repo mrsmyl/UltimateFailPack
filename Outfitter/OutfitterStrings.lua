@@ -1,4 +1,4 @@
-﻿Outfitter.cVersion = "5.4"
+﻿Outfitter.cVersion = "5.4.1"
 
 Outfitter.cTitle = "Outfitter"
 Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
