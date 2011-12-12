@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.16: minor 4.3 changes
+-- Version 1.5.17: added item level back to inspect window but not character sheet
 ------------------------------------------------------------
 
 
-PawnVersion = 1.516
+PawnVersion = 1.517
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -1272,10 +1272,11 @@ function PawnAddValuesToTooltip(Tooltip, ItemValues, UpgradeInfo, BestItemFor, S
 	end
 end
 
--- Returns the total scale values of all equipped items.  Only counts enchanted values.
+-- Returns the total scale values of all equipped items.  Only counts enchanted values.  Returns nil if item information
+-- is unavailable for any item currently equipped.
 -- Parameters: UnitName
 --		UnitName: The name of the unit from whom the inventory item should be retrieved.  Defaults to "player".
--- Return value: ItemValues, Count, EpicItemLevel
+-- Return value: ItemValues, Count, EpicItemLevel, AverageItemLevel
 -- 		ItemValues: Same as PawnGetAllItemValues, or nil if unsuccessful.
 --		Count: The number of item values calculated.
 --		EpicItemLevel: An average epic-equivalent item level for all equipped items.
@@ -1288,9 +1289,8 @@ function PawnGetInventoryItemValues(UnitName)
 	for Slot = 1, 18 do
 		if Slot ~= 4 then -- Skip slots 0, 4, and 19 (they're not gear).
 			-- REVIEW: The item level of the ranged slot appears to be ignored for Ulduar vehicle scaling, at least for shamans.
+			local ItemID = GetInventoryItemID(UnitName, Slot)
 			local Item = PawnGetItemDataForInventorySlot(Slot, false, UnitName)
-			-- REVIEW: This gives faulty numbers if item information hasn't been downloaded yet.  We should bail if there's
-			-- no item information for a particular slot, but NOT if that slot is simply empty.
 			if Item then
 				ItemValues = PawnGetAllItemValues(Item.Stats, Item.Level, Item.SocketBonusStats)
 				-- Add the item's level to our running total.  If it's a 2H weapon (the off-hand slot is empty), double its value.
@@ -1312,6 +1312,15 @@ function PawnGetInventoryItemValues(UnitName)
 					local ScaleName, Value = Entry[1], Entry[2]
 					PawnAddStatToTable(Total, ScaleName, Value) -- (not actually stats, but the function does what we want)
 				end
+			elseif ItemID then
+				-- If we have an item link but no item data, then the player HAS an item in that slot but we don't have data.
+				-- So we should just bail out now to avoid reporting inaccurate totals.  BUT, we should go ahead and query for
+				-- information on the other items before we do so that we have everything by the next time this is called.
+				while Slot <= 18 do
+					Item = PawnGetItemDataForInventorySlot(Slot, false, UnitName)
+					Slot = Slot + 1
+				end
+				return
 			end
 		end
 	end

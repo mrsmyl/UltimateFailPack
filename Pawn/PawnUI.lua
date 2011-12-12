@@ -136,10 +136,19 @@ end
 function PawnUI_AddInventoryTotalsToTooltip(Tooltip, Unit)
 	-- Get the total stats for all items.
 	local ItemValues, Count, EpicItemLevel, AverageItemLevel = PawnGetInventoryItemValues(Unit)
-	if Count > 0 then
+	if Count and Count > 0 then
 		Tooltip:AddLine(" ")
 		Tooltip:AddLine(PawnUI_InventoryPawnButton_Subheader, 1, 1, 1, 1)
 		PawnAddValuesToTooltip(Tooltip, ItemValues, nil, nil, nil, nil, true)
+		if Unit ~= "player" then
+			-- Add average item level information to the inspect window.  (It's not necessary for the current player's
+			-- character sheet because that's part of the default UI now.)
+			if PawnCommon.AlignNumbersRight then
+				Tooltip:AddDoubleLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine,  AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
+			else
+				Tooltip:AddLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine .. ":  " .. AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
+			end
+		end
 	end
 end
 

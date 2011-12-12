@@ -432,7 +432,6 @@ PawnLocal =
 	-- Tooltip annotations
 	["ItemIDTooltipLine"] = "Item ID",
 	["ItemLevelTooltipLine"] = "Item level",
-	["AverageItemLevelTooltipLine"] = "Epic gear level",
 	["AverageItemLevelIgnoringRarityTooltipLine"] = "Average item level",
 	["BaseValueWord"] = "base", -- 123.45 (98.76 base)
 	["AsteriskTooltipLine"] = "|TInterface\\AddOns\\Pawn\\Textures\\Question:0|t Special effects not included in the value.",

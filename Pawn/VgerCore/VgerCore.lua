@@ -1,16 +1,16 @@
 ﻿-- VgerCore  by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2010 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2011 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
--- Version 1.0.6: support for pre-hooking, StringFindReverse supports two-character find-strings
-local VgerCoreThisVersion = 1.06
+-- Version 1.0.7: IsInBattleground updated for patch 4.3
+local VgerCoreThisVersion = 1.07
 -- 
 -- VgerCore contains functionality that is shared by Vger's mods.
 -- It can be used as a standalone add-on, or embedded within other mods.
 --
 ------------------------------------------------------------
 
-local InitializeOrUpgrade = not (VgerCore and VgerCore.Version and VgerCore.Version >= VgerCoreThisVersion);
+local InitializeOrUpgrade = (not VgerCore) or (not VgerCore.Version) or (VgerCore.Version < VgerCoreThisVersion)
 
 -- If the currently loaded version of VgerCore isn't as good as this one, load the new one.
 if InitializeOrUpgrade then
@@ -231,9 +231,9 @@ end
 
 -- Returns true if the user is in a Battleground, or false if not.
 function VgerCore.IsInBattleground()
-	for Battleground = 1, MAX_BATTLEFIELD_QUEUES do
-		local Status, _, _ = GetBattlefieldStatus(Battleground)
-		if Status == "active" then return true end
+	local Battleground
+	for Battleground = 1, GetMaxBattlefieldID() do
+		if GetBattlefieldStatus(Battleground) == "active" then return true end
 	end
 	return false
 end
