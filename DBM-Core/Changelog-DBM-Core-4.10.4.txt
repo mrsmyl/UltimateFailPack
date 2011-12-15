@@ -1,0 +1,87 @@
+tag 4.10.4
+c08fb337e7741769d5dea7111431f9f7feef8ceb
+subversion <svn@deadlybossmods.com>
+2011-12-07 00:37:59 +0100
+
+Tagging as 4.10.4 release
+
+
+--------------------
+
+svn:
+	- increment version number for 4.10.4 release
+subversion:
+	- tandanu via svn r6840: increment version number to 4.10.5 alpha
+	- tandanu via svn r6839: tag 4.10.4-r6839 release
+	- Azael via svn r6838: zhtw update
+	- Snamor via svn r6837: esES update
+	- Omega via svn r6836: Heroic morchok tweaks from videos
+	- Omega via svn r6835: disable madness berserk in LFR, lets assume like other bosses, that LFR doesn't have berserk timers, until we see otherwise
+	- nbluewiz via svn r6834: oops, my mistake.
+	- Omega via svn r6833: Defaults tweak, @ bluewiz, when does the berserk start? timer is added but not started
+	- nbluewiz via svn r6832: oops, not removed parent code.
+	- nbluewiz via svn r6831: # Spine of Deathwing : maybe recent changes intend to Searing Plasma frame, not Fiery Grip, I think.
+	- nbluewiz via svn r6830: koKR update
+	- nbluewiz via svn r6829: # Madness of Deathwing : added berserk timer. / updated Shrapnel spellids. / fix lua error caused by specWarnTerror not defined. / prevent phase2 warning and timer shows double time. # koKR update
+	- Omega via svn r6828: add berserk timer to blackhorn
+	- tandanu via svn r6827: well, I guess enabling the option to actually show the frame would be good...
+	- tandanu via svn r6826: fix and enable plasma target health frame
+	- tandanu via svn r6825: HealthFrame: RemoveBoss(id) now accepts the string as id when removing bars that use a custom update function. The reason for this change is that you probably don't have access (or at least not without ugly code) to the specific closure that was used when adding the boss at the point where you will remove it. The text, however, is likely to be available as this is often used for something like "Damage Absorbing Effect Foo on Player/Boss Bar"
+	- arta via svn r6824: Hagara drycoded heroic stuff:  Frostflake target + icon. Storm Pillars warning + near warning (if he does target someone)
+	- arta via svn r6823: WIP:  Shield frame for Spine of Deathwing
+	- nbluewiz via svn r6822: # Hagara : added Ice Wave spread bar (experimental)
+	- nbluewiz via svn r6821: # Hagara : timer adjust. fix bug.
+	- nbluewiz via svn r6820: koKR update
+	- nbluewiz via svn r6819: # Ultraxion : added healer buff stuff.
+	- nbluewiz via svn r6818: # timer and fel storm warning fix
+	- Omega via svn r6817: lot of good it does without event registered, fixed
+	- Omega via svn r6816: add in a test bar for ultraxion trash, thinking it's timed somehow as i've seen various drake kill amounts, one 10 man guild only killed 8 before it ended, another killed and we killed 16 on 25 man. the variation indicates it's on an internal timer maybe? so we'll see if it's right
+	- nbluewiz via svn r6815: koKR update
+	- Omega via svn r6814: make use of some range frames
+	- Omega via svn r6813: enable the specWarnFragments special awrning, i did verify that's the trigger for the fragments being summoned
+	- Samira via svn r6812: fix Typo
+	- DiabloHu via svn r6811: zhCN update
+	- arta via svn r6810: Timer adjustments and added Stardust warnings
+	- Snamor via svn r6809: esES update
+	- Omega via svn r6808: oops no idea why i registered that event, that's handled by core :)
+	- Omega via svn r6807: Improve accuracy of zonozz mod by account for fact players dying early could screw up old method, so using a new method for phases. Madness of deathwing kill trigger worked, as long as you didn't kill elemental terrors, but they sometimes fire engage events too so screw the hacks, it'll just have to be a localized death trigger.
+	- Omega via svn r6806: disable an invalid timer, to be fixed later
+	- Omega via svn r6805: add some more notes
+	- Omega via svn r6804: do not make changes if you don't know what the hell you are doing, there is a REASON that was using spellid and not spell name
+	- Omega via svn r6803: fix morchok timers for vortex so they are not fail, remove buff active timer, that's useless
+	- nbluewiz via svn r6802: koKR update
+	- nbluewiz via svn r6801: # Hagara : added aoe and feedback stuff.
+	- Omega via svn r6800: more digging, found problem with deathwing kill trigger, should be fine now.
+	- Omega via svn r6799: change option text too
+	- Omega via svn r6798: don't remove stuff that was requested by 99% of the people on PTR< people wanted that timer more then even the bosses actual incombat abiliites, just reword it. I haven't seen a single guild not talk to the NPC when they are ready to pull, and they want to know when to pre pot
+	- nbluewiz via svn r6797: # Madness of Deathwing : Added Shrapnel warnings.
+	- nbluewiz via svn r6796: # Hagara : tweak Ice Lance timer / fix pre waring for Frost Tomb # Ultraxion : removed combat start timer (Ultraxion not combat start automatically) # Madness of Deathwing : removed combat end hack. (invalid works) / fixed impale warning bug. # koKR update
+	- Snamor via svn r6795: esES update
+	- arta via svn r6794: Adjusted timers and added some extra stuff :)
+	- Swix via svn r6793: ruRU update
+	- Omega via svn r6792: disable grip Cd for now, it's too inaccurate, 16-25 second varionations from a single mob.
+	- Omega via svn r6791: Fix fel quickening on unknown message
+	- Omega via svn r6790: enforce new combat detect for those 3 mods by setting minsync requirements, so they don't accept bad pull syncs
+	- Omega via svn r6789: Add in additional checks for boss2, that'll work as both a filter for heroic vs normal mode, AND as a filter for the first casts of fight before he's spawned.
+	- Omega via svn r6788: Drycoded preps for heroic Morchok
+	- nbluewiz via svn r6787: fix error
+	- nbluewiz via svn r6786: # Blackhorn : Set min combattime to prevent combat ends before combat actually starts. # koKR update
+	- Omega via svn r6785: Oozes reach is not accurate. they are slowable, which changes everything. this timer cannot be used with any level of accuracy as a baseline for their timing when diff groups may or many not slow em, or have variable up times on said slows.
+	- Omega via svn r6784: Major madless of deathwing updates. *Support for impale warnings and timers (normal mode at least, i'll need to re-evaluate it on heroic with the mechanic diffs. *Support for phase 2 detection, and add summons in phase 2. *Hopefully working kill detection.
+	- arta via svn r6783: typo
+	- arta via svn r6782: Adds warning for Azshara (experimental)
+	- arta via svn r6781: lets commit it fully instead of half
+	- arta via svn r6780: Arcurion / Asira Dawnslayer / Perotharn:  New combat detection as it failed before (LOCALIZATION REQUIRED!!) Mannoroth: Removed Fel Blade warning (doesn't affect the party)
+	- arta via svn r6779: fixed Fel Flames spell ID
+	- Omega via svn r6778: Account for firstAspect rule which seems new (did not see this behavior on PTR) Based on logs, all abilities come 15 seconds earlier on first assaulted dragon aspect only. Changed pull trigger for spine to yell, so please localizers find your yell, because otherwise mod won't work (ie registereventsincombat stuff)
+	- arta via svn r6777: Timer updates. Mark of Silence is now applied every 8seconds (maybe better to remove?)
+	- arta via svn r6776: double warning, removed 1 and fixed the other (spell_cast_success = 0.5sec faster)
+	- nbluewiz via svn r6775: # Hagara : changed Ice Lance timer. (Ice Lance is not debuff.)
+	- nbluewiz via svn r6774: # Add# Added Mannoroth mod.
+	- nbluewiz via svn r6773: # Added Murozond mod.
+	- nbluewiz via svn r6772: # Zonozz : changed Black Blook warning to special warning (i think it's important for all players) # Yorsahj : added Oozes attackable and reaches timer. # Hagara : improved Ice Lance warning.
+	- arta via svn r6771: unknown in 8sec :)
+	- Omega via svn r6770: use 6 grip icons not 3, for two grips at same time.
+	- Omega via svn r6769: More spellids, and adjust blood timer by 1 sec, you're right it is shorter they changed it from PTR< but it's 15sec plus 2 second cast, verified in my logs, 17 seconds.
+	- nbluewiz via svn r6768: #Hagara: added some spell id. #Morchok: timer tweak (confirmed in lfr25 difficulty.)
+	- tandanu via svn r6767: revert last change by omega; it's too late for that, sorry :(
