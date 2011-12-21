@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.17: added item level back to inspect window but not character sheet
+-- Version 1.5.18: fixed a bug in average item level calculation for Titan's Grip fury warriors.
 ------------------------------------------------------------
 
 
-PawnVersion = 1.517
+PawnVersion = 1.518
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -210,6 +210,7 @@ function PawnInitialize()
 	hooksecurefunc(GameTooltip, "SetLootItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetLootItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetLootRollItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetLootRollItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetMerchantItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetMerchantItem", ...) end)
+	hooksecurefunc(GameTooltip, "SetMissingLootItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetMissingLootItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetQuestItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetQuestItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetQuestLogItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetQuestLogItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetSendMailItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetSendMailItem", ...) end)
@@ -1293,12 +1294,14 @@ function PawnGetInventoryItemValues(UnitName)
 			local Item = PawnGetItemDataForInventorySlot(Slot, false, UnitName)
 			if Item then
 				ItemValues = PawnGetAllItemValues(Item.Stats, Item.Level, Item.SocketBonusStats)
-				-- Add the item's level to our running total.  If it's a 2H weapon (the off-hand slot is empty), double its value.
+				-- Add the item's level to our running total.  If it's a 2H weapon AND the off-hand slot is empty, double its value.
+				-- (We can't assume that the off-hand is empty just because the main hand slot contains a 2H weapon... stupid
+				-- Titan's Grip warriors.)
 				local ThisItemLevel = PawnGetEpicEquivalentItemLevel(Item.Level, Item.Rarity)
 				local ThisItemLevelIgnoringRarity = Item.Level
 				if Slot == 16 then
 					local _, _, _, _, _, _, _, _, InvType = GetItemInfo(GetInventoryItemLink(UnitName, Slot))
-					if InvType == "INVTYPE_2HWEAPON" then
+					if InvType == "INVTYPE_2HWEAPON" and GetInventoryItemID(UnitName, 17) == nil then
 						ThisItemLevel = ThisItemLevel * 2
 						ThisItemLevelIgnoringRarity = ThisItemLevelIgnoringRarity * 2
 					end
