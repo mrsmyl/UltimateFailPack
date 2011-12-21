@@ -224,7 +224,9 @@ local ACHID_ZONE_MISC = {
 	["Hillsbrad Foothills"] = "4827:13",	-- "Surveying the Damage"
 	["Loch Modan"] = "4827:12",		-- "Surveying the Damage"
 	["Silverpine Forest"] = "4827:10",	-- "Surveying the Damage"
-	["Tol Barad"] = { 4874, IsAlliance and 5489 or 5490 },	-- "Breaking out of Tol Barad", "Master of Tol Barad"
+	["Tol Barad"] = { 4874, IsAlliance and 5489 or 5490,	-- "Breaking out of Tol Barad", "Master of Tol Barad"
+			  IsAlliance and 5718 or 5719 },	-- "Just Another Day in Tol Barad"
+	["Tol Barad Peninsula"] = IsAlliance and 5718 or 5719,	-- "Just Another Day in Tol Barad"
 	["Twilight Highlands"] = { 5451, 4960,	-- "Consumed by Nightmare", "Round Three. Fight!",
 				   "4958:3" },	-- "The First Rule of Ring of Blood is You Don't Talk About Ring of Blood"
 	["Westfall"] = "4827:11",	-- "Surveying the Damage"
@@ -260,6 +262,10 @@ local ACHID_ZONE_MISC = {
 		{ 938, 961, 962, 952 },	-- "Savior of the Oracles", "Mercenary of Sholazar"
 	["Zul'Drak"] = { "1576:2", "1596:2" },	-- "Of Blood and Anguish", "Guru of Drakuru"
 	["Wintergrasp"] = { 2199, 1717, 1751, 1755, 1727, 1723 },
+-- Darkmoon Faire
+	["Darkmoon Island"] = { 6020, 6021, 6022, 6023, 6026, 6027, 6028, 6029, IsAlliance and 6030 or 6031, 6032, 6025 },
+	["Darkmoon Faire"] = { 6020, 6021, 6022, 6023, 6026, 6027, 6028, 6029, IsAlliance and 6030 or 6031, 6032, 6025 },
+	-- !! not 100% certain which is needed; may be both; test when the faire's available
 -- Other (Cataclysm)
 	["Deepholm"] = { 5445, 5446, 5447, 5449 },	-- "Fungalophobia", "The Glop Family Line",
 							-- "My Very Own Broodmother", "Rock Lover"
@@ -398,17 +404,23 @@ local ACHID_INSTANCES = {
 ACHID_INSTANCES["Eye of the Storm"] = { 1171, 587, 1258, 211 }
 ACHID_INSTANCES["The Battle for Gilneas"] = 5258
 if (IsAlliance) then
-	ACHID_INSTANCES["Alterac Valley"] = { 1167, 907 }
+	ACHID_INSTANCES["Alterac Valley"] = { 1167, 907, 226 }
 	ACHID_INSTANCES["Arathi Basin"] = { 1169, 907 }
 	ACHID_INSTANCES["Warsong Gulch"] = { 1172, 1259, 907 }
 	ACHID_INSTANCES["Strand of the Ancients"] = 2194
 	ACHID_INSTANCES["Isle of Conquest"] = { 3857, 3845, 3846 }
+	ACHID_INSTANCES["Twin Peaks"] = 5223  -- "Master of Twin Peaks"
+	ACHID_INSTANCES["Wildhammer Stronghold"] = 5223  -- Also part of Twin Peaks
+	ACHID_INSTANCES["Dragonmaw Stronghold"] = 5223  -- Also part of Twin Peaks
 else
-	ACHID_INSTANCES["Alterac Valley"] = { 1168, 714 }
+	ACHID_INSTANCES["Alterac Valley"] = { 1168, 714, 226 }
 	ACHID_INSTANCES["Arathi Basin"] = { 1170, 714 }
 	ACHID_INSTANCES["Warsong Gulch"] = { 1173, 1259, 714 }
 	ACHID_INSTANCES["Strand of the Ancients"] = 2195
 	ACHID_INSTANCES["Isle of Conquest"] = { 3957, 3845, 4176 }
+	ACHID_INSTANCES["Twin Peaks"] = 5259  -- "Master of Twin Peaks"
+	ACHID_INSTANCES["Wildhammer Stronghold"] = 5259  -- Also part of Twin Peaks
+	ACHID_INSTANCES["Dragonmaw Stronghold"] = 5259  -- Also part of Twin Peaks
 end
 -- For all battlegrounds:
 local ACHID_BATTLEGROUNDS = { 238, 245, IsAlliance and 246 or 1005, 247, 229, 227, 231, 1785 }

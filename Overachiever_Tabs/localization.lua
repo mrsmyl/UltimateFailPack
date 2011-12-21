@@ -184,7 +184,7 @@ L["WATCH_DELETE"] = "Supprimer"
 L["WATCH_DISPLAYEDLIST"] = "Liste Affichée :"
 L["WATCH_EMPTY"] = "Votre liste de suivi est vide. Vous pouvez faire Alt+click sur un haut fait dans un autre onglet ou sur un lien de haut fait dans la fenêtre de discussion pour l'afficher."
 L["WATCH_EMPTY_SHORT"] = "Vider la Liste"
--- L["WATCH_ERR_INVALIDID"] = ""
+L["WATCH_ERR_INVALIDID"] = "\"%s\" supprimé de la liste: Le haut-fait avec cet ID est introuvable."
 L["WATCH_HELP"] = "Vous pouvez créer votre liste de suivi avec un |cffffffffalt+click|r sur un haut fait dans un autre onglet ou sur un lien de haut fait dans la fenêtre de discussion. Avec un |cffffffffAlt+click|r sur un haut fait affiché ici, vous arrêtez le suivi."
 L["WATCH_LIST_GLOBAL"] = "Global"
 L["WATCH_LIST_PERCHAR"] = "Spécifique-Personnage"
@@ -304,12 +304,12 @@ elseif (locale == "zhCN") then  -- Simplified Chinese
 L["SEARCH_ANY"] = "以上所有："
 L["SEARCH_CRITERIA"] = "条件："
 L["SEARCH_DESC"] = "描述："
-L["SEARCH_FULLLIST"] = "包含隐藏|n成就"
-L["SEARCH_FULLLIST_TIP"] = "包括没有在默认列表中显示的成就，例如阵营专属成就、‘光辉事迹’成就等。" -- Needs review
-L["SEARCH_HELP"] = "使用这个标签来搜索成就。你也可以通过斜杠命令用名字或ID来搜索成就。详细请参见Overachiever的readme.txt文件。" -- Needs review
+L["SEARCH_FULLLIST"] = "包含隐藏成就"
+L["SEARCH_FULLLIST_TIP"] = "包括没有在默认列表中显示的成就，例如阵营专属成就、‘光辉事迹’成就等。"
+L["SEARCH_HELP"] = "使用这个标签来搜索成就。你也可以通过斜杠命令用名字或ID来搜索成就。详细请参见Overachiever的readme.txt文件。"
 L["SEARCH_NAME"] = "名称："
 L["SEARCH_RESET"] = "重置"
-L["SEARCH_RESULTS"] = "找到%s|4achievement：个成就；。"
+L["SEARCH_RESULTS"] = "找到 %s 个成就。"
 L["SEARCH_REWARD"] = "奖励："
 L["SEARCH_SUBMIT"] = "搜索"
 L["SEARCH_TAB"] = "搜索"
@@ -317,40 +317,40 @@ L["SEARCH_TYPE"] = "类型："
 L["SEARCH_TYPE_ALL"] = "全部"
 L["SEARCH_TYPE_GUILD"] = "公会"
 L["SEARCH_TYPE_INDIV"] = "个人"
-L["SUGGESTIONS_EMPTY"] = "Overachiever 现在没有任何建议。"
-L["SUGGESTIONS_EMPTY_TRADESKILL"] = "%s：Overachiever 当前不能提出建议。"
-L["SUGGESTIONS_HELP"] = "根据你的当前位置建议追踪成就。" -- Needs review
-L["SUGGESTIONS_LOCATION"] = "位置："
--- L["SUGGESTIONS_LOCATION_NOSUBZONE"] = ""
+L["SUGGESTIONS_EMPTY"] = "Overachiever当前没有建议。"
+L["SUGGESTIONS_EMPTY_TRADESKILL"] = "%s：Overachiever当前没有建议。"
+L["SUGGESTIONS_HELP"] = "根据你的当前区域建议追踪成就。"
+L["SUGGESTIONS_LOCATION"] = "区域："
+L["SUGGESTIONS_LOCATION_NOSUBZONE"] = "（未指定）"
 L["SUGGESTIONS_LOCATION_SUBZONE"] = "子区域："
--- L["SUGGESTIONS_LOCATION_TIP"] = ""
--- L["SUGGESTIONS_LOCATION_TIP2"] = ""
+L["SUGGESTIONS_LOCATION_TIP"] = "无视区域/副本位置"
+L["SUGGESTIONS_LOCATION_TIP2"] = "在字段中输入一个完整的有效区域或副本名称，以取得提示。若字段保持空白，则会根据你目前的所在位置。当光标在字段中时，按下|cffffffffTab|r键可根据已输入的内容依序产生有效的完整位置名称。按下|cffffffffShift+Tab|r则产生前一个名称。如果光标在字段的最左侧，它将依序产生所有有效位置名称。"
 L["SUGGESTIONS_REFRESH"] = "刷新"
-L["SUGGESTIONS_RESULTS"] = "找到 %d |4成就:成就;." -- Needs review
--- L["SUGGESTIONS_RESULTS_TRADESKILL"] = ""
+L["SUGGESTIONS_RESULTS"] = "找到 %d 个建议。"
+L["SUGGESTIONS_RESULTS_TRADESKILL"] = "%s：找到 %d 个建议。"
 L["SUGGESTIONS_TAB"] = "建议"
-L["TAB_HELP"] = "|cffffffffCtrl-点击|r一个成就跳转到它在标准成就界面的位置。|n|n |cffffffff蓝色背景|r表示此成就是你还没有完成前续内容的系列成就。|n|n |cffffffff红色背景|r表示此成就无法在当前人物的标准成就界面中找到，因为这是阵营专属成就，或是无法取得的‘光辉事迹’成就。|n|n  |cffffffff绿色背景|r 是提醒此成就最近在鼠标提示中显示过。" -- Needs review
-L["TAB_SORT"] = "按……排序：" -- Needs review
-L["TAB_SORT_COMPLETE"] = "完成时间" -- Needs review
-L["TAB_SORT_ID"] = "ID" -- Needs review
-L["TAB_SORT_NAME"] = "名称" -- Needs review
-L["TAB_SORT_POINTS"] = "成就点数" -- Needs review
+L["TAB_HELP"] = "|cffffffffCtrl-点击|r一个成就跳转到它在标准成就界面的位置。|n|n |cffffffff蓝色背景|r表示此成就是你还没有完成前续内容的系列成就。|n|n |cffffffff红色背景|r表示此成就无法在当前人物的标准成就界面中找到，因为这是阵营专属成就，或是无法取得的‘光辉事迹’成就。|n|n  |cffffffff绿色背景|r 是提醒此成就最近在鼠标提示中显示过。"
+L["TAB_SORT"] = "排序："
+L["TAB_SORT_COMPLETE"] = "完成时间"
+L["TAB_SORT_ID"] = "成就ID"
+L["TAB_SORT_NAME"] = "名称"
+L["TAB_SORT_POINTS"] = "成就点数"
 L["WATCH_CLEAR"] = "清除"
-L["WATCH_COPY"] = "复制从："
--- L["WATCH_COPY_TIP"] = ""
+L["WATCH_COPY"] = "复制"
+L["WATCH_COPY_TIP"] = "当启用时，假如你 |cffffffffshift+alt+点击|r 一个标签上的成就，将会新增至指定的监视列表中。"
 L["WATCH_DEFAULTLIST"] = "默认列表："
--- L["WATCH_DEFAULTLIST_TIP"] = ""
+L["WATCH_DEFAULTLIST_TIP"] = "The specified list will be the Displayed List at the beginning of each session."
 L["WATCH_DELETE"] = "删除"
 L["WATCH_DISPLAYEDLIST"] = "已显示列表："
--- L["WATCH_EMPTY"] = ""
+L["WATCH_EMPTY"] = "你的监视列表是空的。在成就标签上或是成就链接上 Alt+点击 来监视。"
 L["WATCH_EMPTY_SHORT"] = "清空列表"
--- L["WATCH_ERR_INVALIDID"] = ""
--- L["WATCH_HELP"] = ""
+L["WATCH_ERR_INVALIDID"] = "已将\"%s\"从监视列表中移除：找不到这个成就。"
+L["WATCH_HELP"] = "在其他成就标签上或是成就链接使用 |cffffffffalt+点击|r来新建你的监视列表. |cffffffffAlt+点击|r 将停止监视. "
 L["WATCH_LIST_GLOBAL"] = "全局"
--- L["WATCH_LIST_PERCHAR"] = ""
-L["WATCH_NEW"] = "新"
--- L["WATCH_POPUP_CLEARLIST"] = ""
--- L["WATCH_POPUP_DELETELIST"] = ""
+L["WATCH_LIST_PERCHAR"] = "字符特殊"
+L["WATCH_NEW"] = "新增"
+L["WATCH_POPUP_CLEARLIST"] = "确定要清除这个成就监视列表的内容么？"
+L["WATCH_POPUP_DELETELIST"] = "确定要删除这个成就监视列表么？"
 L["WATCH_POPUP_NEWLIST"] = "输入一个新的成就监视列表名称："
 L["WATCH_TAB"] = "监视"
 L.SUBZONES = {
@@ -709,6 +709,111 @@ L.SUBZONES = {
 			end
 		end
 	end
+
+elseif (locale == "ptBR") then  -- Brazilian Portuguese
+L["SEARCH_ANY"] = [=[Qualquer um abaixo:
+Abas]=]
+-- L["SEARCH_CRITERIA"] = ""
+L["SEARCH_DESC"] = [=[Descrição:
+Abas]=]
+-- L["SEARCH_FULLLIST"] = ""
+L["SEARCH_FULLLIST_TIP"] = [=[Inclui na busca conquistas que não estão normalmente listadas na interface padrão do usuário, como aqueles exclusivos à facção oposta, conquistas indisponíveis, etc.
+Abas]=]
+L["SEARCH_HELP"] = "Use essa aba para pesquisar conquistas. Voce pode também pesquisa-los por nome ou ID usando a barra de comandos. Veja o arquivo readme.txt do Overachiever para mais detalhes." -- Needs review
+L["SEARCH_NAME"] = [=[Nome:
+Abas]=]
+L["SEARCH_RESET"] = [=[Reiniciar
+Abas]=]
+L["SEARCH_RESULTS"] = "Achado %s |4achievement:achievements;." -- Needs review
+L["SEARCH_REWARD"] = [=[Recompensa:
+Abas]=]
+L["SEARCH_SUBMIT"] = [=[Pesquisar
+Abas]=]
+L["SEARCH_TAB"] = [=[Pesquisar
+Abas]=]
+L["SEARCH_TYPE"] = [=[Tipo:
+Abas]=]
+L["SEARCH_TYPE_ALL"] = [=[Todos
+Abas]=]
+L["SEARCH_TYPE_GUILD"] = [=[Guilda
+Abas]=]
+L["SEARCH_TYPE_INDIV"] = [=[Pessoal
+Abas]=]
+L["SUGGESTIONS_EMPTY"] = "Overachiever não possui sugestões para você nesse momento."
+L["SUGGESTIONS_EMPTY_TRADESKILL"] = [=[%s: Overachiever não tem sugestão para você neste momento.
+Abas]=] -- Needs review
+L["SUGGESTIONS_HELP"] = "As Conquistas sugeridas estão listadas aqui de acordo com a sua localização. Mas também estão listadas as conquistas que você procurou com o aplicativo nos ultimos 2 minutos ou que o cronômetro começou recentemente."
+L["SUGGESTIONS_LOCATION"] = [=[Localização:
+Abas]=]
+L["SUGGESTIONS_LOCATION_NOSUBZONE"] = [=[(não especificado)
+Abas]=]
+L["SUGGESTIONS_LOCATION_SUBZONE"] = [=[Subzona:
+Abas]=]
+-- L["SUGGESTIONS_LOCATION_TIP"] = ""
+-- L["SUGGESTIONS_LOCATION_TIP2"] = ""
+L["SUGGESTIONS_REFRESH"] = [=[Atualizar
+Abas]=]
+-- L["SUGGESTIONS_RESULTS"] = ""
+L["SUGGESTIONS_RESULTS_TRADESKILL"] = [=[%s: %d |4sugestão:sugestões; Encontrada.
+Abas]=] -- Needs review
+L["SUGGESTIONS_TAB"] = [=[Sugestões
+Abas]=]
+-- L["TAB_HELP"] = ""
+L["TAB_SORT"] = "Classificar por:" -- Needs review
+L["TAB_SORT_COMPLETE"] = "Data completada" -- Needs review
+-- L["TAB_SORT_ID"] = ""
+-- L["TAB_SORT_NAME"] = ""
+-- L["TAB_SORT_POINTS"] = ""
+-- L["WATCH_CLEAR"] = ""
+L["WATCH_COPY"] = [=[Copiar Para:
+Abas]=]
+-- L["WATCH_COPY_TIP"] = ""
+L["WATCH_DEFAULTLIST"] = [=[Lista Padrão:
+Abas]=]
+-- L["WATCH_DEFAULTLIST_TIP"] = ""
+L["WATCH_DELETE"] = [=[Deletar 
+Abas]=]
+-- L["WATCH_DISPLAYEDLIST"] = ""
+-- L["WATCH_EMPTY"] = ""
+-- L["WATCH_EMPTY_SHORT"] = ""
+-- L["WATCH_ERR_INVALIDID"] = ""
+-- L["WATCH_HELP"] = ""
+L["WATCH_LIST_GLOBAL"] = [=[Global 
+Abas]=]
+-- L["WATCH_LIST_PERCHAR"] = ""
+L["WATCH_NEW"] = [=[Novo 
+Abas]=]
+-- L["WATCH_POPUP_CLEARLIST"] = ""
+L["WATCH_POPUP_DELETELIST"] = [=[Tem certeza de que deseja excluir permanentemente a lista de observação de conquistas atual
+Abas]=]
+-- L["WATCH_POPUP_NEWLIST"] = ""
+-- L["WATCH_TAB"] = ""
+L.SUBZONES = {
+	["Argent Pavilion"] = "Abas → SUBZONAS",
+	["Argent Tournament Grounds"] = "Abas → SUBZONAS",
+	["Formation Grounds"] = "Abas → SUBZONAS",
+	["Razorscale's Aerie"] = "Abas → SUBZONAS",
+	["Silver Covenant Pavilion"] = "Abas → SUBZONAS",
+	["Sunreaver Pavilion"] = "Abas → SUBZONAS",
+	["The Alliance Valiants' Ring"] = "Abas → SUBZONAS",
+	["The Argent Valiants' Ring"] = "Abas → SUBZONAS",
+	["The Aspirants' Ring"] = "Abas → SUBZONAS",
+	["The Assembly of Iron"] = "Abas → SUBZONAS",
+	["The Celestial Planetarium"] = "Abas → SUBZONAS",
+	["The Clash of Thunder"] = "Abas → SUBZONAS",
+	["The Colossal Forge"] = "Abas → SUBZONAS",
+	["The Conservatory of Life"] = "Abas → SUBZONAS",
+	["The Descent into Madness"] = "Abas → SUBZONAS",
+	["The Halls of Winter"] = "Abas → SUBZONAS",
+	["The Horde Valiants' Ring"] = "Abas → SUBZONAS",
+	["The Observation Ring"] = "Abas → SUBZONAS",
+	["The Prison of Yogg-Saron"] = "Abas → SUBZONAS",
+	["The Ring of Champions"] = "Abas→SUBZONAS",
+	["The Scrapyard"] = "Abas → SUBZONAS",
+	["The Shattered Walkway"] = "Abas → SUBZONAS",
+	["The Spark of Imagination"] = "Abas → SUBZONAS",
+}
+
 
 end
 if (not L.SUBZONES) then
