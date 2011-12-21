@@ -1,16 +1,17 @@
 --[[
 	playerSelector.lua
-		A player selector widget
+		A player selector button
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-local PlayerSelector = Bagnon.Classy:New('Button')
-Bagnon.PlayerSelector = PlayerSelector
-
+local PlayerSelector = Bagnon:NewClass('PlayerSelector', 'Button')
+local ItemCache = LibStub('LibItemCache-1.0')
 
 local SIZE = 20
-local NORMAL_TEXTURE_SIZE = 64 * (SIZE/36)
+local TEXTURE_SIZE = 64 * (SIZE/36)
+local ALTERNATIVE_ICONS = [[Interface\CharacterFrame\TEMPORARYPORTRAIT-%s-%s]]
+local ICONS = [[Interface\Icons\Achievement_Character_%s_%s]]
 
 
 --[[ Constructor ]]--
@@ -23,8 +24,7 @@ function PlayerSelector:New(frameID, parent)
 
 	local nt = b:CreateTexture()
 	nt:SetTexture([[Interface\Buttons\UI-Quickslot2]])
-	nt:SetWidth(NORMAL_TEXTURE_SIZE)
-	nt:SetHeight(NORMAL_TEXTURE_SIZE)
+	nt:SetSize(TEXTURE_SIZE, TEXTURE_SIZE)
 	nt:SetPoint('CENTER', 0, -1)
 	b:SetNormalTexture(nt)
 
@@ -40,7 +40,6 @@ function PlayerSelector:New(frameID, parent)
 
 	local icon = b:CreateTexture()
 	icon:SetAllPoints(b)
-	icon:SetTexture(self:GetPlayerIcon())
 	b.icon = icon
 
 	b:SetScript('OnClick', b.OnClick)
@@ -56,7 +55,7 @@ end
 --[[ Frame Events ]]--
 
 function PlayerSelector:OnShow()
-	self.icon:SetTexture(self:GetPlayerIcon())
+	self:UpdateIcon()
 end
 
 function PlayerSelector:OnClick()
@@ -82,9 +81,28 @@ end
 --[[ Update Methods ]]--
 
 function PlayerSelector:ShowPlayerSelector()
-	if BagnonDB then
-		BagnonDB:SetDropdownFrame(self)
-		BagnonDB:ToggleDropdown(self, -4, -2)
+	if ItemCache:HasCache() then
+		Bagnon:TogglePlayerDropdown(self, -4, -2)
+	end
+end
+
+function PlayerSelector:UpdateIcon()
+	local _, race, sex = ItemCache:GetPlayerInfo(self:GetPlayer())
+  if not race then
+    return
+  else
+    sex = sex == 3 and 'Female' or 'Male'
+  end
+
+	if race ~= 'Worgen' and race ~= 'Goblin' then
+		if race == 'Scourge' then
+			race = 'Undead'
+		end
+
+		self.icon:SetTexture( ICONS:format(race, sex) )
+	else
+		-- temporary portraits until the holiday achievements bring the cata races in
+		self.icon:SetTexture( ALTERNATIVE_ICONS:format(sex, race) )
 	end
 end
 
@@ -111,23 +129,9 @@ end
 
 function PlayerSelector:SetPlayer(player)
 	self:GetSettings():SetPlayerFilter(player)
+	self:UpdateIcon()
 end
 
 function PlayerSelector:GetPlayer()
 	return self:GetSettings():GetPlayerFilter()
-end
-
-function PlayerSelector:GetPlayerIcon()
-	local race, enRace = UnitRace('player')
-
-	--forsaken hack
-	--if enRace == 'Scourge' then
-		--enRace = 'Undead'
-	--end
-
-
-	local sex = UnitSex('player') == 3 and 'Female' or 'Male'
-	return string.format([[Interface\CharacterFrame\TEMPORARYPORTRAIT-%s-%s]], sex, enRace)
--- switching to temporary portraits until the next holiday achievements that bring worgen ones in
---	return string.format([[Interface\Icons\Achievement_Character_%s_%s]], enRace, sex)
 end

@@ -5,12 +5,11 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-local BagToggle = Bagnon.Classy:New('CheckButton')
-Bagnon.BagToggle = BagToggle
-
+local BagToggle = Bagnon:NewClass('BagToggle', 'CheckButton')
 
 local SIZE = 20
 local NORMAL_TEXTURE_SIZE = 64 * (SIZE/36)
+
 
 --[[ Constructor ]]--
 
@@ -80,11 +79,11 @@ function BagToggle:OnClick(button)
 	if button == 'LeftButton' then
 		self:GetSettings():ToggleBagFrame()
 	else
-		if self:GetFrameID() == 'inventory' then
-			Bagnon:ToggleFrame('bank')
-		else
-			Bagnon:ToggleFrame('inventory')
-		end
+		local frame = self:GetFrameID() == 'inventory' and 'bank' or 'inventory'
+		local frameSettings = Bagnon.FrameSettings:Get(frame)
+		
+		frameSettings:SetPlayerFilter(self:GetSettings():GetPlayerFilter())
+		Bagnon:ToggleFrame(frame)
 	end
 end
 

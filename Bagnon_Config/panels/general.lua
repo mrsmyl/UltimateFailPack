@@ -97,6 +97,12 @@ function GeneralOptions:AddWidgets()
 	
 	local enableFlashFind = self:CreateFlashFindCheckbox()
 	enableFlashFind:SetPoint('TOPLEFT', enableBlizzardBagPassThrough, 'BOTTOMLEFT', 0, -SPACING)
+	
+	local enableFading = self:CreateFadingCheckbox()
+	enableFading:SetPoint('TOPLEFT', enableFlashFind, 'BOTTOMLEFT', 0, -SPACING)
+
+  local enableTipItemCount = self:CreateTipCountCheckbox()
+  enableTipItemCount:SetPoint('TOPLEFT', enableFading, 'BOTTOMLEFT', 0, -SPACING)
 end
 
 function GeneralOptions:UpdateWidgets()
@@ -113,6 +119,8 @@ function GeneralOptions:UpdateWidgets()
 	self:GetColorItemSlotsCheckbox():UpdateChecked()
 	self:GetBlizzardBagPassThroughCheckbox():UpdateChecked()
 	self:GetFlashFindCheckbox():UpdateChecked()
+	self:GetFadingCheckbox():UpdateChecked()
+	self:GetTipCountCheckbox():UpdateChecked()
 end
 
 
@@ -235,8 +243,47 @@ end
 
 function GeneralOptions:GetFlashFindCheckbox()
 	return self.flashFindCheckbox
-end 
+end
 
+--fading
+function GeneralOptions:CreateFadingCheckbox()
+	local button = Bagnon.OptionsCheckButton:New(L.EnableFading, self)
+
+	button.OnEnableSetting = function(self, enable)
+		Bagnon.Settings:SetFading(enable)
+	end
+
+	button.IsSettingEnabled = function(self)
+		return Bagnon.Settings:IsFadingEnabled()
+	end
+
+	self.fadingCheckbox = button
+	return button
+end
+
+function GeneralOptions:GetFadingCheckbox()
+	return self.fadingCheckbox
+end
+
+--tip count
+function GeneralOptions:CreateTipCountCheckbox()
+	local button = Bagnon.OptionsCheckButton:New(L.EnableTipCount, self)
+
+	button.OnEnableSetting = function(self, enable)
+		Bagnon.Settings:SetEnableTipCount(enable)
+	end
+
+	button.IsSettingEnabled = function(self)
+		return Bagnon.Settings:IsTipCountEnabled()
+	end
+
+	self.tipCountCheckbox = button
+	return button
+end
+
+function GeneralOptions:GetTipCountCheckbox()
+	return self.tipCountCheckbox
+end
 
 
 --[[ Load the thing ]]--

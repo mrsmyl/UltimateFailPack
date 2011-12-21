@@ -2,11 +2,11 @@
 ## Title: Bagnon
 ## Author: Tuller & Jaliborc (João Libório)
 ## Notes: Single window displays for your inventory and bank
-## SavedVariables: BagnonGlobalSettings
 ## SavedVariablesPerCharacter: BagnonFrameSettings
+## SavedVariables: BagnonGlobalSettings
 
-## Version: 4.3.0
-## OptionalDeps: LibStub, Ace3, Bagnon_Forever, Bagnon_Armory, LibItemSearch, Unfit-1.0
+## Version: 4.3.4
+## OptionalDeps: LibStub, Ace3, LibItemSearch-1.0, LibItemCache-1.0, Unfit-1.0, BagBrother, BagSync, Armory
 
 embeds.xml
 localization.xml

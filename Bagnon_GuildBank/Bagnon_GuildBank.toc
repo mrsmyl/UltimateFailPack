@@ -2,9 +2,9 @@
 ## Title: Bagnon Guild Bank
 ## Author: Tuller & Jaliborc (João Libório)
 ## Notes: Single window display for your guild bank
-## Version: 4.3.0
+## Version: 4.3.4
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
 
-main.lua
 components.xml
+main.lua

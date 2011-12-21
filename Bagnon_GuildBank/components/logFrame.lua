@@ -4,8 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local LogFrame = Bagnon.Classy:New('ScrollFrame')
-Bagnon.LogFrame = LogFrame
+local LogFrame = Bagnon:NewClass('LogFrame', 'ScrollFrame')
 
 local MESSAGE_PREFIX = '|cff009999   '
 local MAX_TRANSACTIONS = 24
@@ -28,13 +27,16 @@ function LogFrame:New(frameID, parent)
 	
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetFontObject(GameFontHighlight)
-	-- messages:SetInsertMode('TOP') Trows an error message. Blizzard bug?
 	messages:SetScript('OnHyperlinkClick', f.OnHyperlink)
 	messages:SetJustifyH('LEFT')
 	messages:SetAllPoints(true)
 	messages:SetMaxLines(128)
 	messages:SetFading(false)
 	f.messages = messages
+	
+	local bg = f.ScrollBar:CreateTexture()
+	bg:SetTexture(0, 0, 0, .5)
+	bg:SetAllPoints()
 	
 	return f
 end
@@ -91,6 +93,7 @@ end
 function LogFrame:Update()
 	self:UpdateScroll()
 	self.messages:Clear()
+  self:Show()
 	
 	if self.money then
 		self:UpdateMoney()
@@ -149,15 +152,17 @@ function LogFrame:UpdateMoney()
 end
 
 function LogFrame:UpdateScroll()
-	self.messages:SetScrollOffset(FauxScrollFrame_GetOffset(self))
 	self.tab = GetCurrentGuildBankTab()
+	self.numTransactions = self.money and GetNumGuildBankMoneyTransactions() or GetNumGuildBankTransactions(self.tab)
 	
-	if self.money then
-		self.numTransactions = GetNumGuildBankMoneyTransactions()
+	if self.numTransactions > 23 then
+		self.messages:SetScrollOffset(FauxScrollFrame_GetOffset(self))
+		self.ScrollBar:Show()
 	else
-		self.numTransactions = GetNumGuildBankTransactions(self.tab)
+		self.messages:SetScrollOffset(0)
+		self.ScrollBar:Hide()
 	end
-
+	
 	FauxScrollFrame_Update(self, self.numTransactions, MAX_TRANSACTIONS, TRANSACTION_HEIGHT)
 end
 

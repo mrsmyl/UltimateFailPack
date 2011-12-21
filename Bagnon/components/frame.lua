@@ -5,15 +5,12 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-local Frame = Bagnon.Classy:New('Frame')
-
-Frame:Hide()
-Bagnon.Frame = Frame
+local Frame = Bagnon:NewClass('Frame', 'Frame')
 
 
 --[[
-	Constructor
---]]
+  Constructor
+]]--
 
 function Frame:New(frameID)
 	local f = self:Bind(CreateFrame('Frame', 'BagnonFrame' .. frameID, UIParent))
@@ -43,8 +40,8 @@ end
 
 
 --[[
-	Frame Messages
---]]
+  Frame Messages
+]]--
 
 function Frame:UpdateEvents()
 	self:UnregisterAllMessages()
@@ -74,7 +71,7 @@ end
 
 function Frame:FRAME_SHOW(msg, frameID)
 	if self:GetFrameID() == frameID then
-		self:Show()
+		self:FadeFrame(self, self:GetFrameOpacity())
 	end
 end
 
@@ -90,58 +87,40 @@ function Frame:FRAME_MOVE_START(msg, frameID)
 	end
 end
 
-function Frame:FRAME_MOVE_STOP(msg, frameID)
+function Frame:FRAME_MOVE_STOP (msg, frameID)
 	if self:GetFrameID() == frameID then
 		self:StopMovingOrSizing()
 		self:SavePosition()
 	end
 end
 
-function Frame:FRAME_POSITION_UPDATE(msg, frameID)
+function Frame:FRAME_POSITION_UPDATE (msg, frameID)
 	if self:GetFrameID() == frameID then
 		self:UpdatePosition()
 	end
 end
 
-function Frame:FRAME_SCALE_UPDATE(msg, frameID, scale)
+function Frame:FRAME_SCALE_UPDATE (msg, frameID, scale)
 	if self:GetFrameID() == frameID then
 		self:UpdateScale()
 	end
 end
 
-function Frame:FRAME_OPACITY_UPDATE(msg, frameID, opacity)
+function Frame:FRAME_OPACITY_UPDATE (msg, frameID, opacity)
 	if self:GetFrameID() == frameID then
 		self:UpdateOpacity()
 	end
 end
 
-function Frame:FRAME_COLOR_UPDATE(msg, frameID, r, g, b, a)
+function Frame:FRAME_COLOR_UPDATE (msg, frameID, r, g, b, a)
 	if self:GetFrameID() == frameID then
 		self:UpdateBackdrop()
 	end
 end
 
-function Frame:FRAME_BORDER_COLOR_UPDATE(msg, frameID, r, g, b, a)
+function Frame:FRAME_BORDER_COLOR_UPDATE (msg, frameID, r, g, b, a)
 	if self:GetFrameID() == frameID then
 		self:UpdateBackdropBorder()
-	end
-end
-
-function Frame:BAG_FRAME_UPDATE_SHOWN(msg, frameID)
-	if self:GetFrameID() == frameID then
-		self:Layout()
-	end
-end
-
-function Frame:BAG_FRAME_UPDATE_LAYOUT(msg, frameID)
-	if self:GetFrameID() == frameID then
-		self:Layout()
-	end
-end
-
-function Frame:ITEM_FRAME_SIZE_CHANGE(msg, frameID)
-	if self:GetFrameID() == frameID then
-		self:Layout()
 	end
 end
 
@@ -151,40 +130,33 @@ function Frame:FRAME_LAYER_UPDATE(msg, frameID, layer)
 	end
 end
 
-function Frame:BAG_FRAME_ENABLE_UPDATE(msg, frameID, enable)
-	if self:GetFrameID() == frameID then
-		self:Layout()
+do
+	local function LayoutMessage (self, msg, frameID)
+		if self:GetFrameID() == frameID then
+			self:Layout()
+		end
 	end
-end
 
-function Frame:MONEY_FRAME_ENABLE_UPDATE(msg, frameID, enable)
-	if self:GetFrameID() == frameID then
-		self:Layout()
-	end
-end
-
-function Frame:DATABROKER_FRAME_ENABLE_UPDATE(msg, frameID, enable)
-	if self:GetFrameID() == frameID then
-		self:Layout()
-	end
-end
-
-function Frame:SEARCH_TOGGLE_ENABLE_UPDATE(msg, frameID, enable)
-	if self:GetFrameID() == frameID then
-		self:Layout()
-	end
-end
-
-function Frame:OPTIONS_TOGGLE_ENABLE_UPDATE(msg, frameID, enable)
-	if self:GetFrameID() == frameID then
-		self:Layout()
+	local messages = {
+		'BAG_FRAME_UPDATE_LAYOUT',
+		'BAG_FRAME_UPDATE_SHOWN',
+		'ITEM_FRAME_SIZE_CHANGE',
+		'BAG_FRAME_ENABLE_UPDATE',
+		'MONEY_FRAME_ENABLE_UPDATE',
+		'DATABROKER_FRAME_ENABLE_UPDATE',
+		'SEARCH_TOGGLE_ENABLE_UPDATE',
+		'OPTIONS_TOGGLE_ENABLE_UPDATE'
+	}
+	
+	for _, msg in ipairs(messages) do
+		Frame[msg] = LayoutMessage
 	end
 end
 
 
 --[[
-	Frame Events
---]]
+  Frame Events
+]]--
 
 function Frame:OnShow()
 	PlaySound('igBackPackOpen')
@@ -209,9 +181,7 @@ function Frame:OnHide()
 end
 
 function Frame:CloseBankFrame()
-	if Bagnon.PlayerInfo:AtBank() then
-		CloseBankFrame()
-	end
+  CloseBankFrame() -- Will it bug out?
 end
 
 function Frame:IsBankFrame()
@@ -220,8 +190,8 @@ end
 
 
 --[[
-	Update Methods
---]]
+  Update Methods
+]]--
 
 function Frame:UpdateEverything()
 	self:UpdateEvents()
@@ -284,6 +254,14 @@ function Frame:GetFrameOpacity()
 	return self:GetSettings():GetOpacity()
 end
 
+function Frame:FadeFrame(frame, alpha)
+	if Bagnon.Settings:IsFadingEnabled() then
+		UIFrameFadeIn(frame, 0.2, 0, alpha or 1)
+	end
+	
+	frame:Show()
+end
+
 
 --[[
 	Frame Position
@@ -299,14 +277,12 @@ end
 
 --get a frame's position relative to its parent
 function Frame:GetRelativePosition()
-	local parent = self:GetParent()
-	local w, h = parent:GetWidth(), parent:GetHeight()
 	local x, y = self:GetCenter()
-	local s = self:GetScale()
-	if not (x and y) then return end
-
-	w = w/s h = h/s
-
+	local scale = self:GetScale()
+	
+	local h = UIParent:GetHeight() / scale
+	local w = UIParent:GetWidth() / scale
+	
 	local dx, dy
 	local hHalf = (x > w/2) and 'RIGHT' or 'LEFT'
 	if hHalf == 'RIGHT' then
@@ -427,7 +403,7 @@ function Frame:Layout()
 	local padH = 16
 	local width, height = 0, 0
 
-	--place menu butons, this determines our base width
+	--place menu butons
 	local w, h = self:PlaceMenuButtons()
 	width = width + w
 
@@ -465,7 +441,6 @@ function Frame:Layout()
 	--adjust size
 	self:SetWidth(math.max(width, 156) + padW)
 	self:SetHeight(height + padH)
-	self:SavePosition()
 end
 
 
@@ -525,16 +500,6 @@ function Frame:GetMenuButtons()
 		self:PlaceMenuButtons()
 	end
 	return self.menuButtons
-end
-
-
---[[
-	Frame Components
---]]
-
-function Frame:ShowFrame(frame)
-	frame:Show()
-	UIFrameFadeIn(frame, 0.3, 0, 1)
 end
 
 
@@ -770,7 +735,7 @@ function Frame:CreatePlayerSelector()
 end
 
 function Frame:HasPlayerSelector()
-	return BagnonDB and true or false
+	return LibStub('LibItemCache-1.0'):HasCache()
 end
 
 

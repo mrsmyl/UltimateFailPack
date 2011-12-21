@@ -1,7 +1,7 @@
-## Interface: 40100
+## Interface: 40300
 ## Title: LibItemSearch
 ## Notes: An item search library
-## Author: Tuller
+## OptionalDeps: LibStub, ItemRack, Wardrobe
+## Author: Jaliborc (João Libório), Tuller, Yewbacca (Equipment Set Searching)
 ## LoadOnDemand: 1
-LibStub.lua
 LibItemSearch-1.0.lua
