@@ -5,7 +5,7 @@
 
 	AddOn: EnchantrixBarker
 	Revision: $Id: BarkerStrings.lua 5073 2011-01-16 00:38:55Z ccox $
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or

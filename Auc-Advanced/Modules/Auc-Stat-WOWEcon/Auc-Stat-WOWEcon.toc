@@ -2,7 +2,7 @@
 ## Interface: 40100
 ## Dependancies: Auc-Advanced
 ##
-## Version: 5.13.5241 (BoldBandicoot)
+## Version: 5.13.5256 (BoldBandicoot)
 ## Revision: $Id: Auc-Stat-WOWEcon.toc 5142 2011-05-04 04:31:59Z Nechckn $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Histogram Statistics module
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: StatHistogram.lua 5154 2011-05-13 23:15:57Z kandoko $
 	URL: http://auctioneeraddon.com/
 

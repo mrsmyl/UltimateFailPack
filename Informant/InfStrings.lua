@@ -5,7 +5,7 @@
 
 	AddOn: Informant
 	Revision: $Id: InfStrings.lua 5193 2011-07-04 17:35:08Z Nechckn $
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or

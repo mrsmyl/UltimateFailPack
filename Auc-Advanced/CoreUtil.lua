@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.13.5241 (BoldBandicoot)
-	Revision: $Id: CoreUtil.lua 5224 2011-10-06 00:35:53Z Nechckn $
+	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: CoreUtil.lua 5254 2011-12-17 23:11:05Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -212,9 +212,9 @@ do
 			-- delay creating table until function is first called, to give all modules a chance to load first
 			pricemodels = {}
 			tinsert(pricemodels,{"market", lib.localizations("UCUT_Interface_MarketValue")})--Market value {Reusing Undercut's existing localization string}
-			local algoList = AucAdvanced.API.GetAlgorithms()
+			local algoList, algoNames = AucAdvanced.API.GetAlgorithms()
 			for pos, name in ipairs(algoList) do
-				tinsert(pricemodels,{name, lib.localizations("APPR_Interface_Stats").." "..name})--Stats: {Reusing Appraiser's existing localization string}
+				tinsert(pricemodels,{name, format(lib.localizations("ADV_Interface_Algorithm_Price"), algoNames[pos])})--%s Price
 			end
 		end
 		return pricemodels
@@ -629,7 +629,7 @@ do -- Module Functions
 	--[[
 
 	Usage:
-	  local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
+	  local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
 
 	-- ]]
 	function lib.GetModuleLocals()
@@ -833,4 +833,4 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreUtil.lua $", "$Rev: 5224 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreUtil.lua $", "$Rev: 5254 $")

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: CoreManifest.lua 5174 2011-06-01 10:27:55Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -72,7 +72,7 @@ end
 AucAdvanced = {}
 local lib = AucAdvanced
 
-lib.Version="5.13.5241";
+lib.Version="5.13.5256";
 if (lib.Version == "<".."%version%>") then
 	lib.Version = "5.12.DEV";
 end

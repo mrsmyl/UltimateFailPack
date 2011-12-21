@@ -1,6 +1,6 @@
 ﻿--[[
 	Auctioneer - Search UI - Searcher Arbitrage
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: SearcherArbitrage.lua 4851 2010-08-21 05:36:29Z brykrys $
 	URL: http://auctioneeraddon.com/
 

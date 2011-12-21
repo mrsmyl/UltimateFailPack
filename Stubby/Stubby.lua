@@ -1,6 +1,6 @@
 --[[
 	Stubby AddOn for World of Watcraft (tm)
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: Stubby.lua 275 2010-10-03 14:00:39Z kandoko $
 	URL: http://auctioneeraddon.com/dl/Stubby/
 

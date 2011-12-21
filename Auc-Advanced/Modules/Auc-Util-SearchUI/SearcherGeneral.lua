@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher General
-	Version: 5.13.5241 (BoldBandicoot)
-	Revision: $Id: SearcherGeneral.lua 5054 2010-12-28 05:17:38Z kandoko $
+	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: SearcherGeneral.lua 5244 2011-12-03 18:36:18Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -97,7 +97,7 @@ default("general.subtype", "All")
 default("general.quality", -1)
 default("general.timeleft", 0)
 default("general.ilevel.min", 0)
-default("general.ilevel.max", 400)
+default("general.ilevel.max", 410)
 default("general.ulevel.min", 0)
 default("general.ulevel.max", 85)
 default("general.seller", "")
@@ -127,7 +127,7 @@ function lib:MakeGuiConfig(gui)
 	gui:SetControlWidth(0.35)
 	local nameEdit = gui:AddControl(id, "Text",       0,   1, "general.name", "Item name")
 	nameEdit:SetScript("OnTextChanged", function(...) gui:ChangeSetting(...) end) --have the edit box update as user types, default box only updates on escape or enter
-	
+
 	local cont = gui:GetLast(id)
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",   0.11, 0, "general.name.exact", "Exact")
@@ -153,9 +153,9 @@ function lib:MakeGuiConfig(gui)
 
 	last = gui:GetLast(id)
 	gui:SetControlWidth(0.37)
-	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.min", 0, 400, 1, "Min item level")
+	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.min", 0, 410, 1, "Min item level")
 	gui:SetControlWidth(0.37)
-	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.max", 0, 400, 1, "Max item level")
+	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.max", 0, 410, 1, "Max item level")
 	cont = gui:GetLast(id)
 
 	gui:SetLast(id, last)
@@ -361,4 +361,4 @@ function private.PriceSearch(buybid, price)
 	end
 	return false
 end
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5054 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5244 $")

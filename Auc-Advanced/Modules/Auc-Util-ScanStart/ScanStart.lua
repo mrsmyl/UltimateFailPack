@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Scan Start module
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: ScanStart.lua 5153 2011-05-13 19:01:25Z brykrys $
 	URL: http://auctioneeraddon.com/
 

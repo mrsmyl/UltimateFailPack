@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: ConfirmSellUI.lua 5173 2011-06-01 10:08:40Z brykrys $
 	URL: http://auctioneeraddon.com/
 

@@ -1,7 +1,7 @@
 ﻿--[[
 	DebugLib - An embedded library which works as a higher layer for nLog,
 	by providing easier usage of debugging features.
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: DebugLib.lua 312 2011-06-14 07:33:25Z brykrys $
 	URL: http://auctioneeraddon.com/dl/
 

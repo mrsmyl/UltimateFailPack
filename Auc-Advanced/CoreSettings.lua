@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer
-	Version: 5.13.5241 (BoldBandicoot)
-	Revision: $Id: CoreSettings.lua 5210 2011-07-19 19:07:52Z Nechckn $
+	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: CoreSettings.lua 5254 2011-12-17 23:11:05Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	Settings GUI
@@ -124,7 +124,8 @@ local settingDefaults = {
 	['scandata.summaryonmicro'] = false,
 	['scandata.summaryonpartial'] = true,
 	['clickhook.enable'] = true,
-	['scancommit.speed'] = 50,
+	['scancommit.targetFPS'] = 25,
+--	['scancommit.speed'] = 50,
 	['scancommit.progressbar'] = true,
 	['scancommit.ttl'] = 20,
 	['alwaysHomeFaction'] = true,
@@ -514,8 +515,10 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Checkbox",   0, 1, "scandata.summaryonmicro", _TRANS('ADV_Interface_ScanDataSummaryMicro')) --"Enables the display of the post scan summary"
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanDataSummaryMicro')) --"Display the summation of an Auction House scan"
 
-	gui:AddControl(id, "Slider",	0, 1, "scancommit.speed", 1, 100, 1, _TRANS('ADV_Interface_ProcessingPriority')) --"Processing priority: %d"
-	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ProcessPriority')) --"Sets the processing priority of the scan data. Higher values take less time, but cause more lag"
+--	gui:AddControl(id, "Slider",	0, 1, "scancommit.speed", 1, 100, 1, _TRANS('ADV_Interface_ProcessingPriority')) --"Processing priority: %d"
+--	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ProcessPriority')) --"Sets the processing priority of the scan data. Higher values take less time, but cause more lag"
+	gui:AddControl(id, "Slider",	0, 1, "scancommit.targetFPS", 5, 100, 5, _TRANS('ADV_Interface_ProcessingTargetFPS')) --"Desired FPS during scan: %d"
+--	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ProcessingTargetFPS')) --"Sets the target frame rate during the scan. Higher values will be smoother, but will take more time overall."
 	gui:AddControl(id, "Slider",	0, 1, "scancommit.ttl", 0, 300, 1, _TRANS('ADV_Interface_ScanRetrieveTTL').." %d ".._TRANS('ADV_Interface_seconds'))--Scan Retrieval Time-to-Live
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanRetrieveTTL') )--The number of seconds Auctioneer will spend trying to get data that was missing from the scan initially.
 
@@ -686,4 +689,4 @@ function private.CheckObsolete()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreSettings.lua $", "$Rev: 5210 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreSettings.lua $", "$Rev: 5254 $")

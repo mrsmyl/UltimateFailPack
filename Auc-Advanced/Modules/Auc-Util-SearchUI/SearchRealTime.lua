@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 5.13.5241 (BoldBandicoot)
-	Revision: $Id: SearchRealTime.lua 5241 2011-11-30 19:05:41Z Nechckn $
+	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: SearchRealTime.lua 5246 2011-12-05 21:54:54Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This Auctioneer module allows the user to search the current Browse tab
@@ -257,7 +257,7 @@ function lib.ScanPage()
 	for i = 1, batch do
 		local link = GetAuctionItemLink("list", i)
 		if link then
-			local name, _, count, quality, canUse, level, _, minBid, minInc, buyout, curBid, isHigh, owner = GetAuctionItemInfo("list", i)
+			local name, _, count, quality, canUse, level, levelColHeader, minBid, minInc, buyout, curBid, isHigh, owner = GetAuctionItemInfo("list", i)
 			local _, _, quality, iLevel, _, iType, iSubType, stack, iEquip = GetItemInfo(link)
 			iEquip = Const.EquipEncode[iEquip]
 			local timeleft = GetAuctionItemTimeLeft("list", i)
@@ -275,6 +275,9 @@ function lib.ScanPage()
 				price = minBid
 			else
 				price = 1
+			end
+			if not level or levelColHeader ~= "REQ_LEVEL_ABBR" then
+				level = 1
 			end
 
 			-- put the data into a table laid out the same way as the AAdv Scandata, as that's what the searchers need
@@ -417,4 +420,4 @@ function lib.HookAH()
 	private.button.control.tex:SetVertexColor(1, 0.9, 0.1)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5241 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5246 $")

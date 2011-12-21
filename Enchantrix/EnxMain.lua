@@ -1,6 +1,6 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: EnxMain.lua 5136 2011-05-01 01:33:33Z ccox $
 	URL: http://enchantrix.org/
 
@@ -41,7 +41,7 @@ local spellTargetItemHook
 local useItemByNameHook
 local onEvent
 
-Enchantrix.Version = "5.13.5241"
+Enchantrix.Version = "5.13.5256"
 if (Enchantrix.Version == "<".."%version%>") then
 	Enchantrix.Version = "4.0.DEV"
 end

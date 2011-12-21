@@ -6,7 +6,7 @@
 ## Disabled: 0
 ## Dependencies: Auc-Advanced
 ##
-## Version: 5.13.5241 (BoldBandicoot)
+## Version: 5.13.5256 (BoldBandicoot)
 ## Revision: $Id: Auc-Util-AHWindowControl.toc
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer

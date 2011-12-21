@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: Mail-GUI.lua 4556 2009-12-03 22:20:32Z Kandoko $
 	URL: http://auctioneeraddon.com/
 

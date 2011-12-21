@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - ScanData
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: ScanData.lua 4835 2010-07-31 12:02:44Z brykrys $
 	URL: http://auctioneeraddon.com/
 

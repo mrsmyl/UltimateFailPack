@@ -1,11 +1,11 @@
 ## Title: Stubby |cff224477(lib)
-## Notes: Allows AddOns to load automatically, when called, based upon simple event notification hooks. [5.13.5241] This AddOn is licensed under the GNU GPL, see GPL.txt for details.
+## Notes: Allows AddOns to load automatically, when called, based upon simple event notification hooks. [5.13.5256] This AddOn is licensed under the GNU GPL, see GPL.txt for details.
 ##
 ## Interface: 40300
 ## OptionalDeps: !nLog, DebugLib
 ## SavedVariables: StubbyConfig
 ##
-## Version: 5.13.5241 (BoldBandicoot)
+## Version: 5.13.5256 (BoldBandicoot)
 ## Revision: $Id: Stubby.toc 317 2011-11-24 05:01:39Z Nechckn $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Libraries

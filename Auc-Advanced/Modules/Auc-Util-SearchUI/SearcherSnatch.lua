@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Snatch
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: SearcherSnatch.lua 5054 2010-12-28 05:17:38Z kandoko $
 	URL: http://auctioneeraddon.com/
 

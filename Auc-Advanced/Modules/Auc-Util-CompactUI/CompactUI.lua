@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer - Price Level Utility module
-	Version: 5.13.5241 (BoldBandicoot)
-	Revision: $Id: CompactUI.lua 5241 2011-11-30 19:05:41Z Nechckn $
+	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: CompactUI.lua 5254 2011-12-17 23:11:05Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a price level indicator
@@ -35,7 +35,7 @@ if not AucAdvanced then return end
 local libType, libName = "Util", "CompactUI"
 local lib,parent,private = AucAdvanced.NewModule(libType, libName)
 if not lib then return end
-local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
+local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
 
 private.cache = {}
 
@@ -55,12 +55,12 @@ function lib.Processors.configchanged()
 		private.MyAuctionFrameUpdate()
 	end
 end
-
 lib.Processors.blockupdate = lib.Processors.configchanged
 
 function lib.Processors.scanstats()
 	wipe(private.cache)
 end
+lib.Processors.auctionclose = lib.Processors.scanstats
 
 
 local OldSortAuctionApplySort
@@ -71,7 +71,7 @@ function private.OnLoadRunOnce()
 		OldSortAuctionApplySort = SortAuctionApplySort
 		SortAuctionApplySort = private.QueryCurrent
 	end
-	hooksecurefunc("QueryAuctionItems", private.CopyQuery)
+	hooksecurefunc("QueryAuctionItems", private.OnQuery)
 
 	default("util.compactui.activated", true)
 	default("util.compactui.tooltiphelp", true)
@@ -80,15 +80,17 @@ function private.OnLoadRunOnce()
 	default("util.browseoverride.activated", false)
 end
 function lib.OnLoad()
-	--print("AucAdvanced: {{"..libType..":"..libName.."}} loaded!")
 	if private.OnLoadRunOnce then private.OnLoadRunOnce() end
 end
 
 --[[ Local functions ]]--
 private.candy = {}
 private.buttons = {}
-function private.CopyQuery(...)
+function private.OnQuery(...)
+	-- copy query details
 	searchname, searchminLevel, searchmaxLevel, searchinvTypeIndex, searchclassIndex, searchsubclassIndex, searchpage, searchisUsable, searchqualityIndex, searchGetAll = ...
+	-- other functions hooking the query
+	if private.UpdateDetailColumn then private.UpdateDetailColumn(...) end
 end
 
 function private.QueryCurrent(SortTable, SortColumn, reverse)
@@ -341,7 +343,7 @@ function private.HookAH()
 	end
 
 	private.headers = CreateFrame("Frame", nil, AuctionFrameBrowse)
-	table.insert(private.candy, private.headers)
+	tinsert(private.candy, private.headers)
 
 	local bOne = private.buttons[1]
 	createHeader(1, 1, "#", bOne.Count)
@@ -353,32 +355,45 @@ function private.HookAH()
 	createHeader(7, -1, "Price", bOne.Value, bOne.Bid, -110, 0, {"Buy total", "Bid total", "Buy each", "Bid each"})
 	createHeader(8, 1, "Pct", bOne.Value, nil, 0, -2)
 
+	-- Column 3 special handling: label changes depending on queried class/subclass filters
+	local detail = private.headers[3]
+	function private.UpdateDetailColumn(name, minLevel, maxLevel, invTypeIndex, classIndex, subclassIndex, page, isUsable, qualityIndex, GetAll)
+		local text = GetDetailColumnString(classIndex, subclassIndex)
+		if text == "SLOT_ABBR" then
+			detail.Text:SetText("Slot")
+		elseif text == "SKILL_ABBR" then
+			detail.Text:SetText("Skill")
+		else
+			detail.Text:SetText("Min")
+		end
+	end
+
 	local tex
 	tex = AuctionFrameBrowse:CreateTexture()
 	tex:SetTexture(1,1,1, 0.05)
 	tex:SetPoint("TOPLEFT", private.buttons[1].rLevel, "TOPLEFT")
 	tex:SetPoint("BOTTOMRIGHT", private.buttons[NEW_NUM_BROWSE].rLevel, "BOTTOMRIGHT")
-	table.insert(private.candy, tex)
+	tinsert(private.candy, tex)
 
 	tex = AuctionFrameBrowse:CreateTexture()
 	tex:SetTexture(1,1,1, 0.05)
 	tex:SetPoint("TOPLEFT", private.buttons[1].tLeft, "TOPLEFT")
 	tex:SetPoint("BOTTOMRIGHT", private.buttons[NEW_NUM_BROWSE].tLeft, "BOTTOMRIGHT")
-	table.insert(private.candy, tex)
+	tinsert(private.candy, tex)
 
 	tex = AuctionFrameBrowse:CreateTexture()
 	tex:SetTexture(1,1,1, 0.05)
 	tex:SetPoint("TOPLEFT", private.buttons[1].Owner, "TOPRIGHT", 2, 0)
 	tex:SetPoint("BOTTOM", private.buttons[NEW_NUM_BROWSE].Buy, "BOTTOM", 0, 0)
 	tex:SetPoint("RIGHT", private.buttons[1].Bid, "RIGHT", -10, 0)
-	table.insert(private.candy, tex)
+	tinsert(private.candy, tex)
 
 	tex = AuctionFrameBrowse:CreateTexture()
 	tex:SetTexture(1,1,0.5, 0.1)
 	tex:SetPoint("TOPLEFT", private.buttons[NEW_NUM_BROWSE].Count, "BOTTOMLEFT", 0, -1)
 	tex:SetWidth(610)
 	tex:SetHeight(38)
-	table.insert(private.candy, tex)
+	tinsert(private.candy, tex)
 
 	BrowsePrevPageButton:ClearAllPoints()
 	BrowsePrevPageButton:SetPoint("BOTTOMRIGHT", tex, "BOTTOMRIGHT", -170, -5)
@@ -392,12 +407,12 @@ function private.HookAH()
 	check:SetChecked(false)
 	check:SetPoint("TOPLEFT", tex, "TOPLEFT", 5, -5)
 	check:SetScript("OnClick", AuctionFrameBrowse_Update)
-	table.insert(private.candy, check)
+	tinsert(private.candy, check)
 
 	local text = AuctionFrameBrowse:CreateFontString(nil,nil,"GameFontNormal")
 	text:SetPoint("LEFT", check, "LEFT", 30, 0)
 	text:SetText("Show stacks as price per unit")
-	table.insert(private.candy, text)
+	tinsert(private.candy, text)
 
 	text = AuctionFrameBrowse:CreateFontString(nil,nil,"GameFontNormal")
 	private.PageNum = text
@@ -405,7 +420,7 @@ function private.HookAH()
 	text:SetPoint("BOTTOMRIGHT", BrowseNextPageButton, "BOTTOMRIGHT")
 	text:SetFont(STANDARD_TEXT_FONT, 12)
 	text:SetShadowOffset(2,2)
-	table.insert(private.candy, text)
+	tinsert(private.candy, text)
 
 	private.Active = true
 
@@ -530,14 +545,20 @@ function private.RetrievePage()
 			end
 
 			local name, texture, count, quality, canUse, level,
-				_, minBid, minIncrement, buyoutPrice, bidAmount,
+				levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount,
 				highBidder, owner  = GetAuctionItemInfo("list", i)
 			local itemName, itemLink, itemRarity, itemLevel,
 				itemMinLevel, itemType, itemSubType, itemStackCount,
 				itemEquipLoc, itemTexture = GetItemInfo(link)
 
-			if not itemLevel then itemLevel = level end
-			if not itemMinLevel then itemMinLevel = level end
+			if levelColHeader == "ITEM_LEVEL_ABBR" then
+				itemLevel = level
+			else
+				itemMinLevel = level
+			end
+			itemLevel = tonumber(itemLevel) or 1 -- extra safety checking - these values may be used by our sort function
+			itemMinLevel = tonumber(itemMinLevel) or 1
+
 			local timeLeft = GetAuctionItemTimeLeft("list", i)
 			if (timeLeft == 4) then timeLeftText = "48h"
 			elseif (timeLeft == 3) then timeLeftText = "12h"
@@ -595,7 +616,7 @@ function private.RetrievePage()
 			item[24] = g
 			item[25] = b
 
-			table.insert(private.pageContents, item)
+			tinsert(private.pageContents, item)
 		end
 	end
 
@@ -842,4 +863,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5241 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5254 $")

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: CoreModule.lua 5210 2011-07-19 19:07:52Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

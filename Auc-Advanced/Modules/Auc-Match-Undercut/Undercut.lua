@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Price Level Utility module
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: Undercut.lua 5232 2011-11-23 17:47:17Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

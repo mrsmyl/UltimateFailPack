@@ -1,6 +1,6 @@
 --[[
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: BarkerObjects.lua 3581 2008-10-11 12:36:19Z Norganna $
 	URL: http://enchantrix.org/
 

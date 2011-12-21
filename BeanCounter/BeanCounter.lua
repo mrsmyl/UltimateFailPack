@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: BeanCounter.lua 5123 2011-04-06 20:34:59Z kandoko $
 
 	BeanCounterCore - BeanCounter: Auction House History

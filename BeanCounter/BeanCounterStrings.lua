@@ -5,7 +5,7 @@
 
 	AddOn: BeanCounter
 	Revision: $Id: BeanCounterStrings.lua 5078 2011-01-27 02:02:43Z Nechckn $
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or

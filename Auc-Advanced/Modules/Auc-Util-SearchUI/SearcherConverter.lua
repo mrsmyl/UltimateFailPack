@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Converter
-	Version: 5.13.5241 (BoldBandicoot)
+	Version: 5.13.5256 (BoldBandicoot)
 	Revision: $Id: SearcherConverter.lua 5035 2010-12-11 18:03:15Z brykrys $
 	URL: http://auctioneeraddon.com/
 
