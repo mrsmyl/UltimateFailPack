@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 847 $
--- $Date: 2011-11-30 09:19:11 +1100 (Wed, 30 Nov 2011) $
+-- $Revision: 883 $
+-- $Date: 2011-12-17 13:27:08 +1100 (Sat, 17 Dec 2011) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0284,
-		UIVersion = "3.2.84",
+		Version = 3.0286,
+		UIVersion = "3.2.86",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -2373,7 +2373,7 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 	
 	if sid == 9995 then
 		-- vault layout / void storage layout
-		s["!bagslot"] = string.format( "%04i %04i", i.bag_id, i.display_id ) --or i.slot_id )
+		s["!bagslot"] = string.format( "%04i %04i", i.bag_id, i.display_id or i.slot_id )
 	else
 		-- all other bag/slot
 		s["!bagslot"] = string.format( "%04i %04i", i.bag_id, i.slot_id )

@@ -15,7 +15,7 @@ Dependencies: AceLibrary
 License: LGPL v2.1
 ]]
 
-local Dewdrop = LibStub:NewLibrary( "ArkDewdrop-3.0", 1 )
+local Dewdrop = LibStub:NewLibrary( "ArkDewdrop-3.0", 2 )
 
 if not Dewdrop then
 	return -- already loaded and no upgrade necessary
@@ -369,21 +369,21 @@ local function CheckSize(level)
 		height = height + button:GetHeight()
 	end
 	level:SetHeight(height)
-	local width = 160
+	local width = 0
+	local e1, e2
 	for _, button in ipairs(level.buttons) do
-		local extra = 1
-		if button.hasArrow or button.hasColorSwatch then
-			extra = extra + 16
+		if ( not e1 ) and ( button.hasArrow or button.hasColorSwatch ) then
+			e1 = 16
 		end
-		if not button.notCheckable then
-			extra = extra + 24
+		if ( not e2 ) and ( not button.notCheckable ) then
+			e2 = 24
 		end
 		button.text:SetFont(STANDARD_TEXT_FONT, button.textHeight)
-		if button.text:GetWidth() + extra > width then
-			width = button.text:GetWidth() + extra
+		if button.text:GetStringWidth() > width then
+			width = button.text:GetStringWidth()
 		end
 	end
-	level:SetWidth(width + 20)
+	level:SetWidth(width + (e1 or 0) + (e2 or 0) + 20)
 	if level:GetLeft() and level:GetRight() and level:GetTop() and level:GetBottom() and (level:GetLeft() < 0 or level:GetRight() > GetScreenWidth() or level:GetTop() > GetScreenHeight() or level:GetBottom() < 0) then
 		level:ClearAllPoints()
 		local parent = level.parent or level:GetParent()
