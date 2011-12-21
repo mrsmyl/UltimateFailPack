@@ -1,6 +1,6 @@
-## Interface: 40200
-## Title: Accountant 3.11.40200
-## Version: 3.11.40200
+## Interface: 40300
+## Title: Accountant 3.13.40300
+## Version: 3.13.40300
 ## Author: urnati
 ## Description: Logs where your WoW gold goes
 ## DefaultState: enabled

@@ -1855,6 +1855,10 @@ function SC.GetCashForAllToons(for_display)
 				end
 			end
 			i=i+1;
+			if i > SC.MaxRows then
+				SC.Print("ERROR: Too many characters saved. Please delete some in options!! ")
+				return 0 -- we really have no idea what the real values is...
+			end
 		end
 	end
 	   
@@ -2022,7 +2026,7 @@ function SC.UpdateOther(old_gold, new_gold)
 --
 -- Update the Accountant data based on the current gold versus the last saved gold
 --
-	diff = old_gold - new_gold;
+	diff = new_gold - old_gold;
 	if diff == 0 or diff == nil then
 		return;
 	end		
