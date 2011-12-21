@@ -10,15 +10,9 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerSpinners 		= "Следующие Пеплопряды-ткачи",
-	TimerSpiderlings	= "Следующие Паучата",
-	TimerDrone			= "Следующий Трутень"
 })
 
 L:SetOptionLocalization({
-	TimerSpinners		= "Отсчет времени до следующих $journal:2770",
-	TimerSpiderlings	= "Отсчет времени до следующих $journal:2778",
-	TimerDrone			= "Отсчет времени до следующего $journal:2773",
 	RangeFrame			= "Показывать окно проверки дистанции (10м)"
 })
 
@@ -188,7 +182,6 @@ L:SetOptionLocalization({
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),
 	TimerPhaseSons				= "Отсчет времени до окончания \"фазы Сыновей пламени\"",
 	RangeFrame					= "Показывать окно проверки дистанции",
-	P4IconRangeFilter			= "Показывать в окне проверки дистанции только рейдовые метки\n(Необходимо также включить предыдущую опцию)",
 	InfoHealthFrame				= "Информационное окно для игроков с низким уровнем здоровья (<100к)",
 	MeteorFrame					= "Информационное окно для целей $spell:99849",
 	AggroFrame					= "Информационное окно для игроков, не имеющих аггро от элементалей",

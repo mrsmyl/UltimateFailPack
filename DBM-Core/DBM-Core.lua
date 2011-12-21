@@ -15,7 +15,7 @@
 --    * ruRU: Vampik					admin@vampik.ru
 --    * zhTW: Hman						herman_c1@hotmail.com
 --    * zhTW: Azael/kc10577				paul.poon.kw@gmail.com
---    * koKR: BlueNyx/nBlueWiz			bluenyx@gmail.com(Twitter: @Nyx_Khang, http://wow.somegate.com) / everfinale@gmail.com
+--    * koKR: BlueNyx/nBlueWiz			bluenyx@gmail.com(Twitter: @Nyx_Khang) / everfinale@gmail.com
 --    * esES: Snamor/1nn7erpLaY      	romanscat@hotmail.com
 --
 -- Special thanks to:
@@ -41,14 +41,20 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = ("$Revision: 6839 $"):sub(12, -3),
-	DisplayVersion = "4.10.4", -- the string that is shown as version
-	ReleaseRevision = 6839 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 6966 $"):sub(12, -3)),
+	DisplayVersion = "4.10.6", -- the string that is shown as version
+	ReleaseRevision = 6966 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
 -- Some functions that should be using ReleaseRevision still use this one, so we will just keep it and set to ReleaseRevision
 DBM.Version = tostring(DBM.ReleaseRevision)
+
+-- support for git svn which doesn't support svn keyword expansion
+if not DBM.Revision then
+	-- just use the latest release revision
+	DBM.Revision = DBM.ReleaseRevision
+end
 
 DBM_SavedOptions = {}
 
@@ -163,6 +169,7 @@ local fireEvent
 local _, class = UnitClass("player")
 local LastZoneText
 local LastZoneMapID
+local savedDifficulty
 
 local enableIcons = true -- set to false when a raid leader or a promoted player has a newer version of DBM
 
@@ -1428,6 +1435,7 @@ do
 				"LFG_PROPOSAL_SHOW",
 				"LFG_PROPOSAL_FAILED",
 				"LFG_UPDATE",
+				"UPDATE_BATTLEFIELD_STATUS",
 				"UPDATE_MOUSEOVER_UNIT",
 				"PLAYER_TARGET_CHANGED"			
 			)
@@ -1469,6 +1477,12 @@ function DBM:LFG_UPDATE()
     end
 end
 
+function DBM:UPDATE_BATTLEFIELD_STATUS()
+	if GetBattlefieldStatus(1) == "confirm" or GetBattlefieldStatus(2) == "confirm" then
+		DBM.Bars:CreateBar(85, DBM_LFG_INVITE, "Interface\\Icons\\Spell_Holy_BorrowedTime")	-- need to confirm the timer
+	end
+end
+
 --Loading routeens hacks for world bosses based on target or mouseover.
 function DBM:UPDATE_MOUSEOVER_UNIT()
 	if IsInInstance() or UnitIsDead("mouseover") then return end--If you're in an instance no reason to waste cpu. If it's dead, no reason to load a mod for it.
@@ -1485,6 +1499,13 @@ function DBM:UPDATE_MOUSEOVER_UNIT()
 		elseif (cId == 50063 or cId == 50056 or cId == 50089 or cId == 50009 or cId == 50061) and not DBM:GetModByName("Beauty") then--Akamhat, Garr, Julak, Mobus, Xariona
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-Party-Cataclysm" then
+					DBM:LoadMod(v)
+					break
+				end
+			end
+		elseif (cId == 55003 or cId == 54499) and not DBM:GetModByName("Greench") then--The Abominable Greench (Winter Veil world boss)
+			for i, v in ipairs(DBM.AddOns) do
+				if v.modId == "DBM-WorldEvents" then
 					DBM:LoadMod(v)
 					break
 				end
@@ -1508,6 +1529,13 @@ function DBM:PLAYER_TARGET_CHANGED()
 		elseif (cId == 50063 or cId == 50056 or cId == 50089 or cId == 50009 or cId == 50061) and not DBM:GetModByName("Beauty") then--Akamhat, Garr, Julak, Mobus, Xariona
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-Party-Cataclysm" then
+					DBM:LoadMod(v)
+					break
+				end
+			end
+		elseif (cId == 55003 or cId == 54499) and not DBM:GetModByName("Greench") then--The Abominable Greench (Winter Veil world boss)
+			for i, v in ipairs(DBM.AddOns) do
+				if v.modId == "DBM-WorldEvents" then
 					DBM:LoadMod(v)
 					break
 				end
@@ -1665,7 +1693,7 @@ do
 	
 	-- TODO: is there a good reason that version information is broadcasted and not unicasted?
 	syncHandlers["H"] = function(sender)
-		sendSync("V", ("%s\t%s\t%s\t%s"):format(DBM.Revision, DBM.Version, DBM.DisplayVersion, GetLocale()))
+		sendSync("V", ("%d\t%s\t%s\t%s"):format(DBM.Revision, DBM.Version, DBM.DisplayVersion, GetLocale()))
 	end
 	
 	syncHandlers["V"] = function(sender, revision, version, displayVersion, locale)
@@ -2304,14 +2332,22 @@ function DBM:StartCombat(mod, delay, synced)
 			mod.inCombatOnlyEventsRegistered = 1
 			mod:RegisterEvents(unpack(mod.inCombatOnlyEvents))
 		end
-		if mod:IsDifficulty("normal5", "normal10") then
+		if mod:IsDifficulty("lfr25") then
+			savedDifficulty = PLAYER_DIFFICULTY3.." - "
+		elseif mod:IsDifficulty("normal5", "normal10") then
 			mod.stats.normalPulls = mod.stats.normalPulls + 1
+			savedDifficulty = PLAYER_DIFFICULTY1.." - "
 		elseif mod:IsDifficulty("heroic5", "heroic10") then
 			mod.stats.heroicPulls = mod.stats.heroicPulls + 1
+			savedDifficulty = PLAYER_DIFFICULTY2.." - "
 		elseif mod:IsDifficulty("normal25") then
 			mod.stats.normal25Pulls = mod.stats.normal25Pulls + 1
+			savedDifficulty = PLAYER_DIFFICULTY1.." - "
 		elseif mod:IsDifficulty("heroic25") then
 			mod.stats.heroic25Pulls = mod.stats.heroic25Pulls + 1
+			savedDifficulty = PLAYER_DIFFICULTY2.." - "
+		else--you were not in an instance when you started combat, this is an outdoor boss.
+			savedDifficulty = ""--So lets just return no difficulty :)
 		end
 		mod.inCombat = true
 		mod.blockSyncs = nil
@@ -2393,7 +2429,7 @@ function DBM:EndCombat(mod, wipe)
 			self:AddMsg(DBM_CORE_COMBAT_ENDED:format(mod.combatInfo.name, strFromTime(thisTime)))
 			local msg
 			for k, v in pairs(autoRespondSpam) do
-				msg = msg or chatPrefixShort..DBM_CORE_WHISPER_COMBAT_END_WIPE:format(UnitName("player"), (mod.combatInfo.name or ""))
+				msg = msg or chatPrefixShort..DBM_CORE_WHISPER_COMBAT_END_WIPE:format(UnitName("player"), savedDifficulty..(mod.combatInfo.name or ""))
 				sendWhisper(k, msg)
 			end
 			fireEvent("wipe", mod)
@@ -2451,7 +2487,7 @@ function DBM:EndCombat(mod, wipe)
 			end
 			local msg
 			for k, v in pairs(autoRespondSpam) do
-				msg = msg or chatPrefixShort..DBM_CORE_WHISPER_COMBAT_END_KILL:format(UnitName("player"), (mod.combatInfo.name or ""))
+				msg = msg or chatPrefixShort..DBM_CORE_WHISPER_COMBAT_END_KILL:format(UnitName("player"), savedDifficulty..(mod.combatInfo.name or ""))
 				sendWhisper(k, msg)
 			end
 			fireEvent("kill", mod)
@@ -2490,6 +2526,23 @@ function DBM:OnMobKill(cId, synced)
 			end
 			self:EndCombat(v)
 		end
+	end
+end
+
+function DBM:GetCurrentInstanceDifficulty()
+	local _, instanceType, difficulty, _, maxPlayers, playerDifficulty, isDynamicInstance = GetInstanceInfo()
+	if IsPartyLFG() and IsInLFGDungeon() and difficulty == 2 and instanceType == "raid" and maxPlayers == 25 then
+		return "lfr25"
+	elseif difficulty == 1 then
+		return instanceType == "raid" and "normal10" or "normal5"
+	elseif difficulty == 2 then
+		return instanceType == "raid" and "normal25" or "heroic5"
+	elseif difficulty == 3 then
+		return "heroic10"
+	elseif difficulty == 4 then
+		return "heroic25"
+	else
+		return "unknown"
 	end
 end
 
@@ -2728,7 +2781,7 @@ do
 				mod = not v.isCustomMod and v
 			end
 			mod = mod or inCombat[1]
-			sendWhisper(sender, chatPrefix..DBM_CORE_STATUS_WHISPER:format((mod.combatInfo.name or ""), mod:GetHP() or "unknown", getNumAlivePlayers(), math.max(GetNumRaidMembers(), GetNumPartyMembers() + 1)))
+			sendWhisper(sender, chatPrefix..DBM_CORE_STATUS_WHISPER:format(savedDifficulty..(mod.combatInfo.name or ""), mod:GetHP() or "unknown", getNumAlivePlayers(), math.max(GetNumRaidMembers(), GetNumPartyMembers() + 1)))
 		elseif #inCombat > 0 and DBM.Options.AutoRespond and
 		(isRealIdMessage and (not isOnSameServer(sender) or DBM:GetRaidUnitId((select(4, BNGetFriendInfoByID(sender)))) == "none") or not isRealIdMessage and DBM:GetRaidUnitId(sender) == "none") then
 			local mod
@@ -2737,7 +2790,7 @@ do
 			end
 			mod = mod or inCombat[1]
 			if not autoRespondSpam[sender] then
-				sendWhisper(sender, chatPrefix..DBM_CORE_AUTO_RESPOND_WHISPER:format(UnitName("player"), mod.combatInfo.name or "", mod:GetHP() or "unknown", getNumAlivePlayers(), math.max(GetNumRaidMembers(), GetNumPartyMembers() + 1)))
+				sendWhisper(sender, chatPrefix..DBM_CORE_AUTO_RESPOND_WHISPER:format(UnitName("player"), savedDifficulty..(mod.combatInfo.name or ""), mod:GetHP() or "unknown", getNumAlivePlayers(), math.max(GetNumRaidMembers(), GetNumPartyMembers() + 1)))
 				DBM:AddMsg(DBM_CORE_AUTO_RESPONDED)
 			end
 			autoRespondSpam[sender] = true
@@ -3072,6 +3125,11 @@ function bossModPrototype:RegisterOnUpdateHandler(func, interval)
 end
 
 function bossModPrototype:SetRevision(revision)
+	revision = tonumber(revision or "")
+	if not revision then
+		-- bad revision: either forgot the svn keyword or using git svn
+		revision = DBM.Revision
+	end
 	self.revision = revision
 end
 
@@ -3090,40 +3148,70 @@ end
 
 function bossModPrototype:GetBossTarget(cid)
 	cid = cid or self.creatureId
+	local name, realm, uid
 	if self:GetUnitCreatureId("target") == cid then
-		return UnitName("targettarget"), "targettarget"
+		name, realm = UnitName("targettarget")
+		uid = "targettarget"
 	elseif self:GetUnitCreatureId("focus") == cid then	-- we check our own focus frame, maybe the boss is there ;)
-		return UnitName("focustarget"), "focustarget"
+		name, realm = UnitName("focustarget")
+		uid = "focustarget"
 	elseif self:GetUnitCreatureId("boss1") == cid then
-		return UnitName("boss1target"), "boss1target"
+		name, realm = UnitName("boss1target")
+		uid = "boss1target"
 	elseif self:GetUnitCreatureId("boss2") == cid then
-		return UnitName("boss2target"), "boss2target"
+		name, realm = UnitName("boss2target")
+		uid = "boss2target"
 	elseif self:GetUnitCreatureId("boss3") == cid then
-		return UnitName("boss3target"), "boss3target"
+		name, realm = UnitName("boss3target")
+		uid = "boss3target"
 	elseif self:GetUnitCreatureId("boss4") == cid then
-		return UnitName("boss4target"), "boss4target"
+		name, realm = UnitName("boss4target")
+		uid = "boss4target"
 	elseif GetNumRaidMembers() > 0 then
 		for i = 1, GetNumRaidMembers() do
 			if self:GetUnitCreatureId("raid"..i.."target") == cid then
-				return UnitName("raid"..i.."targettarget"), "raid"..i.."targettarget"
+				name, realm = UnitName("raid"..i.."targettarget")
+				uid = "raid"..i.."targettarget"
 			end
 		end
 	elseif GetNumPartyMembers() > 0 then
 		for i = 1, GetNumPartyMembers() do
 			if self:GetUnitCreatureId("party"..i.."target") == cid then
-				return UnitName("party"..i.."targettarget"), "party"..i.."targettarget"
+				name, realm = UnitName("party"..i.."targettarget")
+				uid = "party"..i.."targettarget"
 			end
 		end
 	end
+	if name and realm then
+		name = name.."-"..realm
+	end
+	return name, uid
 end
 
 function bossModPrototype:GetThreatTarget(cid)
 	cid = cid or self.creatureId
-	for i = 1, GetNumRaidMembers() do
-		if self:GetUnitCreatureId("raid"..i.."target") == cid then
-			for x = 1, GetNumRaidMembers() do
-				if UnitDetailedThreatSituation("raid"..x, "raid"..i.."target") == 1 then
-					return "raid"..x
+	local name, realm, uid
+	if self:GetUnitCreatureId("target") == cid then
+		if UnitDetailedThreatSituation("player", "target") == 1 then
+			return "player"
+		end
+	elseif GetNumRaidMembers() > 0 then
+		for i = 1, GetNumRaidMembers() do
+			if self:GetUnitCreatureId("raid"..i.."target") == cid then
+				for x = 1, GetNumRaidMembers() do
+					if UnitDetailedThreatSituation("raid"..x, "raid"..i.."target") == 1 then
+						return "raid"..x
+					end
+				end
+			end
+		end
+	elseif GetNumPartyMembers() > 0 then
+		for i = 1, GetNumRaidMembers() do
+			if self:GetUnitCreatureId("party"..i.."target") == cid then
+				for x = 1, GetNumRaidMembers() do
+					if UnitDetailedThreatSituation("party"..x, "party"..i.."target") == 1 then
+						return "party"..x
+					end
 				end
 			end
 		end
@@ -3137,20 +3225,7 @@ function bossModPrototype:Stop(cid)
 	self:Unschedule()
 end
 
-function bossModPrototype:GetDifficulty() 
-	local _, instanceType, difficulty, _, maxPlayers, playerDifficulty, isDynamicInstance = GetInstanceInfo()
-	if IsPartyLFG() and IsInLFGDungeon() and difficulty == 2 and instanceType == "raid" and maxPlayers == 25 then
-		return "lfr25"
-	elseif difficulty == 1 then
-		return instanceType == "raid" and "normal10" or "normal5"
-	elseif difficulty == 2 then
-		return instanceType == "raid" and "normal25" or "heroic5"
-	elseif difficulty == 3 then
-		return "heroic10"
-	elseif difficulty == 4 then
-		return "heroic25"
-	end
-end 
+bossModPrototype.GetDifficulty = DBM.GetCurrentInstanceDifficulty
 
 function bossModPrototype:IsDifficulty(...)
 	local diff = self:GetDifficulty()
@@ -3217,14 +3292,6 @@ function bossModPrototype:IsManaUser()--Similar to ranged, but includes all pala
 	or (class == "DRUID" and not IsSpellKnown(84840))--Vengeance Check (False)
 end
 
---Unfortunately since feral dps also have vengeance we still have to go more in dept for them.
-local function IsDruidTank()
-	local tankTalents = (getTalentpointsSpent(57880) >= 2 and 1 or 0) +		-- Natural Reaction
-						(getTalentpointsSpent(16931) >= 3 and 1 or 0) +		-- Thick Hide
-						(getTalentpointsSpent(61336) >= 1 and 1 or 0)		-- Survival Instincts
-	return tankTalents >= 3
-end
-
 function bossModPrototype:IsDps()--For features that simply should only be on for dps and not healers or tanks and without me having to use "not is heal or not is tank" rules :)
 	return (class == "WARRIOR" and not IsSpellKnown(93098))--Veangeance Check (false)
 	or (class == "DEATHKNIGHT" and not IsSpellKnown(93099))--Veangeance Check (false)
@@ -3236,6 +3303,14 @@ function bossModPrototype:IsDps()--For features that simply should only be on fo
 	or class == "MAGE"
 	or class == "HUNTER"
 	or class == "ROGUE"
+end
+
+--Unfortunately since feral dps also have vengeance we still have to go more in dept for them.
+local function IsDruidTank()
+	local tankTalents = (getTalentpointsSpent(57880) >= 2 and 1 or 0) +		-- Natural Reaction
+						(getTalentpointsSpent(16931) >= 3 and 1 or 0) +		-- Thick Hide
+						(getTalentpointsSpent(61336) >= 1 and 1 or 0)		-- Survival Instincts
+	return tankTalents >= 3
 end
 
 --A simple check to see if these classes know "Vengeance".
@@ -3351,7 +3426,7 @@ do
 				option = optionName or text,
 				sound = not noSound,
 				mod = self,
-				icon = (type(icon) == "number" and select(3, GetSpellInfo(icon))) or icon,
+				icon = (type(icon) == "string" and icon:match("ej%d+") and select(4, EJ_GetSectionInfo(string.sub(icon, 3))) ~= "" and select(4, EJ_GetSectionInfo(string.sub(icon, 3)))) or (type(icon) == "number" and select(3, GetSpellInfo(icon))) or icon,
 			},
 			mt
 		)
@@ -3366,7 +3441,14 @@ do
 	
 	-- new constructor (auto-localized warnings and options, yay!)
 	local function newAnnounce(self, announceType, spellId, color, icon, optionDefault, optionName, castTime, preWarnTime)
-		spellName = GetSpellInfo(spellId) or DBM_CORE_UNKNOWN
+		local ejSpell
+		if type(spellId) == "string" and spellId:match("ej%d+") then
+			spellId = string.sub(spellId, 3)
+			spellName = EJ_GetSectionInfo(spellId) or DBM_CORE_UNKNOWN
+			ejSpell = true
+		else
+			spellName = GetSpellInfo(spellId) or DBM_CORE_UNKNOWN
+		end
 		icon = icon or spellId
 		local text
 		if announceType == "cast" then
@@ -3391,7 +3473,7 @@ do
 				color = DBM.Options.WarningColors[color or 1] or DBM.Options.WarningColors[1],
 				option = optionName or text,
 				mod = self,
-				icon = (type(icon) == "number" and select(3, GetSpellInfo(icon))) or icon,
+				icon = (ejSpell and select(4, EJ_GetSectionInfo(icon)) ~= "" and select(4, EJ_GetSectionInfo(icon))) or (type(icon) == "number" and select(3, GetSpellInfo(icon))) or icon,
 				sound = not noSound,
 			},
 			mt
@@ -3402,7 +3484,11 @@ do
 			self:AddBoolOption(optionName or text, optionDefault, "announce")
 		end
 		table.insert(self.announces, obj)
-		self.localization.options[text] = DBM_CORE_AUTO_ANNOUNCE_OPTIONS[announceType]:format(spellId, spellName)
+		if ejSpell then
+			self.localization.options[text] = DBM_CORE_AUTO_ANNOUNCE_OPTIONS_EJ[announceType]:format(spellName)
+		else
+			self.localization.options[text] = DBM_CORE_AUTO_ANNOUNCE_OPTIONS[announceType]:format(spellId, spellName)
+		end
 		return obj
 	end
 	
@@ -3452,9 +3538,13 @@ do
 	local mt = { __index = soundPrototype }
 	function bossModPrototype:NewSound(spellId, optionName, optionDefault)
 		self.numSounds = self.numSounds and self.numSounds + 1 or 1
+		local journalId
+		if type(spellId) == "string" and spellId:match("ej%d+") then
+			journalId = string.sub(spellId, 3)
+		end
 		local obj = setmetatable(
 			{
-				option = optionName or DBM_CORE_AUTO_SOUND_OPTION_TEXT:format(spellId),
+				option = optionName or (journalId and DBM_CORE_AUTO_SOUND_OPTION_TEXT_EJ:format(journalId)) or DBM_CORE_AUTO_SOUND_OPTION_TEXT:format(spellId),
 				mod = self,
 			},
 			mt
@@ -3497,19 +3587,43 @@ do
 	function countdownProtoType:Start(timer)
 		if not self.option or self.mod.Options[self.option] then
 			timer = timer or self.timer or 10
-			timer = timer <= 5 and self.timer or timer
-			if DBM.Options.CountdownVoice == "Mosh" then
-				self.sound5:Schedule(timer-5, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\5.ogg")
-				self.sound5:Schedule(timer-4, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\4.ogg")
-				self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\3.ogg")
-				self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\2.ogg")
-				self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\1.ogg")
-			else--When/if more voices get added we can tweak it to use elseif rules, but for now else works smarter cause then ANY value will return to a default voice.
-				self.sound5:Schedule(timer-5, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\5.mp3")
-				self.sound5:Schedule(timer-4, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\4.mp3")
-				self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\3.mp3")
-				self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\2.mp3")
-				self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\1.mp3")
+			timer = timer < 3 and self.timer or timer
+			if timer >= 5 then
+				if DBM.Options.CountdownVoice == "Mosh" then
+					self.sound5:Schedule(timer-5, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\5.ogg")
+					self.sound5:Schedule(timer-4, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\4.ogg")
+					self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\3.ogg")
+					self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\2.ogg")
+					self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\1.ogg")
+				else--When/if more voices get added we can tweak it to use elseif rules, but for now else works smarter cause then ANY value will return to a default voice.
+					self.sound5:Schedule(timer-5, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\5.mp3")
+					self.sound5:Schedule(timer-4, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\4.mp3")
+					self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\3.mp3")
+					self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\2.mp3")
+					self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\1.mp3")
+				end
+			elseif timer >= 4 then
+				if DBM.Options.CountdownVoice == "Mosh" then
+					self.sound5:Schedule(timer-4, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\4.ogg")
+					self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\3.ogg")
+					self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\2.ogg")
+					self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\1.ogg")
+				else--When/if more voices get added we can tweak it to use elseif rules, but for now else works smarter cause then ANY value will return to a default voice.
+					self.sound5:Schedule(timer-4, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\4.mp3")
+					self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\3.mp3")
+					self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\2.mp3")
+					self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\1.mp3")
+				end
+			elseif timer >= 3 then
+				if DBM.Options.CountdownVoice == "Mosh" then
+					self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\3.ogg")
+					self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\2.ogg")
+					self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\1.ogg")
+				else--When/if more voices get added we can tweak it to use elseif rules, but for now else works smarter cause then ANY value will return to a default voice.
+					self.sound5:Schedule(timer-3, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\3.mp3")
+					self.sound5:Schedule(timer-2, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\2.mp3")
+					self.sound5:Schedule(timer-1, "Interface\\AddOns\\DBM-Core\\Sounds\\Corsica_S\\1.mp3")
+				end
 			end
 		end
 	end
@@ -3535,6 +3649,10 @@ do
 		local sound2 = self:NewSound(2, false, true)
 		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
+		local journalId
+		if type(spellId) == "string" and spellId:match("ej%d+") then
+			journalId = string.sub(spellId, 3)
+		end
 		if not spellId then
 			DBM:AddMsg("Error: No spellID given for countdown timer")
 			spellId = 39505
@@ -3547,7 +3665,7 @@ do
 				sound4 = sound4,
 				sound5 = sound5,
 				timer = timer,
-				option = optionName or DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(spellId),
+				option = optionName or (journalId and DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT_EJ:format(journalId)) or DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(spellId),
 				mod = self
 			},
 			mt
@@ -3632,6 +3750,10 @@ do
 		local sound2 = self:NewSound(2, false, true)
 		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
+		local journalId
+		if type(spellId) == "string" and spellId:match("ej%d+") then
+			journalId = string.sub(spellId, 3)
+		end
 		if not spellId then
 			DBM:AddMsg("Error: No spellID given for counted duration timer")
 			spellId = 39505
@@ -3644,7 +3766,7 @@ do
 				sound4 = sound4,
 				sound5 = sound5,
 				timer = timer,
-				option = optionName or DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT:format(spellId),
+				option = optionName or (journalId and DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT_EJ:format(journalId)) or DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT:format(spellId),
 				mod = self
 			},
 			mt
@@ -3665,10 +3787,14 @@ do
 	local yellPrototype = {}
 	local mt = { __index = yellPrototype }
 	function bossModPrototype:NewYell(spellId, yellText, optionDefault, optionName, chatType)
+		local journalId
+		if type(spellId) == "string" and spellId:match("ej%d+") then
+			journalId = string.sub(spellId, 3)
+		end
 		local obj = setmetatable(
 			{
-				option = optionName or DBM_CORE_AUTO_YELL_OPTION_TEXT:format(spellId),
-				text = yellText or DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT:format(GetSpellInfo(spellId) or DBM_CORE_UNKNOWN),
+				option = optionName or (journalId and DBM_CORE_AUTO_YELL_OPTION_TEXT_EJ:format(journalId)) or DBM_CORE_AUTO_YELL_OPTION_TEXT:format(spellId),
+				text = yellText or (journalId and DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT:format(EJ_GetSectionInfo(journalId) or DBM_CORE_UNKNOWN)) or DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT:format(GetSpellInfo(spellId) or DBM_CORE_UNKNOWN),
 				mod = self,
 				chatType = chatType
 			},
@@ -3800,7 +3926,14 @@ do
 	end
 
 	local function newSpecialWarning(self, announceType, spellId, stacks, optionDefault, optionName, noSound, runSound)
-		spellName = GetSpellInfo(spellId) or DBM_CORE_UNKNOWN
+		local ejSpell
+		if type(spellId) == "string" and spellId:match("ej%d+") then
+			spellId = string.sub(spellId, 3)
+			spellName = EJ_GetSectionInfo(spellId) or DBM_CORE_UNKNOWN
+			ejSpell = true
+		else
+			spellName = GetSpellInfo(spellId) or DBM_CORE_UNKNOWN
+		end
 		local text = DBM_CORE_AUTO_SPEC_WARN_TEXTS[announceType]:format(spellName) 
 		local obj = setmetatable( -- todo: fix duplicate code
 			{
@@ -3819,7 +3952,11 @@ do
 			self:AddBoolOption(optionName or text, optionDefault, "announce")		-- todo cleanup core code from that indexing type using options[text] is very bad!!! ;)
 		end
 		table.insert(self.specwarns, obj)
-		if announceType == "stack" then
+		if ejSpell and announceType == "stack" then
+			self.localization.options[text] = DBM_CORE_AUTO_SPEC_WARN_OPTIONS_EJ[announceType]:format(stacks or 3, spellId)
+		elseif ejSpell then
+			self.localization.options[text] = DBM_CORE_AUTO_SPEC_WARN_OPTIONS_EJ[announceType]:format(spellId)
+		elseif announceType == "stack" then
 			self.localization.options[text] = DBM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(stacks or 3, spellId)
 		else
 			self.localization.options[text] = DBM_CORE_AUTO_SPEC_WARN_OPTIONS[announceType]:format(spellId)
@@ -4070,7 +4207,7 @@ do
 	end
 	
 	function bossModPrototype:NewTimer(timer, name, icon, optionDefault, optionName, r, g, b)
-		local icon = type(icon) == "number" and select(3, GetSpellInfo(icon)) or icon
+		local icon = (type(icon) == "string" and icon:match("ej%d+") and select(4, EJ_GetSectionInfo(string.sub(icon, 3))) ~= "" and select(4, EJ_GetSectionInfo(string.sub(icon, 3)))) or (type(icon) == "number" and select(3, GetSpellInfo(icon))) or icon
 		local obj = setmetatable(
 			{
 				text = self.localization.timers[name],
@@ -4100,7 +4237,7 @@ do
 		if type(timerText) == "boolean" or type(optionDefault) == "string" then -- check if the argument was skipped
 			return newTimer(self, timerType, timer, spellId, nil, timerText, optionDefault, optionName, texture, r, g, b)
 		end
-		local spellName, icon
+		local spellName, icon, ejSpell
 		if timerType == "achievement" then
 			spellName = select(2, GetAchievementInfo(spellId))
 			icon = type(texture) == "number" and select(10, GetAchievementInfo(texture)) or texture or spellId and select(10, GetAchievementInfo(spellId))
@@ -4109,8 +4246,15 @@ do
 --				optionDefault = not completed
 --			end
 		else
-			spellName = GetSpellInfo(spellId or 0)
-			if spellName then
+			if type(spellId) == "string" and spellId:match("ej%d+") then
+				spellName = EJ_GetSectionInfo(string.sub(spellId, 3)) or nil
+				ejSpell = true
+			else
+				spellName = GetSpellInfo(spellId or 0)
+			end
+			if spellName and ejSpell then
+				icon = type(texture) == "number" and select(3, GetSpellInfo(texture)) or texture or type(spellId) == "string" and select(4, EJ_GetSectionInfo(string.sub(spellId, 3))) ~= "" and select(4, EJ_GetSectionInfo(string.sub(spellId, 3)))
+			elseif spellName then
 				icon = type(texture) == "number" and select(3, GetSpellInfo(texture)) or texture or spellId and select(3, GetSpellInfo(spellId))
 			else
 				icon = nil
@@ -4139,6 +4283,8 @@ do
 		-- todo: move the string creation to the GUI with SetFormattedString...
 		if timerType == "achievement" then
 			self.localization.options[id] = DBM_CORE_AUTO_TIMER_OPTIONS[timerType]:format(GetAchievementLink(spellId):gsub("%[(.+)%]", "%1"))
+		elseif ejSpell then
+			self.localization.options[id] = DBM_CORE_AUTO_TIMER_OPTIONS_EJ[timerType]:format(spellName)
 		else
 			self.localization.options[id] = DBM_CORE_AUTO_TIMER_OPTIONS[timerType]:format(spellId, spellName)
 		end
@@ -4192,6 +4338,8 @@ do
 		local spellName
 		if timerType == "achievement" then
 			spellName = select(2, GetAchievementInfo(spellId))
+		elseif type(spellId) == "string" and spellId:match("ej%d+") then
+			spellName = EJ_GetSectionInfo(string.sub(spellId, 3))
 		else
 			spellName = GetSpellInfo(spellId)
 		end

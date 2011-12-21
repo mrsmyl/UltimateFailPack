@@ -31,7 +31,7 @@
 ## X-DBM-Mod-Name-esMX: Mazmorras (Cataclysm)
 ## X-DBM-Mod-Sort: 125
 ## X-DBM-Mod-LoadZoneID: 747,753,756,757,759,764,767,768,769,697,793,781,820,819,816
-## X-Curse-Packaged-Version: 4.10.4
+## X-Curse-Packaged-Version: 4.10.6
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

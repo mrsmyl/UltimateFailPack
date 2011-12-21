@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(332, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6828 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 6936 $"):sub(12, -3))
 mod:SetCreatureID(56598)--56427 is Boss, but engage trigger needs the ship which is 56598
 mod:SetModelID(39399)
 mod:SetZone()
@@ -12,6 +12,7 @@ mod:SetMinCombatTime(20)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
+	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_SUMMON",
@@ -24,8 +25,9 @@ mod:RegisterEventsInCombat(
 local warnHarpoon					= mod:NewTargetAnnounce(108038, 2)
 local warnTwilightOnslaught			= mod:NewSpellAnnounce(108862, 4)
 local warnPhase2					= mod:NewPhaseAnnounce(2, 3)
+local warnRoar						= mod:NewSpellAnnounce(109228, 2)
 local warnTwilightFlames			= mod:NewSpellAnnounce(108051, 3)
-local warnShockwave					= mod:NewTargetAnnounce(108862, 4)
+local warnShockwave					= mod:NewTargetAnnounce(108046, 4)
 local warnSunder					= mod:NewStackAnnounce(108043, 3, nil, mod:IsTank() or mod:IsHealer())
 
 local specWarnHarpoon				= mod:NewSpecialWarningTarget(108038, false)
@@ -37,9 +39,11 @@ local yellShockwave					= mod:NewYell(108046)
 local specWarnSunder				= mod:NewSpecialWarningStack(108043, mod:IsTank(), 3)
 
 local timerCombatStart				= mod:NewTimer(20.5, "TimerCombatStart", 2457)
+local timerAdd						= mod:NewTimer(61, "TimerAdd", 107752)
 local timerTwilightOnslaughtCD		= mod:NewNextTimer(35, 107588)
 local timerSapperCD					= mod:NewTimer(40, "TimerSapper", 107752)
 local timerDeckFireCD				= mod:NewCDTimer(20, 110095)--Not the best log, so not sure if this is accurate or actually based on other variables.
+local timerRoarCD					= mod:NewCDTimer(19, 109228)--19~22 variables
 local timerTwilightFlamesCD			= mod:NewNextTimer(8, 108051)
 local timerShockwaveCD				= mod:NewCDTimer(23, 108046)
 local timerSunder					= mod:NewTargetTimer(30, 108043, nil, mod:IsTank() or mod:IsHealer())
@@ -48,6 +52,7 @@ local berserkTimer					= mod:NewBerserkTimer(250)
 
 local phase2Started = false
 local lastFlames = 0
+local addsCount = 0
 
 function mod:ShockwaveTarget()
 	local targetname = self:GetBossTarget(56427)
@@ -65,18 +70,31 @@ function mod:ShockwaveTarget()
 				x, y = GetPlayerMapPosition(uId)
 			end
 			local inRange = DBM.RangeCheck:GetDistance("player", x, y)
-			if inRange and inRange < 13 then--Might be able to tune range?
+			if inRange and inRange < 5 then--Might be able to tune range?
 				specWarnShockwaveNear:Show(targetname)
 			end
 		end
 	end
 end
 
+function mod:AddsRepeat() -- it seems to be adds summon only 3 times. needs more review
+	if addsCount < 2 then -- fix logical error
+		addsCount = addsCount + 1
+		timerAdd:Start()
+		self:ScheduleMethod(61, "AddsRepeat")
+	end
+end
+
 function mod:OnCombatStart(delay)
 	phase2Started = false
 	lastFlames = 0
+	addsCount = 0
 	timerCombatStart:Start(-delay)
-	timerSapperCD:Start(69-delay)
+	timerAdd:Start(24-delay)
+	self:ScheduleMethod(24-delay, "AddsRepeat")
+	if not self:IsDifficulty("lfr25") then--No sappers in LFR
+		timerSapperCD:Start(69-delay)
+	end
 	if self:IsDifficulty("heroic10", "heroic25") then
 		timerTwilightOnslaughtCD:Start(42-delay)--Not sure if variation is cause it was heroic or cause the first one is not consistent
 		timerDeckFireCD:Start(60-delay)--Consistent?
@@ -86,13 +104,20 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(107588) then--Assumed since it's only cast ID spellid in ptr.wowhead
+	if args:IsSpellID(107588) then
 		warnTwilightOnslaught:Show()
 		specWarnTwilightOnslaught:Show()
 		timerTwilightOnslaughtCD:Start()
-	elseif args:IsSpellID(108046) then--Assumed since it's only cast ID spellid in ptr.wowhead
+	elseif args:IsSpellID(108046) then
 		self:ScheduleMethod(0.2, "ShockwaveTarget")
 		timerShockwaveCD:Start()
+	end
+end
+
+function mod:SPELL_CAST_SUCCESS(args)
+	if args:IsSpellID(108044, 109228, 109229, 109230) then -- 108044 is 10 man / 109228 lfr. other drycoded.
+		warnRoar:Show()
+		timerRoarCD:Start()
 	end
 end
 
@@ -111,9 +136,14 @@ function mod:SPELL_AURA_APPLIED(args)
 	--"<2069.5> [MONSTER_YELL] CHAT_MSG_MONSTER_YELL#Looks like I'm doing this myself. Good!#Warmaster Blackhorn###Goriona##0#0##0#564##0#false", -- [61454]
 	elseif args:IsSpellID(108040) and not phase2Started then--Goriona is being shot by the ships Artillery Barrage (phase 2 trigger)
 		phase2Started = true
+		self:UnscheduleMethod("AddsRepeat")
+		timerAdd:Cancel()
+		timerTwilightOnslaughtCD:Cancel()
+		timerSapperCD:Cancel()
 		--timerDeckFireCD:Cancel()--This continue into phase 2 or do we cancel it?
 		warnPhase2:Show()
 		timerCombatStart:Start(5)--Shorter now on live? 5-6 seems about right now. Lets try 5.
+		timerRoarCD:Start(22)
 		timerTwilightFlamesCD:Start(22)
 		timerShockwaveCD:Start()--23-26 second variation
 		if not self:IsDifficulty("lfr25") then--Assumed, but i find it unlikely a 4 min berserk timer will be active on LFR

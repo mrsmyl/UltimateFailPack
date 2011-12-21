@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 12/4/2011
+-- Last update: 12/13/2011
 
 if GetLocale() ~= "zhCN" then return end
 
@@ -967,7 +967,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetMiscLocalization{
-	Kill		= "You know not what you have done. Aman'Thul... What I... have... seen..."
+	Kill		= "你根本不明白你究竟干了什么。阿曼苏尔……我……看到……的……"
 }
 
 ------------------------
@@ -982,7 +982,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetMiscLocalization{
-	Pull		= "No mortal may stand before me and live!"
+	Pull		= "没有凡人能从我手中逃脱！"
 }
 
 
@@ -1009,7 +1009,7 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	Kill		= "Enough! As much as I adore playing hostess, I have more pressing matters to attend to."
+	Kill		= "够了！我虽然好客，但现在必须要去处理更重要的事情了。"
 }
 
 -----------------------------
@@ -1030,7 +1030,7 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	Kill		= "No...no! This victory will not be ripped from my grasp! I will not return to him in failure! I will not be torn from this pitiful world! No...NOOOOOOOO!!!"
+	Kill		= "不……不！我不能让到手的胜利白白溜走！我不能带着一场失败回去见他！我不能……这样……离开这个可悲的世界！不，不——！！！！！"
 }
 
 ------------------------
@@ -1045,7 +1045,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetMiscLocalization{
-	Pull		= "You're a mere mortal. It is time you died like one."
+	Pull		= "你不过是个凡人。现在，像个凡人那样卑微地死去吧。"
 }
 
 ----------------------
@@ -1058,7 +1058,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetMiscLocalization{
-	Pull		= "Let's get to work, shall we?"
+	Pull		= "该干正事了，对吧？"
 }
 
 ---------------------------

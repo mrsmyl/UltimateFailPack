@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(318, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6832 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 6939 $"):sub(12, -3))
 mod:SetCreatureID(53879)
 mod:SetModelID(35268)
 mod:SetZone()
@@ -32,6 +32,7 @@ local specWarnNuclearBlast	= mod:NewSpecialWarningRun(105845, mod:IsMelee())
 local specWarnSealArmor		= mod:NewSpecialWarningSpell(105847, mod:IsDps())
 
 local timerSealArmor		= mod:NewCastTimer(23, 105847)
+local timerBarrelRoll		= mod:NewCastTimer(5, "ej4050")
 --local timerGripCD			= mod:NewCDTimer(25, 109457)
 
 local soundNuclearBlast		= mod:NewSound(105845, nil, mod:IsMelee())
@@ -65,6 +66,7 @@ local function showGripWarning()
 	table.wipe(gripTargets)
 end
 
+--This wasn't working right on 25 man at all, i think more then one went out at a time, and it spam changed name, it didn't want to add more then 1 name to frame at a time so instead it kept replacing the frame, alli saw was about 6 names flash by within 1 second.
 local clearPlasmaTarget, setPlasmaTarget
 do
 	local plasmaTargets = {}
@@ -78,19 +80,21 @@ do
 	mod.SPELL_PERIODIC_HEAL = mod.SPELL_HEAL
 
 	function setPlasmaTarget(guid, name)
-		DBM.BossHealth:Show(L.name)
 		plasmaTargets[guid] = name
 		healed[guid] = 0
 		local maxAbsorb =	mod:IsDifficulty("heroic25") and 420000 or
 							mod:IsDifficulty("heroic10") and 280000 or
 							mod:IsDifficulty("normal25") and 300000 or
 							mod:IsDifficulty("normal10") and 200000 or 1
+		if not DBM.BossHealth:IsShown() then
+			DBM.BossHealth:Show(L.name)
+		end
 		DBM.BossHealth:AddBoss(function() return math.max(1, math.floor((healed[guid] or 0) / maxAbsorb * 100))	end, L.PlasmaTarget:format(name))
 	end
 
 	function clearPlasmaTarget(guid, name)
 		DBM.BossHealth:RemoveBoss(L.PlasmaTarget:format(name))
-		plasmarTargets[guid] = nil
+		plasmaTargets[guid] = nil
 		healed[guid] = nil
 	end
 end
@@ -98,6 +102,11 @@ end
 
 
 function mod:OnCombatStart(delay)
+	if self:IsDifficulty("lfr25") then
+		warnSealArmor = mod:NewCastAnnounce(105847, 4, 34.5)
+	else
+		warnSealArmor = mod:NewCastAnnounce(105847, 4)
+	end
 	table.wipe(gripTargets)
 	gripIcon = 6
 end
@@ -113,10 +122,14 @@ function mod:SPELL_CAST_START(args)
 		warnNuclearBlast:Show()
 		specWarnNuclearBlast:Show()
 		soundNuclearBlast:Play()
-	elseif args:IsSpellID(105847) then
+	elseif args:IsSpellID(105847, 105848) then -- sometimes spellid 105848, maybe related to positions?
 		warnSealArmor:Show()
 		specWarnSealArmor:Show()
-		timerSealArmor:Start(args.sourceGUID)--Super rare, but 2 of these might be out at same time too.
+		if self:IsDifficulty("lfr25") then
+			timerSealArmor:Start(34.5)
+		else
+			timerSealArmor:Start()
+		end
 	end
 end
 
@@ -142,7 +155,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		self:Unschedule(showGripWarning)
 		self:Schedule(0.3, showGripWarning)
-	elseif args:IsSpellID(109379, 109362, 109363, 109364) then -- confirmed 109379 in 10 man. otherid is drycoded.
+	elseif args:IsSpellID(105479, 109362, 109363, 109364) then -- 105479 in 10 man. otherid is drycoded.
 		if self.Options.ShowShieldInfo then
 			setPlasmaTarget(args.destGUID, args.destName)
 		end
@@ -155,20 +168,26 @@ function mod:SPELL_AURA_REMOVED(args)
 		if self.Options.SetIconOnGrip then
 			self:SetIcon(args.destName, 0)
 		end
-	elseif args:IsSpellID(109379, 109362, 109363, 109364) then -- confirmed 109379 in 10 man. otherid is drycoded.
+	elseif args:IsSpellID(105479, 109362, 109363, 109364) then -- 105479 in 10 man. otherid is drycoded.
 		if self.Options.ShowShieldInfo then
 			clearPlasmaTarget(args.destGUID, args.destName)
 		end
 	end
 end	
 
-function mod:RAID_BOSS_EMOTE(msg)--No one had any logs that were any good, so I don't have the emotes for this. NOT ALL RAID BOSS EMOTSE SHOW IN THE CHAT LOGS. there is a reason i ask for transcriptor logs
+function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.DRoll or msg:find(L.DRoll) then
 		self:Unschedule(checkTendrils)--In case you manage to spam spin him, we don't want to get a bunch of extra stuff scheduled.
+		self:Unschedule(clearTendrils)--^
+		checkTendrils()--Warn you right away.
+		self:Schedule(3, checkTendrils)--Check a second time 3 seconds into 5 second cast to remind player
+		self:Schedule(8, clearTendrils)--Clearing 3 seconds after the roll should be sufficent
+		timerBarrelRoll:Start()
+	elseif msg == L.DLevels or msg:find(L.DLevels) then
+		self:Unschedule(checkTendrils)
 		self:Unschedule(clearTendrils)
-		checkTendrils()
-		self:Schedule(3, checkTendrils)--Check more then once?
-		self:Schedule(8, clearTendrils)--Clearing 3 seconds after the roll should be sufficent? Need to perfect this timing later.
+		clearTendrils()
+		timerBarrelRoll:Cancel()
 	end
 end
 

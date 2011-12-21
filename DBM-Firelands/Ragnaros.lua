@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(198, "DBM-Firelands", nil, 78)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6715 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 6911 $"):sub(12, -3))
 mod:SetCreatureID(52409)
 mod:SetModelID(37875)
 mod:SetZone()
@@ -87,6 +87,7 @@ local timerMoltenInferno	= mod:NewNextTimer(10, 100254)--Cast bar for molten Inf
 local timerLivingMeteorCD	= mod:NewNextCountTimer(45, 99268)
 local timerInvokeSons		= mod:NewCastTimer(17, 99014)--8 seconds for splitting blow, about 8-10 seconds after for them landing, using the average, 9.
 local timerLavaBoltCD		= mod:NewNextTimer(4, 100291)
+local timerBlazingHeatCD	= mod:NewCDTimer(20, 100460)
 local timerPhaseSons		= mod:NewTimer(45, "TimerPhaseSons", 99014)	-- lasts 45secs or till all sons are dead
 local timerCloudBurstCD		= mod:NewCDTimer(50, 100714)
 local timerBreadthofFrostCD	= mod:NewCDTimer(45, 100479)
@@ -107,7 +108,6 @@ local soundFixate			= mod:NewSound(99849)
 local soundEmpoweredSulf	= mod:NewSound(100997, nil, mod:IsTank())
 
 mod:AddBoolOption("RangeFrame", true)
-mod:AddBoolOption("P4IconRangeFilter", true)
 mod:AddBoolOption("BlazingHeatIcons", true)
 mod:AddBoolOption("InfoHealthFrame", mod:IsHealer())--Phase 1 info framefor low health detection.
 mod:AddBoolOption("AggroFrame", false)--Phase 2 info frame for seed aggro detection.
@@ -144,12 +144,6 @@ local function showRangeFrame()
 			DBM.RangeCheck:Show(6)--For wrath of rag, only for ranged.
 		elseif phase == 2 then
 			DBM.RangeCheck:Show(6)--For seeds
-		elseif phase == 4 then
-			if mod.Options.P4IconRangeFilter then
-				DBM.RangeCheck:Show(6, GetRaidTargetIndex)--maybe useful for setting up your triforce but i'm not entirely sure we need a range frame in phase 4 either.
-			else
-				DBM.RangeCheck:Show(6)--Frost patch spreading
-			end
 		end
 	end
 end
@@ -194,7 +188,6 @@ local function TransitionEnded()
 		warnLivingMeteorSoon:Cancel()
 		timerFlamesCD:Cancel()
 		timerSulfurasSmash:Cancel()
-		showRangeFrame()
 		timerBreadthofFrostCD:Start(33)
 		timerDreadFlameCD:Start(48)
 		timerCloudBurstCD:Start()
@@ -351,7 +344,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			timerFlamesCD:Start(60)--60 second CD in phase 2
 		end
-	elseif args:IsSpellID(100997) then
+	elseif args:IsSpellID(100997, 100604) then
 		warnEmpoweredSulf:Show(args.spellName)
 		specWarnEmpoweredSulf:Show()
 		soundEmpoweredSulf:Play()
@@ -503,6 +496,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	elseif args:IsSpellID(100460, 100981, 100982, 100983) then	-- Blazing heat
 		warnBlazingHeat:Show(args.destName)
+		timerBlazingHeatCD:Start(args.sourceGUID)--args.sourceGUID is to support multiple cds when more then 1 is up at once
 		if args:IsPlayer() then
 			specWarnBlazingHeat:Show()
 			soundBlazingHeat:Play()
@@ -683,6 +677,8 @@ function mod:UNIT_DIED(args)
 				DBM.InfoFrame:SetHeader(L.HealthInfo)
 				DBM.InfoFrame:Show(5, "health", 100000)
 			end
-		end	
+		end
+	elseif cid == 53231 then--Lava Scion
+		timerBlazingHeatCD:Cancel(args.sourceGUID)
 	end
 end

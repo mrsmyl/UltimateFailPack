@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 11/8/2011
+-- Last update: 12/13/2011
 
 if GetLocale() ~= "zhCN" then return end
 
@@ -14,16 +14,10 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerSpinners 		= "下一波织网蛛",
-	TimerSpiderlings	= "下一波幼蛛",
-	TimerDrone			= "下一波工虫"
 })
 
 L:SetOptionLocalization({
-	TimerSpinners		= "计时条：下一波$journal:2770",
-	TimerSpiderlings	= "计时条：下一波$journal:2778",
-	TimerDrone			= "计时条：下一波$journal:2773",
-	RangeFrame			= "距离监视器（10码）",
+	RangeFrame			= "距离监视器（10码）"
 })
 
 L:SetMiscLocalization({
@@ -185,12 +179,11 @@ L:SetOptionLocalization({
 	warnEngulfingFlame			= "警报：$spell:99171",
 	WarnEngulfingFlameHeroic	= "警报：英雄模式下$spell:99171的位置",
 	WarnRemainingAdds			= "警报：烈焰之子剩余数量",
-	warnSeedsLand				= "警报与计时条：$spell:98520落地位置，而非施法警报",
+	warnSeedsLand				= "警报与计时条：$spell:98520落地，而非施法警报",
 	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100997, GetSpellInfo(100997)),
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),
 	TimerPhaseSons				= "计时条：烈焰之子阶段持续时间",
 	RangeFrame					= "距离监视器",
-	P4IconRangeFilter			= "距离监视器在第4阶段只显示团队标记的成员（需要开启监视器）",
 	InfoHealthFrame				= "信息框：生命值少于10万的团员的列表",
 	MeteorFrame					= "信息框：$spell:99849的目标",
 	AggroFrame					= "信息框：没有获得熔岩元素仇恨的团员的列表",
@@ -267,7 +260,7 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("NexusLegendary")
 
 L:SetGeneralLocalization({
-	name = "Thyrinar"
+	name = "赛瑞纳尔"
 })
 
 L:SetWarningLocalization({

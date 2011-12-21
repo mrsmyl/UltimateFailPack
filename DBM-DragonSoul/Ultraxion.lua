@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(331, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6819 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 6956 $"):sub(12, -3))
 mod:SetCreatureID(55294)
 mod:SetModelID(39099)
 mod:SetZone()
@@ -27,17 +27,21 @@ local specWarnHourofTwilight		= mod:NewSpecialWarningSpell(109416, nil, nil, nil
 local specWarnTwilightEruption		= mod:NewSpecialWarningSpell(106388, nil, nil, nil, true)--Berserk, you have 5 seconds to finish off the boss ;)
 local specWarnFadingLight			= mod:NewSpecialWarningYou(110080)
 
+local timerDrakes					= mod:NewTimer(253, "TimerDrakes", 61248)
 local timerCombatStart				= mod:NewTimer(35, "TimerCombatStart", 2457)
-local timerHourofTwilightCD			= mod:NewNextTimer(45, 109416)
-local timerTwilightEruptionCD		= mod:NewNextTimer(360, 106388)--Berserk timer more or less.
+local timerHourofTwilight			= mod:NewCastTimer(5, 109416)
+local timerHourofTwilightCD			= mod:NewNextCountTimer(45, 109416)
 local timerTwilightEruption			= mod:NewCastTimer(5, 106388)
---local timerFadingLight				= mod:NewBuffFadesTimer(10, 110080)--For some reason the api is not accurate, it's not returning correct value so disabled.
+local timerFadingLight				= mod:NewBuffFadesTimer(10, 110080)--Lets try again using duration, not expire. expire just isn't going to work because of GetTime() 4.3 change.
 local timerFadingLightCD			= mod:NewNextTimer(10, 110080)--10 second on heroic, 15 on normal
 local timerGiftofLight				= mod:NewNextTimer(80, 105896, nil, mod:IsHealer())
 local timerEssenceofDreams			= mod:NewNextTimer(155, 105900, nil, mod:IsHealer())
 local timerSourceofMagic			= mod:NewNextTimer(215, 105903, nil, mod:IsHealer())
 
---local FadingLightCountdown			= mod:NewCountdown(10, 110080)--5-10 second variation that's random according to EJ
+local berserkTimer					= mod:NewBerserkTimer(360)--some players regard as Ultraxian mod not shows berserk Timer. so it will be better to use Generic Berserk Timer..
+
+local FadingLightCountdown			= mod:NewCountdown(10, 110080)--5-10 second variation that's random according to EJ
+local HourofTwilightCountdown		= mod:NewCountdown(45, 109416, mod:IsHealer())--can be confusing with Fading Light, only enable for healer. (healers no dot affect by Fading Light)
 
 local hourOfTwilightCount = 0
 local fadingLightCount = 0
@@ -52,11 +56,12 @@ function mod:OnCombatStart(delay)
 	table.wipe(fadingLightTargets)
 	hourOfTwilightCount = 0
 	fadingLightCount = 0
-	timerTwilightEruptionCD:Start(-delay)
+	timerHourofTwilightCD:Start(45.5-delay, 1)
+	HourofTwilightCountdown:Start(45.5)
 	timerGiftofLight:Start(-delay)
 	timerEssenceofDreams:Start(-delay)
 	timerSourceofMagic:Start(-delay)
-	timerHourofTwilightCD:Start(-delay)
+	berserkTimer:Start(-delay)
 end
 
 function mod:OnCombatEnd()
@@ -68,11 +73,14 @@ function mod:SPELL_CAST_START(args)
 		hourOfTwilightCount = hourOfTwilightCount + 1
 		warnHourofTwilight:Show(hourOfTwilightCount)
 		specWarnHourofTwilight:Show()
-		timerHourofTwilightCD:Start()
+		timerHourofTwilightCD:Start(45, hourOfTwilightCount+1)
+		HourofTwilightCountdown:Start()
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerFadingLightCD:Start(13)
+			timerHourofTwilight:Start(3)
 		else
 			timerFadingLightCD:Start(20)--Same in raid finder too? too many difficulties now
+			timerHourofTwilight:Start()
 		end
 	elseif args:IsSpellID(106388) then
 		specWarnTwilightEruption:Show()
@@ -89,24 +97,24 @@ function mod:SPELL_AURA_APPLIED(args)
 			timerFadingLightCD:Start()
 		elseif self:IsDifficulty("normal10", "normal25") and fadingLightCount < 2 then--It's cast 2 times during hour of twilight buff duration on ultraxion normal. 15 secomds remaining and at 0 seconds remainings.
 			timerFadingLightCD:Start(15)
-		--elseif self:IsDifficulty("lfr25") then
-			--timerFadingLightCD:Start(15)--Same in raid finder as normal?
+		elseif self:IsDifficulty("lfr25") and self:IsTank() then--Only tanks get it in LFR
+			timerFadingLightCD:Start(15)
 		end
 		if args:IsPlayer() then
-			local _, _, _, _, _, duration, expires, _, _ = UnitDebuff("player", args.spellName)--Find out what our specific fading light is
+			local _, _, _, _, _, duration, expires = UnitDebuff("player", args.spellName)--Find out what our specific fading light is
 			specWarnFadingLight:Show()
---			FadingLightCountdown:Start(expires-GetTime()-5)
---			timerFadingLight:Start(expires-GetTime())
+			FadingLightCountdown:Start(duration)
+			timerFadingLight:Start(duration)
 		end
 		self:Unschedule(warnFadingLightTargets)
 		self:Schedule(0.3, warnFadingLightTargets)
 	elseif args:IsSpellID(105925, 109075, 110070, 110080) then--Damage done IDs, dps/healer debuffs
 		fadingLightTargets[#fadingLightTargets + 1] = args.destName
 		if args:IsPlayer() then
-			local _, _, _, _, _, duration, expires, _, _ = UnitDebuff("player", args.spellName)--Find out what our specific fading light is
+			local _, _, _, _, _, duration, expires = UnitDebuff("player", args.spellName)--Find out what our specific fading light is
 			specWarnFadingLight:Show()
---			FadingLightCountdown:Start(expires-GetTime()-5)
---			timerFadingLight:Start(expires-GetTime())
+			FadingLightCountdown:Start(duration)
+			timerFadingLight:Start(duration)
 		end
 		self:Unschedule(warnFadingLightTargets)
 		self:Schedule(0.3, warnFadingLightTargets)
@@ -119,10 +127,10 @@ function mod:CHAT_MSG_MONSTER_SAY(msg)
 	end
 end
 
---			"<18.7> CHAT_MSG_MONSTER_YELL#It is good to see you again, Alexstrasza. I have been busy in my absence.#Deathwing###Notarget##0#0##0#3731##0#false", -- [1]
---			"<271.9> [UNIT_SPELLCAST_SUCCEEDED] Twilight Assaulter:Possible Target<nil>:target:Twilight Escape::0:109904", -- [11926]
+--	"<18.7> CHAT_MSG_MONSTER_YELL#It is good to see you again, Alexstrasza. I have been busy in my absence.#Deathwing###Notarget##0#0##0#3731##0#false", -- [1]
+--	"<271.9> [UNIT_SPELLCAST_SUCCEEDED] Twilight Assaulter:Possible Target<nil>:target:Twilight Escape::0:109904", -- [11926]
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.Trash or msg:find(L.Trash) then
-		DBM.Bars:CreateBar(253, "Skyrim")
+		timerDrakes:Start(253, GetSpellInfo(109904))
 	end
 end

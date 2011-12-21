@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(317, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6824 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 6941 $"):sub(12, -3))
 mod:SetCreatureID(55689)
 mod:SetModelID(39318)
 mod:SetZone()
@@ -25,15 +25,17 @@ local warnFrostTombCast		= mod:NewAnnounce("warnFrostTombCast", 4, 104448)--Can'
 local warnFrostTomb			= mod:NewTargetAnnounce(104451, 4)
 local warnIceLance			= mod:NewTargetAnnounce(105269, 3)
 local warnFrostflake		= mod:NewTargetAnnounce(109325, 3)	-- verify with logs
-local warnStormPillars		= mod:NewSpellAnnounce(109557, 3)	-- verify with logs
+local warnStormPillars		= mod:NewTargetAnnounce(109557, 3)	-- verify with logs
 
 local specWarnFrostTombCast	= mod:NewSpecialWarningSpell(104448, nil, nil, nil, true)
 local specWarnTempest		= mod:NewSpecialWarningSpell(109552, nil, nil, nil, true)
 local specWarnLightingStorm	= mod:NewSpecialWarningSpell(105465, nil, nil, nil, true)
 local specWarnAssault		= mod:NewSpecialWarningSpell(107851, mod:IsTank())
-local specWarnFrostTomb		= mod:NewSpecialWarningYou(104451)
+--local specWarnFrostTomb		= mod:NewSpecialWarningYou(104451)
 local specWarnWatery		= mod:NewSpecialWarningMove(110317)
 local specWarnStormPillars	= mod:NewSpecialWarningClose(109557)	-- if target != nil
+local specWarnFrostflake	= mod:NewSpecialWarningYou(109325)
+local yellFrostflake		= mod:NewYell(109325)
 
 local timerFrostTomb		= mod:NewCastTimer(8, 104448)
 local timerFrostTombCD		= mod:NewNextTimer(20, 104451)
@@ -42,12 +44,14 @@ local timerIceLanceCD		= mod:NewNextTimer(30, 105269)
 local timerSpecialCD		= mod:NewTimer(62, "TimerSpecial", "Interface\\Icons\\Spell_Nature_WispSplode")
 local timerTempestCD		= mod:NewNextTimer(62, 105256)
 local timerLightningStormCD	= mod:NewNextTimer(62, 105465)
-local timerIceWave			= mod:NewNextTimer(15, 105314)
+local timerIceWave			= mod:NewNextTimer(10, 105314)
 local timerFeedback			= mod:NewBuffActiveTimer(15, 108934)
 local timerAssault			= mod:NewBuffActiveTimer(5, 107851, nil, mod:IsTank() or mod:IsTank())
 local timerAssaultCD		= mod:NewCDTimer(15.5, 107851, nil, mod:IsTank() or mod:IsTank())
 
---local soundFrostTomb		= mod:NewSound(104451)--Needed?
+local berserkTimer			= mod:NewBerserkTimer(480)	-- according to Icy-Veins
+
+local SpecialCountdown		= mod:NewCountdown(62, 105256)--Apparently countdown prototype doesn't support localized text, too lazy to do that now, so i'll just use tempest, even though it's enabled for both specials.
 
 mod:AddBoolOption("RangeFrame")--Ice lance spreading. May make it more dynamic later but for now i need to see the fight in realtime before i can do any more guessing off mailed in combat logs.
 mod:AddBoolOption("SetIconOnFrostflake", true)
@@ -62,6 +66,7 @@ local tombIconTargets = {}
 function mod:stormPillarsTarget(target)
 	local targetname = target or self:GetBossTarget(55689)
 	if not targetname then return end
+	warnStormPillars:Show(targetname)
 	local uId = DBM:GetRaidUnitId(targetname)
 	if uId then
 		local x, y = GetPlayerMapPosition(uId)
@@ -71,7 +76,7 @@ function mod:stormPillarsTarget(target)
 		end
 		local inRange = DBM.RangeCheck:GetDistance("player", x, y)
 		if inRange and inRange < 5 then
-			specWarnStormPillars:Show()
+			specWarnStormPillars:Show(targetname)
 		end
 	end
 end
@@ -91,7 +96,8 @@ function mod:OnCombatStart(delay)
 	timerIceLanceCD:Start(12-delay)
 --	timerFrostTombCD:Start(16-delay)--No longer cast on engage? most recent log she only casts it after specials now and not after pull
 	timerSpecialCD:Start(30-delay)
---	berserkTimer:Start(-delay)
+	SpecialCountdown:Start(30-delay)
+	berserkTimer:Start(-delay)
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(3)
 	end
@@ -112,9 +118,6 @@ end
 
 local function ClearTombTargets()
 	table.wipe(tombIconTargets)
---[[	if mod.Options.RangeFrame then
-		DBM.RangeCheck:Hide()
-	end--]]
 end
 
 do
@@ -138,26 +141,16 @@ do
 end
 
 local function warnTombTargets()
---[[	if mod.Options.RangeFrame then
-		if not playerTombed then
-			DBM.RangeCheck:Show(10, GetRaidTargetIndex)
-		else
-			DBM.RangeCheck:Show(10)
-		end
-	end--]]
 	warnFrostTomb:Show(table.concat(tombTargets, "<, >"))
 	table.wipe(tombTargets)
---	playertombed = false
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(104451) then--104451 25 man normal confirmed.
 		tombTargets[#tombTargets + 1] = args.destName
-		if args:IsPlayer() then
---			playerTombed = true
+		--[[if args:IsPlayer() then
 			specWarnFrostTomb:Show()
---			soundFrostTomb:Play("Sound\\Creature\\Illidan\\BLACK_Illidan_04.wav")
-		end
+		end--]]
 		if self.Options.SetIconOnFrostTomb then
 			table.insert(tombIconTargets, DBM:GetRaidUnitId(args.destName))
 			self:UnscheduleMethod("SetTombIcons")
@@ -183,9 +176,13 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args:IsSpellID(110317) and args:IsPlayer() then
 		specWarnWatery:Show()
 	elseif args:IsSpellID(109325) then
-		warnFrostFlake:Show()
+		warnFrostflake:Show(args.destName)
+		if args:IsPlayer() then
+			specWarnFrostflake:Show()
+			yellFrostflake:Yell()
+		end
 		if self.Options.SetIconOnFrostflake then
-			mod:SetIcon(args.destName, 3)
+			self:SetIcon(args.destName, 3)
 		end
 	end
 end
@@ -201,6 +198,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 		timerAssaultCD:Start(20)
 		timerLightningStormCD:Start()
+		SpecialCountdown:Start(62)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(3)
 		end
@@ -212,6 +210,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 		timerAssaultCD:Start(20)
 		timerTempestCD:Start()
+		SpecialCountdown:Start(62)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(3)
 		end
@@ -247,8 +246,7 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(109557) then
-		warnStormPillars:Show()
-		stormPillarsTarget(args.destName)
+		self:stormPillarsTarget()
 	end
 end
 

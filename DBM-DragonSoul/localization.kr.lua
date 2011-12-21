@@ -35,10 +35,13 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	RangeFrame	= "$spell:104601 주문의 영향을 받은 경우 거리 프레임 보기 (10m)\n(영웅 난이도)"
+	ShadowYell			= "$spell:104600 주문의 영향을 받은 경우 외치기(영웅 난이도에서만)",
+	RangeFrame			= "$spell:104601 약화 효과 상태에 따른 거리 프레임 표시(영웅 난이도)",
+	NoFilterRangeFrame	= "거리 프레임 필터링 사용 중지(항상 모든 플레이어 보임)"
 })
 
 L:SetMiscLocalization({
+	voidYell	= "굴카와스 언고브 느조스."--Start translating the yell he does for Void of the Unmaking cast, the latest logs from DS indicate blizz removed the UNIT_SPELLCAST_SUCCESS event that detected casts. sigh.
 })
 
 -----------------------------
@@ -47,20 +50,14 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(325)
 
 L:SetWarningLocalization({
-	warnOozes		= "핏방울: %s",
-	specWarnOozes	= "핏방울 소환!",
 })
 
 L:SetTimerLocalization({
-	timerOozesCD		= "다음 핏방울",
 	timerOozesActive	= "핏방울 공격 가능",
 --	timerOozesReach		= "핏방울 도착"
 })
 
 L:SetOptionLocalization({
-	warnOozes			= "핏방울 소환 알림 보기",
-	specWarnOozes		= "핏방울 소환 특수 경고 보기",
-	timerOozesCD		= "다음 핏방울 바 표시",
 	timerOozesActive	= "핏방울이 소환된 후 공격 가능하기까지 남은시간 바 표시",
 --	timerOozesReach		= "소환된 핏방울이 보스에게 도착하기까지 남은시간 바 표시",
 	RangeFrame			= "보스가 $spell:104898 주문의 영향을 받은 경우 거리 프레임 보기(4m)\n(일반 난이도 이상)"
@@ -85,11 +82,11 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerSpecial			= "첫번째 특수 공격"
+	TimerSpecial			= "다음 폭풍 또는 얼음"
 })
 
 L:SetOptionLocalization({
-	TimerSpecial			= "첫번째 특수 공격 까지 남은 시간 바 표시",
+	TimerSpecial			= "$spell:105456 또는 $spell:109552 까지 남은 시간 바 표시",
 	RangeFrame				= "$spell:105269 주문의 영향을 받은 경우 거리 프레임 보기 (3m)",
 	AnnounceFrostTombIcons	= "$spell:104451 대상을 공격대 대화로 알리기\n(승급 권한 필요)",
 	warnFrostTombCast		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(104448, GetSpellInfo(104448)),
@@ -110,10 +107,12 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
+	TimerDrakes			= "%s",
 	TimerCombatStart	= "울트락시온 착지"
 })
 
 L:SetOptionLocalization({
+	TimerDrakes			= "황혼의 습격자가 $spell:109904 시전까지 남은시간 바 표시",
 	TimerCombatStart	= "울트락시온 착지 바 표시"
 })
 
@@ -132,12 +131,14 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "전투 시작",
-	TimerSapper			= "다음 황혼의 폭파병"
+	TimerSapper			= "다음 황혼의 폭파병",
+	TimerAdd			= "다음 정예병"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "전투 시작 바 표시",
-	TimerSapper			= "다음 황혼의 폭파병 등장 바 표시"--npc=56923
+	TimerSapper			= "다음 황혼의 폭파병 등장 바 표시",--npc=56923
+	TimerAdd			= "다음 황혼의 정예병 등장 바 표시"
 })
 
 L:SetMiscLocalization({
@@ -152,7 +153,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(318)
 
 L:SetWarningLocalization({
-	SpecWarnTendril			= "휘감는 촉수 받으세요!"
+	SpecWarnTendril			= "등에 달라 붙으세요!"
 })
 
 L:SetTimerLocalization({
@@ -169,7 +170,8 @@ L:SetMiscLocalization({
 	Pull			= "저 갑옷! 놈의 갑옷이 벗겨지는군! 갑옷을 뜯어내면 놈을 쓰러뜨릴 기회가 생길 거요!",	
 	NoDebuff		= "%s 없음",
 	PlasmaTarget	= "이글거리는 혈장: %s",
-	DRoll			= "회전하려고"--Not a single transcriptor log for this fight from anyone, just bad chat logs that have more looting then actual boss encounters. This emote needs to be confirmed/fixed if it's wrong.
+	DRoll			= "회전하려고",
+	DLevels			= "수평으로 균형을"
 })
 
 ---------------------------
@@ -189,6 +191,5 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull				= "넌 아무것도 못 했다. 내가 이 세상을 조각내주마.",
-	Kill				= "때가 왔다. 내가 가진 모든 힘을 쏟아 모든 가능성의 끈을 바로 여기, 바로 지금, 용의 영혼에 엮겠다. 앞으로 일어날 일은 절대로 되돌릴 수 없으리라."
+	Pull				= "넌 아무것도 못 했다. 내가 이 세상을 조각내주마."
 })

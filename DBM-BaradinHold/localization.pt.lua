@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "koKR" then return end
+﻿if GetLocale() ~= "ptBR" then return end
 local L
 
 ----------------
@@ -8,7 +8,7 @@ local L
 L = DBM:GetModLocalization("Argaloth")
 
 L:SetGeneralLocalization({
-	name = "아르갈로스"
+	name = "Argaloth"
 })
 
 L:SetWarningLocalization({
@@ -50,11 +50,11 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerFirstSpecial		= "다음 증오 또는 꼬챙이"
+	TimerFirstSpecial		= "Primeiro especial"
 })
 
 L:SetOptionLocalization({
-	TimerFirstSpecial		= "$spell:105738 주문 시전 후 다음 특수 공격에 대한 바 표시\n(첫번째 특수 공격은 $spell:105067 와 $spell:104936 중 무작위로 결정됩니다.)"
+	TimerFirstSpecial		= "Mostrar cronógrafo para o primeiro especial após $spell:105738\n(O primeiro especial é aleatório. Ou $spell:105067 ou $spell:104936)"
 })
 
 L:SetMiscLocalization({

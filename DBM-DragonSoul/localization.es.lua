@@ -11,12 +11,12 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	KohcromCD		= "Kohcrom mimicks %s"
+	KohcromCD		= "Kohcrom imita %s"
 })
 
 L:SetOptionLocalization({
-	KohcromWarning	= "Show warnings for Kohcrom mimicking abilities.",
-	KohcromCD		= "Show timers for Kohcrom's next ability mimick.",
+	KohcromWarning	= "Mostrar avisos para las habilidades que Kohcrom imita.",
+	KohcromCD		= "Mostrar tiempos para las siguientes habilidades imitadas de Kohcrom.",
 	RangeFrame		= "Mostrar distancia (5) para logro."
 })
 
@@ -35,10 +35,13 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	RangeFrame	= "Mostrar distancia (10) para $spell:104601\n(sólo heroico)"
+	ShadowYell			= "Gritar cuando te afecte $spell:104600\n(Solo dificultad Heroica)",
+	RangeFrame			= "Mostrar distancia dinámica basada en el estado del estado del debuff \n$spell:104601 en los jugadores en dificultad Heroica",
+	NoFilterRangeFrame	= "Desactivar el filtro de distancia y mostrar siempre a todo el mundo"
 })
 
 L:SetMiscLocalization({
+	voidYell	= "Gul'kafh an'qov N'Zoth."
 })
 
 -----------------------------
@@ -47,19 +50,13 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(325)
 
 L:SetWarningLocalization({
-	warnOozes		= "Vienen mocos: %s",
-	specWarnOozes	= "Vienen mocos!"
 })
 
 L:SetTimerLocalization({
-	timerOozesCD	= "Siguientes mocos",
 	timerOozesActive	= "Mocos atacables"
 })
 
 L:SetOptionLocalization({
-	warnOozes			= "Mostrar aviso cuando salgan mocos",
-	specWarnOozes		= "Mostrar aviso especial cuando salgan mocos",
-	timerOozesCD		= "Mostrar tiempo para siguientes mocos",
 	timerOozesActive	= "Mostrar tiempo para que los mocos se pueden atacar",
 	RangeFrame			= "Mostrar distancia (4) para $spell:104898\n(Dificultad normal o superior)"
 })
@@ -110,15 +107,17 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerCombatStart	= "Empieza el combate"
+	TimerDrakes			= "%s",
+	TimerCombatStart	= "Ultraxion aterriza"
 })
 
 L:SetOptionLocalization({
+	TimerDrakes			= "Mostrar tiempo para Fuga Crepuscular	de los Asaltantes Crepusculares",
 	TimerCombatStart	= "Mostrar tiempo para el inicio del combate"
 })
 
 L:SetMiscLocalization({
-	Trash				= "It is good to see you again, Alexstrasza. I have been busy in my absence.",--translate
+	Trash				= "Me alegra volver a verte, Alexstrasza. He estado ocupado en mi ausencia.",
 	Pull				= "Percibo que se avecina una gran alteración del equilibrio. ¡Su caos inunda mi mente!"
 })
 
@@ -133,12 +132,14 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "Empieza el combate",
-	TimerSapper			= "Siguiente Zapador Crepuscular"
+	TimerSapper			= "Siguiente Zapador Crepuscular",
+	TimerAdd			= "Siguientes Élites"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "Mostrar tiempo para el inicio del combate",
-	TimerSapper			= "Mostrar tiempo para la aparición del siguiente Zapador Crepuscular"
+	TimerSapper			= "Mostrar tiempo para la aparición del siguiente Zapador Crepuscular",--npc=56923
+	TimerAdd			= "Mostrar tiempo para que salgan los siguientes Élites Crepusculares"
 })
 
 L:SetMiscLocalization({
@@ -167,10 +168,11 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull		= "The plates! He's coming apart! Tear up the plates and we've got a shot at bringing him down!",--translate
+	Pull		= "¡Las placas! ¡Se está deshaciendo! ¡Destrozad las placas y tendremos una oportunidad de derribarlo!",
 	NoDebuff	= "Sin %s",
 	PlasmaTarget	= "Plasma ardiente: %s",
-	DRoll		= "about to roll",--translate
+	DRoll		= "¡Está a punto de girar",
+	DLevels			= "levels out"--translate
 })
 
 ---------------------------
@@ -190,6 +192,5 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull				= "No habéis hecho nada. Destruiré vuestro mundo.",
-	Kill				= "We are one step closer. The unknowable, transcendent power of the Emerald Dream I now give unto the Dragon Soul."--translate
+	Pull				= "No habéis hecho nada. Destruiré vuestro mundo."
 })

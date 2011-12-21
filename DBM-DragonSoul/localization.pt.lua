@@ -1,3 +1,5 @@
+﻿if GetLocale() ~= "ptBR" then return end
+
 local L
 
 -------------
@@ -10,13 +12,13 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	KohcromCD		= "Kohcrom mimicks %s",--Universal single local timer used for all of his mimick timers
+	KohcromCD		= "Kohcrom imita %s",--Universal single local timer used for all of his mimick timers
 })
 
 L:SetOptionLocalization({
-	KohcromWarning	= "Show warnings for Kohcrom mimicking abilities.",
-	KohcromCD		= "Show timers for Kohcrom's next ability mimick.",
-	RangeFrame		= "Show range frame (5) for achievement."
+	KohcromWarning	= "Exibir avisos quando Kohcrom imita habilidades.",
+	KohcromCD		= "Exibir cronógrafo para a próxima imitação de habilidade de Kohcrom.",
+	RangeFrame		= "Exibir medidor de distância (5) para conquista."
 })
 
 L:SetMiscLocalization({
@@ -34,13 +36,10 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	ShadowYell			= "Yell when you are affected by $spell:104600\n(Heroic difficulty only)",
-	RangeFrame			= "Show dynamic range frame based on player debuff status for\n$spell:104601 on Heroic difficulty",
-	NoFilterRangeFrame	= "Disable Range Frame debuff filter and always show everyone"
+	RangeFrame	= "Exibir medidor de distância (10) para $spell:104601\n(Modo Heróico)"
 })
 
 L:SetMiscLocalization({
-	voidYell	= "Gul'kafh an'qov N'Zoth."--Start translating the yell he does for Void of the Unmaking cast, the latest logs from DS indicate blizz removed the UNIT_SPELLCAST_SUCCESS event that detected casts. sigh.
 })
 
 -----------------------------
@@ -52,21 +51,21 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerOozesActive	= "Oozes Attackable"
+	timerOozesActive	= "Glóbulos atacáveis"
 })
 
 L:SetOptionLocalization({
-	timerOozesActive	= "Show timer for when Oozes become attackable",
-	RangeFrame			= "Show range frame (4) for $spell:104898\n(Normal+ difficulty)"
+	timerOozesActive	= "Exibir cronógrafo para quando os Glóbulos se tornam atacáveis",
+	RangeFrame			= "Exibir medidor de distância (4) para $spell:104898\n(Modo Normal+)"
 })
 
 L:SetMiscLocalization({
-	Black			= "|cFF424242black|r",
-	Purple			= "|cFF9932CDpurple|r",
-	Red				= "|cFFFF0404red|r",
-	Green			= "|cFF088A08green|r",
-	Blue			= "|cFF0080FFblue|r",
-	Yellow			= "|cFFFFA901yellow|r"
+	Black			= "|cFF424242negro|r",
+	Purple			= "|cFF9932CDroxo|r",
+	Red				= "|cFFFF0404vermelho|r",
+	Green			= "|cFF088A08verde|r",
+	Blue			= "|cFF0080FFazul|r",
+	Yellow			= "|cFFFFA901amarelo|r"
 })
 
 -----------------------
@@ -75,24 +74,24 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(317)
 
 L:SetWarningLocalization({
-	warnFrostTombCast		= "%s in 8 sec"
+	warnFrostTombCast		= "%s em 8 seg"
 })
 
 L:SetTimerLocalization({
-	TimerSpecial			= "First Special"
+	TimerSpecial			= "Primeiro especial"
 })
 
 L:SetOptionLocalization({
-	TimerSpecial			= "Show timer for first special ability cast",
-	RangeFrame				= "Show range frame (3) for $spell:105269",
-	AnnounceFrostTombIcons	= "Announce icons for $spell:104451 targets to raid chat\n(requires raid leader)",
+	TimerSpecial			= "Exibir cronógrafo para lançamento da primeira habilidade",
+	RangeFrame				= "Exibir medidor de distância (3) para $spell:105269",
+	AnnounceFrostTombIcons	= "Anunciar no chat da raide, ícones para alvos de $spell:104451\n(requer liderança)",
 	warnFrostTombCast		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(104448, GetSpellInfo(104448)),
 	SetIconOnFrostTomb		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(104451),
 	SetIconOnFrostflake		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109325)
 })
 
 L:SetMiscLocalization({
-	TombIconSet				= "Frost Beacon icon {rt%d} set on %s"
+	TombIconSet				= "Ícone de Tumba de Gelo {rt%d} colocado em %s"
 })
 
 ---------------
@@ -104,13 +103,11 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerDrakes			= "%s",--spellname from mod
-	TimerCombatStart	= "Ultraxion Lands"
+	TimerCombatStart	= "Ultraxion pousa"
 })
 
 L:SetOptionLocalization({
-	TimerDrakes			= "Show timer for when Twilight Assaulters $spell:109904",
-	TimerCombatStart	= "Show timer for Ultraxion RP"
+	TimerCombatStart	= "Exibir cronógrafo para início do combate."
 })
 
 L:SetMiscLocalization({
@@ -127,15 +124,13 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerCombatStart	= "Combat starts",
-	TimerSapper			= "Next Twilight Sapper",
-	TimerAdd			= "Next Elites"
+	TimerCombatStart	= "Início do combate",
+	TimerSapper			= "Próximo Sapador do Crepúsculo"
 })
 
 L:SetOptionLocalization({
-	TimerCombatStart	= "Show timer for start of combat",
-	TimerSapper			= "Show timer for next Twilight Sapper spawn",--npc=56923
-	TimerAdd			= "Show timer for next Twilight Elites spawn"
+	TimerCombatStart	= "Exibir cronógrafo para o início do combate",
+	TimerSapper			= "Exibir cronógrafo para surgir o próximo Sapador do Crepúsculo"--npc=56923
 })
 
 L:SetMiscLocalization({
@@ -157,18 +152,17 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnTendril			= "Show special warning when you are missing $spell:109454 debuff",--http://ptr.wowhead.com/npc=56188
-	InfoFrame				= "Show info frame for players without $spell:109454",
+	SpecWarnTendril			= "Exibir aviso especial quando você não tem $spell:109454",--http://ptr.wowhead.com/npc=56188
+	InfoFrame				= "Exibir quadro de informações para jogadores sem $spell:109454",
 	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109459),
-	ShowShieldInfo			= "Show boss health with a health bar for $spell:105479"
+	ShowShieldInfo			= "Exibir vida do chefe, com uma barra de vida para $spell:105479"
 })
 
 L:SetMiscLocalization({
-	Pull			= "The plates! He's coming apart! Tear up the plates and we've got a shot at bringing him down!",
-	NoDebuff		= "No %s",
+	Pull		= "The plates! He's coming apart! Tear up the plates and we've got a shot at bringing him down!",
+	NoDebuff	= "Sem %s",
 	PlasmaTarget	= "Searing Plasma: %s",
-	DRoll			= "about to roll",
-	DLevels			= "levels out"
+	DRoll		= "about to roll"
 })
 
 ---------------------------
@@ -177,14 +171,14 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(333)
 
 L:SetWarningLocalization({
-	SpecWarnTentacle	= "Blistering Tentacles - Switch"--Msg too long? maybe just "Blistering Tentacles!"
+	SpecWarnTentacle	= "Tentáculo Pustuloso"--Msg too long? maybe just "Blistering Tentacles!"
 })
 
 L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnTentacle	= "Show special warning when Blistering Tentacles spawn (and Alexstrasza is not active)"--http://ptr.wowhead.com/npc=56188
+	SpecWarnTentacle	= "Exibir aviso especial quando Tentáculos Pustulosos surgem (e Alexstrasza não está ativa)"--http://ptr.wowhead.com/npc=56188
 })
 
 L:SetMiscLocalization({
