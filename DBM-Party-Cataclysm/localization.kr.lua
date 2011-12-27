@@ -1028,7 +1028,7 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	Kill		= "안 돼... 안 돼! 승리가 눈앞에 있는데 어떻게 이런 일이! 내가 빈손으로 그분께 돌아갈 것 같으냐! 난... 이 초라한 세계를 떠날 수 없어! 안 돼... 안 돼애애애애!"
+	Kill		= "말퓨리온, 그가 해냈어! 차원문이 무너지고 있어!"
 }
 
 ------------------------
@@ -1042,8 +1042,17 @@ L:SetGeneralLocalization{
 	name = "아큐리온"
 }
 
+L:SetTimerLocalization{
+	TimerCombatStart	= "전투 시작"
+}
+
+L:SetOptionLocalization{
+	TimerCombatStart	= "전투 시작 바 표시"
+}
+
 L:SetMiscLocalization{
-	Pull		= "넌 하찮은 필멸자일 뿐. 필멸자답게 황천에나 떨어져라."
+	Event		= "모습을 드러내라!",
+	Pull		= "골짜기 위쪽에서 황혼의 군대가 나타납니다."
 }
 
 ----------------------
@@ -1056,7 +1065,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetMiscLocalization{
-	Pull		= "자, 본론으로 들어갈까?"
+	Pull		= "일단 저놈은 처리했으니, 이제 네놈과 네 멍청한 친구들을 처치하면 되겠군. 음, 날 이렇게 오래 기다리게 하다니!"
 }
 
 ---------------------------
@@ -1066,4 +1075,16 @@ L = DBM:GetModLocalization("Benedictus")
 
 L:SetGeneralLocalization{
 	name = "대주교 베네딕투스"
+}
+
+L:SetTimerLocalization{
+	TimerCombatStart	= "전투 시작"
+}
+
+L:SetOptionLocalization{
+	TimerCombatStart	= "전투 시작 바 표시"
+}
+
+L:SetMiscLocalization{
+	Event		= "그럼... 주술사, 용의 영혼을 내놓으시지. 당장."
 }

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("ApothecaryTrio", "DBM-WorldEvents")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5751 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7004 $"):sub(12, -3))
 mod:SetCreatureID(36272, 36296, 36565)
 mod:SetModelID(16176)
 mod:RegisterCombat("combat")
@@ -31,15 +31,14 @@ function mod:SPELL_CAST_START(args)
 end
 
 do 
-	local lastPerfspill = 0
-	local lastColnspill = 0
+	local lastspill = 0
 	function mod:SPELL_DAMAGE(args)
-		if args:IsSpellID(68927) and args:IsPlayer() and time() - lastPerfspill > 2 then
+		if args:IsSpellID(68927) and args:IsPlayer() and GetTime() - lastspill > 2 then
 			specWarnPerfumeSpill:Show()
-			lastPerfspill = time()
-		elseif args:IsSpellID(68934) and args:IsPlayer() and time() - lastColnspill > 2 then
+			lastspill = GetTime()
+		elseif args:IsSpellID(68934) and args:IsPlayer() and GetTime() - lastspill > 2 then
 			specWarnCologneSpill:Show()
-			lastColnspill = time()
+			lastspill = GetTime()
 		end
 	end
 end

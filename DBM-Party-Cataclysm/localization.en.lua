@@ -1032,7 +1032,7 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	Kill		= "No...no! This victory will not be ripped from my grasp! I will not return to him in failure! I will not be torn from this pitiful world! No...NOOOOOOOO!!!"
+	Kill		= "Malfurion, he has done it! The portal is collapsing!"
 }
 
 ------------------------
@@ -1046,8 +1046,17 @@ L:SetGeneralLocalization{
 	name = "Arcurion"
 }
 
+L:SetTimerLocalization{
+	TimerCombatStart	= "Combat starts"
+}
+
+L:SetOptionLocalization{
+	TimerCombatStart	= "Show timer for start of combat"
+}
+
 L:SetMiscLocalization{
-	Pull		= "You're a mere mortal. It is time you died like one."
+	Event		= "Show yourself!",
+	Pull		= "Twilight forces begin to appear around the canyons edges."
 }
 
 ----------------------
@@ -1060,7 +1069,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetMiscLocalization{
-	Pull		= "Let's get to work, shall we?"
+	Pull		= "...and with that out of the way, you and your flock of fumbling friends are next on my list. Mmm, I thought you'd never get here!"
 }
 
 ---------------------------
@@ -1070,4 +1079,16 @@ L = DBM:GetModLocalization("Benedictus")
 
 L:SetGeneralLocalization{
 	name = "Archbishop Benedictus"
+}
+
+L:SetTimerLocalization{
+	TimerCombatStart	= "Combat starts"
+}
+
+L:SetOptionLocalization{
+	TimerCombatStart	= "Show timer for start of combat"
+}
+
+L:SetMiscLocalization{
+	Event		= "And now, Shaman.. you will give the Dragon Soul to me."
 }

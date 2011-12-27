@@ -41,9 +41,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 6966 $"):sub(12, -3)),
-	DisplayVersion = "4.10.6", -- the string that is shown as version
-	ReleaseRevision = 6966 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 7028 $"):sub(12, -3)),
+	DisplayVersion = "4.10.8", -- the string that is shown as version
+	ReleaseRevision = 7028 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -133,6 +133,7 @@ DBM.DefaultOptions = {
 	BigBrotherAnnounceToRaid = false,
 	SettingsMessageShown = false,
 	AlwaysShowSpeedKillTimer = true,
+	DisableCinematics = false,
 --	HelpMessageShown = false,
 }
 
@@ -1314,29 +1315,20 @@ do
 					end
 				end
 				v.Options = savedOptions[v.id] or {}
-				savedStats[v.id] = savedStats[v.id] or {
-					normalKills = 0,
-					normalPulls = 0,
-					heroicKills = 0,
-					heroicPulls = 0,
-					normal25Kills = 0,
-					normal25Pulls = 0,
-					heroic25Kills = 0,
-					heroic25Pulls = 0
-				}
-				if not savedStats[v.id].normalPulls then
-					savedStats[v.id] = {
-						normalKills = 0,
-						normalPulls = 0,
-						heroicKills = 0,
-						heroicPulls = 0,
-						normal25Kills = 0,
-						normal25Pulls = 0,
-						heroic25Kills = 0,
-						heroic25Pulls = 0
-					}
-				end
-				v.stats = savedStats[v.id]
+				savedStats[v.id] = savedStats[v.id] or {}
+				local stats = savedStats[v.id]
+				stats.normalKills = stats.normalKills or 0
+				stats.normalPulls = stats.normalPulls or 0
+				stats.heroicKills = stats.heroicKills or 0
+				stats.heroicPulls = stats.heroicPulls or 0
+				stats.normal25Kills = stats.normal25Kills or 0
+				stats.normal25Kills = stats.normal25Kills or 0
+				stats.normal25Pulls = stats.normal25Pulls or 0
+				stats.heroic25Kills = stats.heroic25Kills or 0
+				stats.heroic25Pulls = stats.heroic25Pulls or 0
+				stats.lfr25Kills = stats.lfr25Kills or 0
+				stats.lfr25Pulls = stats.lfr25Pulls or 0
+				v.stats = stats
 				if v.OnInitialize then v:OnInitialize() end
 				for i, cat in ipairs(v.categorySort) do -- temporary hack
 					if cat == "misc" then
@@ -1445,6 +1437,19 @@ do
 			DBM:Schedule(1.5, setCombatInitialized)
 			local enabled, loadable = select(4, GetAddOnInfo("DBM_API"))
 			if enabled and loadable then showOldVerWarning() end
+			-- setup MovieFrame hook (TODO: replace this by a proper filtering function that only filters certain movie IDs (which requires some API for boss mods to specify movie IDs and default actions)))
+			-- do not use HookScript here, the movie must not even be started to prevent a strange WoW crash bug on OS X with some movies
+			local oldMovieEventHandler = MovieFrame:GetScript("OnEvent")
+			MovieFrame:SetScript("OnEvent", function(self, event, movieId, ...)
+				if event == "PLAY_MOVIE" and DBM.Options.DisableCinematics then
+					-- you still have to call OnMovieFinished, even if you never actually told the movie frame to start the movie, otherwise you will end up in a weird state (input stops working)
+					MovieFrame_OnMovieFinished(MovieFrame)
+					return
+				else
+					-- other event or cinematics enabled
+					return oldMovieEventHandler and oldMovieEventHandler(self, event, movieId, ...)
+				end
+			end)
 		elseif modname == "DBM-BurningCrusade" then
 			-- workaround to ban really old ZA/ZG mods that are still loaded through the compatibility layer. These mods should be excluded by the compatibility layer by design, however they are no longer loaded through the compatibility layer.
 			-- that means this is unnecessary if you are using a recent version of DBM-BC. However, if you are still on an old version of DBM-BC then filtering ZA/ZG through DBM-Core wouldn't be possible and no one really ever updates DBM-BC
@@ -1533,7 +1538,7 @@ function DBM:PLAYER_TARGET_CHANGED()
 					break
 				end
 			end
-		elseif (cId == 55003 or cId == 54499) and not DBM:GetModByName("Greench") then--The Abominable Greench (Winter Veil world boss)
+		elseif (cId == 55003 or cId == 54499) and not DBM:GetModByName("Greench") then--The Abominable Greench & his helpers (Winter Veil world boss)
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-WorldEvents" then
 					DBM:LoadMod(v)
@@ -1552,7 +1557,7 @@ do
 	function DBM:ZONE_CHANGED_NEW_AREA()
 		--Work around for the zone ID/area updating slow because the world map doesn't always have correct information on zone change
 		--unless we apsolutely make sure we force it to right zone before asking for info.
-		if WorldMapFrame:IsVisible() then --World map is open, people don't like dbm messing with current map area if it's open (such as flying from zone to zone doing archaeology)
+		if WorldMapFrame:IsVisible() and not IsInInstance() then --World map is open and we're not in an instance, (such as flying from zone to zone doing archaeology)
 			local C, Z = GetCurrentMapContinent(), GetCurrentMapZone()--Save current map settings.
 			SetMapToCurrentZone()--Force to right zone
 			LastZoneMapID = GetCurrentMapAreaID() --Set accurate zone area id into cache
@@ -2333,6 +2338,7 @@ function DBM:StartCombat(mod, delay, synced)
 			mod:RegisterEvents(unpack(mod.inCombatOnlyEvents))
 		end
 		if mod:IsDifficulty("lfr25") then
+			mod.stats.lfr25Pulls = mod.stats.lfr25Pulls + 1
 			savedDifficulty = PLAYER_DIFFICULTY3.." - "
 		elseif mod:IsDifficulty("normal5", "normal10") then
 			mod.stats.normalPulls = mod.stats.normalPulls + 1
@@ -2365,7 +2371,9 @@ function DBM:StartCombat(mod, delay, synced)
 		end
 		if (DBM.Options.AlwaysShowSpeedKillTimer or mod.Options.SpeedKillTimer) and mod.Options.Enabled then
 			local bestTime
-			if mod:IsDifficulty("normal5", "normal10") and mod.stats.normalBestTime then
+			if mod:IsDifficulty("lfr25") and mod.stats.lfr25BestTime then
+				bestTime = mod.stats.lfr25BestTime
+			elseif mod:IsDifficulty("normal5", "normal10") and mod.stats.normalBestTime then
 				bestTime = mod.stats.normalBestTime
 			elseif mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicBestTime then
 				bestTime = mod.stats.heroicBestTime
@@ -2415,8 +2423,10 @@ function DBM:EndCombat(mod, wipe)
 		end
 		if wipe then
 			local thisTime = GetTime() - mod.combatInfo.pull
-			if thisTime < 30 then
-				if mod:IsDifficulty("normal5", "normal10") then
+			if thisTime < 15 then
+				if mod:IsDifficulty("lfr25") then
+					mod.stats.lfr25Pulls = mod.stats.lfr25Pulls - 1
+				elseif mod:IsDifficulty("normal5", "normal10") then
 					mod.stats.normalPulls = mod.stats.normalPulls - 1
 				elseif mod:IsDifficulty("heroic5", "heroic10") then
 					mod.stats.heroicPulls = mod.stats.heroicPulls - 1
@@ -2435,9 +2445,17 @@ function DBM:EndCombat(mod, wipe)
 			fireEvent("wipe", mod)
 		else
 			local thisTime = GetTime() - mod.combatInfo.pull
-			local lastTime = (mod:IsDifficulty("normal5", "normal10") and mod.stats.normalLastTime) or (mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicLastTime) or (mod:IsDifficulty("normal25") and mod.stats.normal25LastTime) or (mod:IsDifficulty("heroic25") and mod.stats.heroic25LastTime)
-			local bestTime = (mod:IsDifficulty("normal5", "normal10") and mod.stats.normalBestTime) or (mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicBestTime) or (mod:IsDifficulty("normal25") and mod.stats.normal25BestTime) or (mod:IsDifficulty("heroic25") and mod.stats.heroic25BestTime)
-			if mod:IsDifficulty("normal5") then
+			local lastTime = (mod:IsDifficulty("lfr25") and mod.stats.lfr25LastTime) or (mod:IsDifficulty("normal5", "normal10") and mod.stats.normalLastTime) or (mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicLastTime) or (mod:IsDifficulty("normal25") and mod.stats.normal25LastTime) or (mod:IsDifficulty("heroic25") and mod.stats.heroic25LastTime)
+			local bestTime = (mod:IsDifficulty("lfr25") and mod.stats.lfr25BestTime) or (mod:IsDifficulty("normal5", "normal10") and mod.stats.normalBestTime) or (mod:IsDifficulty("heroic5", "heroic10") and mod.stats.heroicBestTime) or (mod:IsDifficulty("normal25") and mod.stats.normal25BestTime) or (mod:IsDifficulty("heroic25") and mod.stats.heroic25BestTime)
+			if mod:IsDifficulty("lfr25") then
+				mod.stats.lfr25Kills = mod.stats.lfr25Kills + 1
+				mod.stats.lfr25LastTime = thisTime
+				if bestTime and bestTime > 0 and bestTime < 10 then--Just to prevent pre mature end combat calls from broken mods from saving bad time stats.
+					mod.stats.lfr25BestTime = thisTime
+				else
+					mod.stats.lfr25BestTime = math.min(bestTime or math.huge, thisTime)
+				end
+			elseif mod:IsDifficulty("normal5") then
 				mod.stats.normalKills = mod.stats.normalKills + 1
 				mod.stats.normalLastTime = thisTime
 				mod.stats.normalBestTime = math.min(bestTime or math.huge, thisTime)
@@ -2456,7 +2474,7 @@ function DBM:EndCombat(mod, wipe)
 			elseif mod:IsDifficulty("heroic10") then
 				mod.stats.heroicKills = mod.stats.heroicKills + 1
 				mod.stats.heroicLastTime = thisTime
-				if bestTime and bestTime > 0 and bestTime < 15 then--you did not kill a heroic raid boss in 15 seconds (first heroic raid boss in game is ToC10 and most zergable boss would be 8,376,000 valk twins. This could however change in a couple tiers. Current record is 31seconds)
+				if bestTime and bestTime > 0 and bestTime < 10 then
 					mod.stats.heroicBestTime = thisTime
 				else
 					mod.stats.heroicBestTime = math.min(bestTime or math.huge, thisTime)
@@ -2464,7 +2482,7 @@ function DBM:EndCombat(mod, wipe)
 			elseif mod:IsDifficulty("normal25") then
 				mod.stats.normal25Kills = mod.stats.normal25Kills + 1
 				mod.stats.normal25LastTime = thisTime
-				if bestTime and bestTime > 0 and bestTime < 10 then--(All classic raids report as difficulty 1 so this difficulty would mean naxx and later only. I could not find any record less than 20 seconds even for sarth or archavon or any naxx boss yet. So i'm leaving this 10 for now.)
+				if bestTime and bestTime > 0 and bestTime < 10 then
 					mod.stats.normal25BestTime = thisTime
 				else
 					mod.stats.normal25BestTime = math.min(bestTime or math.huge, thisTime)
@@ -2472,7 +2490,7 @@ function DBM:EndCombat(mod, wipe)
 			elseif mod:IsDifficulty("heroic25") then
 				mod.stats.heroic25Kills = mod.stats.heroic25Kills + 1
 				mod.stats.heroic25LastTime = thisTime
-				if bestTime and bestTime > 0 and bestTime < 35 then--(Current fastest record heroic 25 boss kill is 00:52 on Lord Marrowgar)
+				if bestTime and bestTime > 0 and bestTime < 10 then
 					mod.stats.heroic25BestTime = thisTime
 				else
 					mod.stats.heroic25BestTime = math.min(bestTime or math.huge, thisTime)
@@ -2733,13 +2751,10 @@ do
 		self:LFG_UPDATE()
 --		self:Schedule(10, function() if not DBM.Options.HelpMessageShown then DBM.Options.HelpMessageShown = true DBM:AddMsg(DBM_CORE_NEED_SUPPORT) end end)
 		self:Schedule(10, function() if not DBM.Options.SettingsMessageShown then DBM.Options.SettingsMessageShown = true DBM:AddMsg(DBM_HOW_TO_USE_MOD) end end)
-		
-		-- TODO: check if this is the correct place to register the prefixes. http://us.battle.net/wow/en/forum/topic/2228413591 suggests PLAYER_ENTERING_WORLD to do this, however ADDON_LOADED might be sufficient (unless the server forgets the filter list when entering an instance)
 		if type(RegisterAddonMessagePrefix) == "function" then
 			if not RegisterAddonMessagePrefix("D4") then -- main prefix for DBM4
 				DBM:AddMsg("Error: unable to register DBM addon message prefix (reached client side addon message filter limit), synchronization will be unavailable") -- TODO: confirm that this actually means that the syncs won't show up
 			end
---			RegisterAddonMessagePrefix("DBMv4-Ver") -- to see old clients which will still try to communicate with us, but we won't be able to respond as they will filter our messages (allow silent failure as this isn't really important)
 		end
 	end
 end
@@ -3264,6 +3279,15 @@ end
 --Simple talent checker.
 --It checks for key skills in spellbook, without having to do in dept talent point checks.
 
+
+--Unfortunately since feral dps also have vengeance we still have to go more in dept for them.
+local function IsDruidTank()
+	local tankTalents = (getTalentpointsSpent(57880) >= 2 and 1 or 0) +		-- Natural Reaction
+						(getTalentpointsSpent(16931) >= 3 and 1 or 0) +		-- Thick Hide
+						(getTalentpointsSpent(61336) >= 1 and 1 or 0)		-- Survival Instincts
+	return tankTalents >= 3
+end
+
 function bossModPrototype:IsMelee()
 	return class == "ROGUE"
 	or class == "WARRIOR"
@@ -3305,13 +3329,6 @@ function bossModPrototype:IsDps()--For features that simply should only be on fo
 	or class == "ROGUE"
 end
 
---Unfortunately since feral dps also have vengeance we still have to go more in dept for them.
-local function IsDruidTank()
-	local tankTalents = (getTalentpointsSpent(57880) >= 2 and 1 or 0) +		-- Natural Reaction
-						(getTalentpointsSpent(16931) >= 3 and 1 or 0) +		-- Thick Hide
-						(getTalentpointsSpent(61336) >= 1 and 1 or 0)		-- Survival Instincts
-	return tankTalents >= 3
-end
 
 --A simple check to see if these classes know "Vengeance".
 function bossModPrototype:IsTank()
@@ -4579,6 +4596,12 @@ function bossModPrototype:SetWipeTime(t)
 end
 
 function bossModPrototype:GetBossHPString(cId)
+        for i = 1, 4 do
+		local guid = UnitGUID("boss"..i)
+		if guid and tonumber(guid:sub(7, 10), 16) == cId then
+			return math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100) .. "%"
+		end
+	end
 	local idType = (GetNumRaidMembers() == 0 and "party") or "raid"
 	for i = 0, math.max(GetNumRaidMembers(), GetNumPartyMembers()) do
 		local unitId = ((i == 0) and "target") or idType..i.."target"

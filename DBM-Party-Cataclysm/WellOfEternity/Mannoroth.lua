@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod("Mannoroth", "DBM-Party-Cataclysm", 13)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6818 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 6989 $"):sub(12, -3))
 mod:SetCreatureID(54969)
 mod:SetModelID(38996)
 mod:SetZone()
 
 mod:RegisterCombat("combat")
-mod:RegisterKill("yell", L.Kill)
+mod:RegisterKill("say", L.Kill)
 
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
@@ -36,6 +36,7 @@ end
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(103888) then
 		felstorms = felstorms + 1
+		timerFelStormCD:Cancel()
 		specWarnFelStorm:Show()
 		timerFelStorm:Start()
 		if felstorms < 2 then

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(333, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6933 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7020 $"):sub(12, -3))
 mod:SetCreatureID(56173)
 mod:SetModelID(40087)
 mod:SetZone()
@@ -39,8 +39,10 @@ local specWarnFragments			= mod:NewSpecialWarningSpell("ej4115", nil, nil, nil, 
 local specWarnTerror			= mod:NewSpecialWarningSpell(106765, mod:IsTank())--Not need to warn everyone, tanks for sure, everyone else depends on strat and set. Normally kill first set ignore second on normal.
 local specWarnShrapnel			= mod:NewSpecialWarningYou(109598)
 
+local timerMutated				= mod:NewNextTimer(16.5, "ej4112", nil, nil, nil, 467)--use druid spell Thorns icon temporarily.
 local timerImpale				= mod:NewTargetTimer(49.5, 106400, nil, mod:IsTank() or mod:IsHealer())--45 plus 4 second cast plus .5 delay between debuff ID swap.
 local timerImpaleCD				= mod:NewCDTimer(35, 106400, nil, mod:IsTank() or mod:IsHealer())
+local timerElementiumCast		= mod:NewCastTimer(7.5, 105651)
 local timerElementiumBlast		= mod:NewCastTimer(8, 109600)--8 variation depending on where it's actually going to land. Use the min time on variance to make sure healer Cds aren't up late.
 local timerElementiumBoltCD		= mod:NewNextTimer(55.5, 105651)
 local timerHemorrhageCD			= mod:NewCDTimer(100.5, 105863)--Also the earliest observed. Also we use the UNIT event, not emote .3 seconds after it.
@@ -78,11 +80,13 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(107018) then
 		if firstAspect then--The abilities all come 15seconds earlier for first one only
 			firstAspect = false
+			timerMutated:Start(11)
 			timerImpaleCD:Start(22)
 			timerElementiumBoltCD:Start(40.5)
 			timerHemorrhageCD:Start(85.5)
 			timerCataclysmCD:Start(115.5)
 		else
+			timerMutated:Start()
 			timerImpaleCD:Start(27.5)
 			timerElementiumBoltCD:Start()
 			timerHemorrhageCD:Start()
@@ -100,11 +104,13 @@ end
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(105651) then
 		warnElementiumBolt:Show()
-		specWarnElementiumBolt:Show()
 		if not UnitBuff("player", GetSpellInfo(109624)) and not UnitIsDeadOrGhost("player") then--Check for Nozdormu's Presence
+			specWarnElementiumBolt:Show()
 			timerElementiumBlast:Start()--Not up, explosion in 10 seconds
-		else	
+		else
+			timerElementiumCast:Start()
 			timerElementiumBlast:Start(20)--Slowed by Nozdormu, explosion in 20 seconds
+			specWarnElementiumBolt:Schedule(7.5)
 		end
 	elseif args:IsSpellID(110063) and phase2 and self:IsInCombat() then--Astral Recall. Thrall teleports off back platform back to front on defeat.
 		DBM:EndCombat(self)
