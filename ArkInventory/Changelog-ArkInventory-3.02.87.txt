@@ -1,10 +1,20 @@
 ------------------------------------------------------------------------
-r324 | arkayenro | 2011-12-17 02:31:15 +0000 (Sat, 17 Dec 2011) | 3 lines
+r326 | arkayenro | 2011-12-24 12:57:06 +0000 (Sat, 24 Dec 2011) | 3 lines
 Changed paths:
-   A /tags/3.02.86 (from /trunk:323)
+   A /tags/3.02.87 (from /trunk:325)
 
-*3.02.86 (17-DEC-2011)*
- * fixed - menu library issue where menus were always expanding in size until they went off the screen
+*3.02.87 (24-DEC-2011)*
+ * fixed - code issue where i left out a local and potentially tainted a secure global variable
+
+------------------------------------------------------------------------
+r325 | arkayenro | 2011-12-24 12:53:48 +0000 (Sat, 24 Dec 2011) | 3 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryLDB.lua
+   M /trunk/VersionHistory.txt
+
+*3.02.87 (24-DEC-2011)*
+ * fixed - code issue where i left out a local and potentially tainted a secure global variable
 
 ------------------------------------------------------------------------
 r323 | arkayenro | 2011-12-17 02:28:11 +0000 (Sat, 17 Dec 2011) | 3 lines

@@ -15,11 +15,15 @@
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
  
+*3.02.87 (24-DEC-2011)*
+ * fixed - code issue where i left out a local and potentially tainted a secure global variable
+
 *3.02.86 (17-DEC-2011)*
  * fixed - menu library issue where menus were always expanding in size until they went off the screen
  
 *3.02.85 (17-DEC-2011)*
  * fixed - issue when selecting vault/void sort method outside of those two locations
+ * fixed - menu library issue where menus were always expanding in size until they went off the screen
  
 *3.02.84 (30-NOV-2011)*
  * changed - TOC updated to 4.3

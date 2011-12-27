@@ -71,7 +71,7 @@ function ArkInventory.LDB.Tracking_Currency:Update( )
 	
 	-- expand all token headers
 	for j = numTokenTypes, 1, -1 do
-		name, isHeader, isExpanded = GetCurrencyListInfo( j )
+		local name, isHeader, isExpanded = GetCurrencyListInfo( j )
 		if isHeader and not isExpanded then
 			ExpandCurrencyList( j, 1 )
 		end

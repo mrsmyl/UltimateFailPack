@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 883 $
--- $Date: 2011-12-17 13:27:08 +1100 (Sat, 17 Dec 2011) $
+-- $Revision: 884 $
+-- $Date: 2011-12-24 23:49:19 +1100 (Sat, 24 Dec 2011) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0286,
-		UIVersion = "3.2.86",
+		Version = 3.0287,
+		UIVersion = "3.2.87",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
