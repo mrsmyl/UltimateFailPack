@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1188 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1192 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -346,6 +346,8 @@ local AbsorbSpellDuration =
 	[55019] = 12, -- Sonic Shield (one of these too ought to be wrong)
 	[64411] = 15, -- Blessing of the Ancient (Val'anyr Hammer of Ancient Kings equip effect)
 	[64413] = 8, -- Val'anyr, Hammer of Ancient Kings proc Protection of Ancient Kings
+	[105909] = 6, -- Shield of Fury (Warrior T13 Protection 2P Bonus)
+	[105801] = 6, -- Delayed Judgement (Paladin T13 Protection 2P Bonus)
 	-- Misc
 	[40322] = 30, -- Teron's Vengeful Spirit Ghost - Spirit Shield
 	-- Boss abilities
@@ -739,11 +741,12 @@ end
 function Recount:SpellAuraRemoved(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags,spellId, spellName, spellSchool, auraType, amount)
 
 	-- Spirit of Redemption and Shadow of Death handling
-	if spellId == 54223 or spellId == 27827 then
+--[[	if spellId == 54223 or spellId == 27827 then
 		Recount:HandleDoubleDeath(srcName, dstName, spellName,srcGUID,srcFlags,dstGUID,dstFlags,spellId)		
 
 		-- Is this an absorb effect?
-	elseif AbsorbSpellDuration[spellId] then
+	else--]]
+	if AbsorbSpellDuration[spellId] then
 		-- Yes? Lets remove it if it was tracked
 		if AllShields[dstName] and AllShields[dstName][spellId] and AllShields[dstName][spellId][srcName] then
 			
@@ -1860,7 +1863,7 @@ function Recount:AddDamageData(source, victim, ability, element, hittype, damage
 
 end
 
-function Recount:AddHealData(source, victim, ability, healtype, amount, overheal,srcGUID,srcFlags,dstGUID,dstFlags,spellId,isHot)
+function Recount:AddHealData(source, victim, ability, healtype, amount, overheal,srcGUID,srcFlags,dstGUID,dstFlags,spellId,isHot, absorbed)
    --First lets figure if there was overhealing
    --Get the tables	
    
@@ -1886,6 +1889,10 @@ function Recount:AddHealData(source, victim, ability, healtype, amount, overheal
       Recount.cleventtext = Recount.cleventtext .." ("..overheal..L[" overheal"]..")"
    end
 
+	if absorbed and absorbed > 0 then
+		Recount.cleventtext = Recount.cleventtext .." ("..absorbed.." "..L["Absorbed"]..")"
+	end
+   
    local sourceData
 
    if srcRetention then
@@ -1935,6 +1942,10 @@ function Recount:AddHealData(source, victim, ability, healtype, amount, overheal
       amount = amount - overheal
    end
       
+	if absorbed then -- Absorbed is real healing that just didn't get through, often reducing the effect that prevents from it healing physical damage
+		amount = amount + absorbed
+	end
+	  
    if srcRetention and sourceData then
 	 
       sourceData.LastFightIn=Recount.db2.FightNum
@@ -2113,12 +2124,12 @@ function Recount:AddDeathData(source, victim, skill,srcGUID,srcFlags,dstGUID,dst
 	
 	      -- Check for Spirit of Redemption or Ghoul
 	      timeofdeath = GetTime()
-	      doubleDeathDelay = victimData.DoubleDeathTime and timeofdeath-victimData.DoubleDeathTime or 10
+--[[	      doubleDeathDelay = victimData.DoubleDeathTime and timeofdeath-victimData.DoubleDeathTime or 10
 	      
 	      if doubleDeathDelay < 2 then
 		 Recount.cleventtext = Recount.cleventtext .. " ("..victimData.DoubleDeathSpellName..")"
 		 
-	      end
+	      end--]]
 
 	      Recount:AddCurrentEvent(victimData, "MISC", true,nil,Recount.cleventtext)
 	      --This saves who/what killed the victim
