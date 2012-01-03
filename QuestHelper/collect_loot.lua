@@ -1,4 +1,7 @@
-QuestHelper_File["collect_loot.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["collect_loot.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["collect_loot.lua"] = GetTime()
 
 local debug_output = false
@@ -526,8 +529,12 @@ local function LootOpened()
   local items = {}
   items[PseudoIDs["gold"]] = 0
   for i = 1, GetNumLootItems() do
-    tex, name, quant, _ = GetLootSlotInfo(i)
+    tex, name, quant, qual, locked = GetLootSlotInfo(i)
     link = GetLootSlotLink(i)
+    local curr = LootSlotIsCurrency(i)
+    local coin = LootSlotIsCoin(i)
+    local itm = LootSlotIsItem(i)
+
     if quant == 0 then
       -- moneys
       local tot = 0
@@ -537,7 +544,7 @@ local function LootOpened()
       tot = (tonumber(gold) or 0) * 10000 + (tonumber(silver) or 0) * 100 + (tonumber(copper) or 0) * 1
       items[PseudoIDs["gold"]] = tot
     else
-      if LootSlotIsCurrency(i) then
+      if curr then
         if not QHC.PseudoIDs[name] then
           QHC.PseudoIDsMin = QHC.PseudoIDsMin - 1
           QHC.PseudoIDs[name] = QHC.PseudoIDsMin
@@ -545,13 +552,14 @@ local function LootOpened()
         items[QHC.PseudoIDs[name]] = (items[QHC.PseudoIDs[name]] or 0) + quant
       else
         if not link and not name then
-          local msg = "Texture is " .. tostring(tex) .. " with a quantity of " .. tostring(quant) .. "."
-          if LootSlotIsCoin(i) then
+          local msg = "Texture is " .. tostring(tex) .. " with a quantity of " .. tostring(quant) .. ", a quality of " .. qual .. "."
+          if coin then
             QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is coin. " .. msg)
-          elseif LootSlotIsItem(i) then
+          elseif itm then
             QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is item. " .. msg)
           else
-            QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is ???. " .. msg)
+	    QuestHelper_ErrorCatcher_ExplicitError(false, "Loot slot " .. tostring(i) .. " is ???. " .. msg)
+            --QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is ???. " .. msg)
           end
         elseif not link then
           QuestHelper:Assert(link, "Need more info on '" .. name .. "'x" .. tostring(quant) .. ".")

@@ -1,4 +1,7 @@
-QuestHelper_File["upgrade.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["upgrade.lua"] = "4.3.0.238r"
 local my_version = QuestHelper_File["upgrade.lua"]
 
 QuestHelper_Loadtime["upgrade.lua"] = GetTime()
@@ -371,12 +374,6 @@ function QuestHelper_BuildZoneLookup()
   if built then return end
   built = true
   
-  local cartugh
-  if Cartographer_Notes and not Cartographer_Notes.fixed_that_bug_that_causes_POI_to_crash_when_you_change_to_hrothgars_landing then
-    cartugh = Cartographer_Notes.SetNote
-    Cartographer_Notes.SetNote = function () end -- cartographer why are you terrible
-  end
-  
   if GetMapContinents and GetMapZones then
     -- Called from inside the WoW client.
     
@@ -397,12 +394,12 @@ function QuestHelper_BuildZoneLookup()
         local altered_index = "!!! QuestHelper_IndexLookup entry needs update: [%q] = {%s, %s, %s}"
         local altered_zone = "!!! QuestHelper_Zones entry needs update: [%s][%s] = %q -- was %s"
         
-        if not index and my_version == "4.2.0.$svnversion\$" then
+        if not index and my_version == "4.3.0.$svnversion\$" then
           --QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(tostring(base_name), tostring(next_index), tostring(c), tostring(z)))
           QuestHelper:TextOut(false, altered_index:format(tostring(base_name), tostring(next_index), tostring(c), tostring(z)))
           next_index = next_index + 1
         else
-          if QuestHelper_Locale == "enUS" and my_version == "4.2.0.224r" then
+          if QuestHelper_Locale == "enUS" and my_version == "4.3.0.238r" then
             if original_lookup[base_name][2] ~= c or original_lookup[base_name][3] ~= z then
               --QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(base_name, index, c, z))
               QuestHelper:TextOut(false, altered_index:format(base_name, index, c, z))
@@ -472,9 +469,6 @@ function QuestHelper_BuildZoneLookup()
     QuestHelper:Assert(QuestHelper:ZoneSanity())
   end
   
-  if Cartographer_Notes and not Cartographer_Notes.fixed_that_bug_that_causes_POI_to_crash_when_you_change_to_hrothgars_landing then
-    Cartographer_Notes.SetNote = cartugh
-  end
   -- We are broken by the time we get here. Time to turn these TextOut's to Errors.
   QuestHelper:Assert(QuestHelper:ZoneSanity())
 end

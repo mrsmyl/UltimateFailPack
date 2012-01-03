@@ -1,4 +1,7 @@
-QuestHelper_File["collect_merger.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["collect_merger.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["collect_merger.lua"] = GetTime()
 
 

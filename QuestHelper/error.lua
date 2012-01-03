@@ -1,4 +1,4 @@
-QuestHelper_File["error.lua"] = "4.2.0.224r"
+QuestHelper_File["error.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["error.lua"] = GetTime()
 
 --[[
@@ -249,7 +249,6 @@ function QuestHelper_ErrorCatcher.OnError(o_msg, o_frame, o_stack, o_etype, ...)
       )
       or (
         string.find(debugstack(2, 20, 20), "QuestHelper")  -- We're being a little overzealous and catching any bug with "QuestHelper" in the stack. This possibly should be removed, I'm not sure it's ever caught anything interesting.
-        and not string.find(o_msg, "Cartographer_POI")  -- Cartographer started throwing ridiculous numbers of errors on startup with QH in the stack, and since we caught stuff with QH in the stack, we decided these errors were ours. Urgh. Disabled.
       )
     )
     and not string.match(o_msg, "WTF\\Account\\.*")  -- Sometimes the WTF file gets corrupted. This isn't our fault, since we weren't involved in writing it, and there's also nothing we can do about it - in fact we can't even retrieve the remnants of the old file. We may as well just ignore it. I suppose we could pop up a little dialog saying "clear some space on your hard drive, dufus" but, meh.

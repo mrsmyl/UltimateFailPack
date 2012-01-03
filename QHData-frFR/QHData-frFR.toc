@@ -1,8 +1,8 @@
-## Interface: 40200
+## Interface: 40300
 ## Title: QuestHelper Data (frFR)
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Contains the data needed by QuestHelper
-## Version: 4.2.0.224r
+## Version: 4.3.0.238r
 ## Dependencies: QHData-base
 ## LoadOnDemand: 1
 

@@ -1,4 +1,7 @@
-QuestHelper_File["collect_location.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["collect_location.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["collect_location.lua"] = GetTime()
 
 -- little endian two's complement
@@ -11,14 +14,14 @@ local function signed(c)
 end
 
 local function float(c)
-  if not c then c = -128 end
-  QuestHelper: Assert( c >= -128, string.format("c is too small. It is %s.", tostring(c)))
-  QuestHelper: Assert( c < 128, string.format("c is too big. It is %s.", tostring(c)))
+--  if not c then c = -128 end
+--  QuestHelper: Assert( c >= -128, string.format("c is too small. It is %s.", tostring(c)))
+--  QuestHelper: Assert( c < 128, string.format("c is too big. It is %s.", tostring(c)))
   local ret = tostring(c):gsub(",",".") -- eliminate issues with locales that use a comma as the decimal separator.
   return ret
 end
 
-local function BolusizeLocation(delayed, c, z, x, y)
+local function BolusizeLocation(delayed, c, z, x, y, dl, mid, mf, f)
   -- c and z are *signed* integers that fit within an 8-bit int.
   -- x and y are floating-point values, generally between 0 and 1. We'll dedicate 24 bits to the fractional part, largely because we can.
   -- Overall we're using a weird 11 bytes on this. Meh.
@@ -26,11 +29,15 @@ local function BolusizeLocation(delayed, c, z, x, y)
   local float_x = float(x)
   local float_y = float(y)
   local loc = {}
-  loc["delayed"] = signed(delayed and 1 or 0)
-  loc["c"] = signed(c)
-  loc["z"] = signed(z)
+  loc["delayed"] = (delayed and 1 or 0)
+  loc["c"] = c
+  loc["z"] = z
   loc["x"] = float_x
   loc["y"] = float_y
+  loc["dungeonLevel"] = dl
+  loc["mapid"] = mid
+  loc["mapfile"] = mf
+  loc["facing"] = f
   return loc;
   --return string.format("%s,%s,%s,%s,%s", signed(delayed and 1 or 0), signed(c), signed(z), float_x, float_y)
   --return signed(delayed and 1 or 0) .. signed(c) .. signed(z) .. float_x .. float_y

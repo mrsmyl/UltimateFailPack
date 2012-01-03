@@ -1,6 +1,7 @@
-QuestHelper_File["main.lua"] = "4.2.0.224r"
+QuestHelper_File["main.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["main.lua"] = GetTime()
 
+local GetTime = QuestHelper_GetTime
 local version_string = QuestHelper_File["main.lua"] -- we pretty much save this only so we can inform the user that they're using a beta version
 
 -- Just to make sure it's always 'seen' (there's nothing that can be seen, but still...), and therefore always updating.
@@ -42,7 +43,6 @@ local QuestHelper_DefaultPref =
   show_ants = true,
   level = 3,
   hide = false,
-  cart_wp_new = false,
   tomtom_wp_new = false,
   arrow = true,
   arrow_locked = false,
@@ -176,8 +176,6 @@ function QuestHelper:UnsetTargetLocation()
 end
 
 local interruptcount = 0   -- counts how many "played gained control" messages we recieve, used for flight paths
-local init_cartographer_later = false
-
 
 local startup_time
 local please_submit_enabled = true
@@ -212,11 +210,6 @@ QH_Event("ADDON_LOADED", function (addonid)
   local expected_files =
     {
       ["bst_pre.lua"] = true,
-      ["bst_post.lua"] = true,
-      ["bst_astrolabe.lua"] = true,
-      ["bst_ctl.lua"] = true,
-      ["bst_libaboutpanel.lua"] = true,
-      ["bst_range.lua"] = true,
       
       ["manager_event.lua"] = true,
       ["manager_achievement.lua"] = true,
@@ -243,7 +236,6 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["flightpath.lua"] = true,
       ["tracker.lua"] = true,
       ["objtips.lua"] = true,
-      ["cartographer.lua"] = true,
       ["tomtom.lua"] = true,
       ["textviewer.lua"] = true,
       ["error.lua"] = true,
@@ -538,10 +530,6 @@ QH_Event("ADDON_LOADED", function (addonid)
         QuestHelper:InitMapButton()
     end
     
-    if QuestHelper_Pref.cart_wp_new then
-      init_cartographer_later = true
-    end
-
     if QuestHelper_Pref.tomtom_wp_new then
       self:EnableTomTom()
     end
@@ -616,12 +604,6 @@ QH_Event("ADDON_LOADED", function (addonid)
       end
     end)
     
-	-- There's a bug in Cartographer where SetMapZoom() or SetMapToCurrentZone(), called in an instance, causes any open menus to instantly close. Questhelper (and in general, anything that uses Astrolabe, and other UI mods as well) call those function every frame if the map is closed. This isn't a performance problem or anything, but it happens to trigger the Cartographer bug.
-	-- Removing Cartographer_InstanceMaps hack.  Warn user.
-	if Cartographer and Cartographer.SetCurrentInstance and Cartographer_InstanceMaps and Cartographer_InstanceMaps.OnEnable then
-		QH_fixedmessage("Cartographer is no longer supported.  Your interface may not work properly in instances.  Please remove Cartographer and restart WoW.")
-	end
-
     QuestHelper.loading_init3:SetPercentage(1.0)  -- victory
     
     QuestHelper_Loadtime["init3_end"] = GetTime()
@@ -920,13 +902,6 @@ Thanks for testing!]], "QuestHelper " .. version_string, 500, 20, 10)
     please_submit_enabled = false
   end
   QHUpdateNagTick() -- These probably shouldn't be in OnUpdate. Eventually I'll move them somewhere cleaner.
-  
-  if init_cartographer_later and Cartographer_Waypoints then    -- there has to be a better way to do this
-    init_cartographer_later = false
-    if QuestHelper_Pref.cart_wp_new then
-      self:EnableCartographer()
-    end
-  end
   
   if not ontaxi and UnitOnTaxi("player") then
     self:flightBegan()

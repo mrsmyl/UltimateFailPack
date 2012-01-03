@@ -1,4 +1,10 @@
-QuestHelper_File["utility.lua"] = "4.2.0.224r"
+function QuestHelper_GetTime()
+  return debugprofilestop() / 1000
+end
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["utility.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
 QuestHelper = CreateFrame("Frame", "QuestHelper", nil)

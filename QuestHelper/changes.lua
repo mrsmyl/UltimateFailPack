@@ -1,14 +1,14 @@
 QuestHelper_ChangeLog="\
-|cffffff00       Version 4.2.0.101025a 10/25/2010|r\
+|cffffff00       Version 4.3.0.101025a 10/25/2010|r\
 \
 • Handled case of ltype having a nil value in function collect_quest.Loot, by simply returning. Seems to only occur on item rolls. We continue to throw an error if ltype is not nil and has a non-number type.\
 • Added an error to determine what we're receiving when ltype is not nil and is not a number in collect_quest.Looted. The error will tell us the lua type and the value of ltype.\
 \
-|cffffff00       Version 4.2.0.101024a 10/24/2010|r\
+|cffffff00       Version 4.3.0.101024a 10/24/2010|r\
 \
 • Fixed achievement system to deal with changes to the achievement frame's xml.\
 \
-|cffffff00       Version 4.2.0.101023a 10/23/2010|r\
+|cffffff00       Version 4.3.0.101023a 10/23/2010|r\
 \
 • Fixed quest tracker system to deal with invalid quest objective data (basically ignore these).\
 \

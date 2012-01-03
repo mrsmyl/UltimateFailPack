@@ -1,4 +1,7 @@
-QuestHelper_File["help.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["help.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["help.lua"] = GetTime()
 
 local QuestHelper_Version = QuestHelper_File["help.lua"]
@@ -437,25 +440,6 @@ function QuestHelper:ToggleRadar(text)
   end
 end
 
-function QuestHelper:ToggleCartWP()
-  QuestHelper_Pref.cart_wp_new = not QuestHelper_Pref.cart_wp_new
-  if QuestHelper_Pref.cart_wp_new then
-    self:EnableCartographer()
-    if Cartographer_Waypoints then
-      if Waypoint and Waypoint.prototype then
-        self:TextOut("Would use "..self:HighlightText("Cartographer Waypoints").." to show objectives, but another mod is interfering with it.")
-      else
-        self:TextOut(QHFormat("SETTINGS_ARROWLINK_ON", QHText("SETTINGS_ARROWLINK_CART")))
-      end
-    else
-      self:TextOut("Would use "..self:HighlightText("Cartographer Waypoints").." to show objectives, except it doesn't seem to be present.")
-    end
-  else
-    self:DisableCartographer()
-    self:TextOut(QHFormat("SETTINGS_ARROWLINK_OFF", QHText("SETTINGS_ARROWLINK_CART")))
-  end
-end
-
 function QuestHelper:ToggleTomTomWP()
   QuestHelper_Pref.tomtom_wp_new = not QuestHelper_Pref.tomtom_wp_new
   if QuestHelper_Pref.tomtom_wp_new then
@@ -771,10 +755,6 @@ commands =
     {"METRIC",
      "Toggles distance units between metres and yards.",
      {}, QuestHelper.ToggleMetric, QuestHelper},
-    
-    {"CARTWP",
-     "Toggles displaying the current objective using Cartographer Waypoints (must be installed separately).",
-      {}, QuestHelper.ToggleCartWP, QuestHelper},
     
     {"TOMTOM",
      "Toggles displaying the current objective using TomTom (must be installed separately).",

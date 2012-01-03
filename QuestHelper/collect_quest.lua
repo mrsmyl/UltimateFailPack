@@ -1,4 +1,7 @@
-QuestHelper_File["collect_quest.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["collect_quest.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["collect_quest.lua"] = GetTime()
 
 local debug_output = false
@@ -341,7 +344,7 @@ local function MouseoverUnit()
           for _, tv in ipairs(block) do
             if not QHCQ[tv.qid]["criteria"] then QHCQ[tv.qid]["criteria"] = {} end
             if not QHCQ[tv.qid]["criteria"][tostring(tv.obj)] then QHCQ[tv.qid]["criteria"][tostring(tv.obj)] = {} end
-            if not QHCQ[tv.qid]["criteria"][tostring(tv.obj)]["monster"] then QHCQ[tv.qid]["criteria"][tostring(tv.obj)] = {} end
+            if not QHCQ[tv.qid]["criteria"][tostring(tv.obj)]["monster"] then QHCQ[tv.qid]["criteria"][tostring(tv.obj)]["monster"] = {} end
             if not QHCQ[tv.qid]["criteria"][tostring(tv.obj)]["monster"]["true"] then 
               QHCQ[tv.qid]["criteria"][tostring(tv.obj)]["monster"]["true"] = {}
               QHCQ[tv.qid]["criteria"][tostring(tv.obj)]["monster"]["false"] = {}

@@ -1,4 +1,7 @@
-QuestHelper_File["config.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["config.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["config.lua"] = GetTime()
 
 -- This is pretty much ganked wholesale from lightsfuryuther's QuestHelperConfig UI mod, then tweaked heavily because I'm kind of an obsessive asshole when it comes to make things work.
@@ -927,35 +930,6 @@ function addon:GenerateOptions()
 						type = "description",
 						name = L["PluginIntro"],
 					},
---					Cartographer = {
---						order = 2,
---						type = "group",
---						guiInline = true,
---						name = L["PluginCartographerName"],
---						desc = L["PluginCartographerDesc"],
---						disabled = function()
---							return not Cartographer_Waypoints or QuestHelper_Pref['hide'];
---						end,
---						args = {
---							Arrow = {
---								order = 1,
---								type = "toggle",
---								name = L["CartographerArrowName"],
---								desc = L["CartographerArrowDesc"],
---								get = function(i)
---									return QuestHelper_Pref['cart_wp_new'];
---								end,
---								set = function(i, v)
---									QuestHelper_Pref['cart_wp_new'] = v;
---									if QuestHelper_Pref['cart_wp_new'] then
---										QuestHelper:EnableCartographer();
---									else
---										QuestHelper:DisableCartographer();
---									end
---								end,
---							},
---						},
---					},
 					TomTom = {
 						order = 2,
 						type = "group",

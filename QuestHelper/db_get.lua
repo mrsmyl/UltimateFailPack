@@ -1,4 +1,7 @@
-QuestHelper_File["db_get.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["db_get.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["db_get.lua"] = GetTime()
 
 local dev_mode = (QuestHelper_File["db_get.lua"] == "Development Version")
@@ -177,6 +180,11 @@ function DB_GetItem(group, id, silent, register)
           for k, v in pairs(srctab) do
             QuestHelper: Assert(not ite[k] or k == "used")
             ite[k] = v
+            if export then 
+              if not QHDB_Export[group] then QHDB_Export[group] = {} end
+	      if not QHDB_Export[group][id] then QHDB_Export[group][id] = {} end
+              QHDB_Export[group][id][k] = v 
+            end
           end
         end
       end
@@ -202,11 +210,6 @@ function DB_GetItem(group, id, silent, register)
     frequencies[ite] = (frequencies[ite] or 0) + (register and 1 or 1000000000) -- effectively infinity
   end
  
-  if export then 
-    if not QHDB_Export[group] then QHDB_Export[group] = {} end
-    QHDB_Export[group][id] = ite 
-  end
-
   return ite
 end
 

@@ -1,4 +1,7 @@
-QuestHelper_File["manager_completed.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["manager_completed.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["manager_completed.lua"] = GetTime()
 
 local completed_active = false

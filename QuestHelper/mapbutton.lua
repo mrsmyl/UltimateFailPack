@@ -1,4 +1,7 @@
-QuestHelper_File["mapbutton.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["mapbutton.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["mapbutton.lua"] = GetTime()
 
 --[[
@@ -30,12 +33,6 @@ function QuestHelper:DoSettingsMenu()
     arrowmenu = self:CreateMenu()
     QH_Arrow_PopulateMenu(arrowmenu)
     self:CreateMenuItem(menu, QHText("SETTINGS_ARROWLINK_ARROW")):SetSubmenu(arrowmenu)
-    
-    -- Cartographer Waypoints
-    if Cartographer_Waypoints then
-      self:CreateMenuItem(menu, QHFormat("SETTINGS_MENU_CARTWP", QuestHelper_Pref.cart_wp_new and QHText("MENU_DISABLE") or QHText("MENU_ENABLE")))
-                    :SetFunction(self.ToggleCartWP, self)
-    end
     
     -- TomTom
     if TomTom then
@@ -253,13 +250,7 @@ function QuestHelper:InitMapButton()
     QH_Hook(button, "OnHide", QuestHelper_WorldMapHidden)
 
     -- Position it on the World Map frame
---~     if Cartographer then
---~         -- If Cartographer is in use, coordinate with their buttons.
-            -- Trouble is, this makes Cartographer's buttons conflict with the Zone Map dropdown.
-            -- Re-enable this if Cartographer ever learns to work with the Zone Map dropdown.
---~         Cartographer:AddMapButton(button, 3)
---~     else
-        -- Otherwise, just put it in the upper right corner
+        -- put it in the upper right corner
         button:SetPoint("TOPRIGHT", WorldMapButton, "TOPRIGHT", -10, -10)
         button:SetFrameLevel(WorldMapButton:GetFrameLevel()+1)
         button:SetFrameStrata("FULLSCREEN")

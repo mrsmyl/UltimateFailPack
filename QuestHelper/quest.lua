@@ -1,4 +1,7 @@
-QuestHelper_File["quest.lua"] = "4.2.0.224r"
+
+local GetTime = QuestHelper_GetTime
+
+QuestHelper_File["quest.lua"] = "4.3.0.238r"
 QuestHelper_Loadtime["quest.lua"] = GetTime()
 
 do return end
