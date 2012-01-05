@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Inventory-3.0
-Revision: $Rev: 142 $
+Revision: $Rev: 144 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-inventory-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Inventory-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 142 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 144 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -531,7 +531,7 @@ elseif GAME_LOCALE == "koKR" then
 	Bullet = "탄환",
 	Chest = "가슴",
 	Cloth = "천",
-	Cogwheel = "Cogwheel", -- Needs review
+	Cogwheel = "맞물림 톱니", -- Needs review
 	Companion = "친구",
 	Companions = "친구",
 	Consumable = "소비용품",
@@ -844,7 +844,7 @@ elseif GAME_LOCALE == "esMX" then
 	lib:SetCurrentTranslations {
 	Alchemy = "Alquimia",
 	["Ammo Pouch"] = "Bolsa de Munición",
-	-- Archaeology = "",
+	Archaeology = "Archaeology", -- Needs review
 	Armor = "Armadura",
 	["Armor Enchantment"] = "Encantamiento de Armadura",
 	Arrow = "Flecha",
@@ -860,9 +860,9 @@ elseif GAME_LOCALE == "esMX" then
 	Bullet = "Bala",
 	Chest = "Torso",
 	Cloth = "Tela",
-	-- Cogwheel = "",
-	-- Companion = "",
-	-- Companions = "",
+	Cogwheel = "Cogwheel", -- Needs review
+	Companion = "Companion", -- Needs review
+	Companions = "Companions", -- Needs review
 	Consumable = "Consumible",
 	Container = "Contenedor",
 	Cooking = "Cocina",
@@ -876,7 +876,7 @@ elseif GAME_LOCALE == "esMX" then
 	Druid = "Druída",
 	Elemental = "Elemental",
 	Elixir = "Elixir",
-	-- Enchant = "",
+	Enchant = "Enchant", -- Needs review
 	Enchanting = "Encantamiento",
 	["Enchanting Bag"] = "Bolsa de encantamiento",
 	Engineering = "Ingeniería",
@@ -884,38 +884,38 @@ elseif GAME_LOCALE == "esMX" then
 	Explosives = "Explosivos",
 	Feet = "Pies",
 	["First Aid"] = "Primeros auxilios",
-	-- Fish = "",
+	Fish = "Fish", -- Needs review
 	Fishing = "Pesca",
-	-- ["Fishing Lure"] = "",
+	["Fishing Lure"] = "Fishing Lure", -- Needs review
 	["Fishing Pole"] = "Caña de pescar",
 	["Fishing Poles"] = "Cañas de pescar",
 	["Fist Weapon"] = "Arma de Puño",
 	["Fist Weapons"] = "Armas de Puño",
 	Flask = "Frasco",
-	-- ["Flying Mount"] = "",
+	["Flying Mount"] = "Flying Mount", -- Needs review
 	Food = "Comida",
 	["Food & Drink"] = "Comida y bebida",
 	Gem = "Gema",
 	["Gem Bag"] = "Bolsa de Gemas",
 	Glyph = "Glifo",
 	Green = "Verde",
-	-- ["Ground Mount"] = "",
+	["Ground Mount"] = "Ground Mount", -- Needs review
 	Gun = "Pistola",
 	Guns = "Pistolas",
 	Hands = "Manos",
 	Head = "Cabeza",
 	["Held in Off-Hand"] = "Sostener con la mano izquierda",
 	Herb = "Herbalísmo",
-	-- Herbalism = "",
+	Herbalism = "Herbalism", -- Needs review
 	["Herb Bag"] = "Bolsa de hierbas",
 	Holiday = "Festivo",
 	Hunter = "Cazador",
-	-- Hydraulic = "",
+	Hydraulic = "Hydraulic", -- Needs review
 	Idol = "Ãdolo",
 	Idols = "Ãdolos",
-	-- Inscription = "",
+	Inscription = "Inscription", -- Needs review
 	["Inscription Bag"] = "Bolsa de inscripción",
-	-- ["Item Enchantment"] = "",
+	["Item Enchantment"] = "Item Enchantment", -- Needs review
 	["Item Enhancement"] = "Mejora de Objeto",
 	Jewelcrafting = "Joyería",
 	Junk = "Basura",
@@ -934,11 +934,11 @@ elseif GAME_LOCALE == "esMX" then
 	Meat = "Carne",
 	Meta = "Meta",
 	["Metal & Stone"] = "Metal y Piedra",
-	-- Mining = "",
+	Mining = "Mining", -- Needs review
 	["Mining Bag"] = "Bolsa de Minería",
 	Miscellaneous = "Miscelánea",
 	Mount = "Montura",
-	-- Mounts = "",
+	Mounts = "Mounts", -- Needs review
 	Neck = "Cuello",
 	["Off Hand"] = "Mano Izquierda",
 	["One-Hand"] = "Una Mano",
@@ -965,7 +965,7 @@ elseif GAME_LOCALE == "esMX" then
 	Recipe = "Receta",
 	Red = "Rojo",
 	Relic = "Reliquia",
-	-- Riding = "",
+	Riding = "Riding", -- Needs review
 	Ring = "Anillo",
 	Rogue = "Pícaro",
 	Scroll = "Pergamino",
@@ -976,14 +976,14 @@ elseif GAME_LOCALE == "esMX" then
 	Shoulder = "Hombros",
 	Sigils = "Sigilos",
 	Simple = "Simple",
-	-- Skinning = "",
+	Skinning = "Skinning", -- Needs review
 	["Soul Bag"] = "Bolsa de Almas",
 	Staff = "Bastón",
 	Staves = "Bastones",
 	Sword = "Espada",
 	Tabard = "Tabardo",
-	-- Tabards = "",
-	-- ["Tackle Box"] = "",
+	Tabards = "Tabards", -- Needs review
+	["Tackle Box"] = "Tackle Box", -- Needs review
 	Tailoring = "Sastrería",
 	Thrown = "Arrojadiza",
 	Totem = "Tótem",
@@ -1138,16 +1138,16 @@ elseif GAME_LOCALE == "ptBR" then
 	Shields = "Escudos",
 	Shirt = "Camisa",
 	Shoulder = "Ombros",
-	Sigils = "Signos", -- Needs review
+	Sigils = "Signos",
 	Simple = "Simples",
 	Skinning = "Esfolamento",
-	["Soul Bag"] = "Bolsa de Almas", -- Needs review
+	["Soul Bag"] = "Bolsa de Almas",
 	Staff = "Cajado",
 	Staves = "Báculos",
 	Sword = "Espada",
 	Tabard = "Tabardo",
 	Tabards = "Tabardos",
-	["Tackle Box"] = "Caixa de Apetrechos", -- Needs review
+	["Tackle Box"] = "Caixa de Apetrechos",
 	Tailoring = "Alfaiataria",
 	Thrown = "Arremesso",
 	Totem = "totem",

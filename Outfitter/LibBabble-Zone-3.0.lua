@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Zone-3.0
-Revision: $Rev: 339 $
+Revision: $Rev: 341 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-zone-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Zone-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 339 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 341 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -17,7 +17,7 @@ if not lib then return end
 local GAME_LOCALE = GetLocale()
 
 lib:SetBaseTranslations {
-	["Abyssal Deths"] = "Abyssal Depths",
+	["Abyssal Depths"] = "Abyssal Depths",
 	["Ahn'kahet: The Old Kingdom"] = "Ahn'kahet: The Old Kingdom",
 	["Ahn'Qiraj"] = "Ahn'Qiraj",
 	["Ahn'Qiraj: The Fallen Kingdom"] = "Ahn'Qiraj: The Fallen Kingdom",
@@ -689,7 +689,7 @@ elseif GAME_LOCALE == "frFR" then
 	["Dire Maul (North)"] = "Hache-tripes (Nord)",
 	["Dire Maul (West)"] = "Hache-tripes (Ouest)",
 	Dragonblight = "Désolation des dragons",
-	["Dragon Soul"] = "Âme des dragons", -- Needs review
+	["Dragon Soul"] = "L’Âme des dragons", -- Needs review
 	["Drak'Tharon Keep"] = "Donjon de Drak'Tharon",
 	["Dun Morogh"] = "Dun Morogh",
 	Durotar = "Durotar",
