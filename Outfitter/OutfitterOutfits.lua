@@ -426,7 +426,7 @@ function Outfitter._OutfitMethodsEM:GetName()
 end
 
 function Outfitter._OutfitMethodsEM:SetName(pName)
-	RenameEquipmentSet(self.Name, pName) 
+	ModifyEquipmentSet(self.Name, pName, self:GetIconTexture())
 	
 	self.Name = pName
 	
