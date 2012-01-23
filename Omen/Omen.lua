@@ -179,6 +179,11 @@ local testMode = false      -- boolean: Are we in test mode?
 local manualToggle = false  -- boolean: Did we manually toggle Omen?
 local moduleOptions = {}    -- Table for LoD module options registration
 local LDBIconRegistered = false  -- Registered icon?
+local normalizer = 1        -- Default threat normalizer for zones
+local zoneThreatMultipliers = {  -- UnitDetailedThreatSituation returns inconsistent raw threat per zone in 4.3.15050
+	[824] = 10 -- Dragon Soul returns threat values 10% of usual
+}
+setmetatable(zoneThreatMultipliers, {__index = function(self, zoneID) self[zoneID] = 1 return 1 end})
 
 Omen.GuidNameLookup = guidNameLookup
 Omen.GuidClassLookup = guidClassLookup
@@ -605,6 +610,7 @@ function Omen:OnEnable()
 	self:RegisterEvent("PLAYER_UPDATE_RESTING", "UpdateVisible")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	self:RegisterEvent("WORLD_MAP_UPDATE")
 
 	if db.ShowWith.HideWhenOOC then
 		self:RegisterEvent("PLAYER_REGEN_DISABLED", "UpdateVisible")
@@ -1513,7 +1519,9 @@ end
 
 local function recordThreat(unitid, mobunitid, srcGUID)
 	if UnitCanAttack(unitid, mobunitid) then
-		mifadeThreat[srcGUID][UnitGUID(mobunitid)] = select(5, UnitDetailedThreatSituation(unitid, mobunitid))
+		local threatValue = select(5, UnitDetailedThreatSituation(unitid, mobunitid))
+		if threatValue then threatValue = threatValue * normalizer end
+		mifadeThreat[srcGUID][UnitGUID(mobunitid)] = threatValue
 	end
 end
 
@@ -1611,6 +1619,14 @@ function Omen:UpdateCountDowns()
 	end
 end
 
+function Omen:WORLD_MAP_UPDATE()
+	if WorldMapFrame:IsShown() then return end
+	
+	local areaid = GetCurrentMapAreaID()
+	if not areaid then return end
+	normalizer = zoneThreatMultipliers[areaid]
+end
+
 function Omen:PLAYER_ENTERING_WORLD()
 	manualToggle = false
 	wipe(guidNameLookup)
@@ -1682,6 +1698,7 @@ local function updatethreat(unitid, mobunitid)
 	if guid and not threatTable[guid] then
 		local isTanking, state, scaledPercent, rawPercent, threatValue = UnitDetailedThreatSituation(unitid, mobunitid)
 		if threatValue then
+			threatValue = threatValue * normalizer
 			if threatValue == 0 and mifadeThreat[guid] then
 				threatValue = mifadeThreat[guid][UnitGUID(mobunitid)] or 0
 				-- Check for glyphed Hand of Salvation
