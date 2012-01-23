@@ -1009,31 +1009,31 @@ function HealBot_Set_Timers()
     if HealBot_Config.DisabledNow==0 then
         if HealBot_luVars["qaFR"]<10 then
             HB_Timer1=3
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/1.5, 4)  
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/3, 4)  
             HB_Timer3=1.5
         elseif HealBot_luVars["qaFR"]<20 then
             HB_Timer1=2
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/2, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/5, 4)   
             HB_Timer3=1.25
         elseif HealBot_luVars["qaFR"]<30 then
             HB_Timer1=1.5
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/3, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/7, 4)   
             HB_Timer3=1
         elseif HealBot_luVars["qaFR"]<40 then
             HB_Timer1=1.25
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/4, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/8, 4)   
             HB_Timer3=0.75
         elseif HealBot_luVars["qaFR"]<60 then
             HB_Timer1=1
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/5, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/9, 4)   
             HB_Timer3=0.5
         elseif HealBot_luVars["qaFR"]<80 then
             HB_Timer1=0.75
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/7, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/10, 4)   
             HB_Timer3=0.333
         elseif HealBot_luVars["qaFR"]<200 then
             HB_Timer1=0.5
-            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/9, 4)   
+            HB_Timer2=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/11, 4)   
             HB_Timer3=0.25
         else
             HB_Timer1=0.25
@@ -3250,7 +3250,7 @@ end
 local uaUnit=nil
 local uaGUID=nil
 function HealBot_OnEvent_UnitAura(self,unit)
-    if HealBot_Config.NoAuraWhenRested<(IsResting() or 2) then
+    if HealBot_IsFighting or HealBot_Config.NoAuraWhenRested<(IsResting() or 2) then
         uaUnit, uaGUID = HealBot_validUnit(unit)
         if not uaUnit then return end
 
