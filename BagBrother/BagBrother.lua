@@ -129,7 +129,7 @@ end
 --[[ Events ]]--
 
 function Brother:BAG_UPDATE(bag)
-	if bag ~= BANK_CONTAINER and bag <= NUM_BAG_SLOTS then
+	if bag > BANK_CONTAINER and bag <= NUM_BAG_SLOTS then
   		SaveBag(bag, bag == BACKPACK_CONTAINER)
 	end
 end
