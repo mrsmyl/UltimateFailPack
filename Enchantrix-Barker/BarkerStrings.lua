@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: EnchantrixBarker
-	Revision: $Id: BarkerStrings.lua 5073 2011-01-16 00:38:55Z ccox $
-	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: BarkerStrings.lua 5258 2012-01-01 06:07:42Z Nechckn $
+	Version: 5.13.5258 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -770,6 +770,7 @@ EnchantrixBarkerLocalizations = {
 		["EnchSearchMongoose"]	= "incrementa la agilidad en [0-9]+ y la velocidad de ataque";
 		["EnchSearchNatureRes"]	= "resistencia a la naturaleza";
 		["EnchSearchResFire"]	= "resistencia al fuego";
+		["EnchSearchResilience"]	= "Resiliencia";
 		["EnchSearchResShadow"]	= "resistencia a las sombras";
 		["EnchSearchSoulfrost"]	= "hechizos de escarcha y sombras";
 		["EnchSearchSpellPower1"]	= "Daño a Hechizos";
@@ -786,6 +787,7 @@ EnchantrixBarkerLocalizations = {
 		["OneLetterGold"]	= "o";
 		["OneLetterSilver"]	= "p";
 		["Orgrimmar"]	= "Orgrimmar";
+		["RESIL"]	= "hecho";
 		["Ring"]	= "Anillo";
 		["Shattrath"]	= "Shattrath";
 		["Shield"]	= "Escudo";
@@ -903,6 +905,8 @@ EnchantrixBarkerLocalizations = {
 		["BarkerOptionsProfitMarginTooltip"]	= "El porcentaje de beneficio que se añade al coste base de los materiales";
 		["BarkerOptionsRandomFactorTitle"]	= "Factor Aleatorio";
 		["BarkerOptionsRandomFactorTooltip"]	= "La cantidad de aleatoriedad que se aplica a la hora de elegir qué encantamientos se anuncian.";
+		["BarkerOptionsResiliencePriority"]	= "Resiliencia";
+		["BarkerOptionsResiliencePriorityTooltip"]	= "La puntuación de prioridad para la resistencia encanta.\n";
 		["BarkerOptionsRingPriorityTooltip"]	= "La prioridad de puntuación para los encantamientos de anillo.";
 		["BarkerOptionsShadowResistance"]	= "resistencia a la oscuridad";
 		["BarkerOptionsShadowResistanceTooltip"]	= "La prioridad de puntuación para los encantamientos de resistencia a la oscuridad.";
@@ -981,6 +985,7 @@ EnchantrixBarkerLocalizations = {
 		["EnchSearchMongoose"]	= "augmente l'agilité de \+[0-9]+ et augmente légèrement la vitesse d'attaque";
 		["EnchSearchNatureRes"]	= "résistance à la nature";
 		["EnchSearchResFire"]	= "résistance au feu";
+		["EnchSearchResilience"]	= "Résilience";
 		["EnchSearchResShadow"]	= "résistance à l'ombre";
 		["EnchSearchSoulfrost"]	= "sorts de givre et d'ombre";
 		["EnchSearchSpellPower1"]	= "dégât des sorts";
@@ -997,6 +1002,7 @@ EnchantrixBarkerLocalizations = {
 		["OneLetterGold"]	= "po";
 		["OneLetterSilver"]	= "pa";
 		["Orgrimmar"]	= "Cité d'Orgrimmar";
+		["RESIL"]	= "fait";
 		["Ring"]	= "anneau";
 		["Shattrath"]	= "Cité de Shattrath";
 		["Shield"]	= "bouclier";
@@ -1114,6 +1120,8 @@ EnchantrixBarkerLocalizations = {
 		["BarkerOptionsProfitMarginTooltip"]	= "Le pourcentage de bénéfice à ajouter au coût des matériaux de base";
 		["BarkerOptionsRandomFactorTitle"]	= "Facteur aléatoire";
 		["BarkerOptionsRandomFactorTooltip"]	= "La quantité de hasard dans les enchantements choisis pour les cris de commerce";
+		["BarkerOptionsResiliencePriority"]	= "Résilience";
+		["BarkerOptionsResiliencePriorityTooltip"]	= "La cote de priorité pour les enchante résilience.";
 		["BarkerOptionsRingPriorityTooltip"]	= "Priorité pour les enchantements d'anneaux.";
 		["BarkerOptionsShadowResistance"]	= "Résistance à l'ombre";
 		["BarkerOptionsShadowResistanceTooltip"]	= "Priorité pour les enchantements de résistance à l'ombre.";
@@ -1640,7 +1648,7 @@ EnchantrixBarkerLocalizations = {
 		["BarkerNoEnchantsAvail"]	= "Enchantrix: Вы не имеете зачарований или реагентов чтоб их сделать.";
 
 		-- Section: Commands
-		["CmdBarker"]	= "крикун";
+		["CmdBarker"]	= "зазывала";
 		["CmdClear"]	= "Очистить";
 		["CmdDefault"]	= "Стандартные";
 		["CmdDisable"]	= "выведите из строя\n";

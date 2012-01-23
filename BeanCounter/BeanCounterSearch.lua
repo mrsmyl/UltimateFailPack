@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: BeanCounterSearch.lua 5210 2011-07-19 19:07:52Z Nechckn $
 
 	BeanCounterSearch - Search routines for BeanCounter data

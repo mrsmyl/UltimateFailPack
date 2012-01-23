@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher General
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SearcherGeneral.lua 5244 2011-12-03 18:36:18Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

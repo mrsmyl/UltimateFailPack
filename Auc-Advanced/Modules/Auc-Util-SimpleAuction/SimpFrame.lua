@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Simplified Auction Posting
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SimpFrame.lua 5210 2011-07-19 19:07:52Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

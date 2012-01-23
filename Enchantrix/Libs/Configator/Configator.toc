@@ -4,7 +4,7 @@
 ## Interface: 40300
 ## LoadOnDemand: 0
 ##
-## Version: 5.13.5256 (BoldBandicoot)
+## Version: 5.13.5258 (BoldBandicoot)
 ## Revision: $Id: Configator.toc 317 2011-11-24 05:01:39Z Nechckn $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Libraries

@@ -1,6 +1,6 @@
 --[[
 	PanelScroller
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: PanelScroller.lua 312 2011-06-14 07:33:25Z brykrys $
 	URL: http://auctioneeraddon.com/dl/
 

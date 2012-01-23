@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Vendor
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SearcherVendor.lua 5170 2011-05-31 10:14:23Z brykrys $
 	URL: http://auctioneeraddon.com/
 

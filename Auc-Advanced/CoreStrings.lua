@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: Auctioneer
-	Revision: $Id: CoreStrings.lua 5254 2011-12-17 23:11:05Z Nechckn $
-	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: CoreStrings.lua 5258 2012-01-01 06:07:42Z Nechckn $
+	Version: 5.13.5258 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -1098,13 +1098,14 @@ AuctioneerLocalizations = {
 		["AAMU_Interface_OverrideSUIMail"]	= "Benutze ItemSuggest-Werte statt der SearchUI-Gründe für den Mail-Loader";
 		["AAMU_Interface_Vendoring"]	= "AutoMagic-Verkauf aktivieren (A C H T U N G: VORHER HILFE LESEN!)";
 		["AAMU_Interface_VendorOptions"]	= "Händler-Einstellungen";
-		["ADV_Help_ScanRetrieveTTL"]	= "Nach einem schnellen (GetAll) Scan gibt es für gewöhnlich viele Gegestände für die wir keine Daten empfangen. Wir versuchen, einen kompletten Scan zu erhalten indem wir diese Gegenstände wiederholt anwählen um hierzu aktuelle Informationen abzurufen.\nDieser Regler setzt die Zeit, in Sekunden, die wir auf diese neuen Informationen warten bevor wir den Versuch aufgeben und die vorhandenen Daten verarbeiten die wir haben. Jedes Mal wenn wir aktuelle Daten empfangen setzt sich dieser Timer wieder zurück und der Countdown startet erneut.\nDies wird Scans mit vielen fehlenden Daten zwar stark verlangsamen, aber die Chancen auf einen kompletten Datenbestand ohne vorzeitige Abbrüche sind weitaus größer. Scans die schon anfänglich einen fast vollständigen Datenbestand empfangen sollten nicht wesentlich länger dauern als vorherige Versionen von Auctioneer.";
+		["ADV_Help_ScanRetrieveTTL"]	= "Nach einem schnellen (GetAll) Scan gibt es für gewöhnlich viele Gegenstände für die wir keine Daten empfangen. Wir versuchen einen kompletten Scan zu erhalten indem wir diese Gegenstände wiederholt anwählen um hierzu aktuelle Informationen abzurufen.\nDieser Regler setzt die Zeit, in Sekunden, die wir auf diese neuen Informationen warten bevor wir den Versuch aufgeben und die vorhandenen Daten verarbeiten die wir haben. Jedes Mal wenn wir aktuelle Daten empfangen setzt sich dieser Timer wieder zurück und der Countdown startet erneut.\nDies wird Scans mit vielen fehlenden Daten zwar stark verlangsamen, aber die Chancen auf einen kompletten Datenbestand ohne vorzeitige Abbrüche sind weitaus größer. Scans die schon anfänglich einen fast vollständigen Datenbestand empfangen sollten nicht wesentlich länger dauern als vorherige Versionen von Auctioneer.";
 		["ADV_Interface_ActivateProfile"]	= "Ein aktuelles Profil aktivieren";
+		["ADV_Interface_Algorithm_Price"]	= "%s Preis";
 		["ADV_Interface_AllRealms"]	= "Alle Realms";
 		["ADV_Interface_AltChatLinkLeft"]	= "Item-Links im Chat mit ALT+Linksklick öffnen";
 		["ADV_Interface_AlwaysHomeFaction"]	= "Zeige Daten der eigenen Fraktion überall an, außer in einem neutralen AH";
 		["ADV_Interface_AucOptions"]	= "Allgemeine Auctioneer-Einstellungen";
-		["ADV_Interface_ControlsShowHideTooltip"]	= "Kontrollen, um Tooltips anzuzeigen oder zu verbergen.¶\nUm ein Modul komplett zu aktivieren oder zu deaktivieren, benutzen Sie bitte dessen eigene Konfiguration.";
+		["ADV_Interface_ControlsShowHideTooltip"]	= "Kontrollen, um Tooltips anzuzeigen oder zu verbergen.\nUm ein Modul komplett zu aktivieren oder zu deaktivieren, benutze bitte dessen eigene Konfiguration.";
 		["ADV_Interface_CopyProfile"]	= "Kopieren";
 		["ADV_Interface_CreateProfile"]	= "Ein Profil erstellen oder ersetzen";
 		["ADV_Interface_DataRetrieval"]	= "Datenabruf";
@@ -1114,9 +1115,10 @@ AuctioneerLocalizations = {
 		["ADV_Interface_FactionHorde"]	= "Horde";
 		["ADV_Interface_FactionNeutral"]	= "Neutral";
 		["ADV_Interface_General"]	= "Allgemein";
+		["ADV_Interface_MarketPrice"]	= "Marktpreis";
 		["ADV_Interface_MarketValueAccuracy"]	= "Marktpreisfehler: %5.3f%%";
 		["ADV_Interface_MatchOrder"]	= "Treffer-Reihenfolge";
-		["ADV_Interface_MktPriceOptions"]	= "Markt-Preis Optionen";
+		["ADV_Interface_MktPriceOptions"]	= "Marktpreis Optionen";
 		["ADV_Interface_MktPriceShow"]	= "Marktpreis im Tooltip anzeigen";
 		["ADV_Interface_ModTTShow"]	= "Zusätzlichen Auctioneer-Tooltip nur zeigen, wenn ALT gedrückt wird.";
 		["ADV_Interface_mts_alt"]	= "Wenn Alt gedrückt wird";
@@ -1135,11 +1137,12 @@ AuctioneerLocalizations = {
 		["ADV_Interface_PreferredLanguage"]	= "Bevorzugte Sprache";
 		["ADV_Interface_PreferredOutputFrame"]	= "Bevorzugtes Ausgabefenster";
 		["ADV_Interface_ProcessingPriority"]	= "Verarbeitungspriorität: %d";
+		["ADV_Interface_ProcessingTargetFPS"]	= "Gewünschte BPS während Scan: %d";
 		["ADV_Interface_ProfileName"]	= "Neuer Profilname:";
 		["ADV_Interface_ProgressBar"]	= "Fortschrittsbalken aktivieren";
 		["ADV_Interface_PurchasingOptions"]	= "Kaufsoptionen";
 		["ADV_Interface_ResetProfile"]	= "Zurücksetzen";
-		["ADV_Interface_ScanAllQueries"]	= "Manuelle Suchen und Suchen von anderen Addons scannen";
+		["ADV_Interface_ScanAllQueries"]	= "Scannen von manueller Suche und von anderen Addons";
 		["ADV_Interface_ScanDataDisplay"]	= "Scandaten-Tooltip anzeigen";
 		["ADV_Interface_ScanDataForce"]	= "Erzwinge Laden der Scandaten";
 		["ADV_Interface_ScanDataModifier"]	= "Außer beim Drücken der UMSCHALTTASTE nur genaue Übereinstimmungen anzeigen";
@@ -4310,16 +4313,18 @@ AuctioneerLocalizations = {
 		["AAMU_HelpTooltip_AutoSellList"]	= "자동-판매 설정 GUI를 보려면 체크 박스에 체크하십시오.";
 		["AAMU_HelpTooltip_BeginnerTooltip"]	= "마우스 오버시 초보자 툴팁을 보여줍니다.";
 		["AAMU_HelpTooltip_Chatspam"]	= "AutoMagic의 대화 메시지를 표시합니다.";
-		["AAMU_HelpTooltip_DepositLength"]	= "툴팁에 경매기간에 따른 예치금을 표시하려면 선택하십시오.";
-		["AAMU_HelpTooltip_DepositTooltip"]	= "툴팁에 아이템 예치금을 삭제합니다.";
+		["AAMU_HelpTooltip_DepositLength"]	= "툴팁에 경매기간에 따른 보증금을 표시하려면 선택하십시오.";
+		["AAMU_HelpTooltip_DepositTooltip"]	= "툴팁에 아이템 경매보증금을 표시하지 않습니다.";
 		["AAMU_HelpTooltip_MailGUI"]	= "편지함에 자동-편지창을 표시합니다.";
 		["AAMU_HelpTooltip_OverrideSUIMail"]	= "우편 정렬 시 SearchUI의 'Purchased for' 대신 ItemSuggest를 사용";
 		["AAMU_HelpTooltip_Vendoring"]	= "자동-상점 옵션 활성화";
-		["ADV_HelpTooltip_AlwaysHomeFaction"]	= "자신의 진영 데이터를 어디서든지 볼 수 있도록해주며, 중립지역의 경매장창이 열려 있을 경우 중립지역 경매장 데이터를 볼 수 있도록 설정할 때까지 비활성화 됩니다.";
+		["ADV_HelpTooltip_AlwaysHomeFaction"]	= "자신의 진영 데이터를 어디서든지 볼 수 있도록 해주며, 중립지역의 경매장창이 열려 있을 경우 중립지역 경매장 데이터를 볼 수 있도록 설정할 때까지 비활성화 됩니다.";
 		["ADV_HelpTooltip_ChatOutputFrame"]	= "Auctioneer가 결과를 출력할 대화창을 선택할 수 있습니다.";
+		["ADV_HelpTooltip_CopyProfile"]	= "해당 프로필을 생성하거나 덮어씁니다. 현재 프로필의 모든 설정을 가져옵니다.";
 		["ADV_HelpTooltip_MarketValueAccuracy"]	= "시장 가격에 대한 계산의 정확도를 설정합니다. 이 것은 허용할 최대 오류를 의미합니다. 수치가 높을 수록 여러분의 컴퓨터가 비용의 정확도를 계산하는데 필요한 처리량을 줄여줍니다(계산하는 동안 프레임 비율을 향상시켜줌).";
 		["ADV_HelpTooltip_MktPrice"]	= "툴팁에 시장 가격 표시를 활성화합니다. 쉬프트 키를 누르고 있는 동안 시장가격을 보여줍니다.";
 		["ADV_HelpTooltip_ModTTShow"]	= "알트 키를 누르지 않으면 Auctioneer의 추가적인 툴팁을 감춤니다.";
+		["ADV_HelpTooltip_PostConfirmOnClose"]	= "경매장 창을 닫을 경우, posting queue를 초기화할지 묻는 새창을 띄웁니다.";
 		["ADV_HelpTooltip_PreferredLanguage"]	= "Auctioneer에서 사용될 언어를 선택합니다. 설정사항이 완전히 적용될려면 /console reloadui 또는 다시 로그인 해야합니다.";
 		["ADV_HelpTooltip_ProcessPriority"]	= "검색 데이터의 처리 우선순위를 설정합니다. 값이 높을 수록 시간이 적게 걸리지만, 더 많은 렉이 발생합니다.";
 		["ADV_HelpTooltip_ProgressBar"]	= "Auctioneer가 데이터를 처리하는 동안 진행바를 표시합니다.";
@@ -4386,6 +4391,7 @@ AuctioneerLocalizations = {
 		["AAMU_Interface_VendorOptions"]	= "상점 선택사항";
 		["ADV_Interface_ActivateProfile"]	= "현재 프로파일 활성화";
 		["ADV_Interface_AllRealms"]	= "모든 서버";
+		["ADV_Interface_AltChatLinkLeft"]	= "채팅창에 링크된 아이템을 Alt-왼클릭시 툴팁표시";
 		["ADV_Interface_AlwaysHomeFaction"]	= "중립 경매장에 있는 것이 아니라면, 자신의 진영 데이터를 보여줍니다.";
 		["ADV_Interface_AucOptions"]	= "경매인 주요 선택사항";
 		["ADV_Interface_ControlsShowHideTooltip"]	= "툴팁 표시 여부를 결정합니다.\n만약 모듈을 키거나 끄고 싶다면, 해당 모듈 설정을 사용하십시오.";
@@ -4700,6 +4706,14 @@ AuctioneerLocalizations = {
 		["WECN_Interface_SanitizeWOWEcon"]	= "WOWEcon API로 보내기전 링크를 정리합니다.";
 		["WECN_Interface_ShowWOWEconTooltip"]	= "WOWEcon 값을 툴팁에 표시합니다(노트 참고)";
 		["WECN_Interface_WOWEconOptions"]	= "WOWEcon 선택사항";
+
+		-- Section: Scanning Messages
+		["PSS_Complete"]	= "Auctioneer {{%s}}동안 {{%d}}건의 경매건 조사완료";
+		["PSS_Complete_1"]	= "Auctioneer 조사 완료";
+		["PSS_Complete_2"]	= "경매 완료";
+		["PSS_Hours"]	= "시간";
+		["PSS_Minutes"]	= "분";
+		["PSS_Seconds"]	= "초";
 
 		-- Section: Tooltip
 		["APPR_Tooltip_AppraiserCurModel"]	= "감정사 ({{%s}}x{{%s}})";
@@ -5606,8 +5620,10 @@ AuctioneerLocalizations = {
 		["BASC_HelpTooltip_MinimumQualityUncommon"]	= "Invulgar";
 
 		-- Section: Interface
+		["AAMU_Interface_AutoNoPrompt"]	= "... sem confirmação";
 		["AAMU_Interface_AutoSellGrey"]	= "Vender automaticamente objectos de qualidade cinzenta.";
 		["AAMU_Interface_AutoSellList"]	= "Lista de Venda Automática";
+		["AAMU_Interface_AutoStop12"]	= "Pausar a cada 12 items.";
 		["AAMU_Interface_BeginnerTooltip"]	= "Activar dicas para principiantes do AutoMagic ";
 		["AAMU_Interface_Chatspam"]	= "Activa AutoMagic spam no chat";
 		["AAMU_Interface_DepositLength"]	= "Calcule o depósito em qual período de leilão:";
@@ -5619,6 +5635,7 @@ AuctioneerLocalizations = {
 		["AAMU_Interface_Vendoring"]	= "Activar Vendas pelo AutoMagic (A D V E R T Ê N C I A: LEIA A AJUDA!)";
 		["AAMU_Interface_VendorOptions"]	= "Opções de Vendedores";
 		["ADV_Interface_ActivateProfile"]	= "Ativar um perfil atual";
+		["ADV_Interface_Algorithm_Price"]	= "%s Preço";
 		["ADV_Interface_AlwaysHomeFaction"]	= "Ver dados da facção de origem em qualquer lugar, menos em AHs neutras";
 		["ADV_Interface_AucOptions"]	= "Opções Principais do Auctioneer";
 		["ADV_Interface_ControlsShowHideTooltip"]	= "Controla e exibição ou oclusão de informações na tooltip.\nPara ativar ou desativar um módulo completamente, por favor use as configurações deste módulo.";
@@ -5632,6 +5649,7 @@ AuctioneerLocalizations = {
 		["ADV_Interface_MarketValueAccuracy"]	= "Erro do preço de mercado: %5.3f%%";
 		["ADV_Interface_MktPriceShow"]	= "Exibir Preço de Mercado nas dicas";
 		["ADV_Interface_ModTTShow"]	= "Mostrar Auctioneer's tooltip apenas se tiver Alt pressionado";
+		["ADV_Interface_mts_never"]	= "Nunca";
 		["ADV_Interface_MultiplyStack"]	= "Multiplicar pelo tamanho da pilha";
 		["ADV_Interface_NewProfile"]	= "Novo";
 		["ADV_Interface_PreferredLanguage"]	= "Idioma Preferido";
@@ -5648,6 +5666,7 @@ AuctioneerLocalizations = {
 		["ADV_Interface_ScanDataSummaryMicro"]	= "Habilita a exibição do sumário pós-varredura após varrer um único item.\n";
 		["ADV_Interface_ScanDataSummaryPartial"]	= "Habilita a exibição do sumário pós-varredura após uma varedura com mais de um item.";
 		["ADV_Interface_SearchingClickHooks"]	= "Activar a procura de Click-hooks";
+		["ADV_Interface_seconds"]	= "segundos";
 		["ADV_Interface_SetupProfile"]	= "Definir, Configurar e Editar Perfis";
 		["ADV_Interface_ShowPurchaseDebug"]	= "Exibir informações da fila de compras";
 		["ADV_Interface_TooltipDisplayOptionsOptions"]	= "Opções de exibição do Tooltip";
@@ -5774,6 +5793,7 @@ AuctioneerLocalizations = {
 		["APPR_Interface_StopValue"]	= "Valor de corte";
 		["APPR_Interface_SubtractAmount"]	= "Quantia a diminuir:";
 		["APPR_Interface_SubtractDepositCost"]	= "Diminuir custo do depósito";
+		["APPR_Interface_TimeLeft"]	= "Esquerda";
 		["APPR_Interface_TintBidBuyBoxesPriceLevel"]	= "Colorir caixas de lances e compras pelos dados de preços";
 		["APPR_Interface_Top"]	= "Topo";
 		["APPR_Interface_TotalBid"]	= "Lance Total:";
@@ -5788,7 +5808,13 @@ AuctioneerLocalizations = {
 		["APPR_Interface_WhatStepMagnitude"]	= "Qual a magnitude do passo?";
 		["APPR_Interface_WhatValueRounding"]	= "Qual o valor de arredondamento?";
 		["APPR_Interface_WhichMethod"]	= "Que método usarei?";
+		["ASKP_Interface_Each"]	= "(%s cada)";
+		["ASKP_Interface_Options"]	= "Opções";
+		["BASC_Interface_AddPlayerIgnore"]	= "Adicionar jogador na Lista Negra";
+		["BASC_Interface_FilterQuality"]	= "Filtrar por Qualidade";
+		["BASC_Interface_IgnoreList"]	= "Lista Negra";
 		["BASC_Interface_MinimumQuality"]	= "Qualidade mínima: %d";
+		["BASC_Interface_RemovePlayerIgnore"]	= "Remover jogador da Lista Negra";
 		["COMP_Interface_Options"]	= "Opções";
 		["SBTN_Interface_Options"]	= "Opções";
 		["SHTG_Interface_DisplayMedian"]	= "Mostrar Mediana";

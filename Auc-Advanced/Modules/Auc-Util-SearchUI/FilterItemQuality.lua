@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Filter IgnoreItemQuality
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: FilterItemQuality.lua 5232 2011-11-23 17:47:17Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

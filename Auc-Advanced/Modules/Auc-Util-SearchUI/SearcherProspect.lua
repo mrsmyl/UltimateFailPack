@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Prospect
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SearcherProspect.lua 5037 2010-12-11 20:41:29Z ccox $
 	URL: http://auctioneeraddon.com/
 

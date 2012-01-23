@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Disenchant
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SearcherDisenchant.lua 5036 2010-12-11 20:38:14Z ccox $
 	URL: http://auctioneeraddon.com/
 

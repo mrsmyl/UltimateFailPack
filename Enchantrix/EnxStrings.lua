@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: Enchantrix
-	Revision: $Id: EnxStrings.lua 5193 2011-07-04 17:35:08Z Nechckn $
-	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: EnxStrings.lua 5258 2012-01-01 06:07:42Z Nechckn $
+	Version: 5.13.5258 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -1905,6 +1905,7 @@ EnchantrixLocalizations = {
 
 		-- Section: Tooltip Messages
 		["Click"]	= "클릭";
+		["EnxMMTip"]	= "Enchantrix는 마력추출, 보석추출, 제분으로 생산될 재료를 보여줍니다. 또한 가격과 구매 의사 결정이 이루어질 수 있도록 Auctioneer에 통합하여 제공합니다.";
 		["FrmtBarkerPrice"]	= "가격 알림 (%d%% 마진)";
 		["FrmtDEItemLevels"]	= "%d에서 %d레벨 아이템에서 마력 추출 가능.";
 		["FrmtDisinto"]	= "마력 추출:";
@@ -2358,16 +2359,18 @@ EnchantrixLocalizations = {
 		["CmdFindBuyauct"]	= "percentless ";
 		["CmdFindBuyauctShort"]	= "pl ";
 		["CmdHelp"]	= "помощь\n";
-		["CmdOff"]	= "off";
-		["CmdOn"]	= "на\n";
+		["CmdOff"]	= "выключить";
+		["CmdOn"]	= "включить";
 		["CmdPrintin"]	= "print-in ";
 		["CmdToggle"]	= "переключить";
 		["ConfigUI"]	= "настройка";
 		["ShowDELevels"]	= "уровни";
 		["ShowDEMaterials"]	= "материалы";
-		["ShowGuessAuctioneerVal"]	= "оценить";
+		["ShowEmbed"]	= "вставлять";
+		["ShowGuessAuctioneerVal"]	= "оценить-val ";
 		["ShowTerse"]	= "сжатый";
 		["ShowUI"]	= "показать";
+		["ShowValue"]	= "Оценка стоимости";
 		["StatOff"]	= "Не показывать данные зачаровывания";
 		["StatOn"]	= "Показывать сконфигурированные данные по зачаровыванию";
 
@@ -2473,13 +2476,15 @@ EnchantrixLocalizations = {
 		["FrmtPctlessSkipped"]	= "Пропущено %d аукцион(а\ов) из-за сокращения прибыльности (%s)";
 
 		-- Section: Tooltip Messages
+		["Click"]	= "Щелчок";
+		["EnxMMTip"]	= "Enchantrix сообщает вам, какие реагенты можно получить при распылении, измельчении или просеивании. Также этот аддон интегрируется с Auctioneer, чтобы помочь в принятии решений о покупке и продаже. ";
 		["FrmtBarkerPrice"]	= "Barker цена (%d%% прибыль) ";
-		["FrmtDEItemLevels"]	= "Дизэнчантить с уровня предмета %d до %d.";
+		["FrmtDEItemLevels"]	= "Распылять предметы уровней от %d до %d.";
 		["FrmtDisinto"]	= "Распыляется в:";
 		["FrmtFound"]	= "Обнаружено, что %s распыляется в:";
 		["FrmtFoundNotDisenchant"]	= "Обнаружено, что %s не распыляется";
 		["FrmtInkFrom"]	= "Сделано %s";
-		["FrmtMillingFound"]	= "Найденны эти %s измельчения в:";
+		["FrmtMillingFound"]	= "Обнаружено, что %s измельчается в:";
 		["FrmtMillingValueAuctHsp"]	= "Цена измельчения (HSP)";
 		["FrmtMillingValueAuctMed"]	= "Цена измельчения (Среднее)";
 		["FrmtMillingValueAuctVal"]	= "Цена измельчения (АукСовет)";
@@ -2487,7 +2492,7 @@ EnchantrixLocalizations = {
 		["FrmtMillsInto"]	= "Измельчается в:";
 		["FrmtPriceEach"]	= "(%s за шт.)";
 		["FrmtProspectFound"]	= "Обнаружено, что %s просеивается в:";
-		["FrmtProspectFrom"]	= "Перспективный для %s.";
+		["FrmtProspectFrom"]	= "Просеивается из %s.";
 		["FrmtProspectInto"]	= "Просеивается в: ";
 		["FrmtProspectValueAuctHsp"]	= "Цена просеивания (HSP)";
 		["FrmtProspectValueAuctMed"]	= "Цена просеивания (среднее)";
@@ -2503,6 +2508,11 @@ EnchantrixLocalizations = {
 		["FrmtWarnAuctNotLoaded"]	= "[Auctioneer не загружен, использую полученные ранее данные]";
 		["FrmtWarnNoPrices"]	= "[Цены неизвестны]";
 		["FrmtWarnPriceUnavail"]	= "[Некоторые цены неизвестны]";
+		["RightClick"]	= "Щелчок правой кнопки мыши";
+		["ShiftClick"]	= "Shift-Щелчёк";
+		["TipOpenConfig"]	= "редактировать настройки.";
+		["TipOpenEnchant"]	= "для открытия окна Зачарования.";
+		["TipOpenJewel"]	= "для открытия окна Ювелирного дела.";
 		["TooltipMillingLevel"]	= "Для измельчения необходим уровень навыка %d";
 		["TooltipProspectLevel"]	= "Для просеивания необходим уровень навыка %d";
 		["TooltipShowDisenchantLevel"]	= "Для распыления необходим уровень навыка %d";
@@ -2587,10 +2597,12 @@ EnchantrixLocalizations = {
 		["ModTTShow"]	= "Показывать дополнительную подсказку только при нажатии Alt";
 		["ModTTShow_alt"]	= "Когда нажат Alt";
 		["ModTTShow_always"]	= "Всегда";
+		["ModTTShow_ctrl"]	= "Когда нажат Ctrl";
 		["ModTTShow_never"]	= "Никогда";
 		["ModTTShow_noalt"]	= "Когда не нажат Alt";
 		["ModTTShow_noctrl"]	= "Когда не нажат Ctrl";
 		["ModTTShow_noshift"]	= "Когда не нажат Shift";
+		["ModTTShow_shift"]	= "Когда нажат Shift";
 
 	};
 

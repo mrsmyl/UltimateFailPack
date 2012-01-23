@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SearchRealTime.lua 5246 2011-12-05 21:54:54Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: EnxMiniIcon.lua 5000 2010-11-07 19:38:24Z ccox $
 	URL: http://enchantrix.org/
 

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - AH-WindowControl
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: Auc-Util-AHWindowControl.lua 5133 2011-04-29 04:10:49Z Hirsute $
 	URL: http://auctioneeraddon.com/
 

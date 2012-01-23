@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: BeanCounter
-	Revision: $Id: BeanCounterStrings.lua 5078 2011-01-27 02:02:43Z Nechckn $
-	Version: 5.13.5256 (BoldBandicoot)
+	Revision: $Id: BeanCounterStrings.lua 5258 2012-01-01 06:07:42Z Nechckn $
+	Version: 5.13.5258 (BoldBandicoot)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -612,6 +612,7 @@ BeanCounterLocalizations = {
 		["TT_MaxDisplayedResults"]	= "Cela contrôle le nombre total de résultats afficher";
 		["TT_neutralCheck"]	= "Afficher les résultats de l'hôtel des ventes \"Blackwater\"";
 		["TT_OpacityLevel"]	= "Cela contrôle le niveau d'opacité des barres colorées dans la fenêtre de recherche de BeanCounter (si activées)";
+		["TT_sendtosearch"]	= "Lorsque qu'une recherche est entrée sur BeanCounter, elle sera également ajouter à la fenêtre de parcours de l'HV.";
 
 		-- Section: Interface
 		["Cancelled"]	= "Annulé";
@@ -745,6 +746,7 @@ BeanCounterLocalizations = {
 		["C_MailInvoiceTimeout"]	= "우편 송장 타임아웃 = %d 초";
 		["C_MailRecolor"]	= "우편에 다시 색입히는 방법";
 		["C_ModTTShow"]	= "Alt키를 눌렀을 때만 별도의 툴팁을 보여줍니다.";
+		["C_OpacityLevel"]	= "투명화 정도";
 		["C_Resortascendingtime"]	= "시간순으로 모든 항목 재정렬";
 		["C_ResortDatabase"]	= "데이터베이스 재정렬";
 		["C_ScanDatabase"]	= "데이터베이스에서 오류를 검사합니다 : 콩순이 검색시 오류가 발생하면 사용하십시오. \n 사용하기 전에 콩순이의 SavedVariables을 백업해두십시오.";
@@ -782,6 +784,11 @@ BeanCounterLocalizations = {
 		-- Section: HelpTooltip
 		["TTDataExpireEnabled"]	= "선택된 시간보다 오래된 데이터가 삭제됩니다";
 		["TT_neutralCheck"]	= "중립 경매장 결과도 보기";
+		["TT_sendtosearch"]	= "콩순이의 검색창에 입력된 내용을 [검색]탭의 검색창에도 동시에 입력합니다.";
+
+		-- Section: Interface
+		["Cancelled"]	= "취소됨";
+		["UiAucCancelled"]	= "경매 취소됨";
 
 		-- Section: Mail
 		["MailAllianceAuctionHouse"]	= "얼라이언스 경매장";
@@ -842,6 +849,7 @@ BeanCounterLocalizations = {
 		["UiPricePerHeader"]	= "가격 항목";
 		["UiPurchases"]	= "구입";
 		["UiQuantityHeader"]	= "수량";
+		["UiReason"]	= "이유";
 		["UiSales"]	= "판매";
 		["UiSearch"]	= "검색";
 		["UiSearchForLabel"]	= "검색:";
@@ -989,6 +997,87 @@ BeanCounterLocalizations = {
 		["UiWealth"]	= "Zasób";
 		["UiWononBid"]	= "Wygrane w licytacji";
 		["UiWononBuyout"]	= "Wygrane w wykupie";
+
+	};
+
+	ptBR = {
+
+		-- Section: Config Text
+		["C_BeanCounterConfig"]	= "Configuração do BeanCounter";
+		["C_BeanCounterDatabaseMaintenance"]	= "Manutenção do banco de dados do BeanCounter";
+		["C_BeanCounterOptions"]	= "Opções do BeanCounter";
+		["C_ColorizeSearch"]	= "Adicionar um gradiente de cor de cada resultado na janela de pesquisa";
+		["C_DatabaseLength"]	= "Determina quanto tempo BeanCounter salvará as transações da Casa de Leilões";
+		["C_DataMaintenance"]	= "Manutenção dos Dados";
+		["C_DateString"]	= "Formato da Data para usar:";
+		["C_DateStringExample"]	= "Data de Exemplo:";
+		["C_ExtenalSearch"]	= "Permitir que Addons externos usem a Busca do BeanCounter";
+		["C_MailInvoiceTimeout"]	= "Tempo de espera do correio = %d segundos";
+		["C_MailRecolor"]	= "Método de Recolorização do Correio";
+		["C_ModTTShow"]	= "Exibir tooltip extra somente se Alt for pressionado.";
+		["C_MonthsToKeep"]	= "Quantos meses de dados manter?";
+		["C_OpacityLevel"]	= "Opacidade";
+		["C_Resortascendingtime"]	= "Ordenar todas as entradas por tempo em ordem crescente";
+		["C_ResortDatabase"]	= "Reorganizar Base de Dados";
+		["C_ScanDatabase"]	= "Escanear base de dados por erros: Usar somente se você tiver erros quando procurar no BeanCounter. Faça um backup das variáveis salvas do BeanCounter antes de usar.";
+		["C_SearchConfiguration"]	= "Configuração de Busca";
+		["C_SendToSearch"]	= "Adicionar item buscado no BeanCounter na janela principal da Casa de Leilões?";
+		["C_ShowBeginnerTooltips"]	= "Mostrar tooltips iniciais ao passar o mouse em cima";
+		["C_ShowReasonPurchase"]	= "Mostrar motivo da compra no tooltip";
+		["C_ValidateDatabase"]	= "Validar Base de Dados";
+
+		-- Section: Generic Strings
+		["NoRe-Color"]	= "Sem recolorir";
+		["off"]	= "desligado";
+		["Ok"]	= "Ok";
+		["on"]	= "ligado";
+		["Re-ColorIcons"]	= "Recolorir ícones";
+		["Re-ColorIconsandText"]	= "Recolorir ícones e texto";
+		["Re-ColorText"]	= "Recolorir texto";
+		["TooltipFailed"]	= "Incapaz de pegar informações do tooltip";
+		["UiNeutralCheckBox"]	= "Mostrar dados da Casa de Leilões neutros";
+
+		-- Section: Help Text
+		["A_BeanCountersTooltip"]	= "BeanCounter armazenará o motivo que um item foi comprado e mostrará no tooltip.";
+		["A_DateString"]	= "Isto controla como o campo de Data da interface do BeanCounter  é mostrada. Comandos são precedidos por % e múltiplos comandos e textos podem ser misturados. Por exemplo %a == %X mostraria Qua == 21:34:21";
+		["A_DateStringCommands"]	= "Comandos: \n %a = abrev. dia da semana, \n %A = dia da semana, \n %b = abrev. nome do mês, \n %B = nome do mês,\n %c = data e hora, \n %d = dia do mês (01-31),\n %H = hora (24), \n %I = hora (12),\n %M = minuto, \n %m = mês,\n %p = am/pm, \n %S = segundo,\n %U = número da semana do ano ,\n %w = número do dia da semana(0-6),\n %x = data, \n %X = tempo,\n %Y = ano cheio (2007), \n %y = ano em 2 digitos (07)";
+		["A_ExtenalSearch"]	= "Outros addons podem aproveitar a busca do BeanCounter por um item e solicitar que o objeto se mostre na interface do BeanCounter. Por exemplo, isto permite que o BeanCounter mostre quais itens você está procurando no Appraiser de forma automática";
+		["A_MailInvoiceTimeout"]	= "A quantidade de tempo que o BeanCounter irá esperar para que o servidor responda a requisição da fatura. Uma fatura é o \"quem\", \"que\" e \"como\" de uma mensagem da Casa de Leilões.";
+		["A_MailRecolor"]	= "BeanCounter lê todos os correios da Casa de Leilões. Esta opção diz ao BeanCounter como o usuário quer recolorir as mensagens para fazê-las parecer não lidas.";
+		["HelpGuiItemBox"]	= "Arraste o item na caixa para buscar.";
+		["Q_BeanCountersTooltip"]	= "O que é o Tooltip do BeanCounter";
+		["Q_DateString"]	= "Formatos de Data para usar?";
+		["Q_DateStringCommands"]	= "Comandos de Data Aceitáveis?";
+		["Q_ExtenalSearch"]	= "Permitir que addons externos usem o BeanCounter?";
+		["Q_MailInvoiceTimeout"]	= "O que é o tempo de espera do correio?";
+		["Q_MailRecolor"]	= "O que é o Método de Recolorir Correio?";
+
+		-- Section: HelpTooltip
+		["C_MaxDisplayedResults"]	= "Número máximo de resultados mostrados (de cada base de dados)";
+		["TTDataExpireEnabled"]	= "Dados mais velhos que a faixa de tempo selecionada serão APAGADOS";
+		["TT_ColorizeSearch"]	= "Esta opção muda a cor da linha dos itens na janela de busca do BeanCounter.";
+		["TT_MaxDisplayedResults"]	= "Isto controla o número total de resultados mostrados.";
+		["TT_neutralCheck"]	= "Mostra resultados da Casa de Leilões neutra";
+		["TT_OpacityLevel"]	= "Controla o nível de opacidade das barras coloridas na janela de busca do BeanCounter (se ativado)";
+		["TT_sendtosearch"]	= "Quando entra uma busca no BeanCounter, também adiciona o texto na janela da Casa de Leilões.";
+
+		-- Section: Interface
+		["Cancelled"]	= "Cancelado";
+		["UiAucCancelled"]	= "Leilão Cancelado";
+
+		-- Section: Mail
+		["MailAllianceAuctionHouse"]	= "Casa de Leilões da Aliança";
+		["MailHordeAuctionHouse"]	= "Casa de Leilões da Horda";
+		["MailNeutralAuctionHouse"]	= "Casa de Leilões de Blackwater";
+
+		-- Section: Tooltip Messages
+		["TTDateString"]	= "Entre o formato que você gostaria que o campo de data fosse mostrado. O padrão é %c.";
+		["TTDateStringExample"]	= "Mostra um exemplo de como será sua data formatada.";
+		["TTExtenalSearch"]	= "Quando entrar uma busca em outro addon, BeanCounter também irá mostrar uma busca para este item.";
+		["TTMailInvoiceTimeout"]	= "Escolha quanto tempo BeanCounter tentará recuperar uma fatura do correio do servidor antes de desistir. Mais baixo == mais rápido, porém tem mais chance de dados incompletos. Mais alto == mais lento, porém aumenta a chance de recuperar os dados se o servidor de correio está extremamente ocupado.";
+		["TTMailRecolor"]	= "Escolha como o correio vai aparecer depois que o BeanCounter escanear a Caixa de Correio.";
+		["TTModTTShow"]	= "Esta opção irá mostrar o tooltip extra do BeanCounter somente se o Alt for pressionado.";
+		["TTOpenconfig"]	= "Abre a janela de configuração do BeanCounter";
 
 	};
 

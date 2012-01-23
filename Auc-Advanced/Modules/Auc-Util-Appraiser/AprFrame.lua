@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: AprFrame.lua 5241 2011-11-30 19:05:41Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

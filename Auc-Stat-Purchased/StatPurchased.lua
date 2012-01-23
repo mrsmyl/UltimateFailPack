@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - StatPurchased
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: StatPurchased.lua 5154 2011-05-13 23:15:57Z kandoko $
 	URL: http://auctioneeraddon.com/
 

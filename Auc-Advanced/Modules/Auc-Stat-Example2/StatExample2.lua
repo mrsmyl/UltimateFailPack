@@ -18,7 +18,7 @@ end
 
 --[[
 	Auctioneer - Stat's API Example module
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: StatExample2.lua 5210 2011-07-19 19:07:52Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

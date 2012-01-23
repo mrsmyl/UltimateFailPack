@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher EnchantMats
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: SearcherEnchantMats.lua 5039 2010-12-11 21:12:17Z brykrys $
 	URL: http://auctioneeraddon.com/
 

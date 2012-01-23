@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: AskPrice.lua 5160 2011-05-14 20:01:15Z kandoko $
 	URL: http://auctioneeraddon.com/
 

@@ -3,7 +3,7 @@
 ## Notes: Shift+right-click to easily buyout an auction with no confirmation box!
 ## Dependancies: Auc-Advanced
 ##
-## Version: 5.13.5256 (BoldBandicoot)
+## Version: 5.13.5258 (BoldBandicoot)
 ## Revision: $Id: Auc-Util-EasyBuyout.toc 5241 2011-11-30 19:05:41Z Nechckn $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer

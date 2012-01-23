@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: BeancounterVendor.lua 3583 2008-10-11 16:50:02Z Norganna $
 	URL: http://auctioneeraddon.com/
 

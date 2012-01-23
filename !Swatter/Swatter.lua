@@ -1,6 +1,6 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: Swatter.lua 316 2011-10-01 17:16:46Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
@@ -41,7 +41,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="5.13.5256"
+Swatter.Version="5.13.5258"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "5.1.DEV"
 end

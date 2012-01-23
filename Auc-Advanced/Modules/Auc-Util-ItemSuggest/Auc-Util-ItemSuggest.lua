@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Item Suggest module
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: Auc-Util-ItemSuggest.lua 5224 2011-10-06 00:35:53Z Nechckn $
 	URL: http://auctioneeraddon.com/
 

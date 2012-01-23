@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Stat-Sales module
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: BeanCount.lua 4838 2010-08-03 07:41:13Z brykrys $
 	URL: http://auctioneeraddon.com/
 

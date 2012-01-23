@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Outlier Filter
-	Version: 5.13.5256 (BoldBandicoot)
+	Version: 5.13.5258 (BoldBandicoot)
 	Revision: $Id: OutlierFilter.lua 5187 2011-06-29 15:51:33Z brykrys $
 	URL: http://auctioneeraddon.com/
 
