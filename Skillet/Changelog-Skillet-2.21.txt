@@ -1,0 +1,41 @@
+------------------------------------------------------------------------
+r267 | yossa | 2012-02-11 18:46:09 +0000 (Sat, 11 Feb 2012) | 1 line
+Changed paths:
+   A /tags/2.21 (from /trunk:266)
+
+Tagging as 2.21
+------------------------------------------------------------------------
+r266 | yossa | 2012-02-11 18:45:35 +0000 (Sat, 11 Feb 2012) | 3 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+   M /trunk/UI/MainFrame.xml
+
+Skillet:
+- fix > button
+
+------------------------------------------------------------------------
+r264 | yossa | 2012-02-04 18:59:34 +0000 (Sat, 04 Feb 2012) | 5 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+   M /trunk/SkilletData.lua
+   M /trunk/UI/MainFrame.lua
+   M /trunk/UI/MainFrame.xml
+
+Skillet:
+- patch 4.3
+- fixed close during combat
+- minore bugfixes
+
+------------------------------------------------------------------------
+r263 | znuff | 2011-12-27 20:10:43 +0000 (Tue, 27 Dec 2011) | 4 lines
+Changed paths:
+   M /trunk/Skillet.toc
+   M /trunk/UI/MainFrame.lua
+
+Skillet:
+- bumped .toc
+- added fix by dominumds (tradeskill link as atlas-style)
+
+------------------------------------------------------------------------
