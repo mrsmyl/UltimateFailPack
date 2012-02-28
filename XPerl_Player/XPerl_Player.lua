@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 591 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 618 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -777,7 +777,15 @@ function XPerl_Player_Events:PLAYER_ENTERING_WORLD()
 	end
 
 	XPerl_Player_UpdateDisplay(self)
-	
+
+	--Fix Player Portrait not updating after login
+	local frame = CreateFrame("Frame")
+		local t = 0 frame:SetScript("OnUpdate", function(self, e) t = t + e if t > 5 then--Schedule 5 second delay
+			XPerl_Unit_UpdatePortrait(self)--Update portrait
+			frame:SetScript("OnUpdate", nil)--Unschedule so it doesn't loop.
+		end
+	end)
+
 	--fix runes on player load
 	if self.runes then
 		for i = 1,6 do
@@ -942,6 +950,7 @@ end
 function XPerl_Player_Events:UPDATE_SHAPESHIFT_FORM()
 	if (playerClass == "DRUID") then
 		XPerl_Player_DruidBarUpdate(self)
+		XPerl_Unit_UpdatePortrait(self)--Maybe fix portraits not updating when shifting forms?
 	end
 end
 

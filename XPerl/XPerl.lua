@@ -6,10 +6,10 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 591 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 591 $")
-
---Some local copies for speed 
+XPerl_SetModuleRevision("$Revision: 618 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 618 $")
+ 
+--Some local copies for speed
 local strsub = strsub
 local format = format
 local cos, sin, abs = cos, sin, abs
@@ -277,7 +277,7 @@ local function DoRangeCheck(unit, opt)
 			range = 1
 		end
 	end
-	
+
 	if (range ~= 1 and range ~= true) then
 		return opt.FadeAmount
 	end
@@ -1031,7 +1031,7 @@ function XPerl_MinimapMenu(self)
 	ToggleDropDownMenu(1, nil, XPerl_Minimap_Dropdown, "cursor", 0, 0)
 end
 
-local xpModList = {"XPerl", "XPerl_Player", "XPerl_PlayerBuffs", "XPerl_PlayerPet", "XPerl_Target", "XPerl_TargetTarget", "XPerl_Party", "XPerl_PartyPet", "XPerl_ArcaneBar", "XPerl_HUD", "XPerl_RaidFrames", "XPerl_RaidHelper", "XPerl_RaidAdmin", "XPerl_RaidMonitor", "XPerl_RaidPets", "XPerl_GrimReaper"}
+local xpModList = {"XPerl", "XPerl_Player", "XPerl_PlayerBuffs", "XPerl_PlayerPet", "XPerl_Target", "XPerl_TargetTarget", "XPerl_Party", "XPerl_PartyPet", "XPerl_ArcaneBar", "XPerl_RaidFrames", "XPerl_RaidHelper", "XPerl_RaidAdmin", "XPerl_RaidMonitor", "XPerl_RaidPets" }
 local xpStartupMemory = {}
 
 -- XPerl_MinimapButton_Init

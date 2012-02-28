@@ -7,7 +7,7 @@ if (not XPerl_RequestConfig) then
 end
 
 local conf
-XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 564 $")
+XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 618 $")
 
 local ch = CreateFrame("Frame", "XPerl_Custom")
 ch.active = {}
@@ -236,7 +236,7 @@ function ch:DefaultZoneData()
 				[86788] = true,								-- Blackout (Valiona & Theralion)
 				[86622] = true,								-- Engulfing Magic (Valiona & Theralion)
 				[88518] = true,								-- Twilight Meteorite (Valiona & Theralion)
-				
+
 				[82665] = true,								-- Heart of Ice (Ascendant Council)
 				[82772] = true,								-- Frozen (Ascendant Council)
 				[82660] = true,								-- Burning Blood (Ascendant Council)
@@ -247,7 +247,7 @@ function ch:DefaultZoneData()
 				[92307] = true,								-- Frost Beacon (Ascendant Council Heroic)
 
 				[91317] = true,								-- Worshipping (Cho'gall)
-				
+
 				[92955] = true,								-- Wrack (Sinestra)
 			},
 		[XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS] =
@@ -271,10 +271,31 @@ function ch:DefaultZoneData()
 				[99516] = true,								-- Countdown (Baloroc Heroic)
 
 				[98450] = true,								-- Searing Seed (Staghelm)
+				[100211] = true,							-- Burning Orb (Staghelm)
 
 				[100460] = true,							-- Blazing Heat(Ragnaros)
 				[99849] = true,								-- Fixate (Ragnaros)
 				[100292] = true,							-- Lava Wave (Ragnaros)
+			},
+		[XPERL_LOC_ZONE_DRAGONSOUL] =
+			{
+				[103434] = true,							-- Disrupting Shadows (Zon'Ozz)
+
+				[105171] = true,							-- Deep Corruption (Yor'Sahj)
+
+				[109325] = true,							-- Frostflake (Hagara Heroic)	
+	
+				[110080] = true,							-- Fading Light (Ultraxion)
+
+				[109204] = true,							-- Twilight Barrage (Blackhorn Heroic)
+				[110598] = true,							-- Consuming Shroud (Blackhorn Heroic)
+
+				[109364] = true,							-- Searing Plasma (Spine of Deathwing)
+				[109459] = true,							-- Grip (Spine of Deathwing)
+				[106199] = true,							-- Blood Corruption: Death (Heroic Spine of Deathwing)
+
+				[110141] = true,							-- Shrapnal (Madness of Deathwing)
+				[108649] = true,							-- Parasite (Madness of Deathwing Heroic)
 			},
 		}
 end

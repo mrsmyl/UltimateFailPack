@@ -412,16 +412,6 @@
 		<Scripts>
 			<OnLoad>
 				self:SetScript("OnUpdate", XPerl_RefreshAggro)
-				if (GetLocale() == "koKR") then
-					XPerl_AggroPlayer:SetFont("Fonts/K_Damage.TTF", 42, "THICKOUTLINE")
-					XPerl_AggroPet:SetFont("Fonts/K_Damage.TTF", 16, "THICKOUTLINE")
-				elseif (GetLocale() == "zhTW") then
-					XPerl_AggroPlayer:SetFont("Fonts/bKAI00M.TTF", 42, "THICKOUTLINE")
-					XPerl_AggroPet:SetFont("Fonts/bKAI00M.TTF", 16, "THICKOUTLINE")
-				elseif (GetLocale() == "zhCN") then
-					XPerl_AggroPlayer:SetFont("Fonts/ZYHei.ttf", 42, "THICKOUTLINE")
-					XPerl_AggroPet:SetFont("Fonts/ZYHei.ttf", 16, "THICKOUTLINE")
-				end
 			</OnLoad>
 			<OnHide>
 				self.playerFadeStart = nil
@@ -436,12 +426,12 @@
 		</Anchors>
 		<Layers>
 			<Layer level="OVERLAY">
-				<FontString name="$parentPlayer" outline="THICK" font="Fonts\FRIZQT__.TTF" justifyH="CENTER" text="XPERL_AGGRO_PLAYER" hidden="true">
+				<FontString name="$parentPlayer" outline="THICK" font="GameFont_Gigantic" justifyH="CENTER" text="XPERL_AGGRO_PLAYER" hidden="true">
 					<FontHeight>
 						<AbsValue val="42"/>
 					</FontHeight>
 				</FontString>
-				<FontString name="$parentPet" outline="THICK" font="Fonts\FRIZQT__.TTF" justifyH="CENTER" text="XPERL_AGGRO_PET" hidden="true">
+				<FontString name="$parentPet" outline="THICK" font="SystemFont_Huge1" justifyH="CENTER" text="XPERL_AGGRO_PET" hidden="true">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="$parentPlayer" relativePoint="BOTTOM" />
 					</Anchors>

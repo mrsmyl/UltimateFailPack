@@ -34,6 +34,7 @@ if (GetLocale() == "frFR") then
 	XPERL_LOC_ZONE_BASTION_OF_TWILIGHT = "Le bastion du Crépuscule"
 	XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS = "Trône des quatre vents"
 	XPERL_LOC_ZONE_FIRELANDS			= "Terres de Feu"
+	XPERL_LOC_ZONE_DRAGONSOUL			= "L’Âme des dragons"
 
 	XPERL_LOC_DEAD = "Mort"
 	XPERL_LOC_GHOST = "Fant\195\180me"

@@ -52,6 +52,7 @@ XPERL_LOC_ZONE_BLACKWING_DECENT		= "Твердыня Крыла Тьмы"
 XPERL_LOC_ZONE_BASTION_OF_TWILIGHT	= "Сумеречный бастион"
 XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS	= "Трон Четырех Ветров"
 XPERL_LOC_ZONE_FIRELANDS			= "Огненные Просторы"
+XPERL_LOC_ZONE_DRAGONSOUL			= "Душа Дракона"
 
 -- Status
 	XPERL_LOC_DEAD			= DEAD		-- "Dead"

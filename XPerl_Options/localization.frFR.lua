@@ -475,6 +475,8 @@ if (GetLocale() == "frFR") then
 	XPERL_CONF_RAID_PETS_WARLOCKS_DESC		= "Permettre l'affichage des familiers des d\195\169monistes"
 	XPERL_CONF_RAID_TITLES				= "Titres des groupes de raid"
 	XPERL_CONF_RAID_TITLES_DESC			= "Permettre l'affichage des titres de groupe du raid"
+    XPERL_CONF_RAID_ROLE_ICONS					= "XXX"
+    XPERL_CONF_RAID_ROLE_ICONS_DESC				= "XXX"
 	XPERL_CONF_RAID_MANA				= "Montrer la mana du raid"
 	XPERL_CONF_RAID_MANA_DESC			= "Permettre l'affichage de la barre de mana des membres du raid"
 	XPERL_CONF_RAID_PERCENTS			= "Raid Pourcentages"

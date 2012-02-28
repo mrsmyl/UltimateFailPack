@@ -3,7 +3,7 @@
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 374 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 611 $")
 
 local myClass
 local playerAggro, petAggro
@@ -439,7 +439,7 @@ function XPerl_UpdateAssists()
 	--	XPerl_Highlight:ClearAll("AGGRO")
 	--end
 
-	if (XPerlConfigHelper.TargetCounters == 0) then
+	if (XPerlConfigHelper) and (XPerlConfigHelper.TargetCounters == 0) then
 		if (XPerl_Target_AssistFrame) then XPerl_Target_AssistFrame:Hide(); end
 		if (XPerl_Player_TargettingFrame) then XPerl_Player_TargettingFrame:Hide(); end
 		return

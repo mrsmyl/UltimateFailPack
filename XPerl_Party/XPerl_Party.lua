@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 581 $")
+		end, "$Revision: 595 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -41,8 +41,7 @@ function XPerl_Party_Events_OnLoad(self)
 	-- Added UNIT_POWER/UNIT_MAXPOWER to events list for 4.0 (By PlayerLin)
 	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "RAID_ROSTER_UPDATED", "PARTY_MEMBERS_CHANGED",
 			"UNIT_PHASE", "UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
-			"UNIT_TARGET", "UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_ENERGY", "UNIT_MAXENERGY", "UNIT_MANA", "UNIT_MAXMANA", "UNIT_RUNIC_POWER", "UNIT_MAXRUNIC_POWER",
-			"UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
+			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"RAID_TARGET_UPDATE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_LOGIN", "UNIT_THREAT_LIST_UPDATE",
 			"PLAYER_TARGET_CHANGED"}
 	for i,event in pairs(events) do
@@ -1079,29 +1078,12 @@ function XPerl_Party_Events:UNIT_PORTRAIT_UPDATE()
 	XPerl_Unit_UpdatePortrait(self)
 end
 
--- WoW 4.0 UNIT_POWER change. (Added by PlayerLin)
--- New UNIT_Power shit for 4.0 and later.
-
--- UNIT_POWER / UNIT_MAXPOWER (4.0 and later only)
+-- UNIT_POWER / UNIT_MAXPOWER
 function XPerl_Party_Events:UNIT_POWER()
         XPerl_Party_UpdateMana(self)
 end
 
 XPerl_Party_Events.UNIT_MAXPOWER = XPerl_Party_Events.UNIT_POWER
-
--- WoW 3.3.5 or older.
--- UNIT_MANA
-function XPerl_Party_Events:UNIT_MANA()
-	XPerl_Party_UpdateMana(self)
-end
-
-XPerl_Party_Events.UNIT_MAXMANA		= XPerl_Party_Events.UNIT_MANA
-XPerl_Party_Events.UNIT_RAGE		= XPerl_Party_Events.UNIT_MANA
-XPerl_Party_Events.UNIT_MAXRAGE		= XPerl_Party_Events.UNIT_MANA
-XPerl_Party_Events.UNIT_ENERGY		= XPerl_Party_Events.UNIT_MANA
-XPerl_Party_Events.UNIT_MAXENERGY	= XPerl_Party_Events.UNIT_MANA
-XPerl_Party_Events.UNIT_RUNIC_POWER = XPerl_Party_Events.UNIT_MANA
-XPerl_Party_Events.UNIT_MAXRUNIC_POWER = XPerl_Party_Events.UNIT_MANA
 
 -- UNIT_DISPLAYPOWER
 function XPerl_Party_Events:UNIT_DISPLAYPOWER()

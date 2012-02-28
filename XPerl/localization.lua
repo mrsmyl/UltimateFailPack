@@ -6,7 +6,7 @@ XPerl_ProductName		= "|cFFD00000X-Perl|r UnitFrames"
 XPerl_ShortProductName	= "|cFFD00000X-Perl|r"
 XPerl_Author			= "|cFFFF8080Zek|r"
 XPerl_Description		= XPerl_ProductName.." by "..XPerl_Author
-XPerl_VersionNumber 	= "3.2.0"
+XPerl_VersionNumber 	= "3.2.1"
 XPerl_Version			= XPerl_Description.." - "..XPerl_VersionNumber
 XPerl_LongDescription	= "UnitFrame replacement for new look Player, Pet, Party, Target, Target's Target, Focus, Raid"
 XPerl_ModMenuIcon		= "Interface\\Icons\\INV_Misc_Gem_Pearl_02"
@@ -55,6 +55,7 @@ XPERL_LOC_ZONE_BLACKWING_DECENT		= "Blackwing Descent"
 XPERL_LOC_ZONE_BASTION_OF_TWILIGHT	= "The Bastion of Twilight"
 XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS	= "Throne of the Four Winds"
 XPERL_LOC_ZONE_FIRELANDS			= "Firelands"
+XPERL_LOC_ZONE_DRAGONSOUL			= "Dragon Soul"
 
 -- Status
 XPERL_LOC_DEAD		= DEAD			-- "Dead"

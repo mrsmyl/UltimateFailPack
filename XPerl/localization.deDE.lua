@@ -48,6 +48,7 @@ if (GetLocale() == "deDE") then
 	XPERL_LOC_ZONE_BASTION_OF_TWILIGHT 		= "Die Bastion des Zwielichts"
 	XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS 	= "Thron der Vier Winde"
 	XPERL_LOC_ZONE_FIRELANDS				= "Feuerlande"
+	XPERL_LOC_ZONE_DRAGONSOUL				= "Drachenseele"
 
 -- Status
 	XPERL_LOC_DEAD			= DEAD			-- "Tot"

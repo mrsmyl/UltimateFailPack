@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 575 $")
+XPerl_SetModuleRevision("$Revision: 614 $")
 
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
@@ -275,7 +275,7 @@ local function XPerl_CheckOnUpdate(self, elapsed)
 			while (#XPerl_MsgQueue > 0 and count < 4) do
 				local sub = XPerl_MsgQueue[1]
 
-				if (strlen(msg..sub) > 220) then
+				if (strlen(msg..sub) > 220) and UnitInRaid("player") then
 					SendAddonMessage("CTRA", msg, "RAID")
 					break
 				else
@@ -289,7 +289,7 @@ local function XPerl_CheckOnUpdate(self, elapsed)
 				end
 			end
 
-			if (msg ~= "") then
+			if (msg ~= "") and UnitInRaid("player") then
 				SendAddonMessage("CTRA", msg, "RAID")
 			end
 		end

@@ -41,6 +41,7 @@ if (GetLocale() == "koKR") then
 	XPERL_LOC_ZONE_BASTION_OF_TWILIGHT = "황혼의 요새"
 	XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS = "네 바람의 왕좌"
 	XPERL_LOC_ZONE_FIRELANDS			= "불의 땅"
+	XPERL_LOC_ZONE_DRAGONSOUL			= "용의 영혼"
 
 	XPERL_LOC_GHOST		= "유령"
 	XPERL_LOC_FEIGNDEATH	= "죽은척하기"

@@ -1,0 +1,95 @@
+------------------------------------------------------------------------
+r619 | mysticalos | 2012-02-19 18:29:11 +0000 (Sun, 19 Feb 2012) | 1 line
+Changed paths:
+   A /tags/3.2.1 (from /trunk:618)
+
+Tagging as 3.2.1
+------------------------------------------------------------------------
+r618 | mysticalos | 2012-02-19 18:26:02 +0000 (Sun, 19 Feb 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/localization.lua
+
+change delay to 5 so it works for more users. highest i'm willing to go though otherwise us SSD user will still be looking at a missing portrait for too long
+Bump Version
+------------------------------------------------------------------------
+r617 | mysticalos | 2012-02-18 18:05:12 +0000 (Sat, 18 Feb 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Actually this does fix portrait update, confirmed working.
+------------------------------------------------------------------------
+r616 | mysticalos | 2012-02-18 17:48:38 +0000 (Sat, 18 Feb 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.koKR.lua
+
+koKR update
+------------------------------------------------------------------------
+r615 | mysticalos | 2012-02-18 06:59:07 +0000 (Sat, 18 Feb 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+see if this fixes the portrait not working on login issue
+------------------------------------------------------------------------
+r614 | mysticalos | 2012-02-17 21:14:54 +0000 (Fri, 17 Feb 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Avoid some "player not in raid" errors that can happen do to missing checks.
+------------------------------------------------------------------------
+r613 | mysticalos | 2012-02-06 18:05:17 +0000 (Mon, 06 Feb 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Should fix a nil error
+------------------------------------------------------------------------
+r612 | mysticalos | 2012-01-29 23:56:01 +0000 (Sun, 29 Jan 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.lua
+
+custom highlights tweaks
+------------------------------------------------------------------------
+r611 | mysticalos | 2012-01-23 21:05:32 +0000 (Mon, 23 Jan 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidHelper/XPerl_AssistFrame.lua
+
+Fix a possible nil error in assistframe
+------------------------------------------------------------------------
+r610 | mysticalos | 2012-01-23 14:01:25 +0000 (Mon, 23 Jan 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.lua
+
+also fix some copy and paste mistakes from late night editing oops
+------------------------------------------------------------------------
+r609 | mysticalos | 2012-01-23 13:57:47 +0000 (Mon, 23 Jan 2012) | 1 line
+Changed paths:
+   M /trunk/localization.deDE.lua
+   M /trunk/localization.esES.lua
+   M /trunk/localization.frFR.lua
+   M /trunk/localization.koKR.lua
+   M /trunk/localization.lua
+   M /trunk/localization.ruRU.lua
+   M /trunk/localization.zhCN.lua
+   M /trunk/localization.zhTW.lua
+
+Local update
+------------------------------------------------------------------------
+r608 | mysticalos | 2012-01-23 09:06:40 +0000 (Mon, 23 Jan 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/localization.lua
+
+Custom Highlights update. I'll search and add in other language locals tomorrow, bedtime
+------------------------------------------------------------------------
+r607 | DavidTheMachine | 2011-12-13 08:00:09 +0000 (Tue, 13 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Force-bump the revision number in line.
+------------------------------------------------------------------------

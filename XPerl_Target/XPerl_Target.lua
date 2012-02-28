@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 581 $")
+			end, "$Revision: 595 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -1211,37 +1211,12 @@ function XPerl_Target_Events:RAID_TARGET_UPDATE()
 	RaidTargetUpdate(XPerl_Focus)
 end
 
--- WoW 4.0 UNIT_POWER change, thanks Brounks helps me fix this.
--- New UNIT_Power shit for 4.0 and later
-
--- UNIT_POWER / UNIT_MAXPOWER (4.0 and later only)
+-- UNIT_POWER / UNIT_MAXPOWER
 function XPerl_Target_Events:UNIT_POWER()
         XPerl_Target_SetMana(self)
 end
 
 XPerl_Target_Events.UNIT_MAXPOWER = XPerl_Target_Events.UNIT_POWER
-
--- Old UNIT_MANA/UNIT_* shit for 3.3.5 and older
-
--- UNIT_MANA, UNIT_MAXMANA, UNIT_RAGE, UNIT_MAXRAGE, UNIT_ENERGY
--- UNIT_MAXENERGY, UNIT_FOCUS, UNIT_MAXFOCUS (3.3.5 or older only)
-
-function XPerl_Target_Events:UNIT_MANA()
-	XPerl_Target_SetMana(self)
-end
-
-XPerl_Target_Events.UNIT_MAXMANA	= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_RAGE		= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_MAXRAGE	= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_ENERGY		= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_MAXENERGY	= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_FOCUS		= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_MAXFOCUS	= XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_RUNIC_POWER = XPerl_Target_Events.UNIT_MANA
-XPerl_Target_Events.UNIT_MAXRUNIC_POWER = XPerl_Target_Events.UNIT_MANA
-
--- Now they should working fine with both version of WoW... by PlayerLin
--- (......Blizzard, I hate you guys. :P)
 
 -- UNIT_DISPLAYPOWER
 function XPerl_Target_Events:UNIT_DISPLAYPOWER()
