@@ -2,6 +2,15 @@
 
 local L
 
+------------
+--  Omen  --
+------------
+L = DBM:GetModLocalization("Omen")
+
+L:SetGeneralLocalization({
+	name = "오멘"
+})
+
 -----------------------
 --  Apothecary Trio  --
 -----------------------
@@ -9,9 +18,6 @@ L = DBM:GetModLocalization("ApothecaryTrio")
 
 L:SetGeneralLocalization({
 	name = "화학회사 삼인방"
-})
-
-L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
@@ -126,14 +132,55 @@ L:SetGeneralLocalization({
 	name = "썩은내 그린치"
 })
 
-L:SetWarningLocalization({
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "인간 대포알"
 })
 
-L:SetTimerLocalization{
-}
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "놀 때려잡기"
+})
+
+L:SetWarningLocalization({
+	warnGnoll		= "놀 등장",
+	warnHogger		= "들창코 놀 등장",
+	specWarnHogger	= "들창코 놀 등장!"
+})
 
 L:SetOptionLocalization({
+	warnGnoll		= "놀 등장 알림",
+	warnHogger		= "들창코 놀 등장 알림",
+	specWarnHogger	= "들창코 놀 득장 특수 경고 보기"
 })
 
-L:SetMiscLocalization({
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "사격 연습장"
 })
+
+L:SetOptionLocalization({
+	SetBubbles			= "$spell:101871 진행 중일때 대화 말풍선을 표시하지 않음\n(게임 종료 후 원래대로 복구됨)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "통통 전차 게임"
+})
+

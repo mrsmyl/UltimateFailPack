@@ -2,7 +2,7 @@
 local mod	= DBM:NewMod("Nefarian", "DBM-BlackwingDescent")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6869 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7277 $"):sub(12, -3))
 mod:SetCreatureID(41376, 41270)
 mod:SetModelID(32716)
 mod:SetZone()
@@ -25,7 +25,9 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_SUCCESS",
 	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"SWING_DAMAGE",
+	"SWING_MISSED",
 	"CHAT_MSG_MONSTER_YELL",
 	"RAID_BOSS_EMOTE",
 	"UNIT_DIED"
@@ -274,28 +276,30 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsPlayer() and args:IsSpellID(81007, 94085, 94086, 94087) and GetTime() - spamShadowblaze > 5 then
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if (spellId == 81007 or spellId == 94085 or spellId == 94086 or spellId == 94087) and destGUID == UnitGUID("player") and GetTime() - spamShadowblaze > 5 then
 		specWarnShadowblaze:Show()
 		spamShadowblaze = GetTime()
-	elseif args:GetDestCreatureID() == 41918 and args:IsSrcTypePlayer() and not args:IsSpellID(50288) and self:IsInCombat() then--Any spell damage except for starfall
-		if args.sourceName ~= UnitName("player") then
+	elseif spellID ~= 50288 and self:GetCIDFromGUID(destGUID) == 41918 and bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PLAYER) ~= 0 and self:IsInCombat() then--Any spell damage except for starfall
+		if sourceGUID ~= UnitGUID("player") then
 			if self.Options.TankArrow then
-				DBM.Arrow:ShowRunTo(args.sourceName, 0, 0)
+				DBM.Arrow:ShowRunTo(sourceName, 0, 0)
 			end
 		end
 	end
 end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
-function mod:SWING_DAMAGE(args)
-	if args:GetDestCreatureID() == 41918 and args:IsSrcTypePlayer() and self:IsInCombat() then
-		if args.sourceName ~= UnitName("player") then
+function mod:SWING_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags)
+	if self:GetCIDFromGUID(destGUID) == 41918 and bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PLAYER) ~= 0 and self:IsInCombat() then
+		if sourceGUID ~= UnitGUID("player") then
 			if self.Options.TankArrow then
-				DBM.Arrow:ShowRunTo(args.sourceName, 0, 0)
+				DBM.Arrow:ShowRunTo(sourceName, 0, 0)
 			end
 		end
 	end
 end
+mod.SWING_MISSED = mod.SWING_DAMAGE
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.YellPhase2 or msg:find(L.YellPhase2) then

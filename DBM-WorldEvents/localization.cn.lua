@@ -1,9 +1,18 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com) & yleaf(yaroot@gmail.com)
--- Last update: 12/17/2011
+-- Last update: 2/7/2012
 
 if GetLocale() ~= "zhCN" then return end
 
 local L
+
+------------
+--  Omen  --
+------------
+L = DBM:GetModLocalization("Omen")
+
+L:SetGeneralLocalization({
+	name = "年兽"
+})
 
 -----------------------
 --  Apothecary Trio  --
@@ -11,24 +20,21 @@ local L
 L = DBM:GetModLocalization("ApothecaryTrio")
 
 L:SetGeneralLocalization({
-	name 			= "药剂师三人组"
-})
-
-L:SetWarningLocalization({
+	name 			= "皇冠药剂公司"
 })
 
 L:SetTimerLocalization({
-	HummelActive		= "胡默尔 开始活动",
-	BaxterActive		= "巴克斯特 开始活动",
-	FryeActive		= "弗莱伊 开始活动"
+	HummelActive		= "汉摩尔加入战斗",
+	BaxterActive		= "拜克斯特加入战斗",
+	FryeActive		= "弗莱加入战斗"
 })
 
 L:SetOptionLocalization({
-	TrioActiveTimer		= "为药剂师三人组开始活动显示计时条"
+	TrioActiveTimer		= "计时条：药剂师何时加入战斗"
 })
 
 L:SetMiscLocalization({
-	SayCombatStart		= "他们有告诉你我是谁还有我为什么这么做吗?"
+	SayCombatStart		= "他们顾得上告诉你我是谁或者我在做些什么吗？"
 })
 
 -------------
@@ -140,4 +146,56 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+})
+
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "炮弹飞人"
+})
+
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "打豺狼人"
+})
+
+L:SetWarningLocalization({
+	warnGnoll		= "豺狼人出现",
+	warnHogger		= "霍格出现",
+	specWarnHogger	= "霍格出现！"
+})
+
+L:SetOptionLocalization({
+	warnGnoll		= "警报：豺狼人出现",
+	warnHogger		= "警报：霍格出现",
+	specWarnHogger	= "特殊警报：霍格出现"
+})
+
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "射击场"
+})
+
+L:SetOptionLocalization({
+	SetBubbles			= "在$spell:101871期间自动关闭聊天气泡（结束后自动恢复）"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "坦克大战"
 })

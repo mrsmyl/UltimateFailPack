@@ -38,7 +38,7 @@
 --
 --
 
-local revision =("$Revision: 7024 $"):sub(12, -3) 
+local revision =("$Revision: 7251 $"):sub(12, -3) 
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 
 local PanelPrototype = {}
@@ -257,7 +257,18 @@ do
 
 	local function onHyperlinkEnter(self, data, link)
 		GameTooltip:SetOwner(self, "ANCHOR_NONE") -- I want to anchor BOTTOMLEFT of the tooltip to the cursor... (not BOTTOM as in ANCHOR_CURSOR)
-		GameTooltip:SetHyperlink(data)
+		local linkType = strsplit(":", data)
+		if linkType ~= "journal" then
+			GameTooltip:SetHyperlink(data)
+		else -- "journal:contentType:contentID:difficulty"
+			local _, contentType, contentID = strsplit(":", data)
+			if contentType == "2" then -- EJ section
+				local name, description = EJ_GetSectionInfo(tonumber(contentID))
+				GameTooltip:AddLine(name or DBM_CORE_UNKNOWN, 255, 255, 255, 0)
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(description or DBM_CORE_UNKNOWN, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
+			end
+		end
 		GameTooltip:Show()
 		currActiveButton = self:GetParent()
 		updateFrame:SetScript("OnUpdate", onUpdate)
@@ -283,8 +294,8 @@ do
 	end
 
 	local function replaceJournalLinks(id)
-		local title = EJ_GetSectionInfo(id) or DBM_CORE_UNKNOWN
-		return ("|cff71d5ff%s|r"):format(title)
+		local link = select(9, EJ_GetSectionInfo(tonumber(id))) or DBM_CORE_UNKNOWN
+		return link:gsub("|h%[(.*)%]|h", "|h%1|h")
 	end
 	
 	function PanelPrototype:CreateCheckButton(name, autoplace, textleft, dbmvar, dbtvar)
@@ -298,6 +309,9 @@ do
 		button.myheight = 25
 		button.mytype = "checkbutton"
 		-- font strings do not support hyperlinks, so check if we need one...
+		if name:find("%$spell:ej") then -- it is in fact a journal link :-)
+			name = name:gsub("%$spell:ej(%d+)", "$journal:%1")
+		end
 		if name:find("%$spell:") then
 			name = name:gsub("%$spell:(%d+)", replaceSpellLinks)
 		end
@@ -1967,6 +1981,8 @@ do
 		if not panel then 
 			error("Panel is nil", 2)
 		end
+		if addon.modId == "DBM-PvP" then return	end -- no need to create a stats page for PvP modules
+
 		local ptext = panel:CreateText(L.BossModLoaded:format(subtab and addon.subTabs[subtab] or addon.name), nil, nil, GameFontNormal)
 		ptext:SetPoint('TOPLEFT', panel.frame, "TOPLEFT", 10, -10)
 
@@ -2208,6 +2224,25 @@ do
 						mod.Options[v] = not mod.Options[v]
 						if mod.optionFuncs and mod.optionFuncs[v] then mod.optionFuncs[v]() end
 					end)
+				elseif mod.dropdowns and mod.dropdowns[v] then
+					lastButton = button
+					local dropdownOptions = {}
+					for i, v in ipairs(mod.dropdowns[v]) do
+						dropdownOptions[#dropdownOptions + 1] = { text = mod.localization.options[v], value = v }
+					end
+					button = catpanel:CreateDropdown(mod.localization.options[v], dropdownOptions, mod.Options[v], function(value) mod.Options[v] = value end)
+					if addSpacer then
+						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -6)
+						addSpacer = false
+					else
+						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -10)
+					end
+--					button:SetScript("OnShow", function(self)
+--						-- set the correct selected value if the mod is being loaded after the gui is loaded (hack because the dropdown menu lacks a SetSelectedValue method)
+--						_G[button:GetName().."Text"]:SetText(mod.localization.options[v])
+--						button.value = v
+--						button.text = mod.localization.options[v]
+--					end)
 				end
 			end
 			catpanel:AutoSetDimension()

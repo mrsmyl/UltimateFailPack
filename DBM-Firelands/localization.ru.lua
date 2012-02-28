@@ -35,7 +35,6 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	yellPhase2			= "Целую вечность я спокойно спал… Маленькие кусочки мяса… Вы СГОРИТЕ!"
 })
 
 ---------------
@@ -67,7 +66,6 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	YellPull			= "Теперь я служу новому господину, смертные!",
-	Initiate			= "Новообращенный друид-огнеястреб",
 	YellPhase2			= "Небо над вами принадлежит МНЕ!",
 	FullPower			= "spell:99925",--This is in the emote, shouldn't need localizing, just msg:find
 	LavaWorms			= "На поверхность вылезают огненные лавовые паразиты!",
@@ -162,7 +160,6 @@ L:SetWarningLocalization({
 	warnRageRagnarosSoon	= "%s на %s через 5 секунд",--Spellname on targetname
 	warnSplittingBlow		= "%s %s",--Spellname in Location
 	warnEngulfingFlame		= "%s %s",--Spellname in Location
-	WarnRemainingAdds		= "Осталось элементалей: %d",
 	warnEmpoweredSulf		= "%s черещ 5 секунд"--The spell has a 5 second channel, but tooltip doesn't reflect it so cannot auto localize
 })
 
@@ -176,7 +173,6 @@ L:SetOptionLocalization({
 	warnSplittingBlow			= "Предупреждение для $spell:100877",
 	warnEngulfingFlame			= "Предупреждение для $spell:99171",
 	WarnEngulfingFlameHeroic	= "Предупреждение о появлении $spell:99171 (в героическом режиме)",
-	WarnRemainingAdds			= "Показывать количество оставшихся элементалей",
 	warnSeedsLand				= "Отсчитывать время до появления $spell:98520, а не до их появления в воздухе",
 	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100997, GetSpellInfo(100997)),
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),

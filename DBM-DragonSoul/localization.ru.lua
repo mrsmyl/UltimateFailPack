@@ -36,8 +36,11 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	ShadowYell	= "Кричать, когда на вас $spell:104600\n(Героический уровень сложности)",
-	RangeFrame	= "Показывать окно проверки дистанции для $spell:104601\n(Героический уровень сложности)",
-	NoFilterRangeFrame	= "Показывать всех игроков в этом окне, а не только с дебаффами"
+	CustomRangeFrame	= "Range Frame options",
+	Never				= "Disabled",
+	Normal				= "Normal Range Frame",
+	DynamicPhase2		= "Phase2 Debuff Filtering",
+	DynamicAlways		= "Always Debuff Filtering"
 })
 
 L:SetMiscLocalization({
@@ -102,20 +105,22 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(331)
 
 L:SetWarningLocalization({
+	specWarnHourofTwilightN		= "%s (%%d)"--spellname Count
 })
 
 L:SetTimerLocalization({
-	TimerDrakes			= "%s",--spellname from mod
 	TimerCombatStart	= "Ультраксион приземляется"
 })
 
 L:SetOptionLocalization({
-	TimerDrakes			= "Отсчет времени при применении $spell:109904 Сумеречными агрессорами",
-	TimerCombatStart	= "Отсчет времени до приземления Ультраксиона"
+	TimerCombatStart	= "Отсчет времени до приземления Ультраксиона",
+	ResetHoTCounter		= "Restart Hour of Twilight counter",--$spell doesn't work in this function apparently so use typed spellname for now.
+	Never				= "Never",
+	Reset3				= "Reset in sets of 3/2 (heroic/normal)",
+	Reset3Always		= "Always Reset in sets of 3"
 })
 
 L:SetMiscLocalization({
-	Trash				= "Рад встрече, Алекстраза. Скоро ты увидишь, над чем я трудился.",
 	Pull				= "Я чувствую приближение Хаоса… Мой разум не в силах этого выдержать!!"
 })
 
@@ -129,13 +134,11 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "Начало боя",
-	TimerSapper			= "Следующий сапёр",
 	TimerAdd			= "Следующие помощники"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "Отсчет времени до начала боя",
-	TimerSapper			= "Отсчет времени до появления следующего сапёра",--npc=56923
 	TimerAdd			= "Отсчет времени до появления следующих помощников"
 })
 
@@ -178,16 +181,38 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(333)
 
 L:SetWarningLocalization({
-	SpecWarnTentacle	= "Раскаленное щупальце - переключитесь!"--Msg too long? maybe just "Blistering Tentacles!"
 })
 
 L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnTentacle	= "Спец-предупреждение, когда появляются раскаленные щупальца (и Алекстраза не активна)"--http://ptr.wowhead.com/npc=56188
 })
 
 L:SetMiscLocalization({
 	Pull				= "У вас НИЧЕГО не вышло. Я РАЗОРВУ ваш мир на куски.",
+})
+
+-------------
+--  Trash  --
+-------------
+L = DBM:GetModLocalization("DSTrash")
+
+L:SetGeneralLocalization({
+	name =	"Dragonsoul Trash"
+})
+
+L:SetWarningLocalization({
+})
+
+L:SetTimerLocalization({
+	TimerDrakes			= "%s",--spellname from mod
+})
+
+L:SetOptionLocalization({
+	TimerDrakes			= "Отсчет времени при применении $spell:109904 Сумеречными агрессорами"
+})
+
+L:SetMiscLocalization({
+	UltraxionTrash		= "Рад встрече, Алекстраза. Скоро ты увидишь, над чем я трудился."
 })

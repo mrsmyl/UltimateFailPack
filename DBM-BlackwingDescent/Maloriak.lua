@@ -2,7 +2,7 @@
 local mod	= DBM:NewMod("Maloriak", "DBM-BlackwingDescent")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6700 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7187 $"):sub(12, -3))
 mod:SetCreatureID(41378)
 mod:SetModelID(33186)
 mod:SetZone()
@@ -69,7 +69,7 @@ mod:AddBoolOption("FlashFreezeIcon")
 mod:AddBoolOption("BitingChillIcon", false)
 mod:AddBoolOption("ConsumingFlamesIcon", false)
 mod:AddBoolOption("RangeFrame")
-mod:AddBoolOption("SetTextures", true)--Blizz sucks and just about ALL friendly spells cover dark sludge and make you unable to see it.
+mod:AddBoolOption("SetTextures", true)--Just about ALL friendly spells cover dark sludge and make it very hard to see it.
 
 local adds = 18
 local AddsInterrupted = false

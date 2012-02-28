@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("TempleGuardianAnhuur", "DBM-Party-Cataclysm", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6499 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7270 $"):sub(12, -3))
 mod:SetCreatureID(39425)
 mod:SetModelID(35067)
 mod:SetZone()
@@ -48,8 +48,8 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsSpellID(75117, 94951) and GetTime() - spamLight > 5 and args:IsPlayer() then
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if (spellId == 75117 or spellId == 94951) and GetTime() - spamLight > 5 and destGUID == UnitGUID("player") then
 		specWarnLight:Show()
 	end
 end

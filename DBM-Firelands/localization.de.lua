@@ -35,7 +35,6 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	yellPhase2			= "Äonen habe ich ungestört durchgeschlafen… jetzt das… Fleischlinge, Ihr werdet BRENNEN!"
 })
 
 ---------------
@@ -67,7 +66,6 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	YellPull		= "Ich diene jetzt einem neuen Meister, Sterbliche!",
-	Initiate		= "Lodernder Kralleninitiand",--http://de.wowhead.com/npc=53896
 	YellPhase2		= "Dieser Himmel ist MEIN.",
 	FullPower		= "spell:99925",--This is in the emote, shouldn't need localizing, just msg:find
 	LavaWorms		= "Feurige Lavawürmer brechen aus dem Boden hervor!",
@@ -162,7 +160,6 @@ L:SetWarningLocalization({
 	warnRageRagnarosSoon	= "%s auf %s in 5 Sekunden",--Spellname on targetname
 	warnSplittingBlow		= "%s im %s",--Spellname in Location
 	warnEngulfingFlame		= "%s im %s",--Spellname in Location
-	WarnRemainingAdds		= "%d Söhne der Flamme verbleiben",
 	warnEmpoweredSulf		= "%s in 5 Sekunden"
 })
 
@@ -176,7 +173,6 @@ L:SetOptionLocalization({
 	warnSplittingBlow			= "Zeige Warnungen für Position des $spell:100877",
 	warnEngulfingFlame			= "Zeige Warnungen für Position der $spell:99171",
 	WarnEngulfingFlameHeroic	= "Zeige Warnungen für Position der $spell:99171 auf Heroisch",
-	WarnRemainingAdds			= "Verkünde die Anzahl der verbleibenden Söhne der Flamme",
 	warnSeedsLand				= "Zeige Warnung/Timer für Landung der $spell:98520\n(anstatt Erzeugung)",
 	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100997, GetSpellInfo(100997)),
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),

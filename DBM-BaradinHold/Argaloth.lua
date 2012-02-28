@@ -2,7 +2,7 @@
 local mod	= DBM:NewMod("Argaloth", "DBM-BaradinHold")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6700 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7266 $"):sub(12, -3))
 mod:SetCreatureID(47120)
 mod:SetModelID(35426)
 mod:SetZone()
@@ -15,6 +15,7 @@ mod:RegisterEvents(
 	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_START",
 	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"UNIT_HEALTH"
 )
 
@@ -112,12 +113,13 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsSpellID(89000, 95177) and GetTime() - lastFlames > 3 and args:IsPlayer() then -- Flames on ground from Firestorm
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if (spellId == 89000 or spellId == 95177) and destGUID == UnitGUID("player") and GetTime() - lastFlames > 3 then -- Flames on ground from Firestorm
 		specWarnFirestorm:Show()
 		lastFlames = GetTime()
 	end
 end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_HEALTH(uId)
 	if self:GetUnitCreatureId(uId) == 47120 then

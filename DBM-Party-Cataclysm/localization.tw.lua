@@ -222,7 +222,7 @@ L:SetTimerLocalization({
 })
 
 L:SetMiscLocalization({
-	Brann				= "好了，快走吧!只需要把最後的登錄程序輸入到門的機關中...然後..."
+	Brann				= "好了，快走吧!只需要把最後的登錄程序輸入到門的機關中....然後..."
 })
 
 ------------
@@ -1086,5 +1086,5 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	Event		= "現在，薩滿，你要把巨龍之魂交給我。"
+	Event		= "現在呢，薩滿，把巨龍之魂交給我吧。"
 }

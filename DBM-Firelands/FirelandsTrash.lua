@@ -10,6 +10,8 @@ mod:RegisterEvents(
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_START",
+	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"UNIT_DIED",
 	"ZONE_CHANGED_NEW_AREA"
 )
@@ -27,6 +29,7 @@ local specWarnDruidLeap		= mod:NewSpecialWarningYou(99629)
 local yelldruidLeap			= mod:NewYell(99629)
 local specWarnDruidLeapNear	= mod:NewSpecialWarningClose(99629)
 local specWarnEarthQuake	= mod:NewSpecialWarningCast(100724, mod:IsRanged())
+local specWarnLava			= mod:NewSpecialWarningMove(99510)
 
 local timerMoltenArmor		= mod:NewTargetTimer(15, 99532, nil, mod:IsTank() or mod:IsHealer())
 local timerRaiseLavaCD		= mod:NewNextTimer(17, 99503)--Every 15 sec + 2 sec cast.
@@ -35,7 +38,7 @@ local timerLavaSpawnCD		= mod:NewNextTimer(16, 99575)--The worm gyser things tha
 
 mod:AddBoolOption("TrashRangeFrame", false)--off by default, this was NOT well recieved.
 
-local boltsSpam = 0
+local antiSpam = 0
 local surgers = 0
 local surgerGUIDs = {}
 do
@@ -90,7 +93,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnFieroblast:Show()
 		end
 	elseif args:IsSpellID(99629) then--Druid of the Flame Leaping
-		self:ScheduleMethod(0.6, "LeapTarget", args.sourceGUID)
+		self:ScheduleMethod(1, "LeapTarget", args.sourceGUID)
 	elseif args:IsSpellID(99503) then
 		warnRaiselava:Show()
 		timerRaiseLavaCD:Start()
@@ -107,8 +110,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if self.Options.TrashRangeFrame then
 			DBM.RangeCheck:Show(10)
 		end
-	elseif args:IsSpellID(99579) and GetTime() - boltsSpam >= 4 then
-		boltsSpam = GetTime()
+	elseif args:IsSpellID(99579) and GetTime() - antiSpam >= 4 then
+		antiSpam = GetTime()
 		warnMoltenBolt:Show()
 		timerMoltenBoltCD:Start()
 	elseif args:IsSpellID(99575) then
@@ -116,9 +119,18 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerLavaSpawnCD:Start()
 	end
 end
-			
+
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if spellId == 99510 and destGUID == UnitGUID("player") and GetTime() - antiSpam >= 3 then
+		specWarnLava:Show()
+		antiSpam = GetTime()
+	end
+end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE
+		
 function mod:UNIT_DIED(args)
-	if self:GetCIDFromGUID(args.destGUID) == 53141 then
+	local cid = self:GetCIDFromGUID(args.destGUID)
+	if cid == 53141 then
 		surgers = surgers - 1
 		if surgers <= 0 then 
 			surgers = 0
@@ -127,17 +139,19 @@ function mod:UNIT_DIED(args)
 				DBM.RangeCheck:Hide()
 			end
 		end
-	elseif self:GetCIDFromGUID(args.destGUID) == 53575 then
+	elseif cid == 53575 then
 		timerRaiseLavaCD:Cancel()
-	elseif self:GetCIDFromGUID(args.destGUID) == 53617 then
+	elseif cid == 53617 then
 		timerMoltenBoltCD:Cancel()
-	elseif self:GetCIDFromGUID(args.destGUID) == 53616 then
+	elseif cid == 53616 then
 		timerLavaSpawnCD:Cancel()
+	elseif cid == 53619 then
+		self:UnscheduleMethod("LeapTarget", args.destGUID)
 	end	
 end
 
 function mod:ZONE_CHANGED_NEW_AREA()
-	if surgers > 0 then--You probably wiped on trash and don't need the range finder to get stuck open.
+	if surgers ~= 0 then--You probably wiped on trash and don't need the range finder to get stuck open.
 		surgers = 0--Reset the surgers.
 		table.wipe(surgerGUIDs)--Also wipe GUID table
 		if self.Options.TrashRangeFrame then

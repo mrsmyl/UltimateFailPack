@@ -35,7 +35,6 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	yellPhase2			= "긴 세월 내 잠을 방해한 이가 없었건만... 그래... 이 살덩어리들아. 네놈들을 불태워 주마!"
 })
 
 ---------------
@@ -67,7 +66,6 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	YellPull		= "이제 난 새 주인님을 섬긴다. 필멸자여!",
-	Initiate		= "타오르는 발톱 수습생",--http://www.wowhead.com/npc=53896
 	YellPhase2		= "이 하늘은 나의 것이다!",
 	FullPower		= "spell:99925",--This is in the emote, shouldn't need localizing, just msg:find
 	LavaWorms		= "불타는 용암 벌레가 땅에서 튀어나옵니다!",--Might use this one day if i feel it needs a warning for something. Or maybe pre warning for something else (like transition soon)
@@ -114,7 +112,7 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	ResetShardsinThrees	= "$spell:99259 알림 숫자를 지정 횟수 이후 초기화(10인/2회,25인/3회)",
+	ResetShardsinThrees	= "$spell:99259 시전 횟수 알림을 일정 단위마다 초기화 (10인: 2회, 25인: 3회)",
 	warnStrike			= "지옥불/학살의 칼날에 피해를 입을 때 알림 보기",
 	timerStrike			= "지옥불/학살의 칼날 공격 간격 바 표시",
 	TimerBladeActive	= "활성화된 칼날 유지 시간 바 표시",
@@ -162,7 +160,6 @@ L:SetWarningLocalization({
 	warnRageRagnarosSoon	= "5초 후 %s : %s",
 	warnSplittingBlow		= "%s (%s)",
 	warnEngulfingFlame		= "%s (%s)",
-	WarnRemainingAdds		= "남은 피조물: %d",
 	warnEmpoweredSulf		= "5초 후 %s"
 })
 
@@ -176,7 +173,6 @@ L:SetOptionLocalization({
 	warnSplittingBlow			= "$spell:100877 위치 알림 보기",
 	warnEngulfingFlame			= "$spell:99171 알림 보기",
 	WarnEngulfingFlameHeroic	= "영웅 난이도에서 $spell:99171 위치 알림 보기",
-	WarnRemainingAdds			= "사잇단계에서 남은 화염의 피조물 알림 보기",
 	warnSeedsLand				= "$spell:98520 주문이 시전될 때가 아니라 착지되는 시간에 맞는 알림/바 보기",
 	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100997, GetSpellInfo(100997)),
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),

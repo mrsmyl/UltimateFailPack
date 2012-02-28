@@ -1,7 +1,7 @@
-local mod	= DBM:NewMod("HeadlessHorseman", "DBM-WorldEvents")
+local mod	= DBM:NewMod("HeadlessHorseman", "DBM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6693 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7125 $"):sub(12, -3))
 mod:SetCreatureID(23682, 23775)
 --mod:SetModelID(22351)--Model doesn't work/render for some reason.
 mod:RegisterCombat("combat")

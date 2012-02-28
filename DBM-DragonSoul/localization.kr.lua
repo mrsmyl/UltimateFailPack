@@ -15,9 +15,9 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	KohcromWarning	= "크초르모가 동일하게 사용하는 주문 알림 보기(영웅 난이도)",
-	KohcromCD		= "크초르모가 동일하게 사용하는 주문 바 표시(영웅 난이도)",
-	RangeFrame		= "거리 프레임 보기(5m, 업적 용도)"
+	KohcromWarning	= "$journal:4262가 사용하는 주문 알림 보기 (영웅 난이도)",
+	KohcromCD		= "$journal:4262가 사용할 주문 바 표시 (영웅 난이도)",
+	RangeFrame		= "거리 프레임 보기 (5m, 업적 용도)"
 })
 
 L:SetMiscLocalization({
@@ -35,9 +35,12 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	ShadowYell			= "$spell:104600 주문의 영향을 받은 경우 외치기(영웅 난이도에서만)",
-	RangeFrame			= "$spell:104601 약화 효과 상태에 따른 거리 프레임 표시(영웅 난이도)",
-	NoFilterRangeFrame	= "거리 프레임 필터링 사용 중지(항상 모든 플레이어 보임)"
+	ShadowYell			= "$spell:104600 주문의 영향을 받은 경우 외치기 (영웅 난이도)",
+	CustomRangeFrame	= "교란의 그림자 주문에 대한 거리 프레임 설정 (영웅 난이도)",
+	Never				= "사용안함",
+	Normal				= "일반 거리 프레임",
+	DynamicPhase2		= "고라스의 검은 피 도중에만 필터링 사용",
+	DynamicAlways		= "항상 디버프 필터링 사용"
 })
 
 L:SetMiscLocalization({
@@ -50,17 +53,17 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(325)
 
 L:SetWarningLocalization({
+	warnOozesHit	= "핏방울 흡수 (%s) : %s"
 })
 
 L:SetTimerLocalization({
 	timerOozesActive	= "핏방울 공격 가능",
---	timerOozesReach		= "핏방울 도착"
 })
 
 L:SetOptionLocalization({
+	warnOozesHit		= "보스에게 흡수된 핏방울에 대한 알림 보기",
 	timerOozesActive	= "핏방울이 소환된 후 공격 가능하기까지 남은시간 바 표시",
---	timerOozesReach		= "소환된 핏방울이 보스에게 도착하기까지 남은시간 바 표시",
-	RangeFrame			= "보스가 $spell:104898 주문의 영향을 받은 경우 거리 프레임 보기(4m)\n(일반 난이도 이상)"
+	RangeFrame			= "$spell:104898 주문이 활성화 된 경우 거리 프레임 보기 (4m)\n(일반 난이도 이상)"
 })
 
 L:SetMiscLocalization({
@@ -78,20 +81,24 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(317)
 
 L:SetWarningLocalization({
+	WarnPillars				= "%s : %d 남음",
 	warnFrostTombCast		= "8초 후 %s"
 })
 
 L:SetTimerLocalization({
-	TimerSpecial			= "다음 폭풍 또는 얼음"
+	TimerSpecial			= "다음 번개 또는 얼음"
 })
 
 L:SetOptionLocalization({
+	WarnPillars				= "$journal:3919 또는 $journal:4069 남은 횟수 알림 보기",
 	TimerSpecial			= "다음 $spell:105256 또는 $spell:105465 까지 남은 시간 바 표시",
 	RangeFrame				= "$spell:105269 (3m), $journal:4327 (10m) 주문의 영향을 받은 경우 거리 프레임 보기",
-	AnnounceFrostTombIcons	= "$spell:104451 대상을 공격대 대화로 알리기\n(승급 권한 필요)",
+	AnnounceFrostTombIcons	= "$spell:104451 대상을 공격대 대화로 알리기 (승급 권한 필요)",
 	warnFrostTombCast		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(104448, GetSpellInfo(104448)),
 	SetIconOnFrostTomb		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(104451),
-	SetIconOnFrostflake		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109325)
+	SetIconOnFrostflake		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109325),
+	SpecialCount			= "$spell:105256 또는 $spell:105465 주문의 초읽기 소리 듣기(5,4,3,2,1)",
+	SetBubbles				= "$spell:104451 시전이 가능할 때 대화 말풍선을 표시하지 않음\n(전투 종료 후 원래대로 복구됨)"
 })
 
 L:SetMiscLocalization({
@@ -104,20 +111,29 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(331)
 
 L:SetWarningLocalization({
+	specWarnHourofTwilightN		= "5초 후 %s! (%d)"--spellname Count
 })
 
 L:SetTimerLocalization({
-	TimerDrakes			= "%s",
-	TimerCombatStart	= "울트락시온 착지"
+	TimerCombatStart	= "울트락시온 활성화",
+	timerRaidCDs		= "%s 대기시간 : %s"--spellname CD Castername
 })
 
 L:SetOptionLocalization({
-	TimerDrakes			= "황혼의 습격자가 $spell:109904 시전까지 남은시간 바 표시",
-	TimerCombatStart	= "울트락시온 착지 바 표시"
+	TimerCombatStart	= "울트락시온 활성화 바 표시",
+	ResetHoTCounter		= "황혼의 시간 시전 횟수 재시작 설정",--$spell doesn't work in this function apparently so use typed spellname for now.
+	Never				= "사용 안함",
+	Reset3				= "일반 3회, 영웅 2회 단위로 재시작",
+	Reset3Always		= "난이도 구분 없이 3회 단위로 재시작",
+	SpecWarnHoTN		= "황혼의 시간 시전 5초 전 특수 경고 보기 (3회 단위 재시작에서만 작동)",
+	One					= "첫번째 (예: 1 4 7)",
+	Two					= "두번째 (예: 2 5)",
+	Three				= "세번째 (예: 3 6)",
+	ShowRaidCDs			= "공격대 재사용 대기시간 바 표시",
+	ShowRaidCDsSelf		= "자신의 재사용 대기시간 바만 표시 (공격대 재사용 대기시간 바 활성화 필요)"
 })
 
 L:SetMiscLocalization({
-	Trash				= "다시 만나 반갑군, 알렉스트라자. 난 떠나 있는 동안 좀 바쁘게 지냈다.",
 	Pull				= "엄청난 무언가가 느껴진다. 조화롭지 못한 그의 혼돈이 내 정신을 어지럽히는구나!"
 })
 
@@ -127,24 +143,26 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(332)
 
 L:SetWarningLocalization({
+	SpecWarnElites	= "황혼의 정예병!"
 })
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "전투 시작",
-	TimerSapper			= "다음 황혼의 폭파병",
 	TimerAdd			= "다음 정예병"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "전투 시작 바 표시",
-	TimerSapper			= "다음 황혼의 폭파병 등장 바 표시",--npc=56923
-	TimerAdd			= "다음 황혼의 정예병 등장 바 표시"
+	TimerAdd			= "다음 황혼의 정예병 등장 바 표시",
+	SpecWarnElites		= "황혼의 정예병 등장시 특수 경고 보기",
+	SetTextures			= "1 단계 진행 도중 텍스쳐 투영 효과 끄기\n(2 단계에서 다시 활성화 됩니다.)"
 })
 
 L:SetMiscLocalization({
 	SapperEmote			= "비룡이 빠르게 날아와 황혼의 폭파병을 갑판에 떨어뜨립니다!",
 	Broadside			= "spell:110153",
-	DeckFire			= "spell:110095"
+	DeckFire			= "spell:110095",
+	GorionaRetreat		= "%s|1이;가; 고통에 울부짖으며, 소용돌이치는 구름 속으로 달아납니다."
 })
 
 -------------------------
@@ -163,7 +181,7 @@ L:SetOptionLocalization({
 	SpecWarnTendril			= "$spell:109454 약화 효과가 없을 경우 특수 경고 보기",--http://ptr.wowhead.com/npc=56188
 	InfoFrame				= "$spell:109454 약화 효과 없음에 대한 정보 프레임 보기",
 	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109459),
-	ShowShieldInfo			= "$spell:105479 주문 흡수량에 대한 바와 함께 보스 체력 프레임 보기"
+	ShowShieldInfo			= "보스 체력 프레임에 $spell:105479 주문 흡수량 바 표시"
 })
 
 L:SetMiscLocalization({
@@ -180,16 +198,44 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(333)
 
 L:SetWarningLocalization({
-	SpecWarnTentacle	= "열기 촉수 - 대상 전환!"--Msg too long? maybe just "Blistering Tentacles!"
 })
 
 L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnTentacle	= "열기 촉수 등장시 특수 경고 보기 (알렉스트라자의 강화 효과가 비활성화 일때)"--http://ptr.wowhead.com/npc=56188
+	RangeFrame			= "$spell:108649 약화 효과 상태에 따른 거리 프레임 표시 (영웅 난이도)",
+	SetIconOnParasite	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(108649)
 })
 
 L:SetMiscLocalization({
 	Pull				= "넌 아무것도 못 했다. 내가 이 세상을 조각내주마."
+})
+
+-------------
+--  Trash  --
+-------------
+L = DBM:GetModLocalization("DSTrash")
+
+L:SetGeneralLocalization({
+	name =	"용의 영혼 일반몹"
+})
+
+L:SetWarningLocalization({
+	DrakesLeft			= "황혼의 습격자 : %d 남음"
+})
+
+L:SetTimerLocalization({
+	TimerDrakes			= "%s"--spellname from mod
+})
+
+L:SetOptionLocalization({
+	DrakesLeft			= "황혼의 습격자 남은 횟수 알림 보기",
+	TimerDrakes			= "황혼의 습격자가 $spell:109904 시전까지 남은시간 바 표시"
+})
+
+L:SetMiscLocalization({
+	EoEEvent			= "소용없습니다. 용의 영혼이 가진 힘이 너무 강력해 안전하게 다룰 수 없습니다.",
+	UltraxionTrash		= "다시 만나 반갑군, 알렉스트라자. 난 떠나 있는 동안 좀 바쁘게 지냈다.",
+	UltraxionTrashEnded	= "가련한 녀석들, 이 실험은 위대한 결말을 위한 희생이었다. 알 연구의 결과물을 직접 확인해라."
 })

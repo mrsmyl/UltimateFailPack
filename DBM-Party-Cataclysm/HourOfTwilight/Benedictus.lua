@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Benedictus", "DBM-Party-Cataclysm", 14)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7023 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7270 $"):sub(12, -3))
 mod:SetCreatureID(54938)
 mod:SetModelID(38991)
 mod:SetZone()
@@ -12,6 +12,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
 	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"UNIT_HEALTH"
 )
 
@@ -70,15 +71,16 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsSpellID(103653) and args:IsPlayer() and GetTime() - spamDamage > 5 then
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if spellId == 103653 and destGUID == UnitGUID("player") and GetTime() - spamDamage > 5 then
 		specwarnPurified:Show()
 		spamDamage = GetTime()
-	elseif args:IsSpellID(103775) and args:IsPlayer() and GetTime() - spamDamage > 5 then
+	elseif spellId == 103775 and destGUID == UnitGUID("player") and GetTime() - spamDamage > 5 then
 		specwarnTwilight:Show()
 		spamDamage = GetTime()
 	end
 end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_HEALTH(uId)
 	if self:GetUnitCreatureId(uId) == 54938 then

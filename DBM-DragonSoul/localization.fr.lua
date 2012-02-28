@@ -34,10 +34,16 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	RangeFrame	= "Cadre des portées (10) pour $spell:104601 (difficulté héroïque)"
+	ShadowYell			= "Yell when you are affected by $spell:104600\n(Heroic difficulty only)",
+	CustomRangeFrame	= "Range Frame options",
+	Never				= "Disabled",
+	Normal				= "Normal Range Frame",
+	DynamicPhase2		= "Phase2 Debuff Filtering",
+	DynamicAlways		= "Always Debuff Filtering"
 })
 
 L:SetMiscLocalization({
+	voidYell	= "Gul'kafh an'qov N'Zoth."
 })
 
 -----------------------------
@@ -98,6 +104,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(331)
 
 L:SetWarningLocalization({
+	specWarnHourofTwilightN		= "%s (%%d)"--spellname Count
 })
 
 L:SetTimerLocalization({
@@ -105,11 +112,14 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	TimerCombatStart	= "Durée du RP d'Ultraxion"
+	TimerCombatStart	= "Durée du RP d'Ultraxion",
+	ResetHoTCounter		= "Restart Hour of Twilight counter",--$spell doesn't work in this function apparently so use typed spellname for now.
+	Never				= "Never",
+	Reset3				= "Reset in sets of 3/2 (heroic/normal)",
+	Reset3Always		= "Always Reset in sets of 3"
 })
 
 L:SetMiscLocalization({
-	Trash				= "It is good to see you again, Alexstrasza. I have been busy in my absence.", -- à traduire
 	Pull				= "Je sens un grand trouble dans l'équilibre qui s'approche. Un chaos tel qu'il me brùle l'esprit !"
 })
 
@@ -123,12 +133,10 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "Début du combat",
-	TimerSapper			= "Proch. Sapeur du Crépuscule"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "Délai avant le début du combat",
-	TimerSapper			= "Délai avant la prochaine apparition d'un Sapeur du Crépuscule"
 })
 
 L:SetMiscLocalization({
@@ -169,17 +177,36 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(333)
 
 L:SetWarningLocalization({
-	SpecWarnTentacle	= "Tentacules caustiques - Switch"
 })
 
 L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnTentacle	= "Alerte spéciale quand des Tentacules caustiques apparaissent (et Alexstrasza n'est pas active)"
 })
 
 L:SetMiscLocalization({
-	Pull				= "Vous n'avez RIEN fait. Je vais mettre votre monde en PIÈCES.",
-	Kill				= "We are one step closer. The unknowable, transcendent power of the Emerald Dream I now give unto the Dragon Soul." -- à traduire
+	Pull				= "Vous n'avez RIEN fait. Je vais mettre votre monde en PIÈCES."
+})
+
+-------------
+--  Trash  --
+-------------
+L = DBM:GetModLocalization("DSTrash")
+
+L:SetGeneralLocalization({
+	name =	"Dragonsoul Trash"
+})
+
+L:SetWarningLocalization({
+})
+
+L:SetTimerLocalization({
+})
+
+L:SetOptionLocalization({
+})
+
+L:SetMiscLocalization({
+	UltraxionTrash		= "It is good to see you again, Alexstrasza. I have been busy in my absence." -- à traduire
 })

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("BWDTrash", "DBM-BlackwingDescent")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6022 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7273 $"):sub(12, -3))
 mod:SetModelID(29539)
 
 mod:RegisterEvents(
@@ -64,23 +64,14 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
---does this consume too much cpu?--
-function mod:SPELL_DAMAGE(args)
-	if args:GetDestCreatureID() == 42362 and not InCombatLockdown() then
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags)
+	if self:GetCIDFromGUID(destGUID) == 42362 and not InCombatLockdown() then
 		timerChargeCD:Start(21.5)
 	end
 end
-
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
-
-function mod:SWING_DAMAGE(args)
-	if args:GetDestCreatureID() == 42362 and not InCombatLockdown() then
-		timerChargeCD:Start(21.5)
-	end
-end
-
-mod.SWING_MISSED = mod.SWING_DAMAGE
---does this consume too much cpu?--
+mod.SWING_DAMAGE = mod.SPELL_DAMAGE
+mod.SWING_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)

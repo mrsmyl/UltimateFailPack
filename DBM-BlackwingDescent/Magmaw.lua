@@ -2,7 +2,7 @@
 local mod	= DBM:NewMod("Magmaw", "DBM-BlackwingDescent")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6499 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7274 $"):sub(12, -3))
 mod:SetCreatureID(41570)
 mod:SetModelID(37993)
 mod:SetZone()
@@ -18,6 +18,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS",
 	"SPELL_SUMMON",
 	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"CHAT_MSG_MONSTER_YELL",
 	"RAID_BOSS_EMOTE",
 	"UNIT_HEALTH",
@@ -118,12 +119,13 @@ function mod:SPELL_SUMMON(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsSpellID(92128, 92196, 92197, 92198) and args:IsPlayer() and GetTime() - ignitionSpam >= 4 then
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if (spellId == 92128 or spellId == 92196 or spellId == 92197 or spellId == 92198) and destGUID == UnitGUID("player") and GetTime() - ignitionSpam >= 4 then
 		specWarnIgnition:Show()
 		ignitionSpam = GetTime()
 	end
 end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 -- heroic phase 2
 function mod:CHAT_MSG_MONSTER_YELL(msg)

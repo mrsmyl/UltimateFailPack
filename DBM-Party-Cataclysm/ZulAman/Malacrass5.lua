@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Malacrass5", "DBM-Party-Cataclysm", 10)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6706 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7270 $"):sub(12, -3))
 mod:SetCreatureID(24239)
 mod:SetModelID(22332)
 mod:SetZone()
@@ -13,7 +13,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
-	"SPELL_PERIODIC_DAMAGE"
+	"SPELL_PERIODIC_DAMAGE",
+	"SPELL_PERIODIC_MISSED"
 )
 
 --Warriors and warlocks can too but only with right spec/pet. So they are not in the defaults.
@@ -104,16 +105,17 @@ end
 
 do 
 	local lastSIS = 0--Last S.I.S. (Stand in shit)
-	function mod:SPELL_PERIODIC_DAMAGE(args)
-		if args:IsSpellID(43429) and args:IsPlayer() and GetTime() - lastSIS > 3 then	--Paladin (Consecration)
+	function mod:SPELL_PERIODIC_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+		if spellId == 43429 and destGUID == UnitGUID("player") and GetTime() - lastSIS > 3 then	--Paladin (Consecration)
 			specWarnConsecration:Show()
 			lastSIS = GetTime()
-		elseif args:IsSpellID(43440) and args:IsPlayer() and GetTime() - lastSIS > 3 then	--Warlock(Rain of Fire)
+		elseif spellId == 43440 and destGUID == UnitGUID("player") and GetTime() - lastSIS > 3 then	--Warlock(Rain of Fire)
 			specWarnRainofFire:Show()
 			lastSIS = GetTime()
-		elseif args:IsSpellID(61603) and args:IsPlayer() and GetTime() - lastSIS > 3 then	--Death Knight(Death and Decay)
+		elseif spellId == 61603 and destGUID == UnitGUID("player") and GetTime() - lastSIS > 3 then	--Death Knight(Death and Decay)
 			specWarnDeathNDecay:Show()
 			lastSIS = GetTime()
 		end
 	end
+	mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 end

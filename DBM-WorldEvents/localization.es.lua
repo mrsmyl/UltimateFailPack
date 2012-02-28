@@ -2,6 +2,15 @@
 
 local L
 
+------------
+--  Omen  --
+------------
+L = DBM:GetModLocalization("Omen")
+
+L:SetGeneralLocalization({
+	name = "Omen"
+})
+
 -----------------------
 --  Apothecary Trio  --
 -----------------------
@@ -9,9 +18,6 @@ L = DBM:GetModLocalization("ApothecaryTrio")
 
 L:SetGeneralLocalization({
 	name = "Los Tres Boticarios"
-})
-
-L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
@@ -126,14 +132,54 @@ L:SetGeneralLocalization({
 	name = "The Abominable Greench"
 })
 
-L:SetWarningLocalization({
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "Ultracañón Pimpampum 5000"
 })
 
-L:SetTimerLocalization{
-}
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "Golpea al gnoll"
+})
+
+L:SetWarningLocalization({
+	warnGnoll		= "Sale un Gnoll",
+	warnHogger		= "Sale Hogger",
+	specWarnHogger	= "¡Sale Hogger!"
+})
 
 L:SetOptionLocalization({
+	warnGnoll		= "Anunciar cuando sale un Gnoll",
+	warnHogger		= "Anunciar cuando sale un Hogger",
+	specWarnHogger	= "Mostrar aviso especial cuando sale un Hogger"
 })
 
-L:SetMiscLocalization({
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "Galería de tiro"
+})
+
+L:SetOptionLocalization({
+	SetBubbles			= "Desactiva los bocadillos de chat durante $spell:101871\n(se restauran una vez finalizada la partida)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "Combate de tonques"
 })

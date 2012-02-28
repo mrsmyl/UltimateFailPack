@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Daakara", "DBM-Party-Cataclysm", 10)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6707 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7270 $"):sub(12, -3))
 mod:SetCreatureID(23863)
 mod:SetModelID(38118)
 mod:SetZone()
@@ -128,11 +128,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsSpellID(97682) and args:IsPlayer() and GetTime() - lastburn > 3 then
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if spellId == 97682 and destGUID == UnitGUID("player") and GetTime() - lastburn > 3 then
 		specWarnBurn:Show()
 		lastburn = GetTime()
 	end
 end
-
 mod.SPELL_MISSED = mod.SPELL_DAMAGE

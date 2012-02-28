@@ -1,6 +1,15 @@
 ﻿if GetLocale() ~= "deDE" then return end
 local L
 
+------------
+--  Omen  --
+------------
+L = DBM:GetModLocalization("Omen")
+
+L:SetGeneralLocalization({
+	name = "Omen"
+})
+
 -----------------------
 --  Apothecary Trio  --
 -----------------------
@@ -8,9 +17,6 @@ L = DBM:GetModLocalization("ApothecaryTrio")
 
 L:SetGeneralLocalization({
 	name = "Apotheker-Trio"
-})
-
-L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
@@ -125,14 +131,54 @@ L:SetGeneralLocalization({
 	name = "Der monströse Griesgram"
 })
 
-L:SetWarningLocalization({
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "Kanonendonner"
 })
 
-L:SetTimerLocalization{
-}
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "Hau-den-Gnoll"
+})
+
+L:SetWarningLocalization({
+	warnGnoll		= "Gnoll erschienen",
+	warnHogger		= "Hogger erschienen",
+	specWarnHogger	= "Hogger erschienen!"
+})
 
 L:SetOptionLocalization({
+	warnGnoll		= "Zeige Warnung, wenn ein Gnoll erscheint",
+	warnHogger		= "Zeige Warnung, wenn ein Hogger erscheint",
+	specWarnHogger	= "Zeige Spezialwarnung, wenn ein Hogger erscheint"
 })
 
-L:SetMiscLocalization({
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "Schießbude"
+})
+
+L:SetOptionLocalization({
+	SetBubbles			= "Automatische Deaktivierung der 'Sprechblasen' während $spell:101871\n(wird nach dem Spielende auf die vorherige Einstellung zurückgesetzt)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "Panzergeneral"
 })

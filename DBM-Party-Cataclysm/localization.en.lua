@@ -497,7 +497,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetMiscLocalization{
-	Retract		= "%s retracts its cyclone shield!"
+	Retract		= "%s retracts her cyclone shield!"
 }
 
 --------------
@@ -1090,5 +1090,5 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	Event		= "And now, Shaman.. you will give the Dragon Soul to me."
+	Event		= "And now, Shaman, you will give the Dragon Soul to ME."
 }

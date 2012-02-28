@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Arcurion", "DBM-Party-Cataclysm", 14)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7023 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7043 $"):sub(12, -3))
 mod:SetCreatureID(54590)
 mod:SetModelID(35978)
 mod:SetMinSyncRevision(6999)
@@ -23,7 +23,7 @@ local warnIcyTomb		= mod:NewTargetAnnounce(103252, 4)
 local warnChainsFrost	= mod:NewSpellAnnounce(102582, 2)
 local prewarnPhase2		= mod:NewPrePhaseAnnounce(2, 3)
 
-local timerCombatStart	= mod:NewTimer(33.5, "TimerCombatStart", 2457)
+local timerCombatStart	= mod:NewTimer(22.5, "TimerCombatStart", 2457)
 local timerIcyTombCD	= mod:NewNextTimer(30, 103252)
 
 local warnedP2 = false

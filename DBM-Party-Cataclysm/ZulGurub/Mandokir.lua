@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Mandokir", "DBM-Party-Cataclysm", 11)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6993 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7270 $"):sub(12, -3))
 mod:SetCreatureID(52151)
 mod:SetModelID(37816)
 mod:SetZone()
@@ -92,10 +92,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:SPELL_HEAL(args)
-	if args:IsSpellID(96724) then
+function mod:SPELL_HEAL(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if spellId == 96724 then
 		specWarnOhgan:Show()
-		ohganGUID = args.destGUID
+		ohganGUID = destGUID
 	end
 end
 

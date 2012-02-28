@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(192, "DBM-Firelands", nil, 78)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6900 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7267 $"):sub(12, -3))
 mod:SetCreatureID(52498)
 mod:SetModelID(38227)
 mod:SetZone()
@@ -16,7 +16,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_DAMAGE",
 	"SPELL_MISSED",
 	"RAID_BOSS_EMOTE"
---	"UNIT_DIED"
 )
 
 local warnSmolderingDevastation		= mod:NewCountAnnounce(99052, 4)--Use count announce, cast time is pretty obvious from the bar, but it's useful to keep track how many of these have been cast.
@@ -139,12 +138,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(args)
-	if args:IsSpellID(99278, 101133) and args:IsPlayer() and GetTime() - lastPoison > 3 then
-		if args:IsPlayer() and GetTime() - lastPoison > 3  then
-			specWarnVolatilePoison:Show()
-			lastPoison = GetTime()
-		end
+function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
+	if (spellId == 99278 or spellId == 101133) and destGUID == UnitGUID("player") and GetTime() - lastPoison > 3 then
+		specWarnVolatilePoison:Show()
+		lastPoison = GetTime()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE

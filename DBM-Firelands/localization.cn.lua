@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 12/13/2011
+-- Last update: 1/1/2012
 
 if GetLocale() ~= "zhCN" then return end
 
@@ -39,7 +39,6 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	yellPhase2			= "我已经沉睡了无数的时光，现在却被这些血肉生灵所扰……你们将燃烧殆尽！"
 })
 
 ---------------
@@ -71,7 +70,6 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	YellPull		= "凡人们，我现在侍奉新的主人！",
-	Initiate		= "炽炎之爪新兵",--http://www.wowhead.com/npc=53896
 	YellPhase2		= "天空，归我统治！",
 	FullPower		= "spell:99925",--This is in the emote, shouldn't need localizing, just msg:find
 	LavaWorms		= "熔岩火虫从地下涌出来了！",--Might use this one day if i feel it needs a warning for something. Or maybe pre warning for something else (like transition soon)
@@ -165,7 +163,6 @@ L= DBM:GetModLocalization(198)
 L:SetWarningLocalization({
 	warnSplittingBlow		= "%s在%s",--Spellname in Location
 	warnEngulfingFlame		= "%s在%s",--Spellname in Location
-	WarnRemainingAdds		= "剩余%d个烈焰之子",
 	warnEmpoweredSulf		= "%s - 5秒后施放"--The spell has a 5 second channel, but tooltip doesn't reflect it so cannot auto localize
 })
 
@@ -178,7 +175,6 @@ L:SetOptionLocalization({
 	warnSplittingBlow			= "警报：$spell:100877的位置",
 	warnEngulfingFlame			= "警报：$spell:99171",
 	WarnEngulfingFlameHeroic	= "警报：英雄模式下$spell:99171的位置",
-	WarnRemainingAdds			= "警报：烈焰之子剩余数量",
 	warnSeedsLand				= "警报与计时条：$spell:98520落地，而非施法警报",
 	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100997, GetSpellInfo(100997)),
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),
@@ -260,7 +256,7 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("NexusLegendary")
 
 L:SetGeneralLocalization({
-	name = "赛瑞纳尔"
+	name = "泰林纳尔"
 })
 
 L:SetWarningLocalization({

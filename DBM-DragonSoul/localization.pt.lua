@@ -36,7 +36,12 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	RangeFrame	= "Exibir medidor de distância (10) para $spell:104601\n(Modo Heróico)"
+    ShadowYell	= "Gritar ao ser afetado por $spell:104600\n(Apenas modo heróico)",
+	CustomRangeFrame	= "Range Frame options",
+	Never				= "Disabled",
+	Normal				= "Normal Range Frame",
+	DynamicPhase2		= "Phase2 Debuff Filtering",
+	DynamicAlways		= "Always Debuff Filtering"
 })
 
 L:SetMiscLocalization({
@@ -83,7 +88,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	TimerSpecial			= "Exibir cronógrafo para lançamento da primeira habilidade",
-	RangeFrame				= "Exibir medidor de distância (3) para $spell:105269",
+    RangeFrame				= "Exibir medidor de distância: (3) para $spell:105269, (10) para $journal:4327",
 	AnnounceFrostTombIcons	= "Anunciar no chat da raide, ícones para alvos de $spell:104451\n(requer liderança)",
 	warnFrostTombCast		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(104448, GetSpellInfo(104448)),
 	SetIconOnFrostTomb		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(104451),
@@ -100,6 +105,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(331)
 
 L:SetWarningLocalization({
+	specWarnHourofTwilightN		= "%s (%%d)"--spellname Count
 })
 
 L:SetTimerLocalization({
@@ -107,11 +113,14 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	TimerCombatStart	= "Exibir cronógrafo para início do combate."
+	TimerCombatStart	= "Exibir cronógrafo para início do combate.",
+	ResetHoTCounter		= "Restart Hour of Twilight counter",--$spell doesn't work in this function apparently so use typed spellname for now.
+	Never				= "Never",
+	Reset3				= "Reset in sets of 3/2 (heroic/normal)",
+	Reset3Always		= "Always Reset in sets of 3"
 })
 
 L:SetMiscLocalization({
-	Trash				= "It is good to see you again, Alexstrasza. I have been busy in my absence.",
 	Pull				= "I sense a great disturbance in the balance approaching. The chaos of it burns my mind!"
 })
 
@@ -125,12 +134,10 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "Início do combate",
-	TimerSapper			= "Próximo Sapador do Crepúsculo"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "Exibir cronógrafo para o início do combate",
-	TimerSapper			= "Exibir cronógrafo para surgir o próximo Sapador do Crepúsculo"--npc=56923
 })
 
 L:SetMiscLocalization({
@@ -162,7 +169,8 @@ L:SetMiscLocalization({
 	Pull		= "The plates! He's coming apart! Tear up the plates and we've got a shot at bringing him down!",
 	NoDebuff	= "Sem %s",
 	PlasmaTarget	= "Searing Plasma: %s",
-	DRoll		= "about to roll"
+	DRoll		= "about to roll",
+	DLevels			= "levels out"
 })
 
 ---------------------------
@@ -171,16 +179,38 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(333)
 
 L:SetWarningLocalization({
-	SpecWarnTentacle	= "Tentáculo Pustuloso"--Msg too long? maybe just "Blistering Tentacles!"
 })
 
 L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnTentacle	= "Exibir aviso especial quando Tentáculos Pustulosos surgem (e Alexstrasza não está ativa)"--http://ptr.wowhead.com/npc=56188
 })
 
 L:SetMiscLocalization({
 	Pull				= "You have done NOTHING. I will tear your world APART."
+})
+
+-------------
+--  Trash  --
+-------------
+L = DBM:GetModLocalization("DSTrash")
+
+L:SetGeneralLocalization({
+	name =	"Dragonsoul Trash"
+})
+
+L:SetWarningLocalization({
+})
+
+L:SetTimerLocalization({
+	TimerDrakes			= "%s",--spellname from mod
+})
+
+L:SetOptionLocalization({
+	TimerDrakes			= "Exibir cronógrafo para quando Assaltantes do Crepúsculo $spell:109904"
+})
+
+L:SetMiscLocalization({
+	UltraxionTrash		= "It is good to see you again, Alexstrasza. I have been busy in my absence."
 })
