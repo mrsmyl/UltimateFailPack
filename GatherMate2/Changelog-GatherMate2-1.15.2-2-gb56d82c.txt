@@ -1,3 +1,0 @@
-Sal Scotto:
-	- toc ouched
-	- toc bump and pickup new libmapdata
