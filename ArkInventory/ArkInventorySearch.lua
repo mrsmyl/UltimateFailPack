@@ -30,9 +30,9 @@ function ArkInventory.Frame_Search_Paint( )
 	end
 	
 	-- title
-	obj = _G[string.format( "%s%s", frame:GetName( ), "TitleWho" )]
+	local obj = _G[string.format( "%s%s", frame:GetName( ), "TitleWho" )]
 	if obj then
-		t = string.format( "%s: %s %s", ArkInventory.Localise["SEARCH"], ArkInventory.Const.Program.Name, ArkInventory.Global.Version )
+		local t = string.format( "%s: %s %s", ArkInventory.Localise["SEARCH"], ArkInventory.Const.Program.Name, ArkInventory.Global.Version )
 		obj:SetText( t )
 	end
 	

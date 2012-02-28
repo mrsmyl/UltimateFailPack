@@ -15,6 +15,9 @@
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
  
+*3.02.88 (11-FEB-2012)*
+ * updated - pets and mounts
+
 *3.02.87 (24-DEC-2011)*
  * fixed - code issue where i left out a local and potentially tainted a secure global variable
 

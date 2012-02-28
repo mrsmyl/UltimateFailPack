@@ -1,0 +1,20 @@
+------------------------------------------------------------------------
+r328 | arkayenro | 2012-02-11 07:21:00 +0000 (Sat, 11 Feb 2012) | 3 lines
+Changed paths:
+   A /tags/3.02.88 (from /trunk:327)
+
+*3.02.88 (11-FEB-2012)*
+ * updated - pets and mounts
+
+------------------------------------------------------------------------
+r327 | arkayenro | 2012-02-11 07:09:21 +0000 (Sat, 11 Feb 2012) | 3 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryCompanion.lua
+   M /trunk/ArkInventorySearch.lua
+   M /trunk/VersionHistory.txt
+
+*3.02.88 (11-FEB-2012)*
+ * updated - pets and mounts
+
+------------------------------------------------------------------------

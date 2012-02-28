@@ -32,43 +32,85 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 -- only zone and item based restrictions can be checked
 -- sg (ground) | sf (flying) | sw (water) = speed %, 0 = max known
 
+[79744] = { id = 112994 }, -- Eye of the Legion
+
+[79771] = { id = 113120, sf = true }, -- Feldrake
+
+[73762] = { id = 103076 }, -- Darkmoon Balloon
+[75040] = { id = 103076 }, -- Flimsy Darkmoon Balloon / Darkmoon Balloon
+[74981] = { id = 105122 }, -- Darkmoon Cub
+[73764] = { id = 101733 }, -- Darkmoon Monkey
+[73903] = { id = 103544 }, -- Darkmoon Tonk
+[73765] = { id = 103074 }, -- Darkmoon Turtle
+[73905] = { id = 103549 }, -- Darkmoon Zeppelin
+[74611] = { id = 104049 }, -- Festival Lantern
+[76062] = { id = 105633 }, -- Fetish Shaman's Spear / Fetish Shaman
+[73905] = { id = 103549 }, -- Darkmoon Zeppelin
+[72134] = { id = 102317 }, -- Grell Moss / Gregarious Grell
+[73797] = { id = 103125 }, -- Lump of Coal / Lumpy
+[74610] = { id = 104047 }, -- Lunar Lantern
+[71624] = { id = 101493 }, -- Purple Puffer
+[72153] = { id = 102353 }, -- Sand Scarab
+[73953] = { id = 103588 }, -- Sea Pony
+[78916] = { id = 110029 }, -- Soul of the Aspects
+
+[77067] = { id = 107842, sf = true }, -- Reins of the Blazing Drake / Blazing Drake
+[72582] = { id = 102514, sf = true }, -- Corrupted Hippogryph
+[73766] = { id = 103081, sg = true }, -- Darkmoon Dancing Bear
+[78919] = { id = 110039, sf = true }, -- Experiment 12-B
+[78924] = { id = 110051, sf = true }, -- Heart of the Aspects
+[77069] = { id = 107845, sf = true }, -- Life-Binder's Handmaiden
+[73838] = { id = 103195, sg = true }, -- Mountain Horse
+[71954] = { id = 101821, sf = true }, -- Ruthless Gladiator's Twilight Drake
+[76889] = { id = 107516, sf = true }, -- Spectral Gryphon
+[76902] = { id = 107517, sf = true }, -- Spectral Wind Rider
+[72140] = { id = 102346, sg = true }, -- Swift Forest Strider
+[72146] = { id = 102350, sg = true }, -- Swift Lovebird
+[73839] = { id = 103196, sg = true }, -- Swift Mountain Horse
+[71718] = { id = 101573, sg = true }, -- Swift Shorestrider
+[77068] = { id = 107844, sf = true }, -- Reins of the Twilight Harbinger / Twilight Harbinger
+[76755] = { id = 107203, sf = true }, -- Tyrael's Charger
+[72575] = { id = 102488, sg = true }, -- White Riding Camel
+
 [71387] = { id = 101424 }, -- Brilliant Kaliri
-[70099] = { id = 99578 }, -- Cenarion Hatchling
 [71076] = { id = 100684 }, -- The Creepy Crate
 [70160] = { id = 99668 }, -- Crimson Lasher
 [70908] = { id = 100330 }, -- Feline Familiar
+[70140] = { id = 99663 }, -- Hyjal Bear Cub
+[71033] = { id = 100576 }, -- Lil' Tarecgosa
+[71726] = { id = 101606 }, -- Murkablo
+[71140] = { id = 100970 }, -- Nuts' Acorn / Nuts
+[72042] = { id = 101986 }, -- Alliance Balloon
+[72045] = { id = 101989 }, -- Horde Balloon
+
+[69230] = { id = 97560, sf = true }, -- Corrupted Egg of Millagazor / Corrupted Fire Hawk
+[71665] = { id = 101542, sf = true }, -- Flametalon of Alysrazor
+[71339] = { id = 101282, sf = true }, -- Vicious Gladiator's Twilight Drake
+[70909] = { id = 100332, sg = true }, -- Vicious War Steed
+[70910] = { id = 100333, sg = true }, -- Vicious War Wolf
+
+[70099] = { id = 99578 }, -- Cenarion Hatchling
 [69847] = { id = 98736 }, -- Guardian Cub
 [72068] = { id = 98736 }, -- Guardian Cub
-[70140] = { id = 99663 }, -- Hyjal Bear Cub
 [68840] = { id = 96817 }, -- Landro's Lichling
 ['XS-93461'] = { id = 93461 }, -- Landro's Lil' XT
 [69251] = { id = 97779 }, -- Lashtail Hatchling
 [69648] = { id = 98079 }, -- Legs
-[71033] = { id = 100576 }, -- Lil' Tarecgosa
-[71726] = { id = 101606 }, -- Murkablo
 [68841] = { id = 96819 }, -- Nightsaber Cub
-[71140] = { id = 100970 }, -- Nuts' Acorn / Nuts
 [68833] = { id = 96571 }, -- Panther Cub
 [69821] = { id = 98571 }, -- Pterrordax Hatchling
-[72042] = { id = 101986 }, -- Alliance Balloon
-[72045] = { id = 101989 }, -- Horde Balloon
 [69824] = { id = 98587 }, -- Voodoo Figurine
 [69239] = { id = 97638 }, -- Winterspring Cub
 
 [69747] = { id = 98204, sg = true }, -- Amani Battle Bear
 [68825] = { id = 96503, sf = true }, -- Amani Dragonhawk
 [68823] = { id = 96491, sg = true }, -- Armored Razzashi Raptor
-[69230] = { id = 97560, sf = true }, -- Corrupted Egg of Millagazor / Corrupted Fire Hawk
-[71665] = { id = 101542, sf = true }, -- Flametalon of Alyzrazor
 [69213] = { id = 97359, sf = true }, -- Flameward Hippogryph
 [69226] = { id = 97501, sf = true }, -- Green Fire Hawk Mount / Green Fire Hawk
 [69224] = { id = 97493, sf = true }, -- Smoldering Egg of Millagazor / Pureblood Fire Hawk
 [69228] = { id = 97581, sg = true }, -- Savage Raptor
 [67151] = { id = 98718, sw = true }, -- Reins of Poseidus / Subdued Seahorse
 [68824] = { id = 96499, sg = true }, -- Swift Zulian Panther
-[71339] = { id = 101282, sf = true }, -- Vicious Gladiator's Twilight Drake
-[70909] = { id = 100332, sg = true }, -- Vicious War Steed
-[70910] = { id = 100333, sg = true }, -- Vicious War Wolf
 [69846] = { id = 98727, sf = true }, -- Winged Guardian
 
 [66075] = { id = 93815 }, -- Bubbles
@@ -589,7 +631,7 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [12353] = { id = 16083, sg = 100 }, -- White Stallion Bridle / White Stallion
 [2411] = { id = 470, sg = 60 }, -- Black Stallion Bridle
 [8595] = { id = 10969, sg = 60 }, -- Blue Mechanostrider
-[21218] = { id = 25953, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Blue Qiraji Resonating Crystal / Blue Qiraji Battle Tank
+[21218] = { id = 25953, sg = 100, r = { zone = "AHNQIRAJ,AHNQIRAJ_RUINS" } }, -- Blue Qiraji Resonating Crystal / Blue Qiraji Battle Tank
 [13332] = { id = 17463, sg = 60 }, -- Blue Skeletal Horse
 [37827] = { id = 50869, sg = 60 }, -- Brewfest Kodo
 [5656] = { id = 458, sg = 60 }, -- Brown Horse Bridle / Brown Horse
@@ -600,13 +642,13 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [15277] = { id = 18989, sg = 60 }, -- Gray Kodo
 [5864] = { id = 6777, sg = 60 }, -- Gray Ram
 [13321] = { id = 17453, sg = 60 }, -- Green Mechanostrider
-[21323] = { id = 26056, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Green Qiraji Resonating Crystal / Green Qiraji Battle Tank
+[21323] = { id = 26056, sg = 100, r = { zone = "AHNQIRAJ,AHNQIRAJ_RUINS" } }, -- Green Qiraji Resonating Crystal / Green Qiraji Battle Tank
 [5668] = { id = 6654, sg = 60 }, -- Horn of the Brown Wolf / Brown Wolf
 [5665] = { id = 6653, sg = 60 }, -- Horn of the Dire Wolf / Dire Wolf
 [1132] = { id = 580, sg = 60 }, -- Horn of the Timber Wolf / Timber Wolf
 [2414] = { id = 472, sg = 60 }, -- Pinto Bridle / Pinto
 [8563] = { id = 10873, sg = 60 }, -- Red Mechanostrider
-[21321] = { id = 26054, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Red Qiraji Resonating Crystal / Red Qiraji Battle Tank
+[21321] = { id = 26054, sg = 100, r = { zone = "AHNQIRAJ,AHNQIRAJ_RUINS" } }, -- Red Qiraji Resonating Crystal / Red Qiraji Battle Tank
 [13331] = { id = 17462, sg = 60 }, -- Red Skeletal Horse
 [8632] = { id = 10789, sg = 60 }, -- Reins of the Spotted Frostsaber / Spotted Frostsaber
 [8631] = { id = 8394, sg = 60 }, -- Reins of the Striped Frostsaber / Striped Frostsaber
@@ -616,7 +658,7 @@ ArkInventory.Const.CompanionTranslationData = { -- temporary table for item to s
 [8591] = { id = 10796, sg = 60 }, -- Whistle of the Turquoise Raptor / Turquoise Raptor
 [8592] = { id = 10799, sg = 60 }, -- Whistle of the Violet Raptor / Violet Raptor
 [5873] = { id = 6898, sg = 60 }, -- White Ram
-[21324] = { id = 26055, sg = 100, r = { zone = "AHNQIRAJ" } }, -- Yellow Qiraji Resonating Crystal / Yellow Qiraji Battle Tank
+[21324] = { id = 26055, sg = 100, r = { zone = "AHNQIRAJ,AHNQIRAJ_RUINS" } }, -- Yellow Qiraji Resonating Crystal / Yellow Qiraji Battle Tank
 
 [8494] = { id = 10682 }, -- Parrot Cage (Hyacinth Macaw) / Hyacinth Macaw
 [20371] = { id = 24696 }, -- Blue Murloc Egg / Murky
