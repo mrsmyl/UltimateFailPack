@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["routing_debug.lua"] = "4.3.0.238r"
+QuestHelper_File["routing_debug.lua"] = "4.3.0.244r"
 QuestHelper_Loadtime["routing_debug.lua"] = GetTime()
 
 function RTO(text)

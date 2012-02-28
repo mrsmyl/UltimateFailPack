@@ -2,7 +2,7 @@
 ## Title: QuestHelper Data (esMX)
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Contains the data needed by QuestHelper
-## Version: 4.3.0.238r
+## Version: 4.3.0.244r
 ## Dependencies: QHData-base
 ## LoadOnDemand: 1
 

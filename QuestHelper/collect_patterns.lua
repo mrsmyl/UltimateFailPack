@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_patterns.lua"] = "4.3.0.238r"
+QuestHelper_File["collect_patterns.lua"] = "4.3.0.244r"
 QuestHelper_Loadtime["collect_patterns.lua"] = GetTime()
 
 local patterns = {}

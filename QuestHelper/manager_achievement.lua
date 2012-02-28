@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["manager_achievement.lua"] = "4.3.0.238r"
+QuestHelper_File["manager_achievement.lua"] = "4.3.0.244r"
 QuestHelper_Loadtime["manager_achievement.lua"] = GetTime()
 
 local AchievementDB

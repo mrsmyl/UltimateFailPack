@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["db_get.lua"] = "4.3.0.238r"
+QuestHelper_File["db_get.lua"] = "4.3.0.244r"
 QuestHelper_Loadtime["db_get.lua"] = GetTime()
 
 local dev_mode = (QuestHelper_File["db_get.lua"] == "Development Version")

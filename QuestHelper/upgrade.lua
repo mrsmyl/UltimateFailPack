@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["upgrade.lua"] = "4.3.0.238r"
+QuestHelper_File["upgrade.lua"] = "4.3.0.244r"
 local my_version = QuestHelper_File["upgrade.lua"]
 
 QuestHelper_Loadtime["upgrade.lua"] = GetTime()
@@ -399,7 +399,7 @@ function QuestHelper_BuildZoneLookup()
           QuestHelper:TextOut(false, altered_index:format(tostring(base_name), tostring(next_index), tostring(c), tostring(z)))
           next_index = next_index + 1
         else
-          if QuestHelper_Locale == "enUS" and my_version == "4.3.0.238r" then
+          if QuestHelper_Locale == "enUS" and my_version == "4.3.0.244r" then
             if original_lookup[base_name][2] ~= c or original_lookup[base_name][3] ~= z then
               --QuestHelper_ErrorCatcher_ExplicitError(false, altered_index:format(base_name, index, c, z))
               QuestHelper:TextOut(false, altered_index:format(base_name, index, c, z))

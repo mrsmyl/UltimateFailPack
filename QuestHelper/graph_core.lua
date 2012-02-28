@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["graph_core.lua"] = "4.3.0.238r"
+QuestHelper_File["graph_core.lua"] = "4.3.0.244r"
 QuestHelper_Loadtime["graph_core.lua"] = GetTime()
 
 -- Alright so what's the interface here

@@ -1,10 +1,12 @@
 function QuestHelper_GetTime()
-  return debugprofilestop() / 1000
+	if IsMacClient() then return debugprofilestop()
+	else return debugprofilestop() / 1000
+	end
 end
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["utility.lua"] = "4.3.0.238r"
+QuestHelper_File["utility.lua"] = "4.3.0.244r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
 QuestHelper = CreateFrame("Frame", "QuestHelper", nil)
