@@ -1,4 +1,4 @@
-﻿## Interface: 40200
+﻿## Interface: 40300
 ## Title: Minimalist
 ## Author: whizkid
 ## Notes: A Collection of Automations and Interface Tweaks.
@@ -14,7 +14,7 @@
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline
-## X-Curse-Packaged-Version: r119
+## X-Curse-Packaged-Version: r121
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline

@@ -35,7 +35,7 @@ local auto_options = {
 					mod:RegisterEvent("MERCHANT_SHOW")
 					mod.Merchant_Show = true 
 				else
-					if db.AUTOSELL or db.AUTOREPAIR or db.GUILDREPAIR then return end
+					if db.AUTOSELL or db.AUTOREPAIR then return end
 					mod:UnregisterEvent("MERCHANT_SHOW")
 					mod.Merchant_Show = false
 				end
@@ -77,22 +77,18 @@ local auto_options = {
 		},
 		AUTOREPAIR = {
 			name = "Auto-repair",
-			type = "select",
+			type = "toggle",
 			desc = "Repair all Equipment and Inventory automatically.",
-			values = {"Disabled", "Own Money", "Guild Money"},
 			get = function() return db.AUTOREPAIR end,
-			set = function(i, value)
-				db.AUTOREPAIR = value
-				if db.AUTOREPAIR < 2 then
-					if db.AUTOSELL then
-						return
-					else
-						mod:UnregisterEvent("MERCHANT_SHOW")
-						mod.Merchant_Show = false
-					end
-				else
+			set = function(i, switch)
+				db.AUTOREPAIR = switch
+				if switch then
 					mod:RegisterEvent("MERCHANT_SHOW")
 					mod.Merchant_Show = true 
+				else
+					if db.AUTOSELL or db.AUTOREPAIR then return end
+					mod:UnregisterEvent("MERCHANT_SHOW")
+					mod.Merchant_Show = false
 				end
 			end
 		}
@@ -453,7 +449,7 @@ local combat_options = {
 local defaults = {
 	profile = {
 		IGNOREDUELS = false,
-		AUTOREPAIR = 1,
+		AUTOREPAIR = false,
 		AUTOSELL = false,
 		AUTOREZ = false,
 		GOSSIPSKIP = false,
@@ -552,7 +548,24 @@ function Minimalist:OnEnable()
 	self.Minimap.loc:SetFontObject(GameFontNormal)
 
 	for varname, val in pairs(auto_options.args) do
+
+		--Special handling to convert AUTOREPAIR setting from old numeric value to boolean (<2 = false, >=2 = true)
+		if varname == "AUTOREPAIR" then
+			if type(db[varname]) == "boolean" then
+				--self:Print("AUTOREPAIR setting OK")
+			else
+				if db[varname] <  2 then
+					db[varname] = false
+					self:Print("Converting AUTOREPAIR setting to 'disabled'")
+				else
+					db[varname] = true
+					self:Print("Converting AUTOREPAIR setting to 'enabled'")
+				end
+			end
+		end
+
 		if db[varname] then auto_options.args[varname].set(false, db[varname]) end
+	
 	end
 	for varname, val in pairs(chat_options.args) do
 		if db[varname] then chat_options.args[varname].set(false, db[varname]) end
@@ -765,18 +778,13 @@ function Minimalist:RepairHandler()
 	local equipcost = GetRepairAllCost()
 	local funds = GetMoney()
 
-	if (funds < equipcost) and (db.AUTOREPAIR == 2) then
+	if (funds < equipcost) and (db.AUTOREPAIR) then
 		self:Print("Insufficient Funds to Repair")
 	end
-
-	if (equipcost > 0) then 
-		if db.AUTOREPAIR == 3 then 
-			RepairAllItems(1) 
-			self:Print("Total repair Costs (Guild): "..self.abacus:FormatMoneyExtended(equipcost))
-		else
-			RepairAllItems() 
-			self:Print("Total repair Costs: "..self.abacus:FormatMoneyExtended(equipcost))
-		end
+	
+	if (equipcost > 0) and (db.AUTOREPAIR) then
+		RepairAllItems() 
+		self:Print("Total repair Costs: "..self.abacus:FormatMoneyExtended(equipcost))
 	end
 end
 
