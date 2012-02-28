@@ -1,5 +1,5 @@
 --[[
-Copyright 2011 João Cardoso
+Copyright 2011-2012 João Cardoso
 BagBrother is distributed under the terms of the GNU General Public License (or the Lesser GPL).
 This file is part of LibItemCache.
 
@@ -17,16 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BagBrother. If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-if BagSync or Armory then
-  return
-else
-  BrotherBags = {}
-end
-
 local Brother = CreateFrame('Frame', 'BagBrother')
 Brother:SetScript('OnEvent', function(self, event, ...) self[event](self, ...) end)
 Brother:RegisterEvent('ADDON_LOADED')
 Brother:RegisterEvent('PLAYER_LOGIN')
+BrotherBags = BrotherBags or {}
 
 local Player = UnitName('player')
 local Realm = GetRealmName()

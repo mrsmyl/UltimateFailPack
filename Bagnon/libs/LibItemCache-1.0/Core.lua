@@ -1,5 +1,5 @@
 --[[
-Copyright 2011 João Cardoso
+Copyright 2011-2012 João Cardoso
 LibItemCache is distributed under the terms of the GNU General Public License (or the Lesser GPL).
 This file is part of LibItemCache.
 
@@ -110,7 +110,7 @@ function Lib:GetItemCounts (player, id)
 	if self:IsPlayerCached(player) then
 		return Cache('GetItemCounts', player, id)
 	else
-		local item, equip = tonumber(id), 0
+		local id, equip = tonumber(id), 0
 		local total = GetItemCount(id, true)
 		local bags = GetItemCount(id)
 
@@ -129,9 +129,9 @@ end
 
 function Lib:GetMoney (player)
 	if self:IsPlayerCached(player) then
-		return Cache('GetMoney', player), true
+		return Cache('GetMoney', player) or 0, true
 	else
-		return GetMoney()
+		return GetMoney() or 0
 	end
 end
 
