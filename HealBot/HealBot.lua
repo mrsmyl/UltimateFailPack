@@ -1262,13 +1262,13 @@ function HealBot_OnUpdate(self)
                     elseif HealBot_Options_Timer[125] then
                         HealBot_Options_Timer[125]=nil
                         if HealBot_retChangeNumBars() then
-                            hbRequestTime=GetTime()+20
+                            hbRequestTime=GetTime()+2
                             HealBot_setOptions_Timer(130)
                         end
                     elseif HealBot_Options_Timer[130] and hbRequestTime<GetTime() then
                         HealBot_Options_Timer[130]=nil
                         HealBot_Comms_SendAddonMsg("HealBot", "R", HealBot_AddonMsgType, HealBot_PlayerName)
-                        hbRequestTime=GetTime()+30
+                        hbRequestTime=GetTime()+5
                     elseif HealBot_Options_Timer[140] and hbRequestTime<GetTime() then
                         HealBot_Options_Timer[140]=nil
                         if GetGuildInfo("player") then HealBot_Comms_SendAddonMsg("HealBot", "G", 5, HealBot_PlayerName) end
@@ -1280,7 +1280,7 @@ function HealBot_OnUpdate(self)
                             end
                         end
                         HealBot_GetTalentInfo(HealBot_PlayerGUID, "player")
-                        hbRequestTime=GetTime()+30
+                        hbRequestTime=GetTime()+5
                     elseif HealBot_Options_Timer[160] then
                         HealBot_Options_Timer[160]=nil
                         HealBot_Options_SetSkinBars()

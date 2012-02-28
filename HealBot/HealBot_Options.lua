@@ -4421,6 +4421,16 @@ function HealBot_Options_rethbTempUnitNames()
             end
         end
     end
+    x=BNGetNumFriends()
+    if x>0 then
+        for y=1,x do
+           _, _, _, uName, _, _, isOnline = BNGetFriendInfo(y)
+           if isOnline and hbMyFriends[uName] then
+               hbTempShareUnitNames[uName]="B"
+               hbTempNumUnitNames=hbTempNumUnitNames+1
+           end
+       end
+    end 
     x=GetNumGuildMembers()
     if x>0 then
         for y=1,x do
