@@ -13,6 +13,7 @@ Outfitter.Debug = {}
 --
 
 Outfitter.LibBabbleZone = LibStub("LibBabble-Zone-3.0")
+Outfitter.LibBabbleSubZone = LibStub("LibBabble-SubZone-3.0")
 Outfitter.LibBabbleInventory = LibStub("LibBabble-Inventory-3.0")
 Outfitter.LibTipHooker = LibStub("LibTipHooker-1.1")
 Outfitter.LibStatLogic = LibStub("LibStatLogic-1.2")
@@ -21,3 +22,4 @@ Outfitter.LibDropdown = LibStub("LibDropdown-1.0")
 
 Outfitter.LZ = Outfitter.LibBabbleZone:GetLookupTable()
 Outfitter.LBI = Outfitter.LibBabbleInventory:GetLookupTable()
+Outfitter.LSZ = Outfitter.LibBabbleSubZone:GetLookupTable()
