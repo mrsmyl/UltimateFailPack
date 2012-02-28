@@ -1,14 +1,14 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2011 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.18: fixed a bug in average item level calculation for Titan's Grip fury warriors.
+-- Version 1.5.19: minor tweaks to Wowhead scales
 ------------------------------------------------------------
 
 
-PawnVersion = 1.518
+PawnVersion = 1.519
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -1299,6 +1299,7 @@ function PawnGetInventoryItemValues(UnitName)
 				-- Titan's Grip warriors.)
 				local ThisItemLevel = PawnGetEpicEquivalentItemLevel(Item.Level, Item.Rarity)
 				local ThisItemLevelIgnoringRarity = Item.Level
+				if not ThisItemLevelIgnoringRarity then return end -- If we have item information but no level, bail out rather than return inaccurate totals.
 				if Slot == 16 then
 					local _, _, _, _, _, _, _, _, InvType = GetItemInfo(GetInventoryItemLink(UnitName, Slot))
 					if InvType == "INVTYPE_2HWEAPON" and GetInventoryItemID(UnitName, 17) == nil then
@@ -2462,7 +2463,7 @@ end
 -- 13 levels on an epic alters the vehicle's health the same as replacing an epic with a blue of the same level.
 -- This results in the .935 value; other values are simply assumptions.
 function PawnGetEpicEquivalentItemLevel(ItemLevel, Rarity)
-	if not ItemLevel or ItemLevel <= 1 then return 0 end
+	if not ItemLevel or ItemLevel <= 1 or not Rarity then return 0 end
 	if Rarity < 2 or Rarity > 5 then -- Common, poor, or heirloom
 		return 0
 	elseif Rarity == 2 then -- Uncommon
@@ -3871,6 +3872,10 @@ end
 
 -- Sets the visibility of all scales from a particular scale provider to be visible or hidden in a single operation.
 function PawnSetAllScaleProviderScalesVisible(ProviderInternalName, Visible)
+	if (not PawnPlayerFullName) then
+		VgerCore.Fail("PawnSetAllScaleProviderScalesVisible failed because Pawn didn't know your character's name yet.")
+		return nil
+	end
 	if (not ProviderInternalName) or (ProviderInternalName == "") then
 		VgerCore.Fail("ProviderInternalName cannot be empty.  Usage: PawnSetAllScaleProviderScalesVisible(\"ProviderInternalName\", Visible)")
 		return nil
@@ -3931,12 +3936,12 @@ end
 function PawnGetScaleColor(ScaleName, Unenchanted)
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: rrggbb = PawnGetScaleColor(\"ScaleName\", Unenchanted)")
-		return nil
+		return VgerCore.Color.Blue
 	end
 	local Scale = PawnCommon.Scales[ScaleName]
 	if not Scale then
 		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return nil
+		return VgerCore.Color.Blue
 	end
 	
 	if Unenchanted then

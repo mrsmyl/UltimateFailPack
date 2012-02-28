@@ -1,6 +1,6 @@
 ﻿-- VgerCore  by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2011 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
 -- Version 1.0.7: IsInBattleground updated for patch 4.3
 local VgerCoreThisVersion = 1.07
