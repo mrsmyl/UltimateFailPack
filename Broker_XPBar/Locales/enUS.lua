@@ -163,7 +163,7 @@ L["%s: %s/%s (%3.2f%%) Currently %s with %d to go"] = true
 
 L["Usage:"] = true
 L["/brokerxpbar arg"] = true
-L["/bxb arg"] = true
+L["/bxp arg"] = true
 L["Args:"] = true
 L["version - display version information"] = true
 L["menu - display options menu"] = true

@@ -673,6 +673,7 @@ function BrokerXPBar:SetupOptions()
 						get = function() return self.db.profile.Strata end,
 						set = function(info, key)
 							self.db.profile.Strata = key
+							self.MainFrame:SetFrameStrata(key)
 							self.XPBar:SetFrameStrata(key)
 							self.RepBar:SetFrameStrata(key)
 							self.Border:SetFrameStrata(key)
@@ -1097,10 +1098,15 @@ function BrokerXPBar:OnInitialize()
 	AceConfigDialog:AddToBlizOptions(FULLNAME)
 
     self:RegisterChatCommand("brokerxpbar", "ChatCommand")
-	self:RegisterChatCommand("bxb",         "ChatCommand")
+	self:RegisterChatCommand("bxp",         "ChatCommand")
 		
 	-- bar setup
-	local XPBar = CreateFrame("Frame", "BrokerXPBar", UIParent)
+	local MainFrame = CreateFrame("Frame", "BrokerXPBarFrame", UIParent)
+	MainFrame:SetFrameStrata(self.db.profile.Strata)
+	MainFrame:SetHeight(2 * self.db.profile.Thickness + 5)	
+	MainFrame:SetWidth(2 * self.db.profile.Thickness + 5)	
+	
+	local XPBar = CreateFrame("Frame", "BrokerXPBar", MainFrame)
 	XPBar:SetFrameStrata(self.db.profile.Strata)
 	XPBar:SetHeight(self.db.profile.Thickness)
 
@@ -1121,7 +1127,7 @@ function BrokerXPBar:OnInitialize()
 	local spark2 = XPBar:CreateTexture("XPSpark2", "OVERLAY")
 	spark2:SetTexture("Interface\\AddOns\\" .. DIRNAME .. "\\Textures\\glow2.tga")
 	spark2:SetAlpha(self.db.profile.Spark)
-	spark2:SetWidth(128)
+	spark2:SetWidth(32)
 	spark2:SetHeight((self.db.profile.Thickness) * 8)
 	spark2:SetBlendMode("ADD")
 
@@ -1138,7 +1144,7 @@ function BrokerXPBar:OnInitialize()
 	notex:Show()
 	notex:SetAllPoints(XPBar)
 	
-	local Rep = CreateFrame("Frame", "BrokerXPRepBar", UIParent)
+	local Rep = CreateFrame("Frame", "BrokerXPRepBar", MainFrame)
 	Rep:SetFrameStrata(self.db.profile.Strata)
 	Rep:SetHeight(self.db.profile.Thickness)
 
@@ -1159,7 +1165,7 @@ function BrokerXPBar:OnInitialize()
 	local rspark2 = Rep:CreateTexture("RepSpark2", "OVERLAY")
 	rspark2:SetTexture("Interface\\AddOns\\" .. DIRNAME .. "\\Textures\\glow2.tga")
 	rspark2:SetAlpha(self.db.profile.Spark)
-	rspark2:SetWidth(128)
+	rspark2:SetWidth(32)
 	rspark2:SetHeight((self.db.profile.Thickness) * 8)
 	rspark2:SetBlendMode("ADD")
 
@@ -1170,7 +1176,7 @@ function BrokerXPBar:OnInitialize()
 	noreptex:SetAllPoints(Rep)
 	noreptex:Show()
 
-	local Border = CreateFrame("Frame", "BrokerXPBorder", UIParent)
+	local Border = CreateFrame("Frame", "BrokerXPBorder", MainFrame)
 	Border:SetFrameStrata(self.db.profile.Strata)
 	Border:SetHeight(5)
 	
@@ -1180,6 +1186,7 @@ function BrokerXPBar:OnInitialize()
 	bordtex:ClearAllPoints()
 	bordtex:SetAllPoints(Border)
 
+	self.MainFrame   = MainFrame
 	self.XPBar       = XPBar
 	self.XPBarTex    = tex
 	self.Spark       = spark
@@ -1268,7 +1275,7 @@ function BrokerXPBar:ChatCommand(input)
     if input then  
 		args = GetArgs(input, "^ *([^%s]+) *")
 		
-		self:TriggerAction(args[1])
+		self:TriggerAction(args[1], tremove(args, 1))
 	else
 		self:TriggerAction("help")
 	end
@@ -1314,7 +1321,7 @@ function BrokerXPBar:OnClick(button)
 	end
 end
 
-function BrokerXPBar:TriggerAction(action)
+function BrokerXPBar:TriggerAction(action, args)
 	if action == "xp" then
 		-- xp to open edit box
 		self:OutputExperience()
@@ -1331,7 +1338,7 @@ function BrokerXPBar:TriggerAction(action)
 		-- display help
 		Output(L["Usage:"])
 		Output(L["/brokerxpbar arg"])
-		Output(L["/bxb arg"])
+		Output(L["/bxp arg"])
 		Output(L["Args:"])
 		Output(L["version - display version information"])
 		Output(L["menu - display options menu"])
@@ -1346,12 +1353,6 @@ function BrokerXPBar:Reanchor()
 	
 	barframe = self.db.profile.Frame and getglobal(self.db.profile.Frame) or nil
 	
-	-- remove from jostle
-	if Jostle then
-		Jostle:Unregister(self.XPBar)
-		Jostle:Unregister(self.RepBar)
-	end
-
 	if barframe == nil then
 		self:HideBar()
 		return 
@@ -1418,30 +1419,34 @@ function BrokerXPBar:Reanchor()
 		self.RepSpark2:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0)
 	end
 	
-	-- re-register for jostle
-	if Jostle and self.db.profile.Jostle and horizontal then
-		if self.db.profile.Location == "Bottom" then
-			Jostle:RegisterTop(self.XPBar)
-			Jostle:RegisterTop(self.RepBar)
-		else
-			Jostle:RegisterBottom(self.XPBar)
-			Jostle:RegisterBottom(self.RepBar)
-		end
-	end
-	
 	-- detach from old frame
+	self.MainFrame:ClearAllPoints()
 	self.XPBar:ClearAllPoints()
 	self.RepBar:ClearAllPoints()
 	self.Border:ClearAllPoints()
 	
 	-- attach to new frame
+	local xOffset = self.db.profile.xOffset
+	local yOffset = self.db.profile.yOffset
+	
+	self:AttachBarToFrame(self.MainFrame, point, barframe, relpoint, xOffset, yOffset)
+	
 	if self:IsBarRequired("XP") then
 		local offset = 0
 		
 		if self.db.profile.Inverse and self:IsBarRequired("Rep") then
 			offset = y * self.db.profile.Thickness
 		end
-		self:AttachBarToFrame(self.XPBar, point, barframe, relpoint, offset)
+		
+		if horizontal then
+			xOffset = 0
+			yOffset = offset
+		else
+			xOffset = offset
+			yOffset = 0
+		end
+		
+		self:AttachBarToFrame(self.XPBar, point, self.MainFrame, point, xOffset, yOffset)
 		
 		sy = sy + y
 	end
@@ -1453,13 +1458,29 @@ function BrokerXPBar:Reanchor()
 			offset = y * self.db.profile.Thickness
 		end
 		
-		self:AttachBarToFrame(self.RepBar, point, barframe, relpoint, offset)
+		if horizontal then
+			xOffset = 0
+			yOffset = offset
+		else
+			xOffset = offset
+			yOffset = 0
+		end
+
+		self:AttachBarToFrame(self.RepBar, point, self.MainFrame, point, xOffset, yOffset)
 
 		sy = sy + y
 	end
 		
 	if self.db.profile.Shadow then
-		self:AttachBarToFrame(self.Border, point, barframe, relpoint, sy * self.db.profile.Thickness)
+		if horizontal then
+			xOffset = 0
+			yOffset = sy * self.db.profile.Thickness
+		else
+			xOffset = sy * self.db.profile.Thickness
+			yOffset = 0
+		end
+
+		self:AttachBarToFrame(self.Border, point, self.MainFrame, point, xOffset, yOffset)
 	end
 	
 	-- reset tex points
@@ -1526,16 +1547,7 @@ function BrokerXPBar:Reanchor()
 	if Jostle then Jostle:Refresh() end
 end
 
-function BrokerXPBar:AttachBarToFrame(bar, point, frame, relpoint, offset)
-	local xOffset = self.db.profile.xOffset
-	local yOffset = self.db.profile.yOffset
-
-	if horizontal then
-		yOffset = yOffset + offset
-	else
-		xOffset = xOffset + offset
-	end
-	
+function BrokerXPBar:AttachBarToFrame(bar, point, frame, relpoint, xOffset, yOffset)
 	bar:SetParent(frame)
 	bar:SetPoint(point, frame, relpoint, xOffset, yOffset)
 end
@@ -1555,23 +1567,65 @@ function BrokerXPBar:TextureSetPoint(tex, bar, point, offset)
 end
 
 function BrokerXPBar:ShowBar()
-	self:HideBar()	
+	local height = 0
+	
+	self:HideBar()
+
 	if self:IsBarRequired("XP") then
 		self.XPBar:Show()
 		self.Spark:Show()
 		self.Spark2:Show()
+		height = height + self.db.profile.Thickness
+
+		-- register for jostle
+		if Jostle and self.db.profile.Jostle and horizontal then
+			if self.db.profile.Location == "Bottom" then
+				Jostle:RegisterTop(self.XPBar)
+			else
+				Jostle:RegisterBottom(self.XPBar)
+			end
+		end		
 	end
-	if self.db.profile.Shadow then
-		self.Border:Show()
-	end
+	
 	if self:IsBarRequired("Rep") then
 		self.RepBar:Show()
 		self.RepSpark:Show()
 		self.RepSpark2:Show()
+		height = height + self.db.profile.Thickness
+
+		-- register for jostle
+		if Jostle and self.db.profile.Jostle and horizontal then
+			if self.db.profile.Location == "Bottom" then
+				Jostle:RegisterTop(self.RepBar)
+			else
+				Jostle:RegisterBottom(self.RepBar)
+			end
+		end
 	end
+	
+	if self.db.profile.Shadow then
+		self.Border:Show()
+		height = height + 5
+	end
+
+	if horizontal then
+		self.MainFrame:SetHeight(height)
+	else
+		self.MainFrame:SetWidth(height)		
+	end
+	
+	self.MainFrame:Show() 
+
+	return height
 end
 
 function BrokerXPBar:HideBar()
+	-- remove from jostle
+	if Jostle then
+		Jostle:Unregister(self.XPBar)
+		Jostle:Unregister(self.RepBar)
+	end
+
 	self.XPBar:Hide()
 	self.Spark:Hide()
 	self.Spark2:Hide()
@@ -1579,6 +1633,8 @@ function BrokerXPBar:HideBar()
 	self.RepBar:Hide()
 	self.RepSpark:Hide()
 	self.RepSpark2:Hide()
+	
+	self.MainFrame:Hide() 
 end
 
 function BrokerXPBar:IsBarRequired(bar)
@@ -1660,6 +1716,7 @@ function BrokerXPBar:UpdateData()
 		barlength = barframe:GetWidth()
 
 		-- adjust to possible changes in parent frame dimensions
+		self.MainFrame:SetWidth(barlength)
 		self.XPBar:SetWidth(barlength)
 		self.RepBar:SetWidth(barlength)
 		self.Border:SetWidth(barlength)
@@ -1670,6 +1727,7 @@ function BrokerXPBar:UpdateData()
 		barlength = barframe:GetHeight()
 
 		-- adjust to possible changes in parent frame dimensions
+		self.MainFrame:SetHeight(barlength)
 		self.XPBar:SetHeight(barlength)
 		self.RepBar:SetHeight(barlength)
 		self.Border:SetHeight(barlength)
@@ -1692,6 +1750,21 @@ function BrokerXPBar:UpdateData()
 
 		self:TextureSetPoint(self.Spark, self.XPBar, back, length-barlength+11)
 		self:TextureSetPoint(self.Spark2, self.XPBar, back, length-barlength+11)
+		
+		-- resize spark to avoid excessive overlapping
+		local sparklength  = 128
+		local spark2length = 32
+		
+		if length < 128 then
+			sparklength = 28 + (length*100/128)
+		end
+		
+		if length < 32 then
+			spark2length = 8 + (length*100/32)
+		end
+
+		self.Spark:SetWidth(sparklength)
+		self.Spark2:SetWidth(spark2length)	
 		
 		if (restXP + currentXP) / maxXP > 1 then
 			length = barlength
@@ -1716,6 +1789,21 @@ function BrokerXPBar:UpdateData()
 
 		self:TextureSetPoint(self.RepSpark, self.RepBar, back, length-barlength+11)
 		self:TextureSetPoint(self.RepSpark2, self.RepBar, back, length-barlength+11)
+		
+		-- resize spark to avoid excessive overlapping
+		local sparklength  = 128
+		local spark2length = 32
+		
+		if length < 128 then
+			sparklength = 28 + (length*100/128)
+		end
+		
+		if length < 32 then
+			spark2length = 8 + (length*100/32)
+		end
+
+		self.RepSpark:SetWidth(sparklength)
+		self.RepSpark2:SetWidth(spark2length)	
 		
 		if not atmaxrep and standing == 8 and currentRep + 1 == maxRep then
 			self:MaxReputationReached()

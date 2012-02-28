@@ -145,7 +145,7 @@ L["%s: %s/%s (%3.2f%%) Currently %s with %d to go"] = "%s: %s/%s (%3.2f%%) Се�
 
 L["Usage:"] = "Использование:"
 L["/brokerxpbar arg"] = "/brokerxpbar arg"
-L["/bxb arg"] = "/bxb arg"
+L["/bxp arg"] = "/bxb arg"
 L["Args:"] = "Арг:"
 L["version - display version information"] = "version - информация о версии"
 L["menu - display options menu"] = "menu - меню настроек"
