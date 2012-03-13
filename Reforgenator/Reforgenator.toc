@@ -1,0 +1,14 @@
+## Interface: 40300
+## Title: Reforgenator
+## Notes: Figure out what to reforge
+## Author: gunboat, gnerfed
+## URL: 
+## Version: 1.3.13
+## SavedVariables: ReforgenatorDB
+## OptionalDeps: Ace3, tekDebug
+## X-Curse-Packaged-Version: v1.3.13
+## X-Curse-Project-Name: Reforgenator
+## X-Curse-Project-ID: reforgenator
+## X-Curse-Repository-ID: wow/reforgenator/mainline
+
+Reforgenator.xml
