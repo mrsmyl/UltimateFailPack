@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "1.3.15"
+local version = "1.3.16"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -2065,7 +2065,8 @@ end
 function Reforgenator:TwoHandFrostDKModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.26,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.75,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.40,
@@ -2073,9 +2074,10 @@ function Reforgenator:TwoHandFrostDKModel()
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.34,
     }
 
-    model.notes = 'http://elitistjerks.com/f72/t125291-frost_dps_winter_discontent_4_3_a/'
+    model.notes = 'http://www.noxxic.com/pve/death-knight/frost/stat-priority-and-reforging-strats'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2104,7 +2106,8 @@ end
 function Reforgenator:DWFrostDKModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.14,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.58,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.51,
@@ -2112,12 +2115,13 @@ function Reforgenator:DWFrostDKModel()
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.09,
     }
 
-    model.notes = 'http://elitistjerks.com/f72/t125291-frost_dps_winter_discontent_4_3_a/'
+    model.notes = 'http://www.noxxic.com/pve/death-knight/frost/stat-priority-and-reforging-strats'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
-            cap = "SpellHitCap"
+            cap = "MeleeHitCap"
         },
         {
             rating = CR_HASTE_MELEE,
@@ -2143,7 +2147,8 @@ end
 function Reforgenator:MasterfrostDKModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.32,
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.22,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 2.15,
@@ -2153,7 +2158,8 @@ function Reforgenator:MasterfrostDKModel()
 
     model.notes = 'http://elitistjerks.com/f72/t125291-frost_dps_winter_discontent_4_3_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_EXPERTISE,
             cap = "ExpertiseSoftCap"
@@ -2207,7 +2213,8 @@ end
 function Reforgenator:UnholyDKModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.89,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.85,
@@ -2217,7 +2224,8 @@ function Reforgenator:UnholyDKModel()
 
     model.notes = 'http://elitistjerks.com/f72/t125292-unholy_dps_my_friend_misery_4_3_0_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2278,7 +2286,9 @@ function Reforgenator:BearSurvivalModel()	-- going to call this one Survival
 
     return model
 end
-
+-- <--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<-- This one does not get used. it is here as a placeholder only.
+-- <--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<-- This is going to be the basis for a threat based model for Feral tanks.
+-- <--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<-- Right now it is only a copy of the existing Model.
 function Reforgenator:BearThreatModel()	-- going to call this one Threat
     local model = ReforgeModel:new()
     model.readOnly = true
@@ -2297,14 +2307,10 @@ function Reforgenator:BearThreatModel()	-- going to call this one Threat
     model.reforgeOrder = 
 	{
         {
-            rating = CR_EXPERTISE,
-            cap = "ExpertiseSoftCap"
-        },
-        {
-            rating = CR_Dodge,
+            rating = CR_DODGE,
             cap = "MaximumPossible"
         },
-		{
+        {
             rating = CR_MASTERY,
             cap = "MaximumPossible"
         },
@@ -2312,11 +2318,15 @@ function Reforgenator:BearThreatModel()	-- going to call this one Threat
 
     return model
 end
+-- <--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--
+-- <--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--
+-- <--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--<--
 
 function Reforgenator:BoomkinModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 2.4,
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.4,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.15,
@@ -2351,7 +2361,8 @@ end
 function Reforgenator:CatModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.291,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.291,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.291,
@@ -2361,7 +2372,8 @@ function Reforgenator:CatModel()
 
     model.notes = 'http://elitistjerks.com/f73/t127445-feral_cat_cataclysm_4_3_dragon_soul/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
 		{
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2391,7 +2403,8 @@ end
 function Reforgenator:RestoDruidModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 0.75,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.65,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.60,
@@ -2400,7 +2413,8 @@ function Reforgenator:RestoDruidModel()
 
     model.notes = 'http://elitistjerks.com/f73/t110354-resto_cataclysm_4_3_dragon_soul/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_MASTERY,
             cap = "Maintain",
@@ -2430,7 +2444,8 @@ end
 function Reforgenator:ProtPallyModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
         ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.0,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.0,
@@ -2440,7 +2455,8 @@ function Reforgenator:ProtPallyModel()
 
     model.notes = 'http://elitistjerks.com/f76/t126438-prot_4_3_send_me_my_way/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_MASTERY,
             cap = "MaximumPossible"
@@ -2453,7 +2469,8 @@ end
 function Reforgenator:RetPallyModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 1.77,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.30,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.13,
@@ -2463,7 +2480,8 @@ function Reforgenator:RetPallyModel()
 
     model.notes = 'http://elitistjerks.com/f76/t110342-retribution_concordance_4_3_voice_dps/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2493,7 +2511,8 @@ end
 function Reforgenator:HolyPallyModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 0.75,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.40,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.35,
@@ -2502,7 +2521,8 @@ function Reforgenator:HolyPallyModel()
 
     model.notes = 'http://elitistjerks.com/f76/t110847-%5Bholy%5Dcataclysm_holy_compendium/ http://www.bandagespec.com/2011/02/on-haste-crit-and-other-secondary-stats.html'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_SPIRIT,
             cap = "MaximumPossible"
@@ -2533,7 +2553,8 @@ end
 function Reforgenator:BeastMasterHunterModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 1.65,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.60,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.42,
@@ -2542,7 +2563,8 @@ function Reforgenator:BeastMasterHunterModel()
 
     model.notes = 'http://elitistjerks.com/f74/t110880-cataclysm_beast_mastery_4_3_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_RANGED,
             cap = "RangedHitCap"
@@ -2568,7 +2590,8 @@ end
 function Reforgenator:MarksmanshipHunterModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.49,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.66,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.61,
@@ -2577,7 +2600,8 @@ function Reforgenator:MarksmanshipHunterModel()
 
     model.notes = 'http://elitistjerks.com/f74/t112408-cataclysm_marksmanship_updated_4_1_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_RANGED,
             cap = "RangedHitCap"
@@ -2603,7 +2627,8 @@ end
 function Reforgenator:SurvivalHunterModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.19,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.37,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.33,
@@ -2612,7 +2637,8 @@ function Reforgenator:SurvivalHunterModel()
 
     model.notes = 'http://elitistjerks.com/f74/t110723-cataclysm_survival_hunter/#Stats'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_RANGED,
             cap = "RangedHitCap"
@@ -2643,7 +2669,8 @@ end
 function Reforgenator:FuryModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.47,
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.47,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.98,
@@ -2653,7 +2680,8 @@ function Reforgenator:FuryModel()
 
     model.notes = 'http://elitistjerks.com/f81/t110350-cataclysm_warrior_faq_4_2_read_while_patching_before_posting/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2686,7 +2714,8 @@ end
 function Reforgenator:SMFuryModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.2,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.29,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.02,
@@ -2696,7 +2725,8 @@ function Reforgenator:SMFuryModel()
 
     model.notes = 'http://elitistjerks.com/f81/t110350-cataclysm_warrior_faq_4_2_read_while_patching_before_posting/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2772,7 +2802,8 @@ end
 function Reforgenator:ProtWarriorModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.03,
         ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.00,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.00,
@@ -2782,7 +2813,8 @@ function Reforgenator:ProtWarriorModel()
     
     model.notes = 'http://elitistjerks.com/f81/t110350-cataclysm_warrior_faq_4_2_read_while_patching_before_posting/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_MASTERY,
             cap = "MaximumPossible"
@@ -2799,7 +2831,8 @@ end
 function Reforgenator:CombatRogueModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.46,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.13,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.87,
@@ -2809,7 +2842,8 @@ function Reforgenator:CombatRogueModel()
 
     model.notes = 'http://elitistjerks.com/f78/t111329-combat_guide_cata_12_01_2011_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2846,7 +2880,8 @@ end
 function Reforgenator:AssassinationRogueModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 1.75,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.30,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.20,
@@ -2856,7 +2891,8 @@ function Reforgenator:AssassinationRogueModel()
 
     model.notes = 'http://elitistjerks.com/f78/t110134-assassination_guide_cata_12_01_2011_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -2890,7 +2926,8 @@ end
 function Reforgenator:SubtletyRogueModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 1.40,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.35,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.15,
@@ -2900,7 +2937,8 @@ function Reforgenator:SubtletyRogueModel()
 
     model.notes = 'http://elitistjerks.com/f78/t119013-cataclysm_subtlety_compendium/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -2941,7 +2979,8 @@ end
 function Reforgenator:AffWarlockModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.78,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.32,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.79,
@@ -2950,7 +2989,8 @@ function Reforgenator:AffWarlockModel()
 
     model.notes = 'http://elitistjerks.com/f80/t112939-affliction_cataclysm_4_3_release/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -2975,7 +3015,8 @@ end
 function Reforgenator:DestroWarlockModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.83,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.08,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.40,
@@ -2984,7 +3025,8 @@ function Reforgenator:DestroWarlockModel()
 
     model.notes = 'http://elitistjerks.com/f80/t111390-destruction_cataclysm_4_3_release/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3009,16 +3051,18 @@ end
 function Reforgenator:DemoWarlockModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.74,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 2.57,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.37,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.95,
     }
 
-    model.notes = 'http://elitistjerks.com/f80/t110366-demonology_cataclysm_4_3_release/'
+    model.notes = 'http://www.noxxic.com/pve/warlock/demonology/stat-priority-and-reforging-strats'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3049,14 +3093,16 @@ end
 function Reforgenator:ArcaneMageModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.21,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.4,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.34,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.28,
     }
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3082,7 +3128,8 @@ end
 function Reforgenator:FrostMageModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.08,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.97,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.61,
@@ -3091,7 +3138,8 @@ function Reforgenator:FrostMageModel()
 
     model.notes = 'http://www.mmo-champion.com/threads/820907-Mage-The-Ultimate-Guide-to-Frost'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3117,7 +3165,8 @@ end
 function Reforgenator:FireMageModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.44,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.21,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.01,
@@ -3126,7 +3175,8 @@ function Reforgenator:FireMageModel()
 
     model.notes = 'http://elitistjerks.com/f75/t110326-cataclysm_fire_mage_compendium/#Gearing_a_Fire_Mage'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3156,7 +3206,8 @@ end
 function Reforgenator:ShadowPriestModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2,
         ["ITEM_MOD_SPIRIT_SHORT"] = 1.95,
         ["ITEM_MOD_HIT_RATING_SHORT"] = 1.95,
@@ -3164,9 +3215,10 @@ function Reforgenator:ShadowPriestModel()
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.60,
     }
 
-    model.notes = 'http://elitistjerks.com/f77/t124358-shadow_priest_pve_guide_4_3_updated/'
+    model.notes = 'http://www.noxxic.com/pve/priest/shadow/stat-priority-and-reforging-strats'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3223,7 +3275,8 @@ end
 function Reforgenator:HolyPriestModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 0.80,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.75,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.70,
@@ -3232,7 +3285,8 @@ function Reforgenator:HolyPriestModel()
 
     model.notes = 'http://elitistjerks.com/f77/t110245-cataclysm_holy_priest_compendium/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_SPIRIT,
             cap = "MaximumPossible"
@@ -3262,7 +3316,8 @@ end
 function Reforgenator:ElementalModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 2.70,
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.70,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.73,
@@ -3272,7 +3327,8 @@ function Reforgenator:ElementalModel()
 
     model.notes = 'http://www.noxxic.com/pve/shaman/elemental/stat-priority-and-reforging-strats'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
@@ -3297,7 +3353,8 @@ end
 function Reforgenator:EnhancementModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 4.0,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.80,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 2.35,
@@ -3307,7 +3364,8 @@ function Reforgenator:EnhancementModel()
 
     model.notes = 'http://elitistjerks.com/f79/t127416-enhancement_4_3_least_your_old_axe_good_transmog/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
@@ -3332,7 +3390,8 @@ end
 function Reforgenator:RestoShamanModel()
     local model = ReforgeModel:new()
     model.readOnly = true
-    model.statWeights = {
+    model.statWeights = 
+	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 0.65,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.60,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.55,
@@ -3341,7 +3400,8 @@ function Reforgenator:RestoShamanModel()
 
     model.notes = 'http://elitistjerks.com/f79/t121202-resto_raiding_4_1_updating_4_3_a/'
 
-    model.reforgeOrder = {
+    model.reforgeOrder = 
+	{
         {
             rating = CR_SPIRIT,
             cap = "MaimumPossible"
@@ -3360,6 +3420,7 @@ function Reforgenator:RestoShamanModel()
 end
 
 -- End Shaman 9999999999999999999999999999999999999999999999999999999999
+
 function Reforgenator:LoadDefaultModels()
     local models = Reforgenator.db.global.models
     if models ~= nil then
@@ -3383,11 +3444,11 @@ function Reforgenator:LoadDefaultModels()
     self:LoadModel(self:UnholyDKModel(), 'DK, unholy', 'DEATHKNIGHT/3', 'DEATHKNIGHT')
 
     self:LoadModel(self:BoomkinModel(), 'Druid, Boomkin', 'DRUID/1', 'DRUID')
-    self:LoadModel(self:CatModel(), 'Druid, Feral cat', nil, 'DRUID')
+	self:LoadModel(self:CatModel(), 'Druid, Feral cat', nil, 'DRUID')
     self:LoadModel(self:BearSurvivalModel(), 'Druid, Bear Survival', 'DRUID/2', 'DRUID')
-	--self:LoadModel(self:BearThreatModel(), 'Druid, Bear Threat', 'Druid/2', 'DRUID')
+	--self:LoadModel(self:BearThreatModel(), 'Druid, Bear Threat', 'DRUID/2', 'DRUID')    --not sure why this one is not working but something doesn't like it.
     self:LoadModel(self:RestoDruidModel(), 'Druid, Restoration', 'DRUID/3', 'DRUID')
-
+	
     self:LoadModel(self:BeastMasterHunterModel(), 'Hunter, BM', 'HUNTER/1', 'HUNTER')
     self:LoadModel(self:MarksmanshipHunterModel(), 'Hunter, MM', 'HUNTER/2', 'HUNTER')
     self:LoadModel(self:SurvivalHunterModel(), 'Hunter, SV', 'HUNTER/3', 'HUNTER')
@@ -3522,7 +3583,8 @@ function Reforgenator:ShowState()
         return
     end
 
-    local REFORGE_ID_MAP = {
+    local REFORGE_ID_MAP = 
+	{
         [1] = "ITEM_MOD_SPIRIT_SHORT",
         [2] = "ITEM_MOD_DODGE_RATING_SHORT",
         [3] = "ITEM_MOD_PARRY_RATING_SHORT",
@@ -3740,7 +3802,8 @@ function Reforgenator:GetBestReforge(playerModel, item, stat, excessRating, stat
 
             local gain = delta * (statWeights[stat] or 0) * self:CalculateScalingFromDR(playerModel, stat)
 
-            entry = {
+            entry = 
+			{
                 ["stat"] = k,
                 ["cost"] = cost,
                 ["gain"] = gain,
@@ -3794,7 +3857,8 @@ function Reforgenator:GetBestReforge(playerModel, item, stat, excessRating, stat
 
     self:Debug("### " .. candidates[1].stat .. " is best reforgable stat")
 
-    return {
+    return 
+	{
         item = item,
         reforgeFrom = candidates[1].stat,
         reforgeTo = stat,
