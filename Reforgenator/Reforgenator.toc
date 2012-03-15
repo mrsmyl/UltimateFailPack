@@ -3,10 +3,10 @@
 ## Notes: Figure out what to reforge
 ## Author: ducky12432, gunboat, gnerfed
 ## URL: 
-## Version: 1.3.16
+## Version: 1.3.17
 ## SavedVariables: ReforgenatorDB
 ## OptionalDeps: Ace3, tekDebug
-## X-Curse-Packaged-Version: v1.3.16
+## X-Curse-Packaged-Version: v1.3.17
 ## X-Curse-Project-Name: Reforgenator
 ## X-Curse-Project-ID: reforgenator
 ## X-Curse-Repository-ID: wow/reforgenator/mainline

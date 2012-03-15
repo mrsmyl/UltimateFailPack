@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "1.3.16"
+local version = "1.3.17"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -3208,9 +3208,9 @@ function Reforgenator:ShadowPriestModel()
     model.readOnly = true
     model.statWeights = 
 	{
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 2,
-        ["ITEM_MOD_SPIRIT_SHORT"] = 1.95,
-        ["ITEM_MOD_HIT_RATING_SHORT"] = 1.95,
+        ["ITEM_MOD_HIT_RATING_SHORT"] = 2,
+		["ITEM_MOD_HASTE_RATING_SHORT"] = 1.95,
+        ["ITEM_MOD_SPIRIT_SHORT"] = 1.95,        
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.70,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.60,
     }
@@ -3225,7 +3225,7 @@ function Reforgenator:ShadowPriestModel()
         },
         {
             rating = CR_HASTE_SPELL,
-            cap = "1SecGCD"
+            cap = "MaximumPossible"
         },
         {
             rating = CR_MASTERY,
