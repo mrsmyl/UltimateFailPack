@@ -1,6 +1,6 @@
 --[[
 Name: LibBossIDs-1.0
-Revision: $Revision: 74 $
+Revision: $Revision: 77 $
 Author: Elsia
 Website: http://www.wowace.com/addons/libbossids-1-0/
 Documentation:
@@ -10,7 +10,7 @@ Dependencies: LibStub
 License: Public Domain, Absolutely no Warranty.
 ]]
 
-local MAJOR, MINOR = "LibBossIDs-1.0", "$Revision: 74 $"
+local MAJOR, MINOR = "LibBossIDs-1.0", "$Revision: 77 $"
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not lib then return end
@@ -1046,7 +1046,7 @@ local BossIDs = {
    [55312]	= true,	-- Yor'sahj the Unsleeping
    [55689]	= true,	-- Hagara the Binder
    [55294]	= true,	-- Ultraxion
-   [39399]	= true,	-- Warmaster Blackhorn
+   [56427]	= true,	-- Warmaster Blackhorn
    [53879]	= true,	-- Spine Deathwing
    [56173]	= true,	-- Madness Deathwing
    

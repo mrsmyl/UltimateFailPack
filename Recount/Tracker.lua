@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1192 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1195 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -443,27 +443,27 @@ function Recount:AddGuessedAbsorbData(source, victim, ability, element, hittype,
 				
 					if v2-currenttime < -1.0 then
 						shieldref[k][k2]=nil
-						Recount:DPrint("Removing old "..k.." "..k2.." on "..victim)
+--						Recount:DPrint("Removing old "..k.." "..k2.." on "..victim)
 					else
 						mintime = v2-currenttime
 						minsrc = k2
 						minspell = k
 					end
 				end
-				Recount:DPrint(k2.." "..v2.." "..currenttime.." "..v2-currenttime)
+--				Recount:DPrint(k2.." "..v2.." "..currenttime.." "..v2-currenttime)
 			end
 		end
 	end
 
 	if not minsrc then
-		Recount:DPrint("Failed to find a minsource for absorb on "..victim.." "..absorbed)
+--		Recount:DPrint("Failed to find a minsource for absorb on "..victim.." "..absorbed)
 	else
 		local damagesrc = source
 		local spellName = GetSpellInfo(minspell)
 		local source = minsrc
-		Recount:DPrint("Guessing that the absorb goes to "..minsrc.." having used spell "..minspell ..":"..absorbed)
+--		Recount:DPrint("Guessing that the absorb goes to "..minsrc.." having used spell "..minspell ..":"..absorbed)
 		if not Recount.db2.combatants[source] then
-			Recount:DPrint("No source combatant!")
+--			Recount:DPrint("No source combatant!")
 		else
 			local sourceData=Recount.db2.combatants[source]
 			Recount:AddAmount(sourceData,"Absorbs",absorbed)
@@ -637,13 +637,13 @@ function Recount:SpellExtraAttacks(timestamp, eventtype, srcGUID, srcName, srcFl
 	
 	extraattacks = extraattacks or {}
 	if extraattacks[srcName] then
-		Recount:DPrint("Double proc: "..spellName.." "..extraattacks[srcName].spellName)
+--		Recount:DPrint("Double proc: "..spellName.." "..extraattacks[srcName].spellName)
 	else
 		extraattacks[srcName] = {}
 		extraattacks[srcName].spellName = spellName
 		extraattacks[srcName].amount = amount
 		extraattacks[srcName].proctime = GetTime()
-		Recount:DPrint("Proc: "..spellName.." "..extraattacks[srcName].spellName)
+--		Recount:DPrint("Proc: "..spellName.." "..extraattacks[srcName].spellName)
 	end
 end
 
@@ -654,9 +654,9 @@ end
 
 function Recount:AddAbsorbCredit(source, victim, spellName, spellId, absorbed)
 	if not source or not Recount.db2.combatants[source] then
-		Recount:DPrint("No source combatant with absorb! "..spellName.." "..spellId)
+--		Recount:DPrint("No source combatant with absorb! "..spellName.." "..spellId)
 	else
-		Recount:DPrint("Absorb goes to "..source.." having used spell "..spellName.."("..spellId..")" ..":"..absorbed)
+--		Recount:DPrint("Absorb goes to "..source.." having used spell "..spellName.."("..spellId..")" ..":"..absorbed)
 		local sourceData=Recount.db2.combatants[source]
 		Recount:AddAmount(sourceData,"Absorbs",absorbed)
 		Recount:AddTableDataStats(sourceData,"Absorbed",spellName,victim,absorbed)
@@ -673,17 +673,17 @@ function Recount:SpellAuraApplied(timestamp, eventtype, srcGUID, srcName, srcFla
 	if AbsorbSpellDuration[spellId] then
 		-- Yes? Add shield
 		AllShields[dstName] = AllShields[dstName] or {}
-		Recount:DPrint("Assigning active " .. spellName .." on " .. dstName .." cast by " ..srcName)
+--		Recount:DPrint("Assigning active " .. spellName .." on " .. dstName .." cast by " ..srcName)
 		AllShields[dstName][spellId] = AllShields[dstName][spellId] or {}
 		if AllShields[dstName][spellId][srcName] then
-			Recount:DPrint("Valid shield is being rewritten without having been removed first: "..srcName.." "..dstName.." "..spellName)
+--			Recount:DPrint("Valid shield is being rewritten without having been removed first: "..srcName.." "..dstName.." "..spellName)
 		end
 		AllShields[dstName][spellId][srcName] = {}
 		if amount then -- Not guessed!!
 			AllShields[dstName][spellId][srcName] = amount -- Store actual shield amount
 		else
 			if not GuessAbsorbSpells[spellId] then -- Find unknown spellIds
-				Recount:DPrint("Unknown absorb spell without trackability *PLEASE REPORT*: ".. spellName.. " "..spellId)
+--				Recount:DPrint("Unknown absorb spell without trackability *PLEASE REPORT*: ".. spellName.. " "..spellId)
 			end
 			AllShields[dstName][spellId][srcName] = timestamp + AbsorbSpellDuration[spellId] -- Store duration for guessing
 		end
@@ -701,7 +701,7 @@ function Recount:SpellAuraRefresh(timestamp, eventtype, srcGUID, srcName, srcFla
 	if AbsorbSpellDuration[spellId] and amount then
 		-- Yes? Update shield if it is tracked
 		if AllShields[dstName] and AllShields[dstName][spellId] and AllShields[dstName][spellId][srcName] then
-				Recount:DPrint("Updating " .. spellName .." from " .. dstName .. " at time ".. timestamp .. " old stamp was "..AllShields[dstName][spellId][srcName].." "..amount)
+--				Recount:DPrint("Updating " .. spellName .." from " .. dstName .. " at time ".. timestamp .. " old stamp was "..AllShields[dstName][spellId][srcName].." "..amount)
 
 --			if AllShields[dstName][spellId][srcName].expiration < timestamp then
 --				Recount:DPrint("EXPIRED REFRESH FOUND!")
@@ -712,11 +712,11 @@ function Recount:SpellAuraRefresh(timestamp, eventtype, srcGUID, srcName, srcFla
 				Recount:AddAbsorbCredit(srcName, dstName, spellName, spellId, absorb)
 			end
 		else
-			Recount:DPrint("ORPHAN REFRESH FOUND! Rescuing")
+--			Recount:DPrint("ORPHAN REFRESH FOUND! Rescuing")
 			Recount:SpellAuraApplied(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags,spellId, spellName, spellSchool, auraType, amount)
 		end
 	elseif GuessAbsorbSpells[spellId] then
-		Recount:DPrint("Refreshing shield: "..spellName.." on "..dstName)
+--		Recount:DPrint("Refreshing shield: "..spellName.." on "..dstName)
 		-- Yes? Add shield
 		AllShields[dstName] = AllShields[dstName] or {}
 		AllShields[dstName][spellId] = AllShields[dstName][spellId] or {}
@@ -724,7 +724,7 @@ function Recount:SpellAuraRefresh(timestamp, eventtype, srcGUID, srcName, srcFla
 		AllShields[dstName][spellId][srcName] = timestamp + AbsorbSpellDuration[spellId] -- Store duration for guessing
 		
 		if not Recount.db2.combatants[srcName]  then
-			Recount:DPrint("No source combatant!")
+--			Recount:DPrint("No source combatant!")
 		else
 			local sourceData=Recount.db2.combatants[srcName]
 			Recount:AddTableDataSum(sourceData,"ShieldedWho",dstName,spellName,1)
@@ -734,7 +734,7 @@ end
 
 function Recount:RemoveShield(args)
 	local dstName, spellId, srcName = unpack(args)
-	Recount:DPrint("Removing "..dstName.." "..spellId.." "..srcName)
+--	Recount:DPrint("Removing "..dstName.." "..spellId.." "..srcName)
 	AllShields[dstName][spellId][srcName]=nil
 end
 
@@ -767,7 +767,7 @@ function Recount:SpellAuraRemoved(timestamp, eventtype, srcGUID, srcName, srcFla
 				Recount:ScheduleTimer("RemoveShield",0.2,packagedargs)
 			end
 		else
-			Recount:DPrint("Shield "..spellName.." was removed on target "..dstName.." but wasn't detected as applied")
+--			Recount:DPrint("Shield "..spellName.." was removed on target "..dstName.." but wasn't detected as applied")
 		end
 	end
 end
@@ -1187,7 +1187,7 @@ function Recount:AddAmount2(who,datatype,secondary,amount)
 		return
 	end
 	if not secondary then
-		Recount:DPrint("Empty secondary: "..datatype)
+--		Recount:DPrint("Empty secondary: "..datatype)
 		return
 	end
 	
@@ -1547,6 +1547,15 @@ function Recount:DetectPet(name, nGUID, nFlags)
 	end
 
 	return name, owner, ownerID
+end
+
+function Recount:BossFound()
+	local victim = UnitName("boss1")
+	if victim then
+	Recount.FightingWho = victim
+	Recount.FightingLevel = -1
+	Recount:DPrint("Boss from Boss Frame: "..victim)
+	end
 end
 
 function Recount:BossFightWho(srcFlags,dstFlags,victimData, victim)

@@ -13,7 +13,7 @@ local FilterSize	= 20
 local RampUp		= 5
 local RampDown		= 10
       
-Recount.Version = tonumber(string.sub("$Revision: 1172 $", 12, -3))
+Recount.Version = tonumber(string.sub("$Revision: 1194 $", 12, -3))
 
 local UnitLevel = UnitLevel
 local UnitClass = UnitClass
@@ -2069,6 +2069,7 @@ function Recount:OnEnable(first)
 	
 	--Parser Events
 	Recount:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED","CombatLogEvent")
+	Recount:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "BossFound")
 	
 	if RecountDeathTrack then
 		RecountDeathTrack:SetFight(Recount.db.profile.CurDataSet)

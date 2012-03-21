@@ -1,7 +1,7 @@
 LibStub:GetLibrary("AceComm-3.0"):Embed(Recount)
 LibStub:GetLibrary("AceSerializer-3.0"):Embed(Recount)
 
-local revision = tonumber(string.sub("$Revision: 1098 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1195 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -39,10 +39,10 @@ function Recount.SendCommMessage(self,a,b,channel,...)
 	if instanceType == "pvp" or instanceType == "party" then return end -- Disabled sync in all cross-realm content
 
 	if channel == "RAID" and GetNumRaidMembers() > 0 then
-		Recount:DPrint("A "..a.." "..channel)
+--		Recount:DPrint("A "..a.." "..channel)
 		oldSendCommMessage(self,a,b,channel,...)
 	elseif channel ~= "RAID" then
-		Recount:DPrint("B "..a.." "..channel)
+--		Recount:DPrint("B "..a.." "..channel)
 		oldSendCommMessage(self,a,b,channel,...)
 	end
 end
@@ -333,7 +333,7 @@ function Recount:OnCommReceive(prefix, Msgs, distribution, target)
 		worked, cmd,owner,name,syncin["Damage"],syncin["DamageTaken"],syncin["Healing"],syncin["OverHealing"],syncin["HealingTaken"],syncin["ActiveTime"] = Recount:Deserialize(Msgs)
 		if worked == true then
 			if cmd == "PU" then -- Player Update
-				Recount:DPrint(cmd .." "..owner.." "..name.." "..(syncin["Damage"] or "nil").." "..(syncin["DamageTaken"] or "nil").." "..(syncin["Healing"] or "nil").." "..(syncin["OverHealing"] or "nil").." "..(syncin["HealingTaken"] or "nil").." "..(syncin["ActiveTime"] or "nil"))
+--				Recount:DPrint(cmd .." "..owner.." "..name.." "..(syncin["Damage"] or "nil").." "..(syncin["DamageTaken"] or "nil").." "..(syncin["Healing"] or "nil").." "..(syncin["OverHealing"] or "nil").." "..(syncin["HealingTaken"] or "nil").." "..(syncin["ActiveTime"] or "nil"))
 				if type(name)~="number" and (not Recount.VerNum[owner] or Recount.VerNum[owner]>=MinimumV) then
 					local combatant = dbCombatants[name]
 					if not combatant then
@@ -356,9 +356,9 @@ function Recount:OnCommReceive(prefix, Msgs, distribution, target)
 					   if syncamount and localamount and syncamount > localamount then
 					      
 					      if localamount*0.8 < syncamount and syncamount > 20000 then
-						 Recount:DPrint("Sync anomaly: "..localamount.." "..syncamount)
+--						 Recount:DPrint("Sync anomaly: "..localamount.." "..syncamount)
 					      else
-						 Recount:DPrint("Sync "..k.." for: "..syncamount-localamount)
+--						 Recount:DPrint("Sync "..k.." for: "..syncamount-localamount)
 					      end
 					      
 					      Recount:AddAmount(who,k,syncamount-localamount)
@@ -369,7 +369,7 @@ function Recount:OnCommReceive(prefix, Msgs, distribution, target)
 					end
 				end
 			elseif cmd == "PS" then -- Player data set (when first meeting up)
-				Recount:DPrint(cmd .." "..owner.." "..name.." "..(syncin["Damage"] or "nil").." "..(syncin["DamageTaken"] or "nil").." "..(syncin["Healing"] or "nil").." "..(syncin["OverHealing"] or "nil").." "..(syncin["HealingTaken"] or "nil").." "..(syncin["ActiveTime"] or "nil"))
+--				Recount:DPrint(cmd .." "..owner.." "..name.." "..(syncin["Damage"] or "nil").." "..(syncin["DamageTaken"] or "nil").." "..(syncin["Healing"] or "nil").." "..(syncin["OverHealing"] or "nil").." "..(syncin["HealingTaken"] or "nil").." "..(syncin["ActiveTime"] or "nil"))
 				if type(name)~="number" and (not Recount.VerNum[owner] or Recount.VerNum[owner]>=MinimumV) then
 					local combatant = dbCombatants[name]
 					if not combatant then
@@ -380,21 +380,21 @@ function Recount:OnCommReceive(prefix, Msgs, distribution, target)
 						else
 							nameFlags = PARTY_PET_FLAGS
 						end
-						Recount:DPrint("Creating combatant from PS: "..name.." "..(petowner or  "nil"))
+--						Recount:DPrint("Creating combatant from PS: "..name.." "..(petowner or  "nil"))
 						Recount:AddCombatant(name,petowner and owner,nil,nameFlags,nil) -- This could be bad.
 						combatant = dbCombatants[name]
 					end
 					
 					local who = combatant
 				
-					Recount:DPrint("PS with retention: "..name)
+--					Recount:DPrint("PS with retention: "..name)
 					for k,_ in pairs(SyncTypes) do
 					   local syncamount = syncin[k]
 					   if syncamount  then -- This could be bad.
-					      Recount:DPrint("PS setting: "..k)
+--					      Recount:DPrint("PS setting: "..k)
 					      Recount:SetLazySyncAmount(owner,name,k,syncamount)
 					   else
-					      Recount:DPrint("PS NOT setting: "..k)
+--					      Recount:DPrint("PS NOT setting: "..k)
 					   end
 					end
 				end
@@ -425,7 +425,7 @@ function Recount:OnCommReceive(prefix, Msgs, distribution, target)
 					Recount:AddCombatant(name,nil,nil,COMBATLOG_OBJECT_AFFILIATION_RAID+COMBATLOG_OBJECT_TYPE_PLAYER+COMBATLOG_OBJECT_REACTION_FRIENDLY,nil)
 					combatant = dbCombatants[name]
 				end
-				Recount:DPrint("Received RS and retaining: "..name)
+--				Recount:DPrint("Received RS and retaining: "..name)
 				Recount:ResetLazySyncData(name)
 			elseif cmd == "VS" or cmd == "VQ" then -- Version Broadcast
 				-- owner == originator, pet == version string :D
