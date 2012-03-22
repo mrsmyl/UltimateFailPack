@@ -1,0 +1,73 @@
+﻿## Interface: 40300
+## Title: |cff00fe00TradeSkillMaster|r
+## Notes: Addon for making gold off of crafting tradeskill items and selling them on the AH. Does nothing without modules installed.
+## Author: Sapu94
+## Version: v1.2.5
+## SavedVariables: TradeSkillMasterDB
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
+## X-Curse-Packaged-Version: v1.2.5
+## X-Curse-Project-Name: TradeSkillMaster
+## X-Curse-Project-ID: tradeskill-master
+## X-Curse-Repository-ID: wow/tradeskill-master/mainline
+
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceHook-3.0\AceHook-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+Libs\AceLocale-3.0\AceLocale-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+Libs\LibExtraTip\Load.xml
+Libs\TipHelper\Load.xml
+Libs\lib-st\lib-st.xml
+Libs\LibAuctionScan-1.0\Load.xml
+
+Libs\AceComm-3.0\AceComm-3.0.xml
+Libs\AceSerializer-3.0\AceSerializer-3.0.xml
+Libs\LibCompress\lib.xml
+
+
+Locale\enUS.lua
+Locale\deDE.lua
+Locale\esES.lua
+Locale\esMX.lua
+Locale\frFR.lua
+Locale\koKR.lua
+Locale\ruRU.lua
+Locale\zhCN.lua
+Locale\zhTW.lua
+Locale\ptBR.lua
+
+TradeSkillMaster.lua
+
+Util\Templates.xml
+Util\ErrorHandler.lua
+Util\Util.lua
+Util\MainFrame.lua
+Util\Tips.lua
+Util\Tooltips.lua
+Util\Options.lua
+
+Data\Gems.lua
+Data\Destroying.lua
+Data\ItemData.lua
+
+Auction\AuctionGUI.lua
+Auction\AuctionUtil.lua
+Auction\AuctionFrame.lua
+Auction\AuctionScrollingTable.lua
+
+GUI\GUI.lua
+GUI\TSMMainFrame.lua
+GUI\TSMCustomContainers.lua
+GUI\TSMCustomWidgets.lua
+GUI\TSMCustomWidgets-Special.lua
+GUI\TSMSelectionList.lua

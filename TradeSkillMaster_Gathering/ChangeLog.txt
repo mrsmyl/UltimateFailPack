@@ -1,0 +1,43 @@
+v0.2.6
+*Fixed a bug with taking items from the bank.
+*Added functions for new AuctionDB feature.
+*Updated for patch 4.3.
+*Many other minor bug fixes and improvements.
+
+v0.2.5
+*Updated TOC for patch 4.2.
+*Many other minor bug fixes and improvements.
+
+v0.2.4
+*Fixed a bug with "Delete Character" causing an error.
+*Fixed a bug that was causing an error if the player hadn't yet visited the AH since updating gathering.
+*Many other minor bug fixes and improvements.
+
+v0.2.3
+*Fixed a bug where guild bank data wasn't getting properly scanned unless the player was the guild leader.
+
+v0.2.2
+*Gathering will no longer track soulbound items.
+*Many other minor bug fixes and improvements.
+
+v0.2.1
+*Moved auction count tracking from AuctionDB to Gathering.
+*The button to buy mats from a vendor now has a 5 second cooldown to avoid it being pressed too many times and buying too many mats.
+*Cleaned up a bunch of code.
+*Updated TOC for patch 4.1.
+
+v0.2
+*Gathering now gathers materials for your craft queue from your banks/guild banks/alts.
+*Added localizations.
+*Added tooltips.
+*Added a way to delete characters from Gathering.
+*Many other minor bug fixes and improvements.
+
+v0.1.2
+*Fixed a bug where guild banks were not getting scanned correctly.
+
+v0.1.1
+*Fixed a bug that was causing issues with guilds banks were you don't have permission to view each tab.
+
+v0.1
+*First version!
