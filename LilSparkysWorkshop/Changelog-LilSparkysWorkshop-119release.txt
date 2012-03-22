@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+r120 | lilsparky | 2011-12-11 17:40:36 +0000 (Sun, 11 Dec 2011) | 1 line
+Changed paths:
+   A /tags/119release (from /trunk:119)
+
+Tagging as 119release
+------------------------------------------------------------------------
+r119 | lilsparky | 2011-12-11 05:35:27 +0000 (Sun, 11 Dec 2011) | 4 lines
+Changed paths:
+   M /trunk/LilSparkysWorkshop.toc
+   M /trunk/lilsparkysworkshop.lua
+   M /trunk/pricingSupport/disenchanting_support.lua
+   M /trunk/pricingSupport/milling_support.lua
+   M /trunk/pricingSupport/prospecting_support.lua
+   M /trunk/scrollIDs.lua
+
+updated .toc
+removed BOP status in sv file
+update milling/prospecting data
+
+------------------------------------------------------------------------

@@ -1,0 +1,102 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Font name="LSWFontNormalLeftGreen" inherits="GameFontNormalSmallLeft" virtual="true">
+		<Color r="0.0" g="1.0" b="0.0"/>
+	</Font>
+	<Font name="LSWFontNormalLeftYellow" inherits="GameFontNormalSmallLeft" virtual="true">
+		<Color r="1.0" g="1.0" b="0.0"/>
+	</Font>
+	<Font name="LSWFontNormalLeftOrange" inherits="GameFontNormalSmallLeft" virtual="true">
+		<Color r="1.0" g="0.5" b="0.25"/>
+	</Font>
+	<Font name="LSWFontNormalLeftLightGreen" inherits="GameFontNormalSmallLeft" virtual="true">
+		<Color r="0.25" g=".75" b="0.25"/>
+	</Font>
+	<Font name="LSWFontNormalLeftGrey" inherits="GameFontNormalSmallLeft" virtual="true">
+		<Color r="0.5" g="0.5" b="0.5"/>
+	</Font>
+	<Font name="LSWFontNormalLeftRed" inherits="GameFontNormalSmallLeft" virtual="true">
+		<Color r="0.9" g="0.0" b="0.0"/>
+	</Font>
+
+
+	<Button name="LSWTradeSkillValueButtonTemplate" hidden="false" virtual="true">
+		<Size>
+		  <AbsDimension x="23" y="16"/>
+		</Size>
+
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="RIGHT">
+					<Size>
+						<AbsDimension x="23" y="16" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" />
+						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+
+
+		<NormalFont inherits="GameFontNormalSmall" justifyH="RIGHT"/>
+		<HighlightFont inherits="GameFontHighlightSmall" justifyH="RIGHT"/>
+		<DisabledFont inherits="GameFontDisableSmall" justifyH="RIGHT"/>
+	</Button>
+
+	<Button name="LSWTradeSkillCostButtonTemplate" hidden="false" virtual="true">
+		<Size>
+			<AbsDimension x="23" y="16"/>
+    	</Size>
+
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="RIGHT">
+					<Size>
+						<AbsDimension x="23" y="16" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" />
+						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+
+	<NormalFont inherits="GameFontNormalSmall" justifyH="RIGHT"/>
+    <HighlightFont inherits="GameFontHighlightSmall" justifyH="RIGHT"/>
+    <DisabledFont inherits="GameFontDisableSmall" justifyH="RIGHT"/>
+  </Button>
+
+
+
+  <Button name="LSWTradeSkillItemLevelTemplate" hidden="false" virtual="true">
+    <Size>
+      <AbsDimension x="16" y="16"/>
+    </Size>
+
+	<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="RIGHT">
+					<Size>
+						<AbsDimension x="23" y="16" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" />
+						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+
+    <NormalFont inherits="GameFontNormalSmall" justifyH="RIGHT"/>
+    <HighlightFont inherits="GameFontHighlightSmall" justifyH="RIGHT"/>
+    <DisabledFont inherits="GameFontDisableSmall" justifyH="RIGHT"/>
+  </Button>
+
+</Ui>

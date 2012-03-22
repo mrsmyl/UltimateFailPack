@@ -1,0 +1,47 @@
+## Interface: 40300
+## Title: LilSparky's Workshop
+## Notes: LilSparky's Workshop mod for Trade Skills
+## RequiredDeps:
+## OptionalDeps: Auctioneer, Auc-Advanced, Enchantrix, AdvancedTradeSkillWindow, Informant, KC_Items, Skillet, SellFish, ItemPriceTooltip, Valuation, ItemDataCache, LibPeriodicTable-3.1, DoubleWideTradeSkill, AuctionMaster, AuctionLite, Auctionator
+## LoadOnDemand: 0
+## SavedVariables: LSWConfig,LSWPrices
+## SavedVariablesPerCharacter:
+## Notes: Provides Auction-derived prices for Trade Skills
+## Author: lilsparky
+## X-Category: Tradeskill
+## X-Revision: 119
+## X-Curse-Packaged-Version: 119release
+## X-Curse-Project-Name: LilSparky's Workshop
+## X-Curse-Project-ID: lil-sparkys-workshop
+## X-Curse-Repository-ID: wow/lil-sparkys-workshop/mainline
+
+
+lilsparkysworkshop.xml
+lilsparkysworkshop.lua
+scrollIDs.lua
+cooldowns.lua
+ButtonTextFilter.lua
+
+
+frameSupport\blizzardUI_support.lua
+frameSupport\atsw_support.lua
+frameSupport\skillet_support.lua
+frameSupport\mrtrader_support.lua
+
+
+pricingSupport\auctionLite_support.lua
+pricingSupport\auctioneer_support.lua
+pricingSupport\auctionMaster_support.lua
+pricingSupport\auctionator_support.lua
+pricingSupport\cachedPrices_support.lua
+
+
+pricingSupport\getSellValue_support.lua
+pricingSupport\informant_support.lua
+pricingSupport\enchantrix_support.lua
+pricingSupport\disenchanting_support.lua
+pricingSupport\milling_support.lua
+pricingSupport\prospecting_support.lua
+pricingSupport\commonSkills_support.lua
+
+
