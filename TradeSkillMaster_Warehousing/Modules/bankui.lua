@@ -426,7 +426,9 @@ function bankui:updateST()
     if isExpanded["crafting"] then
         for _,prof in ipairs(tradeSkills) do
             total,_ = TSMAPI:GetData("shopping", prof.name)
-            if total and #total > 0 then table.insert (stTable, bankui:createRow(GetSpellInfo(prof.spellID),"Crafting:"..GetSpellInfo(prof.spellID),false)) end
+            if total and #total > 0 then 
+                table.insert (stTable, bankui:createRow(GetSpellInfo(prof.spellID),"Crafting:"..GetSpellInfo(prof.spellID),false))     
+            end
         end
     end
     bagST:SetData(stTable)

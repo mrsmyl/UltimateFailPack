@@ -1,3 +1,7 @@
+v1.4.5
+*Crafting groups now reset properly
+*UPDATEBAGSTATE, and craftstate, are only printed when movedata = true
+
 v1.4.4.3
 *Elvui should work now
 

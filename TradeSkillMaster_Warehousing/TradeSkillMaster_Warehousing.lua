@@ -168,7 +168,7 @@ end
 -- login, it is used for Crafting        --
 -------------------------------------------
  function TSM:UpdatePlayerBagState()
-    TSM:Print ("UPDATE BAG STATE")
+    if TSM.db.global.ShowLogData then TSM:Print ("UPDATE BAG STATE") end
     TSM.db.factionrealm.PlayerBagState = {}
     --if craftGroup then TSM.db.factionrealm.CraftingGroups[craftGroup] = {} end
     for bagid = 0, NUM_BAG_SLOTS do

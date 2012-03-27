@@ -168,14 +168,19 @@ function data:unIndexTableCrafting(craftGrp,grpName)
     
     if TSM.db.factionrealm.CraftingGroups[grpName] then
         craftState = TSM.db.factionrealm.CraftingGroups[grpName]
-        for i,v in pairs(craftState) do
-            TSM:Print (grpName,": ",i,v)
+        if TSM.db.global.ShowLogData then
+            print("In Craft Queue")
+            for i,v in pairs(craftState) do
+                local _, link = GetItemInfo( i)
+                TSM:Print (grpName,": ",link,", have = ",v)
+            end
         end
     end
 
     local zeros = 0
     local grp = {}--TSM.db.factionrealm.WarehousingGroups[grpName]
-    
+    local zeros = {}
+     
     for _, item in ipairs(craftGrp) do 
         
         local id   =  item[1]
@@ -186,11 +191,10 @@ function data:unIndexTableCrafting(craftGrp,grpName)
 
         if have then need = need - have end
         if need > 0 then 
-            table.insert (grp, {item = id, quantity = need}) 
+            table.insert (grp, {item = id, quantity = need})
             scanTable[id] = need
-        else
-            zeros = zeros + 1 --this means that there was no need
         end
+        table.insert (zeros, {item = id, quantity = item[2]})            
 
     end
     if TSM.db.global.ShowLogData then
@@ -198,8 +202,10 @@ function data:unIndexTableCrafting(craftGrp,grpName)
             local sName, link, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo( v.item )
         end
     end
-    if zeros == #craftGrp then
-        return TSMAPI:GetData("shopping", grpName), scanTable
+    print(zeros, #grp, #craftGrp )
+    if #zeros == #craftGrp then
+        TSM.db.factionrealm.CraftingGroups[grpName] = {}
+        return zeros, scanTable
     else
         return grp, scanTable
     end

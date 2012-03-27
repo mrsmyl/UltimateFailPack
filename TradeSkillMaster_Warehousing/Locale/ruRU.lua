@@ -15,13 +15,13 @@
 
 local L = LibStub("AceLocale-3.0"):NewLocale("TradeSkillMaster_Warehousing", "ruRU")
 if not L then return end
-L["   1.1) You can delete a group by typing in its name and hitting okay."] = "1.1) Можно удалить группу, введя её название и нажав ОК"
-L["   1) Open up a bank (either the gbank or personal bank)"] = "1) Открыть банк (гильдийский или личный)"
-L["   1) Type a name in the textbox labeled \"Create New Group\", hit okay"] = "1) Написать название в поле \"Создать новую группу\", нажать ОК"
--- L["   2) Select that group using the table on the left, you should then see a list of all the items currently in your bags with a quantity"] = ""
--- L["   2) You should see a window on your right with a list of groups"] = ""
--- L["   3) Right click to increase, left click to decrease by the current increment"] = ""
--- L["   3) Select a group and hit either"] = ""
+L["   1.1) You can delete a group by typing in its name and hitting okay."] = "  1.1) Можно удалить группу, введя её название и нажав ОК"
+L["   1) Open up a bank (either the gbank or personal bank)"] = "  1) Открыть банк (гильдийский или личный)"
+L["   1) Type a name in the textbox labeled \"Create New Group\", hit okay"] = "  1) Написать название в поле \"Создать новую группу\", нажать ОК"
+L["   2) Select that group using the table on the left, you should then see a list of all the items currently in your bags with a quantity"] = "  2) Выбрать эту группу в таблице слева. После этого должен появиться список всех предметов в сумках и их количество."
+L["   2) You should see a window on your right with a list of groups"] = "  2) Справа должно быть окно со списком групп."
+L["   3) Right click to increase, left click to decrease by the current increment"] = "  3) Правый клик - увеличить, левый - уменьшить значение." -- Needs review
+L["   3) Select a group and hit either"] = "   3) Выберите группу и нажмите ***" -- Needs review
 -- L["   Again warehousing will try to fill out the order, but if it is short, it will remember how much it is short by and adjust its counts. So then you can go to another bank or another character and warehousing will grab the difference. Once the order has been completely filled out, warehousing will reset the count back to the original total. You cannot move a Crafting Queue bags->bank, only bank->bags."] = ""
 L["Auctioning"] = "Auctioning" -- Needs review
 L["Crafting"] = "Crafting" -- Needs review
