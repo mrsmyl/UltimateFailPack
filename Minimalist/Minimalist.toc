@@ -6,15 +6,11 @@
 ## X-Category: Interface Enhancements
 ## SavedVariables: MinimalistDB
 ## X-Embeds: Ace3, LibAbacus-3.0
-## X-Curse-Packaged-Version: r117
-## X-Curse-Project-Name: Minimalist
-## X-Curse-Project-ID: minimalist
-## X-Curse-Repository-ID: wow/minimalist/mainline
-## X-Curse-Packaged-Version: r117
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline
 ## X-Curse-Packaged-Version: r121
+## X-Curse-Packaged-Version: r122
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline
@@ -34,4 +30,5 @@ libs\AceTimer-3.0\AceTimer-3.0.xml
 libs\LibAbacus-3.0\lib.xml
 #@end-no-lib-strip@
 
+#Add-On Code
 Minimalist.lua

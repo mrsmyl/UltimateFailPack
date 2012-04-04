@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r122 | whizkid | 2012-04-03 11:09:58 +0000 (Tue, 03 Apr 2012) | 2 lines
+Changed paths:
+   M /trunk/Minimalist.lua
+   M /trunk/Minimalist.toc
+
+- removed obsolete code
+- repackage libraries for v4.3.3
+------------------------------------------------------------------------
 r121 | whizkid | 2012-01-29 10:02:14 +0000 (Sun, 29 Jan 2012) | 3 lines
 Changed paths:
    M /trunk/Minimalist.lua
@@ -6,10 +14,4 @@ Changed paths:
 - [fix] removed Guild repair to fix Autorepair function
 
 Autorepair true/false now only uses your own money to repair but should be fixed. Old numeric setting will be converted automatically.
-------------------------------------------------------------------------
-r120 | whizkid | 2011-12-27 12:07:30 +0000 (Tue, 27 Dec 2011) | 1 line
-Changed paths:
-   M /trunk/Minimalist.toc
-
-- 4.3 bump
 ------------------------------------------------------------------------

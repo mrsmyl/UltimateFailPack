@@ -387,20 +387,6 @@ local combat_options = {
 				end
 			end
 		},
-		BLOATTEST = {
-			name = "Bloat Test",
-			type = "toggle",
-			desc = "Might make nameplates larger but it fixes the disappearing ones.",
-			get = function() return db.BLOATTEST end,
-			set = function(i, switch)
-				db.BLOATTEST = switch
-				if switch then
-					SetCVar("bloatTest", 1);
-				else
-					SetCVar("bloatTest", 0);
-				end
-			end
-		},
 		BLOATPLATES = {
 			name = "Bloat Plates",
 			type = "toggle",
@@ -469,7 +455,6 @@ local defaults = {
 		MAPHIDETRACKINGBTN = false,
 		MAPHIDEBORDER = false,
 		AUTOPLATES = false,
-		BLOATTEST = false,
 		BLOATPLATES = false,
 		BLOATTHREAT = false,
 		SPREADPLATES = false,
