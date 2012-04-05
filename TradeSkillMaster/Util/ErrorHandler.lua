@@ -179,7 +179,7 @@ local function ShowError(msg)
 	local l = AceGUI:Create("Label")
 	l:SetFullWidth(true)
 	l:SetFontObject(GameFontNormal)
-	l:SetText(L["Looks like TradeSkillMaster has encountered an error. Please help the author fix this error by copying the entire error below and following the instructions for reporting bugs listed here (unless told elsewhere by the author):"].." |cffffff00http://www.curse.com/addons/wow/tradeskill-master|r")
+	l:SetText(L["Looks like TradeSkillMaster has encountered an error. Please help the author fix this error by copying the entire error below and following the instructions for reporting bugs listed here (unless told elsewhere by the author):"].." |cffffff00http://tradeskillmaster.com/wiki|r")
 	f:AddChild(l)
 	
 	local heading = AceGUI:Create("Heading")

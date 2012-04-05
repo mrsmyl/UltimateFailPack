@@ -8,7 +8,7 @@
 ## Revision: $Id: LibExtraTip.toc 280 2010-10-12 19:52:29Z Esamynn $
 ## Author: Norganna's AddOns
 ##
-## X-Curse-Packaged-Version: v1.2.5
+## X-Curse-Packaged-Version: v1.2.6
 ## X-Curse-Project-Name: TradeSkillMaster
 ## X-Curse-Project-ID: tradeskill-master
 ## X-Curse-Repository-ID: wow/tradeskill-master/mainline

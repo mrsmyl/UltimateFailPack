@@ -2,11 +2,11 @@
 ## Title: |cff00fe00TradeSkillMaster|r
 ## Notes: Addon for making gold off of crafting tradeskill items and selling them on the AH. Does nothing without modules installed.
 ## Author: Sapu94
-## Version: v1.2.5
+## Version: v1.2.6
 ## SavedVariables: TradeSkillMasterDB
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
-## X-Curse-Packaged-Version: v1.2.5
+## X-Curse-Packaged-Version: v1.2.6
 ## X-Curse-Project-Name: TradeSkillMaster
 ## X-Curse-Project-ID: tradeskill-master
 ## X-Curse-Repository-ID: wow/tradeskill-master/mainline

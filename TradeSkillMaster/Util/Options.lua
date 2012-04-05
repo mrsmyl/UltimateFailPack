@@ -38,6 +38,11 @@ local function LoadHelpPage(parent)
 							text = L["TradeSkillMaster Website:"] .. " |cffffd200http://tradeskillmaster.com|r\n",
 							fullWidth = true,
 						},
+						{
+							type = "Label",
+							text = L["Video Tutorials by Faid:"] .. " |cffffd200http://www.clockworkriot.com/2012/03/tsm-guide-videos.html|r\n",
+							fullWidth = true,
+						},
 					},
 				},
 				{

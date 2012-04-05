@@ -155,6 +155,7 @@ end
 --- Shows a popup dialog with the given name and ensures it's visible over the TSM frame by setting the frame strata to TOOLTIP.
 -- @param name The name of the static popup dialog to be shown.
 function lib:ShowStaticPopupDialog(name)
+	StaticPopupDialogs[name].preferredIndex = 3
 	StaticPopup_Show(name)
 	for i=1, 100 do
 		if _G["StaticPopup" .. i] and _G["StaticPopup" .. i].which == name then

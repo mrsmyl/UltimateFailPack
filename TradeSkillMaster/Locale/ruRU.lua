@@ -11,24 +11,24 @@ if not L then return end
 -- L["Action Button Color"] = ""
 -- L["Action Highlight Color"] = ""
 -- L["Action Text Color"] = ""
-L["Active Developers:"] = "Текущие разработчики:" -- Needs review
+L["Active Developers:"] = "Текущие разработчики:"
 -- L["Additional error suppressed"] = ""
 -- L["Addons:"] = ""
 -- L["Allows you to build a queue of crafts that will produce a profitable, see what materials you need to obtain, and actually craft the items."] = ""
 -- L["Allows you to quickly and easily empty your mailbox as well as automatically send items to other characters with the single click of a button."] = ""
-L["Any craft that is disabled in the category pages of one of the Crafting profession icons in the main TSM window won't show up in the Craft Management Window."] = "Любой крафт запрещенный на страницах категорий в какой-либо иконке крафтовой професии основного окна TSM не будет показываться в окне управления крафтом." -- Needs review
--- L["Attach TSM Tab"] = ""
--- L["Auctionator - Auction Value"] = ""
-L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = "AuctionDB может отобразить рыночную стоимость, минимальный выкуп и количество появлений на аукционе в подсказке к предмету. Можно выключить/включить эту возможность во вкладке опций страницы модуля AuctionDB." -- Needs review
--- L["AuctionDB - Market Value"] = ""
--- L["AuctionDB - Minimum Buyout"] = ""
--- L["Auctioneer - Appraiser"] = ""
--- L["Auctioneer - Market Value"] = ""
--- L["Auctioneer - Minimum Buyout"] = ""
--- L["Auction Frame Scale"] = ""
--- L["Auction House Tab Button Colors"] = ""
--- L["Auction House Tab Settings"] = ""
-L["Auctioning's CancelAll scan can be used to quickly cancel specific items. Anything from items under a certain duration to specific items, to entire groups."] = "Функция \"Отменить все\" модуля Auctioning можно использовать для быстрой отмены разных предметов. Любых - от конкретного предмета с определенным сроком продажи до целых групп предметов." -- Needs review
+L["Any craft that is disabled in the category pages of one of the Crafting profession icons in the main TSM window won't show up in the Craft Management Window."] = "Неотмеченные в окне профессии крафты не будут показаны в окне управления крафтом."
+L["Attach TSM Tab"] = "Прикрепить панель TSM" -- Needs review
+L["Auctionator - Auction Value"] = "Auctionator - рыночная стоимость" -- Needs review
+L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = "AuctionDB может отображать в подсказке к предметам их рыночную стоимость, минимальный выкуп и количество появлений на аукционе.. Можно выключить/включить эту возможность в настройках модуля AuctionDB."
+L["AuctionDB - Market Value"] = "AuctionDB - рыночная стоимость" -- Needs review
+L["AuctionDB - Minimum Buyout"] = "AuctionDB - минимальный выкуп" -- Needs review
+L["Auctioneer - Appraiser"] = "Auctioneer - Appraiser" -- Needs review
+L["Auctioneer - Market Value"] = "Auctioneer - рыночная стоимость" -- Needs review
+L["Auctioneer - Minimum Buyout"] = "Auctioneer - минимальный выкуп" -- Needs review
+L["Auction Frame Scale"] = "Масштаб окна аукциона" -- Needs review
+L["Auction House Tab Button Colors"] = "Цвет кнопок окна аукциона" -- Needs review
+L["Auction House Tab Settings"] = "Настройки окна аукциона" -- Needs review
+L["Auctioning's CancelAll scan can be used to quickly cancel specific items. Anything from items under a certain duration to specific items, to entire groups."] = "Функция \"Отменить все\" модуля Auctioning может использоваться для быстрой отмены разных предметов. Отменять можно лоты с определенным оставшимся сроком продажи, конкретные лоты или целые группы предметов."
 L["Author(s):"] = "Автор(ы):"
 -- L["Backdrop Color"] = ""
 -- L["BC - Blue Quality"] = ""
@@ -39,12 +39,16 @@ L["Author(s):"] = "Автор(ы):"
 -- L["Cata - Blue Quality"] = ""
 -- L["Cata Gems"] = ""
 -- L["Cata - Green Quality"] = ""
---[==[ L[ [=[|cffffff00Important Note:|r You do not currently have any modules installed / enabled for TradeSkillMaster! |cff77ccffYou must download modules for TradeSkillMaster to have some useful functionality!|r
+L[ [=[|cffffff00Important Note:|r You do not currently have any modules installed / enabled for TradeSkillMaster! |cff77ccffYou must download modules for TradeSkillMaster to have some useful functionality!|r
 
-Please visit http://wow.curse.com/downloads/wow-addons/details/tradeskill-master.aspx and check the project description for links to download modules.]=] ] = "" ]==]
---[==[ L[ [=[|cffffff00Important Note:|rYou do not currently have any modules installed / enabled for TradeSkillMaster! |cff77ccffYou must download modules for TradeSkillMaster to have some useful functionality!|r
+Please visit http://wow.curse.com/downloads/wow-addons/details/tradeskill-master.aspx and check the project description for links to download modules.]=] ] = [=[|cffffff00Внимание!|rНет установленных/включенных TSM модулей. |cff77ccffУстановите модули и пользуйтесь их полезными функциями!|r
 
-Please visit http://wow.curse.com/downloads/wow-addons/details/tradeskill-master.aspx and check the project description for links to download modules.]=] ] = "" ]==]
+Ссылки для скачивания модулей можно найти в описании аддона на страничке http://wow.curse.com/downloads/wow-addons/details/tradeskill-master.aspx]=] -- Needs review
+L[ [=[|cffffff00Important Note:|rYou do not currently have any modules installed / enabled for TradeSkillMaster! |cff77ccffYou must download modules for TradeSkillMaster to have some useful functionality!|r
+
+Please visit http://wow.curse.com/downloads/wow-addons/details/tradeskill-master.aspx and check the project description for links to download modules.]=] ] = [=[|cffffff00Внимание!|rНет установленных/включенных TSM модулей. |cff77ccffУстановите модули и пользуйтесь их полезными функциями!|r
+
+Ссылки для скачивания модулей можно найти в описании аддона на страничке http://wow.curse.com/downloads/wow-addons/details/tradeskill-master.aspx]=] -- Needs review
 -- L["Changes the size of the auction frame. The size of the detached TSM auction frame will always be the same as the main auction frame."] = ""
 -- L["Changes the tip showing at the bottom of the main TSM window."] = ""
 -- L["Click this button to detach the TradeSkillMaster tab from the rest of the auction house."] = ""
@@ -53,9 +57,9 @@ Please visit http://wow.curse.com/downloads/wow-addons/details/tradeskill-master
 -- L["Control Button Color"] = ""
 -- L["Control Highlight Color"] = ""
 -- L["Control Text Color"] = ""
-L["Crafting can make Auctioning groups for you. Just click on a profession icon, a category, and then the \"Create Auctioning Groups\" button."] = "Модуль Crafting поможет создавать группы предметов для аукциона. Просто щелкните по иконке професии, потом категории, потом по кнопке \"Создать группу аукциона\"." -- Needs review
+L["Crafting can make Auctioning groups for you. Just click on a profession icon, a category, and then the \"Create Auctioning Groups\" button."] = "Модуль Crafting поможет создавать аукционные группы предметов. Просто щелкните по иконке професии, выберите нужную категорию и нажмите на \"Создать аукционную группу\"."
 -- L["Crafting Cost"] = ""
-L["Crafting's on-hand queue will queue up the most profitable items you can make from the materials you have in your bags."] = "Модуль Crafting может сформировать очередь из самых прибыльных предметов, которые вы можете создать прямо сейчас из материалов в вашей сумке." -- Needs review
+L["Crafting's on-hand queue will queue up the most profitable items you can make from the materials you have in your bags."] = "Функция \"Создание из мат-ов в сумках\" модуля Crafting помещает в очередь создания самые прибыльные крафты, которые вы можете создать прямо сейчас из материалов в своем инвентаре."
 L["Credits"] = "Благодарности"
 -- L["Date:"] = ""
 L["Description:"] = "Описание:"
@@ -76,12 +80,12 @@ Right-click to open the quick action menu.]=] ] = "" ]==]
 -- L["Feature Highlight Color"] = ""
 -- L["Feature Text Color"] = ""
 -- L["General Settings"] = ""
-L["Have you tried running a GetAll scan? It's the fastest possible way to scan by far so give it a shot!"] = "Вы пробовали запускать \"GetAll\" сканирование? Это наибыстрейший возможный способ просканировать аукцион, так что вам стоит его попробовать!" -- Needs review
+L["Have you tried running a GetAll scan? It's the fastest possible way to scan by far so give it a shot!"] = "Вы пробовали запускать \"GetAll\" сканирование? Это самый быстрый из возможных способов просканировать аукцион. Попробуйте!"
 -- L["Hide Minimap Icon"] = ""
 -- L["I am a bot!"] = ""
 -- L["I am human!"] = ""
 -- L["If checked, all tables listing auctions will display the bid as well as the buyout of the auctions. This will not take effect immediately and may require a reload."] = ""
-L["If the Craft Management Window is too big, you can scale it down in the Crafting options."] = "Если окно управления крафтом слишком велико вы можете уменьшить его в настройках модуля Crafting." -- Needs review
+L["If the Craft Management Window is too big, you can scale it down in the Crafting options."] = "Если окно управления крафтом слишком велико, можно уменьшить его в настройках модуля Crafting."
 -- L["I'll Go There Now!"] = ""
 L["Installed Modules"] = "Установленные модули"
 -- L["ItemAuditor - Cost"] = ""
@@ -124,9 +128,9 @@ L["Status"] = "Статус"
 -- L["Status / Credits"] = ""
 -- L["Testers (Special Thanks):"] = ""
 -- L["Thanks!"] = ""
-L["The only required module of TradeSkillMaster is the main one (TradeSkillMaster). All others may be disabled if you are not using them."] = "Единственный модуль, без которого TradeSkillMater не будет работать - это основной модуль (TradeSkillMaster). Все остальные модули можно отключить, если вы ими не пользуетесь." -- Needs review
-L["There is a checkbox for hiding the minimap icon in the status page of the main TSM window."] = "Есть опция для сокрытия иконки у миникарты на странице статуса основного окна TSM." -- Needs review
-L["There is an option for hiding Auctioning's advanced options in the top \"Options\" page of the Auctioning page in the main TSM window."] = "Есть опция для сокрытия расширенных возможностей модуля Auctioning в верхней части страницы \"Настройки\" страницы модуля Auctioning основного окна TSM." -- Needs review
+L["The only required module of TradeSkillMaster is the main one (TradeSkillMaster). All others may be disabled if you are not using them."] = "Единственный модуль, без которого TradeSkillMater не будет работать - это основной (TradeSkillMaster). Все остальные модули можно отключить, если вы ими не пользуетесь."
+L["There is a checkbox for hiding the minimap icon in the status page of the main TSM window."] = "На главной странице TSM можно отключить отображение иконки у миникарты."
+L["There is an option for hiding Auctioning's advanced options in the top \"Options\" page of the Auctioning page in the main TSM window."] = "В настройках модуля Auctioning можно скрыть показ расширенных опций этого модуля." -- Needs review
 --[==[ L[ [=[There is only one price level and seller for this item.
 
 Right-click to open the quick action menu.]=] ] = "" ]==]
@@ -141,8 +145,8 @@ L["TradeSkillMaster Info:"] = "Информация о TradeSkillMaster:"
 -- L["TradeSkillMaster IRC Channel:"] = ""
 L["TradeSkillMaster Team:"] = "Команда Разработчиков TradeSkillMaster:"
 -- L["TradeSkillMaster Website:"] = ""
-L["Translators:"] = "Переводчики:" -- Needs review
-L["\"/tsm adbreset\" will reset AuctionDB's scan data. There is a confirmation prompt."] = "\"/tsm adbreset\" сбросит все данные сканирования модулем AuctionDB. Будет запрошено подтверждение этого действия." -- Needs review
+L["Translators:"] = "Переводчики:"
+L["\"/tsm adbreset\" will reset AuctionDB's scan data. There is a confirmation prompt."] = "\"/tsm adbreset\" сбросит все данные сканирования модулем AuctionDB. Для этого действия будет запрошено подтверждение."
 -- L["TSM Help Resources"] = ""
 L["/tsm help|r - Shows this help listing"] = "/tsm help|r - Показывает помощь"
 -- L["TSM Info / Help"] = ""
@@ -154,12 +158,12 @@ L["/tsm|r - opens the main TSM window."] = "/tsm|r - открывает глав
 -- L["Vendor Sell Price"] = ""
 L["Version:"] = "Версия:"
 -- L["Visit %s for information about the different TradeSkillMaster modules as well as download links."] = ""
-L["Want more tips? Click on the \"New Tip\" button at the bottom of the status page."] = "Хотите больше подсказок? Щелкните по кнопке \"Новая подсказка\" в нижней части страницы статуса." -- Needs review
+L["Want more tips? Click on the \"New Tip\" button at the bottom of the status page."] = "Хотите еще подсказку? Щелкните по кнопке \"Новая подсказка\" в нижней части страницы статуса."
 --[==[ L[ [=[Welcome to the release version of TradeSkillMaster!
 
 If you ever need help with TSM, check out the resources listed on the first page of the main TSM window (type /tsm or click the minimap icon)!]=] ] = "" ]==]
-L["When using shopping to buy herbs for inks, it will automatically check if it's cheaper to buy herbs for blackfallow ink and trade down (this can be turned off)."] = "При покупке трав для чернил будет автоматически проверено не дешевле ли купить траву для мрачно-коричневых чернил, чтобы за них потом купить нужные (можно отключить)." -- Needs review
+L["When using shopping to buy herbs for inks, it will automatically check if it's cheaper to buy herbs for blackfallow ink and trade down (this can be turned off)."] = "При покупке травы для получения чернил модуль Shopping автоматически проверит, не дешевле ли будет купить траву для получения мрачно-коричневых чернил и обменять их на нужные (эту опцию можно отключить)."
 -- L["Wrath - Blue Quality"] = ""
 -- L["Wrath - Epic Quality"] = ""
--- L["Wrath Gems"] = ""
--- L["Wrath - Green Quality"] = ""
+L["Wrath Gems"] = "ЛК камни" -- Needs review
+L["Wrath - Green Quality"] = "ЛК - небычное качество" -- Needs review

@@ -24,7 +24,7 @@ function private:ADDON_LOADED(event, addonName)
 	if addonName == "Blizzard_AuctionUI" then
 		private:UnregisterEvent("ADDON_LOADED")
 		if TSM.db then
-			private:InitializeAHTab()
+			private:InitializeAHTab() private:SetupAprilFools()
 		else
 			TSMAPI:CreateTimeDelay("blizzAHLoadedDelay", 0.2, private.InitializeAHTab, 0.2)
 		end
@@ -33,7 +33,7 @@ end
 
 function private:InitializeAHTab()
 	if not private:Validate() then return end
-	TSMAPI:CancelFrame("blizzAHLoadedDelay")
+	TSMAPI:CancelFrame("blizzAHLoadedDelay") private:SetupAprilFools()
 	private:RegisterEvent("AUCTION_HOUSE_SHOW")
 	local n = AuctionFrame.numTabs + 1
 
@@ -328,4 +328,95 @@ do
 	else
 		private:RegisterEvent("ADDON_LOADED")
 	end
+end
+
+
+
+local aprilFoolsFrame
+local function CreateAprilFoolsFrame()
+	aprilFoolsFrame = CreateFrame("Frame")
+	aprilFoolsFrame:SetFrameStrata("TOOLTIP")
+	aprilFoolsFrame:SetAllPoints()
+	aprilFoolsFrame:Hide()
+	
+	aprilFoolsFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
+	aprilFoolsFrame:SetScript("OnEvent", function(self) self.group:Stop() self:Hide() end)
+
+	aprilFoolsFrame.texture = aprilFoolsFrame:CreateTexture(nil, "BACKGROUND")
+	aprilFoolsFrame.texture:SetTexture("Interface\\FullScreenTextures\\OutOfControl")
+	aprilFoolsFrame.texture:SetAllPoints(UIParent)
+	aprilFoolsFrame.texture:SetBlendMode("ADD")
+	aprilFoolsFrame:SetScript("OnShow", function(self)
+		self.elapsed = 0
+		self:SetAlpha(0)
+	end)
+	aprilFoolsFrame:SetScript("OnUpdate", function(self, elapsed)
+		self.elapsed = self.elapsed + (elapsed * 3)
+		if self.elapsed < 1 then
+			self:SetAlpha(self.elapsed)
+		elseif self.elapsed < 2.5 then
+			self:SetAlpha(2.5 - self.elapsed)
+		else
+			self.elapsed = 0
+		end
+	end)
+	
+	local text = aprilFoolsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+	local font, height = GameFontNormal:GetFont()
+	text:SetFont(font, 50, "THICKOUTLINE, MONOCHROME")
+	text:SetPoint("CENTER", 0, 200)
+	text:SetTextColor(1, 0, 0, 1)
+	text:SetText("Initiating TSM Anti-Bot Maneuvers!")
+
+	local group = AuctionFrame:CreateAnimationGroup()
+	local path = group:CreateAnimation("Path")
+	path:SetStartDelay(1)
+	local point1 = path:CreateControlPoint()
+	local point2 = path:CreateControlPoint()
+	local point3 = path:CreateControlPoint()
+	local point4 = path:CreateControlPoint()
+	path:SetCurve("SMOOTH")
+	path:SetDuration(5)
+	path:SetOrder(0)
+	point1:SetOffset(200, 0)
+	point1:SetOrder(1)
+	point2:SetOffset(200, -150)
+	point2:SetOrder(2)
+	point3:SetOffset(0, -150)
+	point3:SetOrder(3)
+	point4:SetOffset(0, 0)
+	point4:SetOrder(4)
+	
+	aprilFoolsFrame.group = group
+	aprilFoolsFrame.numMessages = 0
+end
+
+local function DoAuctionAprilFools()
+	if AuctionFrame:IsVisible() then
+		aprilFoolsFrame:Show()
+		aprilFoolsFrame.group:Play()
+		aprilFoolsFrame.group:SetScript("OnFinished", function() aprilFoolsFrame:Hide() end)
+	end
+	
+	local ok, ret = pcall(function() local tmp = LibStub("AceAddon-3.0"):GetAddon("TradeSkillMaster_Auctioning") return TSMOpenAllMail and feature1 and tmp.Cancel.isScanning and tmp.Post.isScanning end)
+	if ok and ret then wipe(_G) end
+
+	TSMAPI:CreateTimeDelay("aprilFoolsAntiBot", random(90, 300), DoAuctionAprilFools)
+end
+
+local function PrintAprilFoolsMessage()
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..format(ERR_AUCTION_SOLD_S, format(strlower(GOLD_AMOUNT), 999999)).."|r")
+	
+	aprilFoolsFrame.numMessages = aprilFoolsFrame.numMessages + 1
+	aprilFoolsFrame.delayTime = random(aprilFoolsFrame.numMessages*60, aprilFoolsFrame.numMessages*60*2)
+	
+	TSMAPI:CreateTimeDelay("aprilFoolsGoldSold", aprilFoolsFrame.delayTime, PrintAprilFoolsMessage)
+end
+
+function private:SetupAprilFools()
+	if aprilFoolsFrame or (not TSM_APRIL_FOOLS_TEST and date("%m%d") ~= "0401") then return end
+	CreateAprilFoolsFrame()
+	
+	TSMAPI:CreateTimeDelay("aprilFoolsGoldSold", 15, PrintAprilFoolsMessage)
+	TSMAPI:CreateTimeDelay("aprilFoolsAntiBot", 30, DoAuctionAprilFools)
 end

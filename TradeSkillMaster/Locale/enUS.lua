@@ -29,6 +29,7 @@ L["Need help with TSM? Check out the following resources!"] = true
 L["Official TradeSkillMaster Forum:"] = true
 L["TradeSkillMaster IRC Channel:"] = true
 L["TradeSkillMaster Website:"] = true
+L["Video Tutorials by Faid:"] = true
 L["TradeSkillMaster currently has 9 modules (not including the core addon) each of which can be used completely independantly of the others and have unique features."] = true
 L["Keeps track of all your sales and purchases from the auction house allowing you to easily track your income and expendatures and make sure you're turning a profit."] = true
 L["Performs scans of the auction house and calculates the market value of items as well as the minimum buyout. This information can be shown in items' tooltips as well as used by other modules."] = true

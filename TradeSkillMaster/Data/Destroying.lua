@@ -1589,6 +1589,10 @@ destroyingData.notDisenchantable = {
 	[20406] = true,
 	[20407] = true,
 	[20408] = true,
+	[11287] = true,
+	[11288] = true,
+	[11289] = true,
+	[11290] = true,
 }
 
 function TSMAPI:GetDestroyingConversionNum(mode, targetID, matID)
