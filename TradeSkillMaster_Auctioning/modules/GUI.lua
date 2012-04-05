@@ -983,6 +983,8 @@ function private:CreateLogST(parent)
 		if type(bValue) == "function" then
 			bValue = bValue()
 		end
+		aValue = aValue or 0
+		bValue = bValue or 0
 		
 		if direction == "asc" then
 			return aValue < bValue

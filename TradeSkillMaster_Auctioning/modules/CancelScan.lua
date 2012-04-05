@@ -13,7 +13,7 @@ local TSM = select(2, ...)
 local Cancel = TSM:NewModule("Cancel", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Auctioning") -- loads the localization table
 
-local cancelQueue, currentItem, tempIndexList = {}, {}, {}
+local cancelQueue, currentItem, tempIndexList, itemsToCancel = {}, {}, {}, {}
 local totalToCancel, totalCanceled, count = 0, 0, 0
 local isScanning, GUI, cancelError, isCancelAll
 
@@ -26,6 +26,7 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 	cancelError = nil
 	wipe(cancelQueue)
 	wipe(currentItem)
+	wipe(itemsToCancel)
 	totalToCancel, totalCanceled, count = 0, 0, 0
 	
 	local tempList, scanList, groupTemp = {}, {}, {}
@@ -34,6 +35,7 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 		for i=GetNumAuctionItems("owner"), 1, -1 do
 			if select(14, GetAuctionItemInfo("owner", i)) == 0 and (not TSM.db.global.cancelWithBid or select(11, GetAuctionItemInfo("owner", i)) == 0) then
 				local itemString = TSMAPI:GetItemString(GetAuctionItemLink("owner", i))
+				itemsToCancel[itemString] = true
 				tempList[itemString] = true
 			end
 		end
@@ -44,6 +46,7 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 				local timeLeft = GetAuctionItemTimeLeft("owner", i)
 				if timeLeft <= maxDuration then
 					local itemString = TSMAPI:GetItemString(GetAuctionItemLink("owner", i))
+					itemsToCancel[itemString] = true
 					tempList[itemString] = true
 				end
 			end
@@ -54,6 +57,7 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 				local itemName = GetAuctionItemInfo("owner", i)
 				if strfind(strlower(itemName), strlower(options.cancelFilter)) then
 					local itemString = TSMAPI:GetItemString(GetAuctionItemLink("owner", i))
+					itemsToCancel[itemString] = true
 					tempList[itemString] = true
 				end
 			end
@@ -337,11 +341,13 @@ function Cancel:Stop(interrupted)
 		for i=GetNumAuctionItems("owner"), 1, -1 do
 			local itemString = TSMAPI:GetItemString(GetAuctionItemLink("owner", i))
 			local itemID = TSMAPI:GetItemID(itemString)
-			if TSM.itemReverseLookup[itemID] then
+			if not isCancelAll and TSM.itemReverseLookup[itemID] then
 				itemString = itemID
 			end
 			if not tempList[itemString] then
-				Cancel:ProcessItem(itemString, true)
+				if not isCancelAll or itemsToCancel[itemString] then
+					Cancel:ProcessItem(itemString, true)
+				end
 				tempList[itemString] = true
 			end
 		end

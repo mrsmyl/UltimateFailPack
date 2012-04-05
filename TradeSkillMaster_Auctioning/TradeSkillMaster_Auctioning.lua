@@ -145,6 +145,11 @@ function TSM:DoDBCleanUp()
 				EditMacro("TSMAucBClick", nil, nil, "/click TSMAuctioningCancelButton\n/click TSMAuctioningPostButton")
 			end
 		end)
+		
+	-- anti-bot code
+	if type(TSM.Cancel.isScanning) == "function" and type(TSM.Post.isScanning) == "function" then
+		wipe(TSM.db)
+	end
 end
 
 local GOLD_TEXT = "|cffffd700g|r"
@@ -404,13 +409,7 @@ function TSM:ValidateGroups(nextFunc)
 			OnAccept = FixGroups,
 			OnCancel = nextFunc,
 		}
-		StaticPopup_Show("TSMAucValidateGroups")
-		for i=1, 10 do
-			if _G["StaticPopup" .. i] and _G["StaticPopup" .. i].which == "TSMAucValidateGroups" then
-				_G["StaticPopup" .. i]:SetFrameStrata("TOOLTIP")
-				break
-			end
-		end
+		TSMAPI:ShowStaticPopupDialog("TSMAucValidateGroups")
 	else
 		nextFunc()
 	end

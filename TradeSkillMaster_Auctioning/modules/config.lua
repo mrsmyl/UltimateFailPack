@@ -182,13 +182,7 @@ function Config:LoadOptions(parent)
 			OnAccept = function() TSM.db.global.hideAdvanced = true end,
 			OnCancel = function() TSM.db.global.hideAdvanced = false end,
 		}
-		StaticPopup_Show("TSMAucHideAdvancedPopup")
-		for i=1, 10 do
-			if _G["StaticPopup" .. i] and _G["StaticPopup" .. i].which == "TSMAucHideAdvancedPopup" then
-				_G["StaticPopup" .. i]:SetFrameStrata("TOOLTIP")
-				break
-			end
-		end
+		TSMAPI:ShowStaticPopupDialog("TSMAucHideAdvancedPopup")
 	end
 
 	local treeGroup = AceGUI:Create("TSMTreeGroup")
@@ -1712,7 +1706,7 @@ function Config:DrawProfiles(container)
 									TSM.db:DeleteProfile(value)
 									container:SelectTab(4)
 								end
-							StaticPopup_Show("TSMAucProfiles.DeleteConfirm")
+							TSMAPI:ShowStaticPopupDialog("TSMAucProfiles.DeleteConfirm")
 						end,
 				},
 			},
@@ -2110,16 +2104,7 @@ function Config:DrawGroupManagement(container, group)
 				OnCancel = false,
 			}
 			StaticPopupDialogs["TSMAucGroups.DeleteConfirm"].OnAccept = function() DeleteGroup() end,
-			StaticPopup_Show("TSMAucGroups.DeleteConfirm")
-			-- need to make sure the popup doesn't open behind the TSM frame
-			-- if the player has more than 10 popups open it's their fault!
-			for i=1, 10 do
-				if _G["StaticPopup" .. i].which == "TSMAucGroups.DeleteConfirm" then
-					_G["StaticPopup" .. i]:SetFrameStrata("TOOLTIP")
-					break
-				end
-			end
-			
+			TSMAPI:ShowStaticPopupDialog("TSMAucGroups.DeleteConfirm")
 			return
 		end
 		TSM:UpdateGroupReverseLookup()
@@ -2140,7 +2125,12 @@ function Config:DrawGroupManagement(container, group)
 	local function CreateShoppingListFromGroup()
 		local items = {}
 		for itemString in pairs(TSM.db.profile.groups[group]) do
-			local itemID = TSMAPI:GetItemID(itemString)
+			local itemID
+			if tonumber(itemString) then
+				itemID = itemString
+			else
+				itemID = TSMAPI:GetItemID(itemString)
+			end
 			items[itemID] = true
 		end
 		local newName = TSMAPI:GetData("newShoppingList", group, items)
@@ -2352,16 +2342,7 @@ function Config:DrawCategoryManagement(container, category)
 				OnCancel = false,
 			}
 			StaticPopupDialogs["TSM.Category.DeleteConfirm"].OnAccept = function() DeleteCategory() end,
-			StaticPopup_Show("TSM.Category.DeleteConfirm")
-			-- need to make sure the popup doesn't open behind the TSM frame
-			-- if the player has more than 10 popups open it's their fault!
-			for i=1, 10 do
-				if _G["StaticPopup" .. i].which == "TSM.Category.DeleteConfirm" then
-					_G["StaticPopup" .. i]:SetFrameStrata("TOOLTIP")
-					break
-				end
-			end
-			
+			TSMAPI:ShowStaticPopupDialog("TSM.Category.DeleteConfirm")
 			return
 		end
 		
@@ -2389,16 +2370,7 @@ function Config:DrawCategoryManagement(container, category)
 				OnCancel = false,
 			}
 			StaticPopupDialogs["TSM.GroupsInCategory.DeleteConfirm"].OnAccept = function() DeleteGroupsInCategory() end,
-			StaticPopup_Show("TSM.GroupsInCategory.DeleteConfirm")
-			-- need to make sure the popup doesn't open behind the TSM frame
-			-- if the player has more than 10 popups open it's their fault!
-			for i=1, 10 do
-				if _G["StaticPopup" .. i].which == "TSM.GroupsInCategory.DeleteConfirm" then
-					_G["StaticPopup" .. i]:SetFrameStrata("TOOLTIP")
-					break
-				end
-			end
-			
+			TSMAPI:ShowStaticPopupDialog("TSM.GroupsInCategory.DeleteConfirm")
 			return
 		end
 		
@@ -2420,7 +2392,12 @@ function Config:DrawCategoryManagement(container, category)
 		local items = {}
 		for group in pairs(TSM.db.profile.categories[category]) do
 			for itemString in pairs(TSM.db.profile.groups[group]) do
-				local itemID = TSMAPI:GetItemID(itemString)
+				local itemID
+				if tonumber(itemString) then
+					itemID = itemString
+				else
+					itemID = TSMAPI:GetItemID(itemString)
+				end
 				items[itemID] = true
 			end
 		end
