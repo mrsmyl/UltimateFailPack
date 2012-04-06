@@ -1,0 +1,36 @@
+------------------------------------------------------------------------
+r330 | arkayenro | 2012-04-05 15:35:23 +0000 (Thu, 05 Apr 2012) | 6 lines
+Changed paths:
+   A /tags/3.02.89 (from /trunk:329)
+
+*3.02.89 (06-APR-2012)*
+ * fixed - another global variable taint issue
+ * fixed - you can no longer move bags around in the changer frame while in combat (caused an interface error and locked the bag in place)
+ * workaround - tainted frames caused by opening AI for the first time, while in combat.  tainted frames are tinted purple and unusable until you leave combat, at which point they are replaced with untainted frames
+ * restored - bag( ) rule function
+
+------------------------------------------------------------------------
+r329 | arkayenro | 2012-04-05 15:31:03 +0000 (Thu, 05 Apr 2012) | 6 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/Locale/deDE.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Locale/esES.lua
+   M /trunk/Locale/esMX.lua
+   M /trunk/Locale/frFR.lua
+   M /trunk/Locale/koKR.lua
+   M /trunk/Locale/ruRU.lua
+   M /trunk/Locale/zhCN.lua
+   M /trunk/Locale/zhTW.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+*3.02.89 (06-APR-2012)*
+ * fixed - another global variable taint issue
+ * fixed - you can no longer move bags around in the changer frame while in combat (caused an interface error and locked the bag in place)
+ * workaround - tainted frames caused by opening AI for the first time, while in combat.  tainted frames are tinted purple and unusable until you leave combat, at which point they are replaced with untainted frames
+ * restored - bag( ) rule function
+
+------------------------------------------------------------------------

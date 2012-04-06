@@ -14,7 +14,12 @@
  * faq - http://code.google.com/p/arkinventory/wiki/FAQ
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
- 
+*3.02.89 (06-APR-2012)*
+ * fixed - another global variable taint issue
+ * fixed - you can no longer move bags around in the changer frame while in combat (caused an interface error and locked the bag in place)
+ * workaround - tainted frames caused by opening AI for the first time, while in combat.  tainted frames are tinted purple and unusable until you leave combat, at which point they are replaced with untainted frames
+ * restored - bag( ) rule function
+
 *3.02.88 (11-FEB-2012)*
  * updated - pets and mounts
 

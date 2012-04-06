@@ -346,9 +346,19 @@ function ArkInventory:LISTEN_COMBAT_LEAVE( )
 	ArkInventory.Global.Mode.Combat = false
 	
 	for loc_id in pairs( ArkInventory.Global.Location ) do
-		if ArkInventory.LocationOptionGet( loc_id, "slot", "cooldown", "show" ) and not ArkInventory.LocationOptionGet( loc_id, "slot", "cooldown", "combat" )  then
-			ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
+		
+		if ArkInventory.Global.Location[loc_id].tainted then
+			
+			ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
+			
+		else
+			
+			if ArkInventory.LocationOptionGet( loc_id, "slot", "cooldown", "show" ) and not ArkInventory.LocationOptionGet( loc_id, "slot", "cooldown", "combat" )  then
+				ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
+			end
+			
 		end
+		
 	end
 	
 end
@@ -3225,7 +3235,7 @@ function ArkInventory.ObjectIDCacheCategory( i )
 end
 
 function ArkInventory.ObjectIDCacheRule( i )
-
+	
 	assert( i and type( i ) == "table", "code failure: i is not a table" )
 	
 	local soulbound = 0
@@ -3236,7 +3246,7 @@ function ArkInventory.ObjectIDCacheRule( i )
 	local internalString = ArkInventory.ObjectIDInternal( i.h )
 	
 	--return string.format( "%i:%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, i.slot_id or 0, soulbound, internalString )
-	return string.format( "%i:%i:%s", i.loc_id or 0, soulbound, internalString )
+	return string.format( "%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, soulbound, internalString )
 	
 end
 

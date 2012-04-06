@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2010, all rights reserved.
--- $Revision: 745 $
--- $Date: 2011-11-04 02:15:23 +1100 (Fri, 04 Nov 2011) $
+-- $Revision: 893 $
+-- $Date: 2012-04-05 22:20:05 +1000 (Thu, 05 Apr 2012) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -1027,7 +1027,6 @@ function ArkInventoryRules.System.characterlevelrange( ... )
 	
 end
 
---[[
 function ArkInventoryRules.System.bag( ... )
 	
 	-- note, this rule is now just which *internal* bag an item is in, ie its just a number from 1 to x
@@ -1061,7 +1060,6 @@ function ArkInventoryRules.System.bag( ... )
 	return false
 	
 end
-]]--
 
 function ArkInventoryRules.System.location( ... )
 	
@@ -1248,7 +1246,7 @@ ArkInventoryRules.Environment = {
 	
 	vpo = ArkInventoryRules.System.vendorpriceover,
 	
-	--bag = ArkInventoryRules.System.bag,
+	bag = ArkInventoryRules.System.bag,
 	
 	location = ArkInventoryRules.System.location,
 	loc = ArkInventoryRules.System.location,

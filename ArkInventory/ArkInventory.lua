@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 886 $
--- $Date: 2012-02-11 18:05:22 +1100 (Sat, 11 Feb 2012) $
+-- $Revision: 896 $
+-- $Date: 2012-04-06 01:29:29 +1000 (Fri, 06 Apr 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0288,
-		UIVersion = "3.2.88",
+		Version = 3.0289,
+		UIVersion = "3.2.89",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -974,6 +974,8 @@ ArkInventory.Global = { -- globals
 			canView = true,
 			canOverride = true,
 			
+			template = "ARKINV_TemplateButtonItem",
+			
 			drawState = ArkInventory.Const.Window.Draw.Init,
 		},
 		
@@ -996,6 +998,8 @@ ArkInventory.Global = { -- globals
 			canOverride = true,
 			canPurge = true,
 			
+			template = "ARKINV_TemplateButtonItem",
+			
 			drawState = ArkInventory.Const.Window.Draw.Init,
 		},
 		
@@ -1017,6 +1021,8 @@ ArkInventory.Global = { -- globals
 			canView = true,
 			canOverride = true,
 			canPurge = true,
+			
+			template = "ARKINV_TemplateButtonVaultItem",
 			
 			drawState = ArkInventory.Const.Window.Draw.Init,
 			
@@ -1085,6 +1091,8 @@ ArkInventory.Global = { -- globals
 			canView = true,
 			canOverride = nil,
 			
+			template = "ARKINV_TemplateButtonCompanionItem",
+			
 			drawState = ArkInventory.Const.Window.Draw.Init,
 		},
 		
@@ -1105,6 +1113,8 @@ ArkInventory.Global = { -- globals
 			isOffline = false,
 			canView = true,
 			canOverride = nil,
+			
+			template = "ARKINV_TemplateButtonCompanionItem",
 			
 			drawState = ArkInventory.Const.Window.Draw.Init,
 		},
@@ -4132,9 +4142,9 @@ function ArkInventory.Frame_Main_Paint( frame )
 end
 
 function ArkInventory.Frame_Main_Paint_All( )
-
+	
 	for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
-		frame = ArkInventory.Frame_Main_Get( loc_id )
+		local frame = ArkInventory.Frame_Main_Get( loc_id )
 		ArkInventory.Frame_Main_Paint( frame )
 	end
 	
@@ -5107,18 +5117,49 @@ function ArkInventory.Frame_Container_Draw( frame )
 				
 				local itemframename = ArkInventory.ContainerItemNameGet( loc_id, bag_id, j )
 				local itemframe = _G[itemframename]
+				
+				local tainteditemframename = itemframename .. "U"
+				local tainteditemframe = _G[tainteditemframename]
+				
 				if not itemframe then
-					--ArkInventory.Output( "creating item frame [", itemframename, "]" )
-					if loc_id == ArkInventory.Const.Location.Vault then
-						itemframe = CreateFrame( "Button", itemframename, bagframe, "ARKINV_TemplateButtonVaultItem" )
-					elseif loc_id == ArkInventory.Const.Location.Pet or loc_id == ArkInventory.Const.Location.Mount then
-						itemframe = CreateFrame( "Button", itemframename, bagframe, "ARKINV_TemplateButtonCompanionItem" )
-					elseif loc_id == ArkInventory.Const.Location.Wearing or loc_id == ArkInventory.Const.Location.Mail or loc_id == ArkInventory.Const.Location.Token or loc_id == ArkInventory.Const.Location.Auction or loc_id == ArkInventory.Const.Location.Spellbook or loc_id == ArkInventory.Const.Location.Tradeskill or loc_id == ArkInventory.Const.Location.Void then
-						itemframe = CreateFrame( "Button", itemframename, bagframe, "ARKINV_TemplateButtonViewOnlyItem" )
+					
+					if InCombatLockdown( ) then
+						
+						itemframe = CreateFrame( "Button", tainteditemframename, bagframe, "ARKINV_TemplateButtonItemTainted" )
+						
+						ArkInventory.Global.Location[loc_id].tainted = true
+						
+						_G[itemframename] = itemframe
+						
+						--ArkInventory.Output( "unsecure ", tainteditemframename )
+						
 					else
-						itemframe = CreateFrame( "Button", itemframename, bagframe, "ARKINV_TemplateButtonItem" )
+						
+						itemframe = CreateFrame( "Button", itemframename, bagframe, ArkInventory.Global.Location[loc_id].template or "ARKINV_TemplateButtonViewOnlyItem" )
+						
+						ArkInventory.Global.Location[loc_id].tainted = false
+						
+						--ArkInventory.Output( "secure ", itemframename )
+						
 					end
-				end	
+					
+				else
+					
+					if itemframe.ARK_Data.tainted and not InCombatLockdown( ) then
+						
+						tainteditemframe:Hide( )
+						tainteditemframe:SetParent( nil )
+						_G[itemframename] = nil
+						
+						itemframe = CreateFrame( "Button", itemframename, bagframe, ArkInventory.Global.Location[loc_id].template or "ARKINV_TemplateButtonViewOnlyItem" )
+						
+						ArkInventory.Global.Location[loc_id].tainted = false
+						
+						--ArkInventory.Output( "secure replace ", itemframename )
+						
+					end
+					
+				end
 				
 				if j == 1 then
 					ArkInventory.Global.BAG_SLOT_SIZE = itemframe:GetWidth( )
@@ -6087,7 +6128,7 @@ function ArkInventory.Frame_Item_Update_NewIndicator( frame )
 	
 	local obj_name = "ArkNewText"
 	local obj = _G[string.format( "%s%s", framename, obj_name )]
-	assert( obj, string.format( "xml element '%s' is missing the sub element %s", framename, obj_name ) )
+	if not obj then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local i = ArkInventory.Frame_Item_GetDB( frame )
@@ -6265,6 +6306,20 @@ function ArkInventory.Frame_Item_OnEnter( frame )
 	if not usedmycode then
 		ContainerFrameItemButton_OnEnter( frame )
 	end
+
+end
+
+function ArkInventory.Frame_Tainted_OnEnter( frame )
+
+	if ArkInventory.ValidFrame( frame, true ) == false then
+		return
+	end
+
+	if not ArkInventory.db.global.option.tooltip.show then
+		return
+	end
+	
+	ArkInventory.GameTooltipSetText( frame, ArkInventory.Localise["BUGFIX_TAINTED_ALERT_MOUSEOVER_TEXT"], 1.0, 0.1, 0.1 )
 
 end
 
@@ -6468,7 +6523,6 @@ end
 function ArkInventory.Frame_Item_OnLoad( frame )
 
 	local framename = frame:GetName( )
-	--ArkInventory.Output( "OnLoad( ", framename, " ]" )
 	
 	local loc_id, bag_id, slot_id = string.match( framename, "^.-(%d+)ContainerBag(%d+)Item(%d+)" )
 	
@@ -6482,13 +6536,11 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 
 	frame:SetID( slot_id )
 	
-	--local bag_id = ArkInventory.BagID_Blizzard( loc_id, bag_id )
-	--ArkInventory.Output( "loc=[", loc_id, "], int=[", bag_id, "], slot=[", slot_id, "], bag=[", bag_id, "]" )
-	
 	frame.ARK_Data = {
 		["loc_id"] = loc_id,
 		["bag_id"] = bag_id,
 		["slot_id"] = slot_id,
+		["tainted"] = false,
 	}
 	
 	ContainerFrameItemButton_OnLoad( frame )
@@ -6513,6 +6565,44 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 		end
 		
 	end
+	
+	ArkInventory.MediaSetFontFrame( frame )
+	
+end
+
+function ArkInventory.Frame_Item_Tainted_OnLoad( frame )
+
+	local framename = frame:GetName( )
+	local loc_id, bag_id, slot_id = string.match( framename, "^.-(%d+)ContainerBag(%d+)Item(%d+)" )
+	
+	assert( loc_id, string.format( "xml element '%s' is not an %s frame", framename, ArkInventory.Const.Program.Name ) )
+	assert( bag_id, string.format( "xml element '%s' is not an %s frame", framename, ArkInventory.Const.Program.Name ) )
+	assert( slot_id, string.format( "xml element '%s' is not an %s frame", framename, ArkInventory.Const.Program.Name ) )
+	
+	loc_id = tonumber( loc_id )
+	bag_id = tonumber( bag_id )
+	slot_id = tonumber( slot_id )
+
+	frame:SetID( slot_id )
+	
+	frame.ARK_Data = {
+		["loc_id"] = loc_id,
+		["bag_id"] = bag_id,
+		["slot_id"] = slot_id,
+		["tainted"] = true,
+	}
+	
+	ContainerFrameItemButton_OnLoad( frame )
+	
+	local obj = _G[string.format("%sCount", framename )]
+	if obj ~= nil then
+		obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 2 )
+		obj:SetPoint( "LEFT", frame, "LEFT", 0, 0 )
+	end
+	
+	frame.UpdateTooltip = ArkInventory.Frame_Tainted_OnEnter
+	
+	frame.locked = true
 	
 	ArkInventory.MediaSetFontFrame( frame )
 	
@@ -7318,7 +7408,7 @@ function ArkInventory.Frame_Changer_Secondary_OnClick( frame, button )
 		local bag = cp.location[loc_id].bag[bag_id]
 	
 		if not bag or bag.count == 0 then
-		
+			
 			-- empty slot, do nothing for the chatlink
 			
 		else
@@ -7339,6 +7429,8 @@ function ArkInventory.Frame_Changer_Secondary_OnClick( frame, button )
 			
 			if button == nil then
 				
+				-- do nothing
+				
 			elseif button == "RightButton" then
 				
 				ArkInventory.MenuBagOpen( frame )
@@ -7353,13 +7445,13 @@ function ArkInventory.Frame_Changer_Secondary_OnClick( frame, button )
 				local inv_id = ArkInventory.InventoryIDGet( loc_id, bag_id )
 				
 				if CursorHasItem( ) then
-				
+					
 					if PutItemInBag( inv_id ) then
 						return
 					end
 					
 				else
-				
+					
 					ArkInventory.Frame_Changer_Secondary_OnDragStart( frame )
 					
 				end
@@ -7373,25 +7465,21 @@ function ArkInventory.Frame_Changer_Secondary_OnClick( frame, button )
 end
 
 function ArkInventory.Frame_Changer_Secondary_OnDragStart( frame )
-
+	
 	if ArkInventory.ValidFrame( frame, true ) == false then
 		return
 	end
-
+	
 	local loc_id = frame.ARK_Data.loc_id
 	
-	if ArkInventory.Global.Location[loc_id].isOffline then
-		return
-	end
-	
-	if loc_id == ArkInventory.Const.Location.Vault then
+	if InCombatLockdown( ) or ArkInventory.Global.Location[loc_id].isOffline or loc_id == ArkInventory.Const.Location.Vault then
 		return
 	end
 	
 	local bag_id = frame.ARK_Data.bag_id
 	local inv_id = ArkInventory.InventoryIDGet( loc_id, bag_id )
+	
 	PickupBagFromSlot( inv_id )
-	PlaySound( "BAGMENUBUTTONPRESS" )
 	
 end
 
