@@ -17,7 +17,7 @@
 ## X-Curse-Project-Name: TradeSkillMaster_Destroying
 ## X-Curse-Project-ID: tradeskillmaster_destroying
 ## X-Curse-Repository-ID: wow/tradeskillmaster_destroying/mainline
-## X-Curse-Packaged-Version: v1.1
+## X-Curse-Packaged-Version: v1.2
 ## X-Curse-Project-Name: TradeSkillMaster_Destroying
 ## X-Curse-Project-ID: tradeskillmaster_destroying
 ## X-Curse-Repository-ID: wow/tradeskillmaster_destroying/mainline
@@ -36,4 +36,8 @@ Locale\ptBR.lua
 TradeSkillMaster_Destroying.lua
 Modules\gui.lua
 Modules\util.lua
+Modules\destroybtn.lua
+Modules\loot.lua
 Modules\de.lua
+Modules\stDestroying.lua
+Modules\stDE.lua

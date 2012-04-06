@@ -34,62 +34,51 @@ qualityColors = { --I stole this from Sapu....
 local savedDBDefaults = {
 	-- any global 
 	global = {
-	
-		destroyingMode = "normal",
-		filter = "dates",
-		SumLoot = true
+        xPos     = 800,
+        yPos     = -800,
+        anchor   = "TOPLEFT",
+        dMode    = "Normal",
+        safeList = {},
+        filter = "mats"
 	},
 	
 	-- data that is stored per realm/faction combination
 	factionrealm = {
-	--Globals for store destroying results-- 
-		SafeGear ={},
-		prospectingData =
-		{
-			Days = {},
-			Mats = {}
-		},
-		millingData =
-		{
-			Days = {},
-			Mats = {}
-		},
-		deData =
-		{
-			Days = {},
-			Mats = {}
-		}
+        --Globals for store destroying data-- 
+		Prospecting = { Day = {}, Mat = {} },
+		Milling     = { Day = {}, Mat = {} },
+		DE          = { Day = {}, Mat = {} }
 	},
-	
+    
 	-- data that is stored per user profile
-	profile = {
-	},
+	profile = {},
 }
 
 -- Called once the player has loaded into the game
 -- Anything that needs to be done in order to initialize the addon should go here
+local destroybtn
 function TSM:OnEnable()
 
-	for name, module in pairs(TSM.modules) do
-          TSM[name] = module
-         -- print (name)
-     end
+	for name, module in pairs(TSM.modules) do TSM[name] = module end
      
 	-- load the saved variables table into TSM.db
 	TSM.db = LibStub:GetLibrary("AceDB-3.0"):New("TradeSkillMaster_DestroyingDB", savedDBDefaults, true)
-	
-	-- register the module with TSM
-	TSMAPI:RegisterReleasedModule("TradeSkillMaster_Destroying", TSM.version, GetAddOnMetadata("TradeSkillMaster_Destroying", "Author"),
-		GetAddOnMetadata("TradeSkillMaster_Destroying", "Notes"))
-		
-	TSMAPI:RegisterIcon(L["Destroying"], "Interface\\Icons\\INV_Gizmo_RocketBoot_Destroyed_02",
-		function(...) TSM.GUI:Load(...) end, "TradeSkillMaster_Destroying")
+	TSMAPI:RegisterReleasedModule("TradeSkillMaster_Destroying", TSM.version, GetAddOnMetadata("TradeSkillMaster_Destroying", "Author"),GetAddOnMetadata("TradeSkillMaster_Destroying", "Notes"))	
+	TSMAPI:RegisterIcon(L["Destroying"], "Interface\\Icons\\INV_Gizmo_RocketBoot_Destroyed_02",function(...) TSM.GUI:Load(...) end, "TradeSkillMaster_Destroying")
+    
+    TSMAPI:RegisterSlashCommand("destroy", TSM.getDestroyBtn, L["Displays the destroy button"], true)
+    
+    --delete old tables--
+    if TSM.db.factionrealm.prospectingData then TSM.db.factionrealm.prospectingData = nil end
+    if TSM.db.factionrealm.millingData then TSM.db.factionrealm.millingData = nil end
+    if TSM.db.factionrealm.deData then TSM.db.factionrealm.deData = nil end
+    
 end
 
+function TSM:getDestroyBtn() TSM.destroybtn:Show() end
 
-function IsDestroyable(bag, slot, action)
+function TSM:IsDestroyable(bag, slot, action)
 
-	--print("IsDestroyable: ", action)
 	local slotID = tostring(bag) .. tostring(slot)
 	
 	if not scanTooltip then
@@ -101,26 +90,23 @@ function IsDestroyable(bag, slot, action)
 	
 	for id=1, scanTooltip:NumLines() do
 		local text = _G["TSMAucScanTooltipTextLeft" .. id]
-
+        
 		--decide what to look for--
 		if action == "Prospectable" then
 			if text and text:GetText() == ITEM_PROSPECTABLE then		
 				return true
 			end
-		elseif action == "Millable" then
-				
+		elseif action == "Millable" then	
 			if text and text:GetText() == ITEM_MILLABLE then			
 				return true
 			end
 		end --end elseif
 		
 	end
-
-
+    
 	return false
 end
-
-
+   
 -- FastDestroyButton
 do
 
@@ -131,41 +117,51 @@ do
 	local Type, Version = "TSMFastDestroyButton", 2
 	if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 	
-	-- waits until some event
+    local lootopened = false
+    local LootFrameIsVisible = false
+
+    local lootOpened = CreateFrame("frame")
+    lootOpened:Hide()
+    lootOpened:SetScript("OnEvent", function(self)  LootFrameIsVisible = true     end)
+    lootOpened:SetScript("OnShow",  function(self)  self:RegisterEvent("LOOT_OPENED")   end)
+    lootOpened:SetScript("OnHide",  function(self)  self:UnregisterEvent("LOOT_OPENED") end)
+
+    local lootClosed = CreateFrame("frame")
+    lootClosed:Hide()    
+    lootClosed:SetScript("OnEvent", function(self)  LootFrameIsVisible = false    end)
+    lootClosed:SetScript("OnShow",  function(self)  self:RegisterEvent("LOOT_CLOSED")   end)
+    lootClosed:SetScript("OnHide",  function(self)  self:UnregisterEvent("LOOT_CLOSED") end)
+
+    
+    -- waits until some event
 	local function Delay(self)
 
 		if self.button.mode == "slow" then
-
-			if self.wait == "cd" then -- wait for the cd to be up on the spell
-				self.endTime = self.endTime or GetTime() + 1
-				if GetSpellCooldown(self.button.spell) == 0 and GetTime() > self.endTime then
-					self.endTime = nil
-					self.isCasting = false
-					self.wait = "lootclosed"
-				end
-			elseif self.wait == "lootclosed" then
-				if not LootFrame:IsVisible() then
-					self:Hide()
-					self.button:SetDisabled(false)
-				end
-			end--end lootframe is visible
-				
+            if not lootopened and LootFrameIsVisible then lootopened = true end
+            if GetSpellCooldown(self.button.spell) == 0 and not UnitCastingInfo("player") 
+                and ( lootopened and not LootFrameIsVisible ) then
+                self:Hide()
+                self.button:SetDisabled(false)
+                lootopened = false
+            end
+            
 		else
+            if not lootopened and LootFrameIsVisible then lootopened = true end
 			if self.wait == "cd" then -- wait for the cd to be up on the spell
-			self.endTime = self.endTime or GetTime() + 1
-			if GetSpellCooldown(self.button.spell) == 0 and GetTime() > self.endTime then
-				self.endTime = nil
-				self:Hide()
-				self.button:SetDisabled(false)
-			end
-			
+                self.endTime = self.endTime or GetTime() + 1
+                if GetSpellCooldown(self.button.spell) == 0 and GetTime() > self.endTime then
+                    self.endTime = nil
+                    self:Hide()
+                    self.button:SetDisabled(false)
+                end
 			elseif self.wait == "lootopen" then -- wait for the loot window to open
-				if (self.button.mode == "fast" and not UnitCastingInfo("player")) or (self.button.mode == "normal" and LootFrame:IsVisible()) then
+				if (self.button.mode == "fast" and not UnitCastingInfo("player")) 
+                or (self.button.mode == "normal" and LootFrameIsVisible) then
 					self:Hide()
 					self.button:SetDisabled(false)
 				end
 			elseif self.wait == "lootclosed" then -- wait for the loot window to close
-				if not LootFrame:IsVisible() then
+                 if ( lootopened and not LootFrameIsVisible ) then
 					self:Hide()
 					self.button:SetDisabled(false)
 				end
@@ -176,27 +172,21 @@ do
 	local function CreateDelay(button)
 		button.delay = CreateFrame("Frame")
 		button.delay.button = button
-		
 		button.delay:Hide()
 		button.delay:SetScript("OnUpdate", Delay)
 	end
 	
 	local function PreClick(self)
-	
-		--Slow Destroy--
+        
+        --Slow Destroy--
 		if self.obj.mode == "slow" then
 			local target = self.obj.GetLocations(self.currentTarget or {bag=-1, slot=-1})		
 			self.currentTarget = target
 			if target and target.bag ~= -1 and target.slot ~= -1  then
-				self.isCasting = true
-				self:SetAttribute("type1", "macro")
-				self:SetAttribute("macrotext1", format("/cast %s;\n/use %s %s;", self.obj.spell, target.bag, target.slot ))
-				--self.attribute = "use"
-				self.obj.delay:Show()
-				self.obj:SetDisabled(true)
-				self.obj.delay.wait = "cd"
-				self.obj.delay:Show()
-				
+                self:SetAttribute("type1", "macro")
+                self:SetAttribute("macrotext1", format("/cast !%s;\n/use %s %s;", self.obj.spell, target.bag, target.slot ))
+                self.obj:SetDisabled(true) 
+                self.obj.delay:Show()
 			else
 				self.obj:Fire("Finished")
 			end		
@@ -204,11 +194,11 @@ do
 			
 			--begin Sapu's Code
 			if not SpellIsTargeting() then
-				if LootFrame:IsVisible() then
-					self.obj:SetDisabled(true)
+                if LootFrameIsVisible then
+                    self.obj:SetDisabled(true)
 					self.obj.delay.wait = "lootclosed"
 					self.obj.delay:Show()
-				else
+				elseif self.obj.spell then
 					self.isCasting = true 
 					self:SetAttribute("type1", "macro")
 					self:SetAttribute("macrotext1", format("/cast %s", self.obj.spell))
@@ -223,9 +213,8 @@ do
 				self.isCasting = false
 				local target = self.obj.GetLocations(self.currentTarget or {bag=-1, slot=-1})
 				self.currentTarget = target
-			
 				if target and target.bag ~= -1 and target.slot ~= -1 then
-					self.nextTarget = CopyTable(target)
+                    self.nextTarget = CopyTable(target)
 					self:SetAttribute("type1", "macro")
 					self:SetAttribute("macrotext1", format("/use %s %s", target.bag, target.slot))
 					self.attribute = "use"
@@ -233,29 +222,46 @@ do
 					self.obj.delay.wait = "cd"
 					self.obj.delay:Show()
 				else
+                    self:SetAttribute("type1", "macro")
+                    string.format("/stopmacro [channeling]")
 					self.obj:Fire("Finished")
 				end
 			end
 			--end Sapu's code
+            
 		end
+
 	end
-	
+    
+
+    local function showListeners()
+        if not lootOpened:IsVisible() then lootOpened:Show() end
+        if not lootClosed:IsVisible() then lootClosed:Show() end
+    end
+        
+    local function hideListeners()
+        lootOpened:Hide()
+        lootClosed:Hide()    
+    end
+    
 	local methods = {
 		-- gets called when the button is added to a frame (ie :AddChild())
 		-- simply initializes the button
 		["OnAcquire"] = function(self)
 			CreateDelay(self)
-			self:SetHeight(24)
+            self:SetHeight(24)
 			self:SetWidth(200)
 			self:SetDisabled(false)
 			self:SetText()
 			self.GetLocations = function() return {} end
 			self.mode = "normal"
+            showListeners()
 		end,
 
 		-- gets called when the button is released (ie hidden when the frame is closed)
 		["OnRelease"] = function(self)
-			self.delay:Hide()
+            self.delay:Hide()
+            hideListeners()
 		end,
 
 		-- just like the regular AceGUI button's SetText method
@@ -265,14 +271,16 @@ do
 		
 		-- set the spell that the button is going to cast
 		["SetSpell"] = function(self, spell)
-			spell = strlower(spell or "")
-			assert(spell == "milling" or spell == "prospecting" or spell == "disenchanting", "Invalid spell name: "..spell..". Expected \"Milling\" or \"Prospecting\" or \"Disenchanting\"")
+			if not spell then self.spell = nil; return end
+            spell = strlower(spell or "")
+            assert(spell == "milling" or spell == "prospecting" or spell == "disenchanting", "Invalid spell name: "
+            ..spell..". Expected \"Milling\" or \"Prospecting\" or \"Disenchanting\"")
 			
-			--to fix localizationg problem--
+			--to fix localizationg problem--F
 			if (spell == "prospecting") then spell = GetSpellInfo (prospecting) end
 			if (spell == "milling") then spell = GetSpellInfo (milling) end
 			if (spell == "disenchanting") then spell = GetSpellInfo (disenchanting) end
-			--TSM:Print(spell, L["Enabled"])
+
 			self.spell = spell
 		end,
 		
@@ -281,7 +289,7 @@ do
 			mode = strlower(mode or "")
 			assert(mode == "fast" or mode == "normal" or mode == "slow", "Invalid mode: "..mode..". Expected \"fast\" or \"normal\" or \"slow\"")
 			self.mode = mode
-			--TSM:Print(L["Speed set to"], mode);
+
 		end,
 
 		-- same as the AceGUI button's SetDisabled method
@@ -312,7 +320,7 @@ do
 		frame:EnableMouse(true)
 		frame:SetScript("OnEnter", function() frame.obj:Fire("OnEnter") end)
 		frame:SetScript("OnLeave", function() frame.obj:Fire("OnLeave") end)
-		frame:SetScript("PostClick", function() if frame.attribute == "use" then frame.obj:Fire("PostClick") end end)
+		frame:SetScript("PostClick",function() if frame.attribute == "use" then frame.obj:Fire("PostClick") end end)
 		frame:SetScript("PreClick", PreClick)
 		
 		-- set the edge texture
@@ -365,7 +373,7 @@ do
 		frame:SetFontString(fontString)
 		frame:GetFontString():SetPoint("CENTER")
 		frame:GetFontString():SetTextColor(1, 0.73, 0, 1)
-
+ 
 		-- create the widget table that turns this button into an AceGUI widget
 		local widget = {
 			frame = frame,

@@ -23,27 +23,23 @@ L["Prospecting"] = true
 L["Disenchanting"] =true
 L["Milling"] = true
 
-L["Destroy All !!"] = true
-L["Destroying"] = true
-L["Destroy"] = true
-
-L["Herbs"] = true
-L["Ore"] = true
-L["Prospect"] = true
-L["Totals:"] = true
-
-L["Slow Speed (Single Click)"] = true
-L["Normal Speed(Double Click)"] = true
-L["Fast Speed (Double Click Advanced)"] = true
-
-L["Speed set to Slow"] = true
-L["Speed set to Normal"] = true
-L["Speed set to Fast"] = true
-L["Speed set to"] = true
-
-L["Clear Results"] = true
-L["Under Construction"] = true
-
-L["Expand/Collapse"] = true
-L["Filter by Mat/Date"] =true
 L["Sum Loot (Uncheck if do not wish to display loot)"] =true
+L["Displays the destroy button"] = true
+
+L["You do not know Milling, Prospecting or Disenchanting."] = true
+L["The Destroyer has risen!"] = true
+
+L["Config"] = true
+L["The Destroyer"] = true
+L["Display the Destroyer"] = true
+L["Create Macro to Display the Destroyer"] = true
+L["Create Macro to Use the Destroyer"] = true
+L["Clear Results Table"] = true
+
+L["Macros"] = true
+L["Data"] = true
+
+L[" Table has been cleared"] = true
+L["Set Filter"] = true
+L["Warning: If you are about to disenchant BOP/soulbound items the Slow speed is recomended."] = true
+L["Warning: Destroying will do its best to destroy everything in your bags."] = true

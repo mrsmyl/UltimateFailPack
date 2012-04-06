@@ -6,145 +6,97 @@ local TSM = select(2, ...)
 local util = TSM:NewModule("util", "AceEvent-3.0")
 local AceGUI = LibStub("AceGUI-3.0") -- load the AceGUI libraries
 
---delay frame--
-local delay = CreateFrame("Frame") 
-delay.mats = {}
+util.dObj = {
+    bag = 0,
+    slot = 1,
+    MergeTable = {},
+    Item = nil,
+}
 
-local currentItem
-local mergeTable={}
+local bagsNum = 4
+local merge = CreateFrame("Frame") 
 
-local DestroyTable = {}
-
----------------------------------------------------------
---
---searchAndDestroy and newSearch handle searching the users bags
---and returning a value to Sapu's super cool button.
---
---current is the item that was selected in the dropdown
---
----------------------------------------------------------
-function util:searchAndDestroy(current,previous, mats)
-
-	destroyTable,mergeTable,total = util:newSearch(current, previous,mats) 
-
-	_,previousSize,_=GetContainerItemInfo(previous.bag, previous.slot)
-
-	if #destroyTable >0 then
-		DestroyTable = destroyTable[1]	
-	elseif  previousSize ~= nil and previousSize>=5 then --to take care of Sapu's "potentail bug"
-		if current == GetContainerItemID(previous.bag, previous.slot) or current == -1 then DestroyTable = previous end 
-	end
-    return total
-end--end searchAndDestroy
-
-function util:getLocations() return DestroyTable end
-
-function util:newSearch(current,previous,mats)
-	local bagsNum = 4
-	local total=0
-    local totalOverAll = 0
-	local destroyTable={}
-	local stackSize
-	local itemId
-	local len
-
-	currentItem = current --need to save this so I don't lose it when I call delay	
-
-	if (current == 1) then
-		len = #mats
-	else
-		current = current-1
-		len = current
-	end 
-	
-	for i=current, len do
-		mergeTable={} --need to reset otherwise WOW will freak out, and try to merge stacks forever
-		itemId = mats[i] 	
-		for bagId=0,bagsNum do --bags		
-			for slotId = 1,GetContainerNumSlots(bagId) do
-				if itemId == GetContainerItemID(bagId, slotId) then
-					_,stackSize,_=GetContainerItemInfo(bagId, slotId)
-					total = total + stackSize	
-					if  previous == nil or (bagId ~= previous.bag or slotId ~= previous.slot) then 
-						if stackSize>4 then
-							temp = { bag=bagId, slot=slotId}
-							table.insert(destroyTable,temp)	
-						else
-							--print ("bag ",bagId, "slot ",slotId, "item ",itemId)
-							temp = { bagId, slotId, itemId}
-							table.insert(mergeTable,temp)	--new
-						end --end if/else
-					end --end previous if
-				end--end big if	
-			end--end slots
-		end--end bags
-		
-		if (destroyAll and #mergeTable >= 2) or (#mergeTable >= 2) then delay.mats=mats; delay:Show()
-		elseif destroyAll and #mergeTable < 2 then mergeTable={} end  
-        
-        if total >4 then totalOverAll= total+totalOverAll end
-        total = 0
-  
-	end--big for
-	return  destroyTable,mergeTable, totalOverAll
-end
-
---------------------------------
---
---This is the set of functions that handle merging.
--- delay
--- GUI:MergeItems
--- checkLocks
---
----------------------------------
-
-delay:Hide() 
-delay:SetScript("OnUpdate", 
+merge:Hide() 
+merge:SetScript("OnUpdate", 
 	
 	function(self, elapsed)
+    
+        for i,t in pairs(util.dObj.MergeTable) do 
+            if #t >= 2 then util.dObj.Item = i; break end 
+            self:Hide()
+        end
+        
+        if not util.dObj.MergeTable[util.dObj.Item] then self:Hide() return end
+        local len = #util.dObj.MergeTable[util.dObj.Item]
 
-		
-		if #mergeTable < 2 then
-			self:Hide()
-		else
-			util:newSearch(currentItem, nil,self.mats)
-			self:Hide() -- hide the delay to stop OnUpdate from firing 
-		end --end if
-				
-		--check locks--
-		coLocked = coroutine.create(checkLocks)
-		coroutine.resume(coLocked, mergeTable)
-		while coroutine.status(coLocked) == "suspended" do coroutine.resume(coLocked, mergeTable) end 
-		
-		util:mergeItems(mergeTable) 
-		ClearCursor()
+        if util.dObj.MergeTable[util.dObj.Item][len] and util.dObj.MergeTable[util.dObj.Item][len-1] then
 
+            PickupContainerItem(util.dObj.MergeTable[util.dObj.Item][len].bag, util.dObj.MergeTable[util.dObj.Item][len].slot)
+            PickupContainerItem(util.dObj.MergeTable[util.dObj.Item][len-1].bag ,util.dObj.MergeTable[util.dObj.Item][len-1].slot) 
+            ClearCursor()
+        
+            table.remove(util.dObj.MergeTable[util.dObj.Item])
+            table.remove(util.dObj.MergeTable[util.dObj.Item])
+            
+        end
+        if #util.dObj.MergeTable[util.dObj.Item] < 2 then util.dObj.MergeTable[util.dObj.Item] = nil end
 	end --end function
 
 ) 
 
-function util:mergeItems (iTable)
-	for i = 1, #iTable-1 do --> array start to end
-		source=iTable[i]
-		destination=iTable[i+1]
-		
-		--these lines magically merge the stacks--
-		PickupContainerItem(source[1],source[2]) --(bag, slot)
-		PickupContainerItem(destination[1], destination[2]) 
-		
-		delay:Show()
-	end--end for
-	
+local function merger (id,bag,slot,stacksize) 
+    if not util.dObj.MergeTable[id] then util.dObj.MergeTable[id] = {} end
+    table.insert(util.dObj.MergeTable[id], {bag = bag, slot = slot, num = stackSize})
 end
 
-function checkLocks(iTable)
+--action: prospectable, millable or de'able
+function util:searchAndDestroy(action, pre)
+    
+    local found = nil
+    
+    for bag = util.dObj.bag,bagsNum do --bags		
+        for slot = util.dObj.slot,GetContainerNumSlots(bag) do
+            if TSM:IsDestroyable(bag, slot, action) then
+                local id = GetContainerItemID(bag, slot);
+                local _,stackSize,_ = GetContainerItemInfo(bag, slot)
+                
+                if  pre == nil or (bag ~= pre.bag or slot ~= pre.slot) then 
+                    if stackSize >= 5 then
+                        TSM.loot:setMat(id)--this is for counting loot
+                        stackSize = stackSize - 5 --to account for what got destroyed                       
+                        if stackSize == 5 then 
+                            util.dObj.bag  = bag
+                            util.dObj.slot = slot
+                        end
+                        return {bag = bag, slot = slot}
+                    elseif stackSize < 5 then
+                        merger(id,bag,slot,stackSize)
+                    end
+                    --keeps a count of destroyable mats in the users bags
+                    if stackSize then
+                        if not found or not found[id] then 
+                            found = {}
+                            found[id] = {num = stackSize} 
+                        end
+                        found[id].num = found[id].num + stackSize
+                    end
+                end
+                merge:Show()
+                
+            end--end IsDestroyable
+        end--end slots
+    end--end bags
 
-	for i = 1, #iTable do
-		tmp = iTable[i]
-		_,_,locked=GetContainerItemInfo(tmp[1], tmp[2])--bag, slot
-		if locked then i=i-1; coroutine.yield() end
-	end
-	--return false
-end
-
-
+    --We have reached the end, now we need to reset
+    util.dObj.bag  = 0
+    util.dObj.slot = 1
+    
+    if found then
+        for i,v in ipairs(found) do
+            if v.num >= 5 then  util:searchAndDestroy(action, pre) end
+        end
+    end
+    
+    --this means there is nothing to destroy
+    return nil
+end--end function

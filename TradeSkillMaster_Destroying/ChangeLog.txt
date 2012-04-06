@@ -1,3 +1,12 @@
+v1.2
+*There is a new destroy window that is smaller and has a bigger button
+*It is safe to use slow speed for DE items that are soulbound
+*Destroying plays nice with loot addons such as Xloot
+*Removed the lag caused by counting loot
+*Removed safelist from DE
+*Made the code simpler and faster
+*other things that I dont remember...
+
 v1.1
 *fixed a bug.
 
