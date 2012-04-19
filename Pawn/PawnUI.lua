@@ -2238,8 +2238,11 @@ function PawnUI_LootUpgradeAdvisor_OnShow(self)
 				end
 				if ShowOldItems and ThisUpgradeData.ExistingItemID then
 					local ExistingItemName, _, Quality = GetItemInfo(ThisUpgradeData.ExistingItemID)
-					local _, _, _, QualityColor =  GetItemQualityColor(Quality)
-					ThisText = format(PawnLocal.TooltipVersusLine, ThisText, QualityColor, ExistingItemName)
+					if ExistingItemName then
+						-- It's possible (though rare) that the existing item isn't in the user's cache, so we can't get its quality color.  In that case, don't display it in the tooltip.
+						local _, _, _, QualityColor =  GetItemQualityColor(Quality)
+						ThisText = format(PawnLocal.TooltipVersusLine, ThisText, QualityColor, ExistingItemName)
+					end
 				end
 				UpgradeText = UpgradeText .. ThisText
 			end

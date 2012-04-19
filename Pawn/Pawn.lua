@@ -13,6 +13,9 @@ PawnVersion = 1.519
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
 
+-- Floating point math
+local PawnEpsilon = 0.0000000001
+
 -- Caching
 -- 	An item in the cache has the following properties: Name, NumLines, UnknownLines, Stats, SocketBonusStats, UnenchantedStats, UnenchantedSocketBonusStats, Values, Link, PrettyLink, Level, Rarity, ID, InvType, Texture, ShouldUseGems
 --	(See PawnGetEmptyCachedItem.)
@@ -2837,7 +2840,7 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 		
 		-- Okay, now do the calculations.
 		local BestOfType = BestItems[InvType]
-		if BestOfType == nil or Value > BestOfType[1] then
+		if BestOfType == nil or Value > (BestOfType[1] + PawnEpsilon) then
 			-- This item's an upgrade.
 			if BestOfType == nil then
 				BestOfType = { }
@@ -2858,7 +2861,7 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 			(InvType == "INVTYPE_FINGER" or InvType == "INVTYPE_WEAPON") and
 			-- If we don't have a second item stored at all, this is obviously the second best.
 			-- Otherwise, the new item's value must be greater than the current second best.
-			(BestOfType[4] == nil or Value > BestOfType[4]) and
+			(BestOfType[4] == nil or Value > (BestOfType[4] + PawnEpsilon)) and
 			-- The item's ID must be different from the best item of this type, OR it must be the same
 			-- as the last item that was scanned, indicating that the player has two copies of that item.
 			-- Otherwise, we assume that the player only has one, so it can't be both first and second best.
@@ -2915,10 +2918,10 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 	--local InvType, BestOfType
 	--for InvType, BestOfType in pairs(BestItems) do
 	--	local _, ItemLink = GetItemInfo(BestOfType[2]
-	--	VgerCore.Message(InvType .. ": " .. ItemLink .. " = " .. BestOfType[1])
-	--	if BestOfType[3] then
-	--		_, ItemLink = GetItemInfo(BestOfType[4]
-	--		VgerCore.Message("    and " .. ItemLink .. " = " .. BestOfType[3])
+	--	VgerCore.Message(InvType .. ": " .. ItemLink .. " = " .. tostring(BestOfType[1]))
+	--	if BestOfType[4] then
+	--		_, ItemLink = GetItemInfo(BestOfType[5]
+	--		VgerCore.Message("    and " .. ItemLink .. " = " .. BestOfType[4])
 	--	end
 	--end
 	--VgerCore.Message(" ")
@@ -3926,8 +3929,14 @@ function PawnIsScaleVisible(ScaleName)
 	end
 	
 	local Scale = PawnCommon.Scales[ScaleName]
-	VgerCore.Assert(Scale.PerCharacterOptions ~= nil, "All per-character options for " .. ScaleName .. " were missing.")
-	VgerCore.Assert(Scale.PerCharacterOptions[PawnPlayerFullName] ~= nil, "Per-character options for this character (" .. PawnPlayerFullName .. ") and scale (" .. ScaleName .. ") were missing.")
+	if Scale.PerCharacterOptions == nil then
+		VgerCore.Fail("All per-character options for " .. ScaleName .. " were missing.")
+		return false
+	end
+	if Scale.PerCharacterOptions[PawnPlayerFullName] == nil then
+		VgerCore.Fail("Per-character options for this character (" .. PawnPlayerFullName .. ") and scale (" .. ScaleName .. ") were missing.")
+		return false
+	end
 	return Scale.PerCharacterOptions[PawnPlayerFullName].Visible
 end
 
