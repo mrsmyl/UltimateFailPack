@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 896 $
--- $Date: 2012-04-06 01:29:29 +1000 (Fri, 06 Apr 2012) $
+-- $Revision: 901 $
+-- $Date: 2012-04-15 15:08:58 +1000 (Sun, 15 Apr 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0289,
-		UIVersion = "3.2.89",
+		Version = 3.0290,
+		UIVersion = "3.2.90",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -1828,46 +1828,7 @@ ArkInventory.Const.DatabaseDefaults.profile = {
 	},
 }
 
-function ArkInventory.OnInitialize( )
-	
-	--ArkInventory.Output( "OnInitialize" )
-	
-	ArkInventory.Global.Version = string.format( "v%s", ArkInventory.Const.Program.UIVersion )
-	if ArkInventory.Const.Program.Beta then
-		ArkInventory.Global.Version = string.format( "%s %s(%s)%s", ArkInventory.Global.Version, RED_FONT_COLOR_CODE, ArkInventory.Const.Program.Beta or "unknown beta version", FONT_COLOR_CODE_CLOSE )
-	end
-	
-	-- pre acedb load, the database is just a table
-	
-	-- erase old factionrealm data
-	if ArkInventory.Const.Program.Version >= 3.0227 then
-		if ARKINVDB and ARKINVDB.factionrealm then
-			ARKINVDB.factionrealm = nil
-		end
-	end
-	
-	
-	-- load database, use default profile, metatables now active so dont play with the table structure
-	ArkInventory.db = LibStub( "AceDB-3.0" ):New( "ARKINVDB", ArkInventory.Const.DatabaseDefaults, true )
-	
-	ArkInventory.StartupChecks( )
-	
-	-- config menu (internal)
-	ArkInventory.Lib.Config:RegisterOptionsTable( ArkInventory.Const.Frame.Config.Internal, ArkInventory.Config.Internal )
-	ArkInventory.Lib.Dialog:SetDefaultSize( ArkInventory.Const.Frame.Config.Internal, 1000, 600 )
-	
-	-- config menu (blizzard)
-	ArkInventory.ConfigBlizzard( )
-	ArkInventory.Lib.Config:RegisterOptionsTable( ArkInventory.Const.Frame.Config.Blizzard, ArkInventory.Config.Blizzard, { "arkinventory", "arkinv", "ai" } )
-	ArkInventory.Lib.Dialog:AddToBlizOptions( ArkInventory.Const.Frame.Config.Blizzard, ArkInventory.Const.Program.Name )
-	
-	
-	-- tooltips
-	ArkInventory.Global.Tooltip.Scan = ArkInventory.TooltipInit( "ARKINV_ScanTooltip" )	
-	--ArkInventory.Global.Tooltip.Vendor = ArkInventory.TooltipInit( "ARKINV_VendorTooltip" )
-	ArkInventory.Global.Tooltip.Vendor = ArkInventory.Global.Tooltip.Scan
-	--ArkInventory.Global.Tooltip.Mount = ArkInventory.TooltipInit( "ARKINV_MountTooltip" )
-	ArkInventory.Global.Tooltip.Mount = ArkInventory.Global.Tooltip.Scan
+function ArkInventory.OnLoad( )
 	
 	local loc_id
 	
@@ -1930,7 +1891,49 @@ function ArkInventory.OnInitialize( )
 	-- void storage
 	table.insert( ArkInventory.Global.Location[ArkInventory.Const.Location.Void].Bags, ArkInventory.Const.Offset.Void + 1 )
 	
+end
 
+function ArkInventory.OnInitialize( )
+	
+	--ArkInventory.Output( "OnInitialize" )
+	
+	ArkInventory.Global.Version = string.format( "v%s", ArkInventory.Const.Program.UIVersion )
+	if ArkInventory.Const.Program.Beta then
+		ArkInventory.Global.Version = string.format( "%s %s(%s)%s", ArkInventory.Global.Version, RED_FONT_COLOR_CODE, ArkInventory.Const.Program.Beta or "unknown beta version", FONT_COLOR_CODE_CLOSE )
+	end
+	
+	-- pre acedb load, the database is just a table
+	
+	-- erase old factionrealm data
+	if ArkInventory.Const.Program.Version >= 3.0227 then
+		if ARKINVDB and ARKINVDB.factionrealm then
+			ARKINVDB.factionrealm = nil
+		end
+	end
+	
+	
+	-- load database, use default profile, metatables now active so dont play with the table structure
+	ArkInventory.db = LibStub( "AceDB-3.0" ):New( "ARKINVDB", ArkInventory.Const.DatabaseDefaults, true )
+	
+	ArkInventory.StartupChecks( )
+	
+	-- config menu (internal)
+	ArkInventory.Lib.Config:RegisterOptionsTable( ArkInventory.Const.Frame.Config.Internal, ArkInventory.Config.Internal )
+	ArkInventory.Lib.Dialog:SetDefaultSize( ArkInventory.Const.Frame.Config.Internal, 1000, 600 )
+	
+	-- config menu (blizzard)
+	ArkInventory.ConfigBlizzard( )
+	ArkInventory.Lib.Config:RegisterOptionsTable( ArkInventory.Const.Frame.Config.Blizzard, ArkInventory.Config.Blizzard, { "arkinventory", "arkinv", "ai" } )
+	ArkInventory.Lib.Dialog:AddToBlizOptions( ArkInventory.Const.Frame.Config.Blizzard, ArkInventory.Const.Program.Name )
+	
+	
+	-- tooltips
+	ArkInventory.Global.Tooltip.Scan = ArkInventory.TooltipInit( "ARKINV_ScanTooltip" )	
+	--ArkInventory.Global.Tooltip.Vendor = ArkInventory.TooltipInit( "ARKINV_VendorTooltip" )
+	ArkInventory.Global.Tooltip.Vendor = ArkInventory.Global.Tooltip.Scan
+	--ArkInventory.Global.Tooltip.Mount = ArkInventory.TooltipInit( "ARKINV_MountTooltip" )
+	ArkInventory.Global.Tooltip.Mount = ArkInventory.Global.Tooltip.Scan
+	
 	ArkInventory.PlayerInfoSet( )
 	ArkInventory.MediaRegister( )
 	
@@ -5100,7 +5103,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 				--ArkInventory.Output( "creating bag frame [", bagframename, "]" )
 				bagframe = CreateFrame( "Frame", bagframename, placeframe, "ARKINV_TemplateFrameBag" )
 			end
-
+			
 			-- remember the maximum number of slots used for each bag
 			local b = cp.location[loc_id].bag[bag_id]
 			
@@ -5118,7 +5121,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 				local itemframename = ArkInventory.ContainerItemNameGet( loc_id, bag_id, j )
 				local itemframe = _G[itemframename]
 				
-				local tainteditemframename = itemframename .. "U"
+				local tainteditemframename = itemframename .. "T"
 				local tainteditemframe = _G[tainteditemframename]
 				
 				if not itemframe then
@@ -5131,7 +5134,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 						
 						_G[itemframename] = itemframe
 						
-						--ArkInventory.Output( "unsecure ", tainteditemframename )
+						--ArkInventory.Output( "tainted ", tainteditemframename )
 						
 					else
 						
@@ -5324,6 +5327,34 @@ function ArkInventory.Frame_Container_OnLoad( frame )
 	frame.ARK_Data = {
 		["loc_id"] = tonumber( loc_id ),
 	}
+	
+	
+	
+	loc_id = frame.ARK_Data.loc_id
+	
+	if ( loc_id == ArkInventory.Const.Location.Bag ) then
+		
+		local placeframename = string.format( "%s%s", frame:GetName( ), "Bag" )
+		local placeframe = _G[placeframename]
+		
+		for bag_id = 1, ( NUM_BAG_SLOTS + 1 ) do
+			
+			local bagframename = string.format( "%s%s", placeframename, bag_id )
+			local bagframe = CreateFrame( "Frame", bagframename, placeframe, "ARKINV_TemplateFrameBag" )
+			
+			for j = 1, 50 do
+				
+				local itemframename = ArkInventory.ContainerItemNameGet( loc_id, bag_id, j )
+				local itemframe = CreateFrame( "Button", itemframename, bagframe, ArkInventory.Global.Location[loc_id].template or "ARKINV_TemplateButtonItem" )
+				
+				ArkInventory.Frame_Item_Update_Clickable( itemframe )
+				itemframe:Hide( )
+				
+			end
+			
+		end
+		
+	end
 	
 end
 
@@ -6566,7 +6597,7 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 		
 	end
 	
-	ArkInventory.MediaSetFontFrame( frame )
+	--ArkInventory.MediaSetFontFrame( frame )
 	
 end
 

@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2010, all rights reserved.
--- $Revision: 893 $
--- $Date: 2012-04-05 22:20:05 +1000 (Thu, 05 Apr 2012) $
+-- $Revision: 899 $
+-- $Date: 2012-04-15 01:45:01 +1000 (Sun, 15 Apr 2012) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -131,13 +131,7 @@ function ArkInventoryRules.AppliesToItem( rid, i )
 end
 
 function ArkInventoryRules.System.soulbound( )
-	
-	if ArkInventoryRules.Object.sb then
-		return true
-	end
-	
-	return false
-	
+	return not not ArkInventoryRules.Object.sb
 end
 
 function ArkInventoryRules.System.id( ... )

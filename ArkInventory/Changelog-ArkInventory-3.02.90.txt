@@ -1,13 +1,24 @@
 ------------------------------------------------------------------------
-r330 | arkayenro | 2012-04-05 15:35:23 +0000 (Thu, 05 Apr 2012) | 6 lines
+r332 | arkayenro | 2012-04-22 03:52:38 +0000 (Sun, 22 Apr 2012) | 4 lines
 Changed paths:
-   A /tags/3.02.89 (from /trunk:329)
+   A /tags/3.02.90 (from /trunk:331)
 
-*3.02.89 (06-APR-2012)*
- * fixed - another global variable taint issue
- * fixed - you can no longer move bags around in the changer frame while in combat (caused an interface error and locked the bag in place)
- * workaround - tainted frames caused by opening AI for the first time, while in combat.  tainted frames are tinted purple and unusable until you leave combat, at which point they are replaced with untainted frames
- * restored - bag( ) rule function
+*3.02.90 (22-APR-2012)*
+ * fixed - tainted frames caused by opening AI for the first time, while in combat.  the first 50 slots of each bag are pre-loaded before entering the game world to ensure they are secure. this will use up more memory but guarantee that all slots are usable while in combat
+ * fixed - soulbound issue introduced in 3.02.89
+
+------------------------------------------------------------------------
+r331 | arkayenro | 2012-04-22 03:48:07 +0000 (Sun, 22 Apr 2012) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+*3.02.90 (22-APR-2012)*
+ * fixed - tainted frames caused by opening AI for the first time, while in combat.  the first 50 slots of each bag are pre-loaded before entering the game world to ensure they are secure. this will use up more memory but guarantee that all slots are usable while in combat
+ * fixed - soulbound issue introduced in 3.02.89
 
 ------------------------------------------------------------------------
 r329 | arkayenro | 2012-04-05 15:31:03 +0000 (Thu, 05 Apr 2012) | 6 lines

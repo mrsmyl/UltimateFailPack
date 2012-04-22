@@ -609,9 +609,9 @@
 	</Button>
 	
 	<Button virtual="true" name="ArkInventory_ChangerGenericExtraTemplate" inherits="ArkInventory_ChangerPlayerMainTemplate">
-	
-		<Scripts>
 		
+		<Scripts>
+			
 			<OnLoad>
 				ArkInventory.Frame_Changer_Secondary_OnLoad( self )
 			</OnLoad>
@@ -631,7 +631,7 @@
 			<OnEnter>
 				ArkInventory.Frame_Changer_Secondary_OnEnter( self )
 			</OnEnter>
-		
+			
 		</Scripts>
 		
 	</Button>
@@ -1599,7 +1599,15 @@
 
 	
 <!-- ADDON FRAME STARTS HERE -->
-
+	
+	<Frame hidden="true">
+		<Scripts>
+			<OnLoad>
+				ArkInventory.OnLoad( )
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	
 	<Frame name="ARKINV_Frame1" inherits="ARKINV_TemplateFrameMain" id="1" /> <!-- bag -->
 	
 	<Frame parent="ARKINV_Frame1Changer" name="$parentWindow" hidden="false">
@@ -1620,7 +1628,7 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-
+			
 			<CheckButton name="$parentBag2" inherits="ArkInventory_ChangerGenericExtraTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentBag1" relativePoint="RIGHT">
@@ -1628,7 +1636,7 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-
+			
 			<CheckButton name="$parentBag3" inherits="ArkInventory_ChangerGenericExtraTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentBag2" relativePoint="RIGHT">

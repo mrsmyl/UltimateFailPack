@@ -3206,13 +3206,9 @@ end
 
 function ArkInventory.ObjectIDCacheCategory( i )
 	
-	local soulbound = 0
+	local soulbound = ( i.sb and 1 ) or 0
 	
-	if i.h then
-		if i.sb then
-			soulbound = 1
-		end
-	else
+	if not i.h then
 		-- empty slots
 		local blizzard_id = ArkInventory.BagID_Blizzard( i.loc_id, i.bag_id )
 		soulbound = ArkInventory.BagType( blizzard_id ) -- allows for unique codes per bag type
@@ -3238,15 +3234,7 @@ function ArkInventory.ObjectIDCacheRule( i )
 	
 	assert( i and type( i ) == "table", "code failure: i is not a table" )
 	
-	local soulbound = 0
-	if i.sb then
-		soulbound = 1
-	end
-	
-	local internalString = ArkInventory.ObjectIDInternal( i.h )
-	
-	--return string.format( "%i:%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, i.slot_id or 0, soulbound, internalString )
-	return string.format( "%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, soulbound, internalString )
+	return string.format( "%i:%i:%i:%s", i.loc_id or 0, i.bag_id or 0, ( i.sb and 1 ) or 0, ArkInventory.ObjectIDInternal( i.h ) )
 	
 end
 
