@@ -49,6 +49,7 @@ local Add = {
 			simpleGroup:SetLayout(args.layout)
 			simpleGroup:SetRelativeWidth(args.relativeWidth or 1)
 			simpleGroup:SetFullHeight(args.fullHeight)
+			if args.height then simpleGroup:SetHeight(args.height) end
 			parent:AddChild(simpleGroup)
 			return simpleGroup
 		end,

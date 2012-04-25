@@ -356,7 +356,8 @@ destroyingData.disenchant  = {
 				},
 			},
 		},
-		[11137] = { -- Vision Dust			name = GetItemInfo(11137),
+		[11137] = { -- Vision Dust
+			name = GetItemInfo(11137),
 			minLevel = 30,
 			maxLevel = 40,
 			itemTypes = {
@@ -470,7 +471,7 @@ destroyingData.disenchant  = {
 						{
 							minItemLevel = 79,
 							maxItemLevel = 79,
-							amountOfMats = 1.125
+							amountOfMats = 1.5
 						},
 						{
 							minItemLevel = 80,
@@ -510,12 +511,12 @@ destroyingData.disenchant  = {
 						{
 							minItemLevel = 130,
 							maxItemLevel = 151,
-							amountOfMats = 1.875
+							amountOfMats = 1.5
 						},
 						{
 							minItemLevel = 152,
 							maxItemLevel = 200,
-							amountOfMats = 4.125
+							amountOfMats = 3.375
 						},
 					},
 				},
@@ -529,7 +530,7 @@ destroyingData.disenchant  = {
 						{
 							minItemLevel = 152,
 							maxItemLevel = 200,
-							amountOfMats = 1.21
+							amountOfMats = 1.1
 						},
 					},
 				},
@@ -568,7 +569,7 @@ destroyingData.disenchant  = {
 							amountOfMats = 2.625
 						},
 						{
-							minItemLevel = 326,
+							minItemLevel = 333,
 							maxItemLevel = 400,
 							amountOfMats = 3
 						},
@@ -808,19 +809,14 @@ destroyingData.disenchant  = {
 				[ARMOR] = {
 					[2] = {
 						{
-							minItemLevel = 79,
-							maxItemLevel = 79,
-							amountOfMats = 0.147
-						},
-						{
-							minItemLevel = 80,
+							minItemLevel = 66,
 							maxItemLevel = 99,
-							amountOfMats = 0.183
+							amountOfMats = 0.167
 						},
 						{
 							minItemLevel = 100,
 							maxItemLevel = 120,
-							amountOfMats = 0.330
+							amountOfMats = 0.3
 						},
 					},
 				},
@@ -855,12 +851,12 @@ destroyingData.disenchant  = {
 						{
 							minItemLevel = 130,
 							maxItemLevel = 151,
-							amountOfMats = 0.110
+							amountOfMats = 0.1
 						},
 						{
 							minItemLevel = 152,
 							maxItemLevel = 200,
-							amountOfMats = 0.330
+							amountOfMats = 0.3
 						},
 					},
 				},
@@ -888,28 +884,68 @@ destroyingData.disenchant  = {
 				[ARMOR] = {
 					[2] = {
 						{
-							minItemLevel = 272,
+							minItemLevel = 201,
+							maxItemLevel = 275,
+							amountOfMats = 0.125
+						},
+						{
+							minItemLevel = 276,
+							maxItemLevel = 290,
+							amountOfMats = 0.167
+						},
+						{
+							minItemLevel = 291,
 							maxItemLevel = 305,
-							amountOfMats = 0.375
+							amountOfMats = 0.208
 						},
 						{
 							minItemLevel = 306,
-							maxItemLevel = 318,
-							amountOfMats = 0.839
+							maxItemLevel = 315,
+							amountOfMats = 0.375
+						},
+						{
+							minItemLevel = 316,
+							maxItemLevel = 325,
+							amountOfMats = 0.625
+						},
+						{
+							minItemLevel = 326,
+							maxItemLevel = 400,
+							amountOfMats = 0.75
 						},
 					},
 				},
 				[WEAPON] = {
 					[2] = {
 						{
-							minItemLevel = 272,
+							minItemLevel = 201,
+							maxItemLevel = 275,
+							amountOfMats = 0.375
+						},
+						{
+							minItemLevel = 276,
+							maxItemLevel = 290,
+							amountOfMats = 0.5
+						},
+						{
+							minItemLevel = 291,
 							maxItemLevel = 305,
-							amountOfMats = 1.125
+							amountOfMats = 0.625
 						},
 						{
 							minItemLevel = 306,
-							maxItemLevel = 318,
-							amountOfMats = 2.250
+							maxItemLevel = 315,
+							amountOfMats = 1.125
+						},
+						{
+							minItemLevel = 316,
+							maxItemLevel = 325,
+							amountOfMats = 1.875
+						},
+						{
+							minItemLevel = 326,
+							maxItemLevel = 400,
+							amountOfMats = 2.25
 						},
 					},
 				},
@@ -924,6 +960,18 @@ destroyingData.disenchant  = {
 			maxLevel = 20,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 1,
+							maxItemLevel = 20,
+							amountOfMats = 0.05
+						},
+						{
+							minItemLevel = 21,
+							maxItemLevel = 25,
+							amountOfMats = 0.1
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 1,
@@ -943,13 +991,19 @@ destroyingData.disenchant  = {
 				},
 			},
 		},
-
 		[11084] = { -- Large Glimmering Shard
 			name = GetItemInfo(11084),
 			minLevel = 16,
 			maxLevel = 25,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 26,
+							maxItemLevel = 30,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 26,
@@ -975,6 +1029,13 @@ destroyingData.disenchant  = {
 			maxLevel = 30,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 31,
+							maxItemLevel = 35,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 31,
@@ -984,6 +1045,13 @@ destroyingData.disenchant  = {
 					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 31,
+							maxItemLevel = 35,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 31,
@@ -1000,6 +1068,13 @@ destroyingData.disenchant  = {
 			maxLevel = 35,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 36,
+							maxItemLevel = 40,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 36,
@@ -1009,6 +1084,13 @@ destroyingData.disenchant  = {
 					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 36,
+							maxItemLevel = 40,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 36,
@@ -1019,13 +1101,19 @@ destroyingData.disenchant  = {
 				},
 			},
 		},
-
 		[11177] = { -- Small Radiant Shard
 			name = GetItemInfo(11177),
 			minLevel = 36,
 			maxLevel = 40,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 41,
+							maxItemLevel = 45,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 41,
@@ -1033,13 +1121,44 @@ destroyingData.disenchant  = {
 							amountOfMats = 1.000
 						},
 					},
+					[4] = {
+						{
+							minItemLevel = 36,
+							maxItemLevel = 40,
+							amountOfMats = 3
+						},	
+						{
+							minItemLevel = 41,
+							maxItemLevel = 45,
+							amountOfMats = 3.5
+						},	
+					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 41,
+							maxItemLevel = 45,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 41,
 							maxItemLevel = 45,
 							amountOfMats = 1.000
+						},	
+					},
+					[4] = {
+						{
+							minItemLevel = 36,
+							maxItemLevel = 40,
+							amountOfMats = 3
+						},	
+						{
+							minItemLevel = 41,
+							maxItemLevel = 45,
+							amountOfMats = 3.5
 						},	
 					},
 				},
@@ -1051,6 +1170,13 @@ destroyingData.disenchant  = {
 			maxLevel = 45,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 46,
+							maxItemLevel = 50,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 46,
@@ -1058,13 +1184,34 @@ destroyingData.disenchant  = {
 							amountOfMats = 1.000
 						},
 					},
+					[4] = {
+						{
+							minItemLevel = 46,
+							maxItemLevel = 50,
+							amountOfMats = 3.5
+						},
+					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 46,
+							maxItemLevel = 50,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 46,
 							maxItemLevel = 50,
 							amountOfMats = 1.000
+						},	
+					},
+					[4] = {
+						{
+							minItemLevel = 46,
+							maxItemLevel = 50,
+							amountOfMats = 3.5
 						},
 					},
 				},
@@ -1076,6 +1223,13 @@ destroyingData.disenchant  = {
 			maxLevel = 50,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 51,
+							maxItemLevel = 55,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 51,
@@ -1083,13 +1237,34 @@ destroyingData.disenchant  = {
 							amountOfMats = 1.000
 						},
 					},
+					[4] = {
+						{
+							minItemLevel = 51,
+							maxItemLevel = 55,
+							amountOfMats = 3.5
+						},
+					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 51,
+							maxItemLevel = 55,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 51,
 							maxItemLevel = 55,
 							amountOfMats = 1.000
+						},	
+					},
+					[4] = {
+						{
+							minItemLevel = 51,
+							maxItemLevel = 55,
+							amountOfMats = 3.5
 						},
 					},
 				},
@@ -1101,6 +1276,13 @@ destroyingData.disenchant  = {
 			maxLevel = 75,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 56,
+							maxItemLevel = 65,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 56,
@@ -1110,6 +1292,13 @@ destroyingData.disenchant  = {
 					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 56,
+							maxItemLevel = 65,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 56,
@@ -1126,30 +1315,54 @@ destroyingData.disenchant  = {
 			maxLevel = 70,
 			itemTypes = {
 				[ARMOR] = {
+					[2] = {
+						{
+							minItemLevel = 66,
+							maxItemLevel = 99,
+							amountOfMats = 0.0167
+						},
+						{
+							minItemLevel = 100,
+							maxItemLevel = 120,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 66,
 							maxItemLevel = 99,
-							amountOfMats = 0.332
+							amountOfMats = 0.33
 						},
 						{
 							minItemLevel = 100,
-							maxItemLevel = 115,
-							amountOfMats = 0.995
+							maxItemLevel = 120,
+							amountOfMats = 1
 						},
 					},
 				},
 				[WEAPON] = {
+					[2] = {
+						{
+							minItemLevel = 66,
+							maxItemLevel = 99,
+							amountOfMats = 0.0167
+						},
+						{
+							minItemLevel = 100,
+							maxItemLevel = 120,
+							amountOfMats = 0.05
+						},
+					},
 					[3] = {
 						{
 							minItemLevel = 66,
 							maxItemLevel = 99,
-							amountOfMats = 0.332
+							amountOfMats = 0.33
 						},
 						{
 							minItemLevel = 100,
-							maxItemLevel = 115,
-							amountOfMats = 0.995
+							maxItemLevel = 120,
+							amountOfMats = 1
 						},
 					},
 				},
@@ -1161,30 +1374,54 @@ destroyingData.disenchant  = {
 			maxLevel = 80,
 			itemTypes = {
 				[ARMOR] = {
-					[3] = {
+					[2] = {
 						{
-							minItemLevel = 130,
-							maxItemLevel = 166,
-							amountOfMats = 0.332
+							minItemLevel = 121,
+							maxItemLevel = 151,
+							amountOfMats = 0.0167
 						},
 						{
-							minItemLevel = 167,
+							minItemLevel = 152,
 							maxItemLevel = 200,
-							amountOfMats = 0.995
+							amountOfMats = 0.05
+						},
+					},
+					[3] = {
+						{
+							minItemLevel = 121,
+							maxItemLevel = 164,
+							amountOfMats = 0.33
+						},
+						{
+							minItemLevel = 165,
+							maxItemLevel = 200,
+							amountOfMats = 1
 						},
 					},
 				},
 				[WEAPON] = {
-					[3] = {
+					[2] = {
 						{
-							minItemLevel = 130,
-							maxItemLevel = 166,
-							amountOfMats = 0.332
+							minItemLevel = 121,
+							maxItemLevel = 151,
+							amountOfMats = 0.0167
 						},
 						{
-							minItemLevel = 167,
+							minItemLevel = 152,
 							maxItemLevel = 200,
-							amountOfMats = 0.995
+							amountOfMats = 0.05
+						},
+					},
+					[3] = {
+						{
+							minItemLevel = 121,
+							maxItemLevel = 164,
+							amountOfMats = 0.33
+						},
+						{
+							minItemLevel = 165,
+							maxItemLevel = 200,
+							amountOfMats = 1
 						},
 					},
 				},
@@ -1198,28 +1435,28 @@ destroyingData.disenchant  = {
 				[ARMOR] = {
 					[3] = {
 						{
-							minItemLevel = 279,
+							minItemLevel = 201,
 							maxItemLevel = 316,
-							amountOfMats = 0.332
+							amountOfMats = 0.33
 						},
 						{
-							minItemLevel = 318,
-							maxItemLevel = 352,
-							amountOfMats = 1.000
+							minItemLevel = 317,
+							maxItemLevel = 400,
+							amountOfMats = 1
 						},
 					},
 				},
 				[WEAPON] = {
 					[3] = {
 						{
-							minItemLevel = 279,
+							minItemLevel = 201,
 							maxItemLevel = 316,
-							amountOfMats = 0.332
+							amountOfMats = 0.33
 						},
 						{
-							minItemLevel = 318,
-							maxItemLevel = 352,
-							amountOfMats = 1.000
+							minItemLevel = 317,
+							maxItemLevel = 400,
+							amountOfMats = 1
 						},
 					},
 				},
@@ -1237,8 +1474,13 @@ destroyingData.disenchant  = {
 					[4] = {
 						{
 							minItemLevel = 56,
-							maxItemLevel = 88,
+							maxItemLevel = 60,
 							amountOfMats = 1.000
+						},
+						{
+							minItemLevel = 61,
+							maxItemLevel = 94,
+							amountOfMats = 1.5
 						},
 					},
 				},
@@ -1246,14 +1488,18 @@ destroyingData.disenchant  = {
 					[4] = {
 						{
 							minItemLevel = 56,
-							maxItemLevel = 88,
+							maxItemLevel = 60,
 							amountOfMats = 1.000
+						},
+						{
+							minItemLevel = 61,
+							maxItemLevel = 94,
+							amountOfMats = 1.5
 						},
 					},
 				},
 			},
 		},
-
 		[22450] = { -- Void Crystal
 			name = GetItemInfo(22450),
 			minLevel = 70,
@@ -1262,18 +1508,28 @@ destroyingData.disenchant  = {
 				[ARMOR] = {
 					[4] = {
 						{
-							minItemLevel = 90,
-							maxItemLevel = 164,
+							minItemLevel = 95,
+							maxItemLevel = 99,
 							amountOfMats = 1
+						},
+						{
+							minItemLevel = 100,
+							maxItemLevel = 164,
+							amountOfMats = 1.5
 						},
 					},
 				},
 				[WEAPON] = {
 					[4] = {
 						{
-							minItemLevel = 90,
-							maxItemLevel = 164,
+							minItemLevel = 95,
+							maxItemLevel = 99,
 							amountOfMats = 1
+						},
+						{
+							minItemLevel = 100,
+							maxItemLevel = 164,
+							amountOfMats = 1.5
 						},
 					},
 				},
@@ -1287,8 +1543,8 @@ destroyingData.disenchant  = {
 				[ARMOR] = {
 					[4] = {
 						{
-							minItemLevel = 185,
-							maxItemLevel = 284,
+							minItemLevel = 165,
+							maxItemLevel = 299,
 							amountOfMats = 1.000
 						},
 					},
@@ -1296,8 +1552,8 @@ destroyingData.disenchant  = {
 				[WEAPON] = {
 					[4] = {
 						{
-							minItemLevel = 185,
-							maxItemLevel = 284,
+							minItemLevel = 165,
+							maxItemLevel = 299,
 							amountOfMats = 1.000
 						},
 					},
@@ -1312,8 +1568,8 @@ destroyingData.disenchant  = {
 				[ARMOR] = {
 					[4] = {
 						{
-							minItemLevel = 285,
-							maxItemLevel = 416,
+							minItemLevel = 300,
+							maxItemLevel = 400,
 							amountOfMats = 1.000
 						},
 					},
@@ -1322,7 +1578,7 @@ destroyingData.disenchant  = {
 					[4] = {
 						{
 							minItemLevel = 285,
-							maxItemLevel = 416,
+							maxItemLevel = 400,
 							amountOfMats = 1.000
 						},
 					},

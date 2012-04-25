@@ -289,7 +289,9 @@ local function LoadOptionsPage(parent)
 							step = 0.05,
 							callback = function(_,_,value)
 									TSM.db.profile.auctionFrameScale = value
-									AuctionFrame:SetScale(value)
+									if AuctionFrame then
+										AuctionFrame:SetScale(value)
+									end
 								end,
 							tooltip = L["Changes the size of the auction frame. The size of the detached TSM auction frame will always be the same as the main auction frame."],
 						},

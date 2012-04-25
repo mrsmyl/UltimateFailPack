@@ -1,3 +1,14 @@
+v1.3
+*Added further warnings for users who may still have TSM_Gathering installed.
+*Fixed error caused by having Auctioneer enabled by not the Appraiser module.
+*Performed a major reorganization of TSM's code to make it easier to find specific functions.
+*Added tooltip support for selection lists.
+*Fixed a bug with SelectionLists not adding/removing items that were selected by not visible.
+*Updated all the disenchanting tables to fix a handful of inaccuracies.
+*Fixed an error caused by changing the Auction House scale before opening it for the first time.
+*SelectionList filters will now be parsed to avoid string pattern errors.
+*Many other minor bug fixes and improvements.
+
 v1.2
 *Added destroying data for essences / shards / crystals for the Destroying feature in the Shopping module.
 *Fixed various bugs with the TSM auction house tab / detached frame not displaying correctly.

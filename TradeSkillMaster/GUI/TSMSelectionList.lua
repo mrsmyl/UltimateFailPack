@@ -184,8 +184,14 @@ local function OnButtonClick(self)
 	self:GetParent().obj:Fire("On"..self.type.."Clicked", selected)
 end
 
+local illegalChars = {"[", "]", "(", ")"}
 local function OnFilterSet(self,_,value)
 	AceGUI:ClearFocus()
+	if value then
+		for _, c in ipairs(illegalChars) do
+			value = gsub(value, "%"..c, "%%"..c)
+		end
+	end
 	self.obj:Fire("OnFilterEntered", value)
 end
 

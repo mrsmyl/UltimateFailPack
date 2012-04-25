@@ -5,21 +5,21 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("TradeSkillMaster", "frFR")
 if not L then return end
 
--- L["Action2 Button Color"] = ""
+L["Action2 Button Color"] = "Couleur du bouton d'Action2" -- Needs review
 -- L["Action2 Highlight Color"] = ""
--- L["Action2 Text Color"] = ""
--- L["Action Button Color"] = ""
+L["Action2 Text Color"] = "Couleur du texte d'Action2" -- Needs review
+L["Action Button Color"] = "Couleur du bouton d'Action" -- Needs review
 -- L["Action Highlight Color"] = ""
--- L["Action Text Color"] = ""
+L["Action Text Color"] = "Couleur du texte d'Action" -- Needs review
 L["Active Developers:"] = "Développeurs actifs:"
--- L["Additional error suppressed"] = ""
+L["Additional error suppressed"] = "Erreur(s) additionelle(s) supprimée(s)" -- Needs review
 L["Addons:"] = "Add-ons: "
 L["Allows you to build a queue of crafts that will produce a profitable, see what materials you need to obtain, and actually craft the items."] = "Vous permet de créer une file de craft qui produira un objet, de voir quel matériaux vous avez besoin et de créer les objets."
 L["Allows you to quickly and easily empty your mailbox as well as automatically send items to other characters with the single click of a button."] = "Vous permet de vider rapidement et facilement votre boite aux lettres ainsi que d'envoyer automatiquement des objets à d'autres personnages d'un simple clic."
 L["Any craft that is disabled in the category pages of one of the Crafting profession icons in the main TSM window won't show up in the Craft Management Window."] = "Toute création d'objet (craft) désactivée dans les panneaux de catégories d'un métier (icônes sur la gauche de la fenêtre principale de TSM) ne s'affichera pas dans la fenêtre de gestion des Crafts."
 -- L["Attach TSM Tab"] = ""
 L["Auctionator - Auction Value"] = "Auctionator - Valeur de l'enchère"
-L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = "AuctionDB peut mettre la valeur du marché, le prix d'achat minimum, et le nombre de vue d'un objet dans le tooltip. Vous pouvez activer ceci dans les options de AuctionDB."
+L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = "AuctionDB peut afficher le prix du marché, le prix d'achat minimum ainsique le nombre de vues d'un objet dans les tooltips. Vous pouvez l'activer dans l'onglet options de AuctionDB." -- Needs review
 L["AuctionDB - Market Value"] = "AuctionDB - Valeur marchande"
 L["AuctionDB - Minimum Buyout"] = "AuctionDB - Achat minimum"
 -- L["Auctioneer - Appraiser"] = ""
@@ -28,7 +28,7 @@ L["Auctioneer - Minimum Buyout"] = "Auctioneer - Achat minimum"
 L["Auction Frame Scale"] = "Echelle de la fenêtre des métiers"
 L["Auction House Tab Button Colors"] = "Couleurs des onglets de l'Hotel des Ventes."
 -- L["Auction House Tab Settings"] = ""
-L["Auctioning's CancelAll scan can be used to quickly cancel specific items. Anything from items under a certain duration to specific items, to entire groups."] = "La fonction \"Tout annuler\" d'Auctioning peut être utilisé rapidement pour annuler des objets spécifiques. (Objets ayant un temps restant court, des groupes entiers, ou des objets avec un nom particulier) "
+L["Auctioning's CancelAll scan can be used to quickly cancel specific items. Anything from items under a certain duration to specific items, to entire groups."] = "La fonction \"Tout annuler\" d'Auctioning peut-être utilisé pour annuler rapidement des objets spécifiques.Qu'il s'agisse d'objets ayant un temps d'enchère particulier, d' objets spécifiques ou de groupes entiers. " -- Needs review
 L["Author(s):"] = "Auteur(s):"
 L["Backdrop Color"] = "Couleur de fond"
 L["BC - Blue Quality"] = "BC - Qualité bleu (rare)"
@@ -53,7 +53,7 @@ L["Common Inks"] = "Encres communes"
 L["Control Button Color"] = "Contrôle de la couleur du bouton"
 L["Control Highlight Color"] = "Contrôle de la couleur du surlignage"
 L["Control Text Color"] = "Contrôle de la couleur du texte"
-L["Crafting can make Auctioning groups for you. Just click on a profession icon, a category, and then the \"Create Auctioning Groups\" button."] = "Crafting peut créer des groupes d'Auctioning pour vous. Cliquez sur une icône de profession, une catégorie, et enfin le bouton \"Créer des groupes Auctioning\""
+L["Crafting can make Auctioning groups for you. Just click on a profession icon, a category, and then the \"Create Auctioning Groups\" button."] = "Crafting peut créer des groupes d'Auctioning pour vous. Cliquez simplement sur une icône de profession, une catégorie, et enfin le bouton \"Créer des groupes Auctioning\"" -- Needs review
 L["Crafting Cost"] = "Coût du craft"
 L["Crafting's on-hand queue will queue up the most profitable items you can make from the materials you have in your bags."] = "\"File d'attente : Composants disponible\" de Crafting ajoutera en file d'attente les objets les plus bénéfiques a vendre avec les composants disponible dans vos sacs."
 L["Credits"] = "Crédits"
@@ -81,7 +81,7 @@ L["Hide Minimap Icon"] = "Cacher l'icône de la Mini-carte"
 L["I am a bot!"] = "Je suis un robot !"
 L["I am human!"] = "Je suis un humain !"
 L["If checked, all tables listing auctions will display the bid as well as the buyout of the auctions. This will not take effect immediately and may require a reload."] = "Si coché, toutes les listes d'enchères afficheront le dépôt ainsi que le prix d'achat immédiat. Cela ne prendra pas effet immédiatement et peut nécessiter un rafraîchissement."
-L["If the Craft Management Window is too big, you can scale it down in the Crafting options."] = "Si la fenêtre de management des crafts est trop grosse, vous pouvez la réduire dans les options de Crafting."
+L["If the Craft Management Window is too big, you can scale it down in the Crafting options."] = "Si la fenêtre de gestion des crafts est trop grande, vous pouvez réduire sa taille dans les options de Crafting." -- Needs review
 L["I'll Go There Now!"] = "J'y vais maintenant !"
 L["Installed Modules"] = "Modules installés"
 -- L["ItemAuditor - Cost"] = ""
@@ -124,8 +124,8 @@ L["Status"] = "Statut"
 L["Status / Credits"] = "Status / Crédits"
 L["Testers (Special Thanks):"] = "Testeurs (Remerciements spécial):"
 L["Thanks!"] = "Merci !"
-L["The only required module of TradeSkillMaster is the main one (TradeSkillMaster). All others may be disabled if you are not using them."] = "Le seul module requis de TradeSkillMaster est le principal (TradeSkillMaster). Tout les autres peuvent êtres désactivé si vous ne les utiliser pas !"
-L["There is a checkbox for hiding the minimap icon in the status page of the main TSM window."] = "Vous pouvez cocher une option pour masquer l’icône de la minimap dans la fenêtre principale de TSM"
+L["The only required module of TradeSkillMaster is the main one (TradeSkillMaster). All others may be disabled if you are not using them."] = "Le seul module requis de TradeSkillMaster est le principal (TradeSkillMaster). Tout les autres peuvent êtres désactivés si vous ne les utilisez pas !" -- Needs review
+L["There is a checkbox for hiding the minimap icon in the status page of the main TSM window."] = "Il y a une case à cocher pour masquer l’icône de la minimap dans la fenêtre principale de TSM" -- Needs review
 L["There is an option for hiding Auctioning's advanced options in the top \"Options\" page of the Auctioning page in the main TSM window."] = "Il y a une option pour masquer les options avancées d'Auctioning dans la partie \"Options\" de Auctioning"
 --[==[ L[ [=[There is only one price level and seller for this item.
 
@@ -154,7 +154,7 @@ L["Use the options below to change the color of the various TSM frames including
 L["Vendor Sell Price"] = "Prix de vente au PNJ"
 L["Version:"] = "Version:"
 -- L["Visit %s for information about the different TradeSkillMaster modules as well as download links."] = ""
-L["Want more tips? Click on the \"New Tip\" button at the bottom of the status page."] = "Vous cherchez plus d'astuces ? Cliquez sur le bouton \"Astuce suivante\" en bas de la page de TSM"
+L["Want more tips? Click on the \"New Tip\" button at the bottom of the status page."] = "Pour plus d'astuces : Cliquez sur le bouton \"Astuce suivante\" en bas de la page de d'état de TSM" -- Needs review
 L[ [=[Welcome to the release version of TradeSkillMaster!
 
 If you ever need help with TSM, check out the resources listed on the first page of the main TSM window (type /tsm or click the minimap icon)!]=] ] = [=[Bienvenue sur la version finale de TradeSkillMaster
