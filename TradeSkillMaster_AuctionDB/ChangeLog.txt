@@ -1,3 +1,9 @@
+v1.2
+*Further optimized the code that decodes the data from the saved variables file when AuctionDB is loaded.
+*Added APIs to support the new special searches in TSM_Shopping.
+*Added disenchant value to the TSM tooltip and applicable options in the AuctionDB config.
+*Many other minor bug fixes and improvements.
+
 v1.1
 *Dramatically reduced the amount of time it takes AuctionDB to load.
 *Removed all caching which should get rid of all interface lag due to AuctionDB.

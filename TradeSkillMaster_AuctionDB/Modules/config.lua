@@ -438,6 +438,7 @@ function Config:LoadOptions(container)
 						{
 							type = "CheckBox",
 							label = L["Enable display of AuctionDB data in tooltip."],
+							fullWidth = true,
 							quickCBInfo = {TSM.db.profile, "tooltip"},
 							callback = function(_,_,value)
 									if value then
@@ -445,7 +446,50 @@ function Config:LoadOptions(container)
 									else
 										TSMAPI:UnregisterTooltip("TradeSkillMaster_AuctionDB")
 									end
+									container:SelectTab(2)
 								end,
+						},
+						{
+							type = "CheckBox",
+							label = L["Display disenchant value in tooltip."],
+							disabled = not TSM.db.profile.tooltip,
+							quickCBInfo = {TSM.db.profile, "deTooltip"},
+							tooltip = L["If checked, the disenchant value of the item will be shown. This value is calculated using the average market value of materials the item will disenchant into."],
+						},
+						{
+							type = "Label",
+							relativeWidth = 0.2,
+							text = L["Disenchant source:"]
+						},
+						{
+							type = "CheckBox",
+							label = L["Market Value"],
+							cbType = "radio",
+							relativeWidth = 0.15,
+							value = TSM.db.profile.deValueSource == "market",
+							callback = function(self,_,value)
+									if value then
+										TSM.db.profile.deValueSource = "market"
+										local i = getIndex(self.parent.children, self)
+										self.parent.children[i+1]:SetValue(false)
+									end
+								end,
+							tooltip = L["Use market value for calculating disenchant value."],
+						},
+						{
+							type = "CheckBox",
+							label = L["Min Buyout"],
+							cbType = "radio",
+							relativeWidth = 0.15,
+							value = TSM.db.profile.deValueSource == "minBuyout",
+							callback = function(self,_,value)
+									if value then
+										TSM.db.profile.deValueSource = "minBuyout"
+										local i = getIndex(self.parent.children, self)
+										self.parent.children[i-1]:SetValue(false)
+									end
+								end,
+							tooltip = L["Use min buyout for calculating disenchant value."],
 						},
 					},
 				},
@@ -492,7 +536,6 @@ function Config:LoadOptions(container)
 							cbType = "radio",
 							relativeWidth = 0.16,
 							value = TSM.db.profile.resultsSortOrder == "ascending",
-							disabled = TSM.db.profile.resultsSortOrder == nil,
 							callback = function(self,_,value)
 									if value then
 										TSM.db.profile.resultsSortOrder = "ascending"
@@ -508,7 +551,6 @@ function Config:LoadOptions(container)
 							cbType = "radio",
 							relativeWidth = 0.16,
 							value = TSM.db.profile.resultsSortOrder == "descending",
-							disabled = TSM.db.profile.resultsSortOrder == nil,
 							callback = function(self,_,value)
 									if value then
 										TSM.db.profile.resultsSortOrder = "descending"

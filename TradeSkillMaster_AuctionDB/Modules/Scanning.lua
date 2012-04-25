@@ -471,6 +471,10 @@ function Scan:ProcessScanData(scanData)
 		TSM:Print(L["It is strongly recommended that you reload your ui (type '/reload') after running a GetAll scan. Otherwise, any other scans (Post/Cancel/Search/etc) will be much slower than normal."])
 	end
 	
+	if isScanning == "GetAll Scan" or isScanning == "Full Scan" then
+		TSM.db.factionrealm.lastCompleteScan = time()
+	end
+	
 	TSM.Data:ProcessData(data) -- fix queue param?
 end
 
@@ -490,5 +494,6 @@ function Scan:ProcessImportedData(auctionData)
 		end
 		data[itemID] = {records=records, minBuyout=minBuyout, quantity=quantity}
 	end
+	TSM.db.factionrealm.lastCompleteScan = time()
 	TSM.Data:ProcessData(data)
 end

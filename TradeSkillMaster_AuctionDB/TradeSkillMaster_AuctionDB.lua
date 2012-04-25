@@ -24,6 +24,7 @@ local savedDBDefaults = {
 		scanData = "",
 		time = 0,
 		lastAutoUpdate = 0;
+		lastCompleteScan = 0;
 	},
 	profile = {
 		scanSelections = {},
@@ -32,6 +33,8 @@ local savedDBDefaults = {
 		resultsSortOrder = "ascending",
 		resultsSortMethod = "name",
 		hidePoorQualityItems = true,
+		deTooltip = true,
+		deValueSource = "market",
 	},
 }
 
@@ -54,6 +57,9 @@ function TSM:OnInitialize()
 	TSMAPI:RegisterSlashCommand("adbreset", TSM.Reset, L["Resets AuctionDB's scan data"], true)
 	TSMAPI:RegisterData("market", TSM.GetData)
 	TSMAPI:RegisterData("seenCount", TSM.GetSeenCount)
+	TSMAPI:RegisterData("lastCompleteScan", TSM.GetLastCompleteScan)
+	TSMAPI:RegisterData("lastCompleteScanTime", TSM.GetLastScanTime)
+	TSMAPI:RegisterData("deValue", TSM.GetDisenchantValue)
 	TSMAPI:AddPriceSource("DBMarket", L["AuctionDB - Market Value"], function(itemLink) return TSM:GetData(itemLink) end)
 	TSMAPI:AddPriceSource("DBMinBuyout", L["AuctionDB - Minimum Buyout"], function(itemLink) return select(5, TSM:GetData(itemLink)) end)
 
@@ -101,6 +107,12 @@ function TSM:LoadTooltip(itemID, quantity)
 	end
 	if totalSeen then
 		tinsert(text, L["AuctionDB Seen Count:"].." |cffffffff"..totalSeen)
+	end
+	if TSM.db.profile.deTooltip then
+		local deValue = TSM:GetDisenchantValue(itemID)
+		if deValue > 0 then
+			tinsert(text, "Disenchant Value:".." |cffffffff"..TSMAPI:FormatTextMoney(deValue, "|cffffffff"))
+		end
 	end
 
 	return text
@@ -154,8 +166,11 @@ end
 local alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_="
 local base = #alpha
 local alphaTable = {}
+local alphaTableLookup = {}
 for i=1, base do
-	tinsert(alphaTable, strsub(alpha, i, i))
+	local char = strsub(alpha, i, i)
+	tinsert(alphaTable, char)
+	alphaTableLookup[char] = i
 end
 
 local function decode(h)
@@ -164,7 +179,7 @@ local function decode(h)
 
 	local i = #h - 1
 	for w in string.gmatch(h, "([A-Za-z0-9_=])") do
-		result = result + (strfind(alpha, w)-1)*(base^i)
+		result = result + (alphaTableLookup[w]-1)*(base^i)
 		i = i - 1
 	end
 
@@ -195,12 +210,9 @@ function encodeScans(scans)
 				result = result .. "!"
 			end
 			result = (result or "") .. encode(day) .. ":"
-			--local dayInfo = {}
 			for i=1, #data do
-				--dayInfo[i] = encode(data[i])
 				result = result .. encode(data[i]) .. (data[i+1] and ";" or "")
 			end
-			--result = result .. table.concat(dayInfo, ";")
 		else
 			if result then
 				result = result .. "!"
@@ -256,4 +268,47 @@ end
 
 function TSM:GetSeenCount(itemID)
 	return TSM.data[itemID] and TSM.data[itemID].seen
+end
+
+function TSM:GetLastCompleteScan()
+	local lastScan = {}
+	for itemID, data in pairs(TSM.data) do
+		if data.lastScan == TSM.db.factionrealm.lastCompleteScan then
+			lastScan[itemID] = {marketValue=data.marketValue, minBuyout=data.minBuyout}
+		end
+	end
+	
+	return lastScan
+end
+
+function TSM:GetLastScanTime()
+	return TSM.db.factionrealm.lastCompleteScan
+end
+
+function TSM:GetDisenchantValue(link)
+	local _, itemLink, quality, ilvl, _, iType = GetItemInfo(link)
+	local id = TSMAPI:GetItemID(itemLink)
+	if not id or TSMAPI.DestroyingData.notDisenchantable[id] or not (iType == ARMOR or iType == WEAPON) then return 0 end
+	
+	local value = 0
+	for _, data in ipairs(TSMAPI.DestroyingData.disenchant) do
+		for itemID, itemData in pairs(data) do
+			if type(itemID) == "number" and itemData.itemTypes[iType] and itemData.itemTypes[iType][quality] then
+				local _, temp = GetItemInfo(itemID)
+				for _, deData in ipairs(itemData.itemTypes[iType][quality]) do
+					if ilvl >= deData.minItemLevel and ilvl <= deData.maxItemLevel then
+						local matValue
+						if TSM.db.profile.deValueSource == "market" then
+							matValue = TSM:GetData(itemID)
+						else
+							matValue = select(5, TSM:GetData(itemID))
+						end
+						value = value + (matValue or 0)*deData.amountOfMats
+					end
+				end
+			end
+		end
+	end
+	
+	return value
 end
