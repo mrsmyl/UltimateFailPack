@@ -13,7 +13,7 @@ end
 --					GUI Creation functions					 --
 -- ------------------------------------------------ --
 
-function Search:Show(frame)
+function Search:Show(frame, mouseButton)
 	Search.searchBar = Search.searchBar or Search:CreateSearchBar(frame)
 	Search.searchBar:Show()
 	Search.searchBar.editBox:SetFocus()
@@ -56,6 +56,7 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 		edgeSize = 24,
 		insets = {left = 4, right = 4, top = 4, bottom = 4},
 	})
+	frame:Hide()
 	TSMAPI:RegisterForColorChanges(frame)
 	frame:SetAllPoints(contentFrame)
 	frame:SetFrameLevel(contentFrame:GetFrameLevel() + 5)
@@ -97,7 +98,7 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 	
 	for i=0, numButtons-1 do
 		local row = CreateFrame("Button", nil, recentFrame)
-		row:RegisterForClicks("AnyDown")
+		row:RegisterForClicks("AnyUp")
 		if i == 0 then
 			row:SetPoint("TOPLEFT", 6, -8)
 			row:SetHeight(buttonHeight+2)
@@ -114,7 +115,7 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 					Search.searchBar.editBox:HighlightText(0, 0)
 				elseif button == "RightButton" then
 					if IsShiftKeyDown() then
-						TSM:Print("\""..TSM.db.global.previousSearches[i].."\" removed from recent searches.")
+						TSM:Printf(L["%s removed from recent searches."], "\""..TSM.db.global.previousSearches[i].."\"")
 						tremove(TSM.db.global.previousSearches, i)
 					else
 						TSM.Config:CreateNewShoppingList(TSM.db.global.previousSearches[i], true)
@@ -193,6 +194,23 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 	text:SetText(L["|cffffbb11No dealfinding or shopping lists found. You can create shopping/dealfinding lists through the TSM_Shopping options.\n\nTIP: You can search for multiple items at a time by separating them with a semicolon. For example: \"volatile life; volatile earth; volatile water\"|r"])
 	
 	savedFrame.st = Search:CreateListsST(savedFrame)
+	
+	local function OnDealfindingSearchButtonClick()
+		local lists = {}
+		for listName in pairs(TSM.db.profile.dealfinding) do
+			tinsert(lists, listName)
+		end
+		Search:StartDealfindingSearch(lists)
+	end
+	
+	local btn = GUI:CreateButton(savedFrame, nil, "control", 1, "CENTER")
+	btn:SetPoint("TOPLEFT", savedFrame.st.frame, "BOTTOMLEFT", 10, -2)
+	btn:SetPoint("TOPRIGHT", savedFrame.st.frame, "BOTTOMRIGHT", -10, -2)
+	btn:SetHeight(20)
+	btn:SetText(L["Scan All Dealfinding Lists"])
+	btn:SetScript("OnClick", OnDealfindingSearchButtonClick)
+	btn.tooltip = L["Starts a dealfinding search which searches for all your dealfinding lists at once."]
+	savedFrame.dealfindingSearchButton = btn
 	
 	savedFrame:SetScript("OnUpdate", function(self)
 			local num = 0
@@ -284,7 +302,7 @@ function Search:CreateListsST(parent)
 	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()), true)
 	st.frame:SetParent(parent)
 	st.frame:SetPoint("TOPLEFT", 0, -20)
-	st.frame:SetPoint("BOTTOMRIGHT")
+	st.frame:SetPoint("BOTTOMRIGHT", 0, 30)
 	st.frame:SetScript("OnSizeChanged", function(_,width, height)
 			st:SetDisplayCols(GetSTColInfo(width))
 			st:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
@@ -358,6 +376,119 @@ function Search:UpdateListsST(st)
 		tinsert(rows, {cols={{value=data.text}}, listName=data.listName})
 	end
 	st:SetData(rows)
+end
+
+function Search:CreateSpecialSearchFrame(parent, contentFrame)
+	local frame = CreateFrame("Frame", nil, parent)
+	frame:SetBackdrop({
+		bgFile = "Interface\\Buttons\\WHITE8X8",
+		tile = false,
+		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		edgeSize = 24,
+		insets = {left = 4, right = 4, top = 4, bottom = 4},
+	})
+	frame:Hide()
+	TSMAPI:RegisterForColorChanges(frame)
+	frame:SetAllPoints(contentFrame)
+	frame:SetFrameLevel(contentFrame:GetFrameLevel() + 5)
+	frame:SetScript("OnShow", function() parent.specialSearchesButton:SetText(L["Hide Special Searches"]) end)
+	frame:SetScript("OnHide", function() parent.specialSearchesButton:SetText(L["Show Special Searches"]) end)
+	frame:EnableMouse(true)
+	
+	local infoText = L["Below are various special searches that TSM_Shopping can perform. The scans will use data from your most recent scan (or import) if the data is less than an hour old. Data can come from TSM_AuctionDB or TSM_WoWuction. Otherwise, they will do a scan of the entire AH which may take several minutes."]
+	local text = frame:CreateFontString()
+	text:SetFontObject(GameFontNormal)
+	text:SetPoint("TOPLEFT", 10, -10)
+	text:SetPoint("TOPRIGHT", -10, -10)
+	text:SetHeight(100)
+	text:SetTextColor(1, 1, 1, 1)
+	text:SetJustifyH("LEFT")
+	text:SetJustifyV("TOP")
+	frame.infoText = text
+	
+	local canUseScanData
+	frame:SetScript("OnUpdate", function()
+			local timeText, extraText = "", ""
+			local lastScanTime, lastScanAddon
+			
+			local lastAuctionDBScan = TSMAPI:GetData("lastCompleteScanTime")
+			local lastWoWuctionTime = TSMAPI:GetData("wowuctionLastScanTime")
+			if lastAuctionDBScan and lastWoWuctionTime then
+				-- check which was more recent if we have both
+				if lastAuctionDBScan > lastWoWuctionTime then
+					lastScanTime = lastAuctionDBScan
+					lastScanAddon = "TSM_AuctionDB"
+				else
+					lastScanTime = lastWoWuctionTime
+					lastScanAddon = "TSM_WoWuction"
+				end
+			elseif lastAuctionDBScan then
+				lastScanTime = lastAuctionDBScan
+				lastScanAddon = "TSM_AuctionDB"
+			elseif lastWoWuctionTime then
+				lastScanTime = lastWoWuctionTime
+				lastScanAddon = "TSM_WoWuction"
+			end
+			
+			if lastScanTime then
+				local diff = time() - lastScanTime
+				if diff < 3600 then
+					canUseScanData = lastScanAddon
+					timeText = format(L["%s minute(s), %s second(s) ago with %s"], floor(diff/60), diff%60, lastScanAddon)
+				else
+					canUseScanData = nil
+					timeText = L["Over an hour ago"]
+				end
+			else
+				canUseScanData = nil
+				timeText = L["Unknown"]
+			end
+			
+			if not canUseScanData then
+				extraText = "\n\n|cffff0000"..L["WARNING: No recent scan data found. Scans may take several minutes."]
+			end
+			
+			frame.infoText:SetText(infoText.."\n\n"..L["Last Scan"]..": "..(canUseScanData and "|cff00ff00" or "|cffff0000")..timeText.."|r"..extraText)
+		end)
+	
+	local specialSearches = {
+		{btnText=L["Vendor Search"], tag="vendor", desc=L["A vendor search will look for auctions which can be purchased and then sold to a vendor for a profit."], func=function() Search:StartVendorSearch(canUseScanData) end, enabled=true},
+		{btnText=L["Disenchant Search"], tag="disenchant", desc=L["A disenchant search will look for auctions which can be purchased and disenchanted for a profit."], func=function() Search:StartDisenchantSearch(canUseScanData) end, enabled=(select(4, GetAddOnInfo("TradeSkillMaster_AuctionDB")) == 1), disabledText="This search requires TSM_AuctionDB. If you already have it installed, make sure it's enabled and up to date."},
+	}
+	
+	local bar = TSMAPI:GetGUIFunctions():AddHorizontalBar(frame, -100, nil, true)
+	
+	for i, data in ipairs(specialSearches) do
+		local bar = TSMAPI:GetGUIFunctions():AddHorizontalBar(frame, -100-50*i, nil, true)
+	
+		local btn = GUI:CreateButton(frame, nil, "action2", 1, "CENTER")
+		btn:SetPoint("TOPLEFT", 10, -115-50*(i-1))
+		btn:SetHeight(30)
+		btn:SetWidth(200)
+		btn:SetText(data.btnText)
+		btn:SetScript("OnClick", data.func)
+		btn:GetFontString():SetFontObject(GameFontNormalHuge)
+		btn.tooltip = data.desc
+		frame[data.tag.."Button"] = btn
+		
+		local text = frame:CreateFontString()
+		text:SetFontObject(GameFontNormal)
+		text:SetPoint("TOPLEFT", 230, -115-50*(i-1))
+		text:SetPoint("TOPRIGHT", -10, -115-50*(i-1))
+		text:SetHeight(30)
+		text:SetTextColor(1, 1, 1, 1)
+		text:SetJustifyH("LEFT")
+		text:SetJustifyV("TOP")
+		text:SetText(data.desc)
+		frame[data.tag.."DescText"] = text
+		
+		if not data.enabled then
+			btn:Disable()
+			text:SetText(data.disabledText)
+		end
+	end
+	
+	return frame
 end
 
 function Search:CreateSearchBar(parent)
@@ -439,6 +570,8 @@ function Search:CreateSearchBar(parent)
 	searchBarFrame.editBox = eb
 	
 	searchBarFrame.suggestionFrame = Search:CreateSearchSuggestionFrame(searchBarFrame, parent.content)
+	searchBarFrame.specialFrame = Search:CreateSpecialSearchFrame(searchBarFrame, parent.content)
+	searchBarFrame.suggestionFrame:Show()
 	
 	local function OnSearchClick()
 		Search:StartRegularSearch(Search.searchBar.editBox:GetText())
@@ -447,44 +580,50 @@ function Search:CreateSearchBar(parent)
 	local btn = GUI:CreateButton(searchBarFrame, "TSMAHTabSearchButton", "control", 1, "CENTER")
 	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 2, -10)
 	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 2, 8)
-	btn:SetWidth(70)
+	btn:SetWidth(80)
 	btn:SetText(SEARCH)
 	btn:SetScript("OnClick", OnSearchClick)
 	searchBarFrame.button = btn
 	
-	local function OnSavedSearchesButtonClick()
+	local function OnSavedSearchesButtonClick(self)
 		if searchBarFrame.suggestionFrame:IsVisible() then
 			searchBarFrame.suggestionFrame:Hide()
 		else
 			searchBarFrame.suggestionFrame:Show()
+			if searchBarFrame.specialFrame:IsVisible() then
+				searchBarFrame.specialFrame:Hide()
+			end
 		end
-	end
-	
-	local function OnDealfindingSearchButtonClick()
-		local lists = {}
-		for listName in pairs(TSM.db.profile.dealfinding) do
-			tinsert(lists, listName)
-		end
-		Search:StartDealfindingSearch(lists)
 	end
 	
 	local btn = GUI:CreateButton(searchBarFrame, nil, "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 80, -10)
-	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 80, 8)
+	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 90, -10)
+	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 90, 8)
 	btn:SetWidth(170)
 	btn:SetText(L["Show Saved Searches"])
 	btn:SetScript("OnClick", OnSavedSearchesButtonClick)
 	btn.tooltip = L["Show/Hide the saved searches frame. This frame shows all your recent searches as well as your shopping and dealfinding lists."]
 	searchBarFrame.savedSearchesButton = btn
 	
+	local function OnSpecialSearchesButtonClick()
+		if searchBarFrame.specialFrame:IsVisible() then
+			searchBarFrame.specialFrame:Hide()
+		else
+			searchBarFrame.specialFrame:Show()
+			if searchBarFrame.suggestionFrame:IsVisible() then
+				searchBarFrame.suggestionFrame:Hide()
+			end
+		end
+	end
+	
 	local btn = GUI:CreateButton(searchBarFrame, nil, "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 260, -10)
-	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 260, 8)
-	btn:SetWidth(150)
-	btn:SetText(L["Dealfinding Search"])
-	btn:SetScript("OnClick", OnDealfindingSearchButtonClick)
-	btn.tooltip = L["Starts a dealfinding search which searches for all your dealfinding lists at once."]
-	searchBarFrame.dealfindingSearchButton = btn
+	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 270, -10)
+	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 270, 8)
+	btn:SetWidth(170)
+	btn:SetText(L["Show Special Searches"])
+	btn:SetScript("OnClick", OnSpecialSearchesButtonClick)
+	btn.tooltip = L["Show/Hide the special searches frame. This frame shows all the special searches such as vendor, disenchanting, resale, and more."]
+	searchBarFrame.specialSearchesButton = btn
 	
 	searchBarFrame.Disable = function(self)
 		self.isDisabled = true
@@ -492,6 +631,7 @@ function Search:CreateSearchBar(parent)
 		self.editBox:Disable()
 		self.button:Disable()
 		self.suggestionFrame:Hide()
+		self.specialFrame:Hide()
 	end
 	searchBarFrame.Enable = function(self)
 		self.isDisabled = nil
@@ -597,8 +737,7 @@ function Search:UpdateTopLabel(page, numPages, numLeft)
 	local filterNum = Search.currentSearch.num - numLeft + 1
 	local temp = {(";"):split(Search.currentSearch.filter)}
 	local currentFilter = "\"|cff99ffff"..(temp[filterNum]):trim().."|r\""
-	Search.topLabel.text:SetFormattedText(L["Scanning page %s of %s for filter: %s"], page, numPages, currentFilter)
-	return filterNum, numPages
+	Search.topLabel.text:SetFormattedText(L["Scanning page %s of %s for filter %s of %s: %s"], page, numPages, filterNum, Search.currentSearch.num, currentFilter)
 end
 
 -- Updates the Search ST

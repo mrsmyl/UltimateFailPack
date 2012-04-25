@@ -203,6 +203,10 @@ end
 function Search:SetMarketPrice(item)
 	if specialSearchMode == "Dealfinding" then
 		item:SetMarketValue(TSM.Config:GetDealfindingData(item:GetItemID()).maxPrice)
+	elseif specialSearchMode == "Vendor" then
+		item:SetMarketValue(select(11, GetItemInfo(item:GetItemID())))
+	elseif specialSearchMode == "Disenchant" then
+		item:SetMarketValue(TSMAPI:GetData("deValue", item:GetItemID()))
 	elseif Search:IsAutomaticMode() then
 		item:SetMarketValue(TSM.Automatic.currItem.cost)
 	else
@@ -211,7 +215,12 @@ function Search:SetMarketPrice(item)
 end
 
 function Search:IsAutomaticMode()
-	return specialSearchMode and specialSearchMode ~= "Dealfinding"
+	return specialSearchMode and not Search:IsSpecialSearch()
+end
+
+function Search:IsSpecialSearch()
+	local specialSearchModes = {Dealfinding=true, Vendor=true, Disenchant=true}
+	return specialSearchModes[specialSearchMode]
 end
 
 
@@ -320,6 +329,85 @@ function Search:StartAutomaticSearch(itemLink, automaticFrame)
 	Search:StartScan(filters)
 end
 
+function Search:StartVendorSearch(useScanData)
+	if not useScanData then
+		TSM:Print(L["Performing a full scan due to no recent scan data being available. This may take several minutes."])
+	end
+
+	TSM.AuctionControl:HideAuctionConfirmation()
+	
+	local filters, filterStrings = {}, {}
+	
+	if useScanData then
+		for itemID, data in pairs(TSMAPI:GetData("lastCompleteScan") or {}) do
+			local vendorPrice = select(11, GetItemInfo(itemID))
+			if vendorPrice and data.minBuyout and vendorPrice > data.minBuyout then
+				local filterData = TSMAPI:GetAuctionQueryInfo(itemID)
+				if filterData then
+					tinsert(filters, filterData)
+					tinsert(filterStrings, filterData.name)
+				end
+			end
+		end
+	else
+		filters = {{name=""}}
+		filterStrings = {L["Vendor Search"]}
+	end
+		
+	filters.num = #filters
+	filters.currentFilter = table.concat(filterStrings, "; ")
+	if #filters == 0 then
+		return TSM:Print(L["Nothing below vendor price from last scan."])
+	end
+	
+	specialSearchMode = "Vendor"
+	Search.searchST:SetPctColText(L["% Vendor Price"])
+	Search:StartScan(filters, {L["Vendor Search"]})
+end
+
+function Search:StartDisenchantSearch(useScanData)
+	if not useScanData then
+		TSM:Print(L["Performing a full scan due to no recent scan data being available. This may take several minutes."])
+	end
+
+	TSM.AuctionControl:HideAuctionConfirmation()
+	
+	local filters, filterStrings = {}, {}
+	
+	if useScanData then
+		local scanData
+		if useScanData == "TSM_WoWuction" then
+			scanData = TSMAPI:GetData("wowuctionLastScan") or {}
+		else
+			scanData = TSMAPI:GetData("lastCompleteScan") or {}
+		end
+	
+		for itemID, data in pairs(scanData) do
+			local deValue = TSMAPI:GetData("deValue", itemID)
+			if deValue > 0 and data.minBuyout and deValue > data.minBuyout then
+				local filterData = TSMAPI:GetAuctionQueryInfo(itemID)
+				if filterData then
+					tinsert(filters, filterData)
+					tinsert(filterStrings, filterData.name)
+				end
+			end
+		end
+	else
+		filters = {{name="", quality=2, class=1}, {name="", quality=2, class=2}}
+		filterStrings = {L["Disenchantable Weapons"], L["Disenchantable Armor"]}
+	end
+		
+	filters.num = #filters
+	filters.currentFilter = table.concat(filterStrings, "; ")
+	if #filters == 0 then
+		return TSM:Print(L["Nothing worth disechanting from last scan."])
+	end
+	
+	specialSearchMode = "Disenchant"
+	Search.searchST:SetPctColText(L["% Disenchant Value"])
+	Search:StartScan(filters, {L["Disenchant Search"]})
+end
+
 
 -- ------------------------------------------------ --
 --				Scanning Processing functions				 --
@@ -366,7 +454,7 @@ function Search:ProcessScan(scanData, isComplete)
 		elseif not obj.searchFlag then
 			local validItem = true
 			local filter = Search.currentSearch.filters[filterNum]
-			if type(filter) == "table" and specialSearchMode ~= "Dealfinding" then
+			if type(filter) == "table" and not Search:IsSpecialSearch() then
 				local name, _, rarity, iLevel = GetItemInfo(itemString)
 				if filter.exactOnly and filter.exactOnly ~= 0 then
 					validItem = name and strlower(name) == strlower(filter.name)
@@ -397,12 +485,34 @@ function Search:ProcessScan(scanData, isComplete)
 							end
 						end)
 					validItem = #obj.records > 0
+				else
+					validItem = false
 				end
+			elseif specialSearchMode == "Vendor" then
+				local vendorPrice = select(11, GetItemInfo(itemString))
+				if vendorPrice and vendorPrice > 0 then
+					obj:FilterRecords(function(record) return record:GetItemBuyout() >= vendorPrice end)
+					validItem = #obj.records > 0
+				else
+					validItem = false
+				end
+			elseif specialSearchMode == "Disenchant" then
+				local deValue = TSMAPI:GetData("deValue", itemString)
+				if deValue > 0 then
+					obj:FilterRecords(function(record) return record:GetItemBuyout() >= deValue end)
+					validItem = #obj.records > 0
+				else
+					validItem = false
+				end
+			end
+			
+			if Search:IsAutomaticMode() then
+				validItem = specialSearchMode == itemString
 			end
 			
 			-- delete if it's not an item we want
 			-- set up the market value and add up the auctions
-			if validItem and (not Search:IsAutomaticMode() or specialSearchMode == itemString) and (specialSearchMode ~= "Dealfinding" or TSM.Config:GetDealfindingData(obj:GetItemID())) then
+			if validItem then
 				Search:SetMarketPrice(obj)
 				obj.searchFlag = true
 				numAuctions = numAuctions + #obj.records
