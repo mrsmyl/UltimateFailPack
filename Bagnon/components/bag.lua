@@ -378,22 +378,19 @@ function Bag:PurchaseSlot()
 			text = CONFIRM_BUY_BANK_SLOT,
 			button1 = YES,
 			button2 = NO,
-
-			OnAccept = function()
-				PurchaseSlot()
-			end,
+			OnAccept = PurchaseSlot,
 
 			OnShow = function(self)
 				MoneyFrame_Update(self:GetName() .. 'MoneyFrame', GetBankSlotCost(GetNumBankSlots()))
 			end,
 
 			hasMoneyFrame = 1,
-			timeout = 0,
-			hideOnEscape = 1,
+			hideOnEscape = 1, timeout = 0,
+			preferredIndex = 3
 		}
 	end
 
-  PlaySound('igMainMenuOption')
+  	PlaySound('igMainMenuOption')
 	StaticPopup_Show('CONFIRM_BUY_BANK_SLOT_BAGNON')
 end
 
@@ -440,7 +437,7 @@ function Bag:IsBackpack()
 	return Bagnon:IsBackpack(self:GetID())
 end
 
-function Bag:IsInventoryBagSlot()
+function Bag:IsBackpackBag()
   return Bagnon:IsBackpackBag(self:GetID())
 end
 
@@ -453,7 +450,7 @@ function Bag:IsBankBagSlot()
 end
 
 function Bag:IsCustomSlot()
-	return self:IsInventoryBagSlot() or self:IsBankBagSlot()
+	return self:IsBackpackBag() or self:IsBankBagSlot()
 end
 
 

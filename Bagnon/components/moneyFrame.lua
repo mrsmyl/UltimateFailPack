@@ -5,63 +5,31 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local MoneyFrame = Bagnon:NewClass('MoneyFrame', 'Frame')
-local ItemCache = LibStub('LibItemCache-1.0')
-
-
---[[ Things! ]]--
-
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-local GOLD_TEXT = string.format('|cffffd700%s|r', 'g')
-local SILVER_TEXT = string.format('|cffc7c7cf%s|r', 's')
-local COPPER_TEXT = string.format('|cffeda55f%s|r', 'c')
+local ItemCache = LibStub('LibItemCache-1.0')
 
 
 --[[ Constructor ]]--
 
 function MoneyFrame:New(frameID, parent)
-	local f = self:Bind(CreateFrame('Frame', 'BagnonMoneyFrame' .. self:GetNextID(), parent, 'SmallMoneyFrameTemplate'))
+	local f = self:Bind(CreateFrame('Button', parent:GetName() .. 'MoneyFrame', parent, 'SmallMoneyFrameTemplate'))
 	f:SetFrameID(frameID)
-	f:AddClickFrame()
+	f:SetHeight(24)
+	
+	local click = CreateFrame('Button', f:GetName() .. 'Click', f)
+	click:SetFrameLevel(self:GetFrameLevel() + 4)
+	click:RegisterForClicks('anyUp')
+	click:SetAllPoints()
+	
+	click:SetScript('OnClick', function(_, ...) f:OnClick(...) end)
+	click:SetScript('OnEnter', function() f:OnEnter() end)
+	click:SetScript('OnLeave', function() f:OnLeave() end)
 
-	f:SetScript('OnShow', f.OnShow)
-	f:SetScript('OnHide', f.OnHide)
-	f:RegisterMessage('PLAYER_UPDATE')
-
-	return f
-end
-
---creates a clickable frame for tooltips/etc
-local function ClickFrame_OnClick(self, button)
-	self:GetParent():OnClick(button)
-end
-
-local function ClickFrame_OnEnter(self)
-	self:GetParent():OnEnter()
-end
-
-local function ClickFrame_OnLeave(self)
-	self:GetParent():OnLeave()
-end
-
-function MoneyFrame:AddClickFrame()
-	local f = CreateFrame('Button', self:GetName() .. 'Click', self)
-	f:SetFrameLevel(self:GetFrameLevel() + 3)
-	f:SetAllPoints(self)
-
-	f:SetScript('OnClick', ClickFrame_OnClick)
-	f:SetScript('OnEnter', ClickFrame_OnEnter)
-	f:SetScript('OnLeave', ClickFrame_OnLeave)
+	f:SetScript('OnShow', f.UpdateEverything)
+	f:SetScript('OnHide', f.UpdateEvents)
+	f:SetScript('OnEvent', f.UpdateValue)
 
 	return f
-end
-
-do
-	local id = 0
-	function MoneyFrame:GetNextID()
-		local nextID = id + 1
-		id = nextID
-		return nextID
-	end
 end
 
 
@@ -75,14 +43,6 @@ end
 
 
 --[[ Frame Events ]]--
-
-function MoneyFrame:OnShow()
-	self:UpdateEverything()
-end
-
-function MoneyFrame:OnHide()
-	self:UpdateEvents()
-end
 
 function MoneyFrame:OnClick()
 	local name = self:GetName()
@@ -103,30 +63,32 @@ end
 
 function MoneyFrame:OnEnter()
 	if not ItemCache:HasCache() then
-    return
-  end
+    	return
+  	end
 
-	GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
-	GameTooltip:SetText(string.format(L.TipGoldOnRealm, GetRealmName()))
+	-- Total
+	local total = 0
+	for i, player in ItemCache:IteratePlayers() do
+		total = total + ItemCache:GetMoney(player)
+	end
 
-	local totalMoney = 0
+	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOM')
+	GameTooltip:AddDoubleLine(L.Total, GetCoinTextureString(total), nil,nil,nil, 1,1,1)
+	GameTooltip:AddLine(' ')
+	
+	-- Each player
 	for i, player in ItemCache:IteratePlayers() do
 		local money = ItemCache:GetMoney(player)
 		if money > 0 then
-			totalMoney = totalMoney + money
-			self:AddPlayer(player, money)
+			GameTooltip:AddDoubleLine(player, self:GetCoinsText(money), 1,1,1, 1,1,1)
 		end
 	end
-
-	GameTooltip:AddLine('----------------------------------------')
-	self:AddPlayer(L.Total, totalMoney)
+	
 	GameTooltip:Show()
 end
 
 function MoneyFrame:OnLeave()
-	if GameTooltip:IsOwned(self) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 
@@ -152,7 +114,7 @@ function MoneyFrame:UpdateEvents()
 end
 
 
---[[ Frame Properties ]]--
+--[[ Properties ]]--
 
 function MoneyFrame:GetSettings()
 	return Bagnon.FrameSettings:Get(self:GetFrameID())
@@ -178,38 +140,30 @@ function MoneyFrame:GetMoney()
 end
 
 
---[[ API ]]--
+--[[ Methods ]]--
 
-function MoneyFrame:AddPlayer(player, money)
+function MoneyFrame:GetCoinsText(money)
 	local gold, silver, copper = self:GetCoins(money)
-	local text
+	local text = ''
 
 	if gold > 0 then
-		text = format('|cffffffff%d|r%s', gold, GOLD_TEXT)
+		text = format('%d|cffffd700%s|r', gold, GOLD_AMOUNT_SYMBOL)
 	end
 
 	if silver > 0 then
-		if text then
-			text = text .. format(' |cffffffff%d|r%s', silver, SILVER_TEXT)
-		else
-			text = format('|cffffffff%d|r%s', silver, SILVER_TEXT)
-		end
+		text = text .. format(' %d|cffc7c7cf%s|r', silver, SILVER_AMOUNT_SYMBOL)
 	end
 
-	if copper > 0 then
-		if text then
-			text = text .. format(' |cffffffff%d|r%s', copper, COPPER_TEXT)
-		else
-			text = format('|cffffffff%d|r%s', copper, COPPER_TEXT)
-		end
+	if copper > 0 or money == 0 then
+		text = text .. format(' %d|cffeda55f%s|r', copper, COPPER_AMOUNT_SYMBOL)
 	end
 
-	GameTooltip:AddDoubleLine(player, text, 1, 1, 1, 1, 1, 1, 0)
+	return text
 end
 
 function MoneyFrame:GetCoins(money)
-  local gold = floor(money / (COPPER_PER_SILVER * SILVER_PER_GOLD))
-  local silver = floor((money - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
-  local copper = money % COPPER_PER_SILVER
-  return gold, silver, copper
+	local gold = floor(money / (COPPER_PER_SILVER * SILVER_PER_GOLD))
+	local silver = floor((money - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
+	local copper = money % COPPER_PER_SILVER
+	return gold, silver, copper
 end
