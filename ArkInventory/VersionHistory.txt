@@ -15,6 +15,10 @@
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
  
+*3.02.91 (02-MAY-2012)*
+ * updated - pets and mounts
+ * fixed - issue with rules window font application
+
 *3.02.90 (22-APR-2012)*
  * fixed - tainted frames caused by opening AI for the first time, while in combat.  the first 50 slots of each bag are pre-loaded before entering the game world to ensure they are secure. this will use up more memory but guarantee that all slots are usable while in combat
  * fixed - soulbound issue introduced in 3.02.89

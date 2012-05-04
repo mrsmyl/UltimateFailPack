@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2010, all rights reserved.
--- $Revision: 899 $
--- $Date: 2012-04-15 01:45:01 +1000 (Sun, 15 Apr 2012) $
+-- $Revision: 907 $
+-- $Date: 2012-05-02 19:05:11 +1000 (Wed, 02 May 2012) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -67,7 +67,7 @@ function ArkInventoryRules.OnEnable( )
 		end
 	end
 	
-	ArkInventory.MediaSetFontFrame( ARKINV_Rules, fontName )
+	ArkInventory.MediaSetFontFrame( ARKINV_Rules )
 	
 	ArkInventory.ItemCacheClear( )
 	ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )

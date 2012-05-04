@@ -1,11 +1,23 @@
 ------------------------------------------------------------------------
-r332 | arkayenro | 2012-04-22 03:52:38 +0000 (Sun, 22 Apr 2012) | 4 lines
+r334 | arkayenro | 2012-05-02 09:16:55 +0000 (Wed, 02 May 2012) | 4 lines
 Changed paths:
-   A /tags/3.02.90 (from /trunk:331)
+   A /tags/3.02.91 (from /trunk:333)
 
-*3.02.90 (22-APR-2012)*
- * fixed - tainted frames caused by opening AI for the first time, while in combat.  the first 50 slots of each bag are pre-loaded before entering the game world to ensure they are secure. this will use up more memory but guarantee that all slots are usable while in combat
- * fixed - soulbound issue introduced in 3.02.89
+*3.02.91 (02-MAY-2012)*
+ * updated - pets and mounts
+ * fixed - issue with rules window font application
+
+------------------------------------------------------------------------
+r333 | arkayenro | 2012-05-02 09:15:00 +0000 (Wed, 02 May 2012) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryCompanion.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+*3.02.91 (02-MAY-2012)*
+ * updated - pets and mounts
+ * fixed - issue with rules window font application
 
 ------------------------------------------------------------------------
 r331 | arkayenro | 2012-04-22 03:48:07 +0000 (Sun, 22 Apr 2012) | 4 lines
