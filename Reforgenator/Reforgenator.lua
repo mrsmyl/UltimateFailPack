@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "1.3.17"
+local version = "1.3.19"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -138,7 +138,19 @@ local options =
             get = function(info)
                 return Reforgenator.db.profile.verbose.emit
             end,
-        }
+        },
+		Money = 
+		{
+            name = "Reforging Cost",
+            desc = "Provide details on the cost of Reforging",
+            type = "toggle",
+            set = function(info, val)
+                Reforgenator.db.profile.verbose.money = val
+            end,
+            get = function(info)
+				return Reforgenator.db.profile.verbose.money
+            end,
+        },
     },
 }
 
@@ -179,6 +191,10 @@ local defaults =
 		{
             emit = false,
         },
+		Money =
+		{
+			hide = false,
+		},
     },
     global = 
 	{
@@ -206,7 +222,7 @@ local help_options =
 |cffffd200SpellHitCap|r: the spell hit cap, normally 17% but is affected by various modifiers.
 |cffffd200DWHitCap|r: the dual-wield hit cap, normally 27% but is affected by various modifiers.
 |cffffd200RangedHitCap|r: the ranged hit cap, normally 8% but is affected by various modifiers.
-|cffffd200ExpertiseSoftCap|r: the expertise soft cap where dodge is pushed off the attack table. Normally 26 but is appected by various modifiers.
+|cffffd200ExpertiseSoftCap|r: the expertise soft cap where dodge is pushed off the attack table. Normally 26 but is affected by various modifiers.
 |cffffd200ExpertiseHardCap|r: the expertise hard cap where parry is pushed off the attack table. Currently 55 for 4.0.3.
 |cffffd200MaximumPossible|r: reforge to get as much of this stat as is possible.
 |cffffd2001SecGCD|r: the value of haste rating necessary to reduce the GCD to one second.
@@ -388,14 +404,15 @@ function Reforgenator:InitializeConstants()
 
     --
     -- These rating taken from http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/
-	-- [0] = Vanilla [1] = BC [2] = Wrath [3] = Cata 
-	-- Returns value based on Game version from GetAccountExpansionLevel()
+	-- [0] = Vanilla [1] = BC [2] = Wrath [3] = Cata  [4] MOP
+	-- Returns value based on Game version from GetExpansionLevel()
     local HIT_RATING_CONVERSIONS = 
 	{
         [0] = 9.37931,
         [1] = 14.7905,
         [2] = 30.7548,
         [3] = 120.109,
+		[4] = 400,						-- Tennative 
     }
     local SPELL_HIT_RATING_CONVERSIONS = 
 	{
@@ -403,6 +420,7 @@ function Reforgenator:InitializeConstants()
         [1] = 12.6154,
         [2] = 26.232,
         [3] = 102.446,
+		[4] = 400,						-- Tennative
     }
     local EXP_RATING_CONVERSIONS = 
 	{
@@ -410,6 +428,7 @@ function Reforgenator:InitializeConstants()
         [1] = 3.69761,
         [2] = 7.68869,
         [3] = 30.0272,
+		[4] = 400,						-- Tennative 
     }
     local HASTE_RATING_CONVERSIONS = 
 	{
@@ -417,6 +436,7 @@ function Reforgenator:InitializeConstants()
         [1] = 15.7692,
         [2] = 32.79,
         [3] = 128.05701,
+		[4] = 500,						-- Tennative 
     }
     local MASTERY_RATING_CONVERSIONS = 
 	{
@@ -424,6 +444,7 @@ function Reforgenator:InitializeConstants()
         [1] = 22.0769,
         [2] = 45.906,
         [3] = 179.28,
+		[4] = 700,						-- Tennative 
     }
 
     local CRIT_RATING_CONVERSIONS = 
@@ -432,6 +453,7 @@ function Reforgenator:InitializeConstants()
         [1] = 22.0769,
         [2] = 45.906,
         [3] = 179.28,
+		[4] = 700,						-- Tennative 
     }
 
     local PARRY_RATING_CONVERSIONS = 
@@ -440,6 +462,7 @@ function Reforgenator:InitializeConstants()
         [1] = 21.76154,
         [2] = 45.25019,
         [3] = 176.7189,
+		[4] = 1035,						-- Tennative 
     }
 
     local DODGE_RATING_CONVERSIONS = 
@@ -448,9 +471,10 @@ function Reforgenator:InitializeConstants()
         [1] = 21.76154,
         [2] = 45.25019,
         [3] = 176.7189,
+		[4] = 1035,						-- Tennative 
     }
 
-    local gameVersion = GetAccountExpansionLevel()
+    local gameVersion = GetExpansionLevel()
     c.RATING_CONVERSIONS = 
 	{
         meleeHit = HIT_RATING_CONVERSIONS[gameVersion],
@@ -1875,10 +1899,10 @@ function Reforgenator:ExpertiseMods(playerModel)
     --   Enh shamans get +4 for each point in Unleashed Rage
     local reduction = 0;
 
-    if playerModel:isBloodDK() then
-        self:Explain("+6 expertise for being blood DK")
-        reduction = reduction + (6 * K)
-    end
+   -- if playerModel:isBloodDK() then
+   --     self:Explain("+6 expertise for being blood DK")
+   --     reduction = reduction + (6 * K)
+   -- end
 
     if playerModel.className == "PALADIN" then
         local hasGlyph = nil
@@ -2307,7 +2331,7 @@ function Reforgenator:BearThreatModel()	-- going to call this one Threat
     model.reforgeOrder = 
 	{
         {
-            rating = CR_DODGE,
+            rating = CR_EXPERTISE,
             cap = "MaximumPossible"
         },
         {
@@ -2478,7 +2502,7 @@ function Reforgenator:RetPallyModel()
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.79,
     }
 
-    model.notes = 'http://elitistjerks.com/f76/t110342-retribution_concordance_4_3_voice_dps/'
+    model.notes = 'http://www.noxxic.com/pve/paladin/retribution/stat-priority-and-reforging-strats'
 
     model.reforgeOrder = 
 	{
@@ -3446,7 +3470,7 @@ function Reforgenator:LoadDefaultModels()
     self:LoadModel(self:BoomkinModel(), 'Druid, Boomkin', 'DRUID/1', 'DRUID')
 	self:LoadModel(self:CatModel(), 'Druid, Feral cat', nil, 'DRUID')
     self:LoadModel(self:BearSurvivalModel(), 'Druid, Bear Survival', 'DRUID/2', 'DRUID')
-	--self:LoadModel(self:BearThreatModel(), 'Druid, Bear Threat', 'DRUID/2', 'DRUID')    --not sure why this one is not working but something doesn't like it.
+	self:LoadModel(self:BearThreatModel(), 'Druid, Bear Threat', nil, 'DRUID')    --seems to be working now I will have to keep an eye on it.
     self:LoadModel(self:RestoDruidModel(), 'Druid, Restoration', 'DRUID/3', 'DRUID')
 	
     self:LoadModel(self:BeastMasterHunterModel(), 'Hunter, BM', 'HUNTER/1', 'HUNTER')
