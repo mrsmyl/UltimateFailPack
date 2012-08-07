@@ -53,6 +53,7 @@ function TomTom:Initialize(event, addon)
                 goodcolor = {0, 1, 0},
                 badcolor = {1, 0, 0},
                 middlecolor = {1, 1, 0},
+				exactcolor = {0, 1, 0},
                 arrival = 15,
                 lock = false,
                 noclick = false,
@@ -193,7 +194,12 @@ function TomTom:GetKeyArgs(m, f, x, y, title)
         f = floors == 0 and 0 or 1
     end
 
-    return string.format("%d:%d:%d:%d:%s", m, f, x*10e8, y*10e8, tostring(title))
+	-- Fudge the x/y values so they avoid precision/printf issues
+	local x = x * 10000
+	local y = y * 10000
+
+    local key = string.format("%d:%d:%d:%d:%s", m, f, x*10e4, y*10e4, tostring(title))
+	return key
 end
 
 local flipFixFrame = CreateFrame("Frame", "TomTomMapFlipFixFrame", UIParent)
@@ -263,15 +269,25 @@ function TomTom:ReloadWaypoints()
             local m,f,x,y = unpack(waypoint)
             local title = waypoint.title
 
-            self:AddMFWaypoint(m, f, x, y, {
-                desc = title,
-                title = title,
-                persistent = waypoint.persistent,
-                minimap = minimap,
-                world = world,
-                callbacks = nil,
-                silent = true,
-            })
+			-- Set up default options
+			local options = {
+				desc = title,
+				title = title,
+				persistent = waypoint.persistent,
+				minimap = minimap,
+				world = world,
+				callbacks = nil,
+				silent = true,
+			}
+
+			-- Override options with what is stored in the profile
+			for k,v in pairs(waypoint) do
+				if type(k) == "string" then
+					options[k] = v
+				end
+			end
+
+            self:AddMFWaypoint(m, f, x, y, options)
         end
     end
 end
@@ -842,14 +858,15 @@ function TomTom:AddMFWaypoint(m, f, x, y, opts)
 
     local zoneName = lmd:MapLocalize(m)
 
-    if not astrolabe:GetMapInfo(m) then
-        return
-    end
-
     -- Get the default map floor, if necessary
     if not f then
-        local floors = astrolabe:GetNumFloors(m)
-        f = floors == 0 and 0 or 1
+		if not astrolabe:GetMapInfo(m) then
+			-- guess the floor
+			f = 0
+		else
+			local floors = astrolabe:GetNumFloors(m)
+			f = floors == 0 and 0 or 1
+		end
     end
 
     -- Ensure there isn't already a waypoint at this location

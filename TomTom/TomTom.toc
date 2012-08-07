@@ -1,14 +1,14 @@
 ## Interface: 40300
 ## Title: TomTom
 ## Author: jnwhiteh
-## Version: v40300-1.4.4
+## Version: v40300-1.4.5
 ## License: All Rights Reserved
 ## Notes: Acts as your portable navigation assistant
 ## Notes-zhCN:一个简单的导航助手。
 ## Notes-ruRU: Удобный портативный навигатор по игровой карте
 ## Author: Cladhaire
 ## SavedVariables: TomTomDB, TomTomWaypoints, TomTomWaypointsMF
-## X-Curse-Packaged-Version: v40300-1.4.4
+## X-Curse-Packaged-Version: v40300-1.4.5
 ## X-Curse-Project-Name: TomTom
 ## X-Curse-Project-ID: tomtom
 ## X-Curse-Repository-ID: wow/tomtom/mainline
