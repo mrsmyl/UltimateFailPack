@@ -314,16 +314,41 @@ local HealBot_ClassIconCoord = {
     DEATHKNIGHT = {3,2},
     DEFAULT = {4,4}};
     
-local ciCol,ciRow=nil,nil
-function HealBot_Action_SetClassIconTexture(button, unit)
+local role_tex_file = "Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES.blp"
+local role_t = "\124T"..role_tex_file..":%d:%d:"
+local role_tex = {
+   DAMAGER = role_t.."0:0:64:64:20:39:22:41\124t",
+   HEALER  = role_t.."0:0:64:64:20:39:1:20\124t",
+   TANK    = role_t.."0:0:64:64:0:19:22:41\124t",
+   LEADER  = role_t.."0:0:64:64:0:19:1:20\124t",
+   NONE    = ""
+}
+local ciCol,ciRow, unitRole=nil,nil,nil
+local str,a,b,c,d=nil,nil,nil,nil,nil
+
+function getRoleTexCoord(role)
+  str = role_tex[role]
+  if not str or #str == 0 then return nil end
+  a,b,c,d = string.match(str, ":(%d+):(%d+):(%d+):(%d+)%\124t")
+  return a/64,b/64,c/64,d/64
+end
+
+function HealBot_Action_SetClassIconTexture(button, unit, hbGUID)
     bar = HealBot_Action_HealthBar(button);
     if not bar then return end
-    iconName = _G[bar:GetName().."Icon15"];
-    _,class = UnitClass(unit)
-    ciCol, ciRow = HealBot_ClassIconCoord[class or "DEFAULT"][1],HealBot_ClassIconCoord[class or "DEFAULT"][2];
-    left, top = (ciRow-1)*0.25,(ciCol-1)*0.25;
-    iconName:SetTexture([[Interface\AddOns\HealBot\Images\icon_class.tga]]);
-    iconName:SetTexCoord(left,left+0.25,top,top+0.25);
+    iconName = _G[bar:GetName().."Icon15"];   
+    unitRole=UnitGroupRolesAssigned(unit)    
+    if Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin]==1 and unitRole~="NONE" then
+        iconName:SetTexture(role_tex_file);
+        a,b,c,d = getRoleTexCoord(unitRole);
+        iconName:SetTexCoord(a,b,c,d);
+    else
+        _,class = UnitClass(unit)
+        ciCol, ciRow = HealBot_ClassIconCoord[class or "DEFAULT"][1],HealBot_ClassIconCoord[class or "DEFAULT"][2];
+        left, top = (ciRow-1)*0.25,(ciCol-1)*0.25;
+        iconName:SetTexture([[Interface\AddOns\HealBot\Images\icon_class.tga]]);
+        iconName:SetTexCoord(left,left+0.25,top,top+0.25);
+    end
 end
 
 local thisX=nil

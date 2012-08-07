@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "4.3.2.0";
+HEALBOT_VERSION = "4.3.4.1";
 
 -------------
 -- ENGLISH --
@@ -748,6 +748,7 @@ HEALBOT_WORD_SOLO                       = "Solo";
 HEALBOT_WORD_NEVER                      = "Never";
 HEALBOT_SHOW_CLASS_AS_ICON              = "as icon";
 HEALBOT_SHOW_CLASS_AS_TEXT              = "as text";
+HEALBOT_SHOW_ROLE                       = "show role when set";
 
 HEALBOT_SHOW_INCHEALS                   = "Show incoming heals";
 HEALBOT_D_DURATION                      = "Direct duration";
@@ -818,6 +819,9 @@ HEALBOT_INFO_INCHEALINFO                = "== Healbot Version Information =="
 HEALBOT_INFO_ADDONCPUUSAGE              = "== Addon CPU Usage in Seconds =="
 HEALBOT_INFO_ADDONCOMMUSAGE             = "== Addon Comms Usage =="
 HEALBOT_WORD_HEALER                     = "Healer"
+HEALBOT_WORD_DAMAGER                    = "Damager"
+HEALBOT_WORD_TANK                       = "Tank"
+HEALBOT_WORD_LEADER                     = "Leader"
 HEALBOT_WORD_VERSION                    = "Version"
 HEALBOT_WORD_CLIENT                     = "Client"
 HEALBOT_WORD_ADDON                      = "Addon"

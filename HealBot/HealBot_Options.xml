@@ -5025,7 +5025,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="12" y="-315"/>
+                      <AbsDimension x="12" y="-325"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -5040,7 +5040,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="12" y="-315"/>
+                      <AbsDimension x="12" y="-325"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -5070,7 +5070,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="12" y="-315"/>
+                      <AbsDimension x="12" y="-325"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -5196,11 +5196,24 @@
                   <OnClick>HealBot_Options_ShowClassOnBar_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
+              <CheckButton name="HealBot_Options_ShowRoleOnBar" inherits="SendMailRadioButtonTemplate" id="1">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowClassOnBar" relativePoint="TOPLEFT">
+                    <Offset>
+                      <AbsDimension x="25" y="-20"/>
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_SHOW_ROLE)</OnLoad>
+                  <OnClick>HealBot_Options_ShowRoleOnBar_OnClick(self,self:GetID())</OnClick>
+                </Scripts>
+              </CheckButton>
               <CheckButton name="HealBot_Options_ShowClassOnBarType1" inherits="SendMailRadioButtonTemplate" id="1">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowClassOnBar" relativePoint="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="145" y="4"/>
+                      <AbsDimension x="158" y="-5"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -5226,7 +5239,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_BarTextInClassColour" relativePoint="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="0" y="-35" />
+                      <AbsDimension x="0" y="-45" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -5253,7 +5266,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowNameOnBar" relativePoint="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="0" y="-35" />
+                      <AbsDimension x="0" y="-40" />
                     </Offset>
                   </Anchor>
                 </Anchors>

@@ -5872,6 +5872,7 @@ function HealBot_Update_Skins()
             if not Healbot_Config_Skins.ihbarcolg[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ihbarcolg[Healbot_Config_Skins.Skins[x]] = 1 end
             if not Healbot_Config_Skins.ihbarcolb[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ihbarcolb[Healbot_Config_Skins.Skins[x]] = 0.2 end
             if not Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Skins[x]] = 1 end
+            if not Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Skins[x]] = 1 end
             if not Healbot_Config_Skins.HighLightActiveBar[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.HighLightActiveBar[Healbot_Config_Skins.Skins[x]] = 1 end
             if not Healbot_Config_Skins.HighLightActiveBarInCombat[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.HighLightActiveBarInCombat[Healbot_Config_Skins.Skins[x]] = 0 end
             if not Healbot_Config_Skins.HighLightActiveBar[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.HighLightActiveBar[Healbot_Config_Skins.Skins[x]] = 1 end

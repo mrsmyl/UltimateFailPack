@@ -503,6 +503,7 @@ function HealBot_Options_setNewSkin(newSkinName)
     Healbot_Config_Skins.ShowHoTicons[newSkinName] = Healbot_Config_Skins.ShowHoTicons[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIcon[newSkinName] = Healbot_Config_Skins.ShowRaidIcon[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIconStar[newSkinName] = Healbot_Config_Skins.ShowRaidIconStar[Healbot_Config_Skins.Current_Skin]
+    Healbot_Config_Skins.ShowRole[newSkinName] = Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] 
     Healbot_Config_Skins.ShowRaidIconCircle[newSkinName] = Healbot_Config_Skins.ShowRaidIconCircle[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIconDiamond[newSkinName] = Healbot_Config_Skins.ShowRaidIconDiamond[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIconTriangle[newSkinName] = Healbot_Config_Skins.ShowRaidIconTriangle[Healbot_Config_Skins.Current_Skin]
@@ -692,6 +693,7 @@ function HealBot_Options_DeleteSkin_OnClick(self)
         Healbot_Config_Skins.UseFluidBars[hbDelSkinName] = nil
         Healbot_Config_Skins.BarFreq[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowHoTicons[hbDelSkinName] = nil
+        Healbot_Config_Skins.ShowRole[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowRaidIcon[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowRaidIconStar[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowRaidIconCircle[hbDelSkinName] = nil
@@ -2134,6 +2136,12 @@ function HealBot_Options_ShowClassOnBarType_OnClick(self,id)
         HealBot_setOptions_Timer(150)
     end
 end
+
+function HealBot_Options_ShowRoleOnBar_OnClick(self)
+    Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] = self:GetChecked() or 0;
+    HealBot_setOptions_Timer(150)
+end
+
 
 function HealBot_Options_ProtectPvP_OnClick(self)
     HealBot_Globals.ProtectPvP = self:GetChecked() or 0;
@@ -4787,6 +4795,7 @@ function HealBot_Options_BuildSkinSendMsg(skinName, partID)
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.HideIncTank[skinName]
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.HideIncFocus[skinName]
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.FrameScale[skinName]
+        ssMsg=ssMsg.."!"..Healbot_Config_Skins.ShowRole[skinName]
     end
     return ssMsg
 end
@@ -4973,7 +4982,7 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
          tmpMsg[1],  tmpMsg[2],  tmpMsg[3],  tmpMsg[4],  tmpMsg[5],  tmpMsg[6],  tmpMsg[7],  tmpMsg[8],  tmpMsg[9], tmpMsg[10],
          tmpMsg[11],  tmpMsg[12],  tmpMsg[13],  tmpMsg[14], tmpMsg[15], tmpMsg[16], tmpMsg[17], tmpMsg[18], tmpMsg[19], tmpMsg[20],
          tmpMsg[21], tmpMsg[22], tmpMsg[23], tmpMsg[24], tmpMsg[25], tmpMsg[26], tmpMsg[27], tmpMsg[28], tmpMsg[29], tmpMsg[30],
-         tmpMsg[31], tmpMsg[32], tmpMsg[33], tmpMsg[34], tmpMsg[35], tmpMsg[36], tmpMsg[37], tmpMsg[38], tmpMsg[39], tmpMsg[40], tmpMsg[41], tmpMsg[42] = string.split("!", msg)
+         tmpMsg[31], tmpMsg[32], tmpMsg[33], tmpMsg[34], tmpMsg[35], tmpMsg[36], tmpMsg[37], tmpMsg[38], tmpMsg[39], tmpMsg[40], tmpMsg[41], tmpMsg[42], tmpMsg[43] = string.split("!", msg)
         Healbot_Config_Skins.HoTx2Bar[skinName] = tonumber(tmpMsg[1])
         Healbot_Config_Skins.ShowIconTextCountSelfCast[skinName] = tonumber(tmpMsg[2])
         Healbot_Config_Skins.ShowIconTextDurationSelfCast[skinName] = tonumber(tmpMsg[3])
@@ -5015,7 +5024,8 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
         Healbot_Config_Skins.HideBars[skinName] = tonumber(tmpMsg[39])
         Healbot_Config_Skins.HideIncTank[skinName] = tonumber(tmpMsg[40])
         Healbot_Config_Skins.HideIncFocus[skinName] = tonumber(tmpMsg[41])
-        Healbot_Config_Skins.FrameScale[skinName] = tonumber(tmpMsg[42])        
+        Healbot_Config_Skins.FrameScale[skinName] = tonumber(tmpMsg[42])   
+        Healbot_Config_Skins.ShowRole[skinName] = tonumber(tmpMsg[43])         
     end
 end
 
@@ -8763,6 +8773,7 @@ function HealBot_Options_SetSkins()
         HealBot_Options_FontHeight:SetValue(Healbot_Config_Skins.btextheight[Healbot_Config_Skins.Current_Skin] or 10)
         HealBot_Options_ShowClassOnBarType_OnClick(nil,Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin] or 2)
         HealBot_Options_ShowClassOnBar:SetChecked(Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin] or 1)
+        HealBot_Options_ShowRoleOnBar:SetChecked(Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] or 0)
         HealBot_Options_ShowNameOnBar:SetChecked(Healbot_Config_Skins.ShowNameOnBar[Healbot_Config_Skins.Current_Skin] or 1)
         HealBot_Options_ShowHealthOnBar:SetChecked(Healbot_Config_Skins.ShowHealthOnBar[Healbot_Config_Skins.Current_Skin] or 1)
         HealBot_Options_BarTextInClassColour:SetChecked(Healbot_Config_Skins.SetClassColourText[Healbot_Config_Skins.Current_Skin] or 1)

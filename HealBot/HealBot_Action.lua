@@ -1267,6 +1267,7 @@ function HealBot_Action_sethbAggroNumberFormat()
     end
 end
 
+local clTxt, hbRole=nil,nil
 function HealBot_Action_HBText(hlth,maxhlth,unitName,unit,healin, hbGUID)
     btHBbarText=" "
     
@@ -1274,10 +1275,26 @@ function HealBot_Action_HBText(hlth,maxhlth,unitName,unit,healin, hbGUID)
         return unitName;
     else
         if Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin]==1 and Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin]==2 and UnitClass(unit) then
-            if Healbot_Config_Skins.ShowNameOnBar[Healbot_Config_Skins.Current_Skin]==1 then
-                uName=UnitClass(unit)..":"..unitName;
+            if Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin]==1 then
+                hbRole=UnitGroupRolesAssigned(unit)    
+                if hbRole=="DAMAGER" then
+                    clTxt=HEALBOT_WORD_DAMAGER
+                elseif hbRole=="HEALER" then
+                    clTxt=HEALBOT_WORD_HEALER
+                elseif hbRole=="TANK" then
+                    clTxt=HEALBOT_WORD_TANK
+                elseif hbRole=="LEADER" then
+                    clTxt=HEALBOT_WORD_LEADER
+                else
+                    clTxt=UnitClass(unit)
+                end
             else
-                uName=UnitClass(unit);
+                clTxt=UnitClass(unit)
+            end
+            if Healbot_Config_Skins.ShowNameOnBar[Healbot_Config_Skins.Current_Skin]==1 then
+                uName=clTxt..":"..unitName;
+            else
+                uName=clTxt;
             end
         elseif Healbot_Config_Skins.ShowNameOnBar[Healbot_Config_Skins.Current_Skin]==1 then
             uName=unitName;
@@ -1588,7 +1605,7 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         if Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin]==1 and Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin]==1 then
             icon15:SetTexture([[Interface\AddOns\HealBot\Images\icon_class.tga]]);
         else
-            icon15:SetTexCoord(0,1,0,1);
+           -- icon15:SetTexCoord(0,1,0,1);
             icon15:SetAlpha(0);
         end
         if Healbot_Config_Skins.HoTonBar[Healbot_Config_Skins.Current_Skin]==1 then
