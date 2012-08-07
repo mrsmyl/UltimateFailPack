@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 905 $
--- $Date: 2012-04-25 01:09:43 +1000 (Wed, 25 Apr 2012) $
+-- $Revision: 912 $
+-- $Date: 2012-07-06 19:45:07 +1000 (Fri, 06 Jul 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0291,
-		UIVersion = "3.2.91",
+		Version = 3.0293,
+		UIVersion = "3.2.93",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -518,6 +518,10 @@ ArkInventory.Const = { -- constants
 				[210] = {
 					["id"] = "CLASS_DEATHKNIGHT",
 					["text"] = ArkInventory.Localise["WOW_CLASS_DEATHKNIGHT"],
+				},
+				[211] = {
+					["id"] = "CLASS_MONK",
+					["text"] = ArkInventory.Localise["WOW_CLASS_MONK"],
 				},
 			},
 			Empty = {
@@ -1232,8 +1236,8 @@ ArkInventory.Global = { -- globals
 	Cache = {
 		ItemCountRaw = { }, -- key generated via ObjectIDTooltip( h )
 		ItemCount = { }, -- key generated via ObjectIDTooltip( h )
-		Default = { }, -- key generated via ObjectIDCacheCategory( i )
-		Rule = { }, -- key generated via ObjectIDCacheRule( i )
+		Default = { }, -- key generated via ObjectIDCacheCategory( )
+		Rule = { }, -- key generated via ObjectIDCacheRule( )
 	},
 	
 	BAG_SLOT_SIZE = 32,
@@ -3437,7 +3441,7 @@ end
 function ArkInventory.ItemCategoryGetDefault( i )
 	
 	-- items cache id
-	local id = ArkInventory.ObjectIDCacheCategory( i )
+	local id = ArkInventory.ObjectIDCacheCategory( i.loc_id, i.bag_id, i.sb, i.h )
 	
 	-- if the value has not been cached yet then get it and cache it
 	if ArkInventory.TranslationsLoaded and not ArkInventory.Global.Cache.Default[id] then
@@ -3503,7 +3507,7 @@ function ArkInventory.ItemCategoryGetPrimary( i )
 	if i.h then -- only items can have a category, empty slots can oly be used by rules
 		
 		-- items category cache id
-		id = ArkInventory.ObjectIDCacheCategory( i )
+		id = ArkInventory.ObjectIDCacheCategory( i.loc_id, i.bag_id, i.sb, i.h )
 		
 		-- manually assigned item to a category?
 		if ArkInventory.db.profile.option.category[id] then
@@ -3514,7 +3518,7 @@ function ArkInventory.ItemCategoryGetPrimary( i )
 	end
 	
 	-- items rule cache id
-	id = ArkInventory.ObjectIDCacheRule( i )
+	id = ArkInventory.ObjectIDCacheRule( i.loc_id, i.bag_id, i.sb, i.h )
 	
 	-- if the value has already been cached then use it
 	if ArkInventory.Global.Cache.Rule[id] then
@@ -3537,7 +3541,7 @@ function ArkInventory.ItemCategorySet( i, cat_id )
 
 	-- set cat_id to nil to reset back to default
 	
-	local id = ArkInventory.ObjectIDCacheCategory( i )
+	local id = ArkInventory.ObjectIDCacheCategory( i.loc_id, i.bag_id, i.sb, i.h )
 	ArkInventory.db.profile.option.category[id] = cat_id
 	
 	--i["cat"] = cat_id
@@ -3611,13 +3615,39 @@ function ArkInventory.ReverseName( n )
 
 end
 
-function ArkInventory.ItemCacheClear( )
+function ArkInventory.ItemCacheClear( h )
 	
 	--ArkInventory.Output( "ItemCacheClear( )" )
 	
-	-- clear all rule information
-	ArkInventory.Table.Clean( ArkInventory.Global.Cache.Rule )
-	ArkInventory.Table.Clean( ArkInventory.Global.Cache.Default )
+	if not h then
+		
+		--ArkInventory.Output( "clearing cache - all" )
+		
+		ArkInventory.Table.Clean( ArkInventory.Global.Cache.Rule )
+		ArkInventory.Table.Clean( ArkInventory.Global.Cache.Default )
+		
+	else
+		
+		local id
+		
+		--ArkInventory.Output( "clearing cache - ", h )
+		
+		for loc_id in pairs( ArkInventory.Global.Location ) do
+			for bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
+				for sb = 0, 1 do
+					
+					id = ArkInventory.ObjectIDCacheRule( loc_id, bag_id, sb, h )
+					ArkInventory.Global.Cache.Rule[id] = nil
+				
+					id = ArkInventory.ObjectIDCacheCategory( loc_id, bag_id, sb, h )
+					ArkInventory.Global.Cache.Default[id] = nil
+					
+				end
+			end
+		end
+			
+	end
+	
 	
 	ArkInventory.CategoryGenerate( )
 	ArkInventory.LocationSetValue( nil, "resort", true )

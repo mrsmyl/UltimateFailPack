@@ -15,6 +15,15 @@
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
  
+*3.02.94 (06-JUL-2012)*
+ * added - monk class
+ 
+*3.02.93 (04-JUL-2012)*
+ * fixed - issue when hooking other mods and clearing the item cache
+ 
+*3.02.92 (24-JUN-2012)*
+ * updated - item relocation will now clear the cached rule/category assignment for that item.  allows for custom rules to work better.
+
 *3.02.91 (02-MAY-2012)*
  * updated - pets and mounts
  * fixed - issue with rules window font application
