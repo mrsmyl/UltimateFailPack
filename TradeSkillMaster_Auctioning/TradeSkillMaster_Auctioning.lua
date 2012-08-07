@@ -145,11 +145,6 @@ function TSM:DoDBCleanUp()
 				EditMacro("TSMAucBClick", nil, nil, "/click TSMAuctioningCancelButton\n/click TSMAuctioningPostButton")
 			end
 		end)
-		
-	-- anti-bot code
-	if type(TSM.Cancel.isScanning) == "function" and type(TSM.Post.isScanning) == "function" then
-		wipe(TSM.db)
-	end
 end
 
 local GOLD_TEXT = "|cffffd700g|r"
@@ -423,7 +418,7 @@ local function GetGroupMoney(groupName, key)
 	if group[key.."PriceMethod"] ~= "gold" then
 		local percent = group[key.."Percent"]
 		if not percent then
-			percent = floor((TSMAPI:SafeDivide(groupValue or 0, TSM:GetMarketValue(groupName, nil, group[key.."PriceMethod"])))*1000 + 0.5)/10
+			percent = floor(((groupValue or 0)/TSM:GetMarketValue(groupName, nil, group[key.."PriceMethod"]))*1000 + 0.5)/10
 			TSM.db.profile[key.."Percent"][groupName] = percent/100
 		end
 	end

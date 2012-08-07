@@ -181,7 +181,22 @@ end
 -- gets the number of an item they have on their alts
 function Data:GetAltNum(itemID)
 	local count = 0
-	if TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Containers")) == 1 and DataStore then
+	if TSM.db.profile.altAddon == "ItemTracker" and select(4, GetAddOnInfo("TradeSkillMaster_ItemTracker")) == 1 then
+		for _, player in pairs(TSMAPI:GetData("playerlist") or {}) do
+			if player ~= UnitName("player") and TSM.db.profile.altCharacters[player] then
+				local bags = TSMAPI:GetData("playerbags", player)
+				local bank = TSMAPI:GetData("playerbank", player)
+				count = count + (bags[itemID] or 0)
+				count = count + (bank[itemID] or 0)
+			end
+		end
+		for _, guild in pairs(TSMAPI:GetData("guildlist") or {}) do
+			if TSM.db.profile.altGuilds[guild] then
+				local bank = TSMAPI:GetData("guildbank", guild)
+				count = count + (bank[itemID] or 0)
+			end
+		end
+	elseif TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Containers")) == 1 and DataStore then
 		for account in pairs(DataStore:GetAccounts()) do
 			for characterName, character in pairs(DataStore:GetCharacters(nil, account)) do
 				if characterName ~= UnitName("Player") and TSM.db.profile.altCharacters[characterName] then
@@ -205,24 +220,16 @@ function Data:GetAltNum(itemID)
 				end
 			end
 		end
-	elseif TSM.db.profile.altAddon == "ItemTracker" and select(4, GetAddOnInfo("TradeSkillMaster_ItemTracker")) == 1 then
-		for _, player in pairs(TSMAPI:GetData("playerlist") or {}) do
-			if player ~= UnitName("player") and TSM.db.profile.altCharacters[player] then
-				local bags = TSMAPI:GetData("playerbags", player)
-				local bank = TSMAPI:GetData("playerbank", player)
-				count = count + (bags[itemID] or 0)
-				count = count + (bank[itemID] or 0)
-			end
-		end
-		for _, guild in pairs(TSMAPI:GetData("guildlist") or {}) do
-			if TSM.db.profile.altGuilds[guild] then
-				local bank = TSMAPI:GetData("guildbank", guild)
-				count = count + (bank[itemID] or 0)
-			end
-		end
 	end
 	
-	if TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Auctions")) == 1 and DataStore then
+	if TSM.db.profile.altAddon == "ItemTracker" and select(4, GetAddOnInfo("TradeSkillMaster_ItemTracker")) == 1 then
+		for _, player in pairs(TSMAPI:GetData("playerlist") or {}) do
+			if player ~= UnitName("player") and TSM.db.profile.altCharacters[player] then
+				local auctions = TSMAPI:GetData("playerauctions", player) or {}
+				count = count + (auctions[itemID] or 0)
+			end
+		end
+	elseif TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Auctions")) == 1 and DataStore then
 		for account in pairs(DataStore:GetAccounts()) do
 			for characterName, character in pairs(DataStore:GetCharacters(nil, account)) do
 				if TSM.db.profile.altCharacters[characterName] and characterName ~= UnitName("player") then
@@ -231,13 +238,6 @@ function Data:GetAltNum(itemID)
 						count = count + (DataStore:GetAuctionHouseItemCount(character, itemID) or 0)
 					end
 				end
-			end
-		end
-	elseif TSM.db.profile.altAddon == "ItemTracker" and select(4, GetAddOnInfo("TradeSkillMaster_ItemTracker")) == 1 then
-		for _, player in pairs(TSMAPI:GetData("playerlist") or {}) do
-			if player ~= UnitName("player") and TSM.db.profile.altCharacters[player] then
-				local auctions = TSMAPI:GetData("playerauctions", player) or {}
-				count = count + (auctions[itemID] or 0)
 			end
 		end
 	end
@@ -249,15 +249,20 @@ end
 function Data:GetPlayerNum(itemID)
 	local auctions = 0
 	
-	if TSM.db.profile.restockAH then
-		if select(4, GetAddOnInfo("DataStore_Auctions")) == 1 and DataStore then
-			auctions = DataStore:GetAuctionHouseItemCount(DataStore:GetCharacter(), itemID) or 0
-		else
+	if TSM.db.profile.altAddon == "ItemTracker" and select(4, GetAddOnInfo("TradeSkillMaster_ItemTracker")) == 1 then
+		if TSM.db.profile.restockAH then
 			auctions = (TSMAPI:GetData("playerauctions", UnitName("player")) or {})[itemID] or 0
 		end
-	end
-	
-	if TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Containers")) == 1 and DataStore then
+		bags = (TSMAPI:GetData("playerbags", UnitName("player")) or {})[itemID] or 0
+		bank = (TSMAPI:GetData("playerbank", UnitName("player")) or {})[itemID] or 0
+		local iType = select(6, GetItemInfo(itemID))
+		if iType and iType ~= "Container" and bags == 0 then bags = bags + GetItemCount(itemID) end
+		if iType and iType ~= "Container" and bank == 0 then bank = bank + (GetItemCount(itemID, true) - GetItemCount(itemID)) end
+		return bags, bank, auctions
+	elseif TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Containers")) == 1 and DataStore then
+		if TSM.db.profile.restockAH and select(4, GetAddOnInfo("DataStore_Auctions")) == 1 then
+			auctions = DataStore:GetAuctionHouseItemCount(DataStore:GetCharacter(), itemID) or 0
+		end
 		for account in pairs(DataStore:GetAccounts()) do
 			for characterName, character in pairs(DataStore:GetCharacters(nil, account)) do
 				if characterName == UnitName("player") then
@@ -266,13 +271,6 @@ function Data:GetPlayerNum(itemID)
 				end
 			end
 		end
-	elseif TSM.db.profile.altAddon == "ItemTracker" and select(4, GetAddOnInfo("TradeSkillMaster_ItemTracker")) == 1 then
-		bags = (TSMAPI:GetData("playerbags", UnitName("player")) or {})[itemID] or 0
-		bank = (TSMAPI:GetData("playerbank", UnitName("player")) or {})[itemID] or 0
-		local iType = select(6, GetItemInfo(itemID))
-		if iType and iType ~= "Container" and bags == 0 then bags = bags + GetItemCount(itemID) end
-		if iType and iType ~= "Container" and bank == 0 then bank = bank + (GetItemCount(itemID, true) - GetItemCount(itemID)) end
-		return bags, bank, auctions
 	else
 		-- if they don't have datastore or ItemTracker...they get the very inaccurate GetItemCount result for bags/bank
 		local bags = GetItemCount(itemID)

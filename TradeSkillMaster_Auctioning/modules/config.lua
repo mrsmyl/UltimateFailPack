@@ -191,6 +191,7 @@ function Config:LoadOptions(parent)
 	treeGroup:SetStatusTable(TSM.db.global.treeGroupStatus)
 	parent:AddChild(treeGroup)
 	
+	--TSMAPI:SetCurrentHelpInfo("Auctioning Groups/Options", nil, "auctioning auc_import")
 	Config.treeGroup = treeGroup
 	Config:UpdateTree()
 	Config.treeGroup:SelectByPath(1)
@@ -276,7 +277,7 @@ function Config:SelectTree(treeFrame, _, selection)
 			tg:SetLayout("Fill")
 			tg:SetFullHeight(true)
 			tg:SetFullWidth(true)
-			tg:SetTabs({{value=1, text=L["Auction Defaults"]}, {value=2, text=L["Create Category / Group"]}})
+			tg:SetTabs({{value=1, text=L["Auction Defaults"]}, {value=2, text=L["Create Category / Group"]}, {value=3, text=L["Quick Group Creation"]}})
 			tg:SetCallback("OnGroupSelected", function(self,_,value)
 				if tg.children and tg.children[1] and tg.children[1].localstatus then
 					offsets[previousTab] = tg.children[1].localstatus.offset
@@ -288,6 +289,8 @@ function Config:SelectTree(treeFrame, _, selection)
 					Config:DrawGroupGeneral(tg, "default")
 				elseif value == 2 then
 					Config:DrawItemGroups(tg)
+				elseif value == 3 then
+					Config:DrawQuickCreation(tg)
 				end
 				
 				if tg.children and tg.children[1] and tg.children[1].localstatus then
@@ -1845,6 +1848,159 @@ function Config:DrawItemGroups(container)
 							relativeWidth = 0.8,
 							callback = AddCategory,
 							tooltip = L["Name of the new category, this can be whatever you want and has no relation to how the category itself functions."],
+						},
+					},
+				},
+			},
+		},
+	}
+	
+	TSMAPI:BuildPage(container, page)
+end
+
+local selectedItems = {}
+function Config:DrawQuickCreation(container)
+	TSM:UpdateItemReverseLookup()
+	
+	-- local function SelectItemsMatching(selectionList, _, value)
+		-- value = strlower(value:trim())
+		-- selectionList:UnselectAllItems()
+		-- if not value or value == "" then return end
+		
+		-- local itemList = {}
+		-- for bag, slot, itemString in TSM:GetBagIterator(true) do
+			-- if itemString then
+				-- local name = GetItemInfo(itemString)
+				-- if name and strmatch(strlower(name), value) and not TSM.itemReverseLookup[itemString] and not Config:IsSoulbound(bag, slot) then
+					-- tinsert(itemList, itemString)
+				-- end
+			-- end
+		-- end
+		
+		-- for itemString in pairs(TSM.db.profile.groups[group]) do
+			-- local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemString)
+			-- if name and strmatch(strlower(name), value) then
+				-- tinsert(itemList, itemString)
+			-- end
+		-- end
+		
+		-- selectionList:SelectItems(itemList)
+	-- end
+	
+	local itemsToAdd = {}
+
+	local ungroupedItems, usedLinks = {}, {}
+	for bag, slot, itemString in TSM:GetBagIterator(true) do
+		if itemString and not Config:IsSoulbound(bag, slot) then
+			local link = GetContainerItemLink(bag, slot)
+			local itemID = TSMAPI:GetItemID(link)
+			if not usedLinks[itemString] and not TSM.itemReverseLookup[itemString] and not TSM.itemReverseLookup[itemID] then
+				local name, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
+				if name and not (TSM.db.global.hideGray and quality == 0) and not selectedItems[itemString] then
+					tinsert(ungroupedItems, {value=itemString, text=link, icon=texture, name=name, tooltip=TSMAPI:GetItemID(link)})
+					usedLinks[itemString] = true
+				end
+			end
+		end
+	end
+	sort(ungroupedItems, function(a,b) return a.name < b.name end)
+	
+	for itemString in pairs(selectedItems) do
+		local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(itemString)
+		if link then
+			tinsert(itemsToAdd, {value=itemString, text=link, icon=texture, name=name, tooltip=TSMAPI:GetItemID(link)})
+		end
+	end
+	sort(itemsToAdd, function(a,b) return a.name < b.name end)
+	
+	local selectedCategory = "<Uncategorized Groups>"
+	local categories = {["<Uncategorized Groups>"]="<Uncategorized Groups>"}
+	local individualGroups = true
+	
+	for name in pairs(TSM.db.profile.categories) do
+		categories[name] = name
+	end
+	
+	local function OnButtonClick()
+		for itemString in pairs(selectedItems) do
+			local itemName = strlower(GetItemInfo(itemString))
+			local groupName = itemName
+			for i=1, 100 do
+				if TSM.db.profile.groups[groupName] then
+					groupName = itemName..i
+				else
+					break
+				end
+			end
+			
+			TSM.db.profile.groups[groupName] = {}
+			
+			if selectedCategory ~= "<Uncategorized Groups>" then
+				TSM.db.profile.categories[selectedCategory][groupName] = true
+			end
+		end
+		selectedItems = {}
+		Config:UpdateTree()
+		container:SelectTab(2)
+	end
+	
+	local page = {
+		{
+			type = "ScrollFrame",
+			layout = "List",
+			children = {
+				{	-- simple group to contain everything
+					type = "InlineGroup",
+					layout = "Flow",
+					children = {
+						{
+							type = "Label",
+							text = "Select items in the selection list below to quickly create groups for them. Each item will be placed in its own individual group. Use the options below to control how these groups are created.",
+							fullWidth = true,
+						},
+						{
+							type = "HeadingLine",
+						},
+						{
+							type = "Dropdown",
+							label = "Add Groups to Category:",
+							list = categories,
+							value = selectedCategory,
+							relativeWidth = 0.5,
+							callback = function(_,_,value) selectedCategory = value end,
+							tooltip = "Groups created will be added to the selected category.",
+						},
+						{
+							type = "Button",
+							text = "Create Groups!",
+							relativeWidth = 0.49,
+							callback = OnButtonClick,
+						}
+					},
+				},
+				{	-- simple group to contain everything
+					type = "SimpleGroup",
+					layout = "Fill",
+					height = 420,
+					children = {
+						{
+							type = "SelectionList",
+							leftTitle = L["Items not in any group:"],
+							rightTitle = L["Items to be added:"],
+							leftList = ungroupedItems,
+							rightList = itemsToAdd,
+							onAdd = function(_,_,selected)
+									for _, item in ipairs(selected) do
+										selectedItems[item] = true
+									end
+									container:SelectTab(3)
+								end,
+							onRemove = function(_,_,selected)
+									for _, item in ipairs(selected) do
+										selectedItems[item] = nil
+									end
+									container:SelectTab(3)
+								end,
 						},
 					},
 				},

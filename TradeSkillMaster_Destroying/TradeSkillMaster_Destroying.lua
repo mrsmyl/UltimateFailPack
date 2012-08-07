@@ -47,7 +47,8 @@ local savedDBDefaults = {
         --Globals for store destroying data-- 
 		Prospecting = { Day = {}, Mat = {} },
 		Milling     = { Day = {}, Mat = {} },
-		DE          = { Day = {}, Mat = {} }
+		DE          = { Day = {}, Mat = {} },
+        SafeTable   = {  }
 	},
     
 	-- data that is stored per user profile

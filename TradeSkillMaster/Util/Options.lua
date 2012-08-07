@@ -38,11 +38,6 @@ local function LoadHelpPage(parent)
 							text = L["TradeSkillMaster Website:"] .. " |cffffd200http://tradeskillmaster.com|r\n",
 							fullWidth = true,
 						},
-						{
-							type = "Label",
-							text = L["Video Tutorials by Faid:"] .. " |cffffd200http://www.clockworkriot.com/2012/03/tsm-guide-videos.html|r\n",
-							fullWidth = true,
-						},
 					},
 				},
 				{
@@ -52,7 +47,7 @@ local function LoadHelpPage(parent)
 					children = {
 						{
 							type = "Label",
-							text = L["TradeSkillMaster currently has 9 modules (not including the core addon) each of which can be used completely independantly of the others and have unique features."] .. "\n\n",
+							text = L["TradeSkillMaster currently has 10 modules (not including the core addon) each of which can be used completely independantly of the others and have unique features."] .. "\n\n",
 							fullWidth = true,
 						},
 						{
@@ -98,6 +93,11 @@ local function LoadHelpPage(parent)
 						{
 							type = "Label",
 							text = CYAN .. "Warehousing" .. "|r - " .. L["Manages your inventory by allowing you to easily move stuff between your bags, bank, and guild bank."] .. "\n",
+							fullWidth = true,
+						},
+						{
+							type = "Label",
+							text = CYAN .. "WoWuction" .. "|r - " .. L["Allows you to use data from http://wowuction.com in other TSM modules and view its various price points in your item tooltips."] .. "\n",
 							fullWidth = true,
 						},
 					},
@@ -522,6 +522,7 @@ end
 
 
 function TSM:LoadOptions(parent)
+	lib:SetCurrentHelpInfo()
 	lib:SetFrameSize(TSM.FRAME_WIDTH, TSM.FRAME_HEIGHT)
 	
 	local tg = AceGUI:Create("TSMTabGroup")

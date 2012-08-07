@@ -151,7 +151,7 @@ function private:GetBagLocation(itemString)
 end
 
 function private:OnAuctionFound()
-	if not private.isSearching then return end
+	if not private.isSearching or not currentAuction then return end
 	private.isSearching = nil
 	
 	AuctionControl:UpdateMatchList()
@@ -240,7 +240,7 @@ function private:UpdateAuctionConfirmation()
 	else
 		private.confirmationFrame.quantityText:SetText("x"..currentAuction.count)
 		private.confirmationFrame.buyoutText:SetText(L["Item Buyout:"].." "..itemBuyoutText.."\n"..L["Auction Buyout:"].." "..buyoutText)
-		private.confirmationFrame.purchasedText:SetText(infoText .. " Auction: "..currentAuction.num.."/"..currentAuction.numAuctions)
+		private.confirmationFrame.purchasedText:SetText((infoText or "") .. " Auction: "..currentAuction.num.."/"..currentAuction.numAuctions)
 	end
 	private.confirmationFrame:Enable()
 end
@@ -255,7 +255,7 @@ function AuctionControl:HideAuctionConfirmation()
 end
 
 function private:DoAction()
-	if private.isSearching then return end
+	if private.isSearching or not currentAuction then return end
 	local foundAuction, isMultiPost
 
 	if confirmationMode == "Buyout" then

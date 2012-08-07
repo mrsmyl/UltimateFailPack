@@ -187,9 +187,12 @@ function Crafting:GetTradeSkillFrameAndOffsets() -- updated
 	elseif GnomeWorks then
 		tsframe, ofsx, ofsy = GnomeWorks:GetMainFrame(), 50, 0
 		bofsx, bofsy = 0, 12
-	else
+	elseif TradeSkillFrame then
 		tsframe, ofsx, ofsy = TradeSkillFrame, 50, 9
 		bofsx, bofsy = 53, 20
+	else
+		tsframe, ofsx, ofsy = UIParent, 30, -30
+		bofsx, bofsy = 33, -19
 	end
 	return tsframe, ofsx, ofsy, bofsx, bofsy
 end
@@ -408,7 +411,7 @@ function Crafting:CreateCraftingRegion() -- updated
 				GameTooltip:SetPoint("LEFT", self, "RIGHT")
 				GameTooltip:AddLine(self.data.name)
 				for itemID, nQuantity in pairs(TSM.Data[Crafting.mode].crafts[self.data.itemID].mats) do
-					local name = GetItemInfo(itemID) or (TSM.Data[Crafting.mode].crafts[itemID] and TSM.Data[Crafting.mode].crafts[itemID].name)
+					local name = GetItemInfo(itemID) or (TSM.Data[Crafting.mode].crafts[itemID] and TSM.Data[Crafting.mode].crafts[itemID].name) or "?"
 					local inventory = TSM.Data:GetPlayerNum(itemID)
 					local need = nQuantity * self.data.quantity
 					local color
@@ -443,7 +446,11 @@ function Crafting:CreateCraftingDisabledMessage() -- updated
 	frame:SetWidth(280)
 	frame:SetHeight(100)
 	frame:SetPoint("BOTTOMRIGHT", -40, 150)
-	frame:SetScript("OnShow", function() Crafting.craftNextButton:Hide() Crafting.frame.craftingScroll:Hide() end)
+	frame:SetScript("OnShow", function()
+			if not Crafting.craftNextButton then return end
+			Crafting.craftNextButton:Hide()
+			Crafting.frame.craftingScroll:Hide()
+		end)
 	
 	local tFile, tSize = GameFontNormalLarge:GetFont()
 	local text = frame:CreateFontString(nil, "Overlay", "GameFontNormalLarge")
@@ -863,14 +870,14 @@ end
 
 -- gets called to update the craft queue frame whenever something changes
 function Crafting:UpdateCrafting()
-	if not Crafting.mode then return end
+	if not Crafting.mode or not Crafting.craftRows then return end
 	for _, row in ipairs(Crafting.craftRows) do row:Hide() end
-	if not (Crafting.mode and TSM[Crafting.mode]:HasProfession()) then
+	if not TSM[Crafting.mode]:HasProfession() then
 		Crafting.frame.noCrafting:Show()
 		Crafting.frame.noCrafting.text:SetText(format("%s was not found so the craft queue has been disabled.", (Crafting.mode or "Profession")))
 		Crafting.frame.noCrafting.button:Hide()
 		return
-	elseif Crafting.mode and TSM[Crafting.mode]:HasProfession() and Crafting:GetCurrentTradeskill() ~= Crafting.mode then
+	elseif TSM[Crafting.mode]:HasProfession() and Crafting:GetCurrentTradeskill() ~= Crafting.mode then
 		Crafting.frame.noCrafting:Show()
 		Crafting.frame.noCrafting.button:Show()
 		Crafting.frame.noCrafting.button:SetText("Open "..Crafting.mode)

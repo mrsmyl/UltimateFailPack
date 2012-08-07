@@ -8,6 +8,11 @@ local AceGUI = LibStub("AceGUI-3.0") -- load the AceGUI libraries
 
 local itemST = nil
 
+local deGUIObj = {
+    container  = nil, 
+    action     = nil, 
+    filter     = nil
+}
 local qualityColors = { --I stole this from Sapu....
 	[0]="9d9d9d",
 	[1]="ffffff",
@@ -18,6 +23,8 @@ local qualityColors = { --I stole this from Sapu....
 	[6]="e6cc80",
 }
 
+
+
 local function noLoot()
     return{ { cols = { { 
         value = function() return "You have chosen to turn off sum loot"  end,
@@ -26,7 +33,6 @@ local function noLoot()
 end
 
 local function createDateRow(d)
-
     return 
 	{
 		cols = {
@@ -43,7 +49,6 @@ end
 local function createRow(name,d)
     return  
 	{
-		
 		cols = {
 			{},
 			{
@@ -55,17 +60,7 @@ local function createRow(name,d)
 				args = {d.num},
             },
 		},
-
 	}
-end
-
-function stDE:hideTable()
-	if itemST then itemST:Hide() end
-end
-
-function stDE:updateTable(frame, action, filter)
-	stDE:hideTable()
-    stDE:DrawScrollFrame(frame, action, filter)
 end
 
 local function sortPairs(t)
@@ -76,7 +71,121 @@ local function sortPairs(t)
     return u
 end
 
-function stDE:DrawScrollFrame (container, action, filter)
+local function DrawGearScrollFrame ()
+
+	local ROW_HEIGHT = 20
+	local stCols = {
+		    {name="Destroy Item", width=0.75},   
+	}
+	
+	local function GetSTColInfo(width)
+        local colInfo = CopyTable(stCols)
+        for i=1, #colInfo do
+            colInfo[i].width = floor(colInfo[i].width*width)
+        end
+        return colInfo
+    end
+        
+	if not gearST then
+        gearST = TSMAPI:CreateScrollingTable(GetSTColInfo( deGUIObj.container.frame:GetWidth()), true )	
+    end 
+    
+	gearST.frame:SetParent(deGUIObj.container.frame)
+	gearST.frame:SetPoint("TOPLEFT", deGUIObj.container.frame, 20, -130) 
+	gearST.frame:SetPoint("BOTTOMRIGHT", deGUIObj.container.frame, -deGUIObj.container.frame:GetWidth()*.5, deGUIObj.container.frame:GetHeight()*.5 ) 
+	gearST.frame:SetScript("OnSizeChanged", function(_,width, height)
+			gearST:SetDisplayCols(GetSTColInfo(width))
+			gearST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
+			gearST.frame:SetPoint("TOPLEFT", deGUIObj.container.frame, 20, -130) 
+			gearST.frame:SetPoint("BOTTOMRIGHT", deGUIObj.container.frame, -deGUIObj.container.frame:GetWidth()*.5, deGUIObj.container.frame:GetHeight()*.5 ) 
+		end)
+	
+	gearST:SetData(TSM.de:getDestroyTable())
+	gearST:Show()
+	
+	gearST:RegisterEvents({
+		["OnClick"] = function(_, _, data, _, _, rowNum, _, self,button)
+			if button == "RightButton" then--move to safe
+			
+				if not rowNum then return end
+				TSM.db.factionrealm.SafeTable[data[rowNum].itemString] = true 
+				stDE:updateGearTables()
+			elseif button == "LeftButton" then --destroy??
+				
+			end
+		end,
+		["OnEnter"] = function(_, self, data, _, _, rowNum)
+			if not rowNum then return end
+
+			GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+			GameTooltip:SetHyperlink(data[rowNum].itemString) 
+			GameTooltip:Show()
+		end,
+		["OnLeave"] = function()
+			GameTooltip:ClearLines()
+			GameTooltip:Hide()
+		end
+	})
+end
+
+local function DrawSafeGearScrollFrame ()
+	local ROW_HEIGHT = 20
+	local stCols = {
+		    {name="Safe Item", width=0.75},
+	}
+	
+	local function GetSTColInfo(width)
+        local colInfo = CopyTable(stCols)
+        for i=1, #colInfo do
+                colInfo[i].width = floor(colInfo[i].width*width)
+        end
+        return colInfo
+    end
+        
+	if not safegearST then
+		safegearST = TSMAPI:CreateScrollingTable(GetSTColInfo( deGUIObj.container.frame:GetWidth()), true )
+	end 
+
+	safegearST:SetData(TSM.de:getSafeTable())
+
+	safegearST.frame:SetParent(deGUIObj.container.frame)
+	safegearST.frame:SetPoint("TOPLEFT", deGUIObj.container.frame, 20, -(deGUIObj.container.frame:GetHeight()*.5)-20)--TOPRIGHT = right-x, top-y
+	safegearST.frame:SetPoint("BOTTOMRIGHT", deGUIObj.container.frame, -(deGUIObj.container.frame:GetWidth()*.5)  , 20) 
+	safegearST.frame:SetScript("OnSizeChanged", function(_,width, height)
+			safegearST:SetDisplayCols(GetSTColInfo(width))
+			safegearST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
+			safegearST.frame:SetPoint("TOPLEFT", deGUIObj.container.frame, 20, -(deGUIObj.container.frame:GetHeight()*.5)-20)--TOPRIGHT = right-x, top-y
+			safegearST.frame:SetPoint("BOTTOMRIGHT", deGUIObj.container.frame, -deGUIObj.container.frame:GetWidth()*.5, 20) 
+		end)
+	safegearST:RegisterEvents({
+	["OnClick"] = function(_, _, data, _, _, rowNum, _, self,button)
+	
+		if button == "RightButton" then--move to destroy
+			if not rowNum then return end
+            TSM.db.factionrealm.SafeTable[data[rowNum].itemString] = nil
+            stDE:updateGearTables()
+		elseif button == "LeftButton" then 
+	
+		end
+	end,
+	["OnEnter"] = function(_, self, data, _, _, rowNum)
+		if not rowNum then return end
+
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+		GameTooltip:SetHyperlink(data[rowNum].itemString) 
+		GameTooltip:Show()
+	end,
+	["OnLeave"] = function()
+		GameTooltip:ClearLines()
+		GameTooltip:Hide()
+	end
+	})
+	safegearST:Show()
+	
+	
+end
+
+local function DrawScrollFrame ()
 
     local ROW_HEIGHT = 20
     local stCols
@@ -95,7 +204,7 @@ function stDE:DrawScrollFrame (container, action, filter)
         return colInfo
     end
         
-    itemST = TSMAPI:CreateScrollingTable(GetSTColInfo(container.frame:GetWidth()))
+    itemST = TSMAPI:CreateScrollingTable(GetSTColInfo(deGUIObj.container.frame:GetWidth()))
 
     local stTable = {}
 
@@ -114,15 +223,45 @@ function stDE:DrawScrollFrame (container, action, filter)
        itemST:SetData( noLoot() )
     end
  
-
-    itemST.frame:SetParent(container.frame)
-    itemST.frame:SetPoint("BOTTOMLEFT", container.frame, 10, 10)
-    itemST.frame:SetPoint("TOPRIGHT", container.frame, -10, -130)
-    itemST.frame:SetScript("OnSizeChanged", function(_,width, height)
-            itemST:SetDisplayCols(GetSTColInfo(width))
-            itemST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
-        end)
+    itemST.frame:SetParent(deGUIObj.container.frame)
+	itemST.frame:SetPoint("TOPLEFT", deGUIObj.container.frame, deGUIObj.container.frame:GetWidth()*.5, -105 )--TOPRIGHT = right-x, top-y
+	itemST.frame:SetPoint("BOTTOMRIGHT", deGUIObj.container.frame, -25  , 20) 
+	itemST.frame:SetScript("OnSizeChanged", function(_,width, height)
+			itemST:SetDisplayCols(GetSTColInfo(width))
+			itemST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
+			itemST.frame:SetPoint("TOPLEFT", deGUIObj.container.frame, deGUIObj.container.frame:GetWidth()*.5, -105 )--TOPRIGHT = right-x, top-y
+			itemST.frame:SetPoint("BOTTOMRIGHT", deGUIObj.container.frame, -25  , 20) 
+    end)
+      
     itemST:Show()
 
-	
+end
+
+function stDE:hideTable()
+	if itemST     then itemST:Hide() end
+    if gearST     then gearST:Hide() end
+    if safegearST then safegearST:Hide() end
+end
+
+function stDE:updateTable()
+	if itemST then itemST:Hide() end
+    if gearST     then gearST:Hide() end
+    DrawScrollFrame(frame, action, filter)
+    DrawGearScrollFrame ()
+end
+
+function stDE:updateGearTables()
+    if gearST     then gearST:Hide() end
+    if safegearST then safegearST:Hide() end
+    DrawGearScrollFrame ()
+    DrawSafeGearScrollFrame ()
+end
+
+function stDE:InitScrollFrames (container, action, filter) 
+    deGUIObj.container = container
+    deGUIObj.action = action
+    deGUIObj.filter = filter
+    DrawScrollFrame ()
+    DrawGearScrollFrame ()
+    DrawSafeGearScrollFrame ()   
 end

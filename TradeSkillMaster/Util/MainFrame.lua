@@ -85,6 +85,7 @@ function lib:SelectIcon(moduleName, iconName)
 	end
 end
 
+
 function TSM:CreateMainFrame()
 	TSM.Frame = AceGUI:Create("TSMMainFrame")
 	TSM.Frame:SetLayout("Fill")
@@ -103,6 +104,8 @@ function TSM:CreateMainFrame()
 			oldHeightSet(self, height)
 			TSM:BuildIcons()
 		end
+		
+	TSM.Frame.helpButton = TSM:CreateHelpButton()
 end
 
 function TSM:BuildIcons()
@@ -146,6 +149,7 @@ function TSM:BuildIcons()
 							version = module.version
 						end
 					end
+					lib:SetCurrentHelpInfo()
 					TSM.Frame:SetTitle((name or private.icons[i].moduleName) .. " " .. version)
 					private.icons[i].loadGUI(TSM.Frame)
 					private.currentIcon = i
@@ -229,4 +233,8 @@ function TSM:SelectInitialIcon()
 		end
 		TSM.Frame:SetTitle(name .. " " .. version)
 	end
+end
+
+function TSM:GetCurrentIcon()
+	return private.icons[currentIcon] and private.icons[currentIcon].moduleName
 end

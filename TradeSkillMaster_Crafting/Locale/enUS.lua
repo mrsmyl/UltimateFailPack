@@ -223,6 +223,7 @@ L["The item you want to base this mat's price on. You can either link the item i
 L["Price Multiplier"] = true
 L["Invalid Number"] = true
 L["Enter what you want to multiply the cost of the other item by to calculate the price of this mat."] = true
+L["Buy From Vendor"] = true
 L["Use the price that a vendor sells this item for as the cost of this material."] = true
 L["Vendor Trade (x%s)"] = true
 L["Note: By default, Crafting will use the second cheapest value (herb or pigment cost) to calculate the cost of the pigment as this provides a slightly more accurate value."] = true
@@ -265,6 +266,7 @@ L["TradeSkillMaster_Crafting - Scanning..."] = true
 
 -- TradeSkillMaster_Crafting.lua
 
+L["Crafting Cost"] = true
 L["Crafting Cost: %s (%s profit)"] = true
 
 -- Vendor.lua

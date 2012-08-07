@@ -1331,7 +1331,8 @@ function ProfessionConfig:ShowMatOptionsWindow(parent, itemID)
 		for i=1, #pigmentData.herbs do
 			local herbID = pigmentData.herbs[i].itemID
 			local pigmentPerMill = pigmentData.herbs[i].pigmentPerMill
-			local cost = floor(TSM:GetItemMarketPrice(herbID, "mat")*5/pigmentPerMill + 0.5)
+			local herbCost = TSM:GetItemMarketPrice(herbID, "mat")
+			local cost = herbCost and floor(herbCost*5/pigmentPerMill + 0.5)
 			local widgets = {
 				{
 					type = "Label",
@@ -1347,7 +1348,7 @@ function ProfessionConfig:ShowMatOptionsWindow(parent, itemID)
 				},
 				{
 					type = "Label",
-					text = (mat.override and "|cffffffff" or "|cff777777")..GetMoneyText(cost).." "..L["per pigment"],
+					text = (mat.override and "|cffffffff" or "|cff777777")..(cost and GetMoneyText(cost) or "?").." "..L["per pigment"],
 					relativeWidth = 0.4,
 				},
 			}

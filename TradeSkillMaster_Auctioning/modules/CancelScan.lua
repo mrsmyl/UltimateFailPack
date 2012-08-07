@@ -40,17 +40,17 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 			end
 		end
 	elseif options.cancelDuration then
-		local maxDuration = TSM.db.global.lowDuration
 		for i=GetNumAuctionItems("owner"), 1, -1 do
 			if select(14, GetAuctionItemInfo("owner", i)) == 0 and (not TSM.db.global.cancelWithBid or select(11, GetAuctionItemInfo("owner", i)) == 0) then
 				local timeLeft = GetAuctionItemTimeLeft("owner", i)
-				if timeLeft <= maxDuration then
+				if timeLeft <= TSM.db.global.lowDuration then
 					local itemString = TSMAPI:GetItemString(GetAuctionItemLink("owner", i))
 					itemsToCancel[itemString] = true
 					tempList[itemString] = true
 				end
 			end
 		end
+		isCancelAll = TSM.db.global.lowDuration
 	elseif options.cancelFilter then
 		for i=GetNumAuctionItems("owner"), 1, -1 do
 			if select(14, GetAuctionItemInfo("owner", i)) == 0 and (not TSM.db.global.cancelWithBid or select(11, GetAuctionItemInfo("owner", i)) == 0) then
@@ -142,7 +142,11 @@ function Cancel:ShouldCancel(index)
 	local cancelData = {itemString=itemString, stackSize=quantity, buyout=buyout, bid=bid, index=index, numStacks=1}
 	
 	if isCancelAll then
-		return cancelData, "cancelAll"
+		if type(isCancelAll) ~= "number" or GetAuctionItemTimeLeft("owner", index) <= isCancelAll then
+			return cancelData, "cancelAll"
+		else
+			return false, "cancelAll"
+		end
 	end
 	
 	local item = TSM.Config:GetConfigObject(itemString)

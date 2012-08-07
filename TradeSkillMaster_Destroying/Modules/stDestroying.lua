@@ -93,7 +93,7 @@ function stDestroying:DrawScrollFrame (container, action, filter)
     }
 
     local function GetSTColInfo(width)
-        local colInfo =CopyTable(stCols)
+        local colInfo = CopyTable(stCols)
         for i=1, #colInfo do
             colInfo[i].width = floor(colInfo[i].width*width)
         end

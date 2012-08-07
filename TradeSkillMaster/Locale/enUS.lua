@@ -29,8 +29,7 @@ L["Need help with TSM? Check out the following resources!"] = true
 L["Official TradeSkillMaster Forum:"] = true
 L["TradeSkillMaster IRC Channel:"] = true
 L["TradeSkillMaster Website:"] = true
-L["Video Tutorials by Faid:"] = true
-L["TradeSkillMaster currently has 9 modules (not including the core addon) each of which can be used completely independantly of the others and have unique features."] = true
+L["TradeSkillMaster currently has 10 modules (not including the core addon) each of which can be used completely independantly of the others and have unique features."] = true
 L["Keeps track of all your sales and purchases from the auction house allowing you to easily track your income and expendatures and make sure you're turning a profit."] = true
 L["Performs scans of the auction house and calculates the market value of items as well as the minimum buyout. This information can be shown in items' tooltips as well as used by other modules."] = true
 L["Posts and cancels your auctions to / from the auction house accorder to pre-set rules. Also, this module can show you markets which are ripe for being reset for a profit."] = true
@@ -40,6 +39,7 @@ L["Tracks and manages your inventory across multiple characters including your b
 L["Allows you to quickly and easily empty your mailbox as well as automatically send items to other characters with the single click of a button."] = true
 L["Provides interfaces for efficiently searching for items on the auction house. When an item is found, it can easily be bought, canceled (if it's yours), or even posted from your bags."] = true
 L["Manages your inventory by allowing you to easily move stuff between your bags, bank, and guild bank."] = true
+L["Allows you to use data from http://wowuction.com in other TSM modules and view its various price points in your item tooltips."] = true
 L["Installed Modules"] = true
 L["Credits"] = true
 L["TradeSkillMaster Team:"] = true

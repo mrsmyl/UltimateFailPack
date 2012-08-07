@@ -50,12 +50,6 @@ function ItemData:OnEnable()
 		TSMAPI:AddPriceSource("TUJGEMedian","TheUndermineJournalGE - Market Median", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketmedian end)
 	end
 	
-	-- AuctionDB
-	if select(4, GetAddOnInfo("TradeSkillMaster_AuctionDB")) == 1 then
-		TSMAPI:AddPriceSource("DBMarket",L["AuctionDB - Market Value"], function(itemLink, itemID) return TSMAPI:GetData("market", itemID) end)
-		TSMAPI:AddPriceSource("DBMinBuyout",L["AuctionDB - Minimum Buyout"], function(itemLink, itemID) return select(5, TSMAPI:GetData("market", itemID)) end)
-	end
-	
 	-- Crafting
 	if select(4, GetAddOnInfo("TradeSkillMaster_Crafting")) == 1 then
 		TSMAPI:AddPriceSource("Crafting",L["Crafting Cost"], function(itemLink, itemID) return TSMAPI:GetData("craftingcost", itemID) end)

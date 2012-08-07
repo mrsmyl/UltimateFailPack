@@ -489,7 +489,7 @@ function Destroying:GetAuctionData(itemString)
 	return Destroying.auctions[itemString].records
 end
 
-function Destroying:TSM_SHOPPING_AH_EVENT(_, mode)
+function Destroying:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
 	local stSelection = Destroying.searchST:GetSelection()
 	local itemString, bid, buyout, count = unpack(Destroying.searchST.data[stSelection].args)
 	

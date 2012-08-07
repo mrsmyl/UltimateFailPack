@@ -38,7 +38,7 @@ local savedDBDefaults = {
 	profile = {
 		profitPercent = 0, -- percentage to subtract from buyout when calculating profit (5% = AH cut)
 		matCostSource = "DBMarket", -- how to calculate the cost of materials
-		craftCostSource = "DBMarket",
+		craftCostSource = "DBMinBuyout",
 		craftHistory = {}, -- stores a history of what crafts were crafted
 		queueMinProfitGold = {default = 50},
 		queueMinProfitPercent = {default = 0.5},
@@ -94,6 +94,7 @@ function TSM:OnEnable()
 	TSMAPI:RegisterData("shopping", TSM.Queue.GetMatsForQueue)
 	TSMAPI:RegisterData("craftingcost", TSM.GetCraftingCost)
 	TSMAPI:RegisterData("professionitems", TSM.GetProfessionItems)
+	TSMAPI:AddPriceSource("Crafting", L["Crafting Cost"], function(itemLink, itemID) return TSMAPI:GetData("craftingcost", itemID) end)
 	
 	if TSM.db.profile.tooltip then
 		TSMAPI:RegisterTooltip("TradeSkillMaster_Crafting", function(...) return TSM:LoadTooltip(...) end)

@@ -481,7 +481,7 @@ function Search:ProcessScan(scanData, isComplete)
 							end
 							
 							if TSM.db.profile.dealfindingShowAboveMaxPrice then
-								return record:GetItemBuyout() > data.maxPrice
+								return (record:GetItemBuyout() or 0) > data.maxPrice
 							end
 						end)
 					validItem = #obj.records > 0
@@ -491,7 +491,7 @@ function Search:ProcessScan(scanData, isComplete)
 			elseif specialSearchMode == "Vendor" then
 				local vendorPrice = select(11, GetItemInfo(itemString))
 				if vendorPrice and vendorPrice > 0 then
-					obj:FilterRecords(function(record) return record:GetItemBuyout() >= vendorPrice end)
+					obj:FilterRecords(function(record) return (record:GetItemBuyout() or 0) >= vendorPrice end)
 					validItem = #obj.records > 0
 				else
 					validItem = false
@@ -499,7 +499,7 @@ function Search:ProcessScan(scanData, isComplete)
 			elseif specialSearchMode == "Disenchant" then
 				local deValue = TSMAPI:GetData("deValue", itemString)
 				if deValue > 0 then
-					obj:FilterRecords(function(record) return record:GetItemBuyout() >= deValue end)
+					obj:FilterRecords(function(record) return (record:GetItemBuyout() or 0) >= deValue end)
 					validItem = #obj.records > 0
 				else
 					validItem = false
@@ -622,12 +622,20 @@ function Search:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
 		end
 	end
 	
+	-- get the next row to click on and then update the ST
+	local rowButton
+	for i=1, #Search.searchST.filtered do
+		if Search.searchST.filtered[i] == stSelection then
+			rowButton = Search.searchST.rows[i-Search.searchST.offset].cols[1]
+			break
+		end
+	end
 	Search:UpdateSearchSTData()
 	
+	
 	if not TSM.AuctionControl:IsConfirmationVisible() then
-		local rowIndex = TSM.AuctionControl:GetRowNum(Search.searchST, stSelection)
-		if rowIndex and rowIndex <= Search.searchST.displayRows and stSelection and Search.searchST.data[stSelection] and Search.searchST.rows[rowIndex] then
-			Search.searchST.rows[rowIndex].cols[1]:Click()
+		if stSelection and Search.searchST.data[stSelection] and rowButton then
+			rowButton:Click()
 		else
 			Search.searchST:SetSelection()
 			TSM.AuctionControl:SetCurrentAuction()

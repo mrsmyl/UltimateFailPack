@@ -259,7 +259,8 @@ function Reset:CreateResetButtons(parent)
 		end
 		self.auction = nil
 		self:Disable()
-		TSMAPI:CreateEventDelay("CHAT_MSG_SYSTEM", Reset.RemoveCurrentAuction, 2, function(_, msg) return msg == ERR_AUCTION_REMOVED end)
+		Reset:RegisterMessage("TSM_AH_EVENTS", Reset.RemoveCurrentAuction)
+		TSMAPI:WaitForAuctionEvents("Cancel")
 	end
 	
 	local function OnStopClick()

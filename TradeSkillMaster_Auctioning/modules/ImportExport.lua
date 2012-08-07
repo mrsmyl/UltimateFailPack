@@ -232,10 +232,10 @@ function TSM:OpenImportFrame()
 				return
 			end
 			
-			if not groupName or TSM.db.profile.groups[groupName] then
+			if not groupName or TSM.db.profile.groups[groupName] or TSM.db.profile.categories[groupName] then
 				groupName = groupName or "imported group"
 				for i=1, 10000 do
-					if not TSM.db.profile.groups[groupName..i] then
+					if not TSM.db.profile.groups[groupName..i] and not TSM.db.profile.categories[groupName..i] then
 						groupName = groupName .. i
 						break
 					end

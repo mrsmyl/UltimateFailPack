@@ -173,7 +173,7 @@ local function drawDE_UI (container)
 			{
                 {
                     type = "Label",
-                    text = deWarning.."\n"..Warning,
+                    text = deWarning,
                     fontObject = GameFontNormalMedium,
                     fullWidth = true,
                     relativeHeight = 1,
@@ -255,7 +255,7 @@ function GUI:Load(parent)
                 TSM.stDestroying:DrawScrollFrame (self, Obj.action, Obj.filter)             
             else
                 drawDE_UI(self)
-                TSM.stDE:DrawScrollFrame (self, Obj.action, Obj.filter)             
+                TSM.stDE:InitScrollFrames (self, Obj.action, Obj.filter)             
             end
 		end)
 	

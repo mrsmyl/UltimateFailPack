@@ -2,10 +2,10 @@
 ## Title: |cff00ff00TradeSkillMaster_Crafting|r
 ## Notes: Computes the profits of making various tradeskill crafts.
 ## Author: Sapu94
-## Version: v1.1
+## Version: v1.1.1
 ## SavedVariables: TradeSkillMaster_CraftingDB
 ## Dependency: TradeSkillMaster
-## X-Curse-Packaged-Version: v1.1
+## X-Curse-Packaged-Version: v1.1.1
 ## X-Curse-Project-Name: TradeSkillMaster_Crafting
 ## X-Curse-Project-ID: tradeskillmaster_crafting
 ## X-Curse-Repository-ID: wow/tradeskillmaster_crafting/mainline

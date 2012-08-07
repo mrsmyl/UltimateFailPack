@@ -27,6 +27,7 @@ local savedDBDefaults = {
 	factionrealm = {
 		characters = {},
 		guilds = {},
+		charactersToSync = {},
 	},
 	
 	-- data that is stored per user profile
@@ -78,6 +79,7 @@ function TSM:OnInitialize()
 	end
 	
 	TSM.Data:Initialize()
+	TSM.Comm:DoSync()
 	
 	if TSM.db.profile.tooltip ~= "hide" then
 		TSMAPI:RegisterTooltip("TradeSkillMaster_ItemTracker", function(...) return TSM:LoadTooltip(...) end)

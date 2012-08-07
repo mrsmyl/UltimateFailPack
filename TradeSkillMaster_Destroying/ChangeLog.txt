@@ -1,3 +1,6 @@
+v1.2.1
+*The safe table is back
+
 v1.2
 *There is a new destroy window that is smaller and has a bigger button
 *It is safe to use slow speed for DE items that are soulbound
