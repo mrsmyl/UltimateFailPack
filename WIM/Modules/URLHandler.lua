@@ -29,24 +29,20 @@ armoryLinks = {
         url = "http://armorylite.com/{eu/us}/{realm}/{user}"
     },
     {
-        title = "Be Imba!",
-        url = "http://be.imba.hu/?zone={EU/US}&realm={realm}&character={user}"
-    },
-    {
-        title = "Warcrafter",
-        url = "http://{realm}-{eu/us}.warcrafter.net/{user}"
+        title = "GuildOx",
+        url = "http://www.guildox.com/go/g.asp?a=8&p={user}&r={realm}-{eu/us}"
     },
     {
         title = "WoW Armory",
-        url = "http://{eu/www}.wowarmory.com/character-sheet.xml?r={realm}&n={user}"
+        url = "http://{eu/us}.battle.net/wow/character/{realm}/{user}/advanced"
     },
     {
         title = "WoW-Heroes",
-        url = "http://www.wow-heroes.com/index.php?zone={eu/us}&server={realm}&name={user}"
+        url = "http://www.wow-heroes.com/character/{eu/us}/{realm}/{user}"
     },
     {
-		title = "Wowhead Profiler",
-		url = "http://www.wowhead.com/?profile={eu/us}.{realm-}.{user}",
+		    title = "Wowhead Profiler",
+		    url = "http://www.wowhead.com/profile={eu/us}.{realm-}.{user}",
     }
 };
 
@@ -170,7 +166,8 @@ local function displayURL(link)
         button2 = _G.TEXT(_G.ACCEPT),
         hasEditBox = 1,
         hasWideEditBox = 1,
-	editBoxWidth = 350,
+        preferredIndex = 3,
+		editBoxWidth = 350,
         showAlert = 1, -- HACK : it"s the only way I found to make de StaticPopup have sufficient width to show WideEditBox :(
         OnShow = function(self)
                 self = self or _G.this; -- tbc hack

@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+r322 | sylvanaar | 2012-05-14 19:00:01 +0000 (Mon, 14 May 2012) | 1 line
+Changed paths:
+   A /tags/3.5.9 (from /trunk:321)
+
+Tagging as 3.5.9, support for D3 icons
+------------------------------------------------------------------------
+r321 | mysticalos | 2012-04-20 02:54:55 +0000 (Fri, 20 Apr 2012) | 1 line
+Changed paths:
+   M /trunk/Skins/Default/class_icons.tga
+   M /trunk/Skins/Default/skin.lua
+   M /trunk/Sources/WindowHandler.lua
+
+Support for D3 detection for message window icons.
+------------------------------------------------------------------------
+r320 | StingerSoft | 2012-04-07 08:06:56 +0000 (Sat, 07 Apr 2012) | 1 line
+Changed paths:
+   M /trunk/Localization/ruRU.lua
+
+ruRU update
+------------------------------------------------------------------------
