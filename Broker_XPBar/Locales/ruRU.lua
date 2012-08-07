@@ -6,9 +6,9 @@ Translator              : StingerSoft
 Revision                : $Rev: 1 $
 ********************************************************************* ]]
 
-local MODNAME   = "BrokerXPBar"
+local ADDON = ...
 
-local L = LibStub:GetLibrary("AceLocale-3.0"):NewLocale(MODNAME, "ruRU")
+local L = LibStub:GetLibrary("AceLocale-3.0"):NewLocale(ADDON, "ruRU")
 if not L then return end
 
 L["Bar Properties"] = "Свойства панели"
@@ -16,7 +16,7 @@ L["Set the Bar Properties"] = "Свойства панели"
 
 L["Show XP Bar"] = "Показать панель опыта"
 L["Show the XP Bar"]  = "Показать панель опыта"
-L["Show Rep Bar"] = "Показать панель репутации"
+L["Show Reputation Bar"] = "Показать панель репутации"
 L["Show the Reputation Bar"] = "Показать панель репутации"
 L["Spark intensity"] = "Яркость искры"
 L["Brightness level of Spark"] = "Уровень яркости искры"

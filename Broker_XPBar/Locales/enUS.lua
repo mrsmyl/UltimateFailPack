@@ -6,9 +6,9 @@ Translator              :
 Revision                : $Rev: 1 $
 ********************************************************************* ]]
 
-local MODNAME   = "BrokerXPBar"
+local ADDON = ...
 
-local L = LibStub:GetLibrary("AceLocale-3.0"):NewLocale(MODNAME, "enUS", true, true)
+local L = LibStub:GetLibrary("AceLocale-3.0"):NewLocale(ADDON, "enUS", true, true)
 if not L then return end
 
 L["Bar Properties"] = true
@@ -16,7 +16,7 @@ L["Set the Bar Properties"] = true
 
 L["Show XP Bar"] = true
 L["Show the XP Bar"]  = true
-L["Show Rep Bar"] = true
+L["Show Reputation Bar"] = true
 L["Show the Reputation Bar"] = true
 L["Spark intensity"] = true
 L["Brightness level of Spark"] = true
@@ -24,6 +24,16 @@ L["Thickness"] = true
 L["Set thickness of the Bars"] = true
 L["Shadow"] = true
 L["Toggle Shadow"] = true
+L["Inverse Order"] = true
+L["Place reputation bar before XP bar"] = true
+L["Other Texture"] = true
+L["Use external texture for bar instead of the one provided with the addon"] = true
+L["Bar Texture"] = true
+L["Texture of the bars."] = true
+L["If you want more textures, you should install the addon 'SharedMedia'."] = true
+L["per Tick"] = true
+L["Ticks"] = true
+L["Set number of ticks shown on the bar."] = true
 
 L["Frame"] = true
 L["Frame Connection Properties"] = true
@@ -138,18 +148,23 @@ L["No watched faction"] = true
 				
 L["%s: %3.0f%% (%s/%s) %s left"] = true
 
+L["Level"] = true
 L["Current XP"] = true
-L["To Level"] = true
 L["Rested XP"] = true
-
-L["Rep to next standing"] = true
-L["Current rep"] = true
-
+L["To next level"] = true
 L["Session XP"] = true
+L["Session kills"] = true
 L["XP per hour"] = true
 L["Kills per hour"] = true
 L["Time to level"] = true
 L["Kills to level"] = true
+
+L["Faction"] = true
+L["Standing"] = true
+L["Current reputation"] = true
+L["To next standing"] = true
+L["Session rep"] = true
+L["Rep per hour"] = true
 
 L["Click"] = true
 L["Shift-Click"] = true
@@ -178,11 +193,12 @@ L["Bottom"] = true
 L["Left"] = true 
 L["Right"] = true 
 
-L["XP"] = true
-L["Rep"] = true
 L["None"] = true
+L["XP"] = true
 L["Kills to Level"] = true
 L["Time to Level"] = true
+L["Rep"] = true
+L["Time to Level Rep"] = true
 L["XP over Rep"] = true
 L["Rep over XP"] = true
 

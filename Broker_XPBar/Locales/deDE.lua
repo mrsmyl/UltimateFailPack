@@ -6,9 +6,9 @@ Translator              : tritium
 Revision                : $Rev: 1 $
 ********************************************************************* ]]
 
-local MODNAME   = "BrokerXPBar"
+local ADDON = ...
 
-local L = LibStub:GetLibrary("AceLocale-3.0"):NewLocale(MODNAME, "deDE")
+local L = LibStub:GetLibrary("AceLocale-3.0"):NewLocale(ADDON, "deDE")
 if not L then return end
 
 L["Bar Properties"] = "Balkeneigenschaften"
@@ -16,14 +16,24 @@ L["Set the Bar Properties"] = "Setzen der Leisteneigenschaften"
 
 L["Show XP Bar"] = "Zeige XP-Leiste"
 L["Show the XP Bar"]  = "Zeige die XP-Leiste"
-L["Show Rep Bar"] = "Zeige Rufleiste"
+L["Show Reputation Bar"] = "Zeige Rufleiste"
 L["Show the Reputation Bar"] = "Zeige den Rufleiste"
 L["Spark intensity"] = "Halointensität"
 L["Brightness level of Spark"] = "Helligkeit der Halo"
 L["Thickness"] = "Dicke"
-L["Set thickness of the Bars"] = "Setzt die Dicke der XP-Balkens"
+L["Set thickness of the Bars"] = "Setzt die Dicke der XP-Leiste"
 L["Shadow"] = "Schatten"
 L["Toggle Shadow"] = "Aktiviert den Schattenwurf"
+L["Inverse Order"] = "Invers"
+L["Place reputation bar before XP bar"] = "Rufleiste vor XP-Leiste anzeigen"
+L["Other Texture"] = "Fremdtextur"
+L["Use external texture for bar instead of the one provided with the addon"] = "Externe Textur verwenden anstelle der im Addon enthaltenen."
+L["Bar Texture"] = "Textur"
+L["Texture of the bars."] = "Textur der Leisten"
+L["If you want more textures, you should install the addon 'SharedMedia'."] = "Installiere das Addon 'SharedMedia' für eine größere Auswahl an Texturen."
+L["per Tick"] = "je Markierung"
+L["Ticks"] = "Markierungen"
+L["Set number of ticks shown on the bar."] = "Setzt Anzahl von Markierungen auf der Leiste."
 
 L["Frame"] = "Frame"
 L["Frame Connection Properties"] = "Frame Einstellungen"
@@ -138,18 +148,23 @@ L["No watched faction"] = "Keine beobachte Fraktion"
 
 L["%s: %3.0f%% (%s/%s) %s left"] = "%s: %3.0f%% (%s/%s) %s übrig"
 
+L["Level"] = true
 L["Current XP"] = "Aktuelle XP"
-L["To Level"] = "Bis Stufe"
 L["Rested XP"] = "Ruhe-XP"
-
-L["Rep to next standing"] = "Ruf bis zur nächsten Rufstufe"
-L["Current rep"] = "Aktueller Ruf"
-
-L["Session XP"] = "Session XP"
+L["To next level"] = "Bis Stufe"
+L["Session XP"] = "XP in Sitzung"
+L["Session kills"] = "Kills in Sitzung"
 L["XP per hour"] = "XP pro Stunde"
 L["Kills per hour"] = "Kills pro Stunde"
 L["Time to level"] = "Zeit bis Stufenaufstieg"
 L["Kills to level"] = "Kills bis Stufenaufstieg"
+
+L["Faction"] = "Fraktion"
+L["Standing"] = "Rang"
+L["Current reputation"] = "Aktueller Ruf"
+L["To next standing"] = "Bis nächste Rufstufe"
+L["Session Rep"] = "Ruf in Sitzung"
+L["Rep per hour"] = "Ruf pro Stunde"
 
 L["Click"] = "Klick"
 L["Shift-Click"] = "Umschalt-Klick"
@@ -178,11 +193,12 @@ L["Bottom"] = "Unten"
 L["Left"] = "Links" 
 L["Right"] = "Rechts"
 
-L["XP"] = "XP"
-L["Rep"] = "Ruf"
 L["None"] = "Nichts"
+L["XP"] = "XP"
 L["Kills to Level"] = "Kills bis Stufenaufstieg"
 L["Time to Level"] = "Zeit bis Stufenaufstieg"
+L["Rep"] = "Ruf"
+L["Time to Level Rep"] = "Zeit bis Aufstieg Ruf"
 L["XP over Rep"] = "XP vor Ruf"
 L["Rep over XP"] = "Ruf vor XP"
 
