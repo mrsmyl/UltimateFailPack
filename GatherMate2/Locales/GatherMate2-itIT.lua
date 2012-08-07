@@ -2,7 +2,7 @@
 -- Please use the Localization App on WoWAce to Update this
 -- http://www.wowace.com/projects/gathermate2/localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "zhTW")
+local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "itIT")
 if not L then return end
 
 L["Add this location to Cartographer_Waypoints"] = "將該地點加入 Cartographer_Waypoints"
@@ -188,7 +188,7 @@ L["Treasure filter"] = "寶藏篩選"
 L["Wrath of the Lich King"] = "巫妖王之怒"
 
 
-local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "zhTW")
+local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "itIT")
 if not NL then return end
 
 NL["Abundant Bloodsail Wreckage"] = "豐碩漂浮殘骸"

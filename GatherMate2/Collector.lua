@@ -12,7 +12,7 @@ Convert for 2.4 spell IDs
 ]]
 local miningSpell = (GetSpellInfo(2575))
 local herbSpell = (GetSpellInfo(2366))
-local herbSkill = (GetSpellInfo(9134))
+local herbSkill = (string.gsub((GetSpellInfo(9134)),"%A",""))
 local fishSpell = (GetSpellInfo(33095))
 local gasSpell = (GetSpellInfo(30427))
 --local gasSpell = (GetSpellInfo(48929))  --other gasspell
@@ -78,7 +78,7 @@ function Collector:RegisterGatherEvents()
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED","SpellFailed")
 	self:RegisterEvent("CURSOR_UPDATE","CursorChange")
 	self:RegisterEvent("UI_ERROR_MESSAGE","UIError")
-	self:RegisterEvent("LOOT_CLOSED","GatherCompleted")
+	--self:RegisterEvent("LOOT_CLOSED","GatherCompleted")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "GasBuffDetector")
 	self:RegisterEvent("CHAT_MSG_LOOT","SecondaryGasCheck") -- for Storm Clouds
 	gatherEvents = true
@@ -95,7 +95,7 @@ function Collector:UnregisterGatherEvents()
 	self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	self:UnregisterEvent("CURSOR_UPDATE")
 	self:UnregisterEvent("UI_ERROR_MESSAGE")
-	self:UnregisterEvent("LOOT_CLOSED")
+	--self:UnregisterEvent("LOOT_CLOSED")
 	self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	gatherEvents = false
 end
@@ -227,6 +227,12 @@ local lastNode = ""
 local lastNodeCoords = 0
 
 function Collector:addItem(skill,what)
+	-- check for microdungeon
+	local mapName, textureWidth, textureHeight, isMicroDungeon, microDungeonName = GetMapInfo()
+	if isMicroDungeon then
+	  SetMapByID(GetCurrentMapAreaID())
+	end
+	-- end check
 	local x, y = GetPlayerMapPosition("player")
 	if x == 0 and y == 0 then return end
 	-- Temporary fix, the map "ScarletEnclave" and "EasternPlaguelands"
@@ -287,6 +293,7 @@ function Collector:addItem(skill,what)
 		lastNode = what
 		lastNodeCoords = foundCoord
 	end
+	self:GatherCompleted()
 end
 
 --[[
