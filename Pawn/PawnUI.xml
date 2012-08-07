@@ -1540,7 +1540,6 @@
 		<Scripts>
 			<OnLoad>
 				tinsert(UISpecialFrames, self:GetName()) -- closes when you press Escape
-				self:RegisterEvent("VARIABLES_LOADED")
 				self:RegisterEvent("ADDON_LOADED")
 				self:RegisterEvent("PLAYER_ENTERING_WORLD")
 				self:RegisterEvent("PLAYER_LOGOUT")

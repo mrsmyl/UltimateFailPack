@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.5.19: minor tweaks to Wowhead scales
+-- Version 1.6: WoW 5.0 compatibility
 ------------------------------------------------------------
 
 
-PawnVersion = 1.519
+PawnVersion = 1.600
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -132,9 +132,8 @@ function PawnOnEvent(Event, arg1, arg2, ...)
 		PawnOnInventoryChanged()
 	elseif Event == "ITEM_LOCKED" then
 		PawnOnItemLocked(arg1, arg2)
-	elseif Event == "VARIABLES_LOADED" then 
-		PawnInitialize()
 	elseif Event == "ADDON_LOADED" then
+		if arg1 == "Pawn" then PawnInitialize() end
 		PawnOnAddonLoaded(arg1, ...)
 	elseif Event == "PLAYER_ENTERING_WORLD" then -- was UPDATE_BINDINGS
 		if not PawnPlayerEnteredWorld then
@@ -158,6 +157,14 @@ function PawnInitialize()
 
 	SLASH_PAWN1 = "/pawn"
 	SlashCmdList["PAWN"] = PawnCommand
+	
+	-- WoW 5.0 compatibility: remove commas from all of the parsing regexes.
+	if LARGE_NUMBER_SEPERATOR then
+		local Regex
+		for _, Regex in pairs(PawnRegexes) do
+			Regex[1] = gsub(Regex[1], ",", "")
+		end
+	end
 
 	-- Set any unset options to their default values.  If the user is a new Pawn user, all options
 	-- will be set to default values.  If upgrading, only missing options will be set to default values.
@@ -251,17 +258,19 @@ function PawnInitialize()
 		end)
 	
 	-- The loot roll window
-	local LootRollClickHandler =
-		function(object, button)
-			if button == "RightButton" then
-				local ItemLink = GetLootRollItemLink(object:GetParent().rollID)
-				PawnUI_SetCompareItemAndShow(2, ItemLink)
+	if GroupLootFrame1IconFrame then
+		local LootRollClickHandler =
+			function(object, button)
+				if button == "RightButton" then
+					local ItemLink = GetLootRollItemLink(object:GetParent().rollID)
+					PawnUI_SetCompareItemAndShow(2, ItemLink)
+				end
 			end
-		end
-	GroupLootFrame1IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	GroupLootFrame2IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	GroupLootFrame3IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	GroupLootFrame4IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+		GroupLootFrame1IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+		GroupLootFrame2IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+		GroupLootFrame3IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+		GroupLootFrame4IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	end
 	
 	-- The "currently equipped" tooltips (two, in case of rings, trinkets, and dual wielding)
 	hooksecurefunc(ShoppingTooltip1, "SetHyperlinkCompareItem", function(self, ItemLink, ...) PawnUpdateTooltip("ShoppingTooltip1", "SetHyperlinkCompareItem", ItemLink, ...) PawnAttachIconToTooltip(ShoppingTooltip1, true) end)
@@ -1521,6 +1530,10 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 				CurrentDebugMessages = false
 				IgnoreErrors = true
 			end
+			-- WoW 5.0 compatibility: remove commas from all tooltip lines.
+			if LARGE_NUMBER_SEPERATOR then
+				CurrentParseText = gsub(CurrentParseText, ",", "")
+			end
 			
 			local ThisLineIsSocketBonus = false
 			if Side == 1 and strsub(CurrentParseText, 1, strlen(PawnSocketBonusPrefix)) == PawnSocketBonusPrefix then
@@ -1622,19 +1635,6 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 	end
 
 	-- Before returning, some stats require special handling.
-	
-	if Stats["AutoArmor"] then
-		if Stats["IsCloth"] or Stats["IsLeather"] or Stats["IsMail"] or Stats["IsPlate"] then
-			-- Cloth, leather, mail, and plate armor is base armor, and can be multiplied by talents.
-			PawnAddStatToTable(Stats, "BaseArmor", Stats["AutoArmor"])
-		else
-			-- Armor on all other item types (weapons, trinkets, rings) is bonus armor, and not multiplied.
-			PawnAddStatToTable(Stats, "BonusArmor", Stats["AutoArmor"])
-		end
-		Stats["AutoArmor"] = nil
-	end
-	PawnAddStatToTable(Stats, "Armor", Stats["BaseArmor"])
-	PawnAddStatToTable(Stats, "Armor", Stats["BonusArmor"])
 	
 	if Stats["IsMainHand"] or Stats["IsOneHand"] or Stats["IsOffHand"] or Stats["IsTwoHand"] or Stats["IsRanged"] then
 		-- Only perform this conversion if this is an actual weapon.  This works around a problem that occurs when you
@@ -2305,6 +2305,21 @@ function PawnCorrectScaleErrors(ScaleName)
 	
 	-- Colorless sockets are no longer valued by Pawn.  (Not the same as Prismatic Sockets.)
 	ThisScale.ColorlessSocket = nil
+	
+	-- Elemental resistances are no longer valued by Pawn as of Pawn 1.6.
+	ThisScale.AllResist = nil
+	ThisScale.FireResist = nil
+	ThisScale.ShadowResist = nil
+	ThisScale.NatureResist = nil
+	ThisScale.ArcaneResist = nil
+	ThisScale.FrostResist = nil
+	
+	-- Pawn 1.6 removed base armor and bonus armor.
+	if (ThisScale.Armor == nil) and (ThisScale.BaseArmor or ThisScale.BonusArmor) then
+		ThisScale.Armor = (ThisScale.BaseArmor or 0) + (ThisScale.BonusArmor or 0)
+	end
+	ThisScale.BaseArmor = nil
+	ThisScale.BonusArmor = nil
 end
 
 -- Replaces one incorrect stat with a correct stat.
@@ -3160,7 +3175,7 @@ function PawnIsArmorBestTypeForPlayer(Item)
 	if Class == "MAGE" or Class == "PRIEST" or Class == "WARLOCK" then
 		-- Cloth classes are easy!
 		if Stats.IsCloth then return true else return false end
-	elseif Class == "DRUID" or Class == "ROGUE" then
+	elseif Class == "DRUID" or Class == "ROGUE" or Class == "MONK" then
 		if Stats.IsLeather then
 			return true
 		elseif Stats.IsCloth then
@@ -3341,10 +3356,11 @@ function PawnPlayerUsesCogwheels()
 		)
 end
 
--- Returns true if the player is at the level cap.
--- (Currently doesn't take into account people who don't have all of the expansions; level cap is still 85 for them.)
+-- Returns true if the player is at the level cap based on which expansions they own.
 function PawnPlayerIsAtMaxLevel()
-	return UnitLevel("player") >= MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()]
+	local LevelCap = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()]
+	if LevelCap == nil then LevelCap = 85 end -- *** WoW 4.3 compatibility (people who preordered Mists will be expansion level 4, but the table doesn't have a value for 4)
+	return UnitLevel("player") >= LevelCap
 end
 
 -- Returns the maximum level an item is a useful heirloom item, or 0 if it never is.  As long as the player's level

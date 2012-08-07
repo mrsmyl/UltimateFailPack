@@ -51,34 +51,24 @@ PawnStats =
 	{"Speed", "Speed", "Weapon speed, in seconds per swing.  (If you prefer fast weapons, this number should be negative.  See also: \"speed baseline\" in the \"Special weapon stats\" section.)", true},
 	
 	{"Hybrid ratings"},
-	{"Hit rating", "HitRating", "Hit rating.  Affects melee attacks, ranged attacks, and spells."},
-	{"Crit rating", "CritRating", "Critical strike rating.  Affects melee attacks, ranged attacks, and spells."},
-	{"Haste rating", "HasteRating", "Haste rating.  Affects melee attacks, ranged attacks, and spells."},
-	{"Mastery rating", "MasteryRating", "Mastery rating.  Improves the unique bonus of your primary talent tree."},
+	{"Hit", "HitRating", "Hit.  Affects melee attacks, ranged attacks, and spells."},
+	{"Crit", "CritRating", "Critical strike.  Affects melee attacks, ranged attacks, and spells."},
+	{"Haste", "HasteRating", "Haste.  Affects melee attacks, ranged attacks, and spells."},
+	{"Mastery", "MasteryRating", "Mastery.  Improves the unique bonus of your primary talent tree."},
 	
 	{"Offensive physical stats"},
 	{"Attack power", "Ap", "Attack power.  Not present on most items directly.  Does not include attack power that you will receive from Strength or Agility."},
-	{"Expertise rating", "ExpertiseRating", "Expertise rating."},
+	{"Expertise", "ExpertiseRating", "Expertise.  Affects melee attacks.  In Mists of Pandaria, also affects ranged attacks."}, -- *** WoW 5.0 note
 	
 	{"Spell stats"},
 	{"Spell power", "SpellPower", "Spell power.  Present on caster weapons but not most armor.  Does not include the spell power that you will receive from Intellect."},
-	{"Spell penetration", "SpellPenetration", "Spell penetration.  Causes your spells to ignore some of your opponent's resistances."},
+	{"Spell penetration", "SpellPenetration", "Spell penetration.  Causes your spells to ignore some of your opponent's resistances.  Obsolete; replaced with PvP Power in Mists of Pandaria."}, -- *** WoW 5.0 note
 	
 	{"Defense stats"},
-	{"Armor", "Armor", "Armor, regardless of item type.  Classes with abilties that give armor bonuses should assign a value to base and bonus armor instead."},
-	{"Armor: base", "BaseArmor", "Base armor value on cloth, leather, mail, and plate.  Can be multiplied by abilities such as Thick Hide and Frost Presence.\n\nTank items with bonus armor in green text will have all of their armor count as base armor, as mods cannot determine how much of the armor is bonus armor."},
-	{"Armor: bonus", "BonusArmor", "Bonus armor value on weapons, trinkets, and rings.  Not affected by abilities and talents that modify armor."},
-	{"Dodge rating", "DodgeRating", "Dodge rating."},
-	{"Parry rating", "ParryRating", "Parry rating."},
-	{"Resilience rating", "ResilienceRating", "Resilience rating."},
-	
-	{"Very rare stats"},
-	{"All resistances", "AllResist", "All elemental resistances."},
-	{"Fire resistance", "FireResist", "Fire resistance.  This stat does not appear on items that give all elemental resistances."},
-	{"Shadow resistance", "ShadowResist", "Shadow resistance.  This stat does not appear on items that give all elemental resistances."},
-	{"Nature resistance", "NatureResist", "Nature resistance.  This stat does not appear on items that give all elemental resistances."},
-	{"Arcane resistance", "ArcaneResist", "Arcane resistance.  This stat does not appear on items that give all elemental resistances."},
-	{"Frost resistance", "FrostResist", "Frost resistance.  This stat does not appear on items that give all elemental resistances."},
+	{"Armor", "Armor", "Armor, regardless of item type.  Does not distinguish between base armor and bonus armor since items with bonus armor are obsolete."},
+	{"Dodge", "DodgeRating", "Tank stat."},
+	{"Parry", "ParryRating", "Tank stat."},
+	{"PVP Resilience", "ResilienceRating", "Resilience rating.  Only effective versus other players"},
 	
 	{"Weapon types"},
 	{"Axe: 1H", "IsAxe", "Points to be assigned if the item is a one-handed axe."},
@@ -91,7 +81,7 @@ PawnStats =
 	{"Mace: 1H", "IsMace", "Points to be assigned if the item is a one-handed mace."},
 	{"Mace: 2H", "Is2HMace", "Points to be assigned if the item is a two-handed mace."},
 	{"Polearm", "IsPolearm", "Points to be assigned if the item is a polearm."},
-	{"Relic", "IsRelic", "Points to be assigned if the item is a relic-slot item."},
+	{"Relic", "IsRelic", "Points to be assigned if the item is a relic-slot item.  Removed in Mists of Pandaria."}, -- *** pre-WoW 5.0 compatibility
 	{"Staff", "IsStaff", "Points to be assigned if the item is a staff."},
 	{"Sword: 1H", "IsSword", "Points to be assigned if the item is a one-handed sword."},
 	{"Sword: 2H", "Is2HSword", "Points to be assigned if the item is a two-handed sword."},
@@ -476,6 +466,10 @@ PawnLocal =
 	["GemQualityLevel85Rare"] = "Level 85 rare",
 	["GemQualityLevel85Epic"] = "Level 85 epic",
 	["MetaGemQualityLevel85Rare"] = "Level 85 crafted",
+	["GemQualityLevel90Uncommon"] = "Level 90 uncommon",
+	["GemQualityLevel90Rare"] = "Level 90 rare",
+	["GemQualityLevel90Epic"] = "Level 90 epic",
+	["MetaGemQualityLevel90Rare"] = "Level 90 crafted",
 	
 	-- Slash commands
 	["DebugOnCommand"] = "debug on",
@@ -529,8 +523,8 @@ PawnWowheadScale_WarlockAffliction = "Warlock: affliction"
 PawnWowheadScale_WarlockDemonology = "Warlock: demonology"
 PawnWowheadScale_WarlockDestruction = "Warlock: destruction"
 PawnWowheadScale_DruidBalance = "Druid: balance"
-PawnWowheadScale_DruidFeralDps = "Druid: feral cat"
-PawnWowheadScale_DruidFeralTank = "Druid: feral bear"
+PawnWowheadScale_DruidFeralDps = "Druid: feral"
+PawnWowheadScale_DruidFeralTank = "Druid: guardian"
 PawnWowheadScale_DruidRestoration = "Druid: restoration"
 
 ------------------------------------------------------------
@@ -594,6 +588,7 @@ PawnIgnoreNames =
 PawnNormalizationRegexes =
 {
 	{"^([%w%s%.]+) %+(%d+)$", "+%2 %1"}, -- "Stamina +5" --> "+5 Stamina"
+	{"^(.*) [rR]ating(.*)$", "%1%2"}, -- "Critical strike rating" --> "Critical strike" (pre-WoW 5.0 compatibility) ***
 	{"^(.-)|r.*", "%1"}, -- For removing meta gem requirements
 }
 
@@ -722,33 +717,33 @@ PawnRegexes =
 	{"^%+?(%-?%d+) Intellect$", "Intellect"}, -- negative Intellect: Kreeg's Mug
 	{"^%+?(%-?%d+) Spirit$", "Spirit"},
 	{"^Titanium Weapon Chain$", "HitRating", 28, PawnMultipleStatsFixed}, -- Weapon enchantment; has additional effects
-	{"^%+?(%d+) Dodge [rR]ating$", "DodgeRating"}, -- Uppercase: Arctic Ring of Eluding; Lowercase: Cata head enchantment for tanks
-	{"^Equip: Increases your dodge rating by (%d+)%.$", "DodgeRating"}, -- Frostwolf Insignia Rank 6
-	{"^Equip: Increases your parry rating by (%d+)%.$", "ParryRating"}, -- Draconic Avenger
-	{"^%+?(%d+) Parry Rating$", "ParryRating"},
+	{"^%+?(%d+) Dodge$", "DodgeRating"}, -- Uppercase: Subtle Alicite, Arctic Ring of Eluding, Cata head enchantment for tanks
+	{"^Equip: Increases your dodge by (%d+)%.$", "DodgeRating"}, -- Frostwolf Insignia Rank 6
+	{"^Equip: Increases your parry by (%d+)%.$", "ParryRating"}, -- Draconic Avenger
+	{"^%+?(%d+) Parry$", "ParryRating"},
 	{"^%(([%d%.,]+) damage per second%)$"}, -- Ignore this; DPS is calculated manually
 	{"^Adds ([%d%.,]+) damage per second$", "Dps"},
 	{"^Fiery Weapon$", "Dps", 4, PawnMultipleStatsFixed}, -- weapon enchantment, 
-	{"^Equip: Increases your expertise rating by (%d+)%.$", "ExpertiseRating"}, -- Earthwarden
-	{"^%+?(%d+) Expertise Rating$", "ExpertiseRating"}, -- Guardian's Shadow Crystal
-	{"^Equip: Increases your critical strike rating by (%d+)%.$", "CritRating"},
-	{"^%+?(%d+) Crit Rating$", "CritRating"}, -- Mantle of Malorne
-	{"^%+?(%d+) Critical Rating$", "CritRating"}, -- Enscribed Fire Opal (after normalization)
-	{"^%+?(%d+) Critical [Ss]trike [Rr]ating%.?$", "CritRating"}, -- One head enchantment is "20 Critical strike rating." with a dot and lowercase
-	{"^Scope %(%+(%d+) Critical Strike Rating%)$", "CritRating"},
+	{"^Equip: Increases your expertise by (%d+)%.$", "ExpertiseRating"}, -- Earthwarden
+	{"^%+?(%d+) Expertise$", "ExpertiseRating"}, -- Guardian's Shadow Crystal
+	{"^Equip: Increases your critical strike by (%d+)%.$", "CritRating"},
+	{"^%+?(%d+) Critical [Ss]trike%.?$", "CritRating"}, -- One head enchantment is "20 Critical strike rating." with a dot and lowercase
+	{"^Scope %(%+(%d+) Critical Strike%)$", "CritRating"},
 	{"^%+?(%d+) Ranged Critical Strike$", "CritRating"}, -- Heartseeker Scope (untested); Pawn doesn't distinguish between ranged and hybrid crit rating
-	{"^Equip: Increases your hit rating by (%d+)%.$", "HitRating"}, -- Don Julio's Band
-	{"^%+?(%d+) Hit Rating$", "HitRating"}, -- 3% hit scope
+	{"^Equip: Increases your hit by (%d+)%.$", "HitRating"}, -- Don Julio's Band
+	{"^%+?(%d+) Hit$", "HitRating"}, -- 3% hit scope
 	{"^Surefooted$", "HitRating", 10, PawnMultipleStatsFixed}, -- Enchantment (untested); has additional effects
 	{"^Accuracy$", "HitRating", 25, PawnMultipleStatsFixed, "CritRating", 25, PawnMultipleStatsFixed}, -- weapon enchantment
-	{"^Equip: Increases your resilience rating by (%d+)%.$", "ResilienceRating"},
-	{"^%+?(%d+) Resilience Rating$", "ResilienceRating"},
-	{"^%+?(%d+) Resilience$", "ResilienceRating"}, -- Sublime Mystic Dawnstone
-	{"^Counterweight %(%+(%d+) Haste Rating%)", "HasteRating"},
-	{"^Equip: Increases your haste rating by (%d+)%.$", "HasteRating"}, -- Swiftsteel Shoulders
-	{"^%+?(%d+) Haste Rating$", "HasteRating"}, -- Leggings of the Betrayed
-	{"^Equip: Increases your mastery rating by (%d+)%.", "MasteryRating"}, -- Elementium Poleaxe (4.0) (Do not include $; mastery rating now includes the name of your mastery on the item.)
-	{"^%+?(%d+) Mastery Rating$", "MasteryRating"}, -- Zen Dream Emerald (4.0 / Cataclysm).
+	{"^Equip: Increases your resilience by (%d+)%.$", "ResilienceRating"}, -- pre-WoW 5.0 compatibility ***
+	{"^Equip: Increases your pvp resilience by (%d+)%.$", "ResilienceRating"},
+	{"^%+?(%d+) Resilience$", "ResilienceRating"}, -- Sublime Mystic Dawnstone -- pre-WoW 5.0 compatibility ***
+	{"^%+?(%d+) PvP Resilience$", "ResilienceRating"}, -- Sublime Mystic Dawnstone
+	{"^%+?(%d+) PvP Power$", "SpellPenetration"}, -- Stormy Chalcedony -- pre-WoW 5.0 compatibility (spell penetration -> PvpPower in 5.0)
+	{"^Counterweight %(%+(%d+) Haste%)", "HasteRating"},
+	{"^Equip: Increases your haste by (%d+)%.$", "HasteRating"}, -- Swiftsteel Shoulders
+	{"^%+?(%d+) Haste$", "HasteRating"}, -- Leggings of the Betrayed
+	{"^Equip: Increases your mastery by (%d+)%.", "MasteryRating"}, -- Elementium Poleaxe (4.0) (pre-WoW 5.0 compatibility: *** Do not include $; mastery rating used to include the name of your mastery on the item.)
+	{"^%+?(%d+) Mastery$", "MasteryRating"}, -- Zen Dream Emerald (4.0 / Cataclysm).
 	{"^Equip: Increases attack power by (%d+)%.$", "Ap"},
 	{"^%+?(%d+) Attack Power$", "Ap"},
 	{"^%+?(%d+) [mM]ana [pP]er 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- Lesser Sledgemace of the Elder (counting 1 MP5 = 2 Spirit)
@@ -764,27 +759,19 @@ PawnRegexes =
 	{"^%+(%d+) Mana$", "Intellect", 1/20, PawnSingleStatMultiplier}, -- +150 mana enchantment (counting 1 Mana = 1/20 Intellect)
 	{"^%+(%d+) HP$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +100 health head/leg enchantment (counting 1 HP = 1/12.5 Stamina)
 	{"^%+(%d+) Health$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +150 health enchantment (counting 1 HP = 1/12.5 Stamin)
-	{"^(%d+) Armor$", "AutoArmor"}, -- normal armor
-	{"^%+(%d+) Armor$", "BonusArmor"}, -- cloak armor enchantments
-	{"^Reinforced %(%+(%d+) Armor%)$", "BonusArmor"}, -- armor kits
-	{"^Equip: %+(%d+) Armor%.$", "BonusArmor"}, -- paladin Royal Seal of Eldre'Thalas
+	{"^(%d+) Armor$", "Armor"}, -- normal armor
+	{"^%+(%d+) Armor$", "Armor"}, -- cloak armor enchantments
+	{"^Reinforced %(%+(%d+) Armor%)$", "Armor"}, -- armor kits
+	{"^Equip: %+(%d+) Armor%.$", "Armor"}, -- paladin Royal Seal of Eldre'Thalas
 	{"^Equip: Increases spell power by (%d+)%.$", "SpellPower"}, -- Overlaid Chain Spaulders
 	{"^%+?(%d+) Spell Power$", "SpellPower"}, -- Reckless Monarch Topaz; enchantments
 	{"^Equip: Increases spell penetration by (%d+)%.$", "SpellPenetration"}, -- Frostfire Robe, Wrathful Gladiator's Grimoire
-	{"^%+?(%d+) Spell Penetration$", "SpellPenetration"}, -- Radiant Talasite
+	{"^%+?(%d+) Spell Penetration$", "SpellPenetration"}, -- Radiant Talasite -- *** removed in WoW 5.0
 	{"^%+(%d+) Arcane Spell Damage$", "SpellPower"}, -- ...of Arcane Wrath
 	{"^%+(%d+) Fire Spell Damage$", "SpellPower"}, -- ...of Fiery Wrath
 	{"^%+(%d+) Frost Spell Damage$", "SpellPower"}, -- ...of Frozen Wrath
 	{"^%+(%d+) Nature Spell Damage$", "SpellPower"}, -- ...of Nature's Wrath
 	{"^%+(%d+) Shadow Spell Damage$", "SpellPower"}, -- ...of Shadow Wrath
-	{"^%+?(%d+) All Resistances$", "AllResist"},
-	{"^%+?(%d+) to All Resistances$", "AllResist"}, -- Band of Many Prisms
-	{"^%+?(%d+) Resist All$", "AllResist"}, -- Prismatic Sphere
-	{"^%+?(%d+) Fire Resistance$", "FireResist"},
-	{"^%+?(%d+) Shadow Resistance$", "ShadowResist"},
-	{"^%+?(%d+) Nature Resistance$", "NatureResist"},
-	{"^%+?(%d+) Arcane Resistance$", "ArcaneResist"},
-	{"^%+?(%d+) Frost Resistance$", "FrostResist"},
 	{PawnGameConstant(EMPTY_SOCKET_RED), "RedSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_YELLOW), "YellowSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_BLUE), "BlueSocket", 1, PawnMultipleStatsFixed},
