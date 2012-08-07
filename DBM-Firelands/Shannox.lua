@@ -1,7 +1,9 @@
 local mod	= DBM:NewMod(195, "DBM-Firelands", nil, 78)
 local L		= mod:GetLocalizedStrings()
+local Riplimb	= EJ_GetSectionInfo(2581)
+local Rageface	= EJ_GetSectionInfo(2583)
 
-mod:SetRevision(("$Revision: 7285 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7664 $"):sub(12, -3))
 mod:SetCreatureID(53691)
 mod:SetModelID(38448)
 mod:SetZone()
@@ -25,11 +27,11 @@ mod:RegisterEventsInCombat(
 
 mod:SetBossHealthInfo(
 	53691,	L.name,
-	53694,	L.Riplimb,
-	53695,	L.Rageface
+	53694,	Riplimb,
+	53695,	Rageface
 )
 
-local warnFaceRage				= mod:NewTargetAnnounce(99945, 4)
+local warnFaceRage				= mod:NewTargetAnnounce(99947, 4)
 local warnRage					= mod:NewTargetAnnounce(100415, 3)
 local warnWary					= mod:NewTargetAnnounce(100167, 2, nil, false)
 local warnTears					= mod:NewStackAnnounce(99937, 3, nil, mod:IsTank() or mod:IsHealer())
@@ -42,7 +44,7 @@ local warnPhase2Soon			= mod:NewPrePhaseAnnounce(2, 3)
 
 local specWarnSpear				= mod:NewSpecialWarningSpell(100002, false)
 local specWarnRage				= mod:NewSpecialWarningYou(100415)
-local specWarnFaceRage			= mod:NewSpecialWarningTarget(99945, false)
+local specWarnFaceRage			= mod:NewSpecialWarningTarget(99947, false)
 local specWarnImmTrap			= mod:NewSpecialWarningMove(99839)
 local specWarnImmTrapNear		= mod:NewSpecialWarningClose(99839)
 local yellImmoTrap				= mod:NewYell(99839, nil, false)
@@ -58,7 +60,7 @@ local timerCrystalPrison		= mod:NewTargetTimer(10, 99837)--Dogs Only
 local timerCrystalPrisonCD		= mod:NewCDTimer(25.5, 99836)--Seems consistent timing, other trap is not.
 local timerSpearCD				= mod:NewCDTimer(42, 100002)--Before riplimb dies
 local timerMagmaRuptureCD		= mod:NewCDTimer(15, 99840)--After riplimb dies
-local timerFaceRageCD			= mod:NewCDTimer(27, 99945, nil, false)--Has a 27-30 sec cd but off by default as it's subject to wild variation do to traps.
+local timerFaceRageCD			= mod:NewCDTimer(27, 99947, nil, false)--Has a 27-30 sec cd but off by default as it's subject to wild variation do to traps.
 
 local berserkTimer				= mod:NewBerserkTimer(600)
 
@@ -111,19 +113,30 @@ function mod:CrystalTrapTarget(targetname)
 	end
 end
 
---This fails if you're already incombat before pulling boss, my transcriptor bugged and didn't log it so I don't know why, because the boss still engaged, registered event, and detected kill fine.
---I can only speculate that somehow he wasn't boss1 but maybe 2-4? Will be hard to reproduce since it's not customary to purposely pull shannox with trash.
-function mod:TrapHandler(SpellID, isTank)
+local function isTank(unit)
+	-- 1. check blizzard tanks first
+	-- 2. check blizzard roles second
+	if GetPartyAssignment("MAINTANK", unit, 1) then
+		return true
+	end
+	if UnitGroupRolesAssigned(unit) == "TANK" then
+		return true
+	end
+	return false
+end
+
+function mod:TrapHandler(SpellID, ScansDone)
 	trapScansDone = trapScansDone + 1
-	if UnitExists("boss1target") then--Better way to check if target exists and prevent nil errors at same time, without stopping scans from starting still. so even if target is nil, we stil do more checks instead of just blowing off a trap warning.
-		local targetname = self:GetBossTarget(53691)
-		if UnitDetailedThreatSituation("boss1target", "boss1") and not isTank then--He's targeting his highest threat target.
+	local targetname, uId = self:GetBossTarget(53691)
+	-- UnitExists also accepts not unit id but unitname. so we can use unitname as UnitExists parameter. and it also works with player controlled pet.
+	if UnitExists(targetname) then--Better way to check if target exists and prevent nil errors at same time, without stopping scans from starting still. so even if target is nil, we stil do more checks instead of just blowing off a trap warning.
+		if isTank(uId) and not ScansDone then--He's targeting a tank.
 			if trapScansDone < 12 then--Make sure no infinite loop.
 				self:ScheduleMethod(0.05, "TrapHandler", SpellID)--Check multiple times to be sure it's not on something other then tank.
 			else
 				self:TrapHandler(SpellID, true)--It's still on tank, force true isTank and activate else rule and warn trap is on tank.
 			end
-		else--He's not targeting highest threat target (or isTank was set to true after 12 scans) so this has to be right target.
+		else--He's not targeting a tank target (or isTank was set to true after 12 scans) so this has to be right target.
 			self:UnscheduleMethod("TrapHandler")--Unschedule all checks just to be sure none are running, we are done.
 			if SpellID == 99836 then
 				self:CrystalTrapTarget(targetname)
@@ -194,7 +207,7 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(100002, 100031) then	--100002 confirmed .. all/right ids?
+	if args:IsSpellID(100002) then
 		warnSpear:Show()--Only valid until rip dies
 		specWarnSpear:Show()
 		timerSpearCD:Start()
@@ -205,7 +218,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(99945, 99947) then--is 99945 even used?, cause my 10 man logs only had 99947 for Spell cast success.
+	if args:IsSpellID(99947) then
 		warnFaceRage:Show(args.destName)
 		specWarnFaceRage:Show(args.destName)
 		timerFaceRageCD:Start()

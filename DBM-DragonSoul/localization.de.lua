@@ -28,12 +28,6 @@ L:SetMiscLocalization({
 ---------------------
 L= DBM:GetModLocalization(324)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	ShadowYell			= "Schreie, wenn du von $spell:104600 betroffen bist\n(nur heroischer Schwierigkeitsgrad)",
 	CustomRangeFrame	= "Abstandsfenster (10m) für Störende Schatten (nur heroischer Schwierigkeitsgrad)",
@@ -57,12 +51,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerOozesActive	= "Kugeln angreifbar"
+	timerOozesActive	= "Kugeln angreifbar",
+	timerOozesReach		= "Kugeln erreichen Boss"
 })
 
 L:SetOptionLocalization({
 	warnOozesHit		= "Verkünde die Farben der Blutkugeln, die den Boss getroffen haben",
 	timerOozesActive	= "Zeige Zeit bis Blutkugeln angreifbar sind",
+	timerOozesReach		= "Zeige Zeit bis Blutkugeln Yor'sahj erreichen",
 	RangeFrame			= "Zeige Abstandsfenster (4m) für $spell:104898\n(normaler und heroischer Schwierigkeitsgrad)"
 })
 
@@ -123,14 +119,15 @@ L:SetOptionLocalization({
 	TimerCombatStart	= "Zeige Dauer des Rollenspiels bevor Ultraxion aktiv wird",
 	ResetHoTCounter		= "Neustart der Stunde des Zwielichts Zählung",
 	Never				= "Nie",
-	Reset3				= "In 3er/2er-Gruppen (heroisch/normal)",
+	ResetDynamic		= "In 3er/2er-Gruppen (heroisch/normal)",
 	Reset3Always		= "Immer in 3er-Gruppen",
-	SpecWarnHoTN		= "Spezialvorwarnung für Stunde des Zwielichts (nur für Neustart in 3er-Gruppen ausgelegt)",
+	SpecWarnHoTN		= "Spezialvorwarnung für Stunde des Zwielichts (bei Neustart auf \"Nie\" nach 3er-Gruppenregel)",
 	One					= "5 Sekunden vor Zählerstand 1 (1 4 7 ...)",
 	Two					= "5 Sekunden vor Zählerstand 2 (2 5 ...)",
 	Three				= "5 Sekunden vor Zählerstand 3 (3 6 ...)",
-	ShowRaidCDs			= "Zeige Timer für \"Raid-Cooldowns\"",
-	ShowRaidCDsSelf		= "Zeige jedoch nur Timer für eigene \"Raid-Cooldowns\"\n(benötigt aktivierte Timer für \"Raid-Cooldowns\")"
+	dropdownRaidCDs		= "Zeige Timer für \"Raid-Cooldowns\"",
+	ShowRaidCDs			= "Alle",
+	ShowRaidCDsSelf		= "Nur meine"
 })
 
 L:SetMiscLocalization({
@@ -174,13 +171,10 @@ L:SetWarningLocalization({
 	SpecWarnTendril			= "Festhalten!"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
-	SpecWarnTendril			= "Zeige Spezialwarnung, falls dir der $spell:109454 Buff fehlt",
-	InfoFrame				= "Zeige Infofenster für Spieler ohne $spell:109454",
-	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109459),
+	SpecWarnTendril			= "Zeige Spezialwarnung, falls dir der $spell:105563 Buff fehlt",
+	InfoFrame				= "Zeige Infofenster für Spieler ohne $spell:105563",
+	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(105490),
 	ShowShieldInfo			= "Zeige Lebensanzeige mit einem Balken für $spell:105479"
 })
 
@@ -196,12 +190,6 @@ L:SetMiscLocalization({
 -- Madness of Deathwing  -- 
 ---------------------------
 L= DBM:GetModLocalization(333)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	RangeFrame			= "Zeige dynamisches Abstandsfenster (10m) basierend auf Spieler-Debuffs für\n$spell:108649 auf heroischem Schwierigkeitsgrad",
@@ -222,7 +210,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	DrakesLeft			= "Zwielichtkampfdrachen verbleibend: %d"
+	DrakesLeft			= "Zwielichtangreifer verbleibend: %d"
 })
 
 L:SetTimerLocalization({
@@ -230,11 +218,12 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	DrakesLeft			= "Verkünde die Anzahl der verbleibenden Zwielichtkampfdrachen",
-	TimerDrakes			= "Zeige Zeit bis zur $spell:109904 der Zwielichtkampfdrachen"
+	DrakesLeft			= "Verkünde die Anzahl der verbleibenden Zwielichtangreifer",
+	TimerDrakes			= "Zeige Zeit bis zur $spell:109904 der Zwielichtangreifer"
 })
 
 L:SetMiscLocalization({
 	EoEEvent			= "Es ist sinnlos, die Macht der Drachenseele ist zu gewaltig",--Partial
-	UltraxionTrash		= "Es tut gut, Euch wiederzusehen, Alexstrasza. Während meiner Abwesenheit war ich fleißig."
+	UltraxionTrash		= "Es tut gut, Euch wiederzusehen, Alexstrasza. Während meiner Abwesenheit war ich fleißig.",
+	UltraxionTrashEnded = "Sie waren bloß Welpen, Experimente, Mittel zu einem Zweck. Ihr werdet sehen, was meine Forschung hervorgebracht hat."
 })

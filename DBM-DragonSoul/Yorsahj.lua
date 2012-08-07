@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(325, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7319 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7599 $"):sub(12, -3))
 mod:SetCreatureID(55312)
 mod:SetModelID(39101)
+mod:SetModelSound("sound\\CREATURE\\Yorsahj\\VO_DS_YORSAHJ_INTRO_01.OGG", "sound\\CREATURE\\Yorsahj\\VO_DS_YORSAHJ_SPELL_02.OGG")
 mod:SetZone()
 mod:SetUsedIcons()
 
@@ -21,21 +22,24 @@ mod:RegisterEventsInCombat(
 
 local warnOozes				= mod:NewTargetAnnounce("ej3978", 4)
 local warnOozesHit			= mod:NewAnnounce("warnOozesHit", 3, 16372)
-local warnVoidBolt			= mod:NewStackAnnounce(108383, 3, nil, mod:IsTank() or mod:IsHealer())
+local warnVoidBolt			= mod:NewStackAnnounce(104849, 3, nil, mod:IsTank() or mod:IsHealer())
 local warnManaVoid			= mod:NewSpellAnnounce(105530, 3)
 local warnDeepCorruption	= mod:NewSpellAnnounce(105171, 4)
 
 local specWarnOozes			= mod:NewSpecialWarningSpell("ej3978")
-local specWarnVoidBolt		= mod:NewSpecialWarningStack(108383, mod:IsTank(), 3)
+local specWarnVoidBolt		= mod:NewSpecialWarningStack(104849, mod:IsTank(), 2)
+local specWarnVoidBoltOther	= mod:NewSpecialWarningTarget(104849, mod:IsTank())
 local specWarnManaVoid		= mod:NewSpecialWarningSpell(105530, mod:IsManaUser())
 local specWarnPurple		= mod:NewSpecialWarningSpell(104896, mod:IsTank() or mod:IsHealer())
 
 local timerOozesCD			= mod:NewNextTimer(90, "ej3978")
 local timerOozesActive		= mod:NewTimer(7, "timerOozesActive", 16372) -- varies (7.0~8.5)
-local timerAcidCD			= mod:NewNextTimer(8.3, 108352)--Green ooze aoe
-local timerSearingCD		= mod:NewNextTimer(6, 108358)--Red ooze aoe
-local timerVoidBoltCD		= mod:NewNextTimer(6, 108383, nil, mod:IsTank())
-local timerVoidBolt			= mod:NewTargetTimer(12, 108383, nil, mod:IsTank() or mod:IsHealer())--Nerfed yet again, its now 12. Good thing dbm timers were already right since i dbm pulls duration from aura heh.
+local timerOozesReach		= mod:NewTimer(34.5, "timerOozesReach", 16372)
+local timerAcidCD			= mod:NewNextTimer(8.3, 105573)--Green ooze aoe
+local timerSearingCD		= mod:NewNextTimer(6, 105033)--Red ooze aoe
+local timerVoidBoltCD		= mod:NewNextTimer(6, 104849, nil, mod:IsTank())
+local timerVoidBolt			= mod:NewTargetTimer(12, 104849, nil, mod:IsTank() or mod:IsHealer())--Nerfed yet again, its now 12. Good thing dbm timers were already right since i dbm pulls duration from aura heh.
+local timerManaVoid			= mod:NewBuffFadesTimer(4, 105530, nil, mod:IsManaUser())
 local timerDeepCorruption	= mod:NewBuffFadesTimer(25, 105171, nil, mod:IsTank() or mod:IsHealer())
 
 local berserkTimer		= mod:NewBerserkTimer(600)
@@ -90,6 +94,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(105530) then
 		warnManaVoid:Show()
 		specWarnManaVoid:Show()
+		timerManaVoid:Start()
 	elseif args:IsSpellID(105573, 108350, 108351, 108352) and self:IsInCombat() then
 		if yellowActive then
 			timerAcidCD:Start(3.5)--Strangely, this is 3.5 even though base CD is 8.3-8.5
@@ -118,10 +123,16 @@ Ooze Absorption and granted abilities expression (black adds only fire UNIT_SPEL
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(104849, 108383, 108384, 108385) then
 		warnVoidBolt:Show(args.destName, args.amount or 1)
-		local _, _, _, _, _, duration, expires, _, _ = UnitDebuff(args.destName, args.spellName)--Try to fix some stupidness in this timer having a 20-22second variation.
+		local _, _, _, _, _, duration, expires = UnitDebuff(args.destName, args.spellName)--This is now consistently 12 seconds, but it's been nerfed twice without warning, i'm just gonna leave this here to make the mod continue to auto correct it when/if it changes more.
 		timerVoidBolt:Start(duration, args.destName)
-		if (args.amount or 1) >= 3 and args:IsPlayer() then
-			specWarnVoidBolt:Show(args.amount)
+		if (args.amount or 1) >= 2 then
+			if args:IsPlayer() then
+				specWarnVoidBolt:Show(args.amount)
+			else
+				if not UnitIsDeadOrGhost("player") then--You're not dead and other tank has 2 stacks (meaning it's your turn).
+					specWarnVoidBoltOther:Show(args.destName)
+				end
+			end
 		end
 	elseif args:IsSpellID(104901) and args:GetDestCreatureID() == 55312 then--Yellow
 		table.insert(oozesHitTable, L.Yellow)
@@ -181,25 +192,6 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end		
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName, _, _, spellID)
-	if not uId:find("boss") then return end--yor can apparently be boss 1 2 3 or 4. even though he's only boss, :o
-	if oozeColors[spellID] then
-		table.wipe(oozesHitTable)
-		specWarnOozes:Show()
-		timerVoidBoltCD:Start(42)
-		timerOozesActive:Start()
-		if self:IsDifficulty("heroic10", "heroic25") then
-			warnOozes:Show(table.concat(oozeColorsHeroic[spellID], ", "))
-			timerOozesCD:Start(75)
-			expectedOozes = 4
-		else
-			warnOozes:Show(table.concat(oozeColors[spellID], ", "))
-			timerOozesCD:Start()
-			expectedOozes = 3
-		end
-	end
-end
-
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 55862 or cid == 55866 or cid == 55865 or cid == 55867 or cid == 55864 or cid == 55863 then--Oozes
@@ -207,17 +199,37 @@ function mod:UNIT_DIED(args)
 	end
 end
 
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+	if oozeColors[spellId] and self:AntiSpam() then
+		table.wipe(oozesHitTable)
+		specWarnOozes:Show()
+		timerVoidBoltCD:Start(42)
+		timerOozesActive:Start()
+		timerOozesReach:Start()
+		if self:IsDifficulty("heroic10", "heroic25") then
+			warnOozes:Show(table.concat(oozeColorsHeroic[spellId], ", "))
+			timerOozesCD:Start(75)
+			expectedOozes = 4
+		else
+			warnOozes:Show(table.concat(oozeColors[spellId], ", "))
+			timerOozesCD:Start()
+			expectedOozes = 3
+		end
+	end
+end
+
 -- support Yor'sahj raid leading tools (eg YorsahjAnnounce) who want to broadcast a target arrow
 RegisterAddonMessagePrefix("DBM-YORSAHJARROW")
 --mod:RegisterEvents("CHAT_MSG_ADDON") -- for debugging
 local oozePos = {
-  ["BLUE"] = 	{ 71, 34 },
-  ["PURPLE"] = 	{ 57, 13 },
-  ["RED"] = 	{ 37, 12 },
-  ["GREEN"] = 	{ 22, 34 },
-  ["YELLOW"] = 	{ 37, 85 },
-  ["BLACK"] = 	{ 71, 65 },
+	["BLUE"] = 	{ 71, 34 },
+	["PURPLE"] = 	{ 57, 13 },
+	["RED"] = 	{ 37, 12 },
+	["GREEN"] = 	{ 22, 34 },
+	["YELLOW"] = 	{ 37, 85 },
+	["BLACK"] = 	{ 71, 65 },
 }
+
 function mod:CHAT_MSG_ADDON(prefix, message, channel, sender)
 	if prefix ~= "DBM-YORSAHJARROW" then return end
 	local cmd = message or ""

@@ -27,12 +27,6 @@ L:SetMiscLocalization({
 ---------------------
 L= DBM:GetModLocalization(324)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	ShadowYell			= "Yell when you are affected by $spell:104600\n(Heroic difficulty only)",
 	CustomRangeFrame	= "Range Frame options (Heroic only)",
@@ -56,12 +50,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerOozesActive	= "Oozes Attackable"
+	timerOozesActive	= "Oozes Attackable",
+	timerOozesReach		= "Oozes Reach Boss"
 })
 
 L:SetOptionLocalization({
 	warnOozesHit		= "Announce what oozes hit the boss",
 	timerOozesActive	= "Show timer for when Oozes become attackable",
+	timerOozesReach		= "Show timer for when Oozes reach Yor'sahj",
 	RangeFrame			= "Show range frame (4) for $spell:104898\n(Normal+ difficulty)"
 })
 
@@ -122,14 +118,15 @@ L:SetOptionLocalization({
 	TimerCombatStart	= "Show timer for Ultraxion RP",
 	ResetHoTCounter		= "Restart Hour of Twilight counter",--$spell doesn't work in this function apparently so use typed spellname for now.
 	Never				= "Never",
-	Reset3				= "Reset in sets of 3/2 (heroic/normal)",
+	ResetDynamic		= "Reset in sets of 3/2 (heroic/normal)",
 	Reset3Always		= "Always Reset in sets of 3",
-	SpecWarnHoTN		= "Special warn 5s before Hour of Twilight (3 set only)",
+	SpecWarnHoTN		= "Special warn 5s before Hour of Twilight. If counter reset is Never, this follows 3set rule",
 	One					= "1 (ie 1 4 7)",
 	Two					= "2 (ie 2 5)",
 	Three				= "3 (ie 3 6)",
-	ShowRaidCDs			= "Show timers for Raid cooldowns",
-	ShowRaidCDsSelf		= "But only show timers for yours\n(requires Raid cooldowns enabled)"
+	dropdownRaidCDs		= "Show timers for Raid Cooldowns",
+	ShowRaidCDs			= "Everyone",
+	ShowRaidCDsSelf		= "Only Mine"
 })
 
 L:SetMiscLocalization({
@@ -173,13 +170,10 @@ L:SetWarningLocalization({
 	SpecWarnTendril			= "Get Secured!"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
-	SpecWarnTendril			= "Show special warning when you are missing $spell:109454 debuff",--http://ptr.wowhead.com/npc=56188
-	InfoFrame				= "Show info frame for players without $spell:109454",
-	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109459),
+	SpecWarnTendril			= "Show special warning when you are missing $spell:105563 debuff",
+	InfoFrame				= "Show info frame for players without $spell:105563",
+	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(105490),
 	ShowShieldInfo			= "Show boss health with a health bar for $spell:105479"
 })
 
@@ -195,12 +189,6 @@ L:SetMiscLocalization({
 -- Madness of Deathwing  -- 
 ---------------------------
 L= DBM:GetModLocalization(333)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	RangeFrame			= "Show dynamic range frame based on player debuff status for\n$spell:108649 on Heroic difficulty",

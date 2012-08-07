@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(332, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7293 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7599 $"):sub(12, -3))
 mod:SetCreatureID(56598)--56427 is Boss, but engage trigger needs the ship which is 56598
 mod:SetMainBossID(56427)
 mod:SetModelID(39399)
+mod:SetModelSound("sound\\CREATURE\\WarmasterBlackhorn\\VO_DS_BLACKHORN_INTRO_01.OGG", "sound\\CREATURE\\WarmasterBlackhorn\\VO_DS_BLACKHORN_SLAY_01.OGG")
 mod:SetZone()
 mod:SetUsedIcons()
 
@@ -27,16 +28,18 @@ mod:RegisterEventsInCombat(
 local warnDrakesLeft				= mod:NewAddsLeftAnnounce("ej4192", 2, 61248)
 local warnHarpoon					= mod:NewTargetAnnounce(108038, 2)
 local warnReloading					= mod:NewCastAnnounce(108039, 2)
-local warnTwilightOnslaught			= mod:NewCountAnnounce(108862, 4)
+local warnTwilightOnslaught			= mod:NewCountAnnounce(107588, 4)
 local warnPhase2					= mod:NewPhaseAnnounce(2, 3)
-local warnRoar						= mod:NewSpellAnnounce(109228, 2)
+local warnRoar						= mod:NewSpellAnnounce(108044, 2)
 local warnTwilightFlames			= mod:NewSpellAnnounce(108051, 3)
+local warnTwilightBreath			= mod:NewSpellAnnounce(110212, 3)
 local warnShockwave					= mod:NewTargetAnnounce(108046, 4)
 local warnSunder					= mod:NewStackAnnounce(108043, 3, nil, mod:IsTank() or mod:IsHealer())
-local warnConsumingShroud			= mod:NewTargetAnnounce(110598)
+local warnConsumingShroud			= mod:NewTargetAnnounce(110214)
 
 local specWarnHarpoon				= mod:NewSpecialWarningTarget(108038, false)
 local specWarnTwilightOnslaught		= mod:NewSpecialWarningSpell(107588, nil, nil, nil, true)
+local specWarnSapper				= mod:NewSpecialWarningSwitch("ej4200", mod:IsDps())
 local specWarnDeckFireCast			= mod:NewSpecialWarningSpell(110095, false, nil, nil, true)
 local specWarnDeckFire				= mod:NewSpecialWarningMove(110095)
 local specWarnElites				= mod:NewSpecialWarning("SpecWarnElites", mod:IsTank())
@@ -49,42 +52,36 @@ local specWarnSunderOther			= mod:NewSpecialWarningTarget(108043, mod:IsTank())
 
 local timerCombatStart				= mod:NewTimer(20.5, "TimerCombatStart", 2457)
 local timerAdd						= mod:NewTimer(61, "TimerAdd", 107752)
-local timerHarpoonCD				= mod:NewNextTimer(6.5, 108038, nil, mod:IsDps())
+local timerHarpoonCD				= mod:NewCDTimer(6.5, 108038, nil, mod:IsDps())--If you fail to kill drake until next drake spawning, timer do not match. So better to use cd timer for now.
 local timerHarpoonActive			= mod:NewBuffActiveTimer(20, 108038, nil, mod:IsDps())--Seems to always hold at least 20 seconds, beyond that, RNG, but you always get at least 20 seconds before they "snap" free.
 local timerReloadingCast			= mod:NewCastTimer(10, 108039, nil, mod:IsDps())
 local timerTwilightOnslaught		= mod:NewCastTimer(7, 107588)
 local timerTwilightOnslaughtCD		= mod:NewNextCountTimer(35, 107588)
 local timerSapperCD					= mod:NewNextTimer(40, "ej4200", nil, nil, nil, 107752)
-local timerDegenerationCD			= mod:NewCDTimer(8.5, 109208, nil, mod:IsTank())--8.5-9.5 variation.
+local timerDegenerationCD			= mod:NewCDTimer(8.5, 107558, nil, mod:IsTank())--8.5-9.5 variation.
 local timerBladeRushCD				= mod:NewCDTimer(15.5, 107595)
 local timerBroadsideCD				= mod:NewNextTimer(90, 110153)
-local timerRoarCD					= mod:NewCDTimer(19, 109228)--19~22 variables (i haven't seen any logs where this wasn't always 21.5, are 19s on WoL somewhere?)
+local timerRoarCD					= mod:NewCDTimer(18.5, 108044)--18.5~24 variables
 local timerTwilightFlamesCD			= mod:NewNextTimer(8, 108051)
 local timerShockwaveCD				= mod:NewCDTimer(23, 108046)
 local timerDevastateCD				= mod:NewCDTimer(8.5, 108042, nil, mod:IsTank())
 local timerSunder					= mod:NewTargetTimer(30, 108043, nil, mod:IsTank() or mod:IsHealer())
-local timerConsumingShroud			= mod:NewCDTimer(30, 110598)
-local timerTwilightBreath			= mod:NewCDTimer(20.5, 110213, nil, mod:IsTank() or mod:IsHealer())
+local timerConsumingShroud			= mod:NewCDTimer(30, 110214)
+local timerTwilightBreath			= mod:NewCDTimer(20.5, 110212, nil, mod:IsTank() or mod:IsHealer())
 
-local twilightOnslaughtCountdown	= mod:NewCountdown(35, 107588)
+local countdownTwilightOnslaught	= mod:NewCountdown(35, 107588)
 local berserkTimer					= mod:NewBerserkTimer(240)
 
 mod:AddBoolOption("SetTextures", false)--Disable projected textures in phase 1, because no harmful spells use them in phase 1, but friendly spells make the blade rush lines harder to see.
 
 local phase2Started = false
-local lastFlames = 0
 local addsCount = 0
 local drakesCount = 6
-local ignoredHarpoons = 0
 local twilightOnslaughtCount = 0
 local CVAR = false
 
 local function Phase2Delay()
 	mod:UnscheduleMethod("AddsRepeat")
-	timerAdd:Cancel()
-	timerTwilightOnslaughtCD:Cancel()
-	twilightOnslaughtCountdown:Cancel()
-	timerBroadsideCD:Cancel()
 	timerSapperCD:Cancel()
 	timerRoarCD:Start(10)
 	timerTwilightFlamesCD:Start(12)
@@ -112,42 +109,31 @@ function mod:ShockwaveTarget()
 	end
 end
 
-function mod:AddsRepeat() -- it seems to be adds summon only 3 times. needs more review
-	if addsCount < 2 then -- fix logical error
+function mod:AddsRepeat()
+	if addsCount < 2 then
 		addsCount = addsCount + 1
-		specWarnElites:Show()
 		timerAdd:Start()
 		self:ScheduleMethod(61, "AddsRepeat")
-		--Confirmed behavior for harpoons, only problem is, sometimes the add timer itself is off. :\ For example in this log it's 22.9, 60.8, 62.6
-		--We can't safetly use 60603 to fix it either cause we can't tell the trades apart in DBM. I only know mine are right because I personally targeted the drake that drops first add all 3 times.
---		"<1.0> [INSTANCE_ENCOUNTER_ENGAGE_UNIT] Fake Args:#1#1#The Skyfire#0xF130DD1600021854#elite#4000000#nil#nil#nil#nil#normal#0#nil#nil#nil#nil#normal#0#nil#nil#nil#nil#normal#0#Real Args:", -- [24]
---		"<23.9> [UNIT_SPELLCAST_SUCCEEDED] Twilight Assault Drake [[target:Eject Passenger 1::0:60603]]", -- [142]
---		"<43.8> [CLEU] SPELL_AURA_APPLIED#false#0xF150DD6900021857#Skyfire Harpoon Gun#2584#0#0xF150DE1700021DDF#Twilight Assault Drake#133704#0#108038#Harpoon#1#BUFF", -- [1309]
---		"<84.7> [UNIT_SPELLCAST_SUCCEEDED] Twilight Assault Drake [[target:Eject Passenger 1::0:60603]]", -- [3524]
---		"<91.8> [CLEU] SPELL_AURA_APPLIED#false#0xF150DD6900021857#Skyfire Harpoon Gun#2584#0#0xF150DE1700022081#Twilight Assault Drake#2632#0#108038#Harpoon#1#BUFF", -- [3857]
---		"<147.3> [UNIT_SPELLCAST_SUCCEEDED] Twilight Assault Drake [[target:Eject Passenger 1::0:60603]]", -- [7445]
---		"<154.2> [CLEU] SPELL_AURA_APPLIED#false#0xF150DD6900021857#Skyfire Harpoon Gun#2584#0#0xF150DE17000222C0#Twilight Assault Drake#2632#0#108038#Harpoon#1#BUFF", -- [7868]
-		if addsCount == 1 then
-			timerHarpoonCD:Start(20)--20 seconds after first elites (Confirmed)
-		else--6-7 seconds after sets 2 and 3.
-			timerHarpoonCD:Start()--6-7 second variation.
-		end
+	end
+	specWarnElites:Show()
+	if addsCount == 1 then
+		timerHarpoonCD:Start(18)--20 seconds after first elites (Confirmed). If harpoon bug not happening, it comes 18 sec after first elites.
+	else--6-7 seconds after sets 2 and 3.
+		timerHarpoonCD:Start()--6-7 second variation.
 	end
 end
 
 function mod:OnCombatStart(delay)
 	phase2Started = false
-	lastFlames = 0
 	addsCount = 0
 	drakesCount = 6
-	ignoredHarpoons = 0
 	twilightOnslaughtCount = 0
 	CVAR = false
 	timerCombatStart:Start(-delay)
 	timerAdd:Start(22.8-delay)
 	self:ScheduleMethod(22.8-delay, "AddsRepeat")
 	timerTwilightOnslaughtCD:Start(48-delay, 1)
-	twilightOnslaughtCountdown:Start(48-delay)
+	countdownTwilightOnslaught:Start(48-delay)
 	if self:IsDifficulty("heroic10", "heroic25") then
 		timerBroadsideCD:Start(57-delay)
 	end
@@ -178,11 +164,12 @@ function mod:SPELL_CAST_START(args)
 		specWarnTwilightOnslaught:Show()
 		timerTwilightOnslaught:Start()
 		timerTwilightOnslaughtCD:Start(nil, twilightOnslaughtCount + 1)
-		twilightOnslaughtCountdown:Start()
+		countdownTwilightOnslaught:Start()
 	elseif args:IsSpellID(108046) then
 		self:ScheduleMethod(0.2, "ShockwaveTarget")
 		timerShockwaveCD:Start()
-	elseif args:IsSpellID(110210, 110213) then
+	elseif args:IsSpellID(110212, 110213) then
+		warnTwilightBreath:Show()
 		timerTwilightBreath:Start()
 	elseif args:IsSpellID(108039) then
 		warnReloading:Show()
@@ -210,31 +197,33 @@ function mod:SPELL_AURA_APPLIED(args)
 				specWarnSunder:Show(args.amount)
 			end
 		else
-			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(108043)) then--Other tank has 2 or more sunders and you have none.
+			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(108043)) and not UnitIsDeadOrGhost("player") then--Other tank has 2 or more sunders and you have none.
 				specWarnSunderOther:Show(args.destName)--So nudge you to taunt it off other tank already.
 			end
 		end
 	elseif args:IsSpellID(108038) then
-		if ignoredHarpoons < 3 then--First two harpoons of fight are bugged, they fire early, apply to drake, even though they missed, then refire. we simply ignore first 2 bad casts to avoid spam and confusion.
-			ignoredHarpoons = ignoredHarpoons + 1
-		else--We are passed the 2 useless ones, do everything as normal now.
+		if self:AntiSpam(5, 1) then -- Use time check for harpooning warning. It can be avoid bad casts also.
 			warnHarpoon:Show(args.destName)
 			specWarnHarpoon:Show(args.destName)
-			if self:IsDifficulty("heroic10", "heroic25") then
-				timerHarpoonActive:Start(nil, args.destGUID)
-			elseif self:IsDifficulty("normal10", "normal25") then
-				timerHarpoonActive:Start(25, args.destGUID)
-			end
+		end
+		-- Timer not use time check. 2 harpoons cast same time even not bugged.
+		if self:IsDifficulty("heroic10", "heroic25") then
+			timerHarpoonActive:Start(nil, args.destGUID)
+		elseif self:IsDifficulty("normal10", "normal25") then
+			timerHarpoonActive:Start(25, args.destGUID)
 		end
 	elseif args:IsSpellID(108040) and not phase2Started then--Goriona is being shot by the ships Artillery Barrage (phase 2 trigger)
-		self:Schedule(10, Phase2Delay)--It seems you can still get phase 1 crap until blackhorn's yell 10 seconds after this trigger, so we delay canceling timers.
+		timerTwilightOnslaughtCD:Cancel()
+		countdownTwilightOnslaught:Cancel()
+		timerBroadsideCD:Cancel()
+		self:Schedule(10, Phase2Delay)--seems to only sapper comes even phase2 started. so delays only sapper stuff.
 		phase2Started = true
 		warnPhase2:Show()--We still warn phase 2 here though to get into position, especially since he can land on deck up to 5 seconds before his yell.
 		timerCombatStart:Start(5)--5-8 seems variation, we use shortest.
 		if DBM.BossHealth:IsShown() then
 			DBM.BossHealth:AddBoss(56427, L.name)
 		end
-	elseif args:IsSpellID(110598, 110214) then
+	elseif args:IsSpellID(110214, 110598) then
 		warnConsumingShroud:Show(args.destName)
 		timerConsumingShroud:Start()
 	end
@@ -248,13 +237,11 @@ function mod:SPELL_SUMMON(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
-	if (spellId == 108076 or spellId == 109222 or spellId == 109223 or spellId == 109224) and destGUID == UnitGUID("player") and GetTime() - lastFlames > 3 then
+function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
+	if (spellId == 108076 or spellId == 109222 or spellId == 109223 or spellId == 109224) and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then--Goriona's Void zones
 		specWarnTwilightFlames:Show()
-		lastFlames = GetTime()
-	elseif spellId == 110095 and destGUID == UnitGUID("player") and GetTime() - lastFlames > 3  then
+	elseif spellId == 110095 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
 		specWarnDeckFire:Show()
-		lastFlames = GetTime()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -262,6 +249,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.SapperEmote or msg:find(L.SapperEmote) then
 		timerSapperCD:Start()
+		specWarnSapper:Show()
 	elseif msg == L.Broadside or msg:find(L.Broadside) then
 		timerBroadsideCD:Start()
 	elseif msg == L.DeckFire or msg:find(L.DeckFire) then
@@ -285,12 +273,13 @@ function mod:UNIT_DIED(args)
 	elseif cid == 56855 or cid == 56587 then--Drakes
 		drakesCount = drakesCount - 1
 		warnDrakesLeft:Show(drakesCount)
+		timerReloadingCast:Cancel(args.sourceGUID)
 		timerHarpoonActive:Cancel(args.sourceGUID)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
-	if spellName == GetSpellInfo(107594) then--Blade Rush, cast start is not detectable, only cast finish, can't use target scanning, or pre warn (ie when the lines go out), only able to detect when they actually finish rush
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+	if spellId == 107594 then--Blade Rush, cast start is not detectable, only cast finish, can't use target scanning, or pre warn (ie when the lines go out), only able to detect when they actually finish rush
 		self:SendSync("BladeRush", UnitGUID(uId))
 	end
 end

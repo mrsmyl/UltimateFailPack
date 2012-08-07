@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(172, "DBM-BlackwingDescent", nil, 73)
-local mod	= DBM:NewMod("Chimaeron", "DBM-BlackwingDescent")
+local mod	= DBM:NewMod(172, "DBM-BlackwingDescent", nil, 73)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6621 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(43296)
 mod:SetModelID(33308)
 mod:SetZone()
@@ -43,7 +42,7 @@ local timerBreak			= mod:NewTargetTimer(60, 82881)
 local timerBreakCD			= mod:NewNextTimer(15, 82881)--Also double attack CD
 local timerMassacre			= mod:NewCastTimer(4, 82848)
 local timerMassacreNext		= mod:NewNextTimer(30, 82848)
-local timerCausticSlime		= mod:NewNextTimer(19, 88915)--always 19 seconds after massacre.
+local timerCausticSlime		= mod:NewNextTimer(19, 82935)--always 19 seconds after massacre.
 local timerFailure			= mod:NewBuffActiveTimer(26, 88853)
 local timerFailureNext		= mod:NewNextTimer(25, 88853)
 

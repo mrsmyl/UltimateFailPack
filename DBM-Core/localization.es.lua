@@ -9,9 +9,10 @@ DBM_CORE_LOAD_GUI_ERROR				= "No se puede cargar la GUI: %s"
 
 DBM_CORE_COMBAT_STARTED				= "%s llamado. Buena suerte y diviertase! :)"
 DBM_CORE_BOSS_DOWN					= "%s murio en %s!"
-DBM_CORE_BOSS_DOWN_LONG				= "%s murio en %s! Su muerte reciente fue %s y la muerte mas rapida fue %s."
-DBM_CORE_BOSS_DOWN_NEW_RECORD		= "%s murio en %s! Es un nuevo record! (el antiguo era %s)"
-DBM_CORE_COMBAT_ENDED				= "El combate contra %s termino en %s."
+DBM_CORE_BOSS_DOWN_L				= "%s murio en %s! Su muerte reciente fue %s y la muerte mas rapida fue %s. Lo has detrrotado %d veces en total."
+DBM_CORE_BOSS_DOWN_NR				= "%s murio en %s! Es un nuevo record! (el antiguo era %s). Lo has detrrotado %d veces en total."
+DBM_CORE_COMBAT_ENDED_AT			= "El combate contra %s (%s) terminó en %s."
+DBM_CORE_COMBAT_ENDED_AT_LONG		= "El combate contra %s (%s) terminó en %s. Has wipeado %d veces en esta dificultad."
 DBM_CORE_COMBAT_STATE_RECOVERED		= "%s empezó %s atrás. Recalibrando temporizadores..."
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d |4segundo:segundos;"
@@ -37,8 +38,10 @@ DBM_CORE_OPTION_CATEGORY_MISC		= "Miscelaneo"
 DBM_CORE_AUTO_RESPONDED				= "Auto-respusta."
 DBM_CORE_STATUS_WHISPER				= "%s: %s, %d/%d gente viva"
 DBM_CORE_AUTO_RESPOND_WHISPER		= "%s esta ocupado en la batalla contra %s (%s, %d/%d gente viva)"
-DBM_CORE_WHISPER_COMBAT_END_KILL	= "%s ha derrotado a %s!"
-DBM_CORE_WHISPER_COMBAT_END_WIPE	= "%s ha wipeado en %s"
+DBM_CORE_WHISPER_COMBAT_END_KILL	= "¡%s ha derrotado a %s!"
+DBM_CORE_WHISPER_COMBAT_END_KILL_STATS		= "¡%s ha derrotado a %s! Lo ha matado %d veces."
+DBM_CORE_WHISPER_COMBAT_END_WIPE_AT			= "%s ha wipeado en %s al %s"
+DBM_CORE_WHISPER_COMBAT_END_WIPE_STATS_AT	= "%s ha wipeado en %s al %s. Ha wipeado %d veces en total en esta dificultad."
 
 DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - Version"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"
@@ -131,8 +134,10 @@ DBM_CORE_AUTO_TIMER_TEXTS = {
 	fades		= "%s se disipa",
 	cd 			= "%s CD",
 	cdcount		= "%s CD (%%d)",
+	cdsource	= "%s CD: %%s",
 	next		= "Siguiente %s",
 	nextcount	= "Siguiente %s (%%d)",
+	nextsource	= "Siguiente %s: %%s",
 	achievement = "%s"
 }
 
@@ -143,8 +148,10 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	fades		= "Mostrar tiempo para cuando $spell:%s se disipa de los jugadores",
 	cd = "Mostrar cooldown de $spell:%s ",
 	cdcount = "Mostrar cooldown de $spell:%s ",
+	cdsource = "Mostrar cooldown (con origen) de $spell:%s ",
 	next = "Mostrar tiempo para el siguiente $spell:%s ",
 	nextcount = "Mostrar tiempo para el siguiente $spell:%s ",
+	nextsource = "Mostrar tiempo (con origen) para el siguiente $spell:%s ",
 	achievement = "Mostrar tiempo para %s"
 }
 
@@ -196,7 +203,7 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell = "%s",
 	dispel = "%s ¡dispelea ahora!",
-	interrupt = "%s ¡interrumpe ahora!",
+	interrupt = "%s ¡interrumpe %%s!",
 	you = "%s en ti!",
 	target = "%s en %%s",
 	close = "%s en %%s cerca de ti",

@@ -1,16 +1,10 @@
 ﻿if GetLocale() ~= "zhTW" then return end
-
 local L
 
 ------------------------
 --  Conclave of Wind  --
 ------------------------
---L = DBM:GetModLocalization(154)
-L = DBM:GetModLocalization("Conclave")
-
-L:SetGeneralLocalization({
-	name 				= "風之議會"
-})
+L = DBM:GetModLocalization(154)
 
 L:SetWarningLocalization({
 	warnSpecial			= "颶風/微風/冰雨風暴啟動",--Special abilities hurricane, sleet storm, zephyr(which are on shared cast/CD)
@@ -33,24 +27,13 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	gatherstrength			= "開始從剩下的風領主那裡取得力量!",
-	Anshal				= "安蕭爾",
-	Nezir				= "涅茲爾",
-	Rohash				= "洛哈許"
+	gatherstrength			= "開始從剩下的風領主那裡取得力量!"
 })
 
 ---------------
 --  Al'Akir  --
 ---------------
---L = DBM:GetModLocalization(155)
-L = DBM:GetModLocalization("AlAkir")
-
-L:SetGeneralLocalization({
-	name 				= "奧拉基爾"
-})
-
-L:SetWarningLocalization({
-})
+L = DBM:GetModLocalization(155)
 
 L:SetTimerLocalization({
 	TimerFeedback 			= "回饋(%d)"
@@ -60,7 +43,4 @@ L:SetOptionLocalization({
 	LightningRodIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(89668),
 	TimerFeedback			= "為$spell:87904的持續時間顯示計時器",
 	RangeFrame				= "為當中了$spell:89668時顯示距離框(20碼)"
-})
-
-L:SetMiscLocalization({
 })

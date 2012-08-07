@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(194, "DBM-Firelands", nil, 78)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7305 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7664 $"):sub(12, -3))
 mod:SetCreatureID(52530)
 mod:SetModelID(38446)
 mod:SetZone()
@@ -48,20 +48,20 @@ local timerFirestormCD		= mod:NewCDTimer(83, 100744)--Heroic
 local timerPhaseChange		= mod:NewTimer(33.5, "TimerPhaseChange", 99816)
 local timerHatchEggs		= mod:NewTimer(50, "TimerHatchEggs", 42471)
 local timerNextInitiate		= mod:NewTimer(32, "timerNextInitiate", 61131)
-local timerWingsofFlame		= mod:NewBuffFadesTimer(30, 98619)
 local timerTantrum			= mod:NewBuffActiveTimer(10, 99362, nil, mod:IsTank())
-local timerSatiated			= mod:NewBuffActiveTimer(15, 100852, nil, mod:IsTank())
-local timerBlazingClaw		= mod:NewTargetTimer(15, 101731, nil, false)
+local timerSatiated			= mod:NewBuffActiveTimer(15, 99359, nil, mod:IsTank())
+local timerBlazingClaw		= mod:NewTargetTimer(15, 99844, nil, false)
 
-local FirestormCountdown	= mod:NewCountdown(83, 100744)
+local countdownFirestorm	= mod:NewCountdown(83, 100744)
 
-mod:AddBoolOption("InfoFrame", false)--Why is this useful?
+mod:AddBoolOption("InfoFrame", false)
 
 local initiatesSpawned = 0
 local initiate = EJ_GetSectionInfo(2834)
 local cataCast = 0
 local clawCast = 0
 local moltCast = 0
+local PowerLevel = GetSpellInfo(98734)
 
 local initiateSpawns = {
 	[1] = L.Both,
@@ -72,16 +72,13 @@ local initiateSpawns = {
 	[6] = L.West
 }
 
---Credits to public WoL http://www.worldoflogs.com/reports/rt-qy30xgzau5w12aae/xe/?enc=bosses&boss=52530&x=spell+%3D+%22Cataclysm%22+or+spell+%3D+%22Burnout%22+or+spell+%3D+%22Firestorm%22+and+%28fulltype+%3D+SPELL_CAST_SUCCESS+or+fulltype+%3D+SPELL_CAST_START+or+fulltype+%3D+SPELL_AURA_APPLIED++or+fulltype+%3D+SPELL_AURA_REMOVED%29
---For heroic information drycodes.
-
 function mod:OnCombatStart(delay)
 	if self:IsDifficulty("heroic10", "heroic25") then
 		timerFieryVortexCD:Start(243-delay)--Probably not right.
 		timerCataclysmCD:Start(32-delay)
 		timerHatchEggs:Start(42-delay)
 		timerFirestormCD:Start(94-delay)
-		FirestormCountdown:Start(94-delay)--Perhaps some tuning.
+		countdownFirestorm:Start(94-delay)--Perhaps some tuning.
 		warnFirestormSoon:Schedule(84-delay)
 		timerHatchEggs:Start(37-delay)
 	else
@@ -94,7 +91,7 @@ function mod:OnCombatStart(delay)
 	clawCast = 0
 	moltCast = 0
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(L.PowerLevel)
+		DBM.InfoFrame:SetHeader(PowerLevel)
 		DBM.InfoFrame:Show(5, "playerpower", 10, ALTERNATE_POWER_INDEX)
 	end
 end
@@ -122,8 +119,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args:IsSpellID(99432) then--Burnout applied (0 energy)
 		warnPhase:Show(3)
-	elseif args:IsSpellID(98619) and args:IsPlayer() then
-		timerWingsofFlame:Start()
 	elseif args:IsSpellID(99844, 101729, 101730, 101731) and args:IsDestTypePlayer() then
 		timerBlazingClaw:Start(args.destName)
 	end
@@ -136,9 +131,7 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 end
 
 function mod:SPELL_AURA_REFRESH(args)
-	if args:IsSpellID(98619) and args:IsPlayer() then
-		timerWingsofFlame:Start()
-	elseif args:IsSpellID(99359, 100850, 100851, 100852) and ((args.sourceGUID == UnitGUID("target") and self:IsTank()) or not self:IsTank() and args.sourceGUID == UnitGUID("targettarget")) then--^^ Same as above only with diff spell
+	if args:IsSpellID(99359, 100850, 100851, 100852) and ((args.sourceGUID == UnitGUID("target") and self:IsTank()) or not self:IsTank() and args.sourceGUID == UnitGUID("targettarget")) then--^^ Same as above only with diff spell
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerSatiated:Start(10)
 		else
@@ -169,7 +162,7 @@ end
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(101223, 101294, 101295, 101296) then
 		if args.sourceGUID == UnitGUID("target") then
-			specWarnFieroblast:Show()
+			specWarnFieroblast:Show(args.sourceName)
 		end
 	elseif args:IsSpellID(102111, 100761) then
 		cataCast = cataCast + 1
@@ -183,7 +176,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnFirestorm:Show()
 		if cataCast < 3 then--Firestorm is only cast 2 times per phase. This essencially makes cd bar only start once.
 			timerFirestormCD:Start()
-			FirestormCountdown:Start(83)--Perhaps some tuning.
+			countdownFirestorm:Start(83)--Perhaps some tuning.
 			warnFirestormSoon:Cancel()--Just in case it's wrong. WoL may not be perfect, i'll have full transcriptor logs soon.
 			warnFirestormSoon:Schedule(73)
 		end
@@ -193,7 +186,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(99464, 100698, 100836, 100837) and self:IsDifficulty("normal10", "normal25") then	--99464, 100698 confirmed
+	if args:IsSpellID(99464, 100698) and self:IsDifficulty("normal10", "normal25") then
 		warnMolting:Show()
 		if moltCast < 2 then
 			timerMoltingCD:Start()
@@ -248,14 +241,14 @@ end
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.FullPower or msg:find(L.FullPower) then
 		warnPhase:Show(1)
-		timerNextInitiate:Start(13.5, L.Both)--Seems same on both.
+		timerNextInitiate:Start(13.5, L.Both)
 		if self:IsDifficulty("heroic10", "heroic25") then
-			timerFieryVortexCD:Start(225)--Probably not right.
+			timerFieryVortexCD:Start(225)
 			timerHatchEggs:Start(22)
 			timerCataclysmCD:Start(18)
-			timerFirestormCD:Start(70)--Needs verification.
-			FirestormCountdown:Start(70)--Perhaps some tuning.
-			warnFirestormSoon:Schedule(60)--Needs verification.
+			timerFirestormCD:Start(70)
+			countdownFirestorm:Start(70)
+			warnFirestormSoon:Schedule(60)
 			cataCast = 0
 			clawCast = 0
 		else

@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(324, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7231 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7425 $"):sub(12, -3))
 mod:SetCreatureID(55308)
 mod:SetModelID(39138)
+mod:SetModelSound("sound\\CREATURE\\WarlordZonozz\\VO_DS_ZONOZZ_INTRO_01.OGG", "sound\\CREATURE\\WarlordZonozz\\VO_DS_ZONOZZ_SPELL_05.OGG")
 mod:SetZone()
 mod:SetUsedIcons()
 
@@ -81,7 +82,7 @@ function mod:OnCombatStart(delay)
 	table.wipe(shadowsTargets)
 	timerVoidofUnmakingCD:Start(5.5-delay)
 	timerFocusedAngerCD:Start(10.5-delay)
-	timerPsychicDrainCD:Start(16.5-delay)
+	timerPsychicDrainCD:Start(13-delay)
 	timerShadowsCD:Start(-delay)
 	self:updateRangeFrame()
 	if not self:IsDifficulty("lfr25") then
@@ -150,11 +151,11 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName, _, _, spellID)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if uId ~= "boss1" then return end--Anti spam to ignore all other args (like target/focus/mouseover)
 	--Void of the unmaking cast, do not use spellname because we want to ignore events using spellid 103627 which fires when the sphere dispurses on the boss.
 	--It looks this event doesn't fire in raid finder. It seems to still fire in normal and heroic modes.
-	if spellID == 103571 and not voidWarned then
+	if spellId == 103571 and not voidWarned then
 		if timerPsychicDrainCD:GetTime() == 0 then--Just a hack to prevent this from overriding first timer on pull, which is only drain that doesn't follow this rule
 			timerPsychicDrainCD:Start(8.5)
 		end

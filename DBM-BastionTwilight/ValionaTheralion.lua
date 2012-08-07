@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(157, "DBM-BastionTwilight", nil, 72)
-local mod	= DBM:NewMod("ValionaTheralion", "DBM-BastionTwilight")
+local mod	= DBM:NewMod(157, "DBM-BastionTwilight", nil, 72)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7266 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(45992, 45993)
 mod:SetModelID(34812)
 mod:SetZone()
@@ -33,7 +32,7 @@ local warnBlackout					= mod:NewTargetAnnounce(86788, 3)
 local warnDevouringFlames			= mod:NewSpellAnnounce(86840, 3)
 local warnDazzlingDestruction		= mod:NewCountAnnounce(86408, 4)--Used by Theralion just before landing
 --Theralion Ground Phase
-local warnFabFlames					= mod:NewTargetAnnounce(92909, 3)
+local warnFabFlames					= mod:NewTargetAnnounce(86505, 3)
 local warnEngulfingMagic			= mod:NewTargetAnnounce(86622, 3)
 local warnDeepBreath				= mod:NewCountAnnounce(86059, 4)--Used by Valiona just before landing
 
@@ -44,13 +43,13 @@ local specWarnDevouringFlames		= mod:NewSpecialWarningSpell(86840, nil, nil, nil
 local specWarnDazzlingDestruction	= mod:NewSpecialWarningSpell(86408, nil, nil, nil, true)
 local specWarnBlackout				= mod:NewSpecialWarningYou(86788)
 mod:AddBoolOption("TBwarnWhileBlackout", false, "announce")
-local specWarnTwilightBlast			= mod:NewSpecialWarningMove(92898, false)
-local specWarnTwilightBlastNear		= mod:NewSpecialWarningClose(92898, false)
-local yellTwilightBlast				= mod:NewYell(92898, nil, false)
+local specWarnTwilightBlast			= mod:NewSpecialWarningMove(86369, false)
+local specWarnTwilightBlastNear		= mod:NewSpecialWarningClose(86369, false)
+local yellTwilightBlast				= mod:NewYell(86369, nil, false)
 --Theralion Ground Phase
 local specWarnDeepBreath			= mod:NewSpecialWarningSpell(86059, nil, nil, nil, true)
-local specWarnFabulousFlames		= mod:NewSpecialWarningMove(92907)
-local specWarnFabulousFlamesNear	= mod:NewSpecialWarningClose(92907)
+local specWarnFabulousFlames		= mod:NewSpecialWarningMove(86505)
+local specWarnFabulousFlamesNear	= mod:NewSpecialWarningClose(86505)
 local yellFabFlames					= mod:NewYell(92907)
 local specWarnTwilightMeteorite		= mod:NewSpecialWarningYou(88518)
 local yellTwilightMeteorite			= mod:NewYell(88518, nil, false)
@@ -89,12 +88,12 @@ local engulfingMagicTargets = {}
 local engulfingMagicIcon = 7
 local dazzlingCast = 0
 local breathCast = 0
-local lastFab = 0
-local spamZone = 0
+local lastFab = 0--Leave this custom one, we use reset gettime on it in extra places and that cannot be done with prototype
 local markWarned = false
 local blackoutActive = false
 local ValionaLanded = false
 local meteorTarget = GetSpellInfo(88518)
+local fabFlames = GetSpellInfo(86497)
 
 local setBlackoutTarget, clearBlackoutTarget
 do
@@ -165,17 +164,14 @@ local function AMSTimerDelay()
 end
 
 function mod:FabFlamesTarget()
-	local targetname = self:GetBossTarget(45993)
+	local targetname, uId = self:GetBossTarget(45993)
 	if not targetname then return end
-	local uId = DBM:GetRaidUnitId(targetname)
---	if UnitDetailedThreatSituation(uId, "boss1") then return end--He's not gonna fab flame the MT, ever. IF it gets cast in melee, he still targeted someone other then MT that was in wrong place. I'm not sure if he's boss1 or boss2 though so anti tank diabled for now.
 	warnFabFlames:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnFabulousFlames:Show()
 		yellFabFlames:Yell()
 		lastFab = GetTime()--Trigger the anti spam here so when we pre warn it thrown at them we don't double warn them again for taking 1 tick of it when it lands.
 	else
-		local uId = DBM:GetRaidUnitId(targetname)
 		if uId then
 			local x, y = GetPlayerMapPosition(uId)
 			if x == 0 and y == 0 then
@@ -225,7 +221,6 @@ function mod:OnCombatStart(delay)
 	dazzlingCast = 0
 	breathCast = 0
 	lastFab = 0
-	spamZone = 0
 	markWarned = false
 	blackoutActive = false
 	ValionaLanded = true
@@ -289,9 +284,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Unschedule(AMSTimerDelay)
 		self:Schedule(20, AMSTimerDelay)--Cause when a DK AMSes it we don't get another timer.
 	elseif args:IsSpellID(92887) and args:IsPlayer() then
-		if (args.amount or 1) >= 20 and GetTime() - spamZone > 5 then
+		if (args.amount or 1) >= 20 and self:AntiSpam(5, 1) then
 			specWarnTwilightZone:Show(args.amount)
-			spamZone = GetTime()
 		end
 	end
 end
@@ -379,11 +373,9 @@ function mod:UNIT_AURA(uId)
 	end
 end
 
---Good worked for 10 man-heroic
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
-	if not (uId == "boss1" or uId == "boss2") then return end
-	if spellName == GetSpellInfo(86497) and not ValionaLanded then--Anti spam because UNIT events fire for ALL valid UNITIDs, ie Boss1, target, focus, mouseover. It's possible to get as much as 4 events.
-		self:ScheduleMethod(0.1, "FabFlamesTarget")--Might need a timing tweak but should work.
+	if spellName == fabFlames and not ValionaLanded and self:AntiSpam(2, 2) then
+		self:ScheduleMethod(0.1, "FabFlamesTarget")
 		timerNextFabFlames:Start()
 		lastFab = GetTime()
 	end

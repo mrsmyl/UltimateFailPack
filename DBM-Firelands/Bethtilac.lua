@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(192, "DBM-Firelands", nil, 78)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7267 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7625 $"):sub(12, -3))
 mod:SetCreatureID(52498)
 mod:SetModelID(38227)
 mod:SetZone()
@@ -21,12 +21,12 @@ mod:RegisterEventsInCombat(
 local warnSmolderingDevastation		= mod:NewCountAnnounce(99052, 4)--Use count announce, cast time is pretty obvious from the bar, but it's useful to keep track how many of these have been cast.
 local warnWidowKiss					= mod:NewTargetAnnounce(99476, 3, nil, mod:IsTank() or mod:IsHealer())
 local warnPhase2Soon				= mod:NewPrePhaseAnnounce(2, 3)
-local warnFixate					= mod:NewTargetAnnounce(99559, 4)--Heroic ability
+local warnFixate					= mod:NewTargetAnnounce(99526, 4)--Heroic ability
 
-local specWarnFixate				= mod:NewSpecialWarningYou(99559)
+local specWarnFixate				= mod:NewSpecialWarningYou(99526)
 local specWarnTouchWidowKiss		= mod:NewSpecialWarningYou(99476)
 local specWarnSmolderingDevastation	= mod:NewSpecialWarningSpell(99052)
-local specWarnVolatilePoison		= mod:NewSpecialWarningMove(101133)--Heroic ability
+local specWarnVolatilePoison		= mod:NewSpecialWarningMove(99278)--Heroic ability
 local specWarnTouchWidowKissOther	= mod:NewSpecialWarningTarget(99476, mod:IsTank())
 
 local timerSpinners 				= mod:NewNextTimer(15, "ej2770", nil, nil, nil, 97370) -- 15secs after Smoldering cast start
@@ -35,12 +35,11 @@ local timerDrone					= mod:NewNextTimer(60, "ej2773", nil, nil, nil, 28866)
 local timerSmolderingDevastationCD	= mod:NewNextCountTimer(90, 99052)
 local timerEmberFlareCD				= mod:NewNextTimer(6, 98934)
 local timerSmolderingDevastation	= mod:NewCastTimer(8, 99052)
-local timerFixate					= mod:NewTargetTimer(10, 99559)
+local timerFixate					= mod:NewTargetTimer(10, 99526)
 local timerWidowsKissCD				= mod:NewCDTimer(32, 99476, nil, mod:IsTank() or mod:IsHealer())
 local timerWidowKiss				= mod:NewTargetTimer(23, 99476, nil, mod:IsTank() or mod:IsHealer())
 
 local smolderingCount = 0
-local lastPoison = 0
 
 mod:AddBoolOption("RangeFrame")
 
@@ -62,7 +61,6 @@ function mod:OnCombatStart(delay)
 	timerDrone:Start(45-delay)
 	self:ScheduleMethod(45-delay, "repeatDrone")
 	smolderingCount = 0
-	lastPoison = 0
 end
 
 function mod:OnCombatEnd()
@@ -139,9 +137,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
-	if (spellId == 99278 or spellId == 101133) and destGUID == UnitGUID("player") and GetTime() - lastPoison > 3 then
+	if (spellId == 99278 or spellId == 101133) and destGUID == UnitGUID("player") and self:AntiSpam(3) then
 		specWarnVolatilePoison:Show()
-		lastPoison = GetTime()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE

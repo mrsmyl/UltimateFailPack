@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(158, "DBM-BastionTwilight", nil, 72)
-local mod	= DBM:NewMod("AscendantCouncil", "DBM-BastionTwilight")
+local mod	= DBM:NewMod(158, "DBM-BastionTwilight", nil, 72)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6711 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(43686, 43687, 43688, 43689, 43735)
 mod:SetModelID(34822)
 mod:SetZone()
@@ -139,10 +138,16 @@ local gravityCrushIcon = 8
 local sentLowHP = {}
 local warnedLowHP = {}
 local frozenCount = 0
-local lastBeacon = 0
 local isBeacon = false
 local isRod = false
 local infoFrameUpdated = false
+local groundedName = GetSpellInfo(83581)
+local searingName = GetSpellInfo(83500)
+local Ignacious = EJ_GetSectionInfo(3118)
+local Feludius = EJ_GetSectionInfo(3110)
+local Arion = EJ_GetSectionInfo(3128)
+local Terrastra = EJ_GetSectionInfo(3135)
+local Monstrosity = EJ_GetSectionInfo(3145)
 
 local function showFrozenWarning()
 	warnFrozen:Show(table.concat(frozenTargets, "<, >"))
@@ -165,23 +170,23 @@ local function showGravityCrushWarning()
 end
 
 local function checkGrounded()
-	if not UnitDebuff("player", GetSpellInfo(83581)) and not UnitIsDeadOrGhost("player") then
+	if not UnitDebuff("player", groundedName) and not UnitIsDeadOrGhost("player") then
 		specWarnGrounded:Show()
 	end
 	if mod.Options.InfoFrame and not infoFrameUpdated then
 		infoFrameUpdated = true
-		DBM.InfoFrame:SetHeader(L.WrongDebuff:format(GetSpellInfo(83581)))
+		DBM.InfoFrame:SetHeader(L.WrongDebuff:format(groundedName))
 		DBM.InfoFrame:Show(5, "playergooddebuff", 83581)
 	end
 end
 
 local function checkSearingWinds()
-	if not UnitDebuff("player", GetSpellInfo(83500)) and not UnitIsDeadOrGhost("player") then
+	if not UnitDebuff("player", searingName) and not UnitIsDeadOrGhost("player") then
 		specWarnSearingWinds:Show()
 	end
 	if mod.Options.InfoFrame and not infoFrameUpdated then
 		infoFrameUpdated = true
-		DBM.InfoFrame:SetHeader(L.WrongDebuff:format(GetSpellInfo(83500)))
+		DBM.InfoFrame:SetHeader(L.WrongDebuff:format(searingName))
 		DBM.InfoFrame:Show(5, "playergooddebuff", 83500)
 	end
 end
@@ -189,13 +194,13 @@ end
 local updateBossFrame = function(phase)
 	DBM.BossHealth:Clear()
 	if phase == 1 then
-		DBM.BossHealth:AddBoss(43687, L.Feludius)
-		DBM.BossHealth:AddBoss(43686, L.Ignacious)
+		DBM.BossHealth:AddBoss(43687, Feludius)
+		DBM.BossHealth:AddBoss(43686, Ignacious)
 	elseif phase == 2 then
-		DBM.BossHealth:AddBoss(43688, L.Arion)
-		DBM.BossHealth:AddBoss(43689, L.Terrastra)
+		DBM.BossHealth:AddBoss(43688, Arion)
+		DBM.BossHealth:AddBoss(43689, Terrastra)
 	elseif phase == 3 then
-		DBM.BossHealth:AddBoss(43735, L.Monstrosity)
+		DBM.BossHealth:AddBoss(43735, Monstrosity)
 	end
 end
 
@@ -248,6 +253,7 @@ do
 end
 
 function mod:OnCombatStart(delay)
+	DBM:GetModByName("BoTrash"):SetFlamestrike(true)
 	updateBossFrame(1)
 	table.wipe(frozenTargets)
 	table.wipe(lightningRodTargets)
@@ -257,7 +263,6 @@ function mod:OnCombatStart(delay)
 	lightningRodIcon = 8
 	gravityCrushIcon = 8
 	frozenCount = 0
-	lastBeacon = 0
 	isBeacon = false
 	isRod = false
 	infoFrameUpdated = false
@@ -285,7 +290,7 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(82772, 92503, 92504, 92505) then--Some spellids drycoded
+	if args:IsSpellID(82772, 92503, 92504, 92505) then
 		frozenCount = frozenCount + 1
 		frozenTargets[#frozenTargets + 1] = args.destName
 		self:Unschedule(showFrozenWarning)
@@ -377,9 +382,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.FrostBeaconIcon then
 			self:SetIcon(args.destName, 3)
 		end
-		if GetTime() - lastBeacon >= 18 then -- sometimes Frost Beacon change targets, show only new Frost orbs.
+		if self:AntiSpam(18, 1) then -- sometimes Frost Beacon change targets, show only new Frost orbs.
 			timerFrostBeaconCD:Start()
-			lastBeacon = GetTime()
 		end
 	elseif args:IsSpellID(92067) then--All other spell IDs are jump spellids, do not add them in or we'll have to scan source target and filter them.
 		warnStaticOverload:Show(args.destName)
@@ -405,7 +409,7 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_AURA_REFRESH(args)--We do not combine refresh with applied cause it causes issues with burning blood/heart of ice.
-	if args:IsSpellID(82772, 92503, 92504, 92505) then--Some spellids drycoded
+	if args:IsSpellID(82772, 92503, 92504, 92505) then
 		frozenCount = frozenCount + 1
 		frozenTargets[#frozenTargets + 1] = args.destName
 		self:Unschedule(showFrozenWarning)
@@ -536,7 +540,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		self:Unschedule(hideShieldHealthBar)
 		hideShieldHealthBar()
 		if self:IsMelee() and (self:GetUnitCreatureId("target") == 43686 or self:GetUnitCreatureId("focus") == 43686) or not self:IsMelee() then
-			specWarnRisingFlames:Show()--Only warn for melee targeting him or exclicidly put him on focus, else warn regardless if he's your target/focus or not if you aren't a melee
+			specWarnRisingFlames:Show(args.sourceName)--Only warn for melee targeting him or exclicidly put him on focus, else warn regardless if he's your target/focus or not if you aren't a melee
 		end
 --[[	elseif args:IsSpellID(83718, 92541, 92542, 92543) then--Harden Skin Removed
 		self:Unschedule(hideShieldHealthBar)
@@ -554,7 +558,7 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif args:IsSpellID(82752, 92509, 92510, 92511) then
 		if self:IsMelee() and (self:GetUnitCreatureId("target") == 43687 or self:GetUnitCreatureId("focus") == 43687) or not self:IsMelee() then
-			specWarnHydroLance:Show()--Only warn for melee targeting him or exclicidly put him on focus, else warn regardless if he's your target/focus or not if you aren't a melee
+			specWarnHydroLance:Show(args.sourceName)--Only warn for melee targeting him or exclicidly put him on focus, else warn regardless if he's your target/focus or not if you aren't a melee
 		end
 		timerHydroLanceCD:Show()
 	elseif args:IsSpellID(82699) then
@@ -568,7 +572,7 @@ function mod:SPELL_CAST_START(args)
 		warnHardenSkin:Show()
 		timerHardenSkinCD:Start()
 		if self:IsMelee() and (self:GetUnitCreatureId("target") == 43689 or self:GetUnitCreatureId("focus") == 43689) or not self:IsMelee() then
-			specWarnHardenedSkin:Show()--Only warn for melee targeting him or exclicidly put him on focus, else warn regardless if he's your target/focus or not if you aren't a melee
+			specWarnHardenedSkin:Show(args.sourceName)--Only warn for melee targeting him or exclicidly put him on focus, else warn regardless if he's your target/focus or not if you aren't a melee
 		end
 	elseif args:IsSpellID(83565, 92544, 92545, 92546) then
 		infoFrameUpdated = false
@@ -674,48 +678,16 @@ function mod:RAID_BOSS_EMOTE(msg)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
-	if not (uId == "boss1" or uId == "boss2" or uId == "boss3" or uId == "boss4") then return end--Anti spam to ignore all other args
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 --	"<60.5> Feludius:Possible Target<nil>:boss1:Frost Xplosion (DND)::0:94739"
-	if spellName == GetSpellInfo(94739) then -- Frost Xplosion (Phase 2 starts)
-		updateBossFrame(2)
-		timerWaterBomb:Cancel()
-		timerGlaciate:Cancel()
-		timerAegisFlame:Cancel()
-		timerBurningBloodCD:Cancel()
-		timerHeartIceCD:Cancel()
-		timerGravityCoreCD:Cancel()
-		timerStaticOverloadCD:Cancel()
-		timerHydroLanceCD:Cancel()
-		if self:IsDifficulty("heroic10", "heroic25") then
-			timerFrostBeaconCD:Start(25)--I need to do heroic hopefully next week after heroic rag to get exact times off new event. We did normal mode this week
-			timerFlameStrikeCD:Start(28)
-		end
-		timerQuakeCD:Start()
-		self:Schedule(3, checkSearingWinds)
+	if spellId == 94739 and self:AntiSpam(2, 2) then -- Frost Xplosion (Phase 2 starts)
+		self:SendSync("Phase2")
 --	"<105.3> Terrastra:Possible Target<Omegal>:boss3:Elemental Stasis::0:82285"
-	elseif spellName == GetSpellInfo(82285) then -- Elemental Stasis (Phase 3 Transition)
-		self:Unschedule(checkSearingWinds)
-		self:Unschedule(checkGrounded)
-		timerQuakeCD:Cancel()
-		timerThundershockCD:Cancel()
-		timerHardenSkinCD:Cancel()
-		timerEruptionCD:Cancel()
-		timerDisperse:Cancel()
-		timerFlameStrikeCD:Cancel()
-		timerTransition:Start()
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:Hide()
-		end
+	elseif spellId == 82285 and self:AntiSpam(2, 2)  then -- Elemental Stasis (Phase 3 Transition)
+		self:SendSync("PhaseTransition")
 --	"<122.0> Elementium Monstrosity:Possible Target<nil>:boss1:Electric Instability::0:84526"
-	elseif spellName == GetSpellInfo(84526) then -- Electric Instability (Phase 3 Actually started)
-		updateBossFrame(3)
-		timerFrostBeaconCD:Cancel()--Cancel here to avoid probelms with orbs that spawn during the transition.
-		timerLavaSeedCD:Start(18)
-		timerGravityCrushCD:Start(28)
-		if self.Options.RangeFrame then
-			DBM.RangeCheck:Show(10)
-		end
+	elseif spellId == 84526 and self:AntiSpam(2, 2) then -- Electric Instability (Phase 3 Actually started)
+		self:SendSync("Phase3")
 	end
 end
 
@@ -735,5 +707,42 @@ function mod:OnSync(msg, boss)
 	if msg == "lowhealth" and boss and not warnedLowHP[boss] then
 		warnedLowHP[boss] = true
 		specWarnBossLow:Show(boss)
+	elseif msg == "Phase2" and self:IsInCombat() then
+		updateBossFrame(2)
+		timerWaterBomb:Cancel()
+		timerGlaciate:Cancel()
+		timerAegisFlame:Cancel()
+		timerBurningBloodCD:Cancel()
+		timerHeartIceCD:Cancel()
+		timerGravityCoreCD:Cancel()
+		timerStaticOverloadCD:Cancel()
+		timerHydroLanceCD:Cancel()
+		if self:IsDifficulty("heroic10", "heroic25") then
+			timerFrostBeaconCD:Start(25)
+			timerFlameStrikeCD:Start(28)
+		end
+		timerQuakeCD:Start()
+		self:Schedule(3, checkSearingWinds)
+	elseif msg == "PhaseTransition" and self:IsInCombat() then
+		self:Unschedule(checkSearingWinds)
+		self:Unschedule(checkGrounded)
+		timerQuakeCD:Cancel()
+		timerThundershockCD:Cancel()
+		timerHardenSkinCD:Cancel()
+		timerEruptionCD:Cancel()
+		timerDisperse:Cancel()
+		timerFlameStrikeCD:Cancel()
+		timerTransition:Start()
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:Hide()
+		end
+	elseif msg == "Phase3" and self:IsInCombat() then
+		updateBossFrame(3)
+		timerFrostBeaconCD:Cancel()--Cancel here to avoid problems with orbs that spawn during the transition.
+		timerLavaSeedCD:Start(18)
+		timerGravityCrushCD:Start(28)
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Show(10)
+		end
 	end
 end

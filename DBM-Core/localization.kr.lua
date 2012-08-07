@@ -1,6 +1,6 @@
 ﻿if (GetLocale() == "koKR") then
 
-DBM_CORE_NEED_SUPPORT				= "안녕하세요. DBM Team입니다. 만약 프로그래밍 또는 언어에 대해 잘 아신다면, DBM Team에 도움을 주실 수 있습니다. 건의/수정 요청 사항이 있다면 루세린-데스윙(everfinale@gmail.com)으로 보내주시면 됩니다. DBM Team에 직접 참가하고 싶다면 www.deadlybossmods.com 을 방문하시거나 tandanu@deadlybossmods.com 또는 nitram@deadlybossmods.com 으로 메일을 보내주세요. 단, 영어로 보내셔야 합니다."
+DBM_CORE_NEED_SUPPORT				= "버그/건의사항은 법사세린-아즈샤라(everfinale@gmail.com) 또는 인벤 닉네임 다시날아 로 보내주시기 바랍니다. DBM Team은 프로그래밍 또는 외국어에 능통하신 분의 도움을 기다리고 있습니다. 자세한 사항은 www.deadlybossmods.com 을 방문하시거나 tandanu@deadlybossmods.com 또는 nitram@deadlybossmods.com 으로 메일을 보내주시기 바랍니다."
 DBM_HOW_TO_USE_MOD					= "DBM 사용을 환영합니다. 대화창에서 /dbm help를 입력하면 사용 가능한 명령어 목록을 볼 수 있습니다. 설정을 위해서는 /dbm을 입력후 표시되는 창에서 각 보스에 대한 세부 설정을 할 수 있습니다. DBM은 처음 설치시 캐릭터 특성에 맞는 적절한 경고를 선택하며, 옵션에서 추가 설정 또한 가능합니다."
 
 DBM_CORE_LOAD_MOD_ERROR				= "%s 경보를 불러오는 중 오류 발생: %s"
@@ -8,10 +8,11 @@ DBM_CORE_LOAD_MOD_SUCCESS			= "'%s' 경보를 불러왔습니다 !"
 DBM_CORE_LOAD_GUI_ERROR				= "그래픽 설정 기능을 불러올 수 없습니다: %s"
 
 DBM_CORE_COMBAT_STARTED				= "%s 작동됨. 행운을 빕니다! :)";
-DBM_CORE_BOSS_DOWN					= "%s 전투에서 승리하였습니다! (%s 소요 되었습니다.)"
-DBM_CORE_BOSS_DOWN_LONG				= "%s 전투에서 승리하였습니다! (%s 소요 되었습니다.) 이 보스의 최종 전투 시간은, %s 입니다. 그리고 가장 빠른 전투 시간은 %s 입니다."
-DBM_CORE_BOSS_DOWN_NEW_RECORD		= "%s 전투에서 승리하였습니다! (%s 소요 되었습니다.) 이 기록은 새로운 기록이군요! (과거 기록: %s)"
-DBM_CORE_COMBAT_ENDED				= "%s 전투가 종료되었습니다. (%s 소요 되었습니다.)"
+DBM_CORE_BOSS_DOWN					= "%s 전투에서 승리하였습니다! (전투 시간: %s)"
+DBM_CORE_BOSS_DOWN_L				= "%s 전투에서 승리하였습니다! (전투 시간: %s, 최종 전투 기록: %s, 가장 빨랐던 기록: %s, 처치: %d회)"
+DBM_CORE_BOSS_DOWN_NR				= "%s 전투에서 승리하였습니다! (전투 시간: %s) 이 기록은 새로운 기록이군요! (과거 기록: %s, 처치: %d회)"
+DBM_CORE_COMBAT_ENDED_AT			= "%s 전투가 종료되었습니다. (전투 종료시 보스 체력: %s, 전투 시간: %s)"
+DBM_CORE_COMBAT_ENDED_AT_LONG		= "%s 전투가 종료되었습니다. (전투 종료시 보스 체력: %s, 전투 시간: %s, 전멸: %d회)"
 DBM_CORE_COMBAT_STATE_RECOVERED		= "%s 전투가 %s 전에 시작되었습니다. 바를 복구 중입니다..."
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d|4초:초;"
@@ -34,11 +35,13 @@ DBM_CORE_OPTION_CATEGORY_TIMERS		= "바"
 DBM_CORE_OPTION_CATEGORY_WARNINGS	= "알림"
 DBM_CORE_OPTION_CATEGORY_MISC		= "기타 추가 기능"
 
-DBM_CORE_AUTO_RESPONDED				= "전투중 받은 귓속말에 대해 자동 응답합니다."
-DBM_CORE_STATUS_WHISPER				= "%s: %s, %d/%d 명이 생존해 있습니다."
-DBM_CORE_AUTO_RESPOND_WHISPER		= "%s 님은 현재 바쁩니다. %s 전투가 진행중입니다. (%s, %d/%d 명 생존중) 전투 종료후 다시 알림 메세지가 표시됩니다."
-DBM_CORE_WHISPER_COMBAT_END_KILL	= "%s 님의 %s 전투가 끝났습니다!"
-DBM_CORE_WHISPER_COMBAT_END_WIPE	= "%s 님이 %s 전투에서 전멸하였습니다."
+DBM_CORE_AUTO_RESPONDED						= "전투중 받은 귓속말을 자동 응답합니다."
+DBM_CORE_STATUS_WHISPER						= "%s: %s, %d/%d 명이 생존해 있습니다."
+DBM_CORE_AUTO_RESPOND_WHISPER				= "%s 님은 현재 바쁩니다. %s 전투가 진행중입니다. (%s, %d/%d 명 생존중) 전투 종료후 다시 알림 메세지가 표시됩니다."
+DBM_CORE_WHISPER_COMBAT_END_KILL			= "%s 님의 %s 전투가 끝났습니다!"
+DBM_CORE_WHISPER_COMBAT_END_KILL_STATS		= "%s 님의 %s 전투가 끝났습니다! (처치: %d회)"
+DBM_CORE_WHISPER_COMBAT_END_WIPE_AT			= "%s 님이 %s 전투에서 전멸하였습니다. 전투 종료시 보스의 체력은 %s 입니다."
+DBM_CORE_WHISPER_COMBAT_END_WIPE_STATS_AT	= "%s 님이 %s 전투에서 전멸하였습니다. 전투 종료시 보스의 체력은 %s 입니다. (현재 난이도에서 전멸: %d회)"
 
 DBM_CORE_VERSIONCHECK_HEADER		= "죽이는 보스 모드 - 버전"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"
@@ -131,8 +134,10 @@ DBM_CORE_AUTO_TIMER_TEXTS = {
 	fades		= "%s 사라짐",--Buff/Debuff on players
 	cd 			= "%s 대기시간",
 	cdcount		= "%s 대기시간 (%%d)",
+	cdsource	= "%s 대기시간: %%s",
 	next 		= "다음 %s",
 	nextcount 	= "다음 %s (%%d)",
+	nextsource	= "다음 %s: %%s",
 	achievement	= "%s"
 }
 
@@ -143,8 +148,10 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	fades		= "$spell:%s 효과가 사라지기 전까지 남은시간 바 표시",
 	cd 			= "$spell:%s 대기시간 바 표시",
 	cdcount		= "$spell:%s 대기시간 바 표시",
+	cdsource	= "$spell:%s 대기시간 바 표시",
 	next 		= "다음 $spell:%s 바 표시",
 	nextcount 	= "다음 $spell:%s 바 표시",
+	nextsource	= "다음 $spell:%s 바 표시",
 	achievement = "%s 업적을 위한 남은시간 바 표시"
 }
 
@@ -164,8 +171,8 @@ DBM_CORE_AUTO_ANNOUNCE_TEXTS = {
 }
 
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS = {
-	target		= "$spell:%s 대상 보기",
-	targetcount	= "$spell:%s 대상 보기",
+	target		= "$spell:%s 대상 알림 보기",
+	targetcount	= "$spell:%s 대상 알림 보기",
 	spell 		= "$spell:%s 알림 보기",
 	adds		= "$spell:%s 남은 횟수 알림 보기",
 	cast 		= "$spell:%s 시전시 알림 보기",
@@ -195,7 +202,7 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell 		= "%s!",
 	dispel 		= "%s : %%s - 해제!",
-	interrupt 	= "%s - 차단!",	
+	interrupt 	= "%s : %%s - 차단!",	
 	you 		= "당신에게 %s",
 	target 		= "%s : %%s",
 	close 		= "당신 근처에 %s (%%s)!",

@@ -5,12 +5,7 @@ local L
 ------------------------
 --  Conclave of Wind  --
 ------------------------
---L = DBM:GetModLocalization(154)
-L = DBM:GetModLocalization("Conclave")
-
-L:SetGeneralLocalization({
-	name = "Conclave do Vento"
-})
+L = DBM:GetModLocalization(154)
 
 L:SetWarningLocalization({
 	warnSpecial			= "Furacão/Zéfiro/Tempestade de Granizo ativos",--Special abilities hurricane, sleet storm, zephyr(which are on shared cast/CD)
@@ -33,24 +28,13 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	gatherstrength	= "begins to gather strength",
-	Anshal			= "Anshal",
-	Nezir			= "Nezir",
-	Rohash			= "Rohash"
+	gatherstrength	= "begins to gather strength"
 })
 
 ---------------
 --  Al'Akir  --
 ---------------
---L = DBM:GetModLocalization(155)
-L = DBM:GetModLocalization("AlAkir")
-
-L:SetGeneralLocalization({
-	name = "Al'Akir"
-})
-
-L:SetWarningLocalization({
-})
+L = DBM:GetModLocalization(155)
 
 L:SetTimerLocalization({
 	TimerFeedback 	= "Realimentação (%d)"
@@ -60,7 +44,4 @@ L:SetOptionLocalization({
 	LightningRodIcon= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(89668),
 	TimerFeedback	= "Exibir cronógrafo para a duração de $spell:87904",
 	RangeFrame		= "Exibir medidor de distância (20), quando afetado por $spell:89668"
-})
-
-L:SetMiscLocalization({
 })

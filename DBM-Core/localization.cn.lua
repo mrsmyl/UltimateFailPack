@@ -1,6 +1,6 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com) & yleaf(yaroot@gmail.com)
 -- merge traslation by bigfoot team  - yleaf 9-10-2010
--- Last update: 2/7/2012
+-- Last update: 3/3/2012
 
 if GetLocale() ~= "zhCN" then return end
 
@@ -13,9 +13,12 @@ DBM_CORE_LOAD_GUI_ERROR				= "无法读取图形界面：%s"
 
 DBM_CORE_COMBAT_STARTED				= "%s作战开始，祝你走运 :)"
 DBM_CORE_BOSS_DOWN					= "%s被击杀！用时%s。"
-DBM_CORE_BOSS_DOWN_LONG				= "%s被击杀！本次用时%s，上次用时%s，最快击杀用时%s。"
-DBM_CORE_BOSS_DOWN_NEW_RECORD		= "%s被击杀！用时%s，新的击杀纪录诞生了！（原纪录为%s）"
-DBM_CORE_COMBAT_ENDED				= "%s作战结束，用时%s。"
+DBM_CORE_BOSS_DOWN_L				= "%s被击杀！本次用时%s，上次用时%s，最快击杀用时%s。总击杀%d次。"--Localize this with new string, won't use it til it has enough language support.
+DBM_CORE_BOSS_DOWN_NR				= "%s被击杀！用时%s，新的击杀纪录诞生了！（原纪录为%s）总击杀%d次。"--Localize this with new string, won't use it til it has enough language support.
+--DBM_CORE_BOSS_DOWN_LONG			= "%s被击杀！本次用时%s，上次用时%s，最快击杀用时%s。"
+--DBM_CORE_BOSS_DOWN_NEW_RECORD		= "%s被击杀！用时%s，新的击杀纪录诞生了！（原纪录为%s）"
+DBM_CORE_COMBAT_ENDED_AT			= "%s（%s）作战结束，用时%s。"
+DBM_CORE_COMBAT_ENDED_AT_LONG		= "%s（%s）作战结束，用时%s。总尝试%d次。"--This is usuable now since it's a new string and won't break locals missing this.
 DBM_CORE_COMBAT_STATE_RECOVERED		= "%s作战%s前开始，正在恢复计时条……"
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d秒"
@@ -42,7 +45,7 @@ DBM_CORE_AUTO_RESPONDED				= "已自动回复密语。"
 DBM_CORE_STATUS_WHISPER				= "%s：%s，%d/%d存活"
 DBM_CORE_AUTO_RESPOND_WHISPER		= "%s正在与%s交战，（当前%s，%d/%d存活）"
 DBM_CORE_WHISPER_COMBAT_END_KILL	= "%s已经击败%s!"
-DBM_CORE_WHISPER_COMBAT_END_WIPE	= "%s在%s的战斗中灭团了。"
+DBM_CORE_WHISPER_COMBAT_END_WIPE_AT	= "%s在%s（%s）的战斗中灭团了。"
 
 DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - 版本检测"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s：%s(r%d)"
@@ -135,8 +138,10 @@ DBM_CORE_AUTO_TIMER_TEXTS = {
 	fades		= "%s消失",--Buff/Debuff on players
 	cd			= "%s冷却",
 	cdcount		= "%s冷却（%%d）",
+	cdsource	= "%s冷却: %%s",
 	next 		= "下一次%s",
 	nextcount	= "下一次%s（%%d）",
+	nextsource	= "下一次%s: %%s",
 	achievement = "%s",
 }
 
@@ -147,8 +152,10 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	fades		= "计时条：$spell:%s何时从玩家身上消失",
 	cd			= "计时条：$spell:%s冷却时间",
 	cdcount		= "计时条：$spell:%s冷却时间",
+	cdsource	= "计时条：$spell:%s冷却时间",
 	next		= "计时条：下一次$spell:%s",
 	nextcount	= "计时条：下一次$spell:%s",
+	nextsource	= "计时条：下一次$spell:%s",
 	achievement	= "计时条：成就%s"
 }
 

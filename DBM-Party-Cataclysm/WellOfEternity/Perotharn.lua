@@ -1,7 +1,7 @@
-local mod	= DBM:NewMod("Perotharn", "DBM-Party-Cataclysm", 13)
+local mod	= DBM:NewMod(290, "DBM-Party-Cataclysm", 13, 185)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6794 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7663 $"):sub(12, -3))
 mod:SetCreatureID(55085)
 mod:SetModelID(39182)
 mod:SetMinSyncRevision(6792)

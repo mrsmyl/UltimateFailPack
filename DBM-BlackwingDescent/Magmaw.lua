@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(170, "DBM-BlackwingDescent", nil, 73)
-local mod	= DBM:NewMod("Magmaw", "DBM-BlackwingDescent")
+local mod	= DBM:NewMod(170, "DBM-BlackwingDescent", nil, 73)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7274 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(41570)
 mod:SetModelID(37993)
 mod:SetZone()
@@ -28,14 +27,14 @@ mod:RegisterEventsInCombat(
 local warnLavaSpew			= mod:NewSpellAnnounce(77689, 3, nil, mod:IsHealer())
 local warnPillarFlame		= mod:NewSpellAnnounce(78006, 3)
 local warnMoltenTantrum		= mod:NewSpellAnnounce(78403, 4)
-local warnInferno			= mod:NewSpellAnnounce(92190, 4)
+local warnInferno			= mod:NewSpellAnnounce(92154, 4)
 local warnMangle			= mod:NewTargetAnnounce(89773, 3)
 local warnArmageddon		= mod:NewSpellAnnounce(92177, 4)
 local warnPhase2Soon		= mod:NewPrePhaseAnnounce(2, 3)--heroic
 local warnPhase2			= mod:NewPhaseAnnounce(2, 4)--heroic
 
 local specWarnPillar		= mod:NewSpecialWarningSpell(78006, mod:IsRanged())
-local specWarnIgnition		= mod:NewSpecialWarningMove(92198)
+local specWarnIgnition		= mod:NewSpecialWarningMove(92128)
 local specWarnInfernoSoon   = mod:NewSpecialWarning("SpecWarnInferno")
 local specWarnArmageddon	= mod:NewSpecialWarningSpell(92177, nil, nil, nil, true)
 
@@ -44,21 +43,17 @@ local timerPillarFlame		= mod:NewCDTimer(32.5, 78006)--This timer is a CD timer.
 local timerMangle			= mod:NewTargetTimer(30, 89773)
 local timerExposed			= mod:NewBuffActiveTimer(30, 79011)
 local timerMangleCD			= mod:NewCDTimer(95, 89773)
-local timerInferno			= mod:NewNextTimer(35, 92190)
+local timerInferno			= mod:NewNextTimer(35, 92154)
 local timerArmageddon		= mod:NewCastTimer(8, 92177)
 
 local berserkTimer			= mod:NewBerserkTimer(600)
 
 mod:AddBoolOption("RangeFrame")
 
-local lastLavaSpew = 0
-local ignitionSpam = 0
 local geddonConstruct = 0
 local prewarnedPhase2 = false
 
 function mod:OnCombatStart(delay)
-	lastLavaSpew = 0
-	ignitionSpam = 0
 	geddonConstruct = 0
 	prewarnedPhase2 = false
 	timerPillarFlame:Start(30-delay)
@@ -99,10 +94,9 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(77690, 91919, 91931, 91932) and GetTime() - lastLavaSpew > 5 then--SpellIds for other modes are guesswork, 77690 10 man confirmed
+	if args:IsSpellID(77690, 91919, 91931, 91932) and self:AntiSpam(5, 1) then
 		warnLavaSpew:Show()
 		timerLavaSpew:Start()
-		lastLavaSpew = GetTime()
 	elseif args:IsSpellID(92177) then
 		warnArmageddon:Show()
 		specWarnArmageddon:Show()
@@ -120,9 +114,8 @@ function mod:SPELL_SUMMON(args)
 end
 
 function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
-	if (spellId == 92128 or spellId == 92196 or spellId == 92197 or spellId == 92198) and destGUID == UnitGUID("player") and GetTime() - ignitionSpam >= 4 then
+	if (spellId == 92128 or spellId == 92196 or spellId == 92197 or spellId == 92198) and destGUID == UnitGUID("player") and self:AntiSpam(4, 2) then
 		specWarnIgnition:Show()
-		ignitionSpam = GetTime()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE

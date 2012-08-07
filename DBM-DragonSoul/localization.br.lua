@@ -29,22 +29,17 @@ L:SetMiscLocalization({
 ---------------------
 L= DBM:GetModLocalization(324)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
     ShadowYell	= "Gritar ao ser afetado por $spell:104600\n(Apenas modo heróico)",
-	CustomRangeFrame	= "Range Frame options",
-	Never				= "Disabled",
-	Normal				= "Normal Range Frame",
-	DynamicPhase2		= "Phase2 Debuff Filtering",
-	DynamicAlways		= "Always Debuff Filtering"
+	CustomRangeFrame	= "Opções do medidor de distância",
+	Never				= "Desabilitado",
+	Normal				= "Medidor Normal",
+	DynamicPhase2		= "Filtrar penalidades na Fase 2",
+	DynamicAlways		= "Sempre filtrar penalidades"
 })
 
 L:SetMiscLocalization({
+	voidYell	= "Gul'kafh an'qov N'Zoth."--Start translating the yell he does for Void of the Unmaking cast, the latest logs from DS indicate blizz removed the UNIT_SPELLCAST_SUCCESS event that detected casts. sigh.
 })
 
 -----------------------------
@@ -53,6 +48,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(325)
 
 L:SetWarningLocalization({
+	warnOozesHit	= "%s absorvidas %s"
 })
 
 L:SetTimerLocalization({
@@ -60,17 +56,18 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	warnOozesHit		= "Anunciar quais glóbulos atingem o chefe",
 	timerOozesActive	= "Exibir cronógrafo para quando os Glóbulos se tornam atacáveis",
 	RangeFrame			= "Exibir medidor de distância (4) para $spell:104898\n(Modo Normal+)"
 })
 
 L:SetMiscLocalization({
-	Black			= "|cFF424242negro|r",
-	Purple			= "|cFF9932CDroxo|r",
-	Red				= "|cFFFF0404vermelho|r",
-	Green			= "|cFF088A08verde|r",
-	Blue			= "|cFF0080FFazul|r",
-	Yellow			= "|cFFFFA901amarelo|r"
+	Black			= "|cFF424242Negro|r",
+	Purple			= "|cFF9932CDPúrpura|r",
+	Red				= "|cFFFF0404Vermelho|r",
+	Green			= "|cFF088A08Verde|r",
+	Blue			= "|cFF0080FFAzul|r",
+	Yellow			= "|cFFFFA901Amarelo|r"
 })
 
 -----------------------
@@ -79,6 +76,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(317)
 
 L:SetWarningLocalization({
+	WarnPillars				= "%s: %d restantes",
 	warnFrostTombCast		= "%s em 8 seg"
 })
 
@@ -87,12 +85,15 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	WarnPillars				= "Anunciar quantos $journal:3919 ou $journal:4069 restam",
 	TimerSpecial			= "Exibir cronógrafo para lançamento da primeira habilidade",
     RangeFrame				= "Exibir medidor de distância: (3) para $spell:105269, (10) para $journal:4327",
 	AnnounceFrostTombIcons	= "Anunciar no chat da raide, ícones para alvos de $spell:104451\n(requer liderança)",
 	warnFrostTombCast		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(104448, GetSpellInfo(104448)),
 	SetIconOnFrostTomb		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(104451),
-	SetIconOnFrostflake		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109325)
+	SetIconOnFrostflake		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109325),
+	SpecialCount			= "Tocar som de contagem regressiva para $spell:105256 ou $spell:105465",
+	SetBubbles				= "Automaticamente desabilitar balões de voz quando $spell:104451 está disponível\n(Voltando ao normal ao fim do combate)"
 })
 
 L:SetMiscLocalization({
@@ -105,23 +106,31 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(331)
 
 L:SetWarningLocalization({
-	specWarnHourofTwilightN		= "%s (%%d)"--spellname Count
+	specWarnHourofTwilightN		= "%s (%d) em 5s"--spellname Count
 })
 
 L:SetTimerLocalization({
-	TimerCombatStart	= "Ultraxion pousa"
+	TimerCombatStart	= "Ultraxion pousa",
+	timerRaidCDs		= "%s CD: %s"--spellname CD Castername
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "Exibir cronógrafo para início do combate.",
-	ResetHoTCounter		= "Restart Hour of Twilight counter",--$spell doesn't work in this function apparently so use typed spellname for now.
-	Never				= "Never",
-	Reset3				= "Reset in sets of 3/2 (heroic/normal)",
-	Reset3Always		= "Always Reset in sets of 3"
+	ResetHoTCounter		= "Reiniciar contador de Hora do Crepúsculo",--$spell doesn't work in this function apparently so use typed spellname for now.
+	Never				= "Nunca",
+	ResetDynamic		= "Zerar a cada 3/2 (heróico/normal)",
+	Reset3Always		= "Sempre zerar a cada 3",
+	SpecWarnHoTN		= "Aviso especial 5s antes de Hora do Crepúsculo. Se configurado para Nunca zerar, a regra de 3 em 3 será utilizada.",
+	One					= "1 (ou seja, 1 4 7)",
+	Two					= "2 (ou seja, 2 5)",
+	Three				= "3 (ou seja, 3 6)",
+	dropdownRaidCDs		= "Exibir cronógrafos para recargas da raide.",
+	ShowRaidCDs			= "Todo mundo",
+	ShowRaidCDsSelf		= "Apenas meus"
 })
 
 L:SetMiscLocalization({
-	Pull				= "I sense a great disturbance in the balance approaching. The chaos of it burns my mind!"
+	Pull				= "Eu sinto uma grande desordem no equilíbrio que se aproxima. O caos incendeia a minha mente!"
 })
 
 -------------------------
@@ -130,20 +139,26 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(332)
 
 L:SetWarningLocalization({
+	SpecWarnElites	= "Elites do Crepúsculo!"
 })
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "Início do combate",
+	TimerAdd			= "Próximos Elites"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "Exibir cronógrafo para o início do combate",
+	TimerAdd			= "Exibir cronógrafo para o surgimento de próximos Elites do Crepúsculo!",
+	SpecWarnElites		= "Exibir aviso especial para novos Elites do Crepúsculo",
+	SetTextures			= "Automaticamente desabilitar texturas projetadas durante a fase 1\n(Habilita novamente na fase 2)"
 })
 
 L:SetMiscLocalization({
-	SapperEmote			= "A drake swoops down to drop a Twilight Sapper onto the deck!",
+	SapperEmote			= "Um draco mergulha para lançar um Sapador do Crepúsculo ao convés!",
 	Broadside			= "spell:110153",
-	DeckFire			= "spell:110095"
+	DeckFire			= "spell:110095",
+	GorionaRetreat			= "se contorce de dor e retira-se entre as nuvens rodopiantes."
 })
 
 -------------------------
@@ -152,10 +167,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(318)
 
 L:SetWarningLocalization({
-	SpecWarnTendril			= "Get Secured!"
-})
-
-L:SetTimerLocalization({
+	SpecWarnTendril			= "Segure-se!"
 })
 
 L:SetOptionLocalization({
@@ -166,11 +178,11 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull		= "The plates! He's coming apart! Tear up the plates and we've got a shot at bringing him down!",
+	Pull		= "As placas! Ele está se desfazendo! Destruam as placas e teremos uma chance de derrotá-lo!",
 	NoDebuff	= "Sem %s",
-	PlasmaTarget	= "Searing Plasma: %s",
-	DRoll		= "about to roll",
-	DLevels			= "levels out"
+	PlasmaTarget	= "Plasma Calcinante: %s",
+	DRoll		= "prestes a rolar",
+	DLevels			= "nivela"
 })
 
 ---------------------------
@@ -178,17 +190,13 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(333)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
+	RangeFrame			= "Exibir medidor de distância dinâmico baseado nas penalidades do jogador para\n$spell:108649 na dificuldade heróica",
+	SetIconOnParasite	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(108649)
 })
 
 L:SetMiscLocalization({
-	Pull				= "You have done NOTHING. I will tear your world APART."
+	Pull				= "Vocês não fizeram NADA. Seu mundo será DESTRUÍDO."
 })
 
 -------------
@@ -197,10 +205,11 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("DSTrash")
 
 L:SetGeneralLocalization({
-	name =	"Dragonsoul Trash"
+	name =	"Trash de Dragonsoul"
 })
 
 L:SetWarningLocalization({
+	DrakesLeft			= "Agressores do Crepúsculo restantes: %d"
 })
 
 L:SetTimerLocalization({
@@ -208,9 +217,12 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	DrakesLeft			= "Anunciar quantos Agressores do Crepúsculo restam",
 	TimerDrakes			= "Exibir cronógrafo para quando Assaltantes do Crepúsculo $spell:109904"
 })
 
 L:SetMiscLocalization({
-	UltraxionTrash		= "It is good to see you again, Alexstrasza. I have been busy in my absence."
+	EoEEvent			= "Não adianta, o poder da Alma é muito grande",--Partial
+	UltraxionTrash		= "Que bom vê-la novamente, Alexstrasza. Estive ocupado na minha ausência.",
+	UltraxionTrashEnded = "Simples dragonetes, experimentos, um meio para uma causa maior. Você verá os frutos da pesquisa que minha prole fez."
 })

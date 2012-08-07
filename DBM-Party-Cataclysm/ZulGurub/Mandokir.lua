@@ -1,7 +1,8 @@
-local mod	= DBM:NewMod("Mandokir", "DBM-Party-Cataclysm", 11)
+local mod	= DBM:NewMod(176, "DBM-Party-Cataclysm", 11, 76)
 local L		= mod:GetLocalizedStrings()
+local Ohgan	= EJ_GetSectionInfo(2615)
 
-mod:SetRevision(("$Revision: 7270 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7663 $"):sub(12, -3))
 mod:SetCreatureID(52151)
 mod:SetModelID(37816)
 mod:SetZone()
@@ -9,7 +10,7 @@ mod:SetUsedIcons(8)
 
 mod:SetBossHealthInfo(
 	52151, L.name,
-	52157, L.Ohgan
+	52157, Ohgan
 )
 
 mod:RegisterCombat("combat")

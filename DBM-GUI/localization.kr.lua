@@ -5,12 +5,13 @@ local L = DBM_GUI_Translations
 
 L.MainFrame = "죽이는 보스 모드"
 
-L.TranslationBy 		= "루세린-데스윙(everfinale@gmail.com)/Old:흑묘서희-에이그윈"
+L.TranslationBy 		= "법사세린-아즈샤라(everfinale@gmail.com)/O:흑묘서희-에이그윈"
 
 L.OTabBosses	= "보스"
 L.OTabOptions	= "설정"
 
 L.TabCategory_Options 	= "일반 설정"
+L.TabCategory_MOP		= "판다리아의 안개"
 L.TabCategory_CATA	 	= "대격변"
 L.TabCategory_WOTLK 	= "리치왕의 분노"
 L.TabCategory_BC 		= "불타는 성전"
@@ -52,8 +53,6 @@ L.Statistic_25Man		= "25인"
 -- Tab: General Options
 L.General 				= "일반 DBM 설정"
 L.EnableDBM 			= "DBM 사용"
-L.EnableStatus 			= "'status' 라는 귓속말을 받은 경우 자동 응답 메세지 보내기"
-L.AutoRespond 			= "보스 전투 중 귓속말을 받은 경우 자동 응답 메세지 보내기"
 L.EnableMiniMapIcon		= "미니맵 버튼 사용"
 L.UseMasterVolume		= "기본 오디오 채널로 소리 듣기"
 L.DisableCinematics		= "게임내 동영상 재생 기능 끄기"
@@ -100,6 +99,21 @@ L.RaidWarnSound			= "알림 소리"
 L.CountdownVoice		= "초읽기(5,4,3,2,1) 및 지속시간 읽기 소리 설정"
 L.SpecialWarnSound		= "특수 경고 소리 (자신이나 특정 직업군이 영향을 받는 주문)"
 L.SpecialWarnSound2		= "특수 경고 소리 (공격대원이 영향을 받는 주문)"
+
+-- Tab: Generalwarnings
+L.Tab_GeneralMessages 		= "메세지 설정"
+L.CoreMessages				= "일반 메세지 설정"
+L.ShowLoadMessage 			= "대화 창에 보스 경보 불러오기 메세지 보이기"
+L.ShowPizzaMessage 			= "대화 창에 사용자 지정 바에 관련된 메세지 보이기"
+L.CombatMessages			= "전투 메세지 설정"
+L.ShowEngageMessage 		= "대화 창에 전투 시작 메세지 보이기"
+L.ShowKillMessage 			= "대화 창에 보스 처치 메세지 보이기"
+L.ShowWipeMessage 			= "대화 창에 보스 전멸 메세지 보이기"
+L.ShowRecoveryMessage 		= "대화 창에 바 복구 메세지 보이기"
+L.WhisperMessages			= "귓속말 설정"
+L.AutoRespond 				= "보스 전투 중 귓속말을 받은 경우 자동 응답 메세지 보내기"
+L.EnableStatus 				= "'status' 라는 귓속말을 받은 경우 자동 응답 메세지 보내기"
+L.WhisperStats 				= "귓속말 자동 응답시 처치/전멸 횟수 포함하기"
 
 -- Tab: Barsetup
 L.BarSetup  				= "바 설정"

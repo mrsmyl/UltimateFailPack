@@ -20,19 +20,11 @@ L:SetOptionLocalization({
 	RangeFrame		= "為成就顯示距離框(5碼)。"
 })
 
-L:SetMiscLocalization({
-})
-
 ---------------------
 -- Warlord Zon'ozz --
 ---------------------
 L= DBM:GetModLocalization(324)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	ShadowYell			= "當你中了$spell:104600時大喊(英雄模式專用)",
@@ -123,14 +115,15 @@ L:SetOptionLocalization({
 	TimerCombatStart	= "為戰鬥開始時間顯示計時器",
 	ResetHoTCounter		= "重置暮光之時計數",--$spell doesn't work in this function apparently so use typed spellname for now.
 	Never				= "不使用",
-	Reset3				= "每三次/兩次重置計數(英雄/普通)",
+	ResetDynamic		= "每三次/兩次重置計數(英雄/普通)",
 	Reset3Always		= "總是每三次重置計數",
-	SpecWarnHoTN		= "前五秒特別警告所設定的暮光之時計數(只適用在每三次重置)",
+	SpecWarnHoTN		= "為暮光之時前五秒顯示特別警告，如設為不使用則預設為每三次重置計數",
 	One					= "1(即為第1 4 7次)",
 	Two					= "2(即為第2 5次)",
 	Three				= "3(即為第3 6次)",
-	ShowRaidCDs			= "為團隊冷卻顯示計時器",
-	ShowRaidCDsSelf		= "只顯示你的團隊冷卻計時器\n(需要開啟團隊冷卻)"
+	dropdownRaidCDs		= "為團隊冷卻顯示計時器",
+	ShowRaidCDs			= "所有人的冷卻",
+	ShowRaidCDsSelf		= "只有我的冷卻",
 })
 
 L:SetMiscLocalization({
@@ -174,9 +167,6 @@ L:SetWarningLocalization({
 	SpecWarnTendril			= "已被安全抓住!"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	SpecWarnTendril			= "當你身上沒有$spell:109454減益時顯示特別警告",
 	InfoFrame				= "為沒有$spell:109454的玩家顯示訊息框",
@@ -196,12 +186,6 @@ L:SetMiscLocalization({
 -- Madness of Deathwing  -- 
 ---------------------------
 L= DBM:GetModLocalization(333)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	RangeFrame			= "根據玩家減益顯示動態的距離框以對應英雄模式的$spell:108649",

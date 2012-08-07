@@ -6,7 +6,7 @@ local L = DBM_GUI_Translations
 
 L.MainFrame = "Deadly Boss Mods"
 
-L.TranslationBy 			= "Vintematar"
+L.TranslationBy 			= "Cavejohnson @ Azralon"
 
 L.OTabBosses	= "Chefes"
 L.OTabOptions	= "Opções"
@@ -53,8 +53,6 @@ L.Statistic_25Man			= "Raide 25 jogadores"
 -- Tab: General Options
 L.General 					= "Opções gerais do DBM"
 L.EnableDBM 				= "Habilitar DBM"
-L.EnableStatus 				= "Responder a sussurros de 'status'"
-L.AutoRespond 				= "Habilitar auto-resposta durante batalhas"
 L.EnableMiniMapIcon			= "Exibir botão no mini-mapa"
 L.UseMasterVolume			= "Utilizar canal principal de áudio para reproduzir arquivos de som."
 L.DisableCinematics			= "Desabilitar todas as cinemáticas no jogo."
@@ -68,6 +66,8 @@ L.ModelSoundShort			= "Curto"
 L.ModelSoundLong			= "Longo"
 
 L.Button_RangeFrame			= "Exibir/esconder quadro de distância"
+L.Button_RangeRadar			= "Exibir/esconder radar de distância"
+L.Button_InfoFrame			= "Exibir/esconder quadro de informações"
 L.Button_TestBars			= "Iniciar barras de teste"
 
 L.PizzaTimer_Headline 		= 'Criar um "Cronógrafo para Pizza"'
@@ -99,6 +99,21 @@ L.RaidWarnSound				= "Tocar som junto com o aviso na raid"
 L.CountdownVoice			= "Definir voz para contagem regressiva."
 L.SpecialWarnSound			= "Definir som para avisos especiais que afetam você ou sua função específica."
 L.SpecialWarnSound2			= "Definir som para avisos especiais que afetam todo mundo"
+
+-- Tab: Generalwarnings
+L.Tab_GeneralMessages 		= "Mensagens em geral"
+L.CoreMessages				= "Opções de mensagens principais"
+L.ShowLoadMessage 			= "Exibir mensagens ao carregar módulos no quadro de chat"
+L.ShowPizzaMessage 			= "Exibir mensagens ao receber cronógrafos no quadro de chat"
+L.CombatMessages			= "Opções de mensagens de combate"
+L.ShowEngageMessage 		= "Exibir mensagens ao iniciar combate no quadro de chat"
+L.ShowKillMessage 			= "Exibir mensagens ao derrotar chefes no quadro de chat"
+L.ShowWipeMessage 			= "Exibir mensanges ao ser derrotado no quadro de chat"
+L.ShowRecoveryMessage 		= "Exibir mensagens ao ajustar cronógrafos no quadro de chat"
+L.WhisperMessages			= "Opções de mensagens de sussuro"
+L.AutoRespond 				= "Responder automaticamente a sussuros durante a luta"
+L.EnableStatus 				= "Responder a sussurros de 'status'"
+L.WhisperStats 				= "Incluir estatísticas de derrotas/vitórias nas respostas a sussurros"
 
 -- Tab: Barsetup
 L.BarSetup   				= "Estilo da barra"

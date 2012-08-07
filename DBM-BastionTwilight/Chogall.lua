@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(167, "DBM-BastionTwilight", nil, 72)
-local mod	= DBM:NewMod("Chogall", "DBM-BastionTwilight")
+local mod	= DBM:NewMod(167, "DBM-BastionTwilight", nil, 72)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7266 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7687 $"):sub(12, -3))
 mod:SetCreatureID(43324)
 mod:SetModelID(34576)
 mod:SetZone()
@@ -32,23 +31,23 @@ local warnShadowOrders				= mod:NewSpellAnnounce(81556, 3, nil, mod:IsDps())--Wa
 local warnFlameOrders				= mod:NewSpellAnnounce(81171, 3, nil, mod:IsDps())--This one is also disabled on normal.
 local warnFlamingDestruction		= mod:NewSpellAnnounce(81194, 4, nil, mod:IsTank() or mod:IsHealer())
 local warnEmpoweredShadows			= mod:NewSpellAnnounce(81572, 4, nil, mod:IsHealer())
-local warnCorruptingCrash			= mod:NewTargetAnnounce(93178, 2, nil, false)
+local warnCorruptingCrash			= mod:NewTargetAnnounce(81685, 2, nil, false)
 local warnPhase2					= mod:NewPhaseAnnounce(2)
 local warnPhase2Soon				= mod:NewPrePhaseAnnounce(2)
 local warnCreations					= mod:NewSpellAnnounce(82414, 3)--Phase 2
 
 local specWarnSickness				= mod:NewSpecialWarningYou(82235, mod:IsMelee())--Ranged should already be spread out and not need a special warning every sickness.
 local specWarnBlaze					= mod:NewSpecialWarningMove(81538)
-local specWarnWorship				= mod:NewSpecialWarningSpell(93205, false)
+local specWarnWorship				= mod:NewSpecialWarningSpell(91317, false)
 local specWarnEmpoweredShadows		= mod:NewSpecialWarningSpell(81572, mod:IsHealer(), nil, nil, true)
-local specWarnCorruptingCrash		= mod:NewSpecialWarningMove(93178)--Subject to accuracy flaws in rare cases but most of the time it's right.
-local specWarnCorruptingCrashNear	= mod:NewSpecialWarningClose(93178)--^^
-local yellCrash						= mod:NewYell(93178)--^^
-local specWarnDepravity				= mod:NewSpecialWarningInterrupt(93177)--On by default cause these things don't get interrupted otherwise. but will only warn if it's target.
+local specWarnCorruptingCrash		= mod:NewSpecialWarningMove(81685)--Subject to accuracy flaws in rare cases but most of the time it's right.
+local specWarnCorruptingCrashNear	= mod:NewSpecialWarningClose(81685)--^^
+local yellCrash						= mod:NewYell(81685)--^^
+local specWarnDepravity				= mod:NewSpecialWarningInterrupt(81713)--On by default cause these things don't get interrupted otherwise. but will only warn if it's target.
 local specwarnFury					= mod:NewSpecialWarningTarget(82524, mod:IsTank())
 local specwarnFlamingDestruction	= mod:NewSpecialWarningSpell(81194, mod:IsTank())
 
-local timerWorshipCD				= mod:NewCDTimer(36, 91317)
+local timerWorshipCD				= mod:NewCDTimer(36, 91303)
 local timerAdherent					= mod:NewCDTimer(92, 81628)
 local timerFesterBlood				= mod:NewNextTimer(40, 82299)--40 seconds after an adherent is summoned
 local timerFlamingDestruction		= mod:NewBuffActiveTimer(10, 81194, nil, mod:IsTank() or mod:IsHealer())
@@ -60,7 +59,7 @@ local timerFlamesOrders				= mod:NewNextTimer(25, 81171, nil, mod:IsDps())--Orde
 local timerShadowsOrders			= mod:NewNextTimer(25, 81556, nil, mod:IsDps())--These are more for dps to switch to them to lower em so useless for normal mode
 local timerFlamingDestructionCD		= mod:NewNextTimer(20, 81194, nil, mod:IsTank() or mod:IsHealer())--Timer for when the special actually goes off (when he absorbs elemental)
 local timerEmpoweredShadowsCD		= mod:NewNextTimer(20, 81572, nil, mod:IsHealer())--^^
-local timerDepravityCD				= mod:NewCDTimer(12, 93177, nil, mod:IsMelee())
+local timerDepravityCD				= mod:NewCDTimer(12, 81713, nil, mod:IsMelee())
 
 local berserkTimer					= mod:NewBerserkTimer(600)
 
@@ -76,12 +75,11 @@ local firstFury = false
 local worshipIcon = 8
 local worshipCooldown = 20.5
 local shadowOrdersCD = 15
-local blazeSpam = 0
-local sickSpam = 0
 local creatureIcons = {}
 local creatureIcon = 8
 local iconsSet = 0
 local Corruption = GetSpellInfo(82235)
+local Bloodlevel = EJ_GetSectionInfo(3165)
 
 local function showWorshipWarning()
 	warnWorship:Show(table.concat(worshipTargets, "<, >"))
@@ -97,6 +95,7 @@ local function resetCreatureIconState()
 	iconsSet = 0
 end
 
+-- needs to be change in MoP (GetNumRaidMembers() removed in 5.0)
 function mod:CorruptingCrashTarget(sGUID)
 	local targetname = nil
 	for i=1, GetNumRaidMembers() do
@@ -139,13 +138,11 @@ function mod:OnCombatStart(delay)
 	worshipIcon = 8
 	worshipCooldown = 20.5
 	shadowOrdersCD = 15
-	blazeSpam = 0
-	sickSpam = 0
 	creatureIcon = 8
 	iconsSet = 0
 	berserkTimer:Start(-delay)
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(L.Bloodlevel)
+		DBM.InfoFrame:SetHeader(Bloodlevel)
 		DBM.InfoFrame:Show(5, "playerpower", 10, ALTERNATE_POWER_INDEX)
 	end
 end	
@@ -221,7 +218,7 @@ function mod:SPELL_CAST_START(args)
 			DBM.BossHealth:AddBoss(args.sourceGUID, args.sourceName)--And add if not.
 		end
 		if args.sourceGUID == UnitGUID("target") then--Only show warning for your own target.
-			specWarnDepravity:Show()
+			specWarnDepravity:Show(args.sourceName)
 			if self:IsDifficulty("normal10", "heroic10") then
 				timerDepravityCD:Start()--every 12 seconds on 10 man from their 1 adherent, can be solo interrupted.
 			else
@@ -286,9 +283,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
-	if (spellId == 81538 or spellId == 93212 or spellId == 93213 or spellId == 93214) and destGUID == UnitGUID("player") and GetTime() - blazeSpam >= 4 then
+	if (spellId == 81538 or spellId == 93212 or spellId == 93213 or spellId == 93214) and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then
 		specWarnBlaze:Show()
-		blazeSpam = GetTime()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -307,13 +303,12 @@ end
 
 function mod:UNIT_AURA(uId)
 	if uId ~= "player" or not self:IsInCombat() then return end
-	if UnitDebuff("player", Corruption) and GetTime() - sickSpam >= 7 then
+	if UnitDebuff("player", Corruption) and self:AntiSpam(7, 2) then
 		specWarnSickness:Show()
 		timerSickness:Start()
 		if self.Options.RangeFrame and not DBM.RangeCheck:IsShown() then
 			DBM.RangeCheck:Show(5)
 		end
-		sickSpam = GetTime()
 	end
 end
 

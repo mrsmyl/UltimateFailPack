@@ -5,12 +5,6 @@ local L
 -----------------
 L= DBM:GetModLocalization(192)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	RangeFrame			= "Show range frame (10)"
 })
@@ -23,18 +17,6 @@ L:SetMiscLocalization({
 -- Lord Rhyolith --
 -------------------
 L= DBM:GetModLocalization(193)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
-L:SetOptionLocalization({
-})
-
-L:SetMiscLocalization({
-})
 
 ---------------
 -- Alysrazor --
@@ -60,7 +42,7 @@ L:SetOptionLocalization({
 	timerNextInitiate	= "Show a timer for next Blazing Talon Initiate",
 	TimerPhaseChange	= "Show a timer till next phase",
 	TimerHatchEggs		= "Show a timer till next eggs are hatched",
-	InfoFrame			= "Show info frame for Molten Feather"
+	InfoFrame			= "Show info frame for $spell:98734"
 })
 
 L:SetMiscLocalization({
@@ -68,7 +50,6 @@ L:SetMiscLocalization({
 	YellPhase2		= "These skies are MINE!",
 	FullPower		= "spell:99925",--This is in the emote, shouldn't need localizing, just msg:find
 	LavaWorms		= "Fiery Lava Worms erupt from the ground!",--Might use this one day if i feel it needs a warning for something. Or maybe pre warning for something else (like transition soon)
-	PowerLevel		= "Molten Feathers",
 	East			= "East",
 	West			= "West",
 	Both			= "Both"
@@ -79,20 +60,9 @@ L:SetMiscLocalization({
 -------------
 L= DBM:GetModLocalization(195)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
-	SetIconOnFaceRage	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(99945),
+	SetIconOnFaceRage	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(99947),
 	SetIconOnRage		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(100415)
-})
-
-L:SetMiscLocalization({
-	Riplimb		= "Riplimb",
-	Rageface	= "Rageface"
 })
 
 -------------
@@ -117,9 +87,9 @@ L:SetOptionLocalization({
 	TimerBladeActive	= "Show a duration timer for the active Blade",
 	TimerBladeNext		= "Show a next timer for Decimation/Inferno Blade",
 	SetIconOnCountdown	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(99516),
-	SetIconOnTorment	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(100232),
+	SetIconOnTorment	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(99256),
 	ArrowOnCountdown	= "Show DBM Arrow when you are affected by $spell:99516 ",
-	InfoFrame			= "Show info frame for Vital Spark stacks",
+	InfoFrame			= "Show info frame for $spell:99262 stacks",
 	RangeFrame			= "Show range frame (5) for $spell:99404"
 })
 
@@ -132,9 +102,6 @@ L:SetMiscLocalization({
 --------------------------------
 L= DBM:GetModLocalization(197)
 
-L:SetWarningLocalization({
-})
-
 L:SetTimerLocalization({
 	timerNextSpecial	= "Next %s (%d)"
 })
@@ -144,10 +111,7 @@ L:SetOptionLocalization({
 	RangeFrameSeeds				= "Show range frame (12) for $spell:98450",
 	RangeFrameCat				= "Show range frame (10) for $spell:98374",
 	LeapArrow					= "Show DBM arrow when $spell:98476 is near you",
-	IconOnLeapingFlames			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(100208)
-})
-
-L:SetMiscLocalization({
+	IconOnLeapingFlames			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(98476)
 })
 
 --------------
@@ -169,18 +133,18 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	warnRageRagnarosSoon		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prewarn:format(101109, GetSpellInfo(101109)),
-	warnSplittingBlow			= "Show location warnings for $spell:100877",
-	warnEngulfingFlame			= "Show location warnings for $spell:99171",
-	WarnEngulfingFlameHeroic	= "Show location warnings for $spell:99171 on heroic",
+	warnSplittingBlow			= "Show location warnings for $spell:98951",
+	warnEngulfingFlame			= "Show location warnings for $spell:99171 on normal",
+	warnEngulfingFlameHeroic	= "Show location warnings for $spell:99171 on heroic",
 	warnSeedsLand				= "Show warning/timer for $spell:98520 landing instead of seed casts.",
-	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100997, GetSpellInfo(100997)),
+	warnEmpoweredSulf			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast:format(100604, GetSpellInfo(100604)),
 	timerRageRagnaros			= DBM_CORE_AUTO_TIMER_OPTIONS.cast:format(101109, GetSpellInfo(101109)),
 	TimerPhaseSons				= "Show a duration timer for the \"Sons of Flame phase\"",
 	RangeFrame					= "Show range frame",
 	InfoHealthFrame				= "Show info frame for health (<100k hp)",
 	MeteorFrame					= "Show info frame for $spell:99849 targets",
-	AggroFrame					= "Show info frame for players who have no aggro during Molten Elementals",
-	BlazingHeatIcons			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(100983)
+	AggroFrame					= "Show info frame for players who have no aggro during $journal:2647",
+	BlazingHeatIcons			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(100460)
 })
 
 L:SetMiscLocalization({
@@ -208,19 +172,6 @@ L:SetGeneralLocalization({
 	name = "Firelands Trash"
 })
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
-L:SetOptionLocalization({
-	TrashRangeFrame	= "Show range frame (10) for $spell:100012"
-})
-
-L:SetMiscLocalization({
-})
-
 ----------------
 --  Volcanus  --
 ----------------
@@ -228,9 +179,6 @@ L = DBM:GetModLocalization("Volcanus")
 
 L:SetGeneralLocalization({
 	name = "Volcanus"
-})
-
-L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
@@ -254,16 +202,4 @@ L = DBM:GetModLocalization("NexusLegendary")
 
 L:SetGeneralLocalization({
 	name = "Thyrinar"
-})
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
-L:SetOptionLocalization({
-})
-
-L:SetMiscLocalization({
 })

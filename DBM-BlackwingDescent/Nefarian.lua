@@ -1,8 +1,9 @@
---local mod	= DBM:NewMod(174, "DBM-BlackwingDescent", nil, 73)
-local mod	= DBM:NewMod("Nefarian", "DBM-BlackwingDescent")
+local mod	= DBM:NewMod(174, "DBM-BlackwingDescent", nil, 73)
 local L		= mod:GetLocalizedStrings()
+local Nefarian	= EJ_GetSectionInfo(3279)
+local Onyxia	= EJ_GetSectionInfo(3283)
 
-mod:SetRevision(("$Revision: 7277 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(41376, 41270)
 mod:SetModelID(32716)
 mod:SetZone()
@@ -12,8 +13,8 @@ mod:SetModelSound("Sound\\Creature\\Nefarian\\VO_BD_Nefarian_Event09.wav", "Soun
 --Short: You really have to want it!
 
 mod:SetBossHealthInfo(
-	41376, L.Nefarian,
-	41270, L.Onyxia
+	41376, Nefarian,
+	41270, Onyxia
 )
 
 mod:RegisterCombat("combat")
@@ -35,8 +36,8 @@ mod:RegisterEventsInCombat(
 
 local warnOnyTailSwipe			= mod:NewAnnounce("OnyTailSwipe", 3, 77827)--we only care about onyxia's tailswipe. Nefarian's shouldn't get in the way or you're doing it wrong.
 local warnNefTailSwipe			= mod:NewAnnounce("NefTailSwipe", 3, 77827, false)--but for those that might care for whatever reason, we include his too, off by default.
-local warnOnyShadowflameBreath	= mod:NewAnnounce("OnyBreath", 3, 94124, mod:IsTank())
-local warnNefShadowflameBreath	= mod:NewAnnounce("NefBreath", 3, 94124, mod:IsTank())
+local warnOnyShadowflameBreath	= mod:NewAnnounce("OnyBreath", 3, 77826, mod:IsTank())
+local warnNefShadowflameBreath	= mod:NewAnnounce("NefBreath", 3, 77826, mod:IsTank())
 local warnBlastNova				= mod:NewSpellAnnounce(80734, 3, nil, false)--Can be spammy so now off by default.
 local warnCinder				= mod:NewTargetAnnounce(79339, 4)
 local warnPhase2				= mod:NewPhaseAnnounce(2)
@@ -52,7 +53,7 @@ local specWarnStolenPower		= mod:NewSpecialWarningStack(80627, nil, 150)
 local specWarnCinder			= mod:NewSpecialWarningYou(79339)
 local specWarnCinderMove		= mod:NewSpecialWarningMove(79339, false, "specWarnCinderMove")
 local yellCinder				= mod:NewYell(79339)
-local specWarnShadowblaze		= mod:NewSpecialWarningMove(94085)
+local specWarnShadowblaze		= mod:NewSpecialWarningMove(81007)
 local specWarnShadowblazeSoon	= mod:NewSpecialWarning("specWarnShadowblazeSoon", mod:IsTank())
 
 local timerBlastNova			= mod:NewCastTimer(1.5, 80734)
@@ -61,8 +62,8 @@ local timerNefLanding			= mod:NewTimer(30, "timerNefLanding", 78620)
 local timerShadowflameBarrage	= mod:NewBuffActiveTimer(150, 78621)
 local timerOnySwipeCD			= mod:NewTimer(10, "OnySwipeTimer", 77827)--10-20 second cd (18 being the most consistent)
 local timerNefSwipeCD			= mod:NewTimer(10, "NefSwipeTimer", 77827, false)--Same as hers, but not synced.
-local timerOnyBreathCD			= mod:NewTimer(12, "OnyBreathTimer", 94124, mod:IsTank() or mod:IsHealer())--12-20 second variations
-local timerNefBreathCD			= mod:NewTimer(12, "NefBreathTimer", 94124, mod:IsTank() or mod:IsHealer())--same as above
+local timerOnyBreathCD			= mod:NewTimer(12, "OnyBreathTimer", 77826, mod:IsTank() or mod:IsHealer())--12-20 second variations
+local timerNefBreathCD			= mod:NewTimer(12, "NefBreathTimer", 77826, mod:IsTank() or mod:IsHealer())--same as above
 local timerCinder				= mod:NewBuffFadesTimer(8, 79339)--Heroic Ability
 local timerCinderCD				= mod:NewCDTimer(22, 79339)--Heroic Ability (Every 22-25 seconds, 25 being most common but we gotta use 22 for timer cause of that small chance it's that).
 local timerDominionCD			= mod:NewNextTimer(15, 79318, nil, not mod:IsTank())
@@ -71,7 +72,7 @@ local timerShadowBlazeCD		= mod:NewCDTimer(10, 81031)
 local berserkTimer				= mod:NewBerserkTimer(630)
 
 local soundCinder				= mod:NewSound(79339)
-local shadowblazeCountdown		= mod:NewCountdown(30, 94085, mod:IsTank())
+local countdownShadowblaze		= mod:NewCountdown(30, 94085, mod:IsTank())
 
 mod:AddBoolOption("RangeFrame", true)
 mod:AddBoolOption("SetIconOnCinder", true)
@@ -80,17 +81,16 @@ mod:AddBoolOption("InfoFrame", true)
 mod:AddBoolOption("SetWater", true)
 mod:AddBoolOption("TankArrow", false)--May be prone to some issues if you have 2 kiters, or unpicked up adds, but it's off by default so hopefully feature is used by smart people.
 
-local spamShadowblaze = 0
-local spamLightningDischarge = 0
 local shadowblazeTimer = 35
 local cinderIcons = 8
-local playerDebuffed = false
 local playerDebuffs = 0
 local cinderTargets	= {}
+local cinderDebuff = GetSpellInfo(79339)
 local dominionTargets = {}
-local lastBlaze = 0
+local lastBlaze = 0--Do NOT use prototype for this, it's updated in a special way using different triggers then when method is called.
 local CVAR = false
 local shadowBlazeSynced = false
+local Charge = EJ_GetSectionInfo(3284)
 
 --Credits to Caleb for original concept, modified with yell sync and timer tweaks.
 function mod:ShadowBlazeFunction()
@@ -104,7 +104,7 @@ function mod:ShadowBlazeFunction()
 	if not shadowBlazeSynced then
 		specWarnShadowblazeSoon:Schedule(shadowblazeTimer - 5, L.ShadowBlazeEstimate)--Pre warning 5 seconds prior to be safe, until we sync timer and know for sure.
 	else
-		shadowblazeCountdown:Start(shadowblazeTimer)
+		countdownShadowblaze:Start(shadowblazeTimer)
 		warnShadowblazeSoon:Schedule(shadowblazeTimer - 5, L.ShadowBlazeExact:format(5))--Start pre warning with regular warnings only as you don't move at this point yet.
 		warnShadowblazeSoon:Schedule(shadowblazeTimer - 4, L.ShadowBlazeExact:format(4))
 		warnShadowblazeSoon:Schedule(shadowblazeTimer - 3, L.ShadowBlazeExact:format(3))
@@ -118,20 +118,23 @@ end
 local cindersDebuffFilter
 do
 	cindersDebuffFilter = function(uId)
-		return UnitDebuff(uId, (GetSpellInfo(79339)))
+		return UnitDebuff(uId, cinderDebuff)
 	end
 end
 
 local function warnCinderTargets()
-	if mod.Options.RangeFrame and not playerDebuffed then
-		DBM.RangeCheck:Show(10, cindersDebuffFilter)--Special range frame that will only show players with Cinders debuff
+	if mod.Options.RangeFrame then
+		if UnitDebuff("player", GetSpellInfo(79339)) then--You have debuff, show everyone
+			DBM.RangeCheck:Show(10, nil)
+		else--You do not have debuff, only show players who do
+			DBM.RangeCheck:Show(10, cindersDebuffFilter)
+		end
 	end
 	warnCinder:Show(table.concat(cinderTargets, "<, >"))
 	timerCinder:Start()
 	timerCinderCD:Start()
 	table.wipe(cinderTargets)
 	cinderIcons = 8
-	playerDebuffed = false
 end
 
 local function warnDominionTargets()
@@ -141,11 +144,8 @@ local function warnDominionTargets()
 end
 
 function mod:OnCombatStart(delay)
-	spamShadowblaze = 0
 	shadowBlazeSynced = false
-	spamLightningDischarge = 0
 	shadowblazeTimer = 35
-	playerDebuffed = false
 	playerDebuffs = 0
 	CVAR = false
 	table.wipe(cinderTargets)
@@ -156,7 +156,7 @@ function mod:OnCombatStart(delay)
 		timerDominionCD:Start(50-delay)
 	end
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(L.Charge)
+		DBM.InfoFrame:SetHeader(Charge)
 		DBM.InfoFrame:Show(2, "enemypower", 5, ALTERNATE_POWER_INDEX)
 	end
 	if self.Options.SetWater and GetCVarBool("cameraWaterCollision") then
@@ -195,7 +195,7 @@ function mod:SPELL_CAST_START(args)
 		end
 		if args.sourceGUID == UnitGUID("target") then--Only show warning/timer for your own target.
 			warnBlastNova:Show()
-			specWarnBlastsNova:Show()
+			specWarnBlastsNova:Show(args.sourceName)
 			if self:IsDifficulty("heroic10", "heroic25") then
 				timerBlastNova:Start()
 			else
@@ -210,14 +210,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		cinderTargets[#cinderTargets + 1] = args.destName
 		playerDebuffs = playerDebuffs + 1
 		if args:IsPlayer() then
-			playerDebuffed = true
 			specWarnCinder:Show()
 			specWarnCinderMove:Schedule(3)
 			soundCinder:Schedule(3)	-- no need to move as soon as the debuff is applied
 			yellCinder:Yell()
-			if self.Options.RangeFrame then
-				DBM.RangeCheck:Show(10, nil)
-			end
 		end
 		if self.Options.SetIconOnCinder then
 			self:SetIcon(args.destName, cinderIcons)
@@ -277,9 +273,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
-	if (spellId == 81007 or spellId == 94085 or spellId == 94086 or spellId == 94087) and destGUID == UnitGUID("player") and GetTime() - spamShadowblaze > 5 then
+	if (spellId == 81007 or spellId == 94085 or spellId == 94086 or spellId == 94087) and destGUID == UnitGUID("player") and self:AntiSpam(4) then
 		specWarnShadowblaze:Show()
-		spamShadowblaze = GetTime()
 	elseif spellID ~= 50288 and self:GetCIDFromGUID(destGUID) == 41918 and bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PLAYER) ~= 0 and self:IsInCombat() then--Any spell damage except for starfall
 		if sourceGUID ~= UnitGUID("player") then
 			if self.Options.TankArrow then
@@ -327,9 +322,9 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		shadowBlazeSynced = true
 		self:UnscheduleMethod("ShadowBlazeFunction")--Unschedule any running stuff
 		specWarnShadowblazeSoon:Cancel()--^^
-		shadowblazeCountdown:Cancel()--^^ Auto corrections still occur more then once, lets make sure to unschedule audio countdown as well so we don't start getting 2 running.
+		countdownShadowblaze:Cancel()--^^ Auto corrections still occur more then once, lets make sure to unschedule audio countdown as well so we don't start getting 2 running.
 		if GetTime() - lastBlaze <= 3 then--The blaze timer is too fast, since the actual cast happened immediately after the method ran. So reschedule functions using last timing which should be right just a little fast. :)
-			shadowblazeCountdown:Start(shadowblazeTimer)
+			countdownShadowblaze:Start(shadowblazeTimer)
 			warnShadowblazeSoon:Schedule(shadowblazeTimer - 5, L.ShadowBlazeExact:format(5))--Start pre warning with regular warnings only as you don't move at this point yet.
 			warnShadowblazeSoon:Schedule(shadowblazeTimer - 4, L.ShadowBlazeExact:format(4))
 			warnShadowblazeSoon:Schedule(shadowblazeTimer - 3, L.ShadowBlazeExact:format(3))

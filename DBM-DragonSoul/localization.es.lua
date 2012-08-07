@@ -28,13 +28,6 @@ L:SetMiscLocalization({
 ---------------------
 L= DBM:GetModLocalization(324)
 
-L:SetWarningLocalization({
-
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	ShadowYell			= "Gritar cuando te afecte $spell:104600\n(Solo dificultad Heroica)",
 	CustomRangeFrame	= "Opciones de marco de distancia",
@@ -58,12 +51,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerOozesActive	= "Mocos atacables"
+	timerOozesActive	= "Mocos atacables",
+	timerOozesReach		= "Mocos llegan al boss"
 })
 
 L:SetOptionLocalization({
 	warnOozesHit		= "Anunciar los mocos que absorbió el Boss",
 	timerOozesActive	= "Mostrar tiempo para que los mocos se pueden atacar",
+	timerOozesReach		= "Mostrar tiempo para que los mocos lleguen a Yor'sahj",
 	RangeFrame			= "Mostrar distancia (4) para $spell:104898\n(Dificultad normal o superior)"
 })
 
@@ -126,14 +121,15 @@ L:SetOptionLocalization({
 	TimerCombatStart	= "Mostrar tiempo para el inicio del combate",
 	ResetHoTCounter		= "Reiniciar contador de Hora del crepusculo",--$spell doesn't work in this function apparently so use typed spellname for now.
 	Never				= "Nunca",
-	Reset3				= "En series de 3/2 (heroico/normal)",
+	ResetDynamic		= "En series de 3/2 (heroico/normal)",
 	Reset3Always		= "Siempre reiniciar en series de 3",
 	SpecWarnHoTN		= "Mostrar aviso especial 5s antes de Hora del Crepusculo (solo en series de 3)",
 	One					= "1 (ej: 1 4 7)",
 	Two					= "2 (ej: 2 5)",
 	Three				= "3 (ej: 3 6)",
-	ShowRaidCDs			= "Mostrar tiempos de CDs de Banda",
-	ShowRaidCDsSelf		= "Pero solo mostrar los CDs propios\n(Requiere 'Mostrar tiempos de CDs de Banda' activado)"
+	dropdownRaidCDs		= "Mostrar tiempos para CDs de Banda",
+	ShowRaidCDs			= "Todos",
+	ShowRaidCDsSelf		= "Solo los mios"
 })
 
 L:SetMiscLocalization({
@@ -178,13 +174,10 @@ L:SetWarningLocalization({
 	SpecWarnTendril			= "¡Ponte a salvo!"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
-	SpecWarnTendril			= "Mostrar un aviso especial cuando no tengas el debuff de $spell:109454",
-	InfoFrame				= "Mostrar información de jugadores sin $spell:109454",
-	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109459),
+	SpecWarnTendril			= "Mostrar un aviso especial cuando no tengas el debuff de $spell:105563",
+	InfoFrame				= "Mostrar información de jugadores sin $spell:105563",
+	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(105490),
 	ShowShieldInfo			= "Mostrar barra de vida del boss con una barra para $spell:105479"
 })
 
@@ -201,12 +194,6 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(333)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	RangeFrame			= "Mostrar distancia dinamica basada en el estado del debuff\n$spell:108649 en dificultad Heroica",
 	SetIconOnParasite	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(108649)
@@ -222,10 +209,11 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("DSTrash")
 
 L:SetGeneralLocalization({
-	name =	"Dragonsoul Trash"
+	name =	"Pulls de Alma del Dragón"
 })
 
 L:SetWarningLocalization({
+	DrakesLeft			= "Acometedores Crepusculares restantes: %d"
 })
 
 L:SetTimerLocalization({
@@ -233,9 +221,12 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	DrakesLeft			= "Anunciar cuantos Acometedores Crepusculares quedan",
 	TimerDrakes			= "Mostrar tiempo para Fuga Crepuscular	de los Asaltantes Crepusculares",
 })
 
 L:SetMiscLocalization({
-	UltraxionTrash				= "Me alegra volver a verte, Alexstrasza. He estado ocupado en mi ausencia.",
+	EoEEvent			= "No sirve de nada, el Alma es demasiado poderosa. No puedo empuñarla de forma segura; la ira que encierra podría ser nuestra perdición.",
+	UltraxionTrash		= "Me alegra volver a verte, Alexstrasza. He estado ocupado en mi ausencia.",
+	UltraxionTrashEnded	= "Simples crías, experimentos, un medio para un fin mayor. Verás el resultado de las investigaciones de mi nidada."
 })

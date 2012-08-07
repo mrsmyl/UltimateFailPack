@@ -28,16 +28,10 @@ L:SetMiscLocalization({
 ---------------------
 L= DBM:GetModLocalization(324)
 
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
-	ShadowYell			= "$spell:104600 주문의 영향을 받은 경우 외치기 (영웅 난이도)",
+	ShadowYell			= "$spell:104600 주문의 영향을 받은 경우 대화로 알리기 (영웅 난이도)",
 	CustomRangeFrame	= "교란의 그림자 주문에 대한 거리 프레임 설정 (영웅 난이도)",
-	Never				= "사용안함",
+	Never				= "거리 프레임 사용안함",
 	Normal				= "일반 거리 프레임",
 	DynamicPhase2		= "고라스의 검은 피 도중에만 필터링 사용",
 	DynamicAlways		= "항상 디버프 필터링 사용"
@@ -58,11 +52,13 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	timerOozesActive	= "핏방울 공격 가능",
+	timerOozesReach		= "핏방울 도착"
 })
 
 L:SetOptionLocalization({
 	warnOozesHit		= "보스에게 흡수된 핏방울에 대한 알림 보기",
 	timerOozesActive	= "핏방울이 소환된 후 공격 가능하기까지 남은시간 바 표시",
+	timerOozesReach		= "소환된 핏방울이 보스에게 도착하기까지 남은시간 바 표시",
 	RangeFrame			= "$spell:104898 주문이 활성화 된 경우 거리 프레임 보기 (4m)\n(일반 난이도 이상)"
 })
 
@@ -111,26 +107,27 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(331)
 
 L:SetWarningLocalization({
-	specWarnHourofTwilightN		= "5초 후 %s! (%d)"--spellname Count
+	specWarnHourofTwilightN		= "5초 후 %s! (%d)"
 })
 
 L:SetTimerLocalization({
 	TimerCombatStart	= "울트락시온 활성화",
-	timerRaidCDs		= "%s 대기시간 : %s"--spellname CD Castername
+	timerRaidCDs		= "%s 대기시간 : %s"
 })
 
 L:SetOptionLocalization({
 	TimerCombatStart	= "울트락시온 활성화 바 표시",
 	ResetHoTCounter		= "황혼의 시간 시전 횟수 재시작 설정",--$spell doesn't work in this function apparently so use typed spellname for now.
 	Never				= "사용 안함",
-	Reset3				= "일반 3회, 영웅 2회 단위로 재시작",
+	ResetDynamic		= "일반 2회, 영웅 3회 단위로 재시작",
 	Reset3Always		= "난이도 구분 없이 3회 단위로 재시작",
-	SpecWarnHoTN		= "황혼의 시간 시전 5초 전 특수 경고 보기 (3회 단위 재시작에서만 작동)",
-	One					= "첫번째 (예: 1 4 7)",
-	Two					= "두번째 (예: 2 5)",
-	Three				= "세번째 (예: 3 6)",
-	ShowRaidCDs			= "공격대 재사용 대기시간 바 표시",
-	ShowRaidCDsSelf		= "자신의 재사용 대기시간 바만 표시 (공격대 재사용 대기시간 바 활성화 필요)"
+	SpecWarnHoTN		= "황혼의 시간 5초 전 특수 경고 설정 (시전 횟수 재시작 설정에 영향 받음)",
+	One					= "시전 횟수가 1일때 보기 (또는 1, 4, 7 일때)",
+	Two					= "시전 횟수가 2일때 보기 (또는 2, 5 일때)",
+	Three				= "시전 횟수가 3일때 보기 (또는 3, 6 일때)",
+	dropdownRaidCDs		= "공격대 재사용 대기시간 바 표시",
+	ShowRaidCDs			= "모두",
+	ShowRaidCDsSelf		= "자신 것만"
 })
 
 L:SetMiscLocalization({
@@ -174,13 +171,10 @@ L:SetWarningLocalization({
 	SpecWarnTendril			= "등에 달라 붙으세요!"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
-	SpecWarnTendril			= "$spell:109454 약화 효과가 없을 경우 특수 경고 보기",--http://ptr.wowhead.com/npc=56188
-	InfoFrame				= "$spell:109454 약화 효과 없음에 대한 정보 프레임 보기",
-	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(109459),
+	SpecWarnTendril			= "$spell:105563 약화 효과가 없을 경우 특수 경고 보기",--http://ptr.wowhead.com/npc=56188
+	InfoFrame				= "$spell:105563 약화 효과 없음에 대한 정보 프레임 보기",
+	SetIconOnGrip			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(105490),
 	ShowShieldInfo			= "보스 체력 프레임에 $spell:105479 주문 흡수량 바 표시"
 })
 
@@ -196,12 +190,6 @@ L:SetMiscLocalization({
 -- Madness of Deathwing  -- 
 ---------------------------
 L= DBM:GetModLocalization(333)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	RangeFrame			= "$spell:108649 약화 효과 상태에 따른 거리 프레임 표시 (영웅 난이도)",

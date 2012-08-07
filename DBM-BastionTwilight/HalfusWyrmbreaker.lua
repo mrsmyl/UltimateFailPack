@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(156, "DBM-BastionTwilight", nil, 72)
-local mod	= DBM:NewMod("HalfusWyrmbreaker", "DBM-BastionTwilight")
+local mod	= DBM:NewMod(156, "DBM-BastionTwilight", nil, 72)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6496 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(44600)
 mod:SetModelID(34816)
 mod:SetZone()
@@ -34,17 +33,14 @@ local timerFuriousRoar		= mod:NewCDTimer(30, 83710)
 local timerBreathCD			= mod:NewCDTimer(20, 83707)--every 20-25 seconds.
 local timerParalysis		= mod:NewBuffActiveTimer(12, 84030)
 local timerParalysisCD		= mod:NewCDTimer(35, 84030)
-local timerNovaCD			= mod:NewCDTimer(7.2, 86168)--7.2 is actually exact next timer, but since there are other variables like roars, or paralysis that could mis time it, we use CD bar instead so we don't give false idea of precision.
+local timerNovaCD			= mod:NewCDTimer(7.2, 83703)--7.2 is actually exact next timer, but since there are other variables like roars, or paralysis that could mis time it, we use CD bar instead so we don't give false idea of precision.
 local timerMalevolentStrike	= mod:NewTargetTimer(30, 83908, nil, mod:IsTank() or mod:IsHealer())
 
 local berserkTimer			= mod:NewBerserkTimer(360)
 
 mod:AddBoolOption("ShowDrakeHealth", true)
 
-local spamFuriousRoar = 0
-
 function mod:OnCombatStart(delay)
-	spamFuriousRoar = 0
 	berserkTimer:Start(-delay)
 	if mod:IsDifficulty("heroic10", "heroic25") then--On heroic we know for sure the drake has breath ability.
 		timerBreathCD:Start(10-delay)
@@ -80,18 +76,17 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(83710, 86169, 86170, 86171) and GetTime() - spamFuriousRoar > 6 then
+	if args:IsSpellID(83710, 86169, 86170, 86171) and self:AntiSpam(6) then
 		warnFuriousRoar:Show()
 		timerFuriousRoar:Cancel()--We Cancel any scheduled roar timers before doing anything else.
 		timerFuriousRoar:Start()--And start a fresh one.
 		timerFuriousRoar:Schedule(30)--If it comes off CD while he's stunned by paralysis, he no longer waits to casts it after stun, it now consumes his CD as if it was cast on time. This is why we schedule this timer. So we get a timer for next roar after a stun.
-		spamFuriousRoar = GetTime()
 	elseif args:IsSpellID(83707) then
 		warnBreath:Show()
 		timerBreathCD:Start()
 	elseif args:IsSpellID(83703, 86166, 86167, 86168) then
 		warnShadowNova:Show()
-		specWarnShadowNova:Show()
+		specWarnShadowNova:Show(args.sourceName)
 		timerNovaCD:Start()
 	end
 end

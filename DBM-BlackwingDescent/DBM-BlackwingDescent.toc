@@ -24,10 +24,6 @@
 ## X-DBM-Mod-Name-ptBR: Descenso do Asa Negra
 ## X-DBM-Mod-Sort: 104
 ## X-DBM-Mod-LoadZoneID: 754
-## X-Curse-Packaged-Version: 4.10.10
-## X-Curse-Project-Name: Deadly Boss Mods
-## X-Curse-Project-ID: deadly-boss-mods
-## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
 localization.en.lua
 localization.de.lua
 localization.es.lua
@@ -36,12 +32,12 @@ localization.kr.lua
 localization.ru.lua
 localization.tw.lua
 localization.cn.lua
-localization.pt.lua
+localization.br.lua
 MapSizes.lua
-Magmaw.lua
 DarkIronGolemCouncil.lua
-Maloriak.lua
-Chimaeron.lua
+Magmaw.lua
 Atramedes.lua
+Chimaeron.lua
+Maloriak.lua
 Nefarian.lua
 BWDTrash.lua

@@ -9,9 +9,10 @@ DBM_CORE_LOAD_GUI_ERROR				= "Konnte die Benutzeroberfläche nicht laden: %s"
 
 DBM_CORE_COMBAT_STARTED				= "Kampf gegen %s hat begonnen. Viel Glück! :)";
 DBM_CORE_BOSS_DOWN					= "%s tot nach %s!"
-DBM_CORE_BOSS_DOWN_LONG				= "%s tot nach %s! Dein letzter Kill hat %s gedauert und der schnellste %s."
-DBM_CORE_BOSS_DOWN_NEW_RECORD		= "%s tot nach %s! Das ist ein neuer Rekord! (Der alte Rekord war %s.)"
-DBM_CORE_COMBAT_ENDED				= "Kampf gegen %s hat nach %s aufgehört."
+DBM_CORE_BOSS_DOWN_L				= "%s tot nach %s! Dein letzter Sieg hat %s gedauert und der schnellste %s. Das war dein %d. Sieg."
+DBM_CORE_BOSS_DOWN_NR				= "%s tot nach %s! Das ist ein neuer Rekord! (Der alte Rekord war %s.) Das war dein %d. Sieg."
+DBM_CORE_COMBAT_ENDED_AT			= "Kampf gegen %s (%s) hat nach %s aufgehört."
+DBM_CORE_COMBAT_ENDED_AT_LONG		= "Kampf gegen %s (%s) hat nach %s aufgehört. Das war deine %d. Niederlage auf diesem Schwierigkeitsgrad."
 DBM_CORE_COMBAT_STATE_RECOVERED		= "Kampf gegen %s hat vor %s begonnen, Neukalibrierung der Timer erfolgt..."
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d |4Sekunde:Sekunden;"
@@ -34,11 +35,13 @@ DBM_CORE_OPTION_CATEGORY_TIMERS		= "Timer"
 DBM_CORE_OPTION_CATEGORY_WARNINGS	= "Ansagen"
 DBM_CORE_OPTION_CATEGORY_MISC		= "Verschiedenes"
 
-DBM_CORE_AUTO_RESPONDED				= "Automatisch geantwortet."
-DBM_CORE_STATUS_WHISPER				= "%s: %s, %d/%d Spieler am Leben"
-DBM_CORE_AUTO_RESPOND_WHISPER		= "%s ist damit beschäftigt gegen %s zu kämpfen! (%s, %d/%d Spieler am Leben)"
-DBM_CORE_WHISPER_COMBAT_END_KILL	= "%s hat %s besiegt!"
-DBM_CORE_WHISPER_COMBAT_END_WIPE	= "%s ist an %s gewipet"
+DBM_CORE_AUTO_RESPONDED						= "Automatisch geantwortet."
+DBM_CORE_STATUS_WHISPER						= "%s: %s, %d/%d Spieler am Leben"
+DBM_CORE_AUTO_RESPOND_WHISPER				= "%s ist damit beschäftigt gegen %s zu kämpfen! (%s, %d/%d Spieler am Leben)"
+DBM_CORE_WHISPER_COMBAT_END_KILL			= "%s hat %s besiegt!"
+DBM_CORE_WHISPER_COMBAT_END_KILL_STATS		= "%s hat %s besiegt! Das war der %d. Sieg."
+DBM_CORE_WHISPER_COMBAT_END_WIPE_AT			= "%s war %s bei %s unterlegen."
+DBM_CORE_WHISPER_COMBAT_END_WIPE_STATS_AT	= "%s war %s bei %s unterlegen. Das war die %d. Niederlage auf diesem Schwierigkeitsgrad."
 
 DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - Versionen"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"
@@ -131,8 +134,10 @@ DBM_CORE_AUTO_TIMER_TEXTS = {
 	fades		= "%s schwindet",--Buff/Debuff on players
 	cd			= "%s CD",
 	cdcount		= "%s CD (%%d)",
+	cdsource	= "%s CD: %%s",
 	next		= "Nächster %s",
 	nextcount	= "Nächster %s (%%d)",
+	nextsource	= "Nächster %s: %%s",
 	achievement	= "%s"
 }
 
@@ -143,8 +148,10 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	fades		= "Zeit bis $spell:%s von Spielern schwindet anzeigen",
 	cd			= "Abklingzeit von $spell:%s anzeigen",
 	cdcount		= "Abklingzeit von $spell:%s anzeigen",
+	cdsource	= "Abklingzeit von $spell:%s anzeigen",
 	next		= "Zeit bis nächstes $spell:%s anzeigen",
 	nextcount	= "Zeit bis nächstes $spell:%s anzeigen",
+	nextsource	= "Zeit bis nächstes $spell:%s anzeigen",
 	achievement	= "Zeit für %s anzeigen"
 }
 
@@ -196,7 +203,7 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell = "%s!",
 	dispel = "%s auf %%s - jetzt reinigen",
-	interrupt = "%s - jetzt unterbrechen",
+	interrupt = "%s - unterbreche %%s!",
 	you = "%s auf dir",
 	target = "%s auf %%s",
 	close = "%s auf %%s in deiner Nähe",
@@ -234,7 +241,7 @@ DBM_ARROW_ERROR_USAGE	= {
 }
 
 DBM_SPEED_KILL_TIMER_TEXT	= "Speed Kill"
-DBM_SPEED_KILL_TIMER_OPTION	= "Zeige einen Timer zur Verbesserung deines schnellsten Kills"
+DBM_SPEED_KILL_TIMER_OPTION	= "Zeige einen Timer zur Verbesserung deines schnellsten Siegs"
 
 
 DBM_REQ_INSTANCE_ID_PERMISSION		= "%s möchte deine aktuellen Instanzsperren (IDs) einsehen.\n Möchtest Du diese Informationen an %s senden? Dieser Spieler wird in der Lage sein, diese Informationen während deiner aktuellen Sitzung abzufragen (also bis du dich neu einloggst)."

@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(311, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7283 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7599 $"):sub(12, -3))
 mod:SetCreatureID(55265)
 mod:SetModelID(39094)
+mod:SetModelSound("sound\\CREATURE\\MORCHOK\\VO_DS_MORCHOK_EVENT_04.OGG", "sound\\CREATURE\\MORCHOK\\VO_DS_MORCHOK_ORB_01.OGG")
 mod:SetZone()
 mod:SetUsedIcons()
 
@@ -21,22 +22,22 @@ mod:RegisterEventsInCombat(
 
 local warnCrushArmor	= mod:NewStackAnnounce(103687, 3, nil, mod:IsTank() or mod:IsHealer())
 local warnCrystal		= mod:NewSpellAnnounce(103639, 3)
-local warnStomp			= mod:NewSpellAnnounce(108571, 3)
-local warnVortex		= mod:NewSpellAnnounce(110047, 3)
+local warnStomp			= mod:NewSpellAnnounce(103414, 3)
+local warnVortex		= mod:NewSpellAnnounce(103821, 3)
 local warnBlood			= mod:NewSpellAnnounce(103851, 4)
 local warnFurious		= mod:NewSpellAnnounce(103846, 3)
 local warnKohcrom		= mod:NewSpellAnnounce(109017, 4)
 local KohcromWarning	= mod:NewAnnounce("KohcromWarning", 2, 55342)--Mirror image icon. use different color for easlier distingush.
 
 local specwarnCrushArmor	= mod:NewSpecialWarningStack(103687, mod:IsTank(), 3)
-local specwarnVortex		= mod:NewSpecialWarningSpell(110047, nil, nil, nil, true)
-local specwarnBlood			= mod:NewSpecialWarningMove(108570)
+local specwarnVortex		= mod:NewSpecialWarningSpell(103821, nil, nil, nil, true)
+local specwarnBlood			= mod:NewSpecialWarningMove(103785)
 local specwarnCrystal		= mod:NewSpecialWarningTarget(103639, false)
 
 local timerCrushArmor	= mod:NewTargetTimer(20, 103687, nil, mod:IsTank())
 local timerCrystal		= mod:NewCDTimer(12, 103640)	-- 12-14sec variation (is also time till 'detonate')
-local timerStomp 		= mod:NewCDTimer(12, 108571)	-- 12-14sec variation
-local timerVortexNext	= mod:NewCDTimer(74, 110047)--96~97 sec after last vortex. must subtract blood 17 + vortex buff 5 sec. 74 sec left
+local timerStomp 		= mod:NewCDTimer(12, 103414)	-- 12-14sec variation
+local timerVortexNext	= mod:NewCDTimer(74, 103821)--96~97 sec after last vortex. must subtract blood 17 + vortex buff 5 sec. 74 sec left
 local timerBlood		= mod:NewBuffActiveTimer(17, 103851)
 local timerKohcromCD	= mod:NewTimer(6, "KohcromCD", 55342)--Enable when we have actual timing for any of his abilies
 --Basically any time morchok casts, we'll start an echo timer for when it will be mimiced by his twin Kohcrom. 
@@ -47,7 +48,6 @@ local berserkTimer		= mod:NewBerserkTimer(420)
 
 mod:AddBoolOption("RangeFrame", false)--For achievement
 
-local spamBlood = 0
 local stompCount = 1
 local crystalCount = 1--3 crystals between each vortex cast by Morchok, we ignore his twins.
 local kohcromSkip = 2--1 is crystal, 2 is stomp.
@@ -78,14 +78,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		if (args.amount or 1) > 3 then
 			specwarnCrushArmor:Show(args.amount or 1)
 		end
-	elseif args:IsSpellID(103846) then
+	elseif args:IsSpellID(103846) and self:AntiSpam(3, 1) then
 		warnFurious:Show()
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(103851) and args:GetSrcCreatureID() == 55265 then--Filter twin here, they vortex together but we don't want to trigger everything twice needlessly.
+	if args:IsSpellID(103851) and self:AntiSpam(3, 1) then--Filter twin here, they vortex together but we don't want to trigger everything twice needlessly.
 		stompCount = 0
 		crystalCount = 0
 		timerStomp:Start(19)
@@ -177,7 +177,7 @@ function mod:SPELL_SUMMON(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(103821, 110045, 110046, 110047) and args:GetSrcCreatureID() == 55265 then
+	if args:IsSpellID(103821, 110045, 110046, 110047) and self:AntiSpam(3, 1) then
 		crystalCount = 0
 		timerStomp:Cancel()
 		timerCrystal:Cancel()
@@ -190,9 +190,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId)
-	if (spellId == 103785 or spellId == 108570 or spellId == 110287 or spellId == 110288) and destGUID == UnitGUID("player") and GetTime() - spamBlood > 3 then
+function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
+	if (spellId == 103785 or spellId == 108570 or spellId == 110287 or spellId == 110288) and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
 		specwarnBlood:Show()
-		spamBlood = GetTime()
 	end
 end

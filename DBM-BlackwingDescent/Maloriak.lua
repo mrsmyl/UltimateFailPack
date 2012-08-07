@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(173, "DBM-BlackwingDescent", nil, 73)
-local mod	= DBM:NewMod("Maloriak", "DBM-BlackwingDescent")
+local mod	= DBM:NewMod(173, "DBM-BlackwingDescent", nil, 73)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7187 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(41378)
 mod:SetModelID(33186)
 mod:SetZone()
@@ -29,7 +28,7 @@ local isDispeller = select(2, UnitClass("player")) == "MAGE"
 
 local warnPhase					= mod:NewAnnounce("WarnPhase", 2)
 local warnReleaseAdds			= mod:NewSpellAnnounce(77569, 3)
-local warnRemainingAdds			= mod:NewAnnounce("WarnRemainingAdds", 2, 77569)
+local warnRemainingAdds			= mod:NewAddsLeftAnnounce("ej2932", 2, 77569)
 local warnFlashFreeze			= mod:NewTargetAnnounce(77699, 4)
 local warnBitingChill			= mod:NewTargetAnnounce(77760, 3)
 local warnRemedy				= mod:NewSpellAnnounce(77912, 3)
@@ -55,7 +54,7 @@ local timerEngulfingDarknessCD	= mod:NewNextTimer(12, 92754, nil, mod:IsHealer()
 
 local specWarnBitingChill		= mod:NewSpecialWarningYou(77760)
 local specWarnConsumingFlames	= mod:NewSpecialWarningYou(77786)
-local specWarnSludge			= mod:NewSpecialWarningMove(92987)
+local specWarnSludge			= mod:NewSpecialWarningMove(92930)
 local specWarnArcaneStorm		= mod:NewSpecialWarningInterrupt(77896, false)
 local specWarnMagmaJets			= mod:NewSpecialWarningMove(78194, mod:IsTank())
 local specWarnEngulfingDarkness	= mod:NewSpecialWarningSpell(92754, mod:IsHealer() or mod:IsTank())--Heroic Ability
@@ -73,14 +72,16 @@ mod:AddBoolOption("SetTextures", true)--Just about ALL friendly spells cover dar
 
 local adds = 18
 local AddsInterrupted = false
-local spamSlime = 0
-local spamSludge = 0
 local bitingChillTargets = {}
 local flashFreezeTargets = {}
 local bitingChillIcon = 6
 local flashFreezeIcon = 8
 local prewarnedPhase2 = false
 local CVAR = false
+local Red = EJ_GetSectionInfo(2935)
+local Green = EJ_GetSectionInfo(2941)
+local Blue = EJ_GetSectionInfo(2938)
+local Dark = EJ_GetSectionInfo(2943)
 
 local function showBitingChillWarning()
 	warnBitingChill:Show(table.concat(bitingChillTargets, "<, >"))
@@ -112,8 +113,6 @@ function mod:OnCombatStart(delay)
 	end
 	adds = 18
 	AddsInterrupted = false
-	spamSlime = 0
-	spamSludge = 0
 	bitingChillIcon = 6
 	flashFreezeIcon = 8
 	prewarnedPhase2 = false
@@ -169,12 +168,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnConsumingFlames:Show()
 		end
-	elseif args:IsSpellID(77615) and GetTime() - spamSlime >= 4 then
-		spamSlime = GetTime()
+	elseif args:IsSpellID(77615) and self:AntiSpam(3, 1) then
 		warnDebilitatingSlime:Show()
 		timerDebilitatingSlime:Start()
-	elseif args:IsSpellID(92930, 92986, 92987, 92988) and GetTime() - spamSludge >= 2 and args:IsPlayer() then
-		spamSludge = GetTime()
+	elseif args:IsSpellID(92930, 92986, 92987, 92988) and args:IsPlayer() and self:AntiSpam(3, 2) then
 		specWarnSludge:Show()
 	end
 end
@@ -216,13 +213,13 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(92754) then
 		warnEngulfingDarkness:Show()
 		timerEngulfingDarknessCD:Start()
-		if self:GetUnitCreatureId("target") == 41378 or self:GetBossTarget(33186) == UnitName("target") then--Add tank doesn't need this spam, just tank on mal and healers healing that tank.
+		if self:GetUnitCreatureId("target") == 41378 or self:GetBossTarget(33186) == UnitName("target") then--First check is for tank (tank is targeting boss), second check is for HEALER< IE, the HEALER is targeting the bosses TARGET
 			specWarnEngulfingDarkness:Show()
 		end
 	elseif args:IsSpellID(77896) then
 		warnArcaneStorm:Show()
 		timerArcaneStormCD:Start()
-		specWarnArcaneStorm:Show()
+		specWarnArcaneStorm:Show(args.sourceName)
 	elseif args:IsSpellID(78194) then
 		warnMagmaJets:Show()
 		if self:IsDifficulty("heroic10", "heroic25") then
@@ -251,7 +248,7 @@ end
 
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.YellRed or msg:find(L.YellRed) then
-		warnPhase:Show(L.Red)
+		warnPhase:Show(Red)
 		timerAddsCD:Start()
 		timerArcaneStormCD:Start(19)
 		timerScorchingBlast:Start(22)
@@ -265,7 +262,7 @@ function mod:RAID_BOSS_EMOTE(msg)
 			SetCVar("projectedTextures", 1)
 		end
 	elseif msg == L.YellBlue or msg:find(L.YellBlue) then
-		warnPhase:Show(L.Blue)
+		warnPhase:Show(Blue)
 		timerPhase:Start()
 		timerAddsCD:Start()
 		timerArcaneStormCD:Start(19)
@@ -279,7 +276,7 @@ function mod:RAID_BOSS_EMOTE(msg)
 			SetCVar("projectedTextures", 1)
 		end
 	elseif msg == L.YellGreen or msg:find(L.YellGreen) then
-		warnPhase:Show(L.Green)
+		warnPhase:Show(Green)
 		timerPhase:Start()
 		timerAddsCD:Start()
 		timerArcaneStormCD:Start(12)--First one is always shorter in green phase then other 2.
@@ -290,7 +287,7 @@ function mod:RAID_BOSS_EMOTE(msg)
 			DBM.RangeCheck:Hide()
 		end
 	elseif msg == L.YellDark or msg:find(L.YellDark) then
-		warnPhase:Show(L.Dark)
+		warnPhase:Show(Dark)
 		timerEngulfingDarknessCD:Start(16.5)
 		timerPhase:Start(100)
 		timerArcaneStormCD:Cancel()

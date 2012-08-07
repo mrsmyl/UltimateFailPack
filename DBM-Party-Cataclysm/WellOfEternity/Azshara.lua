@@ -1,7 +1,7 @@
-local mod	= DBM:NewMod("Azshara", "DBM-Party-Cataclysm", 13)
+local mod	= DBM:NewMod(291, "DBM-Party-Cataclysm", 13, 185)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 6818 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7663 $"):sub(12, -3))
 mod:SetCreatureID(54853)
 mod:SetModelID(39391)
 mod:SetZone()
@@ -23,7 +23,7 @@ local specWarnObedience	= mod:NewSpecialWarningInterrupt(103241)
 
 local timerServantCD	= mod:NewCDTimer(26, 102334)--Still don't have good logs, and encounter bugs a lot so i can't get any reliable timers except for first casts on engage.
 local timerObedienceCD	= mod:NewCDTimer(37, 103241)
-local timerAdds		= mod:NewTimer(36, "TimerAdds")
+local timerAdds			= mod:NewTimer(36, "TimerAdds")
 
 local addsCount = 0
 function mod:Adds()
@@ -46,14 +46,13 @@ end
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(103241) then
 		warnObedience:Show()
-		specWarnObedience:Show()
+		specWarnObedience:Show(args.sourceName)
 --		timerObedienceCD:Start()
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
-	if uId ~= "boss1" then return end--Anti spam to ignore all other args (like target/focus/mouseover)
-	if spellName == GetSpellInfo(102334) then
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+	if spellId == 102334 and self:AntiSpam() then
 		warnServant:Show()
 		specWarnServant:Show()
 --		timerServantCD:Start()

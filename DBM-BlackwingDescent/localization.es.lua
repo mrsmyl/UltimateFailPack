@@ -2,44 +2,10 @@
 
 local L
 
---------------
---  Magmaw  --
---------------
---L = DBM:GetModLocalization(170)
-L = DBM:GetModLocalization("Magmaw")
-
-L:SetGeneralLocalization({
-	name = "Faucemagma"
-})
-
-L:SetWarningLocalization({
-	SpecWarnInferno	= "Ensamblaje osario llameante pronto (~4s)",
-})
-
-L:SetTimerLocalization({
-})
-
-L:SetOptionLocalization({
-	SpecWarnInferno	= "Mostrar pre-aviso especial para $spell:92190 (~4s)",
-	RangeFrame		= "Mostrar distancia en Fase 2 (5 yardas)"
-
-})
-
-L:SetMiscLocalization({
-	Slump			= "¡%s cae hacia delante y deja expuestas sus tenazas!",
-	HeadExposed		= "¡%s acaba empalado en el pincho y deja expuesta la cabeza!",
-	YellPhase2		= "¡Inconcebible! ¡Existe la posibilidad de que venzáis a mi gusano de lava! Quizás yo pueda... desequilibrar la balanza."
-})
-
 -------------------------------
 --  Dark Iron Golem Council  --
 -------------------------------
---L = DBM:GetModLocalization(169)
-L = DBM:GetModLocalization("DarkIronGolemCouncil")
-
-L:SetGeneralLocalization({
-	name = "Sistema de defensa de Omnotron"
-})
+L = DBM:GetModLocalization(169)
 
 L:SetWarningLocalization({
 	SpecWarnActivated			= "Cambia el objetivo a %s!",
@@ -47,16 +13,16 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerArcaneBlowbackCast		= "Retorno Arcano",
 	timerShadowConductorCast	= "Conductor de las Sombras",
-	timerNefAblity				= "CD de Bufo de Habilidad",
-	timerArcaneLockout			= "Aniquilador Silenciado"
+	timerArcaneLockout			= "Aniquilador Silenciado",
+	timerArcaneBlowbackCast		= "Retorno Arcano",
+	timerNefAblity				= "CD de Bufo de Habilidad"
 })
 
 L:SetOptionLocalization({
 	timerShadowConductorCast	= "Mostrar tiempo para lanzamiento de $spell:92053",
+	timerArcaneLockout			= "Mostrar tiempo de silenciamiento de hechizo de $spell:79710",
 	timerArcaneBlowbackCast		= "Mostrar tiempo para lanzamiento de $spell:91879",
-	timerArcaneLockout			= "Mostrar tiempo de silenciamiento de hechizo de $spell:91542",
 	timerNefAblity				= "Mostrar tiempo de CoolDown de las habilidades de bufos en heroico",
 	SpecWarnActivated			= "Mostrar aviso especial cuando se activa un nuevo boss",
 	specWarnGenerator			= "Mostrar aviso especial cuando un boss gana $spell:91557",
@@ -67,69 +33,48 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Magmatron	= "Magmatron",
-	Electron	= "Electron",
-	Toxitron	= "Toxitron",
-	Arcanotron	= "Arcanotron",
 	YellTargetLock		= "¡Sombras atrapantes! ¡Apartaos de mi!"
 })
 
-----------------
---  Maloriak  --
-----------------
---L = DBM:GetModLocalization(173)
-L = DBM:GetModLocalization("Maloriak")
-
-L:SetGeneralLocalization({
-	name = "Maloriak"
-})
+--------------
+--  Magmaw  --
+--------------
+L = DBM:GetModLocalization(170)
 
 L:SetWarningLocalization({
-	WarnPhase		= "Fase %s",
-	WarnRemainingAdds	= "%d aberraciones restantes"
-})
-
-L:SetTimerLocalization({
-	TimerPhase		= "Siguiente fase"
+	SpecWarnInferno	= "Ensamblaje osario llameante pronto (~4s)",
 })
 
 L:SetOptionLocalization({
-	WarnPhase		= "Mostrar aviso de la fase que viene",
-	WarnRemainingAdds	= "Mostrar un aviso con las aberraciones restantes",
-	TimerPhase		= "Mostrar tiempo para la siguiente fase",	
-	RangeFrame		= "Mostrar distancia (6 yardas) durante la fase azul",
-	SetTextures			= "Desactivar las texturas proyectadas automáticamente en fase oscura\n(se reactivan al cambiar de fase)",
-	FlashFreezeIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(92979),
-	BitingChillIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(77760),
-	ConsumingFlamesIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(77786)
+	SpecWarnInferno	= "Mostrar pre-aviso especial para $spell:92154 (~4s)",
+	RangeFrame		= "Mostrar distancia en Fase 2 (5 yardas)"
 })
 
 L:SetMiscLocalization({
-	YellRed			= "rojo|r a la caldera!",
-	YellBlue		= "azul|r a la caldera!",
-	YellGreen		= "verde|r a la caldera!",
-	YellDark		= "oscura|r en el caldero!",
-	Red				= "Rojo",
-	Blue			= "Azul",
-	Green			= "Verde",
-	Dark			= "Oscuro"
+	Slump			= "¡%s cae hacia delante y deja expuestas sus tenazas!",
+	HeadExposed		= "¡%s acaba empalado en el pincho y deja expuesta la cabeza!",
+	YellPhase2		= "¡Inconcebible! ¡Existe la posibilidad de que venzáis a mi gusano de lava! Quizás yo pueda... desequilibrar la balanza."
+})
+
+-----------------
+--  Atramedes  --
+-----------------
+L = DBM:GetModLocalization(171)
+
+L:SetOptionLocalization({
+	InfoFrame			= "Mostrar información de los niveles de sonido",
+	TrackingIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(78092)
+})
+
+L:SetMiscLocalization({
+	NefAdd					= "¡Atramedes, los héroes están justo AHÍ!",
+	Airphase		= "¡Sí, corred! Con cada paso, vuestros corazones se aceleran. El latido, fuerte y clamoroso... Casi ensordecedor. ¡No podéis escapar!"
 })
 
 -----------------
 --  Chimaeron  --
 -----------------
---L = DBM:GetModLocalization(172)
-L = DBM:GetModLocalization("Chimaeron")
-
-L:SetGeneralLocalization({
-	name = "Chimaeron"
-})
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
+L = DBM:GetModLocalization(172)
 
 L:SetOptionLocalization({
 	RangeFrame		= "Mostrar distancia (6 yardas)",
@@ -141,58 +86,40 @@ L:SetMiscLocalization({
 	HealthInfo	= "Información de vida"
 })
 
------------------
---  Atramedes  --
------------------
---L = DBM:GetModLocalization(171)
-L = DBM:GetModLocalization("Atramedes")
-
-L:SetGeneralLocalization({
-	name = "Atramedes"
-})
+----------------
+--  Maloriak  --
+----------------
+L = DBM:GetModLocalization(173)
 
 L:SetWarningLocalization({
-	WarnAirphase		= "Fase aerea",
-	WarnGroundphase		= "Fase en tierra",
-	WarnShieldsLeft		= "Antiguo escudo enano usado - %d restantes",
-	warnAddSoon				= "Maligno Execrable invocado",
-	specWarnAddTargetable	= "%s es targeteable"
+	WarnPhase		= "Fase %s"
 })
 
 L:SetTimerLocalization({
-	TimerAirphase		= "Siguente Fase aerea",
-	TimerGroundphase	= "Siguente Fase en tierra"
+	TimerPhase		= "Siguiente fase"
 })
 
 L:SetOptionLocalization({
-	WarnAirphase		= "Mostrar aviso cuando Atramedes levanta el vuelo",
-	WarnGroundphase		= "Mostrar aviso cuando Atramedes aterriza",
-	WarnShieldsLeft		= "Mostrar aviso cuando Antiguo escudo enano sea usado",
-	warnAddSoon				= "Mostrar aviso especial cuando Nefarian invoca adds",
-	specWarnAddTargetable	= "Mostrar aviso especial cuando los adds son targeteables",
-	TimerAirphase		= "Mostrar tiempo para siguiente Fase aerea",
-	TimerGroundphase	= "Mostrar tiempo para siguiente Fase en tierra",
-	InfoFrame			= "Mostrar información de los niveles de sonido",
-	TrackingIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(78092)
+	WarnPhase		= "Mostrar aviso de la fase que viene",
+	TimerPhase		= "Mostrar tiempo para la siguiente fase",	
+	RangeFrame		= "Mostrar distancia (6 yardas) durante la fase azul",
+	SetTextures			= "Desactivar las texturas proyectadas automáticamente en fase oscura\n(se reactivan al cambiar de fase)",
+	FlashFreezeIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(77699),
+	BitingChillIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(77760),
+	ConsumingFlamesIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(77786)
 })
 
 L:SetMiscLocalization({
-	AncientDwarvenShield	= "Antiguo escudo enano",
-	Soundlevel				= "Nivel de sonido",
-	YellPestered			= "¡Maligno Execrable en mi!",
-	NefAdd					= "¡Atramedes, los héroes están justo AHÍ!",
-	Airphase		= "¡Sí, corred! Con cada paso, vuestros corazones se aceleran. El latido, fuerte y clamoroso... Casi ensordecedor. ¡No podéis escapar!"
+	YellRed			= "rojo|r a la caldera!",
+	YellBlue		= "azul|r a la caldera!",
+	YellGreen		= "verde|r a la caldera!",
+	YellDark		= "oscura|r en el caldero!"
 })
 
 ----------------
 --  Nefarian  --
 ----------------
---L = DBM:GetModLocalization(174)
-L = DBM:GetModLocalization("Nefarian")
-
-L:SetGeneralLocalization({
-	name = "El Final de Nefarian"
-})
+L = DBM:GetModLocalization(174)
 
 L:SetWarningLocalization({
 	OnyTailSwipe		= "Latigazo de cola (Onyxia)",
@@ -214,16 +141,16 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	OnyTailSwipe		= "Mostrar aviso para el $spell:77827 de Onyxia",
 	NefTailSwipe		= "Mostrar aviso para el $spell:77827 de Nefarian",
-	OnyBreath			= "Mostrar aviso para el $spell:94124 de Onyxia",
-	NefBreath			= "Mostrar aviso para el $spell:94124 de Nefarian",	
+	OnyBreath			= "Mostrar aviso para el $spell:77826 de Onyxia",
+	NefBreath			= "Mostrar aviso para el $spell:77826 de Nefarian",	
 	specWarnCinderMove		= "Mostrar aviso especial para moverte si te afecta\n $spell:79339 (5s antes de la explosión)",	
 	warnShadowblazeSoon		= "Mostrar pre-aviso de cuenta atrás para $spell:81031 (5s before)\n(Solo después que el contador se haya sincronizado para asegurar precisión)",
 	specWarnShadowblazeSoon	= "Mostrar pre-aviso especial para $spell:81031 (~5s)",
 	timerNefLanding		= "Mostrar tiempo para que Nefarian aterrice",
 	OnySwipeTimer		= "Mostrar tiempo de cooldown de $spell:77827 de Onyxia",
 	NefSwipeTimer		= "Mostrar tiempo de cooldown de $spell:77827 de Nefarian",
-	OnyBreathTimer		= "Mostrar tiempo de cooldown de $spell:94124 de Onyxia",
-	NefBreathTimer		= "Mostrar tiempo de cooldown de $spell:94124 de Nefarian",
+	OnyBreathTimer		= "Mostrar tiempo de cooldown de $spell:77826 de Onyxia",
+	NefBreathTimer		= "Mostrar tiempo de cooldown de $spell:77826 de Nefarian",
 	InfoFrame			= "Mostrar información sobre la carga eléctrica de Onyxia",
 	SetWater			= "Desactivar la colisión con el agua automáticamente al pullear\n(se reactiva al abandonar el combate)",
 	TankArrow			= "Mostrar flecha para el kiteador de Guerrero Hueso animado\n(diseñado para estrategia de kiteo)",--npc 41918
@@ -236,9 +163,6 @@ L:SetMiscLocalization({
 	YellPhase2		= "¡Os maldigo, mortales! ¡Ese cruel menosprecio por las posesiones de uno debe ser castigado con fuerza extrema!",
 	YellPhase3		= "He intentado ser un buen anfitrión, pero ¡no morís! Es hora de dejarnos de tonterías y simplemente... ¡MATAROS A TODOS!",
 	YellShadowBlaze	= "¡Mirad cómo la llama de las sombras da vida a sus huesos! ¡Luchan a mis órdenes!",
-	Nefarian		= "Nefarian",
-	Onyxia			= "Onyxia",
-	Charge			= "Carga Eléctrica",
 	ShadowBlazeExact	= "hispa de Fuegoarbusto en %ds",
 	ShadowBlazeEstimate	= "Llamarada de las Sombras pronto (~5s)"
 })
@@ -250,16 +174,4 @@ L = DBM:GetModLocalization("BWDTrash")
 
 L:SetGeneralLocalization({
 	name = "Pulls de Descenso de Alanegra"
-})
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
-
-L:SetOptionLocalization({
-})
-
-L:SetMiscLocalization({
 })

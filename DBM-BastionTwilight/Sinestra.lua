@@ -1,8 +1,7 @@
---local mod	= DBM:NewMod(168, "DBM-BastionTwilight", nil, 72)
-local mod	= DBM:NewMod("Sinestra", "DBM-BastionTwilight")
+local mod	= DBM:NewMod(168, "DBM-BastionTwilight", nil, 72)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7266 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7661 $"):sub(12, -3))
 mod:SetCreatureID(45213)
 mod:SetModelID(34335)
 mod:SetZone()
@@ -23,12 +22,12 @@ mod:RegisterEventsInCombat(
 	"UNIT_DIED"
 )
 
-local warnBreath			= mod:NewSpellAnnounce(92944, 3)
+local warnBreath			= mod:NewSpellAnnounce(90125, 3)
 local warnOrbSoon			= mod:NewAnnounce("WarnOrbSoon", 3, 92954, true, nil, true)--Still on by default but no longer plays it's own sounds
 local warnOrbs				= mod:NewAnnounce("warnAggro", 4, 92954)
-local warnWrack				= mod:NewTargetAnnounce(92955, 4)
-local warnWrackJump			= mod:NewAnnounce("warnWrackJump", 3, 92955, false)--Not spammy at all (unless you're dispellers are retarded and make it spammy). Useful for a raid leader to coordinate quicker, especially on 10 man with low wiggle room.
-local warnDragon			= mod:NewAnnounce("WarnDragon", 3, 69002)
+local warnWrack				= mod:NewTargetAnnounce(89421, 4)
+local warnWrackJump			= mod:NewAnnounce("warnWrackJump", 3, 89421, false)--Not spammy at all (unless you're dispellers are retarded and make it spammy). Useful for a raid leader to coordinate quicker, especially on 10 man with low wiggle room.
+local warnDragon			= mod:NewSpellAnnounce("ej3231", 3, 69002)
 local warnPhase2			= mod:NewPhaseAnnounce(2)
 local warnExtinction		= mod:NewSpellAnnounce(86227, 4)
 local warnPhase3			= mod:NewPhaseAnnounce(3, 2)
@@ -36,35 +35,34 @@ local warnRedEssence		= mod:NewSpellAnnounce(87946, 3)
 
 local specWarnOrbs			= mod:NewSpecialWarning("SpecWarnOrbs", nil, nil, nil, true)
 local specWarnOrbOnYou		= mod:NewSpecialWarning("SpecWarnAggroOnYou")
-local specWarnBreath		= mod:NewSpecialWarningSpell(92944, false, nil, nil, true)
-local specWarnEggShield		= mod:NewSpecialWarning("SpecWarnEggShield", mod:IsRanged())
-local specWarnEggWeaken		= mod:NewSpecialWarning("SpecWarnEggWeaken", mod:IsRanged())
-local specWarnIndomitable	= mod:NewSpecialWarningDispel(92946, mod:CanRemoveEnrage())
+local specWarnBreath		= mod:NewSpecialWarningSpell(90125, false, nil, nil, true)
+local specWarnEggShield		= mod:NewSpecialWarningSpell(87654, mod:IsRanged())
+local specWarnEggWeaken		= mod:NewSpecialWarningSwitch("ej3238", mod:IsRanged())
+local specWarnIndomitable	= mod:NewSpecialWarningDispel(90045, mod:CanRemoveEnrage())
 
-local timerBreathCD			= mod:NewCDTimer(21, 92944)
+local timerBreathCD			= mod:NewCDTimer(21, 90125)
 local timerOrbs				= mod:NewTimer(28, "TimerOrbs", 92954)
-local timerWrack			= mod:NewNextTimer(61, 92955)
+local timerWrack			= mod:NewNextTimer(61, 89421)
 local timerExtinction		= mod:NewCastTimer(16, 86227)
 local timerEggWeakening		= mod:NewTimer(4, "TimerEggWeakening", 61357)
 local timerEggWeaken		= mod:NewTimer(30, "TimerEggWeaken", 61357)
-local timerDragon			= mod:NewTimer(50, "TimerDragon", 69002)
+local timerDragon			= mod:NewNextTimer(50, "ej3231", nil, nil,nil, 69002)
 local timerRedEssenceCD		= mod:NewNextTimer(22, 87946)--21-23 seconds after red egg dies
 local timerRedEssence		= mod:NewBuffFadesTimer(180, 87946)
 
-local OrbsCountdown			= mod:NewCountdown(28, 92954, nil, "OrbsCountdown")
+local countdownOrbs			= mod:NewCountdown(28, 92954, nil, "OrbsCountdown")
 
 mod:AddBoolOption("HealthFrame", false)
 mod:AddBoolOption("SetIconOnOrbs", true)
 mod:AddBoolOption("InfoFrame", false)--Does not filter tanks. not putting ugly hack in info frame, its simpley an aggro tracker
 
 local eggDown = 0
-local eggSpam = 0
 local eggRemoved = false
 local calenGUID = 0
 local orbList = {}
 local orbWarned = nil
 local playerWarned = nil
-local wrackName = GetSpellInfo(92955)
+local wrackName = GetSpellInfo(89421)
 local wrackTargets = {}
 
 local function resetPlayerOrbStatus()
@@ -76,7 +74,6 @@ local function isTank(unit)
 	-- 1. check blizzard tanks first
 	-- 2. check blizzard roles second
 	-- 3. anyone with Sinestra Aggro
-	-- 4. anyone with 180k+ health
 	if GetPartyAssignment("MAINTANK", unit, 1) then
 		return true
 	end
@@ -84,7 +81,6 @@ local function isTank(unit)
 		return true
 	end
 	if UnitIsUnit("boss1target", unit) then return true end
-	if UnitHealthMax(unit) >= 180000 then return true end--Will need tuning or removal for new expansions or maybe even new tiers.
 	return false
 end
 
@@ -151,7 +147,7 @@ function mod:OrbsRepeat()
 		warnOrbSoon:Schedule(26, 2)
 		warnOrbSoon:Schedule(27, 1)
 	end
-	OrbsCountdown:Start(28)
+	countdownOrbs:Start(28)
 	specWarnOrbs:Show()--generic aoe warning on spawn, before we have actual targets yet.
 	if self:IsInCombat() then
 		self:ScheduleMethod(28, "OrbsRepeat")
@@ -166,7 +162,6 @@ end
 
 function mod:OnCombatStart(delay)
 	eggDown = 0
-	eggSpam = 0
 	eggRemoved = false
 	calenGUID = 0
 	timerDragon:Start(16-delay)
@@ -183,7 +178,7 @@ function mod:OnCombatStart(delay)
 		warnOrbSoon:Schedule(27-delay, 2)
 		warnOrbSoon:Schedule(28-delay, 1)
 	end
-	OrbsCountdown:Start(29-delay)
+	countdownOrbs:Start(29-delay)
 	self:ScheduleMethod(29-delay, "OrbsRepeat")
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(L.HasAggro)
@@ -226,7 +221,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.WarnOrbSoon then
 			warnOrbSoon:Cancel()
 		end
-		OrbsCountdown:Cancel()
+		countdownOrbs:Cancel()
 		self:UnscheduleMethod("OrbsRepeat")
 		if self.Options.SetIconOnOrbs then
 			self:ClearIcons()
@@ -240,8 +235,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if not DBM.BossHealth:HasBoss(args.sourceGUID) then
 			DBM.BossHealth:AddBoss(args.sourceGUID, args.sourceName)
 		end
-		if GetTime() - eggSpam >= 3 then
-			eggSpam = GetTime()
+		if self:AntiSpam(3) then
 			timerDragon:Cancel()
 			if eggRemoved then
 				specWarnEggShield:Show()
@@ -254,8 +248,7 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(87654) and GetTime() - eggSpam >= 3 then
-		eggSpam = GetTime()
+	if args:IsSpellID(87654) and self:AntiSpam(3) then
 		timerEggWeaken:Show()
 		specWarnEggWeaken:Show()
 		eggRemoved = true
@@ -300,9 +293,9 @@ function mod:UNIT_DIED(args)
 				warnOrbSoon:Schedule(28, 2)
 				warnOrbSoon:Schedule(29, 1)
 			end
-			OrbsCountdown:Cancel()
+			countdownOrbs:Cancel()
 			self:UnscheduleMethod("OrbsRepeat")
-			OrbsCountdown:Start(30)
+			countdownOrbs:Start(30)
 			self:ScheduleMethod(30, "OrbsRepeat")
 		end
 	end

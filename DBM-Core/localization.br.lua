@@ -1,9 +1,7 @@
 ﻿if GetLocale() ~= "ptBR" then return end
 
 DBM_CORE_NEED_SUPPORT				= "Are you good with programming or languages? If yes, the DBM team needs your help to keep DBM the best boss mod for WoW. Join the team by visiting www.deadlybossmods.com or sending a message to tandanu@deadlybossmods.com or nitram@deadlybossmods.com."
-
 DBM_HOW_TO_USE_MOD					= "Bem vindo ao DBM. Digite /dbm help para obter uma lista dos comandos disponíveis. Para acessar as opções, digite /dbm no seu chat para começar a configuração. Carrege zonas específicas manualmente para configurar opções específicas de cada chefe para o seu gosto pessoal. O DBM tenta fazer isso automaticamente para você, observando sua spec na primeira vez que é executado. De qualquer forma, você pode querer habilitar outras opções."
-
 
 DBM_CORE_LOAD_MOD_ERROR				= "Erro ao carregar módulo %s: %s "
 DBM_CORE_LOAD_MOD_SUCCESS			= "Módulo '%s' carregado. Para mais opções, digite /dbm ou /dbm help no chat"
@@ -11,9 +9,10 @@ DBM_CORE_LOAD_GUI_ERROR				= "Não foi possível carregar interface gráfica: %s
 
 DBM_CORE_COMBAT_STARTED				= "%s na mira. Divirta-se e boa sorte! :)"
 DBM_CORE_BOSS_DOWN					= "%s derrotado após %s!"
-DBM_CORE_BOSS_DOWN_LONG				= "%s derrotado após %s! Sua última vitória demorou %s, sua vitória mais rápida %s."
-DBM_CORE_BOSS_DOWN_NEW_RECORD		= "%s derrotado após %s! Esse é um novo récorde! (Récorde antigo era %s)"
-DBM_CORE_COMBAT_ENDED				= "Combate contra %s encerrado após %s."
+DBM_CORE_BOSS_DOWN_L				= "%s derrotado após %s! Sua última vitória levou %s, sua vitória mais rápida %s. Você tem um total de %d vitórias."
+DBM_CORE_BOSS_DOWN_NR				= "%s derrotado após %s! Esse é um novo récorde! (Récorde antigo era %s). Você tem um total de %d vitórias."
+DBM_CORE_COMBAT_ENDED_AT			= "Combate contra %s (%s) encerrado após %s."
+DBM_CORE_COMBAT_ENDED_AT_LONG		= "Combate contra %s (%s) encerrado após %s. Você tem um total de %d derrotas nessa dificuldade."
 DBM_CORE_COMBAT_STATE_RECOVERED		= "Luta contra %s começou %s atrás, reajustando cronógrafos..."
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d |4segundo:segundos;"
@@ -36,11 +35,13 @@ DBM_CORE_OPTION_CATEGORY_TIMERS		= "Barras"
 DBM_CORE_OPTION_CATEGORY_WARNINGS	= "Anúncios"
 DBM_CORE_OPTION_CATEGORY_MISC		= "Diversos"
 
-DBM_CORE_AUTO_RESPONDED				= "Respondido automaticamente"
-DBM_CORE_STATUS_WHISPER				= "%s: %s, %d/%d pessoas vivas"
-DBM_CORE_AUTO_RESPOND_WHISPER		= "%s está ocupado lutando contra %s (%s, %d/%d pessoas vivas)"
-DBM_CORE_WHISPER_COMBAT_END_KILL	= "%s derrotou %s!"
-DBM_CORE_WHISPER_COMBAT_END_WIPE	= "%s foi derrotado por %s"
+DBM_CORE_AUTO_RESPONDED						= "Respondido automaticamente"
+DBM_CORE_STATUS_WHISPER						= "%s: %s, %d/%d pessoas vivas"
+DBM_CORE_AUTO_RESPOND_WHISPER				= "%s está ocupado lutando contra %s (%s, %d/%d pessoas vivas)"
+DBM_CORE_WHISPER_COMBAT_END_KILL			= "%s derrotou %s!"
+DBM_CORE_WHISPER_COMBAT_END_KILL_STATS		= "%s derrotou %s! Ele tem um total de %d vitórias."
+DBM_CORE_WHISPER_COMBAT_END_WIPE_AT			= "%s foi derrotado por %s em %s"
+DBM_CORE_WHISPER_COMBAT_END_WIPE_STATS_AT	= "%s foi derrotado por %s em %s. Ele tem um total de %d derrotas nessa dificuldade."
 
 DBM_CORE_VERSIONCHECK_HEADER		= "Deadly Boss Mods - Versões"
 DBM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"
@@ -133,8 +134,10 @@ DBM_CORE_AUTO_TIMER_TEXTS = {
 	fades		= "%s desvanece",--Buff/Debuff on players
 	cd			= "%s recarrega",
 	cdcount		= "%s recarrega (%%d)",
+	cdsource	= "%s recarrega: %%s",
 	next		= "Próx. %s",
 	nextcount	= "Próx. %s (%%d)",
+	nextsource	= "Próx %s: %%s",
 	achievement	= "%s"
 }
 
@@ -145,8 +148,10 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	fades		= "Exibir cronógrafo para quando $spell:%s desvanecerá dos jogadores",
 	cd			= "Exibir cronógrafo para recarga de $spell:%s",
 	cdcount		= "Exibir cronógrafo para recarga de $spell:%s",
+	cdsource	= "Exibir cronógrafo para recarga de $spell:%s",
 	next		= "Exibir cronógrafo para o próximo $spell:%s",
 	nextcount	= "Exibir cronógrafo para o próximo $spell:%s",
+	nextsource	= "Exibir cronógrafo para o próximo $spell:%s",
 	achievement	= "Exibir cronógrafo para %s"
 }
 
@@ -155,7 +160,7 @@ DBM_CORE_AUTO_ANNOUNCE_TEXTS = {
 	target	= "%s em >%%s<",
 	targetcount	= "%s (%%d) em >%%s<",
 	spell	= "%s",
-	adds		= "%s remaining: %%d",
+	adds		= "%s restantes: %%d",
 	cast	= "Lançando %s: %.1f seg",
 	soon	= "%s em breve",
 	prewarn = "%s em %s",
@@ -192,13 +197,13 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	run 		= "Exibir aviso especial para $spell:%s",
 	cast 		= "Exibir aviso especial para o lançamento de $spell:%s",
 	stack 		= "Exibir aviso especial para pilha >=%d de \n $spell:%s",
-	switch		= "Show special warning to switch targets for \n $spell:%s"
+	switch		= "Exibir aviso especial para mudar de alvo para \n $spell:%s"
 }
 
 DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell = "%s!",
 	dispel = "%s em %%s - remova agora",
-	interrupt = "%s - interrompa agora",
+	interrupt = "%s - interrompa %%s",
 	you = "%s em você",
 	target = "%s em %%s",
 	close = "%s em %%s perto de você",
@@ -206,7 +211,7 @@ DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	run = "%s - corra para longe",
 	cast = "%s - pare de lançar",
 	stack = "%s (%%d)",
-	switch = "%s - switch targets"
+	switch = "%s - mude de alvo"
 }
 
 

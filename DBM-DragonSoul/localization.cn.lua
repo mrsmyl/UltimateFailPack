@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 2/8/2012
+-- Last update: 2/25/2012
 
 if GetLocale() ~= "zhCN"  then return end
 
@@ -31,12 +31,6 @@ L:SetMiscLocalization({
 -- Warlord Zon'ozz --
 ---------------------
 L= DBM:GetModLocalization(324)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	ShadowYell			= "当你受到$spell:104600影响时时大喊（英雄难度）",
@@ -127,7 +121,7 @@ L:SetOptionLocalization({
 	TimerCombatStart	= "计时条：战斗即将开始",
 	ResetHoTCounter		= "重新开始目光审判计数器",--$spell doesn't work in this function apparently so use typed spellname for now.
 	Never				= "从不",
-	Reset3				= "每3/2次（英雄/普通难度）重置一次",
+	ResetDynamic		= "每3/2次（英雄/普通难度）重置一次",
 	Reset3Always		= "总是每3次进行重置",
 	SpecWarnHoTN		= "特殊警报：目光审判施放5秒前（仅针对每3次重置）",
 	One					= "1 (如 1 4 7)",
@@ -178,9 +172,6 @@ L:SetWarningLocalization({
 	SpecWarnTendril			= "小心翻身！"
 })
 
-L:SetTimerLocalization({
-})
-
 L:SetOptionLocalization({
 	SpecWarnTendril			= "特殊警报：当你没有$spell:109454效果时",
 	InfoFrame				= "信息框：没有$spell:109454效果的玩家",
@@ -200,12 +191,6 @@ L:SetMiscLocalization({
 -- Madness of Deathwing  -- 
 ---------------------------
 L= DBM:GetModLocalization(333)
-
-L:SetWarningLocalization({
-})
-
-L:SetTimerLocalization({
-})
 
 L:SetOptionLocalization({
 	RangeFrame			= "距离监视器（根据状态动态变化）：应对$spell:108649（英雄难度）",
@@ -239,6 +224,6 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	EoEEvent			= "It is no use, the power of the Dragon Soul is too great",--Partial
+	EoEEvent			= "这没有用，巨龙之魂的力量太强大了。",--Partial
 	UltraxionTrash		= "重逢真令我高兴，阿莱克斯塔萨。分开之后，我可是一直很忙。",
 })
