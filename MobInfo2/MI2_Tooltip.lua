@@ -172,7 +172,7 @@ end -- MI2_StartTooltipMouseMove
 
 
 -----------------------------------------------------------------------------
--- MI2_UpdateTooltipHealth()
+-- MI2_MouseMove()
 --
 -- set position of MobInfo tooltip based on mouse position
 --
@@ -396,6 +396,7 @@ end -- MI2_FillTooltipWithData
 -- the size of the entries
 --
 local function MI2_UpdateTooltip( mobData, mobName, unit )
+	--print(serialize(mobData,"mobData"))
 	if MobInfoConfig.UseGameTT == 1 then return end
 
 	-- set mob name/level/type/class
