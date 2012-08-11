@@ -15,6 +15,10 @@
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
  
+*3.02.95 (09-AUG-2012)*
+ * fixed - removed ranged slot for mop beta
+ * added - more checking of saved variables
+ 
 *3.02.94 (06-JUL-2012)*
  * added - monk class
  

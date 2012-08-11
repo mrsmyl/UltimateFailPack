@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 912 $
--- $Date: 2012-07-06 19:45:07 +1000 (Fri, 06 Jul 2012) $
+-- $Revision: 913 $
+-- $Date: 2012-08-09 20:30:33 +1000 (Thu, 09 Aug 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0293,
-		UIVersion = "3.2.93",
+		Version = 3.0295,
+		UIVersion = "3.2.95",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -1900,6 +1900,11 @@ end
 function ArkInventory.OnInitialize( )
 	
 	--ArkInventory.Output( "OnInitialize" )
+	
+	if ArkInventory.Const.TOC > 50000 then
+		-- mop has no ranged slot
+		ArkInventory.Const.InventorySlotName = { "HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot", "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot" }
+	end
 	
 	ArkInventory.Global.Version = string.format( "v%s", ArkInventory.Const.Program.UIVersion )
 	if ArkInventory.Const.Program.Beta then
@@ -8260,35 +8265,6 @@ function ArkInventory.ContainerItemNameGet( loc_id, bag_id, slot_id )
 	end
 end
 
-function ArkInventory.LocationOptionGet_old2( loc_id, opt )
-	local loc_id = ArkInventory.db.profile.option.use[loc_id] or loc_id
-	return ArkInventory.LocationOptionGetReal( loc_id, opt )
-end
-
-function ArkInventory.LocationOptionGetReal_old2( loc_id, opt )
-
-	assert( loc_id ~= nil, "location id is nil" )
-	assert( type( opt ) == "table", "opt is not a table" )
-
-	local p = ArkInventory.db.profile.option.location[loc_id]
-	local s = string.format( "db.profile.option.location.%s", loc_id )
-	
-	for i = 1, #opt do
-		
-		assert( p ~= nil, string.format( "code error: encountered nil at %s - please reload ui to reset database or report to author if it continues", s ) )
-		
-		local k = opt[i]
-		assert( k ~= nil, string.format( "code error: encountered a nil parameter at position %s", i ) )
-		
-		s = string.format( "%s.%s", s, k )
-		p = p[k]
-		
-	end
-	
-	return p
-
-end
-
 function ArkInventory.LocationOptionGet( loc_id, ... )
 	local loc_id = ArkInventory.db.profile.option.use[loc_id] or loc_id
 	return ArkInventory.LocationOptionGetReal( loc_id, ... )
@@ -8310,6 +8286,7 @@ function ArkInventory.LocationOptionGetReal( loc_id, ... )
 		
 		local k = select( i, ... )
 		assert( k ~= nil, string.format( "bad code: parameter %s is nil", i ) )
+		assert( type( k ) ~= "boolean", string.format( "bad code: parameter %s is boolean", i ) )
 		
 		s = string.format( "%s.%s", s, k )
 		p = p[k]
@@ -8317,39 +8294,6 @@ function ArkInventory.LocationOptionGetReal( loc_id, ... )
 	end
 	
 	return p
-	
-end
-
-function ArkInventory.LocationOptionSet_old2( loc_id, opt, n )
-	local loc_id = ArkInventory.db.profile.option.use[loc_id] or loc_id
-	return ArkInventory.LocationOptionSetReal( loc_id, opt, n )
-end
-
-function ArkInventory.LocationOptionSetReal_old2( loc_id, opt, n )
-
-	assert( loc_id ~= nil, "location id is nil" )
-	assert( type( opt ) == "table", "opt is not a table" )
-
-	local p = ArkInventory.db.profile.option.location[loc_id]
-	local s = string.format( "db.profile.option.location.%s", loc_id )
-	
-	for i = 1, #opt - 1 do
-		
-		assert( p ~= nil, string.format( "code error: encountered nil at %s - please reload ui to reset database or report to author if it continues", s ) )
-		
-		local k = opt[i]
-		assert( k ~= nil, string.format( "code error: encountered a nil parameter at position %s", i ) )
-		
-		s = string.format( "%s.%s", s, k )
-		p = p[k]
-		
-	end
-	
-	k = opt[#opt]
-	assert( k ~= nil, string.format( "code error: encountered a nil parameter at position %s", #opt ) )
-	
-	--ArkInventory.Output( "set ", s, "[", v, "], old=[", p[v], "], new=[", n, "]" )
-	p[k] = n
 	
 end
 
@@ -8374,6 +8318,7 @@ function ArkInventory.LocationOptionSetReal( loc_id, ... )
 		
 		local k = select( i, ... )
 		assert( k ~= nil, string.format( "bad code: parameter %s is nil", i ) )
+		assert( type( k ) ~= "boolean", string.format( "bad code: parameter %s is boolean", i ) )
 		
 		s = string.format( "%s.%s", s, k )
 		p = p[k]
