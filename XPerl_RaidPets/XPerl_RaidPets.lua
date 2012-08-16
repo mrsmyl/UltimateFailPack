@@ -5,9 +5,15 @@
 local XPerl_RaidPets_Events = {}
 local RaidPetFrameArray = {}
 local conf, rconf, raidconf
-XPerl_RequestConfig(function(New) conf = New raidconf = New.raid rconf = New.raidpet end, "$Revision: 500 $")
+XPerl_RequestConfig(function(New) conf = New raidconf = New.raid rconf = New.raidpet end, "$Revision: 644 $")
 
 local new, del, copy = XPerl_GetReusableTable, XPerl_FreeTable, XPerl_CopyTable
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
+
 
 -- XPerl_RaidPets_OnEvent
 local function XPerl_RaidPets_OnEvent(self, event, unit, ...)

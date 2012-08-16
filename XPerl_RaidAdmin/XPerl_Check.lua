@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 614 $")
+XPerl_SetModuleRevision("$Revision: 644 $")
 
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
@@ -24,6 +24,21 @@ local outputChannel = "RAID"
 local outputChannelIndex = nil
 local outputChannelSelection
 local outputChannelColour
+
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
+
+local IsRaidOfficer = IsRaidOfficer;
+
+
+if (select(4, _G.GetBuildInfo()) >= 50000) then
+	IsRaidOfficer = function() return UnitIsGroupAssistant("player") end
+end
+
+
 
 local ITEMLISTSIZE		= 12
 local PLAYERLISTSIZE		= 10

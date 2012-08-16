@@ -29,7 +29,7 @@ function XPerl_SetModuleRevision(rev)
 end
 local AddRevision = XPerl_SetModuleRevision
 
-XPerl_SetModuleRevision("$Revision: 595 $")
+XPerl_SetModuleRevision("$Revision: 660 $")
 
 function XPerl_Notice(...)
 	if (DEFAULT_CHAT_FRAME) then
@@ -333,29 +333,6 @@ local function onEventPostSetup(self, event, unit, ...)
 			--end
 			XPerl_OutOfCombatQueue[func] = nil
 		end
-
---	elseif (event == "ADDON_LOADED") then
---		if (arg1 == "Blizzard_GuildUI") then
---			hooksecurefunc("GuildRoster_Update", XPerl_GuildRoster_Update)
---		end
-
-	--elseif (event == "ADDON_ACTION_BLOCKED") then
-		--totalBlocked = totalBlocked + 1
-		--if (strfind(arg2, "^XPerl")) then
-		--	xperlBlocked = xperlBlocked + 1
-		--end
-		--if (not iFixed1) then
-		--	if (strfind(arg2, "PetActionBarFrame")) then
-		--		if (not PetActionBarFrame:GetAttribute("unit", "pet")) then
-		--			iFixed1 = true
-		--			--XPerl_Notice("Pet Frame Issue Detected: Setting up workaround")
-		--			XPerl_ProtectedCall(function()
-		--				PetActionBarFrame:SetAttribute("unit", "pet")
-		--				RegisterUnitWatch(PetActionBarFrame)
-		--			end)
-		--		end
-		--	end
-		--end
 	end
 end
 
@@ -380,7 +357,8 @@ local function XPerl_RegisterLDB()
 	XPerl_RegisterLDB = nil
 end
 
-local function startupCheckSettings(self,event)
+
+local function settingspart1(self,event)
 	playerName = UnitName("player")
 	self:UnregisterEvent(event)
 
@@ -407,6 +385,12 @@ local function startupCheckSettings(self,event)
 	XPerl_UpgradeSettings = nil
 
 	XPerl_pcall(XPerl_ValidateSettings)
+end
+	
+
+
+local function startupCheckSettings(self,event)
+
 
 	XPerl_Init()
 	XPerl_BlizzFrameDisable = nil
@@ -418,9 +402,11 @@ end
 
 -- XPerl_Globals_OnEvent
 function XPerl_Globals_OnEvent(self, event, arg1, ...)
-	if (event == "VARIABLES_LOADED") then
-		self:UnregisterEvent(event)
 
+	--if (event == "VARIABLES_LOADED") then
+	if (event == "ADDON_LOADED" and arg1 == "XPerl") then
+		self:UnregisterEvent(event)
+		settingspart1(self,event)
 		-- Tell DHUD to hide Blizzard default Player and Target frames
 		if (type(DHUD_Config) == "table") then
 			if (XPerl_Player) then
@@ -444,7 +430,7 @@ function XPerl_Globals_OnEvent(self, event, arg1, ...)
 	elseif (event == "PLAYER_ENTERING_WORLD") then
 		self:UnregisterEvent(event)
 
-		self:SetScript("OnEvent", onEventPostSetup)
+		--self:SetScript("OnEvent", onEventPostSetup)
 		XPerl_Globals_OnEvent = nil
 	end
 end

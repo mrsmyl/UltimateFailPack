@@ -7,7 +7,7 @@ if (not XPerl_RequestConfig) then
 end
 
 local conf
-XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 618 $")
+XPerl_RequestConfig(function(new) conf = new.custom end, "$Revision: 637 $")
 
 local ch = CreateFrame("Frame", "XPerl_Custom")
 ch.active = {}
@@ -33,6 +33,20 @@ function ch:AddBuff(buffName)
 	local zoneName = GetRealZoneText()
 end
 
+-- Pull zone names from encounter journal so they don't need to be localized.
+-- Cataclysm Raids
+local XPERL_LOC_ZONE_BARADIN_HOLD = EJ_GetInstanceInfo(75)
+local XPERL_LOC_ZONE_BLACKWING_DECENT = EJ_GetInstanceInfo(73)
+local XPERL_LOC_ZONE_BASTION_OF_TWILIGHT = EJ_GetInstanceInfo(72)
+local XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS = EJ_GetInstanceInfo(74)
+local XPERL_LOC_ZONE_FIRELANDS = EJ_GetInstanceInfo(78)
+local XPERL_LOC_ZONE_DRAGONSOUL = EJ_GetInstanceInfo(187)
+--[[
+-- Mists of Pandaria Raids
+local XPERL_LOC_ZONE_MOGUSHAN_VAULTS = EJ_GetInstanceInfo(317)
+local XPERL_LOC_ZONE_TERRACE_OF_ENDLESS_SPRING = EJ_GetInstanceInfo(320)
+local XPERL_LOC_ZONE_HEART_OF_FEAR = EJ_GetInstanceInfo(1009)
+--]]
 -- DefaultZoneData
 function ch:DefaultZoneData()
 	return {
@@ -211,12 +225,12 @@ function ch:DefaultZoneData()
 		[XPERL_LOC_ZONE_BLACKWING_DECENT] =
 			{
 				[80094] = true,								-- Fixate (Toxitron)
-				[92035] = true,								-- Aquiring Target (Magmatron)
-				[91431] = true,								-- Lightning Conductor (Electron)
+				[79501] = true,								-- Aquiring Target (Magmatron)
+				[79888] = true,								-- Lightning Conductor (Electron)
 				[92053] = true,								-- Shadow Conductor (Omnitron Heroic)
 
 				[89773] = true,								-- Mangle (Magmaw)
-				[91913] = true,								-- Paracite Infection (Magmaw)
+				[78941] = true,								-- Paracite Infection (Magmaw)
 
 				[77699] = true,								-- Flash Freeze (Maloriak)
 				[77760] = true,								-- Biting Chill (Maloriak)
@@ -248,34 +262,34 @@ function ch:DefaultZoneData()
 
 				[91317] = true,								-- Worshipping (Cho'gall)
 
-				[92955] = true,								-- Wrack (Sinestra)
+				[89421] = true,								-- Wrack (Sinestra)
 			},
 		[XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS] =
 			{
-				[93058] = true,								-- Slicing Gale (Conclave of Wind)
-				[93123] = true,								-- Wind Chill (Conclave of Wind)
+				[93057] = true,								-- Slicing Gale (Conclave of Wind)
+				[84645] = true,								-- Wind Chill (Conclave of Wind)
 
 				[89668] = true,								-- Lightning Rod (Al'Akir)
 			},
 		[XPERL_LOC_ZONE_FIRELANDS] =
 			{
 				[99837] = true,								-- Crystal Prison Trapped (Shannox)
-				[101210] = true,							-- Immo Trap Debuff (Shannox)
+				[99838] = true,								-- Immo Trap Debuff (Shannox)
 
 				[99476] = true,								-- Widows Kiss (Beth'tilac)		
-				[99559] = true,								-- Fixate (Beth'tilac Heroic)
+				[99526] = true,								-- Fixate (Beth'tilac Heroic)
 
-				[101296] = true,							-- Fieroblast(Alysrazor)
+				[101223] = true,							-- Fieroblast(Alysrazor)
 
 				[99402] = true,								-- Tormented (Baloroc)
 				[99516] = true,								-- Countdown (Baloroc Heroic)
 
 				[98450] = true,								-- Searing Seed (Staghelm)
-				[100211] = true,							-- Burning Orb (Staghelm)
+				[98584] = true,								-- Burning Orb (Staghelm)
 
 				[100460] = true,							-- Blazing Heat(Ragnaros)
 				[99849] = true,								-- Fixate (Ragnaros)
-				[100292] = true,							-- Lava Wave (Ragnaros)
+				[98928] = true,								-- Lava Wave (Ragnaros)
 			},
 		[XPERL_LOC_ZONE_DRAGONSOUL] =
 			{
@@ -285,16 +299,17 @@ function ch:DefaultZoneData()
 
 				[109325] = true,							-- Frostflake (Hagara Heroic)	
 	
-				[110080] = true,							-- Fading Light (Ultraxion)
+				[109075] = true,							-- Fading Light (Ultraxion)
 
-				[109204] = true,							-- Twilight Barrage (Blackhorn Heroic)
-				[110598] = true,							-- Consuming Shroud (Blackhorn Heroic)
+				[107439] = true,							-- Twilight Barrage (Blackhorn Heroic)
+				[110214] = true,							-- Consuming Shroud (Blackhorn Heroic)
 
-				[109364] = true,							-- Searing Plasma (Spine of Deathwing)
-				[109459] = true,							-- Grip (Spine of Deathwing)
+				[105479] = true,							-- Searing Plasma (Spine of Deathwing)
+				[105490] = true,							-- Grip (Spine of Deathwing)
 				[106199] = true,							-- Blood Corruption: Death (Heroic Spine of Deathwing)
 
-				[110141] = true,							-- Shrapnal (Madness of Deathwing)
+				[106794] = true,							-- Shrapnal (Madness of Deathwing)
+				[106730] = true,							-- Tetanus (Madness of Deathwing)
 				[108649] = true,							-- Parasite (Madness of Deathwing Heroic)
 			},
 		}
@@ -462,12 +477,12 @@ function ch:Check(frame, unit)
 		end
 
 		for i = 1,40 do
-			local name, rank, buffIcon = UnitDebuff(unit, i)
+			local name, _, icon = UnitDebuff(unit, i)
 			if (not name) then
 				break
 			end
 			if (z[name]) then
-				self:Highlight(frame, "debuff", unit, name, buffIcon)
+				self:Highlight(frame, "debuff", unit, name, icon)
 				return
 			end
 		end

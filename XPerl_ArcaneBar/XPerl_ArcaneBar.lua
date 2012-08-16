@@ -12,7 +12,7 @@ end
 --@end-debug@]===]
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 606 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 634 $")
 
 -- Registers frame to spellcast events.
 

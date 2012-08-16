@@ -1,0 +1,215 @@
+------------------------------------------------------------------------
+r667 | THARAI | 2012-08-15 09:22:18 +0000 (Wed, 15 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.toc
+
+Update toc version
+------------------------------------------------------------------------
+r666 | THARAI | 2012-08-15 03:10:43 +0000 (Wed, 15 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
+
+Druid bar changes, now the buffs are below the druid bar
+Druid bar compat with mop
+XPerl_RaidMonitor.lua compat with mop
+------------------------------------------------------------------------
+r665 | THARAI | 2012-08-11 06:48:01 +0000 (Sat, 11 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+redisable onupdate that were enabled during testing.
+------------------------------------------------------------------------
+r664 | THARAI | 2012-08-10 09:56:53 +0000 (Fri, 10 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Use the args that are passed to player_level_up as unitlevel can be unreliable when called from within that event..atleast according to wowwiki
+------------------------------------------------------------------------
+r663 | THARAI | 2012-08-10 09:46:00 +0000 (Fri, 10 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Always register PLAYER_LEVEL_UP, UNIT_LEVEL seems to be unreliable?
+------------------------------------------------------------------------
+r662 | THARAI | 2012-08-10 02:08:38 +0000 (Fri, 10 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+Fix target of target
+Fix target of target of target.
+------------------------------------------------------------------------
+r661 | THARAI | 2012-08-09 08:11:04 +0000 (Thu, 09 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+Fix target of target issue(maybe?)
+use unitguid instead of unitname for target of target of target.
+------------------------------------------------------------------------
+r660 | THARAI | 2012-08-08 05:14:35 +0000 (Wed, 08 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Globals.lua
+
+redisable that event sytem, unneeded now.
+------------------------------------------------------------------------
+r659 | THARAI | 2012-08-08 04:25:05 +0000 (Wed, 08 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+I always forget to comment this stuff out...
+------------------------------------------------------------------------
+r658 | THARAI | 2012-08-08 04:24:34 +0000 (Wed, 08 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/XPerl_Globals.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Looks like that function I disabled was used for target frame and pet frame...
+Add the events that were being used there directly to the target frame
+Make target frame use health_frequent and power_frequent
+------------------------------------------------------------------------
+r657 | THARAI | 2012-08-08 04:00:45 +0000 (Wed, 08 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Fix error with IsPartyLeader
+------------------------------------------------------------------------
+r656 | THARAI | 2012-08-08 03:59:07 +0000 (Wed, 08 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Monk power bar
+------------------------------------------------------------------------
+r655 | THARAI | 2012-08-08 03:52:36 +0000 (Wed, 08 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/XPerl_Globals.lua
+
+Disable a print function.
+Disable some event queue system that was eating a bunch of functions for no reason...
+I think this was from when you used to be able to change options in combat, then when you got out of combat the changes would take place.
+------------------------------------------------------------------------
+r654 | THARAI | 2012-08-08 03:47:00 +0000 (Wed, 08 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Globals.lua
+
+Use addon_loaded to prepare the conf values as soon as the inital xperl module is loaded.
+I think this will work better because the old method was using variables_loaded, the new method insures that as soon as XPerl is loaded, the config will avail since XPerl will always be loaded before the others because it is listed as dependency.
+------------------------------------------------------------------------
+r653 | THARAI | 2012-08-06 00:12:53 +0000 (Mon, 06 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+portrait stuff
+------------------------------------------------------------------------
+r652 | THARAI | 2012-08-05 19:12:17 +0000 (Sun, 05 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Re-enable pvp timer...again...
+------------------------------------------------------------------------
+r651 | THARAI | 2012-08-05 10:57:59 +0000 (Sun, 05 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Use UPDATE_EXHAUSTION event instead of OnUpdate to check for changes in rested xp.
+------------------------------------------------------------------------
+r650 | THARAI | 2012-08-04 23:10:50 +0000 (Sat, 04 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Remove updating display from variables loaded
+add PLAYER_ALIVE event, force updating the frame after this event has fired.
+------------------------------------------------------------------------
+r649 | THARAI | 2012-08-04 17:28:28 +0000 (Sat, 04 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Try shifting more code into variables_loaded
+------------------------------------------------------------------------
+r648 | THARAI | 2012-08-04 03:49:16 +0000 (Sat, 04 Aug 2012) | 6 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+
+Pet frame was calling event functions too much.
+
+Fix issue with player health frame not updating
+-half the events are loaded on VARIABLES_LOADED
+-the other half are loaded on PLAYER_ENTERING_WORLD
+-Sometimes players would load in, and the event would be missed on the first load in.
+------------------------------------------------------------------------
+r647 | THARAI | 2012-08-04 01:03:47 +0000 (Sat, 04 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Remove unit_health, we use unit_health_frequent no need to call it twice as often for no gain.
+Remove code from onupdate pertaing to afk flag
+Remove now unused code releated to the paladin holy bar
+------------------------------------------------------------------------
+r646 | THARAI | 2012-08-04 00:39:09 +0000 (Sat, 04 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+issues w/ archy p1
+------------------------------------------------------------------------
+r645 | THARAI | 2012-08-03 19:45:47 +0000 (Fri, 03 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Shit buffs for paladins.
+------------------------------------------------------------------------
+r644 | THARAI | 2012-08-02 17:41:15 +0000 (Thu, 02 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_PartyPet/XPerl_Party_Pet.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.xml
+   M /trunk/XPerl_RaidHelper/XPerl_AssistFrame.lua
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.lua
+   M /trunk/localization.lua
+
+Mop stuff
+------------------------------------------------------------------------
+r643 | THARAI | 2012-08-02 16:07:18 +0000 (Thu, 02 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Blizzard paladin power bar.
+------------------------------------------------------------------------
+r642 | THARAI | 2012-07-28 17:04:54 +0000 (Sat, 28 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Improve target onevent performance.
+------------------------------------------------------------------------
+r641 | THARAI | 2012-07-21 16:15:52 +0000 (Sat, 21 Jul 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Remove mana update from player again, use 
+UNIT_POWER_FREQUENT instead
+------------------------------------------------------------------------
+r640 | mysticalos | 2012-07-20 15:13:12 +0000 (Fri, 20 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Small fix to player frame updating.
+------------------------------------------------------------------------
+r639 | THARAI | 2012-07-20 08:13:49 +0000 (Fri, 20 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+reenable onupdate for targettargettarget since im too busy to use events at the moment.
+------------------------------------------------------------------------
+r638 | THARAI | 2012-07-10 22:26:19 +0000 (Tue, 10 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Don't go through with mana update function, if power value has not changed. 
+------------------------------------------------------------------------

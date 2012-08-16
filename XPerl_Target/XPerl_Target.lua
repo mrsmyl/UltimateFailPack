@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 595 $")
+			end, "$Revision: 659 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -33,6 +33,12 @@ local playerClass
 local lastInspectPending = 0
 local mobhealth
 
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local IsPartyLeader = IsPartyLeader;
+if (select(4, _G.GetBuildInfo()) >= 50000) then
+	IsPartyLeader = function() return UnitIsGroupLeader("player") end
+end
 ----------------------
 -- Loading Function --
 ----------------------
@@ -47,7 +53,8 @@ function XPerl_Target_OnLoad(self, partyid)
 
 	local events = {"UNIT_COMBAT", "PLAYER_FLAGS_CHANGED",
 		"PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "RAID_TARGET_UPDATE", "PARTY_MEMBERS_CHANGED",
-		"PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "UNIT_THREAT_LIST_UPDATE"}
+		"PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "UNIT_THREAT_LIST_UPDATE","UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS",
+			"UNIT_CLASSIFICATION_CHANGED", "UNIT_PORTRAIT_UPDATE", "UNIT_AURA", "UNIT_HEALTH_FREQUENT","UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE"}
 	for i,event in pairs(events) do
 		self:RegisterEvent(event)
 	end
@@ -63,7 +70,7 @@ function XPerl_Target_OnLoad(self, partyid)
 		self.tutorialPage = 3
 		self:RegisterEvent("PLAYER_TARGET_CHANGED")
 		self:RegisterEvent("PLAYER_FOCUS_CHANGED")
-		self:RegisterEvent("VARIABLES_LOADED")
+	
 		if (XPerl_Target_Events.INSPECT_READY) then
 			self:RegisterEvent("INSPECT_READY")
 		end
@@ -118,9 +125,9 @@ function XPerl_Target_OnLoad(self, partyid)
 
 	--RegisterUnitWatch(self)
 
-	XPerl_UnitEvents(self, XPerl_Target_Events, {"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS",
-				"UNIT_CLASSIFICATION_CHANGED", "UNIT_PORTRAIT_UPDATE", "UNIT_AURA", "UNIT_HEALTH"})
-	XPerl_RegisterBasics(self, XPerl_Target_Events)
+	--XPerl_UnitEvents(self, XPerl_Target_Events, {"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS",
+	--			"UNIT_CLASSIFICATION_CHANGED", "UNIT_PORTRAIT_UPDATE", "UNIT_AURA", "UNIT_HEALTH"})
+	--XPerl_RegisterBasics(self, XPerl_Target_Events)
 
 	--self.PlayerFlash = 0
 	self.perlBuffs, self.perlDebuffs, self.RangeUpdate = 0, 0, 0
@@ -697,7 +704,7 @@ function XPerl_Target_SetMana(self)
 	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
 	local pmanaPct
 	if targetmana > 0 and targetmanamax == 0 then--We have current mana but max mana failed.
-		targetmanamax = targetmana--Make max mana at least equal to current health
+		targetmanamax = targetmana--Make max mana at least equal to current mana
 		pmanaPct = 100--And percent 100% cause a number divided by itself is 1, duh.
 	elseif targetmana == 0 and targetmanamax == 0 then--Probably doesn't use mana or is oom?
 		pmanaPct = 0--So just automatically set percent to 0 and avoid division of 0/0 all together in this situation.
@@ -1024,18 +1031,29 @@ end
 -- Event Handler --
 -------------------
 function XPerl_Target_OnEvent(self, event, ...)
+
+	--[[
 	local func = XPerl_Target_Events[event]
 	if (func) then
 		func(self, ...)
 	else
 XPerl_ShowMessage("EXTRA EVENT")
+	end]]--
+	
+	
+	local func = XPerl_Target_Events[event]
+	local unitid = select(1,...);
+	if (strsub(event, 1, 5) == "UNIT_") then
+	
+	 	if (unitid == "target") then
+		--print(event)
+			func(self, ...)
+		end
+	else
+		func(self, ...)
 	end
 end
 
--- VARIABLES_LOADED
-function XPerl_Target_Events:VARIABLES_LOADED()
-
-end
 
 function XPerl_Target_Events:PLAYER_REGEN_ENABLED()
 	XPerl_Unit_ThreatStatus(self, self.partyid == "target" and "player" or nil)
@@ -1191,10 +1209,10 @@ end
 XPerl_Target_Events.PLAYER_FOCUS_CHANGED = XPerl_Target_Events.PLAYER_TARGET_CHANGED
 
 -- UNIT_HEALTH, UNIT_MAXHEALTH
-function XPerl_Target_Events:UNIT_HEALTH()
+function XPerl_Target_Events:UNIT_HEALTH_FREQUENT()
 	XPerl_Target_UpdateHealth(self)
 end
-XPerl_Target_Events.UNIT_MAXHEALTH = XPerl_Target_Events.UNIT_HEALTH
+XPerl_Target_Events.UNIT_MAXHEALTH = XPerl_Target_Events.UNIT_HEALTH_FREQUENT
 
 -- UNIT_DYNAMIC_FLAGS
 function XPerl_Target_Events:UNIT_DYNAMIC_FLAGS()
@@ -1212,11 +1230,11 @@ function XPerl_Target_Events:RAID_TARGET_UPDATE()
 end
 
 -- UNIT_POWER / UNIT_MAXPOWER
-function XPerl_Target_Events:UNIT_POWER()
+function XPerl_Target_Events:UNIT_POWER_FREQUENT()
         XPerl_Target_SetMana(self)
 end
 
-XPerl_Target_Events.UNIT_MAXPOWER = XPerl_Target_Events.UNIT_POWER
+XPerl_Target_Events.UNIT_MAXPOWER = XPerl_Target_Events.UNIT_POWER_FREQUENT
 
 -- UNIT_DISPLAYPOWER
 function XPerl_Target_Events:UNIT_DISPLAYPOWER()

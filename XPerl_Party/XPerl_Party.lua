@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 595 $")
+		end, "$Revision: 644 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -32,6 +32,12 @@ local UnitPowerType = UnitPowerType
 local partyHeader
 local partyAnchor
 
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
+
+
 local XPerl_Party_HighlightCallback
 
 ----------------------
@@ -41,7 +47,7 @@ function XPerl_Party_Events_OnLoad(self)
 	-- Added UNIT_POWER/UNIT_MAXPOWER to events list for 4.0 (By PlayerLin)
 	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "RAID_ROSTER_UPDATED", "PARTY_MEMBERS_CHANGED",
 			"UNIT_PHASE", "UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
-			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
+			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"RAID_TARGET_UPDATE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_LOGIN", "UNIT_THREAT_LIST_UPDATE",
 			"PLAYER_TARGET_CHANGED"}
 	for i,event in pairs(events) do
@@ -973,6 +979,11 @@ end
 
 -- UNIT_HEALTH, UNIT_MAXHEALTH
 function XPerl_Party_Events:UNIT_HEALTH()
+	XPerl_Party_UpdateHealth(self)
+end
+
+-- UNIT_HEALTH, UNIT_MAXHEALTH
+function XPerl_Party_Events:UNIT_HEALTH_FREQUENT()
 	XPerl_Party_UpdateHealth(self)
 end
 

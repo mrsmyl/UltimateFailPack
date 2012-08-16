@@ -8,7 +8,11 @@ local TableUnits = {}			-- Dynamic list of units indexed by raid id, changed on 
 XPerlRaidMonConfig = {}
 local config = XPerlRaidMonConfig
 
-XPerl_SetModuleRevision("$Revision: 582 $")
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+
+XPerl_SetModuleRevision("$Revision: 666 $")
 
 XPERL_RAIDMON_UNIT_WIDTH_MIN = 50
 XPERL_RAIDMON_UNIT_WIDTH_MAX = 150

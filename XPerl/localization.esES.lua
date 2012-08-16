@@ -41,12 +41,6 @@ if (GetLocale() == "esES" or GetLocale() == "esMX") then
 	XPERL_LOC_ZONE_TRIAL_OF_THE_CRUSADER = "Prueba del Cruzado"
 	XPERL_LOC_ZONE_ICECROWN_CITADEL = "Ciudadela de la Corona de Hielo"
 	XPERL_LOC_ZONE_RUBY_SANCTUM = "El Sagrario Rubí"
-	XPERL_LOC_ZONE_BARADIN_HOLD = "Bastión Baradin"
-	XPERL_LOC_ZONE_BLACKWING_DECENT = "Descenso de Alanegra"
-	XPERL_LOC_ZONE_BASTION_OF_TWILIGHT = "El Bastión del Crepúsculo"
-	XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS = "Trono de los Cuatro Vientos"
-	XPERL_LOC_ZONE_FIRELANDS			= "Tierras de Fuego"
-	XPERL_LOC_ZONE_DRAGONSOUL			= "Alma de Dragón"
 
 	-- Status
 	XPERL_LOC_DEAD		= "Muerto"

@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 539 $")
+		end, "$Revision: 648 $")
 local XPerl_Player_Pet_HighlightCallback
 
 -- XPerl_Player_Pet_OnLoad
@@ -270,10 +270,12 @@ end
 -------------------
 function XPerl_Player_Pet_OnEvent(self, event, unitID, ...)
 	local func = XPerl_Player_Pet_Events[event]
-	if (func) then
-		func(self, unitID, ...)
+	if (strsub(event, 1, 5) == "UNIT_") then
+	 	if (unitID == "pet") then
+			func(self,unitID,...)
+		end
 	else
-XPerl_ShowMessage("EXTRA EVENT")
+		func(self, unitID,...)
 	end
 end
 

@@ -4,7 +4,7 @@
 
 local playerClass, playerName, playerGUID
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 590 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 620 $")
 
 local GetNumPartyMembers = GetNumPartyMembers
 local GetNumRaidMembers = GetNumRaidMembers
@@ -1296,7 +1296,7 @@ end
 
 -- COMBATLOG:SPELL_CAST_SUCCESS
 function xpHigh.clEvents:SPELL_CAST_SUCCESS(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
-	if (srcGUID == UnitGUID("player")) then
+	if (srcGUID == playerGUID) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			local spellId, spellName, spellSchool = ...
 			if (hotSpells[spellName]) then
@@ -1323,7 +1323,7 @@ end
 
 -- COMBATLOG:SPELL_HEAL
 function xpHigh.clEvents:SPELL_HEAL(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
-	if (conf.highlight.HEAL and conf.highlight.extraSparkles and srcGUID == UnitGUID("player")) then
+	if (srcGUID == playerGUID and conf.highlight.HEAL and conf.highlight.extraSparkles) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			-- Pretty sparkles for our healing target
 			self:Add(dstGUID, "HOTSPARKS", 0.1)
@@ -1333,7 +1333,7 @@ end
 
 -- COMBATLOG:SPELL_PERIODIC_HEAL
 function xpHigh.clEvents:SPELL_PERIODIC_HEAL(timestamp, event, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
-	if (conf.highlight.HOT and conf.highlight.extraSparkles and srcGUID == UnitGUID("player")) then
+	if (srcGUID == playerGUID and conf.highlight.HOT and conf.highlight.extraSparkles) then
 		if (band(dstFlags, dstMask) ~= 0) then
 			local spellId, spellName, spellSchool, amount = ...
 			if (hotSpells[spellName]) then

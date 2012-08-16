@@ -6,8 +6,8 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 618 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 618 $")
+XPerl_SetModuleRevision("$Revision: 653 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 653 $")
  
 --Some local copies for speed
 local strsub = strsub
@@ -43,6 +43,11 @@ local hugeNumDiv10 = hugeNumDiv * 10
 local largeNumDiv100 = largeNumDiv * 100
 local ArcaneExclusions = XPerl_ArcaneExclusions
 local GetDifficultyColor = GetDifficultyColor or GetQuestDifficultyColor
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
 
 --[===[@debug@
 local function d(...)
@@ -707,7 +712,7 @@ local SetValuedText = XPerl_SetValuedText
 -- XPerl_SetHealthBar
 function XPerl_SetHealthBar(self, hp, Max)
 	local bar = self.statsFrame.healthBar
-
+	--print(self.partyid .. hp .. ":" .. Max)
 	bar:SetMinMaxValues(0, Max)
 	local percent
 	if hp >= 1 and Max == 0 then--For some dumb reason max HP is 0, normal HP is not, so lets use normal HP as max
@@ -1812,7 +1817,14 @@ function XPerl_RestoreAllPositions()
 	end
 end
 
-local BuffExceptions = {
+
+ 
+local DebuffExceptions
+local BuffExceptions
+ 
+if (not isMOP) then
+
+ BuffExceptions = {
 	PRIEST = {
 		[GetSpellInfo(774)] = true,					-- Rejuvenation
 		[GetSpellInfo(8936)] = true,				-- Regrowth
@@ -1865,7 +1877,7 @@ local BuffExceptions = {
 	},
 }
 
-local DebuffExceptions = {
+ DebuffExceptions = {
 	ALL = {
 		[GetSpellInfo(11196)] = true,				-- Recently Bandaged
 	},
@@ -1876,6 +1888,67 @@ local DebuffExceptions = {
 		[GetSpellInfo(25771)] = true				-- Forbearance
 	}
 }
+else
+
+ BuffExceptions = {
+	PRIEST = {
+		[GetSpellInfo(774)] = true,					-- Rejuvenation
+		[GetSpellInfo(8936)] = true,				-- Regrowth
+		[GetSpellInfo(33076)] = true,				-- Prayer of Mending
+	},
+	DRUID = {
+		[GetSpellInfo(139)] = true,					-- Renew
+	},
+	WARLOCK = {
+		[GetSpellInfo(20707)] = true,				-- Soulstone Resurrection
+	},
+	HUNTER = {
+		
+		[GetSpellInfo(13165)] = "HUNTER",			-- Aspect of the Hawk
+		[GetSpellInfo(5118)] = "HUNTER",			-- Aspect of the Cheetah
+		[GetSpellInfo(13159)] = true,				-- Aspect of the Pack
+		[GetSpellInfo(61648)] = "HUNTER",			-- Aspect of the Beast
+		-- [GetSpellInfo(13163)] = "HUNTER",			-- Aspect of the Monkey
+		[GetSpellInfo(19506)] = true,				-- Trueshot Aura
+		[GetSpellInfo(5384)] = "HUNTER",			-- Feign Death
+	},
+	ROGUE = {
+		[GetSpellInfo(1784)] = "ROGUE",				-- Stealth
+		[GetSpellInfo(1856)] = "ROGUE",			-- Vanish
+		[GetSpellInfo(2983)] = "ROGUE",			-- Sprint
+		[GetSpellInfo(13750)] = "ROGUE",			-- Adrenaline Rush
+		[GetSpellInfo(13877)] = "ROGUE",			-- Blade Flurry
+	},
+	PALADIN = {
+		[GetSpellInfo(20154)] = true,				-- Seal of Righteousness
+		[GetSpellInfo(20165)] = true,				-- Seal of Insight
+		[GetSpellInfo(20164)] = true,				-- Seal of Justice
+		[GetSpellInfo(31801)] = true,				-- Seal of Truth
+		-- [GetSpellInfo(20375)] = true,				-- Seal of Command
+		-- [GetSpellInfo(20166)] = true,				-- Seal of Wisdom
+		-- [GetSpellInfo(20165)] = true,				-- Seal of Light
+		-- [GetSpellInfo(53736)] = true,				-- Seal of Corruption
+		-- [GetSpellInfo(31892)] = true,				-- Seal of Blood
+		-- [GetSpellInfo(31801)] = true,				-- Seal of Vengeance
+
+		[GetSpellInfo(25780)] = true,				-- Righteous Fury
+		[GetSpellInfo(20925)] = true,				-- Holy Shield
+		[GetSpellInfo(54428)] = true,				-- Divine Plea
+	},
+}
+
+ DebuffExceptions = {
+	ALL = {
+		[GetSpellInfo(11196)] = true,				-- Recently Bandaged
+	},
+	PRIEST = {
+		[GetSpellInfo(6788)] = true,				-- Weakened Soul
+	},
+	PALADIN = {
+		[GetSpellInfo(25771)] = true				-- Forbearance
+	}
+}
+end
 
 local SeasonalDebuffs = {
 	[GetSpellInfo(26004)] = true,					-- Mistletoe
@@ -3247,6 +3320,7 @@ local dragonmawIllusion = GetSpellInfo(42016)
 
 -- PerlSetPortrait3D
 local function XPerlSetPortrait3D(self, argUnit)
+
 	self:ClearModel()
 	self:SetUnit(argUnit)
 	local guid = UnitGUID(argUnit)
@@ -3270,18 +3344,22 @@ end
 
 -- XPerl_Unit_UpdatePortrait()
 function XPerl_Unit_UpdatePortrait(self)
+
+	
 	if (self.conf and self.conf.portrait) then
-		local pf = self.portraitFrame
-		SetPortraitTexture(pf.portrait, self.partyid)			-- If a player moves out of range for a 3D portrait, it will show their proper 2D one
+		SetPortraitTexture(self.portraitFrame.portrait, self.partyid)			-- If a player moves out of range for a 3D portrait, it will show their proper 2D one
 		if (self.conf.portrait3D and UnitIsVisible(self.partyid)) then
-			pf.portrait:Hide()
-			pf.portrait3D:Show()
-			XPerlSetPortrait3D(pf.portrait3D, self.partyid)
+			self.portraitFrame.portrait:Hide()
+			self.portraitFrame.portrait3D:Show()
+			self.portraitFrame.portrait3D:ClearModel()
+			self.portraitFrame.portrait3D:SetUnit(self.partyid)
+			self.portraitFrame.portrait3D:SetPortraitZoom(1)
 		else
-			pf.portrait:Show()
-			pf.portrait3D:Hide()
+			self.portraitFrame.portrait:Show()
+			self.portraitFrame.portrait3D:Hide()
 		end
-	end
+	end	
+	
 end
 
 -- XPerl_Unit_UpdateLevel

@@ -43,12 +43,6 @@ if (GetLocale() == "deDE") then
 	XPERL_LOC_ZONE_TRIAL_OF_THE_CRUSADER 	= "Pr\195\188fung des Kreuzfahrers"
 	XPERL_LOC_ZONE_ICECROWN_CITADEL 		= "Eiskronenzitadelle"
 	XPERL_LOC_ZONE_RUBY_SANCTUM 			= "Das Rubinsanktum"
-	XPERL_LOC_ZONE_BARADIN_HOLD 			= "Baradinfestung"
-	XPERL_LOC_ZONE_BLACKWING_DECENT 		= "Pechschwingenabstieg"
-	XPERL_LOC_ZONE_BASTION_OF_TWILIGHT 		= "Die Bastion des Zwielichts"
-	XPERL_LOC_ZONE_THRONE_OF_FOUR_WINDS 	= "Thron der Vier Winde"
-	XPERL_LOC_ZONE_FIRELANDS				= "Feuerlande"
-	XPERL_LOC_ZONE_DRAGONSOUL				= "Drachenseele"
 
 -- Status
 	XPERL_LOC_DEAD			= DEAD			-- "Tot"

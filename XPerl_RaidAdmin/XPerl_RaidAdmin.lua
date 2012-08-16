@@ -2,7 +2,12 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 374 $")
+XPerl_SetModuleRevision("$Revision: 644 $")
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
 
 local SavedRoster = nil
 local XswapCount = 0

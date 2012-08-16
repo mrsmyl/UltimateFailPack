@@ -6,9 +6,24 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 618 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 666 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
+
+
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetPrimaryTalentTree = isMOP and GetSpecialization or GetPrimaryTalentTree
+
+local IsPartyLeader = IsPartyLeader;
+
+
+if (select(4, _G.GetBuildInfo()) >= 50000) then
+	IsPartyLeader = function() return UnitIsGroupLeader("player") end
+end
+
+
 
 --[===[@debug@
 local function d(...)
@@ -28,6 +43,10 @@ local UnitName = UnitName
 local UnitPower = UnitPower
 local UnitPowerType = UnitPowerType
 local XPerl_SetHealthBar = XPerl_SetHealthBar
+
+
+local UnitHealth = UnitHealth
+
 
 local XPerl_Player_InitDK
 local XPerl_Player_InitWarlock
@@ -53,6 +72,11 @@ function XPerl_Player_OnLoad(self)
 	XPerl_SecureUnitButton_OnLoad(self.nameFrame, "player", nil, PlayerFrameDropDown, XPerl_ShowGenericMenu)		--PlayerFrame.menu)
 
 	self:RegisterEvent("VARIABLES_LOADED")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("PLAYER_ALIVE")
+	
+	
+	
 
 	self.EnergyLast = 0
 	self.tutorialPage = 2
@@ -61,8 +85,16 @@ function XPerl_Player_OnLoad(self)
 	self:SetScript("OnShow", XPerl_Unit_UpdatePortrait)
 	self.time = 0
 
+	
+	self.Power = 0;
+	self.nameFrame.pvp.time = 0;
+	
 	self.nameFrame.pvp:SetScript("OnUpdate",
 		function(self, elapsed)
+		
+			self.time = self.time + elapsed
+	if (self.time >= 0.2) then
+		self.time = 0
 			if (IsPVPTimerRunning()) then
 				local timeLeft = GetPVPTimer()
 				if (timeLeft > 0 and timeLeft < 300000) then		-- 5 * 60 * 1000
@@ -73,13 +105,14 @@ function XPerl_Player_OnLoad(self)
 				end
 			end
 			self.timer:Hide()
+			end
 		end)
 
 	XPerl_Player_InitDK(self)
 	XPerl_Player_SetupDK(self)
 
 	XPerl_Player_InitMoonkin(self)
-	XPerl_Player_SetupMoonkin(self)
+	--XPerl_Player_SetupMoonkin(self)
 
 	XPerl_Player_InitWarlock(self)
 	XPerl_Player_SetupWarlock(self)
@@ -463,9 +496,9 @@ local function XPerl_Player_DruidBarUpdate(self)
 
 	local form = GetShapeshiftFormID()
 	if (form and form ~= MOONKIN_FORM) or GetPrimaryTalentTree() ~= 1 or (not pconf or not pconf.showRunes) then 
-		self.eclipse:Hide()
+		self.runes:Hide()
 	else
-		self.eclipse:Show()
+		self.runes:Show()
 	end
 
 	if (InCombatLockdown()) then
@@ -488,6 +521,14 @@ end
 local function XPerl_Player_UpdateMana(self)
 	local mb = self.statsFrame.manaBar
 	local playermana = UnitMana(self.partyid)
+	
+	--if (playermana == self.Power) then
+	--	return
+	--else
+	--	self.Power = playermana;
+	--end
+	
+	
 	local playermanamax = UnitManaMax(self.partyid)
 	mb:SetMinMaxValues(0, playermanamax)
 	mb:SetValue(playermana)
@@ -526,52 +567,6 @@ local function XPerl_Player_UpdateMana(self)
 	end
 end
 
---[[
-local origUnitPowerBarAlt_OnUpdate = _G.UnitPowerBarAlt_OnUpdate
-local function XPerl_UnitPowerBarAlt_OnUpdate(self, elapsed)
-	origUnitPowerBarAlt_OnUpdate(self, elapsed)
-	if (self.maxPower and self.minPower and self.value and self.value > self.minPower) then
-		self.text:SetFormattedText("%d/%d (%d%%)", self.value, self.maxPower, ceil(100 / self.maxPower * self.value))
-		self.text:Show()
-	else
-		self.text:Hide()
-	end
-end
-
-function XPerl_CreateAltPower(parent, unit)
-	local p = CreateFrame("Frame", parent:GetName().."AltPowerBar", parent, "UnitPowerBarAltTemplate")
-	p:SetScript("OnUpdate", XPerl_UnitPowerBarAlt_OnUpdate)
-	p:EnableMouse(false)
-	p:ClearAllPoints()
-	p:SetPoint("CENTER", parent, "CENTER", 0, 1)
-	p:SetWidth(parent:GetWidth())
-	p:SetHeight(parent:GetHeight())
-
-	p.text = p:CreateFontString(p:GetName().."text", "OVERLAY", "GameFontNormalSmall")
-	p.text:SetAllPoints()
-	p.text:SetTextColor(1, 1, 1)
-	p.text:Hide()
-
-	parent.altPower = p
-	UnitPowerBarAlt_Initialize(p, unit, 0.5)
-	return p
-end
-
-function XPerl_Player_Events:UNIT_POWER_BAR_SHOW()
-	if not self.altPower then
-		self.altPower = XPerl_CreateAltPower(self.nameFrame, "player")
-		self.altPower.isPlayerBar = true
-	end
-	UnitPowerBarAlt_UpdateAll(self.altPower)
-	self.altPower:Show()
-end
-	
-function XPerl_Player_Events:UNIT_POWER_BAR_HIDE()
-	if self.altPower then
-		self.altPower:Hide()
-	end
-end
---]]
 
 local spiritOfRedemption = GetSpellInfo(27827)
 
@@ -631,6 +626,11 @@ local function XPerl_Player_UpdateLevel(self)
 	self.levelFrame.text:SetText(UnitLevel(self.partyid))
 end
 
+local function XPerl_Player_UpdateLevel2(self,lvl)
+	self.levelFrame.text:SetText(lvl)
+end
+
+
 -- XPerl_PlayerStatus_OnUpdate
 function XPerl_PlayerStatus_OnUpdate(self, val, max)
 	if (pconf.fullScreen.enable) then
@@ -673,27 +673,21 @@ function XPerl_Player_OnUpdate(self, elapsed)
 		XPerl_Player_CombatFlash(self, elapsed, false)
 	end
 
-	XPerl_Player_UpdateMana(self)
-	
-	-- Attempt to fix "not-updating bug", suggested by Taylla @ Curse
-	-- comment 1st, 2nd and 4th line.
-	-- if (self.updateAFK) then
-	-- 	self.updateAFK = nil
-	        XPerl_Player_UpdateHealth(self)
-	-- end	
+	--XPerl_Player_UpdateMana(self)
 
-	if (IsResting() and UnitLevel("player") < 85) then
+	--[[if (IsResting() and UnitLevel("player") < 85) then
 		self.restingDelay = (self.restingDelay or 2) - elapsed
 		if (self.restingDelay <= 0) then
 			self.restingDelay = 2
 			XPerl_Player_UpdateXP(self)
 		end
-	end
+	end]]--
 
-	if (self.updateAFK) then
+	-- Attempt to fix "not-updating bug", suggested by Taylla @ Curse (why was this code in onupdate function twice? identicle code, twice)
+	--[[if (self.updateAFK) then
 		self.updateAFK = nil
 		XPerl_Player_UpdateHealth(self)
-	end
+	end]]--
 end
 
 -- XPerl_Player_UpdateBuffs
@@ -744,9 +738,17 @@ function XPerl_Player_OnEvent(self, event, unitID, ...)
 	end
 end
 
+function XPerl_Player_Events:PLAYER_ALIVE()
+XPerl_Player_UpdateDisplay(self)
+end
+
+
 -- PLAYER_ENTERING_WORLD
 function XPerl_Player_Events:PLAYER_ENTERING_WORLD()
 	self.updateAFK = true
+	
+	--print("PLAYER_ENTERING_WORLD");
+	
 	if (UnitHasVehicleUI("player")) then
 		self.partyid = "vehicle"
 		self:SetAttribute("unit", "vehicle")
@@ -761,33 +763,22 @@ function XPerl_Player_Events:PLAYER_ENTERING_WORLD()
 		end
 	end
 
-	local events = {"UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_MAXENERGY", "UNIT_MAXMANA", "UNIT_MAXRUNIC_POWER",
-			"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
+	--[[local events = {"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
 			"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE", "UNIT_FLAGS", "PLAYER_FLAGS_CHANGED",
-			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "MASTERY_UPDATE", "RAID_TARGET_UPDATE", "UPDATE_SHAPESHIFT_FORM",
-			"RUNE_TYPE_UPDATE", "RUNE_POWER_UPDATE"}
+			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "RAID_TARGET_UPDATE", "UPDATE_SHAPESHIFT_FORM",
+			"RUNE_TYPE_UPDATE", "RUNE_POWER_UPDATE","UNIT_POWER_FREQUENT"}
 
-
-	--XPerl_UnitEvents(self, XPerl_Player_Events, {"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE",
-	--						"UNIT_FLAGS", "PLAYER_FLAGS_CHANGED", "UNIT_SPELLCAST_SUCCEEDED"})
-	--XPerl_RegisterBasics(self, XPerl_Player_Events)
 
 	for i,e in pairs(events) do
 		self:RegisterEvent(e)
 	end
+	
+	]]--
 
 	XPerl_Player_UpdateDisplay(self)
 
-	--Fix Player Portrait not updating after login
-	local frame = CreateFrame("Frame")
-		local t = 0 frame:SetScript("OnUpdate", function(self, e) t = t + e if t > 5 then--Schedule 5 second delay
-			XPerl_Unit_UpdatePortrait(self)--Update portrait
-			frame:SetScript("OnUpdate", nil)--Unschedule so it doesn't loop.
-		end
-	end)
-
 	--fix runes on player load
-	if self.runes then
+	if self.runes and self.runes.list then
 		for i = 1,6 do
 			if self.runes.list[rune] then 
 				RuneButton_Update(self.runes.list[rune], rune, true);
@@ -826,21 +817,43 @@ function XPerl_Player_Events:UNIT_PORTRAIT_UPDATE()
 end
 
 -- VARIABLES_LOADED
-function XPerl_Player_Events:VARIABLES_LOADED()
+function XPerl_Player_Events:VARIABLES_LOADED(who, what)
+
 	self.doubleCheckAFK = 2		-- Check during 2nd UPDATE_FACTION, which are the last guarenteed events to come after logging in
+	--print("VARIABLES_LOADED")
 	self:UnregisterEvent("VARIABLES_LOADED")
 
 	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBERS_CHANGED", "PARTY_LEADER_CHANGED",
 			"PARTY_LOOT_METHOD_CHANGED", "RAID_ROSTER_UPDATE", "PLAYER_UPDATE_RESTING", "PLAYER_REGEN_ENABLED",
 			"PLAYER_REGEN_DISABLED", "PLAYER_ENTER_COMBAT", "PLAYER_LEAVE_COMBAT", "PLAYER_DEAD",
 			"UPDATE_FACTION", "UNIT_AURA", "PLAYER_CONTROL_LOST", "PLAYER_CONTROL_GAINED",
-			"UNIT_COMBAT"}--, "UNIT_POWER_BAR_SHOW", "UNIT_POWER_BAR_HIDE"
+			"UNIT_COMBAT","UNIT_POWER_FREQUENT","UNIT_MAXPOWER"}
 
 	for i,eventE in pairs(events) do
 		self:RegisterEvent(eventE)
 	end
+	
+	
+	--Import events from player_entering_world
+	local events = {"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
+			"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE", "UNIT_FLAGS", "PLAYER_FLAGS_CHANGED",
+			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "RAID_TARGET_UPDATE", "UPDATE_SHAPESHIFT_FORM",
+			"RUNE_TYPE_UPDATE", "RUNE_POWER_UPDATE","UNIT_POWER_FREQUENT","PLAYER_LEVEL_UP"}
+
+
+	for i,e in pairs(events) do
+		self:RegisterEvent(e)
+	end
+	self:RegisterEvent("UPDATE_EXHAUSTION")
+	
+	
+	--XPerl_Player_UpdateDisplay(self)
 
 	XPerl_Player_Events.VARIABLES_LOADED = nil
+end
+
+function XPerl_Player_Events:UPDATE_EXHAUSTION()
+	XPerl_Player_UpdateXP(self)
 end
 
 -- PARTY_LOOT_METHOD_CHANGED
@@ -852,28 +865,31 @@ XPerl_Player_Events.PARTY_LEADER_CHANGED	= XPerl_Player_Events.PARTY_LOOT_METHOD
 XPerl_Player_Events.RAID_ROSTER_UPDATE		= XPerl_Player_Events.PARTY_LOOT_METHOD_CHANGED
 
 -- UNIT_HEALTH, UNIT_MAXHEALTH
-function XPerl_Player_Events:UNIT_HEALTH()
+function XPerl_Player_Events:UNIT_HEALTH_FREQUENT()
 	XPerl_Player_UpdateHealth(self)
 end
-XPerl_Player_Events.UNIT_MAXHEALTH = XPerl_Player_Events.UNIT_HEALTH
-XPerl_Player_Events.PLAYER_DEAD    = XPerl_Player_Events.UNIT_HEALTH
 
--- UNIT_MANA
-function XPerl_Player_Events:UNIT_MANA()
+XPerl_Player_Events.UNIT_MAXHEALTH = XPerl_Player_Events.UNIT_HEALTH_FREQUENT
+XPerl_Player_Events.PLAYER_DEAD    = XPerl_Player_Events.UNIT_HEALTH_FREQUENT
+
+
+
+-- UNIT_POWER
+function XPerl_Player_Events:UNIT_POWER_FREQUENT()
 	XPerl_Player_UpdateMana(self)
 end
 
--- UNIT_MAXMANA
-function XPerl_Player_Events:UNIT_MAXMANA()
+-- UNIT_MAXPOWER
+function XPerl_Player_Events:UNIT_MAXPOWER()
 	XPerl_Player_UpdateMana(self)
 end
 
-XPerl_Player_Events.UNIT_RAGE			= XPerl_Player_Events.UNIT_MAXMANA
+--[[XPerl_Player_Events.UNIT_RAGE			= XPerl_Player_Events.UNIT_MAXMANA
 XPerl_Player_Events.UNIT_MAXRAGE		= XPerl_Player_Events.UNIT_RAGE
 XPerl_Player_Events.UNIT_RUNIC_POWER	= XPerl_Player_Events.UNIT_MAXMANA
 XPerl_Player_Events.UNIT_MAXRUNIC_POWER	= XPerl_Player_Events.UNIT_RUNIC_POWER
 XPerl_Player_Events.UNIT_ENERGY			= XPerl_Player_Events.UNIT_MAXMANA
-XPerl_Player_Events.UNIT_MAXENERGY		= XPerl_Player_Events.UNIT_ENERGY
+XPerl_Player_Events.UNIT_MAXENERGY		= XPerl_Player_Events.UNIT_ENERGY--]]
 
 -- UNIT_DISPLAYPOWER
 function XPerl_Player_Events:UNIT_DISPLAYPOWER()
@@ -891,7 +907,12 @@ function XPerl_Player_Events:UNIT_LEVEL()
 	XPerl_Player_UpdateLevel(self)
 	XPerl_Player_UpdateXP(self)
 end
-XPerl_Player_Events.PLAYER_LEVEL_UP = XPerl_Player_Events.UNIT_LEVEL
+--XPerl_Player_Events.PLAYER_LEVEL_UP = XPerl_Player_Events.UNIT_LEVEL
+
+function XPerl_Player_Events:PLAYER_LEVEL_UP(arg1,arg2,arg3)
+	XPerl_Player_UpdateLevel2(self,arg2)
+	XPerl_Player_UpdateXP(self)
+end
 
 -- PLAYER_XP_UPDATE
 function XPerl_Player_Events:PLAYER_XP_UPDATE()
@@ -923,14 +944,6 @@ XPerl_Player_Events.UNIT_FLAGS = XPerl_Player_Events.UNIT_FACTION
 
 function XPerl_Player_Events:PLAYER_FLAGS_CHANGED(unit)
 	XPerl_Player_UpdateHealth(self)
-end
-
--- MASTERY_UPDATE
-function XPerl_Player_Events:MASTERY_UPDATE()
-	XPerl_Player_UpdateMana(self)
-	if (playerClass == "DRUID") then
-		XPerl_Player_DruidBarUpdate(self)
-	end
 end
 
 -- RAID_TARGET_UPDATE
@@ -1174,7 +1187,6 @@ function XPerl_Player_Set_Bits(self)
 
 	if (pconf.level) then
 		self.levelFrame:Show()
-		self:RegisterEvent("PLAYER_LEVEL_UP")
 	else
 		self.levelFrame:Hide()
 	end
@@ -1245,7 +1257,7 @@ function XPerl_Player_Set_Bits(self)
 	self:SetHeight(max(h1, h2))
 
 	self.highlight:ClearAllPoints()
-	if (pconf.extendPortrait or ((self.runes or self.eclipse) and pconf.showRunes and pconf.dockRunes)) then
+	if (pconf.extendPortrait or (self.runes and pconf.showRunes and pconf.dockRunes)) then
 		self.portraitFrame:SetHeight(62 + (((pconf.xpBar or 0) + (pconf.repBar or 0)) * 10))
 		--self.highlight:SetPoint("TOPLEFT", self.levelFrame, "TOPLEFT", 0, 0)
 		--self.highlight:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, 0)
@@ -1256,8 +1268,9 @@ function XPerl_Player_Set_Bits(self)
 	end
 
 	XPerl_Player_SetupDK(self)
-	XPerl_Player_SetupMoonkin(self)
+	--XPerl_Player_SetupMoonkin(self)
 	XPerl_Player_InitPaladin(self)
+	XPerl_Player_InitMonk(self)
 	XPerl_Player_SetupWarlock(self)
 
 	self.highlight:ClearAllPoints()
@@ -1367,82 +1380,11 @@ local MAX_HOLY_POWER = _G.MAX_HOLY_POWER
 local PALADINPOWERBAR_SHOW_LEVEL = _G.PALADINPOWERBAR_SHOW_LEVEL
 local SPELL_POWER_HOLY_POWER = _G.SPELL_POWER_HOLY_POWER
 
--- XPerl_PaladinPowerBar_ToggleHolyRune
-local function XPerl_PaladinPowerBar_ToggleHolyRune(self, visible)
-	if visible then
-		self.deactivate:Play()
-	else
-		self.activate:Play()
-	end
-end
-
--- XPerl_PaladinPowerBar_Update
-local function XPerl_PaladinPowerBar_Update(self)
-	local numHolyPower = UnitPower( self:GetParent():GetAttribute("unit"), SPELL_POWER_HOLY_POWER )
-
-	for i=1,MAX_HOLY_POWER do
-		local holyRune = self.runes[i]
-		local isShown = holyRune:GetAlpha()> 0 or holyRune.activate:IsPlaying()
-		local shouldShow = i <= numHolyPower
-		if isShown ~= shouldShow then 
-			XPerl_PaladinPowerBar_ToggleHolyRune(holyRune, isShown)
-		end
-	end
-	
-	if numHolyPower == MAX_HOLY_POWER then
-		self.rune1.glow.activate:Play()
-		self.rune2.glow.activate:Play()
-		self.rune3.glow.activate:Play()
-	else
-		self.rune1.glow.deactivate:Play()
-		self.rune2.glow.deactivate:Play()
-		self.rune3.glow.deactivate:Play()
-	end
-end
-
--- XPerl_PaladinPowerBar_OnLoad
-function XPerl_PaladinPowerBar_OnLoad(self)
-	if UnitLevel("player") < PALADINPOWERBAR_SHOW_LEVEL then
-		self:RegisterEvent("PLAYER_LEVEL_UP")
-		self:SetAlpha(0)
-		PaladinPowerBar:Hide()
-		PaladinPowerBar:SetAlpha(0)
-	end
-
-	self:RegisterEvent("UNIT_POWER")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("UNIT_DISPLAYPOWER")
-
-	self.rune1.glow:SetAlpha(0)
-	self.rune2.glow:SetAlpha(0)
-	self.rune3.glow:SetAlpha(0)
-
-	self.runes = {self.rune1, self.rune2, self.rune3}
-end
-
--- XPerl_PaladinPowerBar_OnEvent
-function XPerl_PaladinPowerBar_OnEvent(self, event, arg1, arg2)
-	if ( (event == "UNIT_POWER") and (arg1 == self:GetParent():GetAttribute("unit")) ) then
-		if ( arg2 == "HOLY_POWER" ) then
-			XPerl_PaladinPowerBar_Update(self)
-		end
-	elseif( event ==  "PLAYER_LEVEL_UP" ) then
-		local level = arg1
-		if level >= PALADINPOWERBAR_SHOW_LEVEL then
-			PaladinPowerBar:Show()
-			PaladinPowerBar:SetAlpha(1)
-			self.showAnim:Play()
-			XPerl_PaladinPowerBar_Update(self)
-		end
-	else
-		XPerl_PaladinPowerBar_Update(self)
-	end
-end
 
 -- XPerl_Player_InitPaladin
 function XPerl_Player_InitPaladin(self)
 	if ( select(2,UnitClass("player")) == "PALADIN") then
-		if (pconf and pconf.showRunes) then
+		--[[if (pconf and pconf.showRunes) then
 			if (not self.holyp) then
 				self.holyp = CreateFrame("Frame", "XPerl_Runes", self, "XPerl_PaladinPowerBarTemplate")
 				self.holyp:SetFrameLevel(self.portraitFrame:GetFrameLevel() + 5)
@@ -1452,32 +1394,87 @@ function XPerl_Player_InitPaladin(self)
 				-- How are people supposed to write mods if you go put in ties accross the place:
 				-- Blizzard_CombatText.lua(259): elseif ( arg3 == "HOLY_POWER" and PaladinPowerBar:IsShown() and PaladinPowerBar:GetAlpha() > 0.5 ) then
 				-- Surely there would be no HOLY_POWER event if it was not applicable. Why are you even checking if the bar is shown?
-				PaladinPowerBar:UnregisterAllEvents()
-				PaladinPowerBar:ClearAllPoints()
-				PaladinPowerBar:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", -200, 200)		-- So, we'll put it far off the screen
+				--PaladinPowerBar:UnregisterAllEvents()
+				--PaladinPowerBar:ClearAllPoints()
+				--PaladinPowerBar:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", -200, 200)		-- So, we'll put it far off the screen
+				PaladinPowerBar:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", 0, 0)
 			else
 				self.holyp:Show()
 			end
 		elseif (self.holyp) then
 			self.holyp:Hide()
-		end
+		end]]--
+		
+		
+		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
+		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
+		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
+		PaladinPowerBar:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 0,6)
+		XPerl_Player.unit = "player"
+		PaladinPowerBar:SetParent(XPerl_Player)
+
+		
 	end
 end
+-- XPerl_Player_InitPaladin
+function XPerl_Player_InitMonk(self)
+	if ( select(2,UnitClass("player")) == "MONK") then
+		--[[if (pconf and pconf.showRunes) then
+			if (not self.holyp) then
+				self.holyp = CreateFrame("Frame", "XPerl_Runes", self, "XPerl_PaladinPowerBarTemplate")
+				self.holyp:SetFrameLevel(self.portraitFrame:GetFrameLevel() + 5)
+				self.holyp:SetPoint("LEFT", self, "BOTTOMLEFT", 0, 5)
+		
+				-- DO NOT HIDE PaladinPowerBar. Blizzard_CombatText.lua check's it's visible before giving a message... really? guys...
+				-- How are people supposed to write mods if you go put in ties accross the place:
+				-- Blizzard_CombatText.lua(259): elseif ( arg3 == "HOLY_POWER" and PaladinPowerBar:IsShown() and PaladinPowerBar:GetAlpha() > 0.5 ) then
+				-- Surely there would be no HOLY_POWER event if it was not applicable. Why are you even checking if the bar is shown?
+				--PaladinPowerBar:UnregisterAllEvents()
+				--PaladinPowerBar:ClearAllPoints()
+				--PaladinPowerBar:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", -200, 200)		-- So, we'll put it far off the screen
+				PaladinPowerBar:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", 0, 0)
+			else
+				self.holyp:Show()
+			end
+		elseif (self.holyp) then
+			self.holyp:Hide()
+		end]]--
+		
+		
+		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
+		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
+		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
+		MonkHarmonyBar:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 75,15)
+		XPerl_Player.unit = "player"
+		MonkHarmonyBar:SetParent(XPerl_Player)
 
+		
+	end
+end
 --XPerl_Player_InitMoonkin
 function XPerl_Player_InitMoonkin(self)
 	if ( select(2,UnitClass("player")) == "DRUID") then
-		self.eclipse = CreateFrame("Frame", "XPerl_Runes", self)
 
-		self.eclipse:SetMovable(true)
-		self.eclipse:RegisterForDrag("LeftButton")
-		self.eclipse:SetScript("OnDragStart",
+	
+		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
+		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
+		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
+		EclipseBarFrame:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 0,5)
+		XPerl_Player.unit = "player"
+		self.runes:SetAlpha(0);
+		EclipseBarFrame:SetParent(XPerl_Player)
+
+		--[[self.runes = CreateFrame("Frame", "XPerl_Runes", self)
+
+		self.runes:SetMovable(true)
+		self.runes:RegisterForDrag("LeftButton")
+		self.runes:SetScript("OnDragStart",
 			function(self)
 				if (not pconf.dockRunes) then
 					self:StartMoving()
 				end
 			end)
-		self.eclipse:SetScript("OnDragStop",
+		self.runes:SetScript("OnDragStop",
 			function(self)
 				if (not pconf.dockRunes) then
 					self:StopMovingOrSizing()
@@ -1485,11 +1482,11 @@ function XPerl_Player_InitMoonkin(self)
 				end
 			end)
 
-		self.eclipse.unit = EclipseBarFrame:GetParent().unit
-		EclipseBarFrame:SetParent(self.eclipse)
+		self.runes.unit = EclipseBarFrame:GetParent().unit
+		EclipseBarFrame:SetParent(self.runes)
 		EclipseBarFrame:ClearAllPoints()
 		EclipseBarFrame:SetPoint("TOPLEFT", 3, 0)
-		EclipseBarFrame:SetPoint("BOTTOMLEFT", 15, 5)
+		EclipseBarFrame:SetPoint("BOTTOMLEFT", 15, 5)]]--
 
 	end
 
@@ -1500,21 +1497,22 @@ end
 -- Fix for Eclipse bar not show out problem when respec from Balance or relog in any form other 
 -- than human/moonkin, thanks sontix.
 function XPerl_Player_SetupMoonkin(self)
-	if (self.eclipse) then
-		self.eclipse:ClearAllPoints()
+--[[
+	if (self.runes) then
+		self.runes:ClearAllPoints()
 		if (not pconf or pconf.dockRunes) then
-			self.eclipse:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 5, 2)
-			self.eclipse:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -35) 
+			self.runes:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 5, 2)
+			self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -35) 
 		else
-			self.eclipse:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
-			XPerl_RestorePosition(self.eclipse)
+			self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
+			XPerl_RestorePosition(self.runes)
 		end
 		if GetPrimaryTalentTree() ~= 1 or (not pconf or not pconf.showRunes) then 
-			self.eclipse:Hide()
+			self.runes:Hide()
 		else
-			self.eclipse:Show()
+			self.runes:Show()
 		end
-	end
+	end]]--
 end
 
 
@@ -1602,6 +1600,7 @@ end
 
 -- XPerl_Player_SetupDK
 function XPerl_Player_SetupDK(self)
+if (select(2, UnitClass("player")) == "DEATHKNIGHT") then
 	if (self.runes) then
 		if (not pconf or pconf.showRunes) then
 			self.runes:Show()
@@ -1645,5 +1644,6 @@ function XPerl_Player_SetupDK(self)
 			self.runes:Hide()
 		end
 	end
+end
 end
 

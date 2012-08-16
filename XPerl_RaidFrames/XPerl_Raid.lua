@@ -3,7 +3,7 @@
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
 local XPerl_Raid_Events = {}
-local RaidGroupCounts = {0,0,0,0,0,0,0,0,0,0}
+local RaidGroupCounts = {0,0,0,0,0,0,0,0,0,0,0}
 local myGroup = 0
 local FrameArray = {}		-- List of raid frames indexed by raid ID
 local RaidPositions = {}	-- Back-matching of unit names to raid ID
@@ -15,9 +15,14 @@ local percD = "%d"..PERCENT_SYMBOL
 local lastNamesList, lastName, lastWith, lastNamesCount -- Stores with/without buff list (OnUpdate optimization)
 local fullyInitiallized
 
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
+
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
-	RegisterAddonMessagePrefix("oRA")
 end
 
 --[===[@debug@
@@ -50,7 +55,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 614 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 644 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -87,16 +92,21 @@ local raidHeaders = {}
 -- XPerl_Raid_OnLoad
 function XPerl_Raid_OnLoad(self)
 	local events = {"CHAT_MSG_ADDON",
-			"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "RAID_ROSTER_UPDATE", "UNIT_FACTION",
+			"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "RAID_ROSTER_UPDATE",
 			"UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_POWER", "UNIT_MAXPOWER",
-			"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
+			"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"UNIT_COMBAT", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_FAILED",
 			"UNIT_SPELLCAST_INTERRUPTED", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED",
 			"RAID_TARGET_UPDATE", "PLAYER_LOGIN", "ROLE_CHANGED_INFORM"
 			}
+			
+			
+			--"UNIT_FACTION"
 	for i,event in pairs(events) do
 		self:RegisterEvent(event)
 	end
+	
+	self:SetScript("OnEvent", XPerl_Raid_OnEvent);
 
 	for i = 1,WoWclassCount do
 		_G["XPerl_Raid_Grp"..i]:UnregisterEvent("UNIT_NAME_UPDATE")
@@ -1010,12 +1020,11 @@ function XPerl_Raid_OnUpdate(self, elapsed)
 
 	local updateHighlights, someUpdate
 	local enemyUnitList
-
 	self.time = self.time + elapsed
 	if (self.time >= 0.2) then
 		self.time = 0
 		someUpdate = true
-	end
+	
 
 	for i,frame in pairs(FrameArray) do
 		if (frame:IsShown()) then
@@ -1023,7 +1032,7 @@ function XPerl_Raid_OnUpdate(self, elapsed)
 				XPerl_Raid_CombatFlash(frame, elapsed, false)
 			end
 
-			if (someUpdate) then
+			--[[if (someUpdate) then
 				local unit = frame.partyid -- frame:GetAttribute("unit")
 				if (unit) then
 					local name = UnitName(unit)
@@ -1044,7 +1053,12 @@ function XPerl_Raid_OnUpdate(self, elapsed)
 
 					XPerl_UpdateSpellRange(frame, unit, true)
 				end
+			end]]--
+			
+			if (frame.partyid) then
+				XPerl_UpdateSpellRange(frame, frame.partyid, true)
 			end
+			
 		end
 	end
 
@@ -1057,7 +1071,7 @@ function XPerl_Raid_OnUpdate(self, elapsed)
 			break
 		end
 	end
-
+end
 	fullyInitiallized = true
 end
 
@@ -1200,9 +1214,18 @@ end
 -------------------
 -- Event Handler --
 -------------------
-
+local lastevent = nil;
 -- XPerl_Raid_OnEvent
-function XPerl_Raid_OnEvent(self, event, unit, ...)
+
+
+
+local lastUnit = nil;
+local lastEvent = nil;
+function XPerl_Raid_OnEvent(self, event,unit, ...)
+--print(event);
+--print(dump({...}));
+
+
 	local func = XPerl_Raid_Events[event]
 	if (func) then
 		if (strfind(event, "^UNIT_")) then
@@ -1345,11 +1368,11 @@ function XPerl_Raid_Events:UNIT_COMBAT(...)
 end
 
 -- UNIT_HEALTH
-function XPerl_Raid_Events:UNIT_HEALTH()
+function XPerl_Raid_Events:UNIT_HEALTH_FREQUENT()
 	XPerl_Raid_UpdateHealth(self)
 	XPerl_Raid_UpdateCombat(self)
 end
-XPerl_Raid_Events.UNIT_MAXHEALTH = XPerl_Raid_Events.UNIT_HEALTH
+XPerl_Raid_Events.UNIT_MAXHEALTH = XPerl_Raid_Events.UNIT_HEALTH_FREQUENT
 
 function XPerl_Raid_Events:UNIT_DISPLAYPOWER()
 	XPerl_Raid_UpdateManaType(self)
@@ -1506,7 +1529,7 @@ local QuickFuncs = {
 }
 
 -- DurabilityCheck(msg, author)
--- Quick DUR check for those people who don't have oRA2 and CTRA installed
+-- Quick DUR check for those people who don't have CTRA installed
 -- No, I'm not going to replace either mod
 local XPerl_DurabilityCheck
 do
@@ -1603,17 +1626,17 @@ local function ProcessCTRAMessage(unitName, msg)
 			update = nil
 
 		elseif (msg == "DURC") then
-			if (not CT_RA_VersionNumber and not oRA) then
+			if (not CT_RA_VersionNumber) then
 				XPerl_DurabilityCheck(unitName)
 			end
 
 		elseif (msg == "RSTC") then
-			if (not CT_RA_VersionNumber and not oRA) then
+			if (not CT_RA_VersionNumber) then
 				XPerl_ResistsCheck(unitName)
 			end
 
 		elseif (strsub(msg, 1, 4) == "ITMC") then
-			if (not CT_RA_VersionNumber and not oRA) then
+			if (not CT_RA_VersionNumber) then
 				local itemName = strmatch(msg, "^ITMC (.+)$")
 				if (itemName) then
 					XPerl_ItemCheckCount(itemName, unitName)
@@ -1626,19 +1649,6 @@ local function ProcessCTRAMessage(unitName, msg)
 
 	if (update) then
 		UpdateUnitByName(unitName, true)
-	end
-end
-
--- ProcessoRAMessage
-local function ProcessoRAMessage(unitName, msg)
-	local myRoster = XPerl_Roster[unitName]
-
-	if (not myRoster) then
-		return
-	end
-
-	if (strsub(msg, 1, 5) == "oRAV ") then
-		myRoster.oRAversion = strsub(msg, 6)
 	end
 end
 
@@ -1679,8 +1689,6 @@ function XPerl_Raid_Events:CHAT_MSG_ADDON(prefix, msg, channel, sender)
 	if (channel == "RAID") then
 		if (prefix == "CTRA") then
 			XPerl_ParseCTRA(sender, msg, ProcessCTRAMessage)
-		elseif (prefix == "oRA") then
-			XPerl_ParseCTRA(sender, msg, ProcessoRAMessage)
 		end
 	end
 end
@@ -1693,7 +1701,7 @@ local function SetRaidRoster()
 	RaidPositions = new()
 
 	del(RaidGroupCounts)
-	RaidGroupCounts = new(0,0,0,0,0,0,0,0,0,0)
+	RaidGroupCounts = new(0,0,0,0,0,0,0,0,0,0,0)
 
 	for i = 1,GetNumRaidMembers() do
 		local name, rank, group, level, class, fileName = GetRaidRosterInfo(i)
@@ -1907,7 +1915,7 @@ end
 ------- XPerl_ToggleRaidBuffs -------
 -- Raid Buff Key Binding function --
 function XPerl_ToggleRaidBuffs(castable)
-
+print("hi, got toggled");
 	if (castable) then
 		if (rconf.buffs.castable == 1) then
 			rconf.buffs.castable = 0
@@ -2218,7 +2226,8 @@ function XPerl_Raid_ChangeAttributes()
 	rconf.anchor = (rconf and rconf.anchor) or "TOP"
 
 	local function DefaultRaidClasses()
-		return {
+
+				return {
 			{enable = true, name = "WARRIOR"},
 			{enable = true, name = "DEATHKNIGHT"},
 			{enable = true, name = "ROGUE"},
@@ -2229,7 +2238,9 @@ function XPerl_Raid_ChangeAttributes()
 			{enable = true, name = "DRUID"},
 			{enable = true, name = "SHAMAN"},
 			{enable = true, name = "PALADIN"},
+			{enable = true, name = "MONK"}
 		}
+	
 	end
 
 	local function GroupFilter(n)
@@ -2257,6 +2268,7 @@ function XPerl_Raid_ChangeAttributes()
 			end
 
 			for i = 1,WoWclassCount do
+				
 				if (rconf.class[i].enable) then
 					if (not f) then
 						f = rconf.class[i].name
@@ -2282,6 +2294,8 @@ function XPerl_Raid_ChangeAttributes()
 
 	XPerl_Raid_HideShowRaid()
 end
+
+
 
 -- XPerl_Raid_Set_Bits
 function XPerl_Raid_Set_Bits(self)

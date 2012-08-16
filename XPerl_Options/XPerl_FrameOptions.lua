@@ -2,7 +2,13 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 565 $")
+XPerl_SetModuleRevision("$Revision: 644 $")
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local localGroups = LOCALIZED_CLASS_NAMES_MALE
+local WoWclassCount = 0
+for k,v in pairs(localGroups) do WoWclassCount = WoWclassCount + 1 end
+
 
 function XPerl_OptionsFrame_DisableSlider(slider)
 	local name = slider:GetName();
@@ -907,28 +913,50 @@ function XPerl_Options_DoRangeTooltip(self)
 end
 
 -- DefaultRaidClasses
-local function DefaultRaidClasses()
-	return {
-		{enable = true, name = "WARRIOR"},
-		{enable = true, name = "DEATHKNIGHT"},
-		{enable = true, name = "ROGUE"},
-		{enable = true, name = "HUNTER"},
-		{enable = true, name = "MAGE"},
-		{enable = true, name = "WARLOCK"},
-		{enable = true, name = "PRIEST"},
-		{enable = true, name = "DRUID"},
-		{enable = true, name = "SHAMAN"},
-		{enable = true, name = "PALADIN"},
-	}
-end
+	local function DefaultRaidClasses()
+	
+	if (not isMop) then
+		return {
+			{enable = true, name = "WARRIOR"},
+			{enable = true, name = "DEATHKNIGHT"},
+			{enable = true, name = "ROGUE"},
+			{enable = true, name = "HUNTER"},
+			{enable = true, name = "MAGE"},
+			{enable = true, name = "WARLOCK"},
+			{enable = true, name = "PRIEST"},
+			{enable = true, name = "DRUID"},
+			{enable = true, name = "SHAMAN"},
+			{enable = true, name = "PALADIN"},
+		}
+		else
+				return {
+			{enable = true, name = "WARRIOR"},
+			{enable = true, name = "DEATHKNIGHT"},
+			{enable = true, name = "ROGUE"},
+			{enable = true, name = "HUNTER"},
+			{enable = true, name = "MAGE"},
+			{enable = true, name = "WARLOCK"},
+			{enable = true, name = "PRIEST"},
+			{enable = true, name = "DRUID"},
+			{enable = true, name = "SHAMAN"},
+			{enable = true, name = "PALADIN"},
+			{enable = true, name = "MONK"},
+		}
+		end
+	end
 
 -- ValidateClassNames
 local function ValidateClassNames(part)
 	-- This should never happen, but I'm sure someone will find a way to break it
 
+	if (not isMop) then
 	local list = {WARRIOR = false, MAGE = false, ROGUE = false, DRUID = false,
 			HUNTER = false, SHAMAN = false, PRIEST = false,	WARLOCK = false, PALADIN = false, DEATHKNIGHT = false}
 
+	else
+			local list = {WARRIOR = false, MAGE = false, ROGUE = false, DRUID = false,
+			HUNTER = false, SHAMAN = false, PRIEST = false,	WARLOCK = false, PALADIN = false, DEATHKNIGHT = false,MONK = false}
+	end
 	local valid
 	if (part.class) then
 		local classCount = 0
@@ -937,12 +965,12 @@ local function ValidateClassNames(part)
 				classCount = classCount + 1
 			end
 		end
-		if (classCount == 10) then
+		if (classCount == WoWclassCount) then
 			valid = true
 		end
 
 		if (valid) then
-			for i = 1,10 do
+			for i = 1,WoWclassCount do
 				if (part.class[i]) then
 					list[part.class[i].name] = true
 				end

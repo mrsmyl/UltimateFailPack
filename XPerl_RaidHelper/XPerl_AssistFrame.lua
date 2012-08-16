@@ -3,7 +3,7 @@
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 611 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 644 $")
 
 local myClass
 local playerAggro, petAggro
@@ -12,6 +12,14 @@ local friendlyUnitList = {"player", "pet"}
 local enemyUnitList = {}			-- Players with mobs targetted that target me
 local wholeEnemyUnitList = {}			-- Players with mobs targetted
 local currentPlayerAggro = {}
+
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+
+
+
 
 -- XPerl_Assists_OnLoad(self)
 function XPerl_Assists_OnLoad(self)
