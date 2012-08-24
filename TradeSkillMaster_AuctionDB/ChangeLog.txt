@@ -1,3 +1,9 @@
+v1.3
+*Fixed some divide by zero issues which will cause errors in 5.0.4.
+*Added support for new TSM application.
+*Updated to support new TSM design.
+*Many other minor bug fixes and improvements.
+
 v1.2
 *Further optimized the code that decodes the data from the saved variables file when AuctionDB is loaded.
 *Added APIs to support the new special searches in TSM_Shopping.

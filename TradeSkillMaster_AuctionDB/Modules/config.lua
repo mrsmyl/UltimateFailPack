@@ -44,14 +44,6 @@ function Config:Load(parent)
 	tg:SelectTab(1)
 end
 
-local function getIndex(t, value)
-	for i, v in pairs(t) do
-		if v == value then
-			return i
-		end
-	end
-end
-
 function Config:UpdateItems()
 	wipe(items)
 	local cache = {}
@@ -122,7 +114,7 @@ function Config:LoadSearch(container)
 				{
 					type = "Label",
 					relativeWidth = 0.949,
-					text = L["Use the search box and category filters above to search the AuctionDB data."],
+					text = "|cffffffff"..L["Use the search box and category filters above to search the AuctionDB data."].."|r",
 					fontObject = GameFontNormalLarge,
 				},
 			}
@@ -294,13 +286,6 @@ function Config:LoadSearch(container)
 	searchST:SetData(searchDataTmp)
 	searchST.frame:GetScript("OnSizeChanged")(searchST.frame, searchST.frame:GetWidth(), searchST.frame:GetHeight())
 	
-	local font, size = GameFontNormal:GetFont()
-	for i, row in ipairs(searchST.rows) do
-		for j, col in ipairs(row.cols) do
-			col.text:SetFont(font, size-1)
-		end
-	end
-	
 	searchST:RegisterEvents({
 		["OnClick"] = function(_, self, data, _, _, rowNum, _, _, button)
 			if rowNum and IsShiftKeyDown() and button == "RightButton" then
@@ -316,7 +301,8 @@ function Config:LoadSearch(container)
 			GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
 			GameTooltip:SetHyperlink("item:"..data[rowNum].itemID)
 			GameTooltip:AddLine("\n")
-			GameTooltip:AddLine("|cff99ffff" .. L["Shift-Right-Click to clear all data for this item from AuctionDB."] .. "|r")			GameTooltip:Show()
+			GameTooltip:AddLine(TSMAPI.Design:GetInlineColor("link2")..L["Shift-Right-Click to clear all data for this item from AuctionDB."].."|r")
+			GameTooltip:Show()
 		end,
 		["OnLeave"] = function()
 			GameTooltip:ClearLines()
@@ -412,7 +398,7 @@ function Config:GetSearchData()
 							args = {data.marketValue or 0},
 						},
 						{
-							value = (timeDiff and "|cff99ffff"..format(L["%s ago"], timeDiff).."|r" or "|cff99ffff---|r"),
+							value = (timeDiff and TSMAPI.Design:GetInlineColor("link2")..format(L["%s ago"], timeDiff).."|r" or TSMAPI.Design:GetInlineColor("link2").."---|r"),
 							args = {timeDiff or 0},
 						},
 					},
@@ -457,39 +443,15 @@ function Config:LoadOptions(container)
 							tooltip = L["If checked, the disenchant value of the item will be shown. This value is calculated using the average market value of materials the item will disenchant into."],
 						},
 						{
-							type = "Label",
-							relativeWidth = 0.2,
-							text = L["Disenchant source:"]
-						},
-						{
-							type = "CheckBox",
-							label = L["Market Value"],
-							cbType = "radio",
-							relativeWidth = 0.15,
-							value = TSM.db.profile.deValueSource == "market",
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.deValueSource = "market"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i+1]:SetValue(false)
-									end
+							type = "Dropdown",
+							label = L["Disenchant source:"],
+							value = TSM.db.profile.deValueSource,
+							list = {market=L["Market Value"], minBuyout=L["Min Buyout"]},
+							relativeWidth = 0.49,
+							callback = function(_,_,value)
+									TSM.db.profile.deValueSource = value
 								end,
-							tooltip = L["Use market value for calculating disenchant value."],
-						},
-						{
-							type = "CheckBox",
-							label = L["Min Buyout"],
-							cbType = "radio",
-							relativeWidth = 0.15,
-							value = TSM.db.profile.deValueSource == "minBuyout",
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.deValueSource = "minBuyout"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i-1]:SetValue(false)
-									end
-								end,
-							tooltip = L["Use min buyout for calculating disenchant value."],
+							tooltip = L["Select whether to use market value or min buyout for calculating disenchant value."],
 						},
 					},
 				},
@@ -531,34 +493,15 @@ function Config:LoadOptions(container)
 							relativeWidth = 0.02
 						},
 						{
-							type = "CheckBox",
-							label = L["Ascending"],
-							cbType = "radio",
-							relativeWidth = 0.16,
-							value = TSM.db.profile.resultsSortOrder == "ascending",
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.resultsSortOrder = "ascending"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i+1]:SetValue(false)
-									end
+							type = "Dropdown",
+							label = L["Result Order:"],
+							value = TSM.db.profile.resultsSortOrder,
+							list = {ascending=L["Ascending"], descending=L["Descending"]},
+							relativeWidth = 0.3,
+							callback = function(_,_,value)
+									TSM.db.profile.tooltip = value
 								end,
-							tooltip = L["Sort search results in ascending order."],
-						},
-						{
-							type = "CheckBox",
-							label = L["Descending"],
-							cbType = "radio",
-							relativeWidth = 0.16,
-							value = TSM.db.profile.resultsSortOrder == "descending",
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.resultsSortOrder = "descending"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i-1]:SetValue(false)
-									end
-								end,
-							tooltip = L["Sort search results in descending order."],
+							tooltip = L["Select whether to sort search results in ascending or descending order."],
 						},
 						{
 							type = "CheckBox",

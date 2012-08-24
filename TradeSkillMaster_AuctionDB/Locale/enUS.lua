@@ -57,8 +57,7 @@ L["Enable display of AuctionDB data in tooltip."] = true
 L["Display disenchant value in tooltip."] = true
 L["If checked, the disenchant value of the item will be shown. This value is calculated using the average market value of materials the item will disenchant into."] = true
 L["Disenchant source:"] = true
-L["Use market value for calculating disenchant value."] = true
-L["Use min buyout for calculating disenchant value."] = true
+L["Select whether to use market value or min buyout for calculating disenchant value."] = true
 L["Search Options"] = true
 L["Items per page"] = true
 L["Invalid value entered. You must enter a number between 5 and 500 inclusive."] = true
@@ -66,10 +65,10 @@ L["This determines how many items are shown per page in results area of the \"Se
 L["Sort items by"] = true
 L["Item MinLevel"] = true
 L["Select how you would like the search results to be sorted. After changing this option, you may need to refresh your search results by hitting the \"Refresh\" button."] = true
+L["Result Order:"] = true
 L["Ascending"] = true
-L["Sort search results in ascending order."] = true
 L["Descending"] = true
-L["Sort search results in descending order."] = true
+L["Select whether to sort search results in ascending or descending order."] = true
 L["Hide poor quality items"] = true
 L["If checked, poor quality items won't be shown in the search results."] = true
 

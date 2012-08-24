@@ -121,7 +121,7 @@ function Data:ProcessData(scanData, queue)
 	-- go through each item and figure out the market value / update the data table
 	for itemID, data in pairs(scanData) do
 		TSM.data[itemID] = TSM.data[itemID] or {scans={}, seen=0}
-		local marketValue, num = Data:CalculateMarketValue(data.records)
+		local marketValue = Data:CalculateMarketValue(data.records)
 		
 		if type(TSM.data[itemID].scans[day]) == "number" then
 			TSM.data[itemID].scans[day] = {TSM.data[itemID].scans[day]}
@@ -129,7 +129,7 @@ function Data:ProcessData(scanData, queue)
 		TSM.data[itemID].scans[day] = TSM.data[itemID].scans[day] or {}
 		tinsert(TSM.data[itemID].scans[day], marketValue)
 		
-		TSM.data[itemID].seen = ((TSM.data[itemID].seen or 0) + num)
+		TSM.data[itemID].seen = ((TSM.data[itemID].seen or 0) + data.quantity)
 		TSM.data[itemID].currentQuantity = data.quantity
 		TSM.data[itemID].lastScan = time()
 		TSM.data[itemID].minBuyout = data.minBuyout > 0 and data.minBuyout or nil
@@ -171,5 +171,5 @@ function Data:CalculateMarketValue(records)
 	
 	local correctedMean = floor(TSMAPI:SafeDivide(correctedTotalBuyout, correctedTotalNum) + 0.5)
 	
-	return correctedMean, totalNum
+	return correctedMean
 end

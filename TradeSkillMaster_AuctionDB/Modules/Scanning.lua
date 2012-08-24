@@ -415,13 +415,13 @@ function Scan:OnScanCallback(event, arg1, arg2)
 		local progress = floor((arg1 / 20) * 100 + 0.5)
 		TSM.GUI:UpdateStatus(L["Waiting for data..."], nil, progress)
 	elseif event == "GETALL_UPDATE" then
-		local progress = floor((arg1 / arg2) * 100 + 0.5)
+		local progress = floor((TSMAPI:SafeDivide(arg1,arg2)) * 100 + 0.5)
 		TSM.GUI:UpdateStatus(L["Scanning..."], progress, 0)
 	elseif event == "SCAN_STATUS_UPDATE" then
-		local progress = floor((arg1 / arg2) * 100 + 0.5)
+		local progress = floor((TSMAPI:SafeDivide(arg1,arg2)) * 100 + 0.5)
 		TSM.GUI:UpdateStatus(nil, nil, progress)
 	elseif event == "QUERY_FINISHED" then
-		local progress = floor(((numFilters - arg1.left) / numFilters) * 100 + 0.5)
+		local progress = floor(TSMAPI:SafeDivide((numFilters - arg1.left),numFilters) * 100 + 0.5)
 		currFilterNum = numFilters - arg1.left + 1
 		TSM.GUI:UpdateStatus(nil, progress)
 	elseif event == "SCAN_COMPLETE" then

@@ -23,8 +23,9 @@ local savedDBDefaults = {
 	factionrealm = {
 		scanData = "",
 		time = 0,
-		lastAutoUpdate = 0;
-		lastCompleteScan = 0;
+		lastAutoUpdate = 0,
+		lastCompleteScan = 0,
+		appDataUpdate = 0,
 	},
 	profile = {
 		scanSelections = {},
@@ -79,6 +80,49 @@ end
 function TSM:OnEnable()
 	if TSM.CheckNewAuctionData then
 		TSM:CheckNewAuctionData()
+	end
+	
+	if TSM.AppData then
+		local realm = GetRealmName()
+		local faction = UnitFactionGroup("player")
+		local newData = {}
+		local numNewScans = 0
+		for realmInfo, data in pairs(TSM.AppData) do
+			local r, f, t = ("-"):split(realmInfo)
+			if realm == r and (faction == f or f == "Both") and tonumber(t) > TSM.db.factionrealm.appDataUpdate then
+				newData[tonumber(t)] = LibStub("LibParse"):JSONDecode(data)
+				numNewScans = numNewScans + 1
+			end
+		end
+		
+		for epochTime, realmData in pairs(newData) do
+			TSM.db.factionrealm.appDataUpdate = max(TSM.db.factionrealm.appDataUpdate, epochTime)
+			local day = TSM.Data:GetDay(epochTime)
+			for itemID, data in pairs(realmData[strlower(faction)]) do
+				itemID = tonumber(itemID)
+				TSM.data[itemID] = TSM.data[itemID] or {scans={}, seen=0, lastScan=0}
+				local marketValue, minBuyout, num = tonumber(data.m), tonumber(data.b), tonumber(data.n)
+				
+				if type(TSM.data[itemID].scans[day]) == "number" then
+					TSM.data[itemID].scans[day] = {TSM.data[itemID].scans[day]}
+				end
+				TSM.data[itemID].scans[day] = TSM.data[itemID].scans[day] or {}
+				tinsert(TSM.data[itemID].scans[day], marketValue)
+				
+				TSM.data[itemID].seen = ((TSM.data[itemID].seen or 0) + num)
+				
+				if TSM.data[itemID].lastScan < epochTime then
+					TSM.data[itemID].currentQuantity = num
+					TSM.data[itemID].lastScan = epochTime
+					TSM.data[itemID].minBuyout = minBuyout > 0 and minBuyout or nil
+				end
+				TSM.Data:UpdateMarketValue(TSM.data[itemID])
+			end
+		end
+		
+		if numNewScans > 0 then
+			TSM:Printf("Imported %s scans worth of new auction data!", numNewScans)
+		end
 	end
 end
 

@@ -30,7 +30,8 @@ local professions = {
 local private = {}
 
 function GUI:OnInitialize()
-	TSMTEST = TSMAPI:RegisterAuctionFunction("TradeSkillMaster_AuctionDB", GUI, L["Run Scan"], L["Scan the auction house with AuctionDB to update its market value and min buyout data."])end
+	TSMAPI:RegisterAuctionFunction("TradeSkillMaster_AuctionDB", GUI, L["Run Scan"], L["Scan the auction house with AuctionDB to update its market value and min buyout data."])
+end
 
 function GUI:Show(frame)
 	private.statusBar = private.statusBar or private:CreateStatusBar(frame.content)
@@ -73,9 +74,9 @@ function private:CreateStatusBar(parent)
 
 	local level = parent:GetFrameLevel()
 	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetHeight(30)
-	frame:SetPoint("TOPLEFT", 0, -1)
-	frame:SetPoint("TOPRIGHT", 0, -1)
+	frame:SetHeight(25)
+	frame:SetPoint("TOPLEFT", 2, -3)
+	frame:SetPoint("TOPRIGHT", -2, -3)
 	frame:SetFrameLevel(level+1)
 	frame.UpdateStatus = UpdateStatus
 	frame.SetStatusText = SetStatusText
@@ -84,10 +85,9 @@ function private:CreateStatusBar(parent)
 	local statusBar = CreateFrame("STATUSBAR", "TSMAuctionDBMinorStatusBar", frame, "TextStatusBar")
 	statusBar:SetOrientation("HORIZONTAL")
 	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetPoint("TOPLEFT", 4, -4)
-	statusBar:SetPoint("BOTTOMRIGHT", -4, 4)
-	statusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill")
-	statusBar:SetStatusBarColor(0.85, 0.85, 1, 0.5)
+	statusBar:SetAllPoints()
+	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+	statusBar:SetStatusBarColor(.19, .22, .33, .9)
 	statusBar:SetFrameLevel(level+2)
 	frame.minorStatusBar = statusBar
 	
@@ -95,8 +95,7 @@ function private:CreateStatusBar(parent)
 	local statusBar = CreateFrame("STATUSBAR", "TSMAuctionDBMajorStatusBar", frame, "TextStatusBar")
 	statusBar:SetOrientation("HORIZONTAL")
 	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetPoint("TOPLEFT", 4, -4)
-	statusBar:SetPoint("BOTTOMRIGHT", -4, 4)
+	statusBar:SetAllPoints()
 	statusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill")
 	statusBar:SetStatusBarColor(0.71, 0.71, 0.89, 0.9)
 	statusBar:SetFrameLevel(level+3)
@@ -106,19 +105,18 @@ function private:CreateStatusBar(parent)
 	textFrame:SetFrameLevel(level+4)
 	textFrame:SetAllPoints(frame)
 	-- Text for the StatusBar
-	local tFile, tSize = GameFontNormal:GetFont()
-	local text = textFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	text:SetFont(tFile, tSize, "OUTLINE")
+	local text = TSMAPI.GUI:CreateLabel(textFrame)
 	text:SetPoint("CENTER")
 	frame.text = text
 	
-	GUIUtil:AddHorizontalBar(frame, -25, parent)
+	TSMAPI.GUI:CreateHorizontalLine(frame, -30, parent, true)
 	
 	return frame
 end
 
 function private:CreateStartScanContent(parent)
 	local frame = CreateFrame("Frame", nil, parent)
+	TSMAPI.Design:SetFrameBackdropColor(frame)
 	frame:SetAllPoints(parent)
 	frame:Hide()
 
@@ -131,15 +129,15 @@ function private:CreateStartScanContent(parent)
 				local diff = previous + 15*60 - time()
 				local diffMin = math.floor(diff/60)
 				local diffSec = diff - diffMin*60
-				frame.getAllStatusText:SetText("|cffff0000"..format(L["Ready in %s min and %s sec"], diffMin, diffSec))
+				frame.getAllStatusText:SetText("|cff990000"..format(L["Ready in %s min and %s sec"], diffMin, diffSec))
 			else
-				frame.getAllStatusText:SetText("|cffff0000"..L["Not Ready"])
+				frame.getAllStatusText:SetText("|cff990000"..L["Not Ready"])
 			end
 			frame:Enable()
 			frame.startGetAllButton:Disable()
 		else
 			frame:Enable()
-			frame.getAllStatusText:SetText("|cff00ff00"..L["Ready"])
+			frame.getAllStatusText:SetText("|cff009900"..L["Ready"])
 			frame.startGetAllButton:Enable()
 		end
 	end
@@ -164,25 +162,22 @@ function private:CreateStartScanContent(parent)
 		self.startProfessionScanButton:Disable()
 	end
 
-	local bar = GUIUtil:AddVerticalBar(frame, 0)
+	local bar = TSMAPI.GUI:CreateVerticalLine(frame, 0, nil, true)
 	bar:ClearAllPoints()
-	bar:SetPoint("TOPLEFT", 415, -31)
+	bar:SetPoint("TOPLEFT", 415, -30)
 	bar:SetHeight(200)
-	bar:SetWidth(6)
 	
 	
 	-- first row (getall scan)
-	local text = frame:CreateFontString()
-	text:SetPoint("TOPLEFT", 10, -45)
-	text:SetHeight(40)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	text:SetPoint("TOPLEFT", 10, -35)
+	text:SetHeight(50)
 	text:SetWidth(400)
-	text:SetFont(GameFontHighlight:GetFont(), 12)
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("CENTER")
-	text:SetTextColor(1, 1, 1, 1)
 	text:SetText(L["A GetAll scan is the fastest in-game method for scanning every item on the auction house. However, it may disconnect you from the game and has a 15 minute cooldown."])
 	
-	local btn = GUIUtil:CreateButton(frame, nil, "action2", 1, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(frame, 18)
 	btn:SetPoint("TOPLEFT", 425, -45)
 	btn:SetHeight(22)
 	btn:SetWidth(205)
@@ -190,32 +185,27 @@ function private:CreateStartScanContent(parent)
 	btn:SetText(L["Run GetAll Scan"])
 	frame.startGetAllButton = btn
 	
-	local text = frame:CreateFontString()
+	local text = TSMAPI.GUI:CreateLabel(frame)
 	text:SetPoint("TOPLEFT", 425, -70)
 	text:SetHeight(16)
 	text:SetWidth(205)
-	text:SetFontObject(GameFontNormal)
 	text:SetJustifyH("CENTER")
 	text:SetJustifyV("CENTER")
-	text:SetTextColor(1, 1, 1, 1)
-	text:SetText(" ")
 	frame.getAllStatusText = text
 	
-	GUIUtil:AddHorizontalBar(frame, -95)
+	TSMAPI.GUI:CreateHorizontalLine(frame, -95, nil, true)
 	
 	
 	-- second row (full scan)
-	local text = frame:CreateFontString()
-	text:SetPoint("TOPLEFT", 10, -110)
-	text:SetHeight(40)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	text:SetPoint("TOPLEFT", 10, -100)
+	text:SetHeight(50)
 	text:SetWidth(400)
-	text:SetFont(GameFontHighlight:GetFont(), 12)
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("CENTER")
-	text:SetTextColor(1, 1, 1, 1)
 	text:SetText(L["A full auction house scan will scan every item on the auction house but is far slower than a GetAll scan. Expect this scan to take several minutes or longer."])
 	
-	local btn = GUIUtil:CreateButton(frame, nil, "action2", 1, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(frame, 18)
 	btn:SetPoint("TOPLEFT", 425, -120)
 	btn:SetHeight(22)
 	btn:SetWidth(205)
@@ -223,25 +213,22 @@ function private:CreateStartScanContent(parent)
 	btn:SetText(L["Run Full Scan"])
 	frame.startFullScanButton = btn
 	
-	GUIUtil:AddHorizontalBar(frame, -160)
+	TSMAPI.GUI:CreateHorizontalLine(frame, -160, nil, true)
 	
 	
 	-- third row (profession scan)
-	local text = frame:CreateFontString()
-	text:SetPoint("TOPLEFT", 10, -175)
-	text:SetHeight(40)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	text:SetPoint("TOPLEFT", 10, -165)
+	text:SetHeight(50)
 	text:SetWidth(170)
-	text:SetFont(GameFontHighlight:GetFont(), 12)
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("CENTER")
-	text:SetTextColor(1, 1, 1, 1)
 	text:SetText(L["A profession scan will scan items required/made by a certain profession."])
 	
-	local bar = GUIUtil:AddVerticalBar(frame, 0)
+	local bar = TSMAPI.GUI:CreateVerticalLine(frame, 0, nil, true)
 	bar:ClearAllPoints()
-	bar:SetPoint("TOPLEFT", 185, -167)
-	bar:SetHeight(61)
-	bar:SetWidth(6)
+	bar:SetPoint("TOPLEFT", 185, -160)
+	bar:SetHeight(65)
 
 	local dd = GUIUtil:CreateDropdown(frame, L["Professions:"], 200, professions, {"TOPLEFT", 200, -172}, L["Select professions to include in the profession scan."])	dd:SetMultiselect(true)
 	for key in pairs(professions) do
@@ -249,7 +236,7 @@ function private:CreateStartScanContent(parent)
 	end
 	dd:SetCallback("OnValueChanged", function(_,_,key,value) TSM.db.profile.scanSelections[key] = value end)
 	
-	local btn = GUIUtil:CreateButton(frame, nil, "action2", 1, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(frame, 18)
 	btn:SetPoint("TOPLEFT", 425, -185)
 	btn:SetHeight(22)
 	btn:SetWidth(205)
@@ -257,17 +244,15 @@ function private:CreateStartScanContent(parent)
 	btn:SetText(L["Run Profession Scan"])
 	frame.startProfessionScanButton = btn
 	
-	GUIUtil:AddHorizontalBar(frame, -225)
+	TSMAPI.GUI:CreateHorizontalLine(frame, -225, nil, true)
 	
 	-- 4th row (auto updater)
-	local text = frame:CreateFontString()
+	local text = TSMAPI.GUI:CreateLabel(frame)
 	text:SetPoint("TOPLEFT", 10, -235)
 	text:SetPoint("TOPRIGHT", -10, -235)
 	text:SetHeight(60)
-	text:SetFont(GameFontHighlight:GetFont(), 12)
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("CENTER")
-	text:SetTextColor(1, 1, 1, 1)
-	text:SetText(format("|cff99ffff"..L["Never scan the auction house again!"].."|r "..L["The author of TradeSkillMaster has created an application which uses blizzard's online auction house APIs to update your AuctionDB data automatically. Check it out at the link in TSM_AuctionDB's description on curse or at: %s"], "|cff99ffffhttp://bit.ly/uuiiNL|r"))
+	text:SetText(format(TSMAPI.Design:GetInlineColor("link")..L["Never scan the auction house again!"].."|r "..L["The author of TradeSkillMaster has created an application which uses blizzard's online auction house APIs to update your AuctionDB data automatically. Check it out at the link in TSM_AuctionDB's description on curse or at: %s"], TSMAPI.Design:GetInlineColor("link").."http://bit.ly/uuiiNL|r"))
 	return frame
 end
