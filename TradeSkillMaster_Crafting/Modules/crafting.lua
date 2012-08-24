@@ -26,7 +26,6 @@ local FRAME_HEIGHT = 500
 local FRAME_WIDTH = 870
 
 -- color codes
-local CYAN = "|cff99ffff"
 local GREEN = "|cff00ff00"
 local RED = "|cffff0000"
 local WHITE = "|cffffffff"
@@ -50,7 +49,6 @@ function Crafting:OnInitialize()
 	
 	Crafting:RegisterEvent("TRADE_SKILL_SHOW")
 	Crafting:RegisterEvent("TRADE_SKILL_CLOSE")
-	Crafting:RegisterMessage("TSM_UPDATE_FRAME_COLORS")
 end
 
 -- opens the crafting window
@@ -263,7 +261,8 @@ function Crafting:CreateCraftingFrame() -- updated
 		edgeSize = 24,
 		insets = {left = 4, right = 4, top = 4, bottom = 4},
 	})
-	TSMAPI:RegisterForColorChanges(frame)
+	frame:SetBackdropColor(0, 0, .05, 1)
+	frame:SetBackdropBorderColor(0, 0, 1, 1)
 	tinsert(UISpecialFrames, frame:GetName())
 	Crafting.frame = frame
 	
@@ -277,7 +276,8 @@ function Crafting:CreateCraftingFrame() -- updated
 		edgeSize = 20,
 		insets = {left = 4, right = 1, top = 4, bottom = 4},
 	})
-	TSMAPI:RegisterForColorChanges(sideFrame)
+	sideFrame:SetBackdropColor(0, 0, .05, 1)
+	sideFrame:SetBackdropBorderColor(0, 0, 1, 1)
 	sideFrame:EnableMouse(true)
 	sideFrame:SetFrameLevel(1)
 	sideFrame:SetWidth(60)
@@ -350,7 +350,8 @@ function Crafting:CreateFrameTitle() -- updated
 		edgeSize = 12,
 		insets = {left = 2, right = 2, top = 2, bottom = 2},
 	})
-	TSMAPI:RegisterForColorChanges(titlebg)
+	titlebg:SetBackdropColor(0, 0, .05, 1)
+	titlebg:SetBackdropBorderColor(0, 0, 1, 1)
 	titlebg:SetPoint("TOP", 0, 28)
 	Crafting.frame.titleBackground = titlebg
 	
@@ -771,7 +772,8 @@ function Crafting:CreateQueuingRegion() -- updated
 		edgeSize = 24,
 		insets = {left = 4, right = 4, top = 4, bottom = 4},
 	})
-	TSMAPI:RegisterForColorChanges(frame)
+	frame:SetBackdropColor(0, 0, .05, 1)
+	frame:SetBackdropBorderColor(0, 0, 1, 1)
 	frame:Hide()
 	frame:SetScript("OnShow", function(self)
 			self.eb:SetNumber(TSM.Data[Crafting.mode].crafts[self.itemID].queued)
@@ -1344,7 +1346,7 @@ function Crafting:UpdateQueuing()
 				
 				local color = GREEN
 				if profit <= 0 then color = RED end
-				buyout = (TSM:FormatTextMoney(buyout, (specialBuyout and CYAN), true) or "---")
+				buyout = (TSM:FormatTextMoney(buyout, (specialBuyout and TSMAPI.Design:GetInlineColor("link2")), true) or "---")
 				profit = (profit<=0 and RED.."-".."|r" or "")..(TSM:FormatTextMoney(abs(profit), color, true, true) or "---")..percentText
 			else
 				buyout = nil
@@ -1549,12 +1551,4 @@ function Crafting:ChangeSort(button, row, method)
 	
 	orderCache.time = 0
 	Crafting:UpdateQueuing()
-end
-
-function Crafting:TSM_UPDATE_FRAME_COLORS()
-	if Crafting.frame then
-		Crafting.frame.horizontalBarFrame.texture:SetVertexColor(TSMAPI:GetBorderColor())
-		Crafting.frame.horizontalBarFrame2.texture:SetVertexColor(TSMAPI:GetBorderColor())
-		Crafting.frame.verticalBarFrame.texture:SetVertexColor(TSMAPI:GetBorderColor())
-	end
 end

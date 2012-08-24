@@ -21,15 +21,6 @@ local AceGUI = LibStub("AceGUI-3.0") -- load the AceGUI libraries
 
 local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Crafting") -- loads the localization table
 
--- color codes
-local CYAN = "|cff99ffff"
-local BLUE = "|cff5555ff"
-local GREEN = "|cff00ff00"
-local RED = "|cffff0000"
-local WHITE = "|cffffffff"
-local GOLD = "|cffffbb00"
-local YELLOW = "|cffffd000"
-
 
 local function getIndex(t, value)
 	for i, v in pairs(t) do
@@ -117,64 +108,6 @@ function Options:LoadGeneralSettings(container)
 									end
 								end,
 							tooltip = L["If checked, the crafting cost of items will be shown in the tooltip for the item."],
-						},
-					},
-				},
-				{
-					type = "InlineGroup",
-					layout = "flow",
-					title = L["Profession Page Settings"],
-					children = {
-						{
-							type = "Dropdown",
-							label = L["Sort Crafts By"],
-							list = {["name"]=L["Name"], ["cost"]=L["Cost to Craft"], ["profit"]=L["Profit"], ["scount"]=L["Seen Count"], ["ccount"]=L["Times Crafted"], ["ilvl"]=L["Item Level"]},
-							value = TSM.db.profile.craftSortMethod.default,
-							relativeWidth = 0.49,
-							callback = function(_,_,value)
-									TSM.db.profile.craftSortMethod.default = value
-								end,
-							tooltip = L["This setting determines how crafts are sorted in the craft group pages (NOT the Craft Management Window)."],
-						},
-						{
-							type = "Label",
-							text = "",
-							relativeWidth = 0.06,
-						},
-						{
-							type = "Label",
-							text = L["Sort Order:"],
-							relativeWidth = 0.12,
-						},
-						{
-							type = "CheckBox",
-							label = L["Ascending"],
-							cbType = "radio",
-							relativeWidth = 0.16,
-							value = TSM.db.profile.craftSortOrder.default == "ascending",
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.craftSortOrder.default = "ascending"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i+1]:SetValue(false)
-									end
-								end,
-							tooltip = L["Sort crafts in ascending order."],
-						},
-						{
-							type = "CheckBox",
-							label = L["Descending"],
-							cbType = "radio",
-							relativeWidth = 0.16,
-							value = TSM.db.profile.craftSortOrder.default == "descending",
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.craftSortOrder.default = "descending"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i-1]:SetValue(false)
-									end
-								end,
-							tooltip = L["Sort crafts in descending order."],
 						},
 						{
 							type = "CheckBox",
@@ -565,9 +498,7 @@ function Options:LoadQueueSettings(container)
 							relativeWidth = 0.49,
 							callback = function(self,_,value)
 									if value > TSM.db.profile.maxRestockQuantity.default then
-										TSMAPI:SetStatusText("|cffffff00"..L["Warning: The min restock quantity must be lower than the max restock quantity."].."|r")
-									else
-										TSMAPI:SetStatusText("")
+										TSM:Print("|cffffff00"..L["Warning: The min restock quantity must be lower than the max restock quantity."].."|r")
 									end
 									TSM.db.profile.minRestockQuantity.default = value
 								end,
@@ -586,9 +517,7 @@ function Options:LoadQueueSettings(container)
 							relativeWidth = 0.49,
 							callback = function(self,_,value)
 									if value < TSM.db.profile.minRestockQuantity.default then
-										TSMAPI:SetStatusText(CYAN ..L["Warning: The min restock quantity must be lower than the max restock quantity."])
-									else
-										TSMAPI:SetStatusText("")
+										TSM:Print(TSMAPI.Design:GetInlineColor("link2")..L["Warning: The min restock quantity must be lower than the max restock quantity."])
 									end
 									TSM.db.profile.maxRestockQuantity.default = value
 								end,
@@ -756,7 +685,7 @@ function Options:LoadQueueSettings(container)
 							callback = function(self,_,value)
 									local copper = TSM:GetMoneyValue(value)
 									if not copper then
-										TSMAPI:SetStatusText(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
+										TSM:Print(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
 										self:SetFocus()
 									else
 										self:ClearFocus()
@@ -790,7 +719,7 @@ function Options:LoadProfileSettings(container)
 		delete_desc = L["Delete existing and unused profiles from the database to save space, and cleanup the SavedVariables file."],
 		delete = L["Delete a Profile"],
 		profiles = L["Profiles"],
-		current = L["Current Profile:"] .. " " .. CYAN .. TSM.db:GetCurrentProfile() .. "|r",
+		current = L["Current Profile:"] .. " " .. TSMAPI.Design:GetInlineColor("link") .. TSM.db:GetCurrentProfile() .. "|r",
 	}
 
 	-- Returns a list of all the current profiles with common and nocurrent modifiers.
@@ -935,10 +864,9 @@ function Options:LoadProfileSettings(container)
 					disabled = not GetProfileList(TSM.db, true, nil) and true,
 					callback = function(_,_,value)
 							if TSM.db:GetCurrentProfile() == value then
-								TSMAPI:SetStatusText(L["Cannot delete currently active profile!"])
+								TSM:Print(L["Cannot delete currently active profile!"])
 								return
 							end
-							TSMAPI:SetStatusText("")
 							StaticPopupDialogs["TSMCrafting.DeleteConfirm"].OnAccept = function()
 									TSM.db:DeleteProfile(value)
 									container:SelectTab(4)

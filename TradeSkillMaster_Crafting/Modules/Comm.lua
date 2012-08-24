@@ -37,7 +37,6 @@ function Comm:OnCommReceived(_, msg, _, sender)
 	if isValid then
 		TSM:Printf(L["Successfully got %s bytes of crafting cost data from %s!"], #serializedMsg, sender)
 		TSM.db.global.crossAccountCraftingCosts = data
-		TSM_TEST = data
 	else
 		TSM:Printf(L["Got invalid crafting cost data from %s."], sender)
 	end

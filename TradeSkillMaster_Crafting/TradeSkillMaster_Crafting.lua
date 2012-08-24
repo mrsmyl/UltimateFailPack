@@ -60,8 +60,6 @@ local savedDBDefaults = {
 		inscriptionGrouping = 2,
 		lastScan = {},
 		alwaysQueue = {},
-		craftSortMethod = {default = "name"},
-		craftSortOrder = {default = "ascending"},
 		unknownProfitMethod = {default = "unknown"},
 		enableNewTradeskills = false,
 		showPercentProfit = true,

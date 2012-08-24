@@ -296,9 +296,9 @@ end
 -- gets the cost to create this craft
 function Data:GetCraftCost(itemID, mode, extraArg)
 	if not itemID then return end
+	mode = mode or TSM.mode
 	local craft = Data[mode].crafts[itemID]
 	if not craft then return end
-	mode = mode or TSM.mode
 	
 	-- first, we calculate the cost of crafting that crafted item based off the cost of the individual materials
 	local cost, costIsValid = 0, true

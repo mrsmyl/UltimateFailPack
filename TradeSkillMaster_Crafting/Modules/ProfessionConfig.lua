@@ -26,7 +26,6 @@ local BIG_NUMBER = 100000000000 -- 10 million gold
 local ROW_HEIGHT = 16
 
 -- color codes
-local CYAN = "|cff99ffff"
 local GREEN = "|cff00ff00"
 local RED = "|cffff0000"
 local WHITE = "|cffffffff"
@@ -63,7 +62,6 @@ end
 
 -- setup the main frame / structure
 function ProfessionConfig:Load(num, parent)
-	TSMAPI:SetFrameSize(FRAME_WIDTH, FRAME_HEIGHT)
 	local treeGroupStatus = {treewidth = TREE_WIDTH, groups = TSM.db.global.treeStatus}
 
 	-- Create the main tree-group that will control and contain the entire GUI
@@ -159,19 +157,16 @@ function ProfessionConfig:LoadCraftsPage(container)
 			children = {
 				{
 					type = "Label",
-					text = "TradeSkillMaster_Crafting v" .. TSM.version .. " " .. L["Status"] .. ": " .. GOLD .. TSM.mode .. "|r\n",
+					text = "TradeSkillMaster_Crafting v" .. TSM.version .. " " .. L["Status"] .. ": " .. TSMAPI.Design:GetInlineColor("link") .. TSM.mode .. "|r\n",
 					fontObject = GameFontNormalHuge,
 					fullWidth = true,
-					colorRed = 255,
-					colorGreen = 0,
-					colorBlue = 0,
 				},
 				{
 					type = "Spacer"
 				},
 				{
 					type = "Label",
-					text = CYAN .. L["Use the links on the left to select which page to show."] .. "|r",
+					text = TSMAPI.Design:GetInlineColor("link") .. L["Use the links on the left to select which page to show."] .. "|r",
 					fontObject = GameFontNormalLarge,
 					fullWidth = true,
 				},
@@ -221,18 +216,19 @@ function ProfessionConfig:LoadCraftsPage(container)
 end
 
 -- Craft Pages
+local craftsST
 function ProfessionConfig:LoadSubCraftsPage(container, slot)
-	ProfessionConfig:HookScript(container.frame, "OnHide", function() ProfessionConfig:UnhookAll() if ProfessionConfig.OpenWindow then ProfessionConfig.OpenWindow:Hide() end end)
+	ProfessionConfig:HookScript(container.frame, "OnHide", function() ProfessionConfig:UnhookAll() if ProfessionConfig.OpenWindow then ProfessionConfig.OpenWindow:Hide() end if craftsST then craftsST:Hide() craftsST:SetData({}) end end)
 	local function ShowAdditionalSettings(parent, itemID, data)
 		if ProfessionConfig.OpenWindow then ProfessionConfig.OpenWindow:Hide() end
 
 		local window = AceGUI:Create("TSMWindow")
 		window.frame:SetParent(container.frame)
+		window.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 		window:SetWidth(500)
 		window:SetHeight(440)
 		window:SetTitle(L["Add Item to TSM_Auctioning"])
 		window:SetLayout("Flow")
-		window:EnableResize(false)
 		window.frame:SetFrameLevel(container.frame:GetFrameLevel() + 10)
 		window.frame:SetPoint("TOPRIGHT", parent.frame, "TOPLEFT")
 		window:SetCallback("OnClose", function(self)
@@ -394,7 +390,7 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 
 						if value < (TSM.db.profile.minRestockQuantity[itemID] or TSM.db.profile.minRestockQuantity.default) then
 							value = TSM.db.profile.minRestockQuantity[itemID] or TSM.db.profile.minRestockQuantity.default
-							TSM:Print(format(L["Can not set a max restock quantity below the minimum restock quantity of %d."], value))
+							TSM:Printf(L["Can not set a max restock quantity below the minimum restock quantity of %d."], value)
 						end
 						TSM.db.profile.maxRestockQuantity[itemID] = value
 
@@ -449,7 +445,7 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 						local value = (TSM.db.profile.minRestockQuantity[itemID] or 0) + 1
 						if value > (TSM.db.profile.maxRestockQuantity[itemID] or TSM.db.profile.maxRestockQuantity.default) then
 							value = TSM.db.profile.maxRestockQuantity[itemID] or TSM.db.profile.maxRestockQuantity.default
-							TSM:Print(format("Can not set a min restock quantity above the max restock quantity of %d.", value))
+							TSM:Printf("Can not set a min restock quantity above the max restock quantity of %d.", value)
 						end
 						TSM.db.profile.minRestockQuantity[itemID] = value
 
@@ -513,54 +509,16 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 		TSMAPI:BuildPage(window, page)
 	end
 
-	local sortMethod = TSM:GetDBValue("craftSortMethod", TSM.mode)
-	local sortOrder = TSM:GetDBValue("craftSortOrder", TSM.mode)
-	local itemIDCache = {}
-	for itemID, craft in pairs(TSM.Data[TSM.mode].crafts) do
-		itemIDCache[craft] = itemID
-	end
-	local sortedData = TSM:GetSortedData(TSM.Data[TSM.mode].crafts, function(a, b)
-			if sortOrder == "ascending" then
-				if sortMethod == "name" then
-					return a.name < b.name
-				elseif sortMethod == "cost" then
-					return (TSM.Data:GetCraftCost(itemIDCache[a]) or 0) < (TSM.Data:GetCraftCost(itemIDCache[b]) or 0)
-				elseif sortMethod == "profit" then
-					return (TSM.Data:GetCraftProfit(itemIDCache[a]) or math.huge) < (TSM.Data:GetCraftProfit(itemIDCache[b]) or math.huge)
-				elseif sortMethod == "scount" then
-					return (TSM:GetSeenCount(a.originalIndex) or 0) < (TSM:GetSeenCount(b.originalIndex) or 0)
-				elseif sortMethod == "ccount" then
-					return (TSM.db.profile.craftHistory[a.spellID] or 0) < (TSM.db.profile.craftHistory[b.spellID] or 0)
-				elseif sortMethod == "ilvl" then
-					return (select(4, GetItemInfo(a.originalIndex)) or 0) < (select(4, GetItemInfo(b.originalIndex)) or 0)
-				end
-			else
-				if sortMethod == "name" then
-					return a.name > b.name
-				elseif sortMethod == "cost" then
-					return (TSM.Data:GetCraftCost(itemIDCache[a]) or 0) > (TSM.Data:GetCraftCost(itemIDCache[b]) or 0)
-				elseif sortMethod == "profit" then
-					return (TSM.Data:GetCraftProfit(itemIDCache[a]) or math.huge) > (TSM.Data:GetCraftProfit(itemIDCache[b]) or math.huge)
-				elseif sortMethod == "scount" then
-					return (TSM:GetSeenCount(a.originalIndex) or 0) > (TSM:GetSeenCount(b.originalIndex) or 0)
-				elseif sortMethod == "ccount" then
-					return (TSM.db.profile.craftHistory[a.spellID] or 0) > (TSM.db.profile.craftHistory[b.spellID] or 0)
-				elseif sortMethod == "ilvl" then
-					return (select(4, GetItemInfo(a.originalIndex)) or 0) > (select(4, GetItemInfo(b.originalIndex)) or 0)
-				end
-			end
-		end)
-
 	local function DrawCreateAuctioningGroups(parent)
 		if ProfessionConfig.OpenWindow then ProfessionConfig.OpenWindow:Hide() end
 
 		local window = AceGUI:Create("TSMWindow")
 		window.frame:SetParent(container.frame)
+		window.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 		window:SetWidth(560)
-		window:SetHeight(250)
+		window:SetHeight(300)
 		window:SetTitle(L["Export Crafts to TradeSkillMaster_Auctioning"])
 		window:SetLayout("flow")
-		window:EnableResize(false)
 		window.frame:SetPoint("TOPRIGHT", parent.frame, "TOPLEFT")
 		window:SetCallback("OnClose", function(self)
 				self:ReleaseChildren()
@@ -672,9 +630,7 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 						end
 
 						local count = 0
-						for _, sData in pairs(sortedData) do
-							local itemID = sData.originalIndex
-							local data = TSM.Data[TSM.mode].crafts[itemID]
+						for itemID, data in pairs(TSM.Data[TSM.mode].crafts) do
 							if data.group == slot then
 								-- make sure the item isn't already in a group (or the checkbox is checked to ignore this)
 								if (not itemLookup[itemID] or moveCrafts) and (onlyEnabled and data.enabled or not onlyEnabled) then
@@ -690,9 +646,9 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 						end
 
 						if groupName then
-							TSM:Print(format(L["Added %s crafted items to: %s."], count, "\""..groupName.."\""))
+							TSM:Printf(L["Added %s crafted items to: %s."], count, "\""..groupName.."\"")
 						else
-							TSM:Print(format(L["Added %s crafted items to %s individual groups."], count, count))
+							TSM:Printf(L["Added %s crafted items to %s individual groups."], count, count)
 						end
 						self.parent:Hide()
 					end,
@@ -705,8 +661,8 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 
 	local page = {
 		{
-			type = "ScrollFrame",
-			layout = "Flow",
+			type = "SimpleGroup",
+			layout = "flow",
 			children = {
 				{
 					type = "InlineGroup",
@@ -715,7 +671,7 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 					children = {
 						{	-- label at the top of the page
 							type = "Label",
-							text = L["The checkboxes in next to each craft determine enable / disable the craft being shown in the Craft Management Window."],
+							text = L["The checkmarks next to each craft determine whether or not the craft will be shown in the Craft Management Window."],
 							relativeWidth = 1,
 						},
 						{	-- add all button
@@ -723,10 +679,9 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 							text = L["Enable All Crafts"],
 							relativeWidth = 0.3,
 							callback = function(self)
-									for _, sData in pairs(sortedData) do
-										local itemID = sData.originalIndex
-										if TSM.Data[TSM.mode].crafts[itemID].group == slot then
-											TSM.Data[TSM.mode].crafts[itemID].enabled = true
+									for _, data in pairs(TSM.Data[TSM.mode].crafts) do
+										if data.group == slot then
+											data.enabled = true
 										end
 									end
 									ProfessionConfig.TreeGroup:SelectByPath(1, slot)
@@ -737,10 +692,9 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 							text = L["Disable All Crafts"],
 							relativeWidth = 0.3,
 							callback = function(self)
-									for _, sData in pairs(sortedData) do
-										local itemID = sData.originalIndex
-										if TSM.Data[TSM.mode].crafts[itemID].group == slot then
-											TSM.Data[TSM.mode].crafts[itemID].enabled = nil
+									for _, data in pairs(TSM.Data[TSM.mode].crafts) do
+										if data.group == slot then
+											data.enabled = nil
 										end
 									end
 									ProfessionConfig.TreeGroup:SelectByPath(1, slot)
@@ -753,12 +707,20 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 							relativeWidth = 0.4,
 							callback = function(self) DrawCreateAuctioningGroups(self) end,
 						},
+						{
+							type = "HeadingLine"
+						},
+						{	-- label at the top of the page
+							type = "Label",
+							text = TSMAPI.Design:GetInlineColor("link")..L["Left-Click|r on a row below to enable/disable a craft."].."\n"..TSMAPI.Design:GetInlineColor("link")..L["Right-Click|r on a row below to show additional settings for a craft."],
+							relativeWidth = 1,
+						},
 					},
 				},
 				{
-					type = "InlineGroup",
-					layout = "flow",
-					title = L["Crafts"],
+					type = "SimpleGroup",
+					layout = "list",
+					fullHeight = true,
 					children = {},
 				},
 			},
@@ -774,92 +736,171 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 		end
 	end
 
-	-- local variable to store the parent table to add children widgets to
-	local inline = page[1].children[2].children
-
-	-- Creates the widgets for the tab
-	-- loops once for every craft contained in the tab
-	for _, sData in pairs(sortedData) do
-		local itemID = sData.originalIndex
-		local data = TSM.Data[TSM.mode].crafts[itemID]
-		if data.group == slot then
-
-			-- The text below the links of each item
-			local numCrafted = YELLOW .. (TSM.db.profile.craftHistory[data.spellID] or 0) .. "|r" .. WHITE
-
-			-- calculations / widget for printing out the cost, lowest buyout, and profit of the scroll
-			local cost, buyout, profit = TSM.Data:GetCraftPrices(itemID)
-			if buyout and profit then
+	local function GetCraftData()
+		local stData = {}
+		for itemID, data in pairs(TSM.Data[TSM.mode].crafts) do
+			if data.group == slot then
+				local cost, _, profit = TSM.Data:GetCraftPrices(itemID)
 				local color = GREEN
-				if profit <= 0 then color = RED end
-				buyout = TSM:FormatTextMoney(buyout, CYAN, true) or "?|r"
-				profit = (profit <=0 and RED.."-|r" or "")..(TSM:FormatTextMoney(abs(profit), color, true, true) or (RED..profit.."|cffffd700g|r"))
-			else
-				buyout = CYAN .. "?|r"
-				profit = CYAN .. "?|r"
+				if profit then
+					if profit <= 0 then color = RED end
+				end
+				
+				tinsert(stData, {
+					cols = {
+						{
+							value = data.enabled and "|TInterface\\Buttons\\UI-CheckBox-Check:24|t" or "",
+						},
+						{
+							value = select(2, GetItemInfo(itemID)) or data.name,
+							args = {data.name}
+						},
+						{
+							value = function() return TSM:FormatTextMoney(cost, TSMAPI.Design:GetInlineColor("link2"), true, true) or (TSMAPI.Design:GetInlineColor("link2").."?|r") end,
+							args = {cost or 0}
+						},
+						{
+							value = function() return (profit and (profit <=0 and RED.."-|r" or "")..(TSM:FormatTextMoney(abs(profit), color, true, true) or (RED..profit.."|cffffd700g|r")) or TSMAPI.Design:GetInlineColor("link2").."?|r") end,
+							args = {profit or -math.huge},
+						},
+						{
+							value = TSM.db.profile.craftHistory[data.spellID] or 0,
+						},
+					},
+					itemID = itemID,
+					data = data,
+				})
 			end
-			cost = TSM:FormatTextMoney(cost, CYAN, true, true) or (CYAN .. "?|r")
-			local ts = "       " -- tabspace
-
-			-- the line that lists the cost, buyout, and profit
-			local rString = format(L["Cost: %s Market Value: %s Profit: %s Times Crafted: %s"],  cost..ts, buyout..ts, profit..ts, numCrafted)
-
-			local inlineChildren = {
-				{
-					type = "CheckBox",
-					relativeWidth = 0.05,
-					value = data.enabled,
-					tooltip = L["Enable / Disable showing this craft in the craft management window."],
-					callback = function(_,_,value)
-							if not value then
-								data.queued = 0
-							end
-							data.enabled = value and true or nil
-						end,
-				},
-				{
-					type = "InteractiveLabel",
-					text = select(2, GetItemInfo(itemID)) or data.name,
-					fontObject = GameFontHighlight,
-					relativeWidth = 0.61,
-					callback = function() SetItemRef("item:".. itemID, itemID) end,
-					tooltip = itemID,
-				},
-				{
-					type = "Button",
-					text = L["Additional Item Settings"],
-					relativeWidth = 0.33,
-					callback = function(self) ShowAdditionalSettings(self, itemID, data) end,
-				},
-				{
-					type = "Label",
-					text = rString,
-					fontObject = GameFontWhite,
-					fullWidth = true,
-				},
-				{
-					type = "HeadingLine",
-				},
-			}
-
-			foreach(inlineChildren, function(_, data) tinsert(inline, data) end)
 		end
+		return stData
 	end
 
+	local stData = GetCraftData()
 	-- if no crafts have been added for this slot, show a message to alert the user
-	if #(inline) == 0 then
+	if #stData == 0 then
 		local text = L["No crafts have been added for this profession. Crafts are automatically added when you click on the profession icon while logged onto a character which has that profession."]
-		tinsert(inline, {
+		tinsert(page[1].children[1].children, {
+				type = "HeadingLine"
+			})
+		tinsert(page[1].children[1].children, {
 				type = "Label",
 				text = text,
 				fullWidth=true,
 			})
-	else
-		-- remove the last headingline
-		tremove(inline)
 	end
-
+	
+	local function ColSortMethod(st, aRow, bRow, col)
+		local a, b = st:GetCell(aRow, col), st:GetCell(bRow, col)
+		local column = st.cols[col]
+		local direction = column.sort or column.defaultsort or "dsc"
+		local aValue, bValue = ((a.args or {})[1] or a.value), ((b.args or {})[1] or b.value)
+		if direction == "asc" then
+			return aValue < bValue
+		else
+			return aValue > bValue
+		end
+	end
+	
+	local colInfo = {
+		{
+			name = "",
+			width = 0.05,
+			defaultsort = "asc",
+			comparesort = ColSortMethod,
+		},
+		{
+			name = L["Name"],
+			width = 0.45,
+			defaultsort = "asc",
+			comparesort = ColSortMethod,
+		},
+		{
+			name = L["Crafting Cost"],
+			width = 0.15,
+			defaultsort = "dsc",
+			comparesort = ColSortMethod,
+		},
+		{
+			name = L["Profit"],
+			width = 0.15,
+			defaultsort = "dsc",
+			comparesort = ColSortMethod,
+		},
+		{
+			name = L["Times Crafted"],
+			width = 0.15,
+			defaultsort = "dsc",
+			comparesort = ColSortMethod,
+		},
+	}
+	
+	local function GetColInfo(width)
+		local info = CopyTable(colInfo)
+		for i=1, #info do
+			if type(info[i].name) == "function" then
+				info[i].name = info[i].name()
+			end
+			info[i].width = floor(info[i].width*width)
+		end
+		
+		return info
+	end
+	
 	TSMAPI:BuildPage(container, page)
+	
+	if not craftsST then
+		local colInfo = GetColInfo(container.frame:GetWidth())
+		craftsST = TSMAPI:CreateScrollingTable(colInfo, true)
+	end
+	local stParent = container.children[1].children[#container.children[1].children].frame
+	craftsST.frame:SetParent(stParent)
+	craftsST.frame:SetPoint("BOTTOMLEFT", container.children[1].frame)
+	craftsST.frame:SetPoint("TOPRIGHT", container.children[1].children[1].frame, "BOTTOMRIGHT", 0, -20)
+	craftsST.frame:SetScript("OnSizeChanged", function(_,width, height)
+			craftsST:SetDisplayCols(GetColInfo(width))
+			craftsST:SetDisplayRows(floor(height/16), 16)
+		end)
+	craftsST:Show()
+	craftsST:SetData(stData)
+	craftsST.frame:GetScript("OnSizeChanged")(craftsST.frame, craftsST.frame:GetWidth(), craftsST.frame:GetHeight())
+	
+	local font, size = GameFontNormal:GetFont()
+	for i, row in ipairs(craftsST.rows) do
+		for j, col in ipairs(row.cols) do
+			col.text:SetFont(font, size-1)
+		end
+	end
+	
+	for i, col in ipairs(craftsST.head.cols) do
+		col:SetHeight(32)
+	end
+	craftsST.head.cols[2]:Click()
+	
+	craftsST:RegisterEvents({
+		["OnClick"] = function(_, _, data, _, _, rowNum, _, self, button)
+			if not rowNum then return end
+			if button == "LeftButton" then
+				data[rowNum].data.enabled = not data[rowNum].data.enabled
+				craftsST:SetData(GetCraftData())
+			else
+				ShowAdditionalSettings(self, data[rowNum].itemID, data[rowNum].data)
+			end
+		end,
+		["OnEnter"] = function(_, self, data, _, _, rowNum, col)
+			if not rowNum then return end
+			
+			GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+			if col == 2 then
+				GameTooltip:SetHyperlink("item:"..data[rowNum].itemID)
+			else
+				GameTooltip:SetText(TSMAPI.Design:GetInlineColor("link2")..L["Left-Click"]..": |r"..L["Enable / Disable showing this craft in the craft management window."].."\n"..TSMAPI.Design:GetInlineColor("link2")..L["Right-Click"]..": |r"..L["Additional Item Settings"], 1, 1, 1, 1, false)
+			end
+			GameTooltip:Show()
+		end,
+		["OnLeave"] = function()
+			GameTooltip:ClearLines()
+			GameTooltip:Hide()
+		end})
 end
 
 -- Materials Page
@@ -996,7 +1037,7 @@ function ProfessionConfig:LoadMaterialsPage(container)
 
 	local colInfo = GetColInfo(stParent:GetWidth())
 	if not matST then
-		matST = TSMAPI:CreateScrollingTable(colInfo)
+		matST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
 	matST.frame:SetParent(stParent)
 	matST.frame:SetPoint("BOTTOMLEFT", 2, 2)
@@ -1007,13 +1048,6 @@ function ProfessionConfig:LoadMaterialsPage(container)
 		end)
 	matST:Show()
 	matST:SetData(colData)
-
-	local font, size = GameFontNormal:GetFont()
-	for i, row in ipairs(matST.rows) do
-		for j, col in ipairs(row.cols) do
-			col.text:SetFont(font, size-1)
-		end
-	end
 
 	matST:RegisterEvents({
 		["OnClick"] = function(_, self, _, _, _, rowNum)
@@ -1043,11 +1077,11 @@ function ProfessionConfig:ShowMatOptionsWindow(parent, itemID)
 
 	local window = AceGUI:Create("TSMWindow")
 	window.frame:SetParent(parent)
+	window.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 	window:SetWidth(600)
 	window:SetHeight(545)
 	window:SetTitle(L["Material Cost Options"])
 	window:SetLayout("Flow")
-	window:EnableResize(false)
 	window.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
 	window:SetCallback("OnClose", function(self)
 			self:ReleaseChildren()
@@ -1069,7 +1103,7 @@ function ProfessionConfig:ShowMatOptionsWindow(parent, itemID)
 		},
 		{
 			type = "Label",
-			text = CYAN..L["Price:"].." |r"..(TSM:FormatTextMoney(cost) or "---"),
+			text = TSMAPI.Design:GetInlineColor("link")..L["Price:"].." |r"..(TSMAPI:FormatTextMoneyIcon(cost) or "---"),
 			relativeWidth = 0.39,
 		},
 		{
@@ -1421,110 +1455,6 @@ function ProfessionConfig:LoadProfessionOptions(container)
 					layout = "flow",
 					title = L["General Setting Overrides"],
 					children = {
-						{
-							type = "Label",
-							text = L["Here, you can override general settings."],
-							fullWidth = true,
-						},
-						{
-							type = "HeadingLine",
-						},
-						{
-							type = "CheckBox",
-							label = L["Override Craft Sort Method"],
-							value = TSM.db.profile.craftSortMethod[TSM.mode] and true,
-							callback = function(self, _, value)
-									if value then
-										TSM.db.profile.craftSortMethod[TSM.mode] = TSM.db.profile.craftSortMethod.default
-									else
-										TSM.db.profile.craftSortMethod[TSM.mode] = nil
-									end
-
-									local i = getIndex(self.parent.children, self)
-									self.parent.children[i+1]:SetDisabled(not value)
-								end,
-							tooltip = L["Allows you to set a different craft sort method for this profession."],
-						},
-						{
-							type = "Dropdown",
-							label = L["Sort Crafts By"],
-							list = {["name"]=L["Name"], ["cost"]=L["Cost to Craft"], ["profit"]=L["Profit"], ["scount"]=L["Seen Count"], ["ccount"]=L["Times Crafted"], ["ilvl"]=L["Item Level"]},
-							value = TSM.db.profile.craftSortMethod[TSM.mode],
-							disabled = TSM.db.profile.craftSortMethod[TSM.mode] == nil,
-							relativeWidth = 0.49,
-							callback = function(_,_,value)
-									TSM.db.profile.craftSortMethod[TSM.mode] = value
-								end,
-							tooltip = L["This setting determines how crafts are sorted in the craft group pages (NOT the Craft Management Window)."],
-						},
-						{
-							type = "CheckBox",
-							label = L["Override Craft Sort Order"],
-							value = TSM.db.profile.craftSortOrder[TSM.mode] and true,
-							callback = function(self, _, value)
-									if value then
-										TSM.db.profile.craftSortOrder[TSM.mode] = TSM.db.profile.craftSortOrder.default
-									else
-										TSM.db.profile.craftSortOrder[TSM.mode] = nil
-									end
-
-									local siblings = self.parent.children
-									local i = getIndex(siblings, self)
-									if value then
-										siblings[i+1]:SetColor(1, 1, 1)
-									else
-										siblings[i+1]:SetColor(0.5, 0.5, 0.5)
-									end
-									siblings[i+2]:SetDisabled(not value)
-									siblings[i+2]:SetValue(TSM.db.profile.craftSortOrder[TSM.mode] == "ascending")
-									siblings[i+3]:SetDisabled(not value)
-									siblings[i+3]:SetValue(TSM.db.profile.craftSortOrder[TSM.mode] == "descending")
-								end,
-							tooltip = L["Allows you to set a different craft sort order for this profession."],
-						},
-						{
-							type = "Label",
-							text = L["Sort Order:"],
-							relativeWidth = 0.12,
-							colorRed = TSM.db.profile.craftSortOrder[TSM.mode] == nil and 0.5 or 1,
-							colorGreen = TSM.db.profile.craftSortOrder[TSM.mode] == nil and 0.5 or 1,
-							colorBlue = TSM.db.profile.craftSortOrder[TSM.mode] == nil and 0.5 or 1,
-						},
-						{
-							type = "CheckBox",
-							label = L["Ascending"],
-							cbType = "radio",
-							relativeWidth = 0.16,
-							value = TSM.db.profile.craftSortOrder[TSM.mode] == "ascending",
-							disabled = TSM.db.profile.craftSortOrder[TSM.mode] == nil,
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.craftSortOrder[TSM.mode] = "ascending"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i+1]:SetValue(false)
-									end
-								end,
-							tooltip = L["Sort crafts in ascending order."],
-						},
-						{
-							type = "CheckBox",
-							label = L["Descending"],
-							cbType = "radio",
-							relativeWidth = 0.16,
-							value = TSM.db.profile.craftSortOrder[TSM.mode] == "descending",
-							disabled = TSM.db.profile.craftSortOrder[TSM.mode] == nil,
-							callback = function(self,_,value)
-									if value then
-										TSM.db.profile.craftSortOrder[TSM.mode] = "descending"
-										local i = getIndex(self.parent.children, self)
-										self.parent.children[i-1]:SetValue(false)
-									end
-								end,
-							tooltip = L["Sort crafts in descending order."],
-						},
-						{
- 							type = "HeadingLine",
- 						},
  						{
  							type = "Label",
  							text = L["Min ilvl to craft:"],
@@ -1642,7 +1572,7 @@ function ProfessionConfig:LoadProfessionOptions(container)
 
 									if value < (TSM.db.profile.minRestockQuantity[TSM.mode] or TSM.db.profile.minRestockQuantity.default) then
 										value = TSM.db.profile.minRestockQuantity[TSM.mode] or TSM.db.profile.minRestockQuantity.default
-										TSM:Print(format(L["Can not set a max restock quantity below the minimum restock quantity of %d."], value))
+										TSM:Printf(L["Can not set a max restock quantity below the minimum restock quantity of %d."], value)
 									end
 									TSM.db.profile.maxRestockQuantity[TSM.mode] = value
 
@@ -1696,7 +1626,7 @@ function ProfessionConfig:LoadProfessionOptions(container)
 									local value = (TSM.db.profile.minRestockQuantity[TSM.mode] or 0) + 1
 									if value > (TSM.db.profile.maxRestockQuantity[TSM.mode] or TSM.db.profile.maxRestockQuantity.default) then
 										value = TSM.db.profile.maxRestockQuantity[TSM.mode] or TSM.db.profile.maxRestockQuantity.default
-										TSM:Print(format(L["Can not set a min restock quantity above the max restock quantity of %d."], value))
+										TSM:Printf(L["Can not set a min restock quantity above the max restock quantity of %d."], value)
 									end
 									TSM.db.profile.minRestockQuantity[TSM.mode] = value
 

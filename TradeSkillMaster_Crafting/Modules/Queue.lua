@@ -255,7 +255,7 @@ function Queue:CreateRestockQueue()
 			
 			if minRestock > maxRestock then
 				local link = select(2, GetItemInfo(itemID)) or data.name
-				TSM:Print(format(L["%s not queued! Min restock of %s is higher than max restock of %s"], link, minRestock, maxRestock))
+				TSM:Printf(L["%s not queued! Min restock of %s is higher than max restock of %s"], link, minRestock, maxRestock)
 			elseif profitMethod == "none" or TSM.db.profile.alwaysQueue[itemID] then
 				data.queued = floor(maxQueueCount / data.numMade)
 			else
