@@ -17,7 +17,7 @@
 ## X-Curse-Project-Name: TradeSkillMaster_Destroying
 ## X-Curse-Project-ID: tradeskillmaster_destroying
 ## X-Curse-Repository-ID: wow/tradeskillmaster_destroying/mainline
-## X-Curse-Packaged-Version: v1.2.1
+## X-Curse-Packaged-Version: v1.2.2
 ## X-Curse-Project-Name: TradeSkillMaster_Destroying
 ## X-Curse-Project-ID: tradeskillmaster_destroying
 ## X-Curse-Repository-ID: wow/tradeskillmaster_destroying/mainline
