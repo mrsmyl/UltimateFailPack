@@ -55,20 +55,22 @@ function GUI:Load(parent)
 end
 
 function GUI:DrawSales(container)
-	local colInfo = GUI:GetColInfo("sales", container.frame:GetWidth())
-
 	if not saleST then
+		local colInfo = GUI:GetColInfo("sales", 100)
 		saleST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
-	saleST.frame:SetParent(container.frame)
-	saleST.frame:SetPoint("BOTTOMLEFT", container.frame, 10, 10)
-	saleST.frame:SetPoint("TOPRIGHT", container.frame, -10, -105)
+	GUI:CreateTopWidgetsPlayer(container, saleST, function(...) return TSM.Data:GetSalesData(...) end)
+	local stParent = container.children[1].children[#container.children[1].children].frame
+	saleST.frame:SetParent(stParent)
+	saleST.frame:SetPoint("BOTTOMLEFT")
+	saleST.frame:SetPoint("TOPRIGHT", 0, -20)
 	saleST.frame:SetScript("OnSizeChanged", function(_,width, height)
 			saleST:SetDisplayCols(GUI:GetColInfo("sales", width))
 			saleST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
 		end)
 	saleST:Show()
 	saleST:SetData(TSM.Data:GetSalesData())
+	saleST.frame:GetScript("OnSizeChanged")(saleST.frame, saleST.frame:GetWidth(), saleST.frame:GetHeight())
 	
 	local font, size = GameFontNormal:GetFont()
 	for i, row in ipairs(saleST.rows) do
@@ -98,25 +100,25 @@ function GUI:DrawSales(container)
 			GameTooltip:ClearLines()
 			GameTooltip:Hide()
 		end})
-		
-	GUI:CreateTopWidgetsPlayer(container, saleST, function(...) return TSM.Data:GetSalesData(...) end)
 end
 
 function GUI:DrawPurchases(container)
-	local colInfo = GUI:GetColInfo("buys", container.frame:GetWidth())
-
 	if not buyST then
+		local colInfo = GUI:GetColInfo("buys", 100)
 		buyST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
-	buyST.frame:SetParent(container.frame)
-	buyST.frame:SetPoint("BOTTOMLEFT", container.frame, 10, 10)
-	buyST.frame:SetPoint("TOPRIGHT", container.frame, -10, -105)
+	GUI:CreateTopWidgetsPlayer(container, buyST, function(...) return TSM.Data:GetBuyData(...) end)
+	local stParent = container.children[1].children[#container.children[1].children].frame
+	buyST.frame:SetParent(stParent)
+	buyST.frame:SetPoint("BOTTOMLEFT")
+	buyST.frame:SetPoint("TOPRIGHT", 0, -20)
 	buyST.frame:SetScript("OnSizeChanged", function(_,width, height)
 			buyST:SetDisplayCols(GUI:GetColInfo("buys", width))
 			buyST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
 		end)
 	buyST:Show()
 	buyST:SetData(TSM.Data:GetBuyData())
+	buyST.frame:GetScript("OnSizeChanged")(buyST.frame, buyST.frame:GetWidth(), buyST.frame:GetHeight())
 	
 	local font, size = GameFontNormal:GetFont()
 	for i, row in ipairs(buyST.rows) do
@@ -146,19 +148,18 @@ function GUI:DrawPurchases(container)
 			GameTooltip:ClearLines()
 			GameTooltip:Hide()
 		end})
-	
-	GUI:CreateTopWidgetsPlayer(container, buyST, function(...) return TSM.Data:GetBuyData(...) end)
 end
 
 function GUI:DrawItemSummary(container)
-	local colInfo = GUI:GetColInfo("itemSummary", container.frame:GetWidth())
-
 	if not itemSummaryST then
+		local colInfo = GUI:GetColInfo("itemSummary", 100)
 		itemSummaryST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
-	itemSummaryST.frame:SetParent(container.frame)
-	itemSummaryST.frame:SetPoint("BOTTOMLEFT", container.frame, 10, 10)
-	itemSummaryST.frame:SetPoint("TOPRIGHT", container.frame, -10, -105)
+	GUI:CreateTopWidgets(container, itemSummaryST, function(...) return TSM.Data:GetItemSummaryData(...) end)
+	local stParent = container.children[1].children[#container.children[1].children].frame
+	itemSummaryST.frame:SetParent(stParent)
+	itemSummaryST.frame:SetPoint("BOTTOMLEFT")
+	itemSummaryST.frame:SetPoint("TOPRIGHT", 0, -20)
 	itemSummaryST.frame:SetScript("OnSizeChanged", function(_,width, height)
 			itemSummaryST:SetDisplayCols(GUI:GetColInfo("itemSummary", width))
 			itemSummaryST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
@@ -191,26 +192,24 @@ function GUI:DrawItemSummary(container)
 			GameTooltip:ClearLines()
 			GameTooltip:Hide()
 		end})
-	
-	GUI:CreateTopWidgets(container, itemSummaryST, function(...) return TSM.Data:GetItemSummaryData(...) end)
 end
 
 function GUI:DrawResaleSummary(container)
-	local colInfo = GUI:GetColInfo("resaleSummary", container.frame:GetWidth())
-
 	if not resaleSummaryST then
+		local colInfo = GUI:GetColInfo("resaleSummary", 100)
 		resaleSummaryST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
-	resaleSummaryST.frame:SetParent(container.frame)
-	resaleSummaryST.frame:SetPoint("BOTTOMLEFT", container.frame, 10, 10)
-	resaleSummaryST.frame:SetPoint("TOPRIGHT", container.frame, -10, -105)
+	GUI:CreateTopWidgets(container, resaleSummaryST, function(...) return TSM.Data:GetResaleSummaryData(...) end)
+	local stParent = container.children[1].children[#container.children[1].children].frame
+	resaleSummaryST.frame:SetParent(stParent)
+	resaleSummaryST.frame:SetPoint("BOTTOMLEFT")
+	resaleSummaryST.frame:SetPoint("TOPRIGHT", 0, -20)
 	resaleSummaryST.frame:SetScript("OnSizeChanged", function(_,width, height)
 			resaleSummaryST:SetDisplayCols(GUI:GetColInfo("resaleSummary", width))
 			resaleSummaryST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
 		end)
 	resaleSummaryST:Show()
 	resaleSummaryST:SetData(TSM.Data:GetResaleSummaryData())
-	resaleSummaryST.frame:GetScript("OnSizeChanged")(resaleSummaryST.frame, resaleSummaryST.frame:GetWidth(), resaleSummaryST.frame:GetHeight())
 	
 	local font, size = GameFontNormal:GetFont()
 	for i, row in ipairs(resaleSummaryST.rows) do
@@ -218,6 +217,7 @@ function GUI:DrawResaleSummary(container)
 			col.text:SetFont(font, size-1)
 		end
 	end
+	resaleSummaryST.frame:GetScript("OnSizeChanged")(resaleSummaryST.frame, resaleSummaryST.frame:GetWidth(), resaleSummaryST.frame:GetHeight())
 	
 	resaleSummaryST:RegisterEvents({
 		["OnClick"] = function(_, _, data, _, _, rowNum, _, self)
@@ -236,14 +236,14 @@ function GUI:DrawResaleSummary(container)
 			GameTooltip:ClearLines()
 			GameTooltip:Hide()
 		end})
-	
-	GUI:CreateTopWidgets(container, resaleSummaryST, function(...) return TSM.Data:GetResaleSummaryData(...) end)
 end
 
 function GUI:DrawItemLookup(container, itemString, returnTab)
 	container:ReleaseChildren()
 	local itemID = TSM:ItemStringToID(itemString)
 	local itemData = TSM.Data:GetItemData(itemString)
+	
+	local color, color2 = TSMAPI.Design:GetInlineColor("link2"), TSMAPI.Design:GetInlineColor("category2")
 	
 	local buyers, sellers = {}, {}
 	for name, quantity in pairs(itemData.buyers) do
@@ -257,38 +257,45 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 	
 	local buyersText, sellersText = "", ""
 	for i=1, min(#buyers, 5) do
-		buyersText = buyersText..buyers[i].name.."|cff99ffff("..buyers[i].quantity..")|r, "
+		buyersText = buyersText.."|cffffffff"..buyers[i].name.."|r"..color.."("..buyers[i].quantity..")|r, "
 	end
 	for i=1, min(#sellers, 5) do
-		sellersText = sellersText..sellers[i].name.."|cff99ffff("..sellers[i].quantity..")|r, "
+		sellersText = sellersText.."|cffffffff"..sellers[i].name.."|r"..color.."("..sellers[i].quantity..")|r, "
 	end
 
 	local page = {
 		{
 			type = "SimpleGroup",
-			layout = "Flow",
+			layout = "List",
+			fullHeight = true,
 			children = {
 				{
-					type = "Label",
-					relativeWidth = 0.1,
-				},
-				{
-					type = "InteractiveLabel",
-					text = itemData.link or itemString,
-					fontObject = GameFontNormalLarge,
-					relativeWidth = 0.5,
-					callback = function() SetItemRef("item:"..itemID, itemID) end,
-					tooltip = itemID,
-				},
-				{
-					type = "Label",
-					relativeWidth = 0.1,
-				},
-				{
-					type = "Button",
-					text = L["Back to Previous Page"],
-					relativeWidth = 0.29,
-					callback = function() container:SelectTab(returnTab) end,
+					type = "SimpleGroup",
+					layout = "Flow",
+					children = {
+						{
+							type = "Label",
+							relativeWidth = 0.1,
+						},
+						{
+							type = "InteractiveLabel",
+							text = itemData.link or itemString,
+							fontObject = GameFontNormalLarge,
+							relativeWidth = 0.4,
+							callback = function() SetItemRef("item:"..itemID, itemID) end,
+							tooltip = itemID,
+						},
+						{
+							type = "Label",
+							relativeWidth = 0.1,
+						},
+						{
+							type = "Button",
+							text = L["Back to Previous Page"],
+							relativeWidth = 0.29,
+							callback = function() container:SelectTab(returnTab) end,
+						},
+					},
 				},
 				{
 					type = "HeadingLine",
@@ -297,20 +304,24 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 					type = "InlineGroup",
 					title = L["Sale Data"],
 					layout = "Flow",
+					backdrop = true,
 					children = {},
 				},
 				{
 					type = "InlineGroup",
 					title = L["Purchase Data"],
 					layout = "Flow",
+					backdrop = true,
 					children = {},
 				},
 				{
-					type = "InlineGroup",
-					title = L["Activity Log"],
+					type = "Spacer",
+					quantity = 2,
+				},
+				{
+					type = "SimpleGroup",
 					layout = "Flow",
 					fullHeight = true,
-					children = {},
 				},
 			},
 		},
@@ -321,32 +332,32 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 		sellWidgets = {
 			{
 				type = "MultiLabel",
-				labelInfo = {{text="|cffcc8000"..L["Average Prices:"], relativeWidth = 0.19},
-					{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalSell) or "---"), relativeWidth=0.22},
-					{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthSell) or "---"), relativeWidth=0.29},
-					{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekSell) or "---"), relativeWidth=0.29}},
+				labelInfo = {{text=color2..L["Average Prices:"], relativeWidth = 0.19},
+					{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalSell) or "---"), relativeWidth=0.22},
+					{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthSell) or "---"), relativeWidth=0.29},
+					{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekSell) or "---"), relativeWidth=0.29}},
 				relativeWidth = 1,
 			},
 			{
 				type = "MultiLabel",
-				labelInfo = {{text="|cffcc8000"..L["Quantity Sold:"], relativeWidth = 0.19},
-					{text="|cff99ffff"..L["Total:"].." |r"..itemData.totalSellNum, relativeWidth=0.22},
-					{text="|cff99ffff"..L["Last 30 Days:"].." |r"..itemData.monthSellNum, relativeWidth=0.29},
-					{text="|cff99ffff"..L["Last 7 Days:"].." |r"..itemData.weekSellNum, relativeWidth=0.29}},
+				labelInfo = {{text=color2..L["Quantity Sold:"], relativeWidth = 0.19},
+					{text=color..L["Total:"].." |r|cffffffff"..itemData.totalSellNum, relativeWidth=0.22},
+					{text=color..L["Last 30 Days:"].." |r|cffffffff"..itemData.monthSellNum, relativeWidth=0.29},
+					{text=color..L["Last 7 Days:"].." |r|cffffffff"..itemData.weekSellNum, relativeWidth=0.29}},
 				relativeWidth = 1,
 			},
 			{
 				type = "MultiLabel",
-				labelInfo = {{text="|cffcc8000"..L["Gold Earned:"], relativeWidth = 0.19},
-					{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalSell*itemData.totalSellNum) or "---"), relativeWidth=0.22},
-					{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthSell*itemData.monthSellNum) or "---"), relativeWidth=0.29},
-					{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekSell*itemData.weekSellNum) or "---"), relativeWidth=0.29}},
+				labelInfo = {{text=color2..L["Gold Earned:"], relativeWidth = 0.19},
+					{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalSell*itemData.totalSellNum) or "---"), relativeWidth=0.22},
+					{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthSell*itemData.monthSellNum) or "---"), relativeWidth=0.29},
+					{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekSell*itemData.weekSellNum) or "---"), relativeWidth=0.29}},
 				relativeWidth = 1,
 			},
 			{
 				type = "Label",
 				relativeWidth = 1,
-				text = "|cffcc8000"..L["Top Buyers:"].." |r"..buyersText,
+				text = color2..L["Top Buyers:"].." |r"..buyersText,
 			},
 		}
 	else
@@ -354,7 +365,7 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 			{
 				type = "Label",
 				relativeWidth = 1,
-				text = L["There is no sale data for this item."],
+				text = "|cffffffff"..L["There is no sale data for this item."].."|r",
 			},
 		}
 	end
@@ -363,32 +374,32 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 		buyWidgets = {
 			{
 				type = "MultiLabel",
-				labelInfo = {{text="|cffcc8000"..L["Average Prices:"], relativeWidth = 0.19},
-					{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalBuy) or "---"), relativeWidth=0.22},
-					{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthBuy) or "---"), relativeWidth=0.29},
-					{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekBuy) or "---"), relativeWidth=0.29}},
+				labelInfo = {{text=color2..L["Average Prices:"], relativeWidth = 0.19},
+					{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalBuy) or "---"), relativeWidth=0.22},
+					{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthBuy) or "---"), relativeWidth=0.29},
+					{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekBuy) or "---"), relativeWidth=0.29}},
 				relativeWidth = 1,
 			},
 			{
 				type = "MultiLabel",
-				labelInfo = {{text="|cffcc8000"..L["Quantity Bought:"], relativeWidth = 0.19},
-					{text="|cff99ffff"..L["Total:"].." |r"..itemData.totalBuyNum, relativeWidth=0.22},
-					{text="|cff99ffff"..L["Last 30 Days:"].." |r"..itemData.monthBuyNum, relativeWidth=0.29},
-					{text="|cff99ffff"..L["Last 7 Days:"].." |r"..itemData.weekBuyNum, relativeWidth=0.29}},
+				labelInfo = {{text=color2..L["Quantity Bought:"], relativeWidth = 0.19},
+					{text=color..L["Total:"].." |r|cffffffff"..itemData.totalBuyNum, relativeWidth=0.22},
+					{text=color..L["Last 30 Days:"].." |r|cffffffff"..itemData.monthBuyNum, relativeWidth=0.29},
+					{text=color..L["Last 7 Days:"].." |r|cffffffff"..itemData.weekBuyNum, relativeWidth=0.29}},
 				relativeWidth = 1,
 			},
 			{
 				type = "MultiLabel",
-				labelInfo = {{text="|cffcc8000"..L["Total Spent:"], relativeWidth = 0.19},
-					{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalBuy*itemData.totalBuyNum) or "---"), relativeWidth=0.22},
-					{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthBuy*itemData.monthBuyNum) or "---"), relativeWidth=0.29},
-					{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekBuy*itemData.weekBuyNum) or "---"), relativeWidth=0.29}},
+				labelInfo = {{text=color2..L["Total Spent:"], relativeWidth = 0.19},
+					{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(itemData.avgTotalBuy*itemData.totalBuyNum) or "---"), relativeWidth=0.22},
+					{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgMonthBuy*itemData.monthBuyNum) or "---"), relativeWidth=0.29},
+					{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(itemData.avgWeekBuy*itemData.weekBuyNum) or "---"), relativeWidth=0.29}},
 				relativeWidth = 1,
 			},
 			{
 				type = "Label",
 				relativeWidth = 1,
-				text = "|cffcc8000"..L["Top Sellers:"].." |r"..sellersText,
+				text = color2..L["Top Sellers:"].." |r"..sellersText,
 			},
 		}
 	else
@@ -396,13 +407,13 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 			{
 				type = "Label",
 				relativeWidth = 1,
-				text = L["There is no purchase data for this item."],
+				text = "|cffffffff"..L["There is no purchase data for this item."].."|r",
 			},
 		}
 	end
 	
 	local index
-	for i=1, #page[1].children do
+	for i=2, #page[1].children do
 		if page[1].children[i].type == "InlineGroup" then
 			index = i
 			break
@@ -418,20 +429,21 @@ function GUI:DrawItemLookup(container, itemString, returnTab)
 	
 	TSMAPI:BuildPage(container, page)
 	
-	local stParent = container.children[1].children[#container.children[1].children].content
-	local colInfo = GUI:GetColInfo("itemDetail", container.frame:GetWidth())
+	local colInfo = GUI:GetColInfo("itemDetail", 100)
 	if not itemDetailST then
 		itemDetailST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
+	local stParent = container.children[1].children[#container.children[1].children].frame
 	itemDetailST.frame:SetParent(stParent)
-	itemDetailST.frame:SetPoint("TOPLEFT", 0, -10)
-	itemDetailST.frame:SetPoint("BOTTOMRIGHT", 0, 0)
+	itemDetailST.frame:SetPoint("TOPLEFT")
+	itemDetailST.frame:SetPoint("BOTTOMRIGHT", container.children[1].frame)
 	itemDetailST.frame:SetScript("OnSizeChanged", function(_,width, height)
 			itemDetailST:SetDisplayCols(GUI:GetColInfo("itemDetail", width))
 			itemDetailST:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
 		end)
 	itemDetailST:Show()
 	itemDetailST:SetData(itemData.stData)
+	itemDetailST.frame:GetScript("OnSizeChanged")(itemDetailST.frame, itemDetailST.frame:GetWidth(), itemDetailST.frame:GetHeight())
 	
 	local font, size = GameFontNormal:GetFont()
 	for i, row in ipairs(itemDetailST.rows) do
@@ -443,6 +455,7 @@ end
 
 function GUI:DrawGoldSummary(container)
 	local data = TSM.Data:GetGoldData()
+	local color, color2 = TSMAPI.Design:GetInlineColor("link2"), TSMAPI.Design:GetInlineColor("category2")
 
 	local page = {
 		{
@@ -453,27 +466,28 @@ function GUI:DrawGoldSummary(container)
 					type = "InlineGroup",
 					layout = "Flow",
 					title = L["Sales"],
+					backdrop = true,
 					children = {
 						{
 							type = "MultiLabel",
-							labelInfo = {{text="|cffcc8000"..L["Gold Earned:"], relativeWidth = 0.19},
-								{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(data.totalSale) or "---"), relativeWidth=0.22},
-								{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(data.monthSale) or "---"), relativeWidth=0.29},
-								{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(data.weekSale) or "---"), relativeWidth=0.29}},
+							labelInfo = {{text=color2..L["Gold Earned:"], relativeWidth = 0.19},
+								{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(data.totalSale) or "---"), relativeWidth=0.22},
+								{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(data.monthSale) or "---"), relativeWidth=0.29},
+								{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(data.weekSale) or "---"), relativeWidth=0.29}},
 							relativeWidth = 1,
 						},
 						{
 							type = "MultiLabel",
-							labelInfo = {{text="|cffcc8000"..L["Earned Per Day:"], relativeWidth = 0.19},
-								{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.totalSale, data.totalTime)+0.5)) or "---"), relativeWidth=0.22},
-								{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.monthSale, data.monthTime)+0.5)) or "---"), relativeWidth=0.29},
-								{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.weekSale, data.weekTime)+0.5)) or "---"), relativeWidth=0.29}},
+							labelInfo = {{text=color2..L["Earned Per Day:"], relativeWidth = 0.19},
+								{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.totalSale, data.totalTime)+0.5)) or "---"), relativeWidth=0.22},
+								{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.monthSale, data.monthTime)+0.5)) or "---"), relativeWidth=0.29},
+								{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.weekSale, data.weekTime)+0.5)) or "---"), relativeWidth=0.29}},
 							relativeWidth = 1,
 						},
 						{
 							type = "Label",
 							relativeWidth = 0.3,
-							text = "|cffcc8000"..L["Top Item by Gold:"].."|r",
+							text = color2..L["Top Item by Gold:"].."|r",
 						},
 						{
 							type = "InteractiveLabel",
@@ -486,7 +500,7 @@ function GUI:DrawGoldSummary(container)
 						{
 							type = "Label",
 							relativeWidth = 0.3,
-							text = "|cffcc8000"..L["Top Item by Quantity:"].."|r",
+							text = color2..L["Top Item by Quantity:"].."|r",
 						},
 						{
 							type = "InteractiveLabel",
@@ -501,27 +515,28 @@ function GUI:DrawGoldSummary(container)
 					type = "InlineGroup",
 					layout = "Flow",
 					title = L["Purchases"],
+					backdrop = true,
 					children = {
 						{
 							type = "MultiLabel",
-							labelInfo = {{text="|cffcc8000"..L["Gold Spent:"], relativeWidth = 0.19},
-								{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(data.totalBuy) or "---"), relativeWidth=0.22},
-								{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(data.monthBuy) or "---"), relativeWidth=0.29},
-								{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(data.weekBuy) or "---"), relativeWidth=0.29}},
+							labelInfo = {{text=color2..L["Gold Spent:"], relativeWidth = 0.19},
+								{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(data.totalBuy) or "---"), relativeWidth=0.22},
+								{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(data.monthBuy) or "---"), relativeWidth=0.29},
+								{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(data.weekBuy) or "---"), relativeWidth=0.29}},
 							relativeWidth = 1,
 						},
 						{
 							type = "MultiLabel",
-							labelInfo = {{text="|cffcc8000"..L["Spent Per Day:"], relativeWidth = 0.19},
-								{text="|cff99ffff"..L["Total:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.totalBuy, data.totalTime)+0.5)) or "---"), relativeWidth=0.22},
-								{text="|cff99ffff"..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.monthBuy, data.monthTime)+0.5)) or "---"), relativeWidth=0.29},
-								{text="|cff99ffff"..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.weekBuy, data.weekTime)+0.5)) or "---"), relativeWidth=0.29}},
+							labelInfo = {{text=color2..L["Spent Per Day:"], relativeWidth = 0.19},
+								{text=color..L["Total:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.totalBuy, data.totalTime)+0.5)) or "---"), relativeWidth=0.22},
+								{text=color..L["Last 30 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.monthBuy, data.monthTime)+0.5)) or "---"), relativeWidth=0.29},
+								{text=color..L["Last 7 Days:"].." |r"..(TSM:FormatTextMoney(floor(TSMAPI:SafeDivide(data.weekBuy, data.weekTime)+0.5)) or "---"), relativeWidth=0.29}},
 							relativeWidth = 1,
 						},
 						{
 							type = "Label",
 							relativeWidth = 0.3,
-							text = "|cffcc8000"..L["Top Item by Gold:"].."|r",
+							text = color2..L["Top Item by Gold:"].."|r",
 						},
 						{
 							type = "InteractiveLabel",
@@ -533,7 +548,7 @@ function GUI:DrawGoldSummary(container)
 						{
 							type = "Label",
 							relativeWidth = 0.3,
-							text = "|cffcc8000"..L["Top Item by Quantity:"].."|r",
+							text = color2..L["Top Item by Quantity:"].."|r",
 						},
 						{
 							type = "InteractiveLabel",
@@ -722,7 +737,7 @@ local colInfo = {
 			comparesort = ColSortMethod,
 		},
 		{
-			name = L["Stack\nSize"],
+			name = L["Stack"],
 			width = 0.05,
 			defaultsort = "dsc",
 			comparesort = ColSortMethod,
@@ -766,7 +781,7 @@ local colInfo = {
 			comparesort = ColSortMethod,
 		},
 		{
-			name = L["Stack\nSize"],
+			name = L["Stack"],
 			width = 0.05,
 			defaultsort = "dsc",
 			comparesort = ColSortMethod,
@@ -1022,6 +1037,11 @@ function GUI:CreateTopWidgetsPlayer(container, st, dataFunc)
 							UpdateFilter()
 						end,
 				},
+				{
+					type = "SimpleGroup",
+					fullHeight = true,
+					layout = "flow"
+				},
 			},
 		},
 	}
@@ -1103,6 +1123,11 @@ function GUI:CreateTopWidgets(container, st, dataFunc)
 							ddSelection = value
 							UpdateFilter()
 						end,
+				},
+				{
+					type = "SimpleGroup",
+					fullHeight = true,
+					layout = "flow"
 				},
 			},
 		},

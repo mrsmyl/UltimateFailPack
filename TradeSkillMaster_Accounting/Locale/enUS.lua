@@ -93,7 +93,7 @@ L["Data older than this many days will be deleted when you click on the button t
 L["Remove Old Data (No Confirmation)"] = true
 L["Click this button to permanently remove data older than the number of days selected in the dropdown."] = true
 L["Item Name"] = true
-L["Stack\nSize"] = true
+L["Stack"] = true
 L["Aucs"] = true
 L["Total Sale Price"] = true
 L["Last Sold"] = true

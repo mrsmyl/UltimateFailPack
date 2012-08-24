@@ -172,7 +172,7 @@ end
 -- returns a formatted time in the format that the user has selected
 function Data:GetFormattedTime(rTime)
 	if TSM.db.factionrealm.timeFormat == "ago" then
-		return format(L["%s ago"], SecondsToTime(time()-rTime))
+		return format(L["%s ago"], SecondsToTime(time()-rTime) or "?")
 	elseif TSM.db.factionrealm.timeFormat == "usdate" then
 		return date("%m/%d/%y %H:%M", rTime)
 	elseif TSM.db.factionrealm.timeFormat == "eudate" then

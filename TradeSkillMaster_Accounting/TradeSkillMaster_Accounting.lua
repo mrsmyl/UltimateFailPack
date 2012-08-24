@@ -69,7 +69,7 @@ function TSM:OnInitialize()
 				whileDead = true,
 				hideOnEscape = false,
 				OnAccept = function() TSM:ImportFromMySales() end,
-				--OnCancel = function() TSM.db.global.infoID = 1 end,
+				OnCancel = function() TSM.db.global.infoID = 1 end,
 			}
 			StaticPopup_Show("TSMAccountingImport")
 			for i=1, 10 do
@@ -195,9 +195,9 @@ local GOLD_TEXT = "|r|cffffd700g|r"
 local SILVER_TEXT = "|r|cffc7c7cfs|r"
 local COPPER_TEXT = "|r|cffeda55fc|r"
 
-function TSM:FormatTextMoney(copper, defaultColor)
+function TSM:FormatTextMoney(copper, color)
 	if not copper or copper == 0 then return end
-	defaultColor = defaultColor or "|cffffffff"
+	color = color or "|cffffffff"
 	local isNegative = false
 	if copper < 0 then
 		isNegative = true
@@ -211,20 +211,32 @@ function TSM:FormatTextMoney(copper, defaultColor)
 	
 	-- Add gold
 	if gold > 0 then
-		text = format("%s%s", defaultColor..gold.."|r", GOLD_TEXT)
+		if color then
+			text = format("%s%s", color..gold.."|r", GOLD_TEXT)
+		else
+			text = format("%s%s", gold, GOLD_TEXT)
+		end
 	end
 	
 	-- Add silver
 	if silver > 0 then
-		text = format("%s%s%s", text, defaultColor..silver.."|r", SILVER_TEXT)
+		if color then
+			text = format("%s%s%s", text, color..silver.."|r", SILVER_TEXT)
+		else
+			text = format("%s%s%s", text, silver, SILVER_TEXT)
+		end
 	end
 	
 	-- Add copper if we have no silver/gold found, or if we actually have copper
 	if text == "" or copper > 0 then
-		text = format("%s%s%s", text, defaultColor..copper.."|r", COPPER_TEXT)
+		if color then
+			text = format("%s%s%s", text, color..copper.."|r", COPPER_TEXT)
+		else
+			text = format("%s%s%s", text, copper, COPPER_TEXT)
+		end
 	end
 	
-	return ((isNegative and defaultColor.."-|r" or "")..text):trim()
+	return ((isNegative and color.."-|r" or "")..text):trim()
 end
 
 
@@ -346,5 +358,5 @@ function TSM:ReadMySalesData()
 	end
 	
 	TSM.db.global.infoID = 1
-	TSM:Print(format(L["MySales Import Complete! Imported %s sales. Was unable to import %s sales."], successfulNum, failedNum))
+	TSM:Printf(L["MySales Import Complete! Imported %s sales. Was unable to import %s sales."], successfulNum, failedNum)
 end
