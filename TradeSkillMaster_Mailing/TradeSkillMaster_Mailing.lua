@@ -71,7 +71,7 @@ function TSM:SetupOpenMailButton()
 	button:SetScript("OnClick", function(self) private:StartAutoLooting() end)
 	private.button = button
 	
-	if ElvUI then
+	if ElvUI and ElvUI[1] then
 		ElvUI[1]:GetModule("Skins"):HandleButton(button)
 	end
 
@@ -84,6 +84,9 @@ function TSM:SetupOpenMailButton()
 	if select(4, GetAddOnInfo("Postal")) == 1 then
 		button:Hide()
 		foundOtherMailAddon = true
+	end
+	if button:GetName() then
+		error("Stack overflow.", 2)
 	end
 
 	local noop = function() end

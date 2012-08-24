@@ -73,18 +73,17 @@ function Config:DrawMain(container)
 	local function AddMailTarget(value)
 		value = strlower(value or ""):trim()
 		if value == "" then
-			TSMAPI:SetStatusText(L["No player name entered."])
+			TSM:Print(L["No player name entered."])
 			return
 		end
 		
 		for _, name in ipairs(TSM.db.factionrealm.mailTargets) do
 			if strlower(name) == value then
-				TSMAPI:SetStatusText(format(L["Player \"%s\" is already a mail target."], name))
+				TSM:Printf(L["Player \"%s\" is already a mail target."], name)
 				return
 			end
 		end
 		
-		TSMAPI:SetStatusText("")
 		tinsert(TSM.db.factionrealm.mailTargets, value)
 		Config:UpdateTree()
 		return value
@@ -326,20 +325,20 @@ function Config:DrawGroup(container, groupNum)
 			if type(index) == "string" then --it's a group name
 				-- check if this group is still a group or not
 				if groups[index] then
-					tinsert(grouped, {value=index, text=index, name=index})
+					tinsert(grouped, {value=index, text=index, name=index, tooltip=index})
 				else
 					target = nil
 				end
 			elseif not Config.itemsInGroup[itemID] then
 				local name,link,_,_,_,_,_,_,_,texture = GetItemInfo(index)
-				tinsert(grouped, {value=index, text=link, icon=texture, name=name})
+				tinsert(grouped, {value=index, text=link, icon=texture, name=name, tooltip=link})
 			end
 		end
 	end
 	
 	for groupName in pairs(groups) do
 		if not TSM.db.factionrealm.mailItems[groupName] then
-			tinsert(unGrouped, {value=groupName, text=groupName, name=groupName})
+			tinsert(unGrouped, {value=groupName, text=groupName, name=groupName, tooltip=groupName})
 		end
 	end
 	
@@ -352,7 +351,7 @@ function Config:DrawGroup(container, groupNum)
 				usedLinks[itemID] = true
 				local name,_,_,_,_,_,_,_,_,texture = GetItemInfo(link)
 				if not TSM.db.factionrealm.mailItems[itemID] and not Config.itemsInGroup[itemID] then
-					tinsert(unGrouped, {value=itemID, text=link, name=name, icon=texture})
+					tinsert(unGrouped, {value=itemID, text=link, name=name, icon=texture, tooltip=link})
 				end
 			end
 		end
