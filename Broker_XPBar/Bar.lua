@@ -34,6 +34,28 @@ local ORIENTATION_ROTATE_RIGHT_90 = { 0, 1, 1, 1, 0, 0, 1, 0 }
 
 local SIDES = {"TOP", "BOTTOM", "LEFT", "RIGHT"}
 
+local FONT_DEFAULT = "TextStatusBarText"
+local FONT_STYLE   = "OUTLINE"
+
+local function vertical(str)
+	if not str or type(str) ~= "string" then
+		return str
+	end
+	
+    -- test multi-byte
+    local _, len = str:gsub("[^\128-\193]", "")
+	
+	local vertical
+ 
+    if len == #str then
+        vertical = str:gsub("(.)", "%1\n")
+    else
+	    vertical = str:gsub("([%z\1-\127\194-\244][\128-\191]*)", "%1\n")
+    end
+	
+	return vertical:sub(1, #vertical-1)
+end
+	
 -- tick
 local TICK_ACTIVE_COLOR = {
 	r = 1,
@@ -71,6 +93,11 @@ local Bar = {
 		Rested      = 0,
 		Reputation  = 0,
 	},
+
+	text = {
+		XP          = "",
+		Reputation  = "",
+	},
 	
 	-- settings
 	settings = {
@@ -89,6 +116,9 @@ local Bar = {
 		yOffset   = 0,
 		Texture   = TEX_BAR,
 		Ticks     = 0,
+		Font      = FONT_DEFAULT,
+		FontSize  = 6,
+		MouseOver = false,
 	},
 	
 	-- colors
@@ -125,6 +155,9 @@ function Bar:Initialize()
 	-- bar setup
 	local MainFrame = CreateFrame("Frame", ADDON.."_Bar_MainFrame", UIParent)
 	
+	MainFrame:SetScript('OnEnter', function(self) Bar:OnMouseEnter() end)
+	MainFrame:SetScript('OnLeave', function(self) Bar:OnMouseLeave() end)	
+	
 	local XPBar = CreateFrame("Frame", ADDON.."_Bar_XPBar", MainFrame)
 
 	r, g, b, a = self:GetColor("XP")
@@ -155,30 +188,42 @@ function Bar:Initialize()
 	notex:SetVertexColor(r, g, b, a)
 	notex:SetAllPoints(XPBar)
 	
-	local Rep = CreateFrame("Frame", ADDON.."_Bar_RepBar", MainFrame)
+	local xptext = XPBar:CreateFontString(ADDON.."_XPText", "OVERLAY", FONT_DEFAULT)
+	--xptext:SetWidth(600) -- just make it big enough
+	--xptext:SetHeight(600) -- just make it big enough
+	xptext:SetJustifyH("CENTER")
+	xptext:SetJustifyV("MIDDLE")
+	xptext:SetPoint("CENTER", XPBar, "CENTER")
+	
+	local RepBar = CreateFrame("Frame", ADDON.."_Bar_RepBar", MainFrame)
 
 	r, g, b, a = self:GetColor("Rep")
 	
-	local reptex = Rep:CreateTexture(ADDON.."_Tex_RepTex", "ARTWORK")
+	local reptex = RepBar:CreateTexture(ADDON.."_Tex_RepTex", "ARTWORK")
 	reptex:SetTexture(TEX_BAR)
 	reptex:SetVertexColor(r, g, b, a)
 
-	local rspark = Rep:CreateTexture(ADDON.."_Tex_RepSpark", "OVERLAY")
+	local rspark = RepBar:CreateTexture(ADDON.."_Tex_RepSpark", "OVERLAY")
 	rspark:SetTexture(TEX_SPARK)
 	rspark:SetVertexColor(r, g, b, intensity)
 	rspark:SetBlendMode("ADD")
 
-	local rspark2 = Rep:CreateTexture(ADDON.."_Tex_RepSpark2", "OVERLAY")
+	local rspark2 = RepBar:CreateTexture(ADDON.."_Tex_RepSpark2", "OVERLAY")
 	rspark2:SetTexture(TEX_SPARK2)
 	rspark2:SetBlendMode("ADD")
 
 	r, g, b, a = self:GetColor("NoRep")
 	
-	local noreptex = Rep:CreateTexture(ADDON.."_Tex_NoRepTex", "BACKGROUND")
+	local noreptex = RepBar:CreateTexture(ADDON.."_Tex_NoRepTex", "BACKGROUND")
 	noreptex:SetTexture(TEX_BAR)
 	noreptex:SetVertexColor(r, g, b, a)
-	noreptex:SetAllPoints(Rep)
+	noreptex:SetAllPoints(RepBar)
 
+	local reptext = RepBar:CreateFontString(ADDON.."_RepText", "OVERLAY", FONT_DEFAULT)
+	reptext:SetJustifyH("CENTER")
+	reptext:SetJustifyV("MIDDLE")
+	reptext:SetPoint("CENTER", RepBar, "CENTER")
+	
 	local Border = CreateFrame("Frame", ADDON.."_Bar_Border", MainFrame)
 	
 	local bordtex = Border:CreateTexture(ADDON.."_Tex_BorderTex", "BACKGROUND")
@@ -193,11 +238,13 @@ function Bar:Initialize()
 	self.Spark2      = spark2
 	self.NoXPTex     = notex
 	self.RestedXPTex = resttex
-	self.RepBar      = Rep
+	self.XPText      = xptext
+	self.RepBar      = RepBar
 	self.RepBarTex   = reptex
 	self.RepSpark    = rspark
 	self.RepSpark2   = rspark2
 	self.NoRepTex    = noreptex
+	self.RepText     = reptext
 	self.Border      = Border
 	self.BorderTex   = bordtex	
 	
@@ -304,7 +351,7 @@ function Bar:Reanchor()
 		
 		visibleBars = visibleBars + 1
 	end
-	
+		
 	if self:GetSetting("ShowRep") then
 		local offset = 0
 		
@@ -372,17 +419,26 @@ function Bar:Reanchor()
 		self.Border:SetWidth(BORDER_HEIGHT)
 	end
 	
+	if self:GetSetting("MouseOver") then
+		self.XPText:Hide()
+		self.RepText:Hide()
+	else
+		self.XPText:Show()
+		self.RepText:Show()
+	end	
+
 	-- refresh settings
 	self:UpdateThickness()
 	self:UpdateStrata()
 	self:UpdateSparkIntensity()
 	self:UpdateTexture()
+	self:UpdateFont()
 	
 	-- (re)anchoring finished
 	self.anchored = true	
 	
 	self:Show()
-	
+
 	self:Update()
 
 	if Jostle then Jostle:Refresh() end
@@ -485,7 +541,19 @@ function Bar:Update()
 
 		self:TextureSetPoint(self.RestedXPTex, self.XPBar, back, length-barlength)
 
-		self:UpdateTicks("XP", barlength, front)		
+		self:UpdateTicks("XP", barlength, front)
+		
+		local text = self:GetText("XP")
+		
+		if not self.horizontal then
+			text = vertical(text)
+		end
+	
+		self.XPText:SetText(text)
+			
+		if self.XPText:IsShown() then
+			self.XPText:Show()
+		end
 	end
 
 	if self:GetSetting("ShowRep") then
@@ -506,6 +574,18 @@ function Bar:Update()
 		end
 
 		self:UpdateTicks("Reputation", barlength, front)
+		
+		local text = self:GetText("Reputation")
+		
+		if not self.horizontal then
+			text = vertical(text)
+		end
+	
+		self.RepText:SetText(text)
+			
+		if self.RepText:IsShown() then
+			self.RepText:Show()
+		end
 	end
 end
 
@@ -562,6 +642,28 @@ function Bar:Hide()
 	self.RepBar:Hide()
 	
 	self.MainFrame:Hide() 
+end
+
+function Bar:OnMouseEnter()
+	if self:GetSetting("MouseOver") then
+		if not self.XPText:IsShown() then
+			self.XPText:Show()
+		end
+		if not self.RepText:IsShown() then
+			self.RepText:Show()
+		end
+	end
+end
+
+function Bar:OnMouseLeave()
+	if self:GetSetting("MouseOver") then
+		if self.XPText:IsShown() then
+			self.XPText:Hide()
+		end
+		if self.RepText:IsShown() then
+			self.RepText:Hide()
+		end
+	end
 end
 
 -- ticks
@@ -765,9 +867,27 @@ function Bar:UpdateTexture()
 	self.NoRepTex:SetTexture(texture)
 end
 
+function Bar:UpdateFont()
+	if not LibSharedMedia then
+		return
+	end
+	
+	local font = self:GetSetting("Font")
+	
+	font = LibSharedMedia:Fetch("font", font)
+
+	if not font then
+		font = FONT_DEFAULT
+	end
+
+	-- setup bar texts
+	self.XPText:SetFont(font, self:GetSetting("FontSize") or 6, FONT_STYLE)
+	self.RepText:SetFont(font, self:GetSetting("FontSize") or 6, FONT_STYLE)
+end
+
 -- set bar progress in fraction of 1
 function Bar:SetBarProgress(bar, fraction)
-	if not fraction then
+	if not bar or not fraction then
 		return
 	end
 	
@@ -816,4 +936,26 @@ function Bar:SetColor(id, r, g, b, a)
 	self.colors[id].a = a
 	
 	self:UpdateColor(id)
+end
+
+function Bar:GetText(bar)
+	return self.text[bar]
+end
+
+function Bar:SetText(bar, text)
+	if not bar then
+		return
+	end
+
+	if not text then
+		text = ""
+	end
+	
+	local current = self:GetText(bar)
+
+	if current == value then
+		return
+	end
+	
+	self.text[bar] = text
 end

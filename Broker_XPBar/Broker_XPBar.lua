@@ -58,6 +58,9 @@ BrokerXPBar.faction         = 0
 BrokerXPBar.watchedStanding = 0
 BrokerXPBar.atMaxRep        = false
 
+BrokerXPBar.FONT_NAME_DEFAULT = "Broker: XP Bar - Default"
+BrokerXPBar.FONT_DEFAULT      = "TextStatusBarText"
+
 local ldbObj  = LDB:NewDataObject(ADDON, {
 	type	= "data source",
 	icon	= ICON,
@@ -383,6 +386,10 @@ local defaults = {
 		TTHideXPDetails  = false,
 		TTHideRepDetails = false,
 		Ticks            = 0,
+		ShowBarText      = false,
+		MouseOver        = false,
+		Font             = BrokerXPBar.FONT_NAME_DEFAULT,
+		FontSize         = 6,
 	}
 }
 
@@ -669,18 +676,25 @@ function BrokerXPBar:UpdateBar()
 		local oldValue = self.Bar.progress.XP
 		
 		self.Bar:SetBarProgress("XP", xp)
-		
 		self:Debug("UpdateBar: Progress for bar XP set to " .. tostring(self.Bar.progress.XP) .. " (from " .. oldValue .. ")")
 		
 		oldValue = self.Bar.progress.Rested
 		
 		self.Bar:SetBarProgress("Rested", rested)
-		
 		self:Debug("UpdateBar: Progress for bar Rested set to " .. tostring(self.Bar.progress.Rested) .. " (from " .. oldValue .. ")")
+		
+		local text = ""
+		
+		if self:GetSetting("ShowBarText") then
+			text = string.format("%s / %s", self:FormatNumberLabel(currentXP), self:FormatNumberLabel(maxXP))
+		end
+		
+		self.Bar:SetText("XP", text)		
 	end
 
 	if self:GetSetting("ShowRep") then
 		local reputation = 0
+		local text = ""
 		
 		if self.faction ~= 0 then
 			local name, standing, minRep, maxRep, currentRep = nil, 0, 0, 0, 0
@@ -688,13 +702,18 @@ function BrokerXPBar:UpdateBar()
 			name, _, standing, minRep, maxRep, currentRep = GetFactionInfo(self.faction)
 			
 			reputation = (currentRep - minRep) / (maxRep - minRep)
+			
+			if self:GetSetting("ShowBarText") then
+				text = string.format("%s / %s", self:FormatNumberLabel(currentRep - minRep), self:FormatNumberLabel(maxRep - minRep))
+			end
 		end
 
 		local oldValue = self.Bar.progress.Reputation
 		
 		self.Bar:SetBarProgress("Reputation", reputation)
-		
 		self:Debug("UpdateBar: Progress for bar Reputation set to " .. tostring(self.Bar.progress.Reputation) .. " (from " .. oldValue .. ")")		
+		
+		self.Bar:SetText("Reputation", text)
 	end
 		
 	self.Bar:Update()

@@ -164,6 +164,10 @@ end
 local updateHandler = {}
 
 function BrokerXPBar:SetupOptions()
+	if LibSharedMedia then
+		LibSharedMedia:Register("font", self.FONT_NAME_DEFAULT, self.FONT_DEFAULT)
+	end
+	
 	updateHandler = {
 		Spark           = BrokerXPBar.UpdateBarSetting,
 		Thickness       = BrokerXPBar.UpdateBarSetting,
@@ -174,6 +178,10 @@ function BrokerXPBar:SetupOptions()
 		ExternalTexture = BrokerXPBar.UpdateTextureSetting,
 		Texture         = BrokerXPBar.UpdateTextureSetting,
 		Ticks           = BrokerXPBar.UpdateBarSetting,
+		ShowBarText     = BrokerXPBar.UpdateBarTextSetting,
+		MouseOver       = BrokerXPBar.UpdateBarSetting,
+		Font            = BrokerXPBar.UpdateBarSetting,
+		FontSize        = BrokerXPBar.UpdateBarSetting,
 		Frame           = BrokerXPBar.UpdateBarSetting,
 		Location        = BrokerXPBar.UpdateBarSetting,
 		xOffset         = BrokerXPBar.UpdateBarSetting,
@@ -236,7 +244,7 @@ function BrokerXPBar:SetupOptions()
 						min = 1.5,
 						max = 32,
 						step = 0.1,
-						order = 2
+						order = 2,
 					},
 					showxp = {
 						type = 'toggle',
@@ -246,7 +254,7 @@ function BrokerXPBar:SetupOptions()
 						set = function()
 							self:ToggleSetting("ShowXP")
 						end,
-						order = 3
+						order = 3,
 					},
 					showrep = {
 						type = 'toggle',
@@ -256,7 +264,7 @@ function BrokerXPBar:SetupOptions()
 						set = function()
 							self:ToggleSetting("ShowRep")
 						end,
-						order = 4
+						order = 4,
 					},
 					shadow = {
 						type = 'toggle',
@@ -266,7 +274,7 @@ function BrokerXPBar:SetupOptions()
 						set = function()
 							self:ToggleSetting("Shadow")
 						end,
-						order = 5
+						order = 5,
 					},
 					inverse = {
 						type = 'toggle',
@@ -321,6 +329,63 @@ function BrokerXPBar:SetupOptions()
 						end,
 						values = tickConfig,
 						order = 9,
+					},
+					bartext = {
+						type = 'group',
+						name = L["Bar Text"],
+						desc = L["Display settings for bar text."],
+						args = {
+							text = {
+								type = 'toggle',
+								name = L["Show Bar Text"],
+								desc = L["Show current progress values on bar."],
+								get = function() return self:GetSetting("ShowBarText") end,
+								set = function()
+									self:ToggleSetting("ShowBarText")
+								end,
+								order = 1,
+							},
+							mouseover = {
+								type = 'toggle',
+								name = L["Mouse-Over"],
+								desc = L["Show text only on mouse over bar."],
+								get = function() return self:GetSetting("MouseOver") end,
+								set = function()
+									self:ToggleSetting("MouseOver")
+								end,
+								order = 2,
+							},
+							font = {
+								type = 'select',
+								name = L["Font"],
+								desc = L["Font of the bar text."] .. "\n" .. L["If you want more fonts, you should install the addon 'SharedMedia'."],
+								get = function() return self:GetSetting("Font") end,
+								set = function(info, value)
+									self:SetSetting("Font", value)
+								end,
+								values = function(info)
+									return LibSharedMedia:HashTable("font")
+								end,
+								hidden = function(info)
+									return not LibSharedMedia
+								end,
+								dialogControl = AceGUI.WidgetRegistry["LSM30_Font"] and "LSM30_Font" or nil,
+								order = 3,
+							},
+							fontsize = {
+								type = 'range',
+								name = L["Font Size"],
+								desc = L["The font size of the text."],
+								get = function() return self:GetSetting("FontSize") end,
+								set = function(info, value)
+									self:SetSetting("FontSize", value)
+								end,
+								min = 2,
+								max = 32,
+								step = 1,
+								order = 4,
+							},
+						},
 					},
 				},
 			},
@@ -505,7 +570,7 @@ function BrokerXPBar:SetupOptions()
 						set = function()
 							self:ToggleSetting("BlizzRep")
 						end,
-						order = 6
+						order = 6,
 					},
 				},
 			},
@@ -525,7 +590,7 @@ function BrokerXPBar:SetupOptions()
 							self:SetSetting("ShowText", showtext.opt2val[value])
 						end,
 						values = showtext.opt2txt,
-						order = 1
+						order = 1,
 					},
 					togo = {
 						type = 'toggle',
@@ -535,7 +600,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("ToGo") 
 						end,
-						order = 2
+						order = 2,
 					},
 					faction = {
 						type = 'toggle',
@@ -545,7 +610,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("ShowFactionName") 
 						end,
-						order = 3
+						order = 3,
 					},
 					values = {
 						type = 'toggle',
@@ -555,7 +620,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("ShowValues") 
 						end,
-						order = 4
+						order = 4,
 					},
 					perc = {
 						type = 'toggle',
@@ -565,7 +630,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("ShowPercentage") 
 						end,
-						order = 5
+						order = 5,
 					},
 					colored = {
 						type = 'toggle',
@@ -575,7 +640,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("ColoredText") 
 						end,
-						order = 6
+						order = 6,
 					},
 					separators = {
 						type = 'toggle',
@@ -585,7 +650,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("Separators") 
 						end,
-						order = 7
+						order = 7,
 					},
 					abbreviations = {
 						type = 'toggle',
@@ -595,7 +660,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("Abbreviations") 
 						end,
-						order = 8
+						order = 8,
 					},
 					tooltipabbrev = {
 						type = 'toggle',
@@ -605,7 +670,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("TTAbbreviations")
 						end,
-						order = 9
+						order = 9,
 					},
 					decimalplaces = {
 						type = 'select',
@@ -616,7 +681,7 @@ function BrokerXPBar:SetupOptions()
 							self:SetSetting("DecimalPlaces", value) 
 						end,
 						values = { [0] = "0", [1] = "1", [2] = "2", [3] = "3" },
-						order = 10
+						order = 10,
 					},
 				},
 			},
@@ -633,7 +698,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("AutoTrackOnGain")
 						end,
-						order = 1
+						order = 1,
 					},
 					loss = {
 						type = 'toggle',
@@ -643,7 +708,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("AutoTrackOnLoss") 
 						end,
-						order = 2
+						order = 2,
 					},
 				},
 			},
@@ -663,7 +728,7 @@ function BrokerXPBar:SetupOptions()
 						min = 0,
 						max = 120,
 						step = 1,
-						order = 1
+						order = 1,
 					},
 					weight = {
 						type = 'range',
@@ -676,7 +741,7 @@ function BrokerXPBar:SetupOptions()
 						min = 0,
 						max = 1,
 						step = 0.01,
-						order = 2
+						order = 2,
 					},
 				},
 			},
@@ -693,7 +758,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("MaxHideXPText")
 						end,
-						order = 1
+						order = 1,
 					},
 					hidexpbar = {
 						type = 'toggle',
@@ -703,7 +768,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("MaxHideXPBar")
 						end,
-						order = 2
+						order = 2,
 					},
 					hidereptxt = {
 						type = 'toggle',
@@ -713,7 +778,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("MaxHideRepText")
 						end,
-						order = 3
+						order = 3,
 					},
 					hiderepbar = {
 						type = 'toggle',
@@ -723,7 +788,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("MaxHideRepBar")
 						end,
-						order = 4
+						order = 4,
 					},
 				},
 			},
@@ -749,7 +814,7 @@ function BrokerXPBar:SetupOptions()
 				set  = function()
 					self:ToggleSetting("ShowBlizzBars") 
 				end,
-				order = 2
+				order = 2,
 			},
 			minimap = {
 				type = 'toggle',
@@ -759,7 +824,7 @@ function BrokerXPBar:SetupOptions()
 				set  = function()
 					self:ToggleSetting("Minimap")
 				end,
-				order = 3
+				order = 3,
 			},
 			hint = {
 				type = 'toggle',
@@ -769,7 +834,7 @@ function BrokerXPBar:SetupOptions()
 				set  = function()
 					self:ToggleSetting("HideHint")
 				end,
-				order = 4
+				order = 4,
 			},
 		}
 	}
@@ -843,6 +908,10 @@ end
 
 function BrokerXPBar:UpdateTextureSetting()
 	self.Bar:SetSetting("Texture", self:GetSetting("ExternalTexture") and self:GetSetting("Texture") or nil)
+end
+
+function BrokerXPBar:UpdateBarTextSetting()
+	self:UpdateBar()
 end
 
 function BrokerXPBar:UpdateRepColorSetting()

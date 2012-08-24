@@ -1,7 +1,7 @@
 ## Interface: 40300
 ## Title: Broker: |cffffffffXP|rBar
 ## Notes: Lightweight XP Bar for Broker Bars
-## Version: 1.5 r026
+## Version: 1.6 r027
 ## Author: tritium
 ## X-Credits: Wobin (For the original Fubar - XPFu)
 ## X-Category: Interface Enhancements
