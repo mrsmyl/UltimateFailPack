@@ -40,14 +40,16 @@ function ItemData:OnEnable()
 	
 	-- TheUndermineJournal
 	if select(4, GetAddOnInfo("TheUndermineJournal")) == 1 and TUJMarketInfo then
-		TSMAPI:AddPriceSource("TUJMarket",L["TheUndermineJournal - Market Price"], function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).market end)
-		TSMAPI:AddPriceSource("TUJMean",L["TheUndermineJournal - Mean"], function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketaverage end)
+		TSMAPI:AddPriceSource("TUJMarket","TUJ RE - Market Price", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).market end)
+		TSMAPI:AddPriceSource("TUJMean","TUJ RE - Mean", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketaverage end)
+		TSMAPI:AddPriceSource("TUJGEMarket","TUJ GE - Market Average", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).gemarketaverage end)
+		TSMAPI:AddPriceSource("TUJGEMedian","TUJ GE - Market Median", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).gemarketmedian end)
 	end
 	
 	-- TheUndermineJournalGE
 	if select(4, GetAddOnInfo("TheUndermineJournalGE")) == 1 and TUJMarketInfo then
-		TSMAPI:AddPriceSource("TUJGEMarket","TheUndermineJournalGE - Market Average", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketaverage end)
-		TSMAPI:AddPriceSource("TUJGEMedian","TheUndermineJournalGE - Market Median", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketmedian end)
+		TSMAPI:AddPriceSource("TUJGEMarket","TUJ GE - Market Average", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketaverage end)
+		TSMAPI:AddPriceSource("TUJGEMedian","TUJ GE - Market Median", function(itemLink, itemID) return itemID~=0 and (TUJMarketInfo(itemID) or {}).marketmedian end)
 	end
 	
 	-- Crafting

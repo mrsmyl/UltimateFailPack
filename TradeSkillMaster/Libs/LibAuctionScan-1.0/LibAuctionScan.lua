@@ -1,5 +1,4 @@
 
-
 local MAJOR, MINOR = "LibAuctionScan-1.0", 1
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -281,9 +280,15 @@ do
 			end
 		end
 
-		-- sort the auction house by name < buyout
-		SortAuctionsAscending("buyout")
-		SortAuctionsAscending("name")
+		if scanOptions.ShouldStop then
+			-- sort the auction house by buyout < name
+			SortAuctionsAscending("name")
+			SortAuctionsAscending("buyout")
+		else
+			-- sort the auction house by name < buyout
+			SortAuctionsAscending("buyout")
+			SortAuctionsAscending("name")
+		end
 
 		if not status.AH then
 			return -1 -- the auction house isn't open (return code -1)
@@ -304,9 +309,11 @@ do
 
 		for i=1, #scanQueue do
 			if type(scanQueue[i]) ~= "table" then
+				local isNum = tonumber(scanQueue[i]) and true
 				local itemString = GetItemString(scanQueue[i])
 				if itemString then
 					scanQueue[i] = lib:GetAuctionQueryInfo(itemString)
+					scanQueue[i].exactOnly = not isNum
 					scanQueue[i].arg = itemString
 				else
 					return -3 -- the scan queue contained invalid entries (return code -3)
@@ -331,6 +338,11 @@ do
 		status.isScanning = true -- used to prevent functions from running when we're not supposed to be scanning
 		status.callbackHandler = callbackHandler
 		status.options = scanOptions -- any special options for this scan
+		status.ShouldStop = function(link, count, buyout)
+			if scanOptions.ShouldStop and link and select(8, GetItemInfo(link)) == count and buyout then
+				return scanOptions.ShouldStop(link, buyout/count)
+			end
+		end
 
 		--starts scanning
 		private:SendQuery()
@@ -419,7 +431,7 @@ do
 		
 		-- now that we know our query is good, time to verify and then store our data
 		for _, v in ipairs(temp) do
-			local newItem = private:AddAuctionRecord(v.index)
+			local newItem, shouldStop = private:AddAuctionRecord(v.index)
 			if newItem and status.filter.isCombinedFilter then
 				if type(newItem) == "table" then
 					for _, itemString in ipairs(newItem) do
@@ -438,13 +450,17 @@ do
 						break
 					end
 				end
+			elseif shouldStop and not status.filter.isCombinedFilter and not newItem then
+				isDone = true
+				status.filter.exactOnly = not status.options.ShouldStop and "done"
+				break
 			end
 		end
 		
-		if not isDone then
+		if not isDone or status.filter.exactOnly == "done" then
 			-- This query has more pages to scan
 			-- increment the page # and send the new query
-			if totalPages > (status.page + 1) then
+			if status.filter.exactOnly ~= "done" and totalPages > (status.page + 1) then
 				status.page = status.page + 1
 				private:SendQuery()
 				return
@@ -539,7 +555,12 @@ do
 			status.data[itemString]:SetItemLink(link)
 		end
 		status.data[itemString]:AddAuctionRecord(count, minBid, minIncrement, buyout, bid, highBidder, seller or status.options.missingSellerName, timeLeft)
-		return newItem
+
+		local exactOnly = status.filter.exactOnly ~= 0 and status.filter.exactOnly
+		if exactOnly and not status.filter.isCombinedFilter and not newItem and not status.options.ShouldStop then
+			return nil, strlower(name) > strlower(status.filter.name)
+		end
+		return newItem, status.ShouldStop(link, count, buyout)
 	end
 
 	-- stops the scan when we are finished scanning, it was interrupted, or somebody stopped it
@@ -601,7 +622,7 @@ do
 					-- check if we are done scanning or not
 					if self.num == self.numShown then
 						-- bug with getall scan only being able to return a max of 42554 auctions
-						if self.num == 42554 then
+						if self.num ~= self.totalNum then
 							DoCallback("GETALL_BUG")
 						end
 						
@@ -633,7 +654,7 @@ do
 			if self.delay <= 0 then
 				if GetNumAuctionItems("list") > 50 then
 					-- data is ready to be scanned!
-					scanFrame.numShown = GetNumAuctionItems("list")
+					scanFrame.numShown, scanFrame.totalNum = GetNumAuctionItems("list")
 					self:Hide()
 					scanFrame:Show()
 				else
@@ -673,6 +694,7 @@ do
 			status.data = {} -- the data we've scanned so far
 			status.isScanning = "getAll" -- used to prevent functions from running when we're not supposed to be scanning
 			status.callbackHandler = callbackHandler
+			status.ShouldStop = function() end
 		
 			QueryAuctionItems("", "", "", nil, nil, nil, nil, nil, nil, true)
 			

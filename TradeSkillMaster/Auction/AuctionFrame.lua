@@ -15,9 +15,9 @@ function TSMAPI:RegisterAuctionFunction(moduleName, obj, buttonText, buttonDesc)
 		return nil, "No module registered under name: " .. moduleName
 	end
 	
-	buttonDesc = "|cff99ffff" .. moduleName .. "|r\n\n" .. (buttonDesc or "")
+	buttonDesc = TSMAPI.Design:GetInlineColor("link2")..moduleName.."|r\n\n"..(buttonDesc or "")
 	
-	tinsert(private.modes, private:GetModeObject(obj, buttonText, buttonDesc))
+	tinsert(private.modes, private:GetModeObject(obj, buttonText, buttonDesc, moduleName))
 end
 
 function private:ADDON_LOADED(event, addonName)
@@ -39,7 +39,7 @@ function private:InitializeAHTab()
 
 	local frame = CreateFrame("Button", "AuctionFrameTab"..n, AuctionFrame, "AuctionTabTemplate")
 	frame:SetID(n)
-	frame:SetText("|cff99ffffTSM|r")
+	frame:SetText(TSMAPI.Design:GetInlineColor("link2").."TSM|r")
 	frame:SetNormalFontObject(GameFontHighlightSmall)
 	frame.isTSMTab = true
 	frame:SetPoint("LEFT", _G["AuctionFrameTab"..n-1], "RIGHT", -8, 0)
@@ -61,11 +61,8 @@ function private:InitializeAHTab()
 				TSMAuctionFrame:SetAlpha(1)
 				TSMAuctionFrame:SetFrameStrata(AuctionFrame:GetFrameStrata())
 				TSMAuctionFrame:SetFrameLevel(AuctionFrame:GetFrameLevel() + 1)
-			elseif not TSMAuctionFrame:IsVisible() then
-				private:HideAHTab()
 			elseif TSMAuctionFrame.isAttached then
-				TSMAuctionFrame:SetAlpha(0)
-				TSMAuctionFrame:SetFrameStrata("LOW")
+				private:MinimizeAHTab()
 			end
 		end, true)
 	
@@ -73,8 +70,8 @@ function private:InitializeAHTab()
 	-- This probably doesn't have to be a SecureHook, but does need to be a Post-Hook.
 	private:SecureHook("ContainerFrameItemButton_OnModifiedClick", function(self)
 			local tab = _G["AuctionFrameTab"..PanelTemplates_GetSelectedTab(AuctionFrame)]
-			if tab ~= private.auctionFrameTab and not TSMAuctionFrame:IsVisible() then
-				private:HideAHTab()
+			if tab ~= private.auctionFrameTab and TSMAuctionFrame:IsVisible() and TSMAuctionFrame.isAttached then
+				private:MinimizeAHTab()
 			end
 		end)
 end
@@ -107,20 +104,29 @@ function private:OnTabClick()
 	AuctionFrameBotLeft:SetTexture("Interface\\AuctionFrame\\UI-AuctionFrame-Browse-BotLeft")
 	AuctionFrameBot:SetTexture("Interface\\AuctionFrame\\UI-AuctionFrame-Auction-Bot")
 	AuctionFrameBotRight:SetTexture("Interface\\AuctionFrame\\UI-AuctionFrame-Bid-BotRight")
-	AuctionFrameMoneyFrame:Show()
+	AuctionFrameMoneyFrame:Hide()
+	AuctionFrameCloseButton:Hide()
+	private:RegisterEvent("PLAYER_MONEY")
+	
+	TSMAPI:CreateTimeDelay("hideAHMoneyFrame", .1, function() AuctionFrameMoneyFrame:Hide() end)
+	
+	TSMAPI.Design:SetFrameBackdropColor(TSMAuctionFrame)
+	AuctionFrameTab1:SetPoint("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 15, 1)
 	
 	if not private.frame then
 		private:CreateAHTab()
 	end
 	private.frame:Show()
+	TSMAuctionFrame.moneyText:SetMoney(GetMoney())
 end
 
-function private:HideAHTab()
-	if not private.frame then return end
-	private.frame:Hide()
-	private:HideCurrentMode()
-	if private.confirmation then private.confirmation:Hide() end
-	private:UnregisterEvent("AUCTION_ITEM_LIST_UPDATE")
+function private:MinimizeAHTab()
+	AuctionFrameMoneyFrame:Show()
+	AuctionFrameCloseButton:Show()
+	AuctionFrameTab1:SetPoint("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 15, 12)
+	
+	TSMAuctionFrame:SetAlpha(0)
+	TSMAuctionFrame:SetFrameStrata("LOW")
 end
 
 function private:HideCurrentMode()
@@ -129,10 +135,46 @@ function private:HideCurrentMode()
 	private.mode = nil
 end
 
+function private:PLAYER_MONEY()
+	TSMAuctionFrame.moneyText:SetMoney(GetMoney())
+end
+
 function private:CreateAHTab()
-	local btn = TSMAPI:GetGUIFunctions():CreateButton(TSMAuctionFrame, nil, "control", 0, "CENTER")
-	btn:SetPoint("TOPRIGHT", -85, -17)
-	btn:SetHeight(14)
+	local iconFrame = CreateFrame("Frame", nil, TSMAuctionFrame)
+	iconFrame:SetPoint("CENTER", TSMAuctionFrame, "TOPLEFT", 30, -30)
+	iconFrame:SetHeight(100)
+	iconFrame:SetWidth(100)
+	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
+	icon:SetAllPoints()
+	icon:SetTexture("Interface\\Addons\\TradeSkillMaster\\Media\\TSM_Icon_Big")
+	local ag = iconFrame:CreateAnimationGroup()
+	local spin = ag:CreateAnimation("Rotation")
+	spin:SetOrder(1)
+	spin:SetDuration(2)
+	spin:SetDegrees(90)
+	local spin = ag:CreateAnimation("Rotation")
+	spin:SetOrder(2)
+	spin:SetDuration(4)
+	spin:SetDegrees(-180)
+	local spin = ag:CreateAnimation("Rotation")
+	spin:SetOrder(3)
+	spin:SetDuration(2)
+	spin:SetDegrees(90)
+	ag:SetLooping("REPEAT")
+	iconFrame:SetScript("OnEnter", function() ag:Play() end)
+	iconFrame:SetScript("OnLeave", function() ag:Stop() end)
+	
+	local moneyText = TSMAPI.GUI:CreateTitleLabel(TSMAuctionFrame, 16)
+	moneyText:SetPoint("BOTTOMLEFT", 8, 12)
+	TSMAPI.Design:SetIconRegionColor(moneyText)
+	moneyText.SetMoney = function(self, money)
+		self:SetText(TSMAPI:FormatTextMoneyIcon(money))
+	end
+	TSMAuctionFrame.moneyText = moneyText
+	
+	local btn = TSMAPI.GUI:CreateButton(TSMAuctionFrame, 16)
+	btn:SetPoint("TOPRIGHT", -85, 15)
+	btn:SetHeight(20)
 	btn:SetWidth(150)
 	btn:SetText("Detach TSM Tab")
 	btn.tooltip = function()
@@ -156,12 +198,14 @@ function private:CreateAHTab()
 				private.auctionFrameTab:Hide()
 				AuctionFrameTab1:Click()
 				self:SetText(L["Attach TSM Tab"])
+				AuctionFrameTab1:SetPoint("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 15, 12)
 			else
 				TSMAuctionFrame.isAttached = true
 				TSMAuctionFrame:SetAllPoints(AuctionFrame)
 				private.auctionFrameTab:Show()
 				private.auctionFrameTab:Click()
 				self:SetText(L["Detach TSM Tab"])
+				AuctionFrameTab1:SetPoint("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 15, 2)
 			end
 		end)
 	btn:SetScript("OnShow", function() btn:SetText(L["Detach TSM Tab"]) end)
@@ -197,23 +241,22 @@ end
 function private:CreateContentFrame(parent)
 	local frame = CreateFrame("Frame")
 	parent:AddSecureChild(frame)
-	frame:SetPoint("TOPLEFT", 185, -99)
-	frame:SetWidth(639)
-	frame:SetHeight(310)
-	return frame
+	frame:SetPoint("TOPLEFT", 4, -80)
+	frame:SetPoint("BOTTOMRIGHT", -4, 35)
+	TSMAPI.Design:SetFrameColor(frame)
+	local content = CreateFrame("Frame", nil, frame)
+	content:SetPoint("TOPLEFT", 181, -8)
+	content:SetPoint("BOTTOMRIGHT", -8, 8)
+	TSMAPI.Design:SetContentColor(content)
+	return content
 end
 
 function private:CreateControlFrame(parent)
 	local frame = CreateFrame("Frame")
 	parent:AddSecureChild(frame)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-	})
-	frame:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
 	frame:SetHeight(24)
 	frame:SetWidth(390)
-	frame:SetPoint("BOTTOMRIGHT", -20, 13)
+	frame:SetPoint("BOTTOMRIGHT", -20, 6)
 
 	local cb = GUI:CreateCheckBox(frame, L["Show stacks as price per item"], 210, {"TOPLEFT", -240, 0}, "")
 	cb:SetValue(TSM.db.global.pricePerUnit)
@@ -225,12 +268,18 @@ function private:CreateControlFrame(parent)
 	cb.frame:Hide()
 	frame.checkBox = cb
 	
-	local button = GUI:CreateButton(frame, "TSMAHTabCloseButton", "action", 3, "CENTER")
-	button:SetPoint("TOPLEFT", 325, 0)
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabCloseButton")
+	button:SetPoint("TOPLEFT", 330, 0)
 	button:SetWidth(75)
 	button:SetHeight(24)
 	button:SetText(CLOSE)
-	button:SetScript("OnClick", function() TSMAuctionFrameCloseButton:Click() end)
+	button:SetScript("OnClick", function()
+			if TSMAuctionFrame.isAttached then
+				CloseAuctionHouse()
+			else
+				TSMAuctionFrame:OnManualClose()
+			end
+		end)
 	frame.close = button
 	
 	return frame
@@ -238,24 +287,35 @@ end
 
 local BUTTON_HEIGHT = 26
 function private:CreateSidebarButtons(parent)
-	local frame = CreateFrame("Frame")
-	parent:AddSecureChild(frame)
-	frame:SetPoint("TOPLEFT", 20, -103)
-	frame:SetHeight(304)
-	frame:SetWidth(160)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-	})
-	frame:SetBackdropColor(0, 0, 0, 1)
-
-	local buttons = {}
-	local numButtons = #private.modes
-	local spacing = min(TSMAPI:SafeDivide(frame:GetHeight() - 8 - numButtons*BUTTON_HEIGHT, numButtons - 1) + BUTTON_HEIGHT, frame:GetHeight())
+	local function CreateSidebarButtonContainer(titleText)
+		titleText = gsub(titleText, "TradeSkillMaster_", "")
+		local frame = CreateFrame("Frame")
+		parent:AddSecureChild(frame)
+		frame:SetWidth(160)
+		TSMAPI.Design:SetFrameColor(frame)
+		
+		local title = frame:CreateFontString(nil, "OVERLAY")
+		title:SetPoint("CENTER", frame, "TOP")
+		title:SetJustifyH("CENTER")
+		title:SetJustifyV("CENTER")
+		title:SetFont(TSMAPI.Design:GetBoldFont(), 16)
+		title:SetText(titleText)
+		TSMAPI.Design:SetIconRegionColor(title)
+		
+		local titleBG = frame:CreateTexture(nil, "ARTWORK")
+		titleBG:SetPoint("TOPLEFT", title, -2, 0)
+		titleBG:SetPoint("BOTTOMRIGHT", title, 2, 0)
+		TSMAPI.Design:SetFrameColor(titleBG)
+		
+		return frame
+	end
 	
+	local buttonFrames = {}
 	local function UnlockAllHighlight()
-		for i, button in ipairs(buttons) do
-			button:UnlockHighlight()
+		for _, frame in ipairs(buttonFrames) do
+			for _, button in ipairs(frame.buttons) do
+				button:UnlockHighlight()
+			end
 		end
 	end
 	
@@ -266,33 +326,75 @@ function private:CreateSidebarButtons(parent)
 		end
 	end
 	
-	for i=1, numButtons do
-		local btn = GUI:CreateButton(frame, nil, "feature", 3, "LEFT", true)
-		btn:SetPoint("TOPLEFT", 3, -((i-1)*spacing+4))
-		btn:SetWidth(frame:GetWidth() - 6)
-		btn:SetHeight(BUTTON_HEIGHT)
-		btn:SetText(private.modes[i].buttonText)
-		btn:SetScript("OnMouseUp", function(self, button)
-				UnlockAllHighlight()
-				self:LockHighlight()
-				private:OnSidebarButtonClick(private.modes[i], button)
-			end)
-		btn:SetScript("OnEnter", function(self)
-				if private.modes[i].buttonDesc then
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					GameTooltip:AddLine(private.modes[i].buttonDesc, 1, 1, 1, true)
-					GameTooltip:Show()
-				end
-			end)
-		btn:SetScript("OnLeave", function()
-				GameTooltip:ClearLines()
-				GameTooltip:Hide()
-			end)
-		btn:Hide()
-		btn:SetScript("OnShow", OnShow)
-		btn.flag = (private.modes[i].obj.moduleName == "Search")
-		btn:Show()
-		buttons[i] = btn
+	local buttonInfo, modules = {}, {}
+	for _, mode in ipairs(private.modes) do
+		modules[mode.module] = modules[mode.module] or {}
+		tinsert(modules[mode.module], mode)
+	end
+	for module, modes in pairs(modules) do
+		local moduleButtons = {module=module, modes=modes}
+		tinsert(buttonInfo, moduleButtons)
+	end
+	sort(buttonInfo, function(a, b) return a.module < b.module end)
+	
+	for i, moduleInfo in ipairs(buttonInfo) do
+		local frame = CreateSidebarButtonContainer(moduleInfo.module)
+		tinsert(buttonFrames, frame)
+		local buttons = {}
+		frame.buttons = buttons
+		for j, mode in ipairs(moduleInfo.modes) do
+			local btn = CreateFrame("Button", nil, frame)
+			tinsert(buttons, btn)
+			local highlight = btn:CreateTexture(nil, "HIGHLIGHT")
+			highlight:SetAllPoints()
+			highlight:SetTexture(0, 0, 0, .1)
+			highlight:SetBlendMode("BLEND")
+			btn.highlight = highlight
+			if j == 1 then
+				btn:SetPoint("TOPLEFT", 4, -22)
+				btn:SetPoint("TOPRIGHT", -4, -22)
+			else
+				btn:SetPoint("TOPLEFT", buttons[j-1], "BOTTOMLEFT", 0, -4)
+				btn:SetPoint("TOPRIGHT", buttons[j-1], "BOTTOMRIGHT", 0, -4)
+			end
+			btn:SetHeight(22)
+			btn:SetScript("OnClick", nil)
+			btn:Show()
+			local label = TSMAPI.GUI:CreateTitleLabel(btn, 18)
+			label:SetPoint("TOP")
+			label:SetJustifyH("CENTER")
+			label:SetJustifyV("CENTER")
+			label:SetHeight(18)
+			label:SetText(mode.buttonText)
+			btn:SetFontString(label)
+			btn:SetScript("OnMouseUp", function(self, button)
+					UnlockAllHighlight()
+					self:LockHighlight()
+					private:OnSidebarButtonClick(mode, button)
+				end)
+			btn:SetScript("OnEnter", function(self)
+					if mode.buttonDesc then
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						GameTooltip:AddLine(mode.buttonDesc, 1, 1, 1, true)
+						GameTooltip:Show()
+					end
+				end)
+			btn:SetScript("OnLeave", function()
+					GameTooltip:ClearLines()
+					GameTooltip:Hide()
+				end)
+			btn:Hide()
+			btn:SetScript("OnShow", OnShow)
+			btn.flag = (mode.obj.moduleName == "Search")
+			btn:Show()
+		end
+		
+		if i == 1 then
+			frame:SetPoint("TOPLEFT", 15, -100)
+		else
+			frame:SetPoint("TOPLEFT", buttonFrames[i-1], "BOTTOMLEFT", 0, -15)
+		end
+		frame:SetHeight(#buttons * 22 + 40)
 	end
 end
 
@@ -327,5 +429,5 @@ do
 end
 
 function private:Validate()
-	return TSM.db and tonumber(select(3, strfind(debugstack(), "([0-9]+)"))) == private.num
+	return TSM.db and true -- tonumber(select(3, strfind(debugstack(), "([0-9]+)"))) == private.num
 end

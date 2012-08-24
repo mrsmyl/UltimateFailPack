@@ -113,7 +113,6 @@ local function ShowHelpWindow()
 	window:SetHeight(500)
 	window:SetTitle(helpData.title)
 	window:SetLayout("Fill")
-	window:EnableResize(false)
 	window.frame:SetFrameStrata("TOOLTIP")
 	window:SetCallback("OnClose", function(self) self:ReleaseChildren() end)
 
@@ -171,7 +170,7 @@ local function ShowHelpWindow()
 end
 
 function TSM:CreateHelpButton()
-	local btn = lib:GetGUIFunctions():CreateButton(TSM.Frame.frame, nil, "action2", 2, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(TSM.Frame.frame, 18)
 	btn:SetPoint("TOPRIGHT", -80, 0)
 	btn:SetHeight(15)
 	btn:SetWidth(80)

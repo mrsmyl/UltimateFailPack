@@ -13,6 +13,7 @@ local ROW_HEIGHT = 16
 --[[-----------------------------------------------------------------------------
 Scripts
 -------------------------------------------------------------------------------]]
+
 local function ShowIcon(row)
 	row.iconFrame:Show()
 	row.label:SetPoint("TOPLEFT", 20, 0)
@@ -92,15 +93,18 @@ local function UpdateRows(parent)
 				end
 			end)
 			row:SetScript("OnEnter", function(self)
-				if not self.data.tooltip then return end
+				local tooltip = self.data.tooltip
+				if not tooltip then return end
 				
 				GameTooltip:SetOwner(self, "ANCHOR_NONE")
 				GameTooltip:SetPoint("LEFT", parent:GetParent():GetParent(), "RIGHT")
 				
-				if type(self.data.tooltip) == "number" then
-					GameTooltip:SetHyperlink("item:" .. self.data.tooltip)
+				if type(tooltip) == "number" then
+					GameTooltip:SetHyperlink("item:"..tooltip)
+				elseif type(tooltip) == "string" and strfind(tooltip, "item:") then
+					GameTooltip:SetHyperlink(tooltip)
 				else
-					GameTooltip:AddLine(self.data.tooltip, 1, 1, 1, 1)
+					GameTooltip:AddLine(tooltip, 1, 1, 1, 1)
 				end
 				GameTooltip:Show()
 			end)
@@ -135,14 +139,13 @@ local function UpdateRows(parent)
 			iconTexture:SetVertexColor(1, 1, 1)
 			iconFrame.icon = iconTexture
 			
-			local label = row:CreateFontString(nil, "OVERLAY", GameFontHighlight)
-			local tFile, tSize = GameFontHighlight:GetFont()
-			label:SetFont(tFile, tSize-2)
+			local label = row:CreateFontString(nil, "OVERLAY")
+			label:SetFont(TSMAPI.Design:GetContentFont("normal"))
 			label:SetJustifyH("LEFT")
 			label:SetJustifyV("CENTER")
-			label:SetTextColor(1, 1, 1, 1)
 			label:SetPoint("TOPLEFT", 20, 0)
 			label:SetPoint("BOTTOMRIGHT", 10, 0)
+			TSMAPI.Design:SetWidgetTextColor(label)
 			row.label = label
 			
 			parent.rows[i] = row
@@ -154,13 +157,14 @@ end
 local function OnButtonClick(self)
 	local selected = {}
 	local rows, rowData
+	local parent = self:GetParent():GetParent()
 	
 	if self.type == "Add" then
-		rows = self:GetParent().obj.leftFrame.scrollFrame.rows
-		rowData = self:GetParent().obj.leftFrame.list
+		rows = parent.obj.leftFrame.scrollFrame.rows
+		rowData = parent.obj.leftFrame.list
 	elseif self.type == "Remove" then
-		rows = self:GetParent().obj.rightFrame.scrollFrame.rows
-		rowData = self:GetParent().obj.rightFrame.list
+		rows = parent.obj.rightFrame.scrollFrame.rows
+		rowData = parent.obj.rightFrame.list
 	end
 	if not rows then error("Invalid type") end
 	
@@ -181,7 +185,7 @@ local function OnButtonClick(self)
 		end
 	end
 
-	self:GetParent().obj:Fire("On"..self.type.."Clicked", selected)
+	parent.obj:Fire("On"..self.type.."Clicked", selected)
 end
 
 local illegalChars = {"[", "]", "(", ")"}
@@ -195,9 +199,11 @@ local function OnFilterSet(self,_,value)
 	self.obj:Fire("OnFilterEntered", value)
 end
 
+
 --[[-----------------------------------------------------------------------------
 Methods
 -------------------------------------------------------------------------------]]
+
 local methods = {
 	["OnAcquire"] = function(self)
 		-- restore default values
@@ -215,19 +221,10 @@ local methods = {
 	end,
 	
 	["OnHeightSet"] = function(self, height)
-		if self.parent then
-			TSMAPI:CreateTimeDelay("selectionListHeight", 0.01, function()
-					self.leftScrollFrame.height = self.frame:GetHeight() - 20
-					self.rightScrollFrame.height = self.frame:GetHeight() - 20
-					UpdateRows(self.leftScrollFrame)
-					UpdateRows(self.rightScrollFrame)
-				end)
-		else
-			self.leftScrollFrame.height = self.frame:GetHeight() - 20
-			self.rightScrollFrame.height = self.frame:GetHeight() - 20
-			UpdateRows(self.leftScrollFrame)
-			UpdateRows(self.rightScrollFrame)
-		end
+		self.leftScrollFrame.height = self.frame:GetHeight() - 20
+		self.rightScrollFrame.height = self.frame:GetHeight() - 20
+		UpdateRows(self.leftScrollFrame)
+		UpdateRows(self.rightScrollFrame)
 	end,
 	
 	["SetList"] = function(self, side, list)
@@ -245,9 +242,9 @@ local methods = {
 	
 	["SetTitle"] = function(self, side, title)
 		if strlower(side) == "left" then
-			self.frame.leftTitle:SetText("|cffffbb00"..title)
+			self.frame.leftTitle:SetText(title)
 		elseif strlower(side) == "right" then
-			self.frame.rightTitle:SetText("|cffffbb00"..title)
+			self.frame.rightTitle:SetText(title)
 		elseif strlower(side) == "filter" and title then
 			self.buttonFrame.filterFrame:Show()
 			self.buttonFrame.filterFrame.filter:SetLabel(title)
@@ -290,14 +287,10 @@ local methods = {
 	end,
 }
 
+
 --[[-----------------------------------------------------------------------------
 Constructor
 -------------------------------------------------------------------------------]]
-local frameEdge = {
-	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-	edgeSize = 24,
-	insets = {left = 4, right = 4, top = 4, bottom = 4},
-}
 
 local function Constructor()
 	local borderColor = TSM.db.profile.frameBackdropColor
@@ -308,58 +301,82 @@ local function Constructor()
 	local leftFrame = CreateFrame("Frame", name.."LeftFrame", frame)
 	leftFrame:SetPoint("TOPLEFT", 0, -15)
 	leftFrame:SetPoint("BOTTOMLEFT")
-	leftFrame:SetBackdrop(frameEdge)
-	leftFrame:SetBackdropBorderColor(TSMAPI:GetBorderColor())
+	TSMAPI.Design:SetContentColor(leftFrame)
 	leftFrame:SetWidth(200)
 	leftFrame.list = {}
 	frame.leftFrame = leftFrame
 	
-	local leftTitle = frame:CreateFontString(nil, "OVERLAY", GameFontHighlight)
-	local tFile, tSize = GameFontHighlight:GetFont()
-	leftTitle:SetFont(tFile, tSize-1)
+	local leftTitle = frame:CreateFontString(nil, "OVERLAY")
+	leftTitle:SetFont(TSMAPI.Design:GetContentFont("normal"))
+	TSMAPI.Design:SetTitleTextColor(leftTitle)
 	leftTitle:SetJustifyH("LEFT")
 	leftTitle:SetJustifyV("BOTTOM")
-	leftTitle:SetTextColor(1, 1, 1, 1)
 	leftTitle:SetHeight(15)
 	leftTitle:SetPoint("BOTTOMLEFT", leftFrame, "TOPLEFT", 8, 0)
 	leftTitle:SetPoint("BOTTOMRIGHT", leftFrame, "TOPRIGHT", -8, 0)
 	frame.leftTitle = leftTitle
 	
 	local leftSF = CreateFrame("ScrollFrame", name.."LeftFrameScrollFrame", leftFrame, "FauxScrollFrameTemplate")
-	leftSF:SetPoint("TOPLEFT", 10, -12)
-	leftSF:SetPoint("BOTTOMRIGHT", -28, 8)
+	leftSF:SetPoint("TOPLEFT", 6, -6)
+	leftSF:SetPoint("BOTTOMRIGHT", -6, 6)
 	leftSF:SetScript("OnVerticalScroll", function(self, offset)
 		FauxScrollFrame_OnVerticalScroll(self, offset, ROW_HEIGHT, function() UpdateScrollFrame(self) end) 
 	end)
 	leftFrame.scrollFrame = leftSF
 	
+	local leftScrollBar = _G[leftSF:GetName().."ScrollBar"]
+	leftScrollBar:ClearAllPoints()
+	leftScrollBar:SetPoint("BOTTOMRIGHT")
+	leftScrollBar:SetPoint("TOPRIGHT")
+	leftScrollBar:SetWidth(12)
+	
+	local thumbTex = leftScrollBar:GetThumbTexture()
+	thumbTex:SetPoint("CENTER")
+	TSMAPI.Design:SetFrameColor(thumbTex)
+	thumbTex:SetHeight(150)
+	thumbTex:SetWidth(leftScrollBar:GetWidth())
+	_G[leftScrollBar:GetName().."ScrollUpButton"]:Hide()
+	_G[leftScrollBar:GetName().."ScrollDownButton"]:Hide()
+	
 	local rightFrame = CreateFrame("Frame", name.."RightFrame", frame)
 	rightFrame:SetPoint("TOPRIGHT", 0, -15)
 	rightFrame:SetPoint("BOTTOMRIGHT")
-	rightFrame:SetBackdrop(frameEdge)
-	rightFrame:SetBackdropBorderColor(TSMAPI:GetBorderColor())
+	TSMAPI.Design:SetContentColor(rightFrame)
 	rightFrame:SetWidth(200)
 	rightFrame.list = {}
 	frame.rightFrame = rightFrame
 	
-	local rightTitle = frame:CreateFontString(nil, "OVERLAY", GameFontHighlight)
-	local tFile, tSize = GameFontHighlight:GetFont()
-	rightTitle:SetFont(tFile, tSize-1)
+	local rightTitle = frame:CreateFontString(nil, "OVERLAY")
+	rightTitle:SetFont(TSMAPI.Design:GetContentFont("normal"))
+	TSMAPI.Design:SetTitleTextColor(rightTitle)
 	rightTitle:SetJustifyH("LEFT")
 	rightTitle:SetJustifyV("BOTTOM")
-	rightTitle:SetTextColor(1, 1, 1, 1)
 	rightTitle:SetHeight(15)
 	rightTitle:SetPoint("BOTTOMLEFT", rightFrame, "TOPLEFT", 8, 0)
 	rightTitle:SetPoint("BOTTOMRIGHT", rightFrame, "TOPRIGHT", -8, 0)
 	frame.rightTitle = rightTitle
 	
 	local rightSF = CreateFrame("ScrollFrame", name.."RightFrameScrollFrame", rightFrame, "FauxScrollFrameTemplate")
-	rightSF:SetPoint("TOPLEFT", 10, -12)
-	rightSF:SetPoint("BOTTOMRIGHT", -28, 8)
+	rightSF:SetPoint("TOPLEFT", 6, -6)
+	rightSF:SetPoint("BOTTOMRIGHT", -6, 6)
 	rightSF:SetScript("OnVerticalScroll", function(self, offset)
 		FauxScrollFrame_OnVerticalScroll(self, offset, ROW_HEIGHT, function() UpdateScrollFrame(self) end) 
 	end)
 	rightFrame.scrollFrame = rightSF
+	
+	local rightScrollBar = _G[rightSF:GetName().."ScrollBar"]
+	rightScrollBar:ClearAllPoints()
+	rightScrollBar:SetPoint("BOTTOMRIGHT")
+	rightScrollBar:SetPoint("TOPRIGHT")
+	rightScrollBar:SetWidth(12)
+	
+	local thumbTex = rightScrollBar:GetThumbTexture()
+	thumbTex:SetPoint("CENTER")
+	TSMAPI.Design:SetFrameColor(thumbTex)
+	thumbTex:SetHeight(150)
+	thumbTex:SetWidth(rightScrollBar:GetWidth())
+	_G[rightScrollBar:GetName().."ScrollUpButton"]:Hide()
+	_G[rightScrollBar:GetName().."ScrollDownButton"]:Hide()
 	
 	local buttonFrame = CreateFrame("Frame", name.."ButtonFrame", frame)
 	buttonFrame:SetPoint("CENTER")
@@ -369,9 +386,9 @@ local function Constructor()
 	rightFrame:SetPoint("LEFT", buttonFrame, "RIGHT")
 	
 	local ebFrame = CreateFrame("Frame", nil, buttonFrame)
-	ebFrame:SetPoint("TOPLEFT")
-	ebFrame:SetPoint("TOPRIGHT")
-	ebFrame:SetHeight(50)
+	ebFrame:SetPoint("TOPLEFT", 2, 0)
+	ebFrame:SetPoint("TOPRIGHT", -2, 0)
+	ebFrame:SetHeight(40)
 	buttonFrame.filterFrame = ebFrame
 	
 	local eb = AceGUI:Create("TSMEditBox")
@@ -389,13 +406,14 @@ local function Constructor()
 	eb.editbox:Show()
 	ebFrame.filter = eb
 	
-	local btn = AceGUI:Create("TSMButton").frame
+	local btn = AceGUI:Create("TSMButton").btn
+	local btnFrame = btn:GetParent()
 	btn.type = "Add"
-	btn:SetParent(buttonFrame)
-	btn:SetPoint("TOPLEFT", 0, -100)
-	btn:SetPoint("TOPRIGHT", 0, -100)
-	btn:SetText("|cffffffffAdd>>|r")
-	btn:SetHeight(30)
+	btnFrame:SetParent(buttonFrame)
+	btnFrame:SetPoint("TOPLEFT", 4, -100)
+	btnFrame:SetPoint("TOPRIGHT", -4, -100)
+	btn:SetText("Add >>>")
+	btnFrame:SetHeight(30)
 	btn:SetScript("OnEnter", function(self)
 			if not self.tooltip then return end
 			GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
@@ -405,16 +423,17 @@ local function Constructor()
 	btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	btn:SetScript("OnClick", OnButtonClick)
 	btn.tooltip = "Click to add the selected items to the list on the right."
-	btn:Show()
-	buttonFrame.topButton = btn
+	btnFrame:Show()
+	buttonFrame.topButton = btnFrame
 	
-	local btn = AceGUI:Create("TSMButton").frame
+	local btn = AceGUI:Create("TSMButton").btn
+	local btnFrame = btn:GetParent()
 	btn.type = "Remove"
-	btn:SetParent(buttonFrame)
-	btn:SetPoint("BOTTOMLEFT")
-	btn:SetPoint("BOTTOMRIGHT")
-	btn:SetText("|cffffffff<<Remove|r")
-	btn:SetHeight(30)
+	btnFrame:SetParent(buttonFrame)
+	btnFrame:SetPoint("BOTTOMLEFT", 4, 0)
+	btnFrame:SetPoint("BOTTOMRIGHT", -4, 0)
+	btn:SetText("<<< Remove")
+	btnFrame:SetHeight(30)
 	btn:SetScript("OnEnter", function(self)
 			if not self.tooltip then return end
 			GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
@@ -424,8 +443,8 @@ local function Constructor()
 	btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	btn:SetScript("OnClick", OnButtonClick)
 	btn.tooltip = "Click to remove the selected items from the list on the right."
-	btn:Show()
-	buttonFrame.bottomButton = btn
+	btnFrame:Show()
+	buttonFrame.bottomButton = btnFrame
 
 	local widget = {
 		buttonFrame = buttonFrame,
@@ -446,7 +465,6 @@ local function Constructor()
 	widget.rightFrame.obj = widget
 	widget.frame.obj = widget
 
-	tinsert(TSM.customContainers, widget)
 	return AceGUI:RegisterAsWidget(widget)
 end
 

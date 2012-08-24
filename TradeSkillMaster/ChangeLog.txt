@@ -1,3 +1,14 @@
+v1.4
+*Redesigned the look and feel of the main TSM window and the auction house tab.
+*Added a bunch of new options for customizing the new look.
+*Added the ability to import / export appearance settings.
+*Added a list of importable preset themes for TSM.
+*There is now a hidden gem somewhere in TSM. Find it and something cool will happen :).
+*Removed a few things which will cause errors in patch 5.0.4.
+*Added support for the general stats which are now also included in the TUJ realm edition.
+*TSM will now be packaged with a new version of LibAuctionScan which has significant scan speed improvements.
+*Many other minor bug fixes and improvements.
+
 v1.3
 *Added further warnings for users who may still have TSM_Gathering installed.
 *Fixed error caused by having Auctioneer enabled by not the Appraiser module.
