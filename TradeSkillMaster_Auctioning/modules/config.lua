@@ -20,58 +20,6 @@ local specialSettingKeys = {thresholdPriceMethod="threshold", thresholdPercent="
 	resetMaxCostPriceMethod="resetMaxCost", resetMaxCostPercent="resetMaxCost",
 	resetMinProfitPriceMethod="resetMinProfit", resetMinProfitPercent="resetMinProfit"}
 
--- Make sure the item isn't soulbound
-local scanTooltip
-local resultsCache = {lastClear=GetTime()}
-function Config:IsSoulbound(bag, slot)
-	if GetTime() - resultsCache.lastClear > 0.5 then
-		resultsCache = {lastClear=GetTime()}
-	end
-
-	local slotID = bag.."@"..slot
-	if resultsCache[slotID] ~= nil then return resultsCache[slotID] end
-	
-	if not scanTooltip then
-		scanTooltip = CreateFrame("GameTooltip", "TSMAucScanTooltip", UIParent, "GameTooltipTemplate")
-		scanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	end
-	scanTooltip:ClearLines()
-	scanTooltip:SetBagItem(bag, slot)
-	
-	for id=1, scanTooltip:NumLines() do
-		local text = _G["TSMAucScanTooltipTextLeft" .. id]
-		if text and ((text:GetText() == ITEM_BIND_ON_PICKUP and id < 4) or text:GetText() == ITEM_SOULBOUND or text:GetText() == ITEM_BIND_QUEST) then
-			resultsCache[slotID] = true
-			return true
-		end
-	end
-	
-	resultsCache[slotID] = false
-	return false
-end
-
-function Config:ValidateName(value)
-	for name in pairs(TSM.db.profile.groups) do
-		if strlower(name) == strlower(value) then
-			return false
-		end
-	end
-	for name in pairs(TSM.db.profile.categories) do
-		if strlower(name) == strlower(value) then
-			return false
-		end
-	end
-	return true
-end
-
-function Config:ShouldScan(itemString, mode, groups)
-	local isGroupDisabled = Config:GetBoolConfigValue(itemString, "disabled")
-	local isGroupNoCancel = (mode == "Cancel") and Config:GetBoolConfigValue(itemString, "noCancel")
-	local isGroupCustomDisabled = groups and not groups[TSM.itemReverseLookup[itemString]]
-	
-	return not (isGroupDisabled or isGroupNoCancel or isGroupCustomDisabled)
-end
-
 function Config:GetConfigObject(itemString, noCaching)
 	local configObject = {itemString=itemString, cache=(not noCaching and {})}
 	setmetatable(configObject, {__index=function(self, key)
@@ -202,7 +150,7 @@ function Config:UpdateTree()
 	TSM:UpdateGroupReverseLookup()
 
 	local categoryTreeIndex = {}
-	local treeGroups = {{value=1, text=L["Options"]}, {value=2, text=L["Categories / Groups"], children={{value="~", text="|cffaaff11"..L["<Uncategorized Groups>"].."|r", disabled=true, children={}}}}}
+	local treeGroups = {{value=1, text=L["Options"]}, {value=2, text=L["Categories / Groups"], children={{value="~", text=TSMAPI.Design:GetInlineColor("category2")..L["<Uncategorized Groups>"].."|r", disabled=true, children={}}}}, {value=3, text="Auctioning Wizard"}}
 	local pageNum
 	for categoryName, groups in pairs(TSM.db.profile.categories) do
 		for groupName, v in pairs(groups) do
@@ -210,7 +158,7 @@ function Config:UpdateTree()
 				v = nil
 			end
 		end
-		tinsert(treeGroups[2].children, {value=categoryName, text="|cff99ff99"..categoryName.."|r"})
+		tinsert(treeGroups[2].children, {value=categoryName, text=TSMAPI.Design:GetInlineColor("category")..categoryName.."|r"})
 		categoryTreeIndex[categoryName] = #(treeGroups[2].children)
 	end
 	for name in pairs(TSM.db.profile.groups) do
@@ -271,6 +219,8 @@ function Config:SelectTree(treeFrame, _, selection)
 			end)
 			content:AddChild(tg)
 			tg:SelectTab(1)
+		elseif tonumber(selectedParent) == 3 then
+			TSM.Wizard:DrawWizard(content)
 		else
 			local offsets, previousTab = {}, 1
 			local tg = AceGUI:Create("TSMTabGroup")
@@ -481,7 +431,7 @@ function Config:DrawGeneralOptions(container)
 					children = {
 						{
 							type = "Label",
-							text = format(L["There are two ways of making clicking the Post / Cancel Auction button easier. You can put %s and %s in a macro (on separate lines), or use the utility below to have a macro automatically made and bound to scrollwheel for you."], "\"|cffffbb00/click TSMAuctioningPostButton|r\"", "\"|cffffbb00/click TSMAuctioningCancelButton|r\""),
+							text = format(L["There are two ways of making clicking the Post / Cancel Auction button easier. You can put %s and %s in a macro (on separate lines), or use the utility below to have a macro automatically made and bound to scrollwheel for you."], "\""..TSMAPI.Design:GetInlineColor("link").."/click TSMAuctioningPostButton|r\"", "\""..TSMAPI.Design:GetInlineColor("link").."/click TSMAuctioningCancelButton|r\""),
 							relativeWidth = 1,
 						},
 						{
@@ -608,22 +558,21 @@ function Config:DrawGroupGeneral(container, groupName)
 	end
 	
 	local function GetInfo(num)
-		local color = "|cfffed000"
+		local color = TSMAPI.Design:GetInlineColor("link")
 		local isGroup = not (TSM.db.profile.categories[groupName] or isDefaultPage)
 	
 		if num == 1 then
 			local stacksOver = color..GetValue("ignoreStacksOver").."|r"
 			local stacksUnder = color..GetValue("ignoreStacksUnder").."|r"
-			local maxPriceGap = color..(GetValue("priceThreshold")*100).."%|r"
 			local noCancel = GetValue("noCancel")
 			local disabled = GetValue("disabled")
 			
 			if disabled then
 				return format(L["Items in this group will not be posted or canceled automatically."])
 			elseif noCancel then
-				return format(L["When posting, ignore auctions with more than %s items or less than %s items in them. Ignoring the lowest auction if the price difference between the lowest two auctions is more than %s. Items in this group will not be canceled automatically."], stacksOver, stacksUnder, maxPriceGap)
+				return format(L["When posting, ignore auctions with more than %s items or less than %s items in them. Items in this group will not be canceled automatically."], stacksOver, stacksUnder)
 			else
-				return format(L["When posting and canceling, ignore auctions with more than %s item(s) or less than %s item(s) in them. Ignoring the lowest auction if the price difference between the lowest two auctions is more than %s."], stacksOver, stacksUnder, maxPriceGap)
+				return format(L["When posting and canceling, ignore auctions with more than %s item(s) or less than %s item(s) in them."], stacksOver, stacksUnder)
 			end
 		elseif num == 2 then
 			local duration = color..GetValue("postTime").."|r"
@@ -755,11 +704,11 @@ function Config:DrawGroupGeneral(container, groupName)
 		local goldMethod = TSM.db.profile[key.."PriceMethod"] and TSM.db.profile[key.."PriceMethod"][groupName] == "gold" or not TSM.db.profile[key.."PriceMethod"]
 		
 		if not gold and not silver and not copper and goldMethod then
-			TSMAPI:SetStatusText(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
+			TSM:Print(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
 			editBox:SetFocus()
 			return
 		elseif not percent and TSM.db.profile[key.."PriceMethod"] and TSM.db.profile[key.."PriceMethod"][groupName] ~= "gold" then
-			TSMAPI:SetStatusText(L["Invalid percent format entered, should be \"#%\", \"105%\" is 105 percent."])
+			TSM:Print(L["Invalid percent format entered, should be \"#%\", \"105%\" is 105 percent."])
 			editBox:SetFocus()
 			return
 		elseif gold or silver or copper then
@@ -771,7 +720,6 @@ function Config:DrawGroupGeneral(container, groupName)
 		end
 		
 		editBox:SetText(GetGroupMoney(key))
-		TSMAPI:SetStatusText()
 		container:SelectTab(1)
 	end
 
@@ -900,7 +848,6 @@ function Config:DrawGroupGeneral(container, groupName)
 							type = "Slider",
 							settingInfo = {"ignoreStacksUnder", 1},
 							label = L["Ignore stacks under"],
-							isPercent = false,
 							min = 1,
 							max = 1000,
 							step = 1,
@@ -910,28 +857,21 @@ function Config:DrawGroupGeneral(container, groupName)
 							type = "Slider",
 							settingInfo = {"ignoreStacksOver", 1},
 							label = L["Ignore stacks over"],
-							isPercent = false,
 							min = 1,
 							max = 1000,
 							step = 1,
 							tooltip = L["Items that are stacked beyond the set amount are ignored when calculating the lowest market price."]..unoverrideTooltip,
 						},
 						{
-							type = "Slider",
-							settingInfo = {"priceThreshold", 1, true},
-							label = L["Maximum price gap"],
-							isPercent = true,
-							min = 0.1,
-							max = 10,
-							step = 0.05,
-							tooltip = L["How much of a difference between auction prices should be allowed before posting at the second highest value.\n\nFor example. If Apple is posting Runed Scarlet Ruby at 50g, Orange posts one at 30g and you post one at 29g, then Oranges expires. If you set price threshold to 30% then it will cancel yours at 29g and post it at 49g next time because the difference in price is 42% and above the allowed threshold."]..unoverrideTooltip,
-						},
-						{
 							type = "Dropdown",
 							settingInfo = {"minDuration", 1},
 							label = L["Ignore low duration auctions"],
-							list = {[0]=L["<none>"], [1]=L["short (less than 30 minutes)"], [2]=L["medium (30 minutes - 2 hours)"], [3]=L["long (2 - 12 hours)"]},
+							list = {[0]=L["<none>"], [1]=L["short (less than 30 minutes)"], [2]=L["medium (less than 2 hours)"], [3]=L["long (less than 12 hours)"]},
 							tooltip = L["Any auctions at or below the selected duration will be ignored. Selecting \"<none>\" will cause no auctions to be ignored based on duration."]..unoverrideTooltip,
+						},
+						{
+							type = "Label",
+							relativeWidth = 0.45,
 						},
 						{
 							type = "CheckBox",
@@ -996,7 +936,6 @@ function Config:DrawGroupGeneral(container, groupName)
 							type = "Slider",
 							settingInfo = {"postCap", 2},
 							label = L["Post cap"],
-							isPercent = false,
 							min = 1,
 							max = 500,
 							step = 1,
@@ -1006,7 +945,6 @@ function Config:DrawGroupGeneral(container, groupName)
 							type = "Slider",
 							settingInfo = {"perAuction", 2},
 							label = L["Per auction"],
-							isPercent = false,
 							min = 1,
 							max = 1000,
 							step = 1,
@@ -1436,7 +1374,6 @@ function Config:DrawGroupGeneral(container, groupName)
 							type = "Slider",
 							settingInfo = {"resetMaxQuantity", 7},
 							label = L["Max quantity to buy"],
-							isPercent = false,
 							min = 1,
 							max = 200,
 							step = 1,
@@ -1475,7 +1412,6 @@ function Config:DrawGroupGeneral(container, groupName)
 	
 	local function PreparePage(data)
 		for i=#data, 1, -1 do
-			--if data[i].hidden then
 			if (type(data[i].hidden) == "function" and data[i].hidden()) or (type(data[i].hidden) ~= "function" and data[i].hidden) then
 				tremove(data, i)
 			elseif data[i].onRightClick and isDefaultPage then
@@ -1497,14 +1433,17 @@ function Config:DrawGroupGeneral(container, groupName)
 				end
 				data[i].relativeWidth = data[i].relativeWidth or 0.48
 				data[i].disabled = TSM.db.profile[key][groupName] == nil
-				data[i].disabledTooltip = overrideTooltip
 				
-				data[i].onRightClick = function(self, value)
-					SetGroupOverride(key, value, self)
-					if oldCallback then
-						oldCallback()
+				if not isDefaultPage then
+					data[i].disabledTooltip = overrideTooltip
+					data[i].onRightClick = function(self, value)
+						SetGroupOverride(key, value, self)
+						if oldCallback then
+							oldCallback()
+						end
 					end
 				end
+				
 				if num then
 					local oldCallback = data[i].callback
 					data[i].callback = function(self, _, value)
@@ -1544,7 +1483,7 @@ function Config:DrawProfiles(container)
 		delete_desc = L["Delete existing and unused profiles from the database to save space, and cleanup the SavedVariables file."],
 		delete = L["Delete a Profile"],
 		profiles = L["Profiles"],
-		current = L["Current Profile:"] .. " |cff99ffff" .. TSM.db:GetCurrentProfile() .. "|r",
+		current = L["Current Profile:"] .. " " .. TSMAPI.Design:GetInlineColor("link") .. TSM.db:GetCurrentProfile() .. "|r",
 	}
 	
 	-- Popup Confirmation Window used in this module
@@ -1721,15 +1660,9 @@ end
 
 function Config:DrawItemGroups(container)
 	local function AddGroup(editBox, _, value)
-		local ok, name = pcall(function() return GetItemInfo(value) end)
-		value = ok and name or value
-		value = (strlower(value) or ""):trim()
-		if not Config:ValidateName(value) then
-			TSMAPI:SetStatusText(format(L["Group/Category named \"%s\" already exists!"], value))
-			editBox:SetFocus()
-			return
-		elseif value == "" then
-			TSMAPI:SetStatusText(L["Invalid group name."])
+		local value, errMsg = TSM.Util:ValidateGroupName(value)
+		if not value then
+			TSM:Print(errMsg)
 			editBox:SetFocus()
 			return
 		end
@@ -1742,7 +1675,7 @@ function Config:DrawItemGroups(container)
 			for bag, slot, itemString in TSM:GetBagIterator(true) do
 				if itemString then
 					local name, link = GetItemInfo(itemString)
-					if name and not TSM.itemReverseLookup[itemString] and not Config:IsSoulbound(bag, slot) then
+					if name and not TSM.itemReverseLookup[itemString] and not TSM.Util:IsSoulbound(bag, slot) then
 						local name = gsub(strlower(name), "-", " ")
 						local tempValue = gsub(value, "-", " ")
 						if strfind(name, tempValue) then
@@ -1754,9 +1687,9 @@ function Config:DrawItemGroups(container)
 			end
 			
 			if #addedItems > 5 then
-				TSM:Print(format(L["Added %s items to %s automatically because they contained the group name in their name. You can turn this off in the options."], #addedItems, "\""..value.."\""))
+				TSM:Printf(L["Added %s items to %s automatically because they contained the group name in their name. You can turn this off in the options."], #addedItems, "\""..value.."\"")
 			elseif #addedItems > 0 then
-				TSM:Print(format(L["Added the following items to %s automatically because they contained the group name in their name. You can turn this off in the options."], "\""..value.."\""))
+				TSM:Printf(L["Added the following items to %s automatically because they contained the group name in their name. You can turn this off in the options."], "\""..value.."\"")
 				for i=1, #addedItems do
 					print(addedItems[i])
 				end
@@ -1773,15 +1706,9 @@ function Config:DrawItemGroups(container)
 	end
 	
 	local function AddCategory(editBox, _, value)
-		local ok, name = pcall(function() return GetItemInfo(value) end)
-		value = ok and name or value
-		value = string.trim(strlower(value) or "")
-		if not Config:ValidateName(value) then
-			TSMAPI:SetStatusText(format(L["Group/Category named \"%s\" already exists!"], value))
-			editBox:SetFocus()
-			return
-		elseif value == "" then
-			TSMAPI:SetStatusText(L["Invalid category name."])
+		local value, errMsg = TSM.Util:ValidateGroupName(value)
+		if not value then
+			TSM:Print(errMsg)
 			editBox:SetFocus()
 			return
 		end
@@ -1862,36 +1789,11 @@ local selectedItems = {}
 function Config:DrawQuickCreation(container)
 	TSM:UpdateItemReverseLookup()
 	
-	-- local function SelectItemsMatching(selectionList, _, value)
-		-- value = strlower(value:trim())
-		-- selectionList:UnselectAllItems()
-		-- if not value or value == "" then return end
-		
-		-- local itemList = {}
-		-- for bag, slot, itemString in TSM:GetBagIterator(true) do
-			-- if itemString then
-				-- local name = GetItemInfo(itemString)
-				-- if name and strmatch(strlower(name), value) and not TSM.itemReverseLookup[itemString] and not Config:IsSoulbound(bag, slot) then
-					-- tinsert(itemList, itemString)
-				-- end
-			-- end
-		-- end
-		
-		-- for itemString in pairs(TSM.db.profile.groups[group]) do
-			-- local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemString)
-			-- if name and strmatch(strlower(name), value) then
-				-- tinsert(itemList, itemString)
-			-- end
-		-- end
-		
-		-- selectionList:SelectItems(itemList)
-	-- end
-	
 	local itemsToAdd = {}
 
 	local ungroupedItems, usedLinks = {}, {}
 	for bag, slot, itemString in TSM:GetBagIterator(true) do
-		if itemString and not Config:IsSoulbound(bag, slot) then
+		if itemString and not TSM.Util:IsSoulbound(bag, slot) then
 			local link = GetContainerItemLink(bag, slot)
 			local itemID = TSMAPI:GetItemID(link)
 			if not usedLinks[itemString] and not TSM.itemReverseLookup[itemString] and not TSM.itemReverseLookup[itemID] then
@@ -1933,7 +1835,7 @@ function Config:DrawQuickCreation(container)
 				end
 			end
 			
-			TSM.db.profile.groups[groupName] = {}
+			TSM.db.profile.groups[groupName] = {[itemString]=true}
 			
 			if selectedCategory ~= "<Uncategorized Groups>" then
 				TSM.db.profile.categories[selectedCategory][groupName] = true
@@ -2014,26 +1916,25 @@ end
 function Config:DrawWhitelist(container)
 	local function AddPlayer(self, _, value)
 		value = string.trim(strlower(value or ""))
-		if value == "" then return TSMAPI:SetStatusText(L["No name entered."]) end
+		if value == "" then return TSM:Print(L["No name entered."]) end
 		
 		if TSM.db.factionrealm.whitelist[value] then
-			TSMAPI:SetStatusText(format(L["The player \"%s\" is already on your whitelist."], TSM.db.factionrealm.whitelist[value]))
+			TSM:Printf(L["The player \"%s\" is already on your whitelist."], TSM.db.factionrealm.whitelist[value])
 			return
 		end
 		
 		if TSM.db.factionrealm.blacklist[value] then
-			TSMAPI:SetStatusText(L["You can not whitelist characters whom are on your blacklist."])
+			TSM:Print(L["You can not whitelist characters whom are on your blacklist."])
 			return
 		end
 		
 		for player in pairs(TSM.db.factionrealm.player) do
 			if strlower(player) == value then
-				TSMAPI:SetStatusText(format(L["You do not need to add \"%s\", alts are whitelisted automatically."], player))
+				TSM:Printf(L["You do not need to add \"%s\", alts are whitelisted automatically."], player)
 				return
 			end
 		end
 		
-		TSMAPI:SetStatusText()
 		TSM.db.factionrealm.whitelist[strlower(value)] = value
 		self.parent.parent.parent:SelectTab(2)
 	end
@@ -2115,26 +2016,25 @@ end
 function Config:DrawBlacklist(container)
 	local function AddPlayer(self, _, value)
 		value = string.trim(strlower(value or ""))
-		if value == "" then return TSMAPI:SetStatusText(L["No name entered."]) end
+		if value == "" then return TSM:Print(L["No name entered."]) end
 		
 		if TSM.db.factionrealm.blacklist[value] then
-			TSMAPI:SetStatusText(format(L["The player \"%s\" is already on your blacklist."], TSM.db.factionrealm.blacklist[value]))
+			TSM:Printf(L["The player \"%s\" is already on your blacklist."], TSM.db.factionrealm.blacklist[value])
 			return
 		end
 		
 		if TSM.db.factionrealm.whitelist[value] then
-			TSMAPI:SetStatusText(L["You can not blacklist characters whom are on your whitelist."])
+			TSM:Print(L["You can not blacklist characters whom are on your whitelist."])
 			return
 		end
 		
 		for player in pairs(TSM.db.factionrealm.player) do
 			if strlower(player) == value then
-				TSMAPI:SetStatusText(L["You can not blacklist yourself."])
+				TSM:Print(L["You can not blacklist yourself."])
 				return
 			end
 		end
 		
-		TSMAPI:SetStatusText()
 		TSM.db.factionrealm.blacklist[strlower(value)] = value
 		self.parent.parent.parent:SelectTab(3)
 	end
@@ -2216,20 +2116,13 @@ end
 function Config:DrawGroupManagement(container, group)
 	TSM:UpdateGroupReverseLookup()
 	local function RenameGroup(self, _, value)
-		local ok, name = pcall(function() return GetItemInfo(value) end)
-		value = ok and name or value
-		TSM:UpdateGroupReverseLookup()
-		value = string.trim(strlower(value or ""))
-		if not Config:ValidateName(value) then
-			TSMAPI:SetStatusText(format(L["Group/Category named \"%s\" already exists!"], value))
-			self:SetFocus()
-			return
-		elseif value == "" then
-			TSMAPI:SetStatusText(L["Invalid group name."])
+		local value, errMsg = TSM.Util:ValidateGroupName(value)
+		if not value then
+			TSM:Print(errMsg)
 			return
 		end
 		
-		TSMAPI:SetStatusText()
+		TSM:UpdateGroupReverseLookup()
 		TSM.db.profile.groups[value] = CopyTable(TSM.db.profile.groups[group])
 		TSM.db.profile.groups[group] = nil
 		for key, data in pairs(TSM.db.profile) do
@@ -2370,7 +2263,7 @@ function Config:DrawAddRemoveItem(container, group)
 		for bag, slot, itemString in TSM:GetBagIterator(true) do
 			if itemString then
 				local name = GetItemInfo(itemString)
-				if name and strmatch(strlower(name), value) and not TSM.itemReverseLookup[itemString] and not Config:IsSoulbound(bag, slot) then
+				if name and strmatch(strlower(name), value) and not TSM.itemReverseLookup[itemString] and not TSM.Util:IsSoulbound(bag, slot) then
 					tinsert(itemList, itemString)
 				end
 			end
@@ -2390,14 +2283,14 @@ function Config:DrawAddRemoveItem(container, group)
 	for itemString in pairs(TSM.db.profile.groups[group]) do
 		local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemString)
 		if name then
-			tinsert(itemsInGroup, {value=itemString, text=link, icon=texture, name=name, tooltip=TSMAPI:GetItemID(link)})
+			tinsert(itemsInGroup, {value=itemString, text=link, icon=texture, name=name, tooltip=link})
 		end
 	end
 	sort(itemsInGroup, function(a,b) return a.name < b.name end)
 
 	local ungroupedItems, usedLinks = {}, {}
 	for bag, slot, itemString in TSM:GetBagIterator(true) do
-		if itemString and not Config:IsSoulbound(bag, slot) then
+		if itemString and not TSM.Util:IsSoulbound(bag, slot) then
 			local link = GetContainerItemLink(bag, slot)
 			local itemID = TSMAPI:GetItemID(link)
 			if not usedLinks[itemString] and not TSM.itemReverseLookup[itemString] and not usedLinks[itemID] and not TSM.itemReverseLookup[itemID] then
@@ -2415,7 +2308,7 @@ function Config:DrawAddRemoveItem(container, group)
 						tinsert(ungroupedItems, {value=itemID, text=link, icon=texture, name=name, tooltip=TSMAPI:GetItemID(link)})
 						usedLinks[itemID] = true
 					else
-						tinsert(ungroupedItems, {value=itemString, text=link, icon=texture, name=name, tooltip=TSMAPI:GetItemID(link)})
+						tinsert(ungroupedItems, {value=itemString, text=link, icon=texture, name=name, tooltip=link})
 						usedLinks[itemString] = true
 					end
 				end
@@ -2460,18 +2353,12 @@ end
 
 function Config:DrawCategoryManagement(container, category)
 	local function RenameCategory(self, _, value)
-		local ok, name = pcall(function() return GetItemInfo(value) end)
-		value = ok and name or value
-		value = string.trim(strlower(value or ""))
-		if not Config:ValidateName(value) then
-			TSMAPI:SetStatusText(format(L["Group/Category named \"%s\" already exists!"], value))
-			return
-		elseif value == "" then
-			TSMAPI:SetStatusText(L["Invalid category name."])
+		local value, errMsg = TSM.Util:ValidateGroupName(value)
+		if not value then
+			TSM:Print(errMsg)
 			return
 		end
 		
-		TSMAPI:SetStatusText()
 		TSM.db.profile.categories[value] = CopyTable(TSM.db.profile.categories[category])
 		TSM.db.profile.categories[category] = nil
 		for key, data in pairs(TSM.db.profile) do
@@ -2627,14 +2514,14 @@ function Config:DrawAddRemoveGroup(container, category)
 	
 	local groupsInCategory = {}
 	for groupName in pairs(TSM.db.profile.categories[category]) do
-		tinsert(groupsInCategory, {value=groupName, name=groupName, text=groupName})
+		tinsert(groupsInCategory, {value=groupName, name=groupName, text=groupName, tooltip=groupName})
 	end
 	sort(groupsInCategory, function(a,b) return a.name < b.name end)
 	
 	local uncategorizedGroups = {}
 	for groupName in pairs(TSM.db.profile.groups) do
 		if not TSM.groupReverseLookup[groupName] then
-			tinsert(uncategorizedGroups, {value=groupName, name=groupName, text=groupName})
+			tinsert(uncategorizedGroups, {value=groupName, name=groupName, text=groupName, tooltip=groupName})
 		end
 	end
 	sort(uncategorizedGroups, function(a,b) return a.name < b.name end)

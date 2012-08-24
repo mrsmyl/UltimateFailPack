@@ -22,9 +22,24 @@ function Scan:StartItemScan(filterList)
 end
 
 function Scan:ShouldIgnoreAuction(record)
-	record.parent.group = record.parent.group or TSM.Config:GetConfigObject(record.parent:GetItemString())
+	if not record.parent.group then
+		local itemString = record.parent:GetItemString()
+		local itemID = record.parent:GetItemID()
+		if not TSM.itemReverseLookup[itemString] and TSM.itemReverseLookup[itemID] then
+			itemString = itemID
+		end
+		record.parent.group = TSM.Config:GetConfigObject(itemID)
+	end
 	local group = record.parent.group
 	return (record.timeLeft <= group.minDuration or record.count > group.ignoreStacksOver or record.count < group.ignoreStacksUnder)
+end
+
+function Scan:ShouldScan(itemString, mode, groups)
+	local isGroupDisabled = TSM.Config:GetBoolConfigValue(itemString, "disabled")
+	local isGroupNoCancel = (mode == "Cancel") and TSM.Config:GetBoolConfigValue(itemString, "noCancel")
+	local isGroupCustomDisabled = groups and not groups[TSM.itemReverseLookup[itemString]]
+	
+	return not (isGroupDisabled or isGroupNoCancel or isGroupCustomDisabled)
 end
 
 function Scan:OnCallback(event, data, arg2)
@@ -47,7 +62,7 @@ function Scan:OnCallback(event, data, arg2)
 		msg = "TSMAuc_"..event
 	elseif event == "SCAN_STATUS_UPDATE" then
 		msg = "TSMAuc_SCAN_NEW_PAGE"
-		args = {data/arg2}
+		args = {TSMAPI:SafeDivide(data,arg2)}
 	elseif event == "SCAN_ERROR" then
 		TSM:Print(L["Error with scan. Scanned item multiple times unexpectedly. You can try restarting the scan. Item:"].." "..data)
 	end
@@ -87,16 +102,6 @@ function Scan:GetPlayerAuctionCount(itemString, findBuyout, findBid)
 	end
 	
 	return quantity
-end
-
--- Check what the second lowest auction is and returns the difference as a percent
-function Scan:CompareLowestToSecond(item, lowestBuyout)
-	local buyout = Scan:GetSecondLowest(item.itemString, lowestBuyout)
-	if buyout then
-		local fallback = item.fallback * item.fallbackCap
-		if fallback < buyout then return 0 end
-	end
-	return buyout and TSMAPI:SafeDivide(buyout - lowestBuyout, buyout) or 0
 end
 
 -- gets the buyout / bid of the second lowest auction for this item

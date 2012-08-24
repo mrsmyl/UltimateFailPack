@@ -41,7 +41,6 @@ local savedDBDefaults = {
 		postCap = {default = 4},
 		perAuction = {default = 1},
 		perAuctionIsCap = {default = false},
-		priceThreshold = {default = 10},
 		ignoreStacksOver = {default = 1000},
 		ignoreStacksUnder = {default = 1},
 		reset = {default = "none"},
@@ -147,9 +146,9 @@ function TSM:DoDBCleanUp()
 		end)
 end
 
-local GOLD_TEXT = "|cffffd700g|r"
-local SILVER_TEXT = "|cffc7c7cfs|r"
-local COPPER_TEXT = "|cffeda55fc|r"
+local GOLD_TEXT = "|cffc29918g|r"
+local SILVER_TEXT = "|cff868688s|r"
+local COPPER_TEXT = "|cffaf6136c|r"
 
 -- Truncate tries to save space, after 300g stop showing copper, after 3000g stop showing silver
 function TSM:FormatTextMoney(money, truncate, noColor)
@@ -250,12 +249,12 @@ function TSM:TSMAUC_NEW_GROUP_ITEM(_, groupName, itemID, isNewGroup, category)
 				TSM.db.profile.categories[category][groupName] = true
 			end
 		else
-			TSM:Print(format(L["Group named \"%s\" already exists! Item not added."], groupName))
+			TSM:Printf(L["Group named \"%s\" already exists! Item not added."], groupName)
 			return
 		end
 	else
 		if not TSM.db.profile.groups[groupName] then
-			TSM:Print(format(L["Group named \"%s\" does not exist! Item not added."], groupName))
+			TSM:Printf(L["Group named \"%s\" does not exist! Item not added."], groupName)
 			return
 		end
 	end
@@ -532,11 +531,11 @@ function TSM.AuctionSTRightClickCallback(parent, itemLink)
 
 	local window = AceGUI:Create("TSMWindow")
 	window.frame:SetParent(parent)
+	window.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 	window:SetWidth(500)
 	window:SetHeight(200)
 	window:SetTitle(L["Add Item to TSM_Auctioning"])
 	window:SetLayout("Flow")
-	window:EnableResize(false)
 	window.frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
 	window:SetCallback("OnClose", function(self)
 			self:ReleaseChildren()

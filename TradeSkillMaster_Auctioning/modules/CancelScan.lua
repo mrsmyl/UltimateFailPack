@@ -72,7 +72,7 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 					itemString = itemID
 				end
 				local groupName = TSM.itemReverseLookup[itemString]
-				if groupName and not tempList[itemString] and TSM.Config:ShouldScan(itemString, "Cancel", options.groups) then
+				if groupName and not tempList[itemString] and TSM.Scan:ShouldScan(itemString, "Cancel", options.groups) then
 					local searchTerm = TSM.Config:GetConfigValue(itemString, "searchTerm")
 					if not TSM.db.profile.itemIDGroups[groupName] and searchTerm and searchTerm ~= "" then
 						searchTerm = strlower(searchTerm)
@@ -151,7 +151,6 @@ function Cancel:ShouldCancel(index)
 	
 	local item = TSM.Config:GetConfigObject(itemString)
 	local lowestBuyout, lowestBid, lowestOwner, isWhitelist, _, isPlayer, isInvalidSeller = TSM.Scan:GetLowestAuction(item.auctionItem)
-	local priceDifference = TSM.Scan:CompareLowestToSecond(item, lowestBuyout)
 	local secondLowest = TSM.Scan:GetSecondLowest(itemString, lowestBuyout)
 	
 	if wasSold == 1 or not lowestOwner then

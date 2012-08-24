@@ -39,7 +39,6 @@ local info = {
 		bid = {L["Auction has been bid on."], CYAN},
 		atReset = {L["Not canceling auction at reset price."], GREEN},
 		reset = {L["Canceling to repost at reset price."], CYAN},
-		priceDifference = {L["Price gap too high."], CYAN},
 		belowThreshold = {L["Not canceling auction below threshold."], ORANGE},
 		undercut = {L["You've been undercut."], RED},
 		whitelistUndercut = {L["Undercut by whitelisted player."], RED},

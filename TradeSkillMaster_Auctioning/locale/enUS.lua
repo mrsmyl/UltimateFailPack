@@ -110,8 +110,8 @@ L["Right click to remove the override of this setting."] = true
 L["Fixed Gold Amount"] = true
 L["%% of %s"] = true
 L["Items in this group will not be posted or canceled automatically."] = true
-L["When posting, ignore auctions with more than %s items or less than %s items in them. Ignoring the lowest auction if the price difference between the lowest two auctions is more than %s. Items in this group will not be canceled automatically."] = true
-L["When posting and canceling, ignore auctions with more than %s item(s) or less than %s item(s) in them. Ignoring the lowest auction if the price difference between the lowest two auctions is more than %s."] = true
+L["When posting, ignore auctions with more than %s items or less than %s items in them. Items in this group will not be canceled automatically."] = true
+L["When posting and canceling, ignore auctions with more than %s item(s) or less than %s item(s) in them."] = true
 L["Auctions will be posted for %s hours in stacks of up to %s. A maximum of %s auctions will be posted."] = true
 L["Auctions will be posted for %s hours in stacks of %s. A maximum of %s auctions will be posted."] = true
 L["Auctioning will undercut your competition by %s. When posting, the bid of your auctions will be set to %s percent of the buyout."] = true
@@ -133,12 +133,10 @@ L["General Settings"] = true
 L["Ignore stacks under"] = true
 L["Items that are stacked beyond the set amount are ignored when calculating the lowest market price."] = true
 L["Ignore stacks over"] = true
-L["Maximum price gap"] = true
-L["How much of a difference between auction prices should be allowed before posting at the second highest value.\n\nFor example. If Apple is posting Runed Scarlet Ruby at 50g, Orange posts one at 30g and you post one at 29g, then Oranges expires. If you set price threshold to 30% then it will cancel yours at 29g and post it at 49g next time because the difference in price is 42% and above the allowed threshold."] = true
 L["Ignore low duration auctions"] = true
 L["short (less than 30 minutes)"] = true
-L["medium (30 minutes - 2 hours)"] = true
-L["long (2 - 12 hours)"] = true
+L["medium (less than 2 hours)"] = true
+L["long (less than 12 hours)"] = true
 L["Any auctions at or below the selected duration will be ignored. Selecting \"<none>\" will cause no auctions to be ignored based on duration."] = true
 L["Disable auto cancelling"] = true
 L["Disable automatically cancelling of items in this group if undercut."] = true
@@ -387,7 +385,6 @@ L["Invalid seller data returned by server."] = true
 L["Auction has been bid on."] = true
 L["Not canceling auction at reset price."] = true
 L["Canceling to repost at reset price."] = true
-L["Price gap too high."] = true
 L["Not canceling auction below threshold."] = true
 L["You've been undercut."] = true
 L["Undercut by whitelisted player."] = true
@@ -439,6 +436,13 @@ L["(whitelisted)"] = true
 L["(blacklisted)"] = true
 L["Done Scanning!\n\nCould potentially reset %d items for %s profit."] = true
 L["Auction not found. Skipped."] = true
+L["Max Cost:"] = true
+L["Min Profit:"] = true
+L["Max Quantity:"] = true
+L["Max Price Per:"] = true
+L["\nClick to reset this item to this target price."] = true
+L["\nClick to show auctions for this item."] = true
+
 
 -- ScanUtil.lua
 

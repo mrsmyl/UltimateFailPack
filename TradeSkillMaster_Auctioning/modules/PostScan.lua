@@ -32,7 +32,7 @@ function Post:GetScanListAndSetup(GUIRef, options)
 			itemString = itemID
 		end
 		local groupName = TSM.itemReverseLookup[itemString]
-		if groupName and TSM.Config:ShouldScan(itemString, "Post", options and options.groups) then
+		if groupName and TSM.Scan:ShouldScan(itemString, "Post", options and options.groups) then
 			tempList[itemString] = true
 		end
 	end
@@ -195,14 +195,7 @@ end
 function Post:GetPostPrice(item)
 	local lowestBuyout, lowestBid, lowestOwner, isWhitelist, isBlacklist, isPlayer = TSM.Scan:GetLowestAuction(item.auctionItem)
 	local bid, buyout, differencedPrice, info
-	local priceDifference = TSM.Scan:CompareLowestToSecond(item, lowestBuyout)
-	
-	-- Difference between lowest that we have and second lowest is too high, undercut second lowest instead
-	if isPlayer and priceDifference and priceDifference >= item.priceThreshold then
-		differencedPrice = true
-		lowestBuyout, lowestBid = TSM.Scan:GetSecondLowest(item.itemString, lowestBuyout)
-	end
-		
+
 	if not lowestOwner then
 		-- No other auctions up, default to fallback
 		info = "postingFallback"
@@ -291,7 +284,7 @@ function Post:FindItemSlot(findItemString, allLocations, ignoreBagSlot)
 	for bag, slot, itemString in TSM:GetBagIterator() do
 		local quantity = select(2, GetContainerItemInfo(bag, slot))
 		if findItemString == TSMAPI:GetItemID(itemString) or findItemString == itemString then
-			if not TSM.Config:IsSoulbound(bag, slot) and not (ignoreBagSlot and ignoreBagSlot[bag.."$"..slot]) then
+			if not TSM.Util:IsSoulbound(bag, slot) and not (ignoreBagSlot and ignoreBagSlot[bag.."$"..slot]) then
 				tinsert(locations, {bag=bag, slot=slot, quantity=quantity})
 				if not allLocations then
 					return bag, slot
@@ -307,7 +300,7 @@ function Post:GetNumInBags(itemString)
 		local num = 0
 		for bag, slot, itemString in TSM:GetBagIterator() do
 			if findItemString == TSMAPI:GetItemID(itemString) or findItemString == itemString then
-				if not TSM.Config:IsSoulbound(bag, slot) then
+				if not TSM.Util:IsSoulbound(bag, slot) then
 					num = num + select(2, GetContainerItemInfo(bag, slot))
 				end
 			end
@@ -457,7 +450,7 @@ function Post:GetAHGoldTotal()
 			incomingTotal = incomingTotal + buyoutAmount
 		end
 	end
-	return TSM:FormatTextMoney(total), TSM:FormatTextMoney(incomingTotal)
+	return TSMAPI:FormatTextMoneyIcon(total), TSMAPI:FormatTextMoneyIcon(incomingTotal)
 end
 
 function Post:GetStatus()

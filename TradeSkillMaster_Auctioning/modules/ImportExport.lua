@@ -44,15 +44,16 @@ end
 
 local eVersion = 1
 local settings = {dr="postTime", fb="fallback", pa="perAuction", pc="postCap",
-	pt="priceThreshold", nc="noCancel", pi="perAuctionIsCap", uc="undercut",
+	nc="noCancel", pi="perAuctionIsCap", uc="undercut",
 	so="ignoreStacksOver", su="ignoreStacksUnder", th="threshold", fc="fallbackCap",
 	bp="bidPercent", md="minDuration", rt="reset", rp="resetPrice", ii="itemIDGroups"}
-local isNumber = {uc=true, dr=true, fb=true, pa=true, pc=true, pt=true, so=true, su=true,
+local isNumber = {uc=true, dr=true, fb=true, pa=true, pc=true, so=true, su=true,
 	th=true, fc=true, bp=true, md=true, rp=true}
 local isBool = {nc=true, pi=true, ii=true}
 local isString = {rt=true}
 local encodeReset = {none="n", threshold="t", fallback="f", custom="c"}
 local decodeReset = {n="none", t="threshold", f="fallback", c="custom"}
+local ignored = {pt=true}
 	
 function TSM:Encode(groupName)
 	if not TSM.db.profile.groups[groupName] then return "invalid name" end
@@ -129,7 +130,7 @@ function TSM:Decode(rope)
 			end
 		elseif c == "en" then
 			finished = true
-		else
+		elseif not ignored[c] then
 			valid = false
 		end
 	end
@@ -282,7 +283,7 @@ function TSM:OpenImportFrame()
 			
 			TSM.Config:UpdateTree()
 			f:Hide()
-			TSM:Print(format(L["Data Imported to Group: %s"], groupName))
+			TSM:Printf(L["Data Imported to Group: %s"], groupName)
 		end)
 	f:AddChild(btn)
 	

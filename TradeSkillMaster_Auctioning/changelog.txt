@@ -1,3 +1,15 @@
+v1.2
+*Added Auctioning group creation wizard.
+*Fixed some divide by zero issues for patch 5.0.4.
+*The maximum price gap setting was removed.
+*Fixed a bug with scanning items by itemID.
+*Added tooltips to resetscan log.
+*Added support for the new TSM design.
+*Added feature for creating shopping lists from Auctioning groups / categories.
+*Fixed a bug with items at reset price being incorrectly canceled.
+*Added quick group creation feature.
+*Many other minor bug fixes and improvements.
+
 v1.1
 *Added tooltips to the add/remove items pages for the items in the lists.
 *Improved the sorting of the post/cancel log.

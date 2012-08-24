@@ -11,7 +11,6 @@
 local TSM = select(2, ...)
 local Reset = TSM:NewModule("Reset", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Auctioning") -- loads the localization table
-local GUIUtil = TSMAPI:GetGUIFunctions()
 
 local resetData, summarySTCache, showCache, itemsReset, justBought = {}, {}, {}, {}, {}
 local isScanning, doneScanningText, currentItem, GUI
@@ -61,12 +60,28 @@ function Reset:CreateSummaryST(parent)
 			if rowNum then
 				GameTooltip:SetOwner(cellFrame, "ANCHOR_NONE")
 				GameTooltip:SetPoint("BOTTOMLEFT", cellFrame, "TOPLEFT")
-				GameTooltip:Show()
+				
+				local row = CopyTable(data[rowNum].rowInfo)
+				local resetMaxCost = TSM.Config:GetConfigValue(row.itemString, "resetMaxCost")
+				local resetMinProfit = TSM.Config:GetConfigValue(row.itemString, "resetMinProfit")
+				local resetMaxQuantity = TSM.Config:GetConfigValue(row.itemString, "resetMaxQuantity")
+				local resetMaxPricePer = TSM.Config:GetConfigValue(row.itemString, "resetMaxPricePer")
+				local groupName = TSM.itemReverseLookup[row.itemString] or "---"
+				
+				GameTooltip:AddLine(data[rowNum].cols[1].args[2] or "")				
+				GameTooltip:AddLine(L["Max Cost:"].." "..(TSMAPI:FormatTextMoney(resetMaxCost, "|cffffffff") or "---"))
+				GameTooltip:AddLine(L["Min Profit:"].." "..(TSMAPI:FormatTextMoney(resetMinProfit, "|cffffffff") or "---"))
+				GameTooltip:AddLine(L["Max Quantity:"].." "..(TSMAPI:FormatTextMoney(resetMaxQuantity, "|cffffffff") or "---"))
+				GameTooltip:AddLine(L["Max Price Per:"].." "..(TSMAPI:FormatTextMoney(resetMaxPricePer, "|cffffffff") or "---"))
+				GameTooltip:AddLine(L["Group:"].." |cffffffff"..(groupName))		
+				
 				if TSM.Reset:IsScanning() then
-					GameTooltip:AddLine(L["Must wait for scan to finish before starting to reset."])
+					GameTooltip:AddLine("\n"..L["Must wait for scan to finish before starting to reset."])
 				else
-					GameTooltip:AddLine(L["Click to reset this item to this target price."])
+					GameTooltip:AddLine(TSMAPI.Design:GetInlineColor("link2")..L["\nClick to show auctions for this item."].."|r")
+					GameTooltip:AddLine(TSMAPI.Design:GetInlineColor("link2")..L["Shift-Right-Click to show the options for this item's Auctioning group."].."|r")
 				end
+				GameTooltip:Show()
 			end
 		end,
 		["OnLeave"] = function(_, _, data, _, _, rowNum, column)
@@ -74,17 +89,36 @@ function Reset:CreateSummaryST(parent)
 				GameTooltip:Hide()
 			end
 		end,
-		["OnClick"] = function(_, _, data, _, _, rowNum, column)
+		["OnClick"] = function(_, _, data, _, _, rowNum, column, _, mouseButton)
 			if rowNum and not TSM.Reset:IsScanning() then
-				summaryST:Hide()
-				auctionST:Show()
-				resetButtons.summaryButton:Enable()
+				local row = data[rowNum].rowInfo
+				if mouseButton == "RightButton" then
+					if IsShiftKeyDown() then
+						local group = TSM.itemReverseLookup[row.itemString]
+						
+						if group then
+							TSMAPI:OpenFrame()
+							TSMAPI:SelectIcon("TradeSkillMaster_Auctioning", L["Auctioning Groups/Options"])
+							TSM.Config.treeGroup:SelectByPath(2, TSM.groupReverseLookup[group] or "~", group)
+						else
+							TSM:Print(L["Could not find item's group."])
+						end
+					end
+				else
+					summaryST:Hide()
+					auctionST:Show()
+					resetButtons.summaryButton:Enable()
+					
+					currentItem = CopyTable(data[rowNum].rowInfo)
+					Reset:UpdateAuctionST()
+					Reset:SelectAuctionRow(1)
+					currentItem.isReset = true
+					TSM.Manage:SetInfoText(currentItem)
+				end
+			
+			
+			
 				
-				currentItem = CopyTable(data[rowNum].rowInfo)
-				Reset:UpdateAuctionST()
-				Reset:SelectAuctionRow(1)
-				currentItem.isReset = true
-				TSM.Manage:SetInfoText(currentItem)
 			end
 		end,
 	}
@@ -106,18 +140,23 @@ function Reset:CreateSummaryST(parent)
 		return colInfo
 	end
 	
-	local ROW_HEIGHT = 20
+	local ROW_HEIGHT = 19
 
-	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()))
+	local font, size = TSMAPI.Design:GetContentFont("small")
+	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()), {font, size, "SetWidgetTextColor"})
 	st.frame:SetParent(parent)
 	st.frame:SetPoint("TOPLEFT", 0, -50)
 	st.frame:SetPoint("BOTTOMRIGHT")
 	st.frame:SetScript("OnSizeChanged", function(_,width, height)
 			st:SetDisplayCols(GetSTColInfo(width))
-			st:SetDisplayRows(12, floor((height-20)/12))
+			st:SetDisplayRows(13, floor((height-20)/13))
 		end)
-		
-	local font = GameFontHighlightSmall:GetFont()
+	st:Show()
+	st:SetData({})
+	st:RegisterEvents(events)
+	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
+	st:Hide()
+
 	for i, row in ipairs(st.rows) do
 		row:SetHeight(ROW_HEIGHT)
 		local tex = row:CreateTexture()
@@ -134,7 +173,9 @@ function Reset:CreateSummaryST(parent)
 		
 		for j, col in ipairs(row.cols) do
 			col.text:SetHeight(ROW_HEIGHT)
-			col.text:SetFont(font, 10)
+			col.text:SetFont(TSMAPI.Design:GetContentFont("small"))
+			TSMAPI.Design:SetWidgetTextColor(col.text)
+			col.text:SetShadowColor(0, 0, 0, 0)
 		end
 	end
 
@@ -158,10 +199,6 @@ function Reset:CreateSummaryST(parent)
 			end
 		end)
 	
-	st:Show()
-	st:RegisterEvents(events)
-	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
-	st:Hide()
 	return st
 end
 
@@ -192,7 +229,8 @@ function Reset:CreateAuctionST(parent)
 	
 	local ROW_HEIGHT = 25
 
-	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()))
+	local font, size = TSMAPI.Design:GetContentFont("small")
+	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()), {font, size, "SetWidgetTextColor"})
 	st.frame:SetParent(parent)
 	st.frame:SetPoint("TOPLEFT", 0, -50)
 	st.frame:SetPoint("BOTTOMRIGHT")
@@ -200,8 +238,12 @@ function Reset:CreateAuctionST(parent)
 			st:SetDisplayCols(GetSTColInfo(width))
 			st:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
 		end)
-		
-	local font = GameFontHighlightSmall:GetFont()
+	st:Show()
+	st:RegisterEvents(events)
+	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
+	st:EnableSelection(true)
+	st:Hide()
+
 	for i, row in ipairs(st.rows) do
 		row:SetHeight(ROW_HEIGHT)
 		local tex = row:CreateTexture()
@@ -218,29 +260,21 @@ function Reset:CreateAuctionST(parent)
 		
 		for j, col in ipairs(row.cols) do
 			col.text:SetHeight(ROW_HEIGHT)
-			col.text:SetFont(font, 10)
+			col.text:SetFont(TSMAPI.Design:GetContentFont("small"))
+			TSMAPI.Design:SetWidgetTextColor(col.text)
+			col.text:SetShadowColor(0, 0, 0, 0)
 		end
 	end
 	
-	st:Show()
-	st:RegisterEvents(events)
-	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
-	st:EnableSelection(true)
-	st:Hide()
 	return st
 end
 
 function Reset:CreateResetButtons(parent)
 	local height = 24
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-	})
-	frame:SetBackdropColor(0.1, 0.1, 0.1, 0.4)
 	frame:SetHeight(height)
 	frame:SetWidth(324)
-	frame:SetPoint("BOTTOMRIGHT", -86, 13)
+	frame:SetPoint("BOTTOMRIGHT", -75, 6)
 	
 	frame.Disable = function(self)
 		self.buyout:Disable()
@@ -276,7 +310,7 @@ function Reset:CreateResetButtons(parent)
 		Reset:UpdateSummaryST()
 	end
 	
-	local button = GUIUtil:CreateButton(frame, "TSMAuctioningResetBuyoutButton", "action2", 8, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningResetBuyoutButton")
 	button:SetPoint("TOPLEFT", -5, 0)
 	button:SetWidth(90)
 	button:SetHeight(height)
@@ -284,7 +318,7 @@ function Reset:CreateResetButtons(parent)
 	button:SetScript("OnClick", Reset.BuyAuction)
 	frame.buyout = button
 	
-	local button = GUIUtil:CreateButton(frame, "TSMAuctioningResetCancelButton", "action2", 8, "CENTER")
+	local button =TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningResetCancelButton")
 	button:SetPoint("TOPLEFT", 95, 0)
 	button:SetWidth(90)
 	button:SetHeight(height)
@@ -292,7 +326,7 @@ function Reset:CreateResetButtons(parent)
 	button:SetScript("OnClick", OnCancelClick)
 	frame.cancel = button
 	
-	local button = GUIUtil:CreateButton(frame, "TSMAuctioningResetStopButton", "action2", 5, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningResetStopButton")
 	button:SetPoint("TOPLEFT", 195, 0)
 	button:SetWidth(110)
 	button:SetHeight(height)
@@ -300,8 +334,8 @@ function Reset:CreateResetButtons(parent)
 	button:SetScript("OnClick", OnStopClick)
 	frame.stop = button
 	
-	local summaryButton = GUIUtil:CreateButton(frame, nil, "action", 1, "CENTER")
-	summaryButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, -75)
+	local summaryButton = TSMAPI.GUI:CreateButton(frame, 16)
+	summaryButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, -50)
 	summaryButton:SetHeight(17)
 	summaryButton:SetWidth(150)
 	summaryButton:SetScript("OnClick", ReturnToSummary)
@@ -447,7 +481,7 @@ function Reset:GetSummarySTRow(data)
 	local function GetQuantityText(quantity, playerQuantity, isValid)
 		if isValid then
 			if playerQuantity > 0 then
-				return quantity .. "|cff99ffff(" .. playerQuantity .. ")|r"
+				return quantity..TSMAPI.Design:GetInlineColor("link2")..playerQuantity..")|r"
 			else
 				return quantity
 			end
@@ -670,7 +704,7 @@ function Reset:DoneScanning()
 	
 	resetButtons.stop:Disable()
 	isScanning = false
-	doneScanningText = format(L["Done Scanning!\n\nCould potentially reset %d items for %s profit."], num, TSMAPI:FormatTextMoney(totalProfit))
+	doneScanningText = format(L["Done Scanning!\n\nCould potentially reset %d items for %s profit."], num, TSMAPI:FormatTextMoneyIcon(totalProfit))
 	TSM.Manage:SetInfoText(doneScanningText)
 end
 

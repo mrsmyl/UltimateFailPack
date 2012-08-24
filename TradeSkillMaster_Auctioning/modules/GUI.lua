@@ -171,15 +171,7 @@ function private:CreateGroupSelectionScreen(parent)
 	local BUTTON_WIDTH = 200
 
 	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
-	frame:SetBackdropColor(0, 0, 0.05, 1)
-	frame:SetBackdropBorderColor(0,0,1,1)
+	TSMAPI.Design:SetFrameBackdropColor(frame)
 	frame:SetAllPoints()
 	frame:Show()
 	
@@ -199,15 +191,15 @@ function private:CreateGroupSelectionScreen(parent)
 	sg.frame:Show()
 	frame.sg = sg
 	
-	GUIUtil:AddVerticalBar(frame, sg.frame:GetWidth() + 6)
+	TSMAPI.GUI:CreateVerticalLine(frame, sg.frame:GetWidth() + 6, nil, true)
 	
 	local controlFrame = CreateFrame("Frame", nil, frame)
-	controlFrame:SetPoint("TOPLEFT", sg.frame:GetWidth() + 6, -4)
-	controlFrame:SetPoint("BOTTOMRIGHT", -2, 4)
+	controlFrame:SetPoint("TOPLEFT", sg.frame:GetWidth() + 6, 0)
+	controlFrame:SetPoint("BOTTOMRIGHT")
 	frame.controlFrame = controlFrame
 	
-	local button = GUIUtil:CreateButton(frame, nil, "action", 0, "CENTER")
-	button:SetPoint("TOPLEFT", 20, 25)
+	local button = TSMAPI.GUI:CreateButton(frame, 16)
+	button:SetPoint("TOPLEFT", 20, 35)
 	button:SetHeight(20)
 	button:SetWidth(150)
 	button:SetText(L["Enable All"])
@@ -222,8 +214,8 @@ function private:CreateGroupSelectionScreen(parent)
 		end)
 	frame.enableAll = button
 	
-	local button = GUIUtil:CreateButton(frame, nil, "action", 0, "CENTER")
-	button:SetPoint("TOPLEFT", 220, 25)
+	local button = TSMAPI.GUI:CreateButton(frame, 16)
+	button:SetPoint("TOPLEFT", 220, 35)
 	button:SetHeight(20)
 	button:SetWidth(150)
 	button:SetText(L["Disable All"])
@@ -238,57 +230,55 @@ function private:CreateGroupSelectionScreen(parent)
 		end)
 	frame.disableAll = button
 	
-	local helpText = frame:CreateFontString()
-	helpText:SetPoint("TOPLEFT", sg.frame, "TOPRIGHT", 8, -8)
+	local helpText = TSMAPI.GUI:CreateLabel(controlFrame)
+	helpText:SetPoint("TOP", -4)
 	helpText:SetHeight(80)
 	helpText:SetWidth(BUTTON_WIDTH)
-	helpText:SetFont(GameFontNormal:GetFont(), 12)
 	helpText:SetJustifyH("CENTER")
 	helpText:SetJustifyV("TOP")
-	helpText:SetTextColor(1, 1, 1, 1)
 	helpText:SetText(L["Use the checkboxes to the left to select which groups you'd like to include in this scan."])
 	frame.helpText = helpText
 	
-	local button = GUIUtil:CreateButton(frame, nil, "action", -1, "CENTER")
-	button:SetPoint("TOPRIGHT", -10, -65)
+	local button = TSMAPI.GUI:CreateButton(frame, 16)
+	button:SetPoint("TOPRIGHT", -10, -60)
 	button:SetHeight(20)
 	button:SetWidth(BUTTON_WIDTH)
 	button:SetText(L["Start Scan of Selected Groups"])
 	frame.startButton = button
 	
-	GUIUtil:AddHorizontalBar(controlFrame, -85)
+	TSMAPI.GUI:CreateHorizontalLine(controlFrame, -85, nil, true)
 	
 	local cFrame = CreateFrame("Frame", nil, controlFrame)
 	cFrame:SetAllPoints()
 	frame.cancelFrame = cFrame
 	
-	local button = GUIUtil:CreateButton(cFrame, nil, "action", -1, "CENTER")
-	button:SetPoint("TOPRIGHT", -10, -100)
+	local button = TSMAPI.GUI:CreateButton(cFrame, 16)
+	button:SetPoint("TOPRIGHT", -10, -95)
 	button:SetHeight(20)
 	button:SetWidth(BUTTON_WIDTH)
 	button:SetText(L["Cancel ALL Current Auctions"])
 	cFrame.cancelAllButton = button
 	
-	GUIUtil:AddHorizontalBar(cFrame, -120)
+	TSMAPI.GUI:CreateHorizontalLine(controlFrame, -120, nil, true)
 	
 	local eb = GUIUtil:CreateEditBox(cFrame, L["Cancel Filter"], BUTTON_WIDTH, {"TOPRIGHT", -10, -130}, L["Enter a filter into this box and click the button below it to cancel all of your auctions that contain that filter (without scanning)."])
 	eb:SetCallback("OnEnterPressed", function(_,_,value) cFrame.filterCancelButton.cancelFilter = value end)
 	
-	local button = GUIUtil:CreateButton(cFrame, nil, "action", -1, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(cFrame, 16)
 	button:SetPoint("TOPRIGHT", -10, -180)
 	button:SetHeight(20)
 	button:SetWidth(BUTTON_WIDTH)
 	button:SetText(L["Cancel Auctions Matching Filter"])
 	cFrame.filterCancelButton = button
 	
-	GUIUtil:AddHorizontalBar(cFrame, -205)
+	TSMAPI.GUI:CreateHorizontalLine(controlFrame, -205, nil, true)
 	
 	local dd = GUIUtil:CreateDropdown(cFrame, L["Duration"], BUTTON_WIDTH, {L["Short (30 minutes)"], L["Medium (2 hours)"], L["Long (12 hours)"]}, {"TOPRIGHT", -10, -215}, L["All auctions of this duration and below will be canceled when you press the \"Cancel Low Duration Auctions\" button"])
 	dd:SetValue(TSM.db.global.lowDuration)
 	dd:SetCallback("OnValueChanged", function(_,_,value) TSM.db.global.lowDuration = value end)
 	cFrame.durationCancelEditBox = dd
 	
-	local button = GUIUtil:CreateButton(cFrame, nil, "action", -1, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(cFrame, 16)
 	button:SetPoint("TOPRIGHT", -10, -275)
 	button:SetHeight(20)
 	button:SetWidth(BUTTON_WIDTH)
@@ -411,9 +401,9 @@ function private:CreateStatusBar(parent)
 
 	local level = parent:GetFrameLevel()
 	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetHeight(30)
-	frame:SetPoint("TOPLEFT", 0, -1)
-	frame:SetPoint("TOPRIGHT", 0, -1)
+	frame:SetHeight(25)
+	frame:SetPoint("TOPLEFT", 2, -3)
+	frame:SetPoint("TOPRIGHT", -2, -3)
 	frame:SetFrameLevel(level+1)
 	frame.UpdateStatus = UpdateStatus
 	frame.SetStatusText = SetStatusText
@@ -422,10 +412,9 @@ function private:CreateStatusBar(parent)
 	local statusBar = CreateFrame("STATUSBAR", "TSMAuctioningMinorStatusBar", frame, "TextStatusBar")
 	statusBar:SetOrientation("HORIZONTAL")
 	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetPoint("TOPLEFT", 4, -4)
-	statusBar:SetPoint("BOTTOMRIGHT", -4, 4)
-	statusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill")
-	statusBar:SetStatusBarColor(0.85, 0.85, 1, 0.5)
+	statusBar:SetAllPoints()
+	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+	statusBar:SetStatusBarColor(.42, .42, .42, .7)
 	statusBar:SetFrameLevel(level+2)
 	frame.minorStatusBar = statusBar
 	
@@ -433,10 +422,9 @@ function private:CreateStatusBar(parent)
 	local statusBar = CreateFrame("STATUSBAR", "TSMAuctioningMajorStatusBar", frame, "TextStatusBar")
 	statusBar:SetOrientation("HORIZONTAL")
 	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetPoint("TOPLEFT", 4, -4)
-	statusBar:SetPoint("BOTTOMRIGHT", -4, 4)
-	statusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill")
-	statusBar:SetStatusBarColor(0.71, 0.71, 0.89, 0.9)
+	statusBar:SetAllPoints()
+	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+	statusBar:SetStatusBarColor(.19, .22, .33, .9)
 	statusBar:SetFrameLevel(level+3)
 	frame.majorStatusBar = statusBar
 	
@@ -444,11 +432,16 @@ function private:CreateStatusBar(parent)
 	textFrame:SetFrameLevel(level+4)
 	textFrame:SetAllPoints(frame)
 	-- Text for the StatusBar
-	local tFile, tSize = GameFontNormal:GetFont()
-	local text = textFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	text:SetFont(tFile, tSize, "OUTLINE")
+	local text = TSMAPI.GUI:CreateLabel(textFrame)
+	TSMAPI.Design:SetWidgetTextColor(text)
 	text:SetPoint("CENTER")
 	frame.text = text
+	
+	local frame2 = CreateFrame("Frame", nil, frame)
+	frame2:SetAllPoints(parent)
+	frame2:SetFrameStrata(parent:GetFrameStrata())
+	frame2:SetFrameLevel(parent:GetFrameLevel())
+	local bar = TSMAPI.GUI:CreateHorizontalLine(frame2, -30)
 	
 	return frame
 end
@@ -456,14 +449,9 @@ end
 function private:CreateButtons(parent)
 	local height = 24
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-	})
-	frame:SetBackdropColor(0.1, 0.1, 0.1, 0.4)
 	frame:SetHeight(height)
 	frame:SetWidth(324)
-	frame:SetPoint("BOTTOMRIGHT", -86, 13)
+	frame:SetPoint("BOTTOMRIGHT", -86, 6)
 	
 	frame.Enable = function(self)
 		if self.post:IsVisible() then
@@ -503,7 +491,7 @@ function private:CreateButtons(parent)
 		end
 	end
 	
-	local button = GUIUtil:CreateButton(frame, "TSMAuctioningPostButton", "action2", 8, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningPostButton")
 	button:SetPoint("TOPLEFT", -5, 0)
 	button:SetWidth(110)
 	button:SetHeight(height)
@@ -512,7 +500,7 @@ function private:CreateButtons(parent)
 	button:SetScript("OnClick", OnClick)
 	frame.post = button
 	
-	local button = GUIUtil:CreateButton(frame, "TSMAuctioningCancelButton", "action2", 8, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAuctioningCancelButton")
 	button:SetPoint("TOPLEFT", -5, 0)
 	button:SetWidth(110)
 	button:SetHeight(height)
@@ -521,7 +509,7 @@ function private:CreateButtons(parent)
 	button:SetScript("OnClick", OnClick)
 	frame.cancel = button
 	
-	local button = GUIUtil:CreateButton(frame, nil, "action2", 1, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18)
 	button:SetPoint("TOPLEFT", 110, 0)
 	button:SetWidth(95)
 	button:SetHeight(height)
@@ -530,7 +518,7 @@ function private:CreateButtons(parent)
 	button:SetScript("OnClick", OnClick)
 	frame.skip = button
 	
-	local button = GUIUtil:CreateButton(frame, nil, "action2", 1, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18)
 	button:SetPoint("TOPLEFT", 210, 0)
 	button:SetWidth(112)
 	button:SetHeight(height)
@@ -588,8 +576,8 @@ function private:CreateContentButtons(parent)
 		end
 	end
 
-	local auctionsButton = GUIUtil:CreateButton(frame, nil, "action", 1, "CENTER")
-	auctionsButton:SetPoint("TOPRIGHT", -10, -50)
+	local auctionsButton = TSMAPI.GUI:CreateButton(frame, 16)
+	auctionsButton:SetPoint("TOPRIGHT", -10, -20)
 	auctionsButton:SetHeight(17)
 	auctionsButton:SetWidth(150)
 	auctionsButton.which = "auctions"
@@ -597,8 +585,8 @@ function private:CreateContentButtons(parent)
 	auctionsButton:SetText(L["Show All Auctions"])
 	frame.auctionsButton = auctionsButton
 	
-	local currAuctionsButton = GUIUtil:CreateButton(frame, nil, "action", 1, "CENTER")
-	currAuctionsButton:SetPoint("TOPRIGHT", -170, -50)
+	local currAuctionsButton = TSMAPI.GUI:CreateButton(frame, 16)
+	currAuctionsButton:SetPoint("TOPRIGHT", -170, -20)
 	currAuctionsButton:SetHeight(17)
 	currAuctionsButton:SetWidth(150)
 	currAuctionsButton.which = "currAuctions"
@@ -606,8 +594,8 @@ function private:CreateContentButtons(parent)
 	currAuctionsButton:SetText(L["Show Item Auctions"])
 	frame.currAuctionsButton = currAuctionsButton
 	
-	local logButton = GUIUtil:CreateButton(frame, nil, "action", 1, "CENTER")
-	logButton:SetPoint("TOPRIGHT", -10, -75)
+	local logButton = TSMAPI.GUI:CreateButton(frame, 16)
+	logButton:SetPoint("TOPRIGHT", -10, -45)
 	logButton:SetHeight(17)
 	logButton:SetWidth(150)
 	logButton.which = "log"
@@ -615,8 +603,8 @@ function private:CreateContentButtons(parent)
 	logButton:SetText(L["Show Log"])
 	frame.logButton = logButton
 	
-	local editPriceButton = GUIUtil:CreateButton(frame, nil, "action", 1, "CENTER")
-	editPriceButton:SetPoint("TOPRIGHT", -170, -75)
+	local editPriceButton = TSMAPI.GUI:CreateButton(frame, 16)
+	editPriceButton:SetPoint("TOPRIGHT", -170, -45)
 	editPriceButton:SetHeight(17)
 	editPriceButton:SetWidth(150)
 	editPriceButton.which = "editPrice"
@@ -625,19 +613,11 @@ function private:CreateContentButtons(parent)
 	frame.editPriceButton = editPriceButton
 	
 	local editPriceFrame = CreateFrame("Frame", nil, frame)
+	TSMAPI.Design:SetFrameBackdropColor(editPriceFrame)
 	editPriceFrame:SetPoint("CENTER")
 	editPriceFrame:SetFrameStrata("DIALOG")
 	editPriceFrame:SetWidth(300)
 	editPriceFrame:SetHeight(150)
-	editPriceFrame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
-	editPriceFrame:SetBackdropColor(0, 0, 0.05, 1)
-	editPriceFrame:SetBackdropBorderColor(0,0,1,1)
 	editPriceFrame:EnableMouse(true)
 	editPriceFrame:SetScript("OnShow", function(self)
 			editPriceFrame:SetFrameStrata("DIALOG")
@@ -651,17 +631,19 @@ function private:CreateContentButtons(parent)
 		end)
 	frame.editPriceFrame = editPriceFrame
 	
-	local linkLabel = editPriceFrame:CreateFontString()
-	linkLabel:SetFontObject(GameFontNormal)
-	linkLabel:SetTextColor(1, 1, 1, 1)
+	local linkLabel = TSMAPI.GUI:CreateLabel(editPriceFrame)
 	linkLabel:SetPoint("TOP", 0, -14)
 	linkLabel:SetJustifyH("CENTER")
 	linkLabel:SetText("")
 	editPriceFrame.linkLabel = linkLabel
 	
-	local priceBoxLabel = editPriceFrame:CreateFontString()
-	priceBoxLabel:SetFontObject(GameFontNormal)
-	priceBoxLabel:SetTextColor(1, 1, 1, 1)
+	local bg = editPriceFrame:CreateTexture(nil, "BACKGROUND")
+	bg:SetPoint("TOPLEFT", linkLabel, -2, 2)
+	bg:SetPoint("BOTTOMRIGHT", linkLabel, 2, -2)
+	TSMAPI.Design:SetContentColor(bg)
+	linkLabel.bg = bg
+	
+	local priceBoxLabel = TSMAPI.GUI:CreateLabel(editPriceFrame)
 	priceBoxLabel:SetPoint("TOPLEFT", 14, -40)
 	priceBoxLabel:SetText(L["Auction Buyout (Stack Price):"])
 	editPriceFrame.priceBoxLabel = priceBoxLabel
@@ -672,7 +654,7 @@ function private:CreateContentButtons(parent)
 	priceBox:SetWidth(120)
 	editPriceFrame.priceBox = priceBox
 	
-	local saveButton = GUIUtil:CreateButton(editPriceFrame, nil, "action", 1, "CENTER")
+	local saveButton = TSMAPI.GUI:CreateButton(editPriceFrame, 16)
 	saveButton:SetPoint("BOTTOMLEFT", 10, 10)
 	saveButton:SetPoint("BOTTOMRIGHT", editPriceFrame, "BOTTOM", -2, 10)
 	saveButton:SetHeight(20)
@@ -684,7 +666,7 @@ function private:CreateContentButtons(parent)
 	saveButton:SetText(L["Save New Price"])
 	editPriceFrame.saveButton = saveButton
 	
-	local cancelButton = GUIUtil:CreateButton(editPriceFrame, nil, "action", 1, "CENTER")
+	local cancelButton = TSMAPI.GUI:CreateButton(editPriceFrame, 16)
 	cancelButton:SetPoint("BOTTOMLEFT", editPriceFrame, "BOTTOM", 2, 10)
 	cancelButton:SetPoint("BOTTOMRIGHT", -10, 10)
 	cancelButton:SetHeight(20)
@@ -693,8 +675,6 @@ function private:CreateContentButtons(parent)
 		end)
 	cancelButton:SetText(L["Cancel"])
 	editPriceFrame.cancelButton = cancelButton
-	
-	GUIUtil:AddHorizontalBar(frame, -25, parent.content)
 	
 	return frame
 end
@@ -707,20 +687,34 @@ function private:CreateInfoText(parent)
 		if type(item) == "string" then
 			self.icon:Hide()
 			self.linkText:Hide()
+			self.linkText.bg:Hide()
 			self.stackText:Hide()
 			self.bidText:Hide()
 			self.buyoutText:Hide()
-			self.statusText:Show()
 			self.quantityText:Hide()
+			self.statusText:Show()
 			
-			self.statusText:SetText(item)
+			local status, _, gold, gold2 = ("\n"):split(item)
+			if gold then
+				self.goldText:Show()
+				self.goldText2:Show()
+				self.goldText:SetText(gold)
+				self.goldText2:SetText(gold2)
+			else
+				self.goldText:Hide()
+				self.goldText2:Hide()
+			end
+			self.statusText:SetText(status)
 		elseif item.isReset then
 			self.icon:Show()
 			self.linkText:Show()
+			self.linkText.bg:Show()
 			self.stackText:Show()
 			self.bidText:Show()
 			self.buyoutText:Show()
 			self.statusText:Hide()
+			self.goldText:Hide()
+			self.goldText2:Hide()
 			
 			local itemID = TSMAPI:GetItemID(item.itemString)
 			local playerTotal, altTotal = TSMAPI:GetData("playertotal", itemID)
@@ -729,35 +723,48 @@ function private:CreateInfoText(parent)
 			if playerTotal and guildTotal then
 				local total = playerTotal + altTotal + guildTotal + auctionTotal
 				self.quantityText:Show()
-				self.quantityText:SetText("|cff99ffff"..L["Currently Owned:"].."|r "..total)
+				self.quantityText:SetText(TSMAPI.Design:GetInlineColor("link")..L["Currently Owned:"].."|r "..total)
 			end
 			
 			local _,link,_,_,_,_,_,_,_,texture = GetItemInfo(item.itemString)
 			self.linkText:SetText(link)
+			if self.linkText:GetStringWidth() > 200 then
+				self.linkText:SetWidth(200)
+			else
+				self.linkText:SetWidth(self.linkText:GetStringWidth())
+			end
 			self.icon.link = link
 			self.icon:GetNormalTexture():SetTexture(texture)
-			self.stackText:SetText(format(L["%s item(s) to buy/cancel"], item.num.."|cff99ffff"))
-			self.bidText:SetText("|cff99ffff"..L["Target Price:"].."|r "..TSMAPI:FormatTextMoney(item.targetPrice))
-			self.buyoutText:SetText("|cff99ffff"..L["Profit:"].."|r "..TSMAPI:FormatTextMoney(item.profit))
+			self.stackText:SetText(format(L["%s item(s) to buy/cancel"], item.num..TSMAPI.Design:GetInlineColor("link")))
+			self.bidText:SetText(TSMAPI.Design:GetInlineColor("link")..L["Target Price:"].."|r "..TSMAPI:FormatTextMoneyIcon(item.targetPrice))
+			self.buyoutText:SetText(TSMAPI.Design:GetInlineColor("link")..L["Profit:"].."|r "..TSMAPI:FormatTextMoneyIcon(item.profit))
 		else
 			self.icon:Show()
 			self.linkText:Show()
+			self.linkText.bg:Show()
 			self.stackText:Show()
 			self.bidText:Show()
 			self.buyoutText:Show()
 			self.statusText:Hide()
 			self.quantityText:Hide()
+			self.goldText:Hide()
+			self.goldText2:Hide()
 		
 			local _,link,_,_,_,_,_,_,_,texture = GetItemInfo(item.itemString)
 			self.linkText:SetText(link)
+			if self.linkText:GetStringWidth() > 200 then
+				self.linkText:SetWidth(200)
+			else
+				self.linkText:SetWidth(self.linkText:GetStringWidth())
+			end
 			self.icon.link = link
 			self.icon:GetNormalTexture():SetTexture(texture)
 			
-			local sText = format("%s |cff99ffffauctions of|r %s", item.numStacks, item.stackSize)
+			local sText = format("%s "..TSMAPI.Design:GetInlineColor("link").."auctions of|r %s", item.numStacks, item.stackSize)
 			self.stackText:SetText(sText)
 			
-			self.bidText:SetText("|cff99ffff"..L["Bid:"].."|r "..TSMAPI:FormatTextMoney(item.bid))
-			self.buyoutText:SetText("|cff99ffff"..L["Buyout:"].."|r "..TSMAPI:FormatTextMoney(item.buyout))
+			self.bidText:SetText(TSMAPI.Design:GetInlineColor("link")..L["Bid:"].."|r "..TSMAPI:FormatTextMoneyIcon(item.bid))
+			self.buyoutText:SetText(TSMAPI.Design:GetInlineColor("link")..L["Buyout:"].."|r "..TSMAPI:FormatTextMoneyIcon(item.buyout))
 
 			private.contentButtons.editPriceButton:Enable()
 			private.contentButtons.editPriceFrame.itemString = item.itemString
@@ -765,12 +772,10 @@ function private:CreateInfoText(parent)
 		end
 	end
 	
-	frame.UpdateMode = function(self)
-	
-	end
+	frame.UpdateMode = function(self) end
 	
 	local icon = CreateFrame("Button", nil, frame)
-	icon:SetPoint("TOPLEFT", 70, -45)
+	icon:SetPoint("TOPLEFT", 85, -20)
 	icon:SetWidth(50)
 	icon:SetHeight(50)
 	local tex = icon:CreateTexture()
@@ -789,70 +794,66 @@ function private:CreateInfoText(parent)
 		end)
 	frame.icon = icon
 	
-	local linkText = frame:CreateFontString()
-	linkText:SetPoint("TOPLEFT", icon, "TOPRIGHT", 4, 0)
-	linkText:SetPoint("BOTTOMLEFT", icon, "BOTTOMRIGHT", 4, 0)
-	linkText:SetWidth(200)
-	linkText:SetFontObject(GameFontNormal)
+	local linkText = TSMAPI.GUI:CreateLabel(frame)
+	linkText:SetPoint("LEFT", icon, "RIGHT", 4, 0)
 	linkText:SetJustifyH("LEFT")
 	linkText:SetJustifyV("CENTER")
-	linkText:SetTextColor(1, 1, 1, 1)
-	linkText:SetText("")
 	frame.linkText = linkText
 	
-	local stackText = frame:CreateFontString()
-	stackText:SetPoint("TOPLEFT", 330, -38)
+	local bg = frame:CreateTexture(nil, "BACKGROUND")
+	bg:SetPoint("TOPLEFT", linkText, -2, 2)
+	bg:SetPoint("BOTTOMRIGHT", linkText, 2, -2)
+	TSMAPI.Design:SetContentColor(bg)
+	linkText.bg = bg
+	
+	local stackText = TSMAPI.GUI:CreateLabel(frame)
+	stackText:SetPoint("TOPLEFT", 350, -18)
 	stackText:SetWidth(175)
 	stackText:SetHeight(18)
-	stackText:SetFontObject(GameFontNormal)
 	stackText:SetJustifyH("LEFT")
 	stackText:SetJustifyV("CENTER")
-	stackText:SetTextColor(1, 1, 1, 1)
-	stackText:SetText("")
 	frame.stackText = stackText
 	
-	local bidText = frame:CreateFontString()
-	bidText:SetPoint("TOPLEFT", 330, -58)
+	local bidText = TSMAPI.GUI:CreateLabel(frame)
+	bidText:SetPoint("TOPLEFT", 350, -38)
 	bidText:SetWidth(175)
 	bidText:SetHeight(18)
-	local font, height = GameFontNormal:GetFont()
-	bidText:SetFont(font, height-1)
 	bidText:SetJustifyH("LEFT")
 	bidText:SetJustifyV("CENTER")
-	bidText:SetTextColor(1, 1, 1, 1)
-	bidText:SetText("")
 	frame.bidText = bidText
 	
-	local buyoutText = frame:CreateFontString()
-	buyoutText:SetPoint("TOPLEFT", 330, -78)
+	local buyoutText = TSMAPI.GUI:CreateLabel(frame)
+	buyoutText:SetPoint("TOPLEFT", 350, -58)
 	buyoutText:SetWidth(175)
 	buyoutText:SetHeight(18)
-	buyoutText:SetFontObject(GameFontNormal)
 	buyoutText:SetJustifyH("LEFT")
 	buyoutText:SetJustifyV("CENTER")
-	buyoutText:SetTextColor(1, 1, 1, 1)
-	buyoutText:SetText("")
 	frame.buyoutText = buyoutText
 	
-	local statusText = frame:CreateFontString()
-	statusText:SetPoint("CENTER", frame, "TOPLEFT", 300, -65)
-	statusText:SetWidth(400)
-	statusText:SetFontObject(GameFontNormal)
+	local statusText = TSMAPI.GUI:CreateLabel(frame)
+	statusText:SetPoint("TOP", frame, "TOPLEFT", 300, -15)
 	statusText:SetJustifyH("CENTER")
 	statusText:SetJustifyV("CENTER")
-	statusText:SetTextColor(1, 1, 1, 1)
-	statusText:SetText("")
 	frame.statusText = statusText
 	
-	local quantityText = frame:CreateFontString()
-	quantityText:SetPoint("TOPLEFT", 520, -38)
+	local goldText = TSMAPI.GUI:CreateLabel(frame)
+	goldText:SetPoint("TOP", statusText, "BOTTOM", 0, -15)
+	goldText:SetJustifyH("CENTER")
+	goldText:SetJustifyV("CENTER")
+	frame.goldText = goldText
+	
+	local goldText2 = TSMAPI.GUI:CreateLabel(frame)
+	goldText2:SetPoint("TOP", goldText, "BOTTOM")
+	goldText2:SetJustifyH("CENTER")
+	goldText2:SetJustifyV("CENTER")
+	frame.goldText2 = goldText2
+	
+	local quantityText = TSMAPI.GUI:CreateLabel(frame)
+	quantityText:SetPoint("TOPLEFT", 535, -58)
 	quantityText:SetWidth(175)
 	quantityText:SetHeight(18)
-	quantityText:SetFontObject(GameFontNormal)
 	quantityText:SetJustifyH("LEFT")
 	quantityText:SetJustifyV("CENTER")
-	quantityText:SetTextColor(1, 1, 1, 1)
-	quantityText:SetText("")
 	frame.quantityText = quantityText
 	
 	return frame
@@ -928,9 +929,9 @@ function private:CreateLogST(parent)
 				GameTooltip:AddLine(L["Fallback:"].." "..(TSMAPI:FormatTextMoney(fallback, "|cffffffff") or "???"))
 				GameTooltip:AddLine(L["Lowest Buyout:"].." |r"..(TSMAPI:FormatTextMoney(buyout, "|cffffffff") or "---"))
 				GameTooltip:AddLine(L["Log Info:"].." "..info)
-				GameTooltip:AddLine("\n|cff99ffff"..L["Click to show auctions for this item."].."|r")
-				GameTooltip:AddLine("|cff99ffff"..format(L["Right-Click to add %s to your friends list."], "|r"..(row.seller or "---").."|cff99ffff").."|r")
-				GameTooltip:AddLine("|cff99ffff"..L["Shift-Right-Click to show the options for this item's Auctioning group."].."|r")
+				GameTooltip:AddLine("\n"..TSMAPI.Design:GetInlineColor("link2")..L["Click to show auctions for this item."].."|r")
+				GameTooltip:AddLine(TSMAPI.Design:GetInlineColor("link2")..format(L["Right-Click to add %s to your friends list."], "|r"..(row.seller or "---")..TSMAPI.Design:GetInlineColor("link2")).."|r")
+				GameTooltip:AddLine(TSMAPI.Design:GetInlineColor("link2")..L["Shift-Right-Click to show the options for this item's Auctioning group."].."|r")
 				GameTooltip:Show()
 			end
 		end,
@@ -1015,18 +1016,24 @@ function private:CreateLogST(parent)
 		return colInfo
 	end
 	
-	local ROW_HEIGHT = 20
+	local ROW_HEIGHT = 19
 
-	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()))
+	local font, size = TSMAPI.Design:GetContentFont("small")
+	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()), {font, size, "SetWidgetTextColor"})
 	st.frame:SetParent(parent)
 	st.frame:SetPoint("TOPLEFT", 0, -50)
 	st.frame:SetPoint("BOTTOMRIGHT")
 	st.frame:SetScript("OnSizeChanged", function(_,width, height)
 			st:SetDisplayCols(GetSTColInfo(width))
-			st:SetDisplayRows(12, floor((height-20)/12))
+			st:SetDisplayRows(13, floor((height-20)/13))
 		end)
-		
-	local font = GameFontHighlightSmall:GetFont()
+	st:Show()
+	st:SetData({})
+	st:RegisterEvents(events)
+	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
+	st:EnableSelection(true)
+	st:Hide()
+
 	for i, row in ipairs(st.rows) do
 		row:SetHeight(ROW_HEIGHT)
 		local tex = row:CreateTexture()
@@ -1043,7 +1050,9 @@ function private:CreateLogST(parent)
 		
 		for j, col in ipairs(row.cols) do
 			col.text:SetHeight(ROW_HEIGHT)
-			col.text:SetFont(font, 10)
+			col.text:SetFont(TSMAPI.Design:GetContentFont("small"))
+			TSMAPI.Design:SetWidgetTextColor(col.text)
+			col.text:SetShadowColor(0, 0, 0, 0)
 		end
 	end
 
@@ -1067,12 +1076,6 @@ function private:CreateLogST(parent)
 			end
 		end)
 	
-	st:Show()
-	st:SetData({})
-	st:RegisterEvents(events)
-	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
-	st:EnableSelection(true)
-	st:Hide()
 	return st
 end
 
@@ -1138,7 +1141,7 @@ function private:GetLogSTRow(record)
 			if isPlayer then
 				return "|cffffff00"..seller.."|r"
 			elseif isWhiteList then
-				return "|cff99ffff"..seller.."|r"
+				return TSMAPI.Design:GetInlineColor("link2")..seller.."|r"
 			elseif isBlackList then
 				return "|cffff0033"..seller.."|r"
 			else
@@ -1206,7 +1209,8 @@ function private:UpdateSTData()
 end
 
 local function SetGoldText()
-	local text = format(L["Done Posting\n\nTotal value of your auctions: %s\nIncoming Gold: %s"], TSM.Post:GetAHGoldTotal())
+	local line1, line2 = TSM.Post:GetAHGoldTotal()
+	local text = format(L["Done Posting\n\nTotal value of your auctions: %s\nIncoming Gold: %s"], line1, line2)
 	private.infoText:SetInfo(text)
 end
 
@@ -1214,8 +1218,6 @@ function private:Stopped(notDone)
 	TSM.Manage:UnregisterAllMessages()
 	private.buttons:Disable(true)
 	private.statusBar:UpdateStatus(100, 100)
-	
-	--private.contentButtons.editPriceButton:Hide()
 	private.contentButtons.currAuctionsButton:Hide()
 	
 	if private.mode == "Post" then
