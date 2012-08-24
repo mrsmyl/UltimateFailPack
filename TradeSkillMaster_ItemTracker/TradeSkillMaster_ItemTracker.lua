@@ -84,6 +84,25 @@ function TSM:OnInitialize()
 	if TSM.db.profile.tooltip ~= "hide" then
 		TSMAPI:RegisterTooltip("TradeSkillMaster_ItemTracker", function(...) return TSM:LoadTooltip(...) end)
 	end
+	
+	local itemIDs = {}
+	for _, data in pairs(TSM.characters) do
+		for itemID in pairs(data.bags) do
+			itemIDs[itemID] = true
+		end
+		for itemID in pairs(data.bank) do
+			itemIDs[itemID] = true
+		end
+		for itemID in pairs(data.auctions) do
+			itemIDs[itemID] = true
+		end
+	end
+	for _, data in pairs(TSM.guilds) do
+		for itemID in pairs(data.items) do
+			itemIDs[itemID] = true
+		end
+	end
+	TSMAPI:GetItemInfoCache(itemIDs, true)
 end
 
 function TSM:LoadTooltip(itemID)

@@ -223,6 +223,12 @@ function Config:LoadInventoryViewer(parent)
 							viewerST:SetData(GetSTData())
 						end,
 				},
+				{
+					type = "SimpleGroup",
+					fullHeight = true,
+					layout = "Flow",
+					children = {}
+				},
 			},
 		},
 	}
@@ -232,26 +238,21 @@ function Config:LoadInventoryViewer(parent)
 	
 	-- scrolling table
 	local colInfo = GetColInfo(parent.frame:GetWidth())
+	local stParent = parent.children[1].children[#parent.children[1].children].frame
 
 	if not viewerST then
 		viewerST = TSMAPI:CreateScrollingTable(colInfo, true)
 	end
-	viewerST.frame:SetParent(parent.frame)
-	viewerST.frame:SetPoint("BOTTOMLEFT", parent.frame, 10, 10)
-	viewerST.frame:SetPoint("TOPRIGHT", parent.frame, -10, -105)
+	viewerST.frame:SetParent(stParent)
+	viewerST.frame:SetPoint("BOTTOMLEFT")
+	viewerST.frame:SetPoint("TOPRIGHT", 0, -20)
 	viewerST.frame:SetScript("OnSizeChanged", function(_,width, height)
 			viewerST:SetDisplayCols(GetColInfo(width))
 			viewerST:SetDisplayRows(floor(height/16), 16)
 		end)
 	viewerST:Show()
 	viewerST:SetData(GetSTData())
-	
-	local font, size = GameFontNormal:GetFont()
-	for i, row in ipairs(viewerST.rows) do
-		for j, col in ipairs(row.cols) do
-			col.text:SetFont(font, size-1)
-		end
-	end
+	viewerST.frame:GetScript("OnSizeChanged")(viewerST.frame, viewerST.frame:GetWidth(), viewerST.frame:GetHeight())
 	
 	for i, col in ipairs(viewerST.head.cols) do
 		col:SetHeight(32)
@@ -354,7 +355,7 @@ function Config:LoadOptions(parent)
 									end
 									
 									TSM.characters[value] = nil
-									TSM:Print(format(L["\"%s\" removed from ItemTracker."], value))
+									TSM:Printf(L["\"%s\" removed from ItemTracker."], value)
 									players[value] = nil
 									self:SetList(players)
 									self:SetValue()

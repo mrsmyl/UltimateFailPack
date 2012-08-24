@@ -15,16 +15,16 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("TradeSkillMaster_ItemTracker", "ruRU")
 if not L then return end
 
--- L["Delete Character:"] = ""
--- L["Full"] = ""
--- L["Here, you can choose what ItemTracker info, if any, to show in tooltips. \"Simple\" will show only show totals for bags/banks and for guild banks. \"Full\" will show detailed information for every character and guild."] = ""
--- L["If you previously used TSM_Gathering, note that inventory data was not transfered to TSM_ItemTracker and will not show up until you log onto each character and visit the bank / gbank / auction house."] = ""
--- L["If you rename / transfer / delete one of your characters, use this dropdown to remove that character from ItemTracker. There is no confirmation. If you accidentally delete a character that still exists, simply log onto that character to re-add it to ItemTracker."] = ""
--- L["ItemTracker: %s on player, %s on alts, %s in guild banks, %s on AH"] = ""
--- L["No Tooltip Info"] = ""
--- L["Options"] = ""
--- L["Simple"] = ""
--- L["\"%s\" removed from ItemTracker."] = ""
--- L["%s: %s in guild bank"] = ""
--- L["%s: %s (%s in bags, %s in bank, %s on AH)"] = ""
+L["Delete Character:"] = "Удалить персонажа:"
+L["Full"] = "Полный"
+L["Here, you can choose what ItemTracker info, if any, to show in tooltips. \"Simple\" will show only show totals for bags/banks and for guild banks. \"Full\" will show detailed information for every character and guild."] = "Настройка отображение данных модуля itemTracker в подсказках. \"Простой\" - показывается только общее количество предметов в сумках/банках и в банках гильдий. \"Полный\" - показывается детальная информация для каждого персонажа и гильдии."
+L["If you previously used TSM_Gathering, note that inventory data was not transfered to TSM_ItemTracker and will not show up until you log onto each character and visit the bank / gbank / auction house."] = "Если вы до этого пользовались модулем TSM_Gathering, обратите внимание, что данные инвентаря не были перенесены в TSM_ItemTracker и не будут отображаться до тех пор, пока вы не зайдёте в игру каждым персонажем и не посетите банк / банк гильдии / аукционный дом." -- Needs review
+L["If you rename / transfer / delete one of your characters, use this dropdown to remove that character from ItemTracker. There is no confirmation. If you accidentally delete a character that still exists, simply log onto that character to re-add it to ItemTracker."] = "Без подтверждения! Если вы переименуете / перенесёте / удалите одного из ваших персонажей, используйте этот список для удаления данного персонажа из модуля ItemTracker. Если вы случайно удалили персонажа, то просто зайдите этим персонажем в игру для добавления его в модуль." -- Needs review
+L["ItemTracker: %s on player, %s on alts, %s in guild banks, %s on AH"] = "ItemTracker: %s у игрока, %s у альтов, %s в банках гильдий, %s на ауке"
+L["No Tooltip Info"] = "Без подсказок"
+L["Options"] = "Настройки"
+L["Simple"] = "Простой"
+L["\"%s\" removed from ItemTracker."] = "\"%s\" удалено из ItemTracker."
+L["%s: %s in guild bank"] = "%s: %s в банке гильдии"
+L["%s: %s (%s in bags, %s in bank, %s on AH)"] = "%s: %s (%s в сумках, %s в банке, %s на ауке)"
 -- L["trackerMessage"] = ""

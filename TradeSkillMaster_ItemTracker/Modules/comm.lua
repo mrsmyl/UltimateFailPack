@@ -27,7 +27,9 @@ function Comm:DoSync()
 	
 	-- add people to friends list who aren't already
 	for i=1, GetNumFriends() do
-		friends[strlower(GetFriendInfo(i))] = i
+		if GetFriendInfo(i) then
+			friends[strlower(GetFriendInfo(i))] = i
+		end
 	end
 	for name in pairs(TSM.db.factionrealm.charactersToSync) do
 		if not friends[name] then
