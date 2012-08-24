@@ -29,8 +29,6 @@ function Automatic:Show(frame)
 
 	parentFrame = frame
 	Automatic:RegisterMessage("TSM_AUTOMATIC_SCAN_COMPLETE", "FinishedScanning")
-	Automatic:RegisterMessage("TSM_UPDATE_FRAME_COLORS")
-	Automatic:TSM_UPDATE_FRAME_COLORS()
 end
 
 function Automatic:Hide()
@@ -47,15 +45,8 @@ end
 
 function Automatic:CreateItemFrame(parent)
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
-	TSMAPI:RegisterForColorChanges(frame)
-	frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -4, -10)
+	TSMAPI.Design:SetFrameBackdropColor(frame)
+	frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 4, 0)
 	frame:SetWidth(350)
 	frame:SetHeight(300)
 	frame:SetFrameLevel(parent:GetFrameLevel()+6)
@@ -67,15 +58,12 @@ function Automatic:CreateItemFrame(parent)
 	frame:SetScript("OnDragStart", frame.StartMoving)
 	frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 	
-	local title = frame:CreateFontString()
-	title:SetFontObject(GameFontHighlight)
-	title:SetTextColor(1, 1, 1, 1)
-	title:SetPoint("TOP", 0, -8)
+	local title = TSMAPI.GUI:CreateTitleLabel(frame, 18)
+	title:SetPoint("TOP", 0, -4)
 	title:SetText(L["Shopping - Crafting Mats"])
 	frame.title = title
 	
-	frame.bar = GUI:AddHorizontalBar(frame, -25)
-	
+	TSMAPI.GUI:CreateHorizontalLine(frame, -25, nil, true)
 	
 	local stEvents = {
 		["OnClick"] = function(_, _, data, _, _, rowNum, column, st, button)
@@ -125,8 +113,8 @@ function Automatic:CreateItemFrame(parent)
 
 	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(frame:GetWidth()), true)
 	st.frame:SetParent(frame)
-	st.frame:SetPoint("TOPLEFT", 2, -60)
-	st.frame:SetPoint("BOTTOMRIGHT", -2, 0)
+	st.frame:SetPoint("TOPLEFT", 4, -45)
+	st.frame:SetPoint("BOTTOMRIGHT", -4, 4)
 	st.frame:SetScript("OnSizeChanged", function(_,width, height)
 			st:SetDisplayCols(GetSTColInfo(width))
 			st:SetDisplayRows(floor(height/18), 18)
@@ -136,7 +124,6 @@ function Automatic:CreateItemFrame(parent)
 	st.frame:GetScript("OnSizeChanged")(st.frame, st.frame:GetWidth(), st.frame:GetHeight())
 	st:EnableSelection(true)
 	
-	local font = GameFontHighlightSmall:GetFont()
 	for i, row in ipairs(st.rows) do
 		row:SetHeight(18)
 		if i%2 == 0 then
@@ -148,45 +135,15 @@ function Automatic:CreateItemFrame(parent)
 			tex:SetAlpha(0.3)
 			row:SetNormalTexture(tex)
 		end
-		for j, col in ipairs(row.cols) do
-			if j == 1 then
-				col.text:SetFont(font, 11)
-				col.text:SetHeight(18)
-			else
-				col.text:SetFont(font, 10)
-			end
-		end
 	end
 
 	for j, col in ipairs(st.head.cols) do
-		local fontString = col:GetFontString()
-		fontString:SetJustifyH("CENTER")
-		fontString:SetJustifyV("CENTER")
-		col:SetHeight(20)
-
-		local tex = col:CreateTexture()
-		tex:SetPoint("TOPLEFT", 0, 0)
-		tex:SetPoint("BOTTOMRIGHT", 0, -4)
-		tex:SetTexture("Interface\\WorldStateFrame\\WorldStateFinalScore-Highlight")
-		tex:SetTexCoord(0.017, 1, 0.083, 0.909)
-		tex:SetAlpha(0.5)
-		col:SetNormalTexture(tex)
-
-		local tex = col:CreateTexture()
-		tex:SetPoint("TOPLEFT", 0, 0)
-		tex:SetPoint("BOTTOMRIGHT", 0, -4)
-		tex:SetTexture("Interface\\Buttons\\UI-Listbox-Highlight")
-		tex:SetTexCoord(0.025, 0.957, 0.087, 0.931)
-		tex:SetAlpha(0.2)
-		col:SetHighlightTexture(tex)
+		col:GetFontString():SetJustifyH("CENTER")
+		col:GetFontString():SetJustifyV("CENTER")
 	end
 	
-	st.head:SetPoint("BOTTOMLEFT", st.frame, "TOPLEFT", 4, 8)
-	st.head:SetPoint("BOTTOMRIGHT", st.frame, "TOPRIGHT", -4, 8)
-	st.head:SetHeight(15)
 	st:RegisterEvents(stEvents)
 	frame.st = st
-	
 	return frame
 end
 
@@ -219,6 +176,7 @@ function Automatic:CreateIntroFrame(parent)
 		for key in pairs(ddList) do
 			self.destroyingModesDropdown:SetItemValue(key, TSM.db.global.automaticDestroyingModes[key])
 		end
+		self.contentFrame:Show()
 	end
 	
 	local function OnButtonClick()
@@ -232,18 +190,24 @@ function Automatic:CreateIntroFrame(parent)
 	end
 
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetPoint("TOPLEFT", 120, -45)
+	frame:SetPoint("TOPLEFT", 300, -20)
 	frame:SetHeight(30)
-	frame:SetPoint("TOPRIGHT", -20, -45)
+	frame:SetPoint("TOPRIGHT", -40, -20)
 	frame:Hide()
 	frame:SetScript("OnShow", OnFrameShow)
+	frame:SetScript("OnHide", function(self) self.contentFrame:Hide() end)
 	
-	local dd = GUI:CreateDropdown(frame, L["Professions to Buy Materials for:"], 600, {}, {"TOPLEFT", -40, 8}, L["Select all the professions for which you would like to buy materials."])
+	local contentFrame = CreateFrame("Frame", nil, parent.content)
+	TSMAPI.Design:SetFrameBackdropColor(contentFrame)
+	contentFrame:SetAllPoints()
+	frame.contentFrame = contentFrame
+	
+	local dd = GUI:CreateDropdown(frame, L["Professions to Buy Materials for:"], 400, {}, {"TOPLEFT", -40, 8}, L["Select all the professions for which you would like to buy materials."])
 	dd:SetCallback("OnValueChanged", function(_,_,key,value) professions[key] = value end)
 	dd:SetMultiselect(true)
 	frame.professionsDropdown = dd
 	
-	local btn = GUI:CreateButton(frame, "TSMAHTabCraftingMatsButton", "control", 1, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabCraftingMatsButton")
 	btn:SetPoint("TOPLEFT", dd.frame, "TOPRIGHT", 40, -22)
 	btn:SetPoint("BOTTOMLEFT", dd.frame, "BOTTOMRIGHT", 40, 2)
 	btn:SetText(SEARCH)
@@ -251,17 +215,16 @@ function Automatic:CreateIntroFrame(parent)
 	btn:SetScript("OnClick", OnButtonClick)
 	frame.button = btn
 	
-	local text = frame:CreateFontString()
-	text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, -20)
-	text:SetFontObject(GameFontNormal)
-	text:SetText("|cff99ffff"..L["Additional Options:"].."|r")
+	local text = TSMAPI.GUI:CreateLabel(contentFrame)
+	text:SetPoint("TOPLEFT", 20, -20)
+	text:SetText(TSMAPI.Design:GetInlineColor("link")..L["Additional Options:"].."|r")
 	
-	local dd2 = GUI:CreateDropdown(frame, L["Destroying Modes to Use:"], 300, {}, {"TOPLEFT", parent.content, "TOPLEFT", 40, -60}, L["Here you can choose in which situations Shopping should run a destroying search rather than a regular search for the target item."])
+	local dd2 = GUI:CreateDropdown(contentFrame, L["Destroying Modes to Use:"], 300, {}, {"TOPLEFT", parent.content, "TOPLEFT", 40, -60}, L["Here you can choose in which situations Shopping should run a destroying search rather than a regular search for the target item."])
 	dd2:SetCallback("OnValueChanged", function(_,_,key,value) TSM.db.global.automaticDestroyingModes[key] = value end)
 	dd2:SetMultiselect(true)
 	frame.destroyingModesDropdown = dd2
 	
-	local cb = GUI:CreateCheckBox(frame, L["Even Stacks Only (Ore/Herbs)"], 250, {"TOPLEFT", parent.content, "TOPLEFT", 380, -80}, L["If checked, only 5/10/15/20 stacks of ore and herbs will be shown. Note that this setting is the same as the one that shows up when you run a Destroying search."])
+	local cb = GUI:CreateCheckBox(contentFrame, L["Even Stacks Only (Ore/Herbs)"], 250, {"TOPLEFT", parent.content, "TOPLEFT", 380, -80}, L["If checked, only 5/10/15/20 stacks of ore and herbs will be shown. Note that this setting is the same as the one that shows up when you run a Destroying search."])
 	cb:SetValue(TSM.db.profile.evenStacks)
 	cb:SetCallback("OnValueChanged", function(_,_,value) TSM.db.profile.evenStacks = value TSM.Destroying:UpdateSearchSTData() end)
 	frame.evenStackCB = cb
@@ -271,28 +234,26 @@ end
 
 function Automatic:CreateInfoFrame(parent)
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetPoint("TOPLEFT", 80, -40)
+	frame:SetPoint("TOPLEFT", 100, -20)
 	frame:SetHeight(30)
-	frame:SetPoint("TOPRIGHT", -20, -40)
+	frame:SetPoint("TOPRIGHT", -20, -20)
 	frame:Hide()
 	frame:SetScript("OnShow", OnFrameShow)
 	
-	local itemText = frame:CreateFontString()
+	local itemText = TSMAPI.GUI:CreateLabel(frame)
 	itemText:SetPoint("TOPLEFT")
-	itemText:SetFontObject(GameFontNormal)
 	itemText:SetText(L["Shopping for:"])
-	itemText:SetTextColor(1, 1, 1, 1)
 	frame.itemText = itemText
 	
-	local linkText = frame:CreateFontString()
-	linkText:SetPoint("LEFT", frame.itemText, "RIGHT", 2, 0)
-	linkText:SetFontObject(GameFontNormal)
-	linkText:SetTextColor(1, 1, 1, 1)
-	linkText:SetText("")
+	local linkText = TSMAPI.GUI:CreateLabel(frame)
+	linkText:SetPoint("LEFT", frame.itemText, "RIGHT", 4, 0)
 	frame.linkText = linkText
 	
 	local linkFrame = CreateFrame("Frame", nil, frame)
-	linkFrame:SetAllPoints(frame.linkText)
+	linkText:SetParent(linkFrame)
+	TSMAPI.Design:SetContentColor(linkFrame)
+	linkFrame:SetPoint("TOPLEFT", linkText, -2, 2)
+	linkFrame:SetPoint("BOTTOMRIGHT", linkText, 2, -2)
 	linkFrame:SetScript("OnEnter", function(self)
 			local link = self.text:GetText()
 			if link and link ~= "" then
@@ -306,26 +267,17 @@ function Automatic:CreateInfoFrame(parent)
 			GameTooltip:Hide()
 		end)
 	linkFrame.text = linkText
-		
-	local modeText = frame:CreateFontString()
+	
+	local modeText = TSMAPI.GUI:CreateLabel(frame)
 	modeText:SetPoint("TOPLEFT", 0, -20)
-	modeText:SetFontObject(GameFontNormal)
-	modeText:SetTextColor(1, 1, 1, 1)
-	modeText:SetText("")
 	frame.modeText = modeText
 	
-	local costText = frame:CreateFontString()
+	local costText = TSMAPI.GUI:CreateLabel(frame)
 	costText:SetPoint("TOPLEFT", 400, 0)
-	costText:SetFontObject(GameFontNormal)
-	costText:SetTextColor(1, 1, 1, 1)
-	costText:SetText("")
 	frame.costText = costText
 	
-	local quantityText = frame:CreateFontString()
+	local quantityText = TSMAPI.GUI:CreateLabel(frame)
 	quantityText:SetPoint("TOPLEFT", 400, -20)
-	quantityText:SetFontObject(GameFontNormal)
-	quantityText:SetTextColor(1, 1, 1, 1)
-	quantityText:SetText("")
 	frame.quantityText = quantityText
 	
 	return frame
@@ -384,20 +336,20 @@ function Automatic:SetCurrentItem(item, rowNum)
 	local _, link = GetItemInfo(item.itemID)
 	Automatic.infoFrame:Show()
 	Automatic.infoFrame.linkText:SetText(link)
-	Automatic.infoFrame.costText:SetText(L["Crafting Cost:"].." "..(TSMAPI:FormatTextMoney(item.cost, "|cff99ffff", true) or "---"))
-	Automatic.infoFrame.quantityText:SetText(L["Quantity Needed:"].." |cff99ffff"..item.quantity.."|r")
+	Automatic.infoFrame.costText:SetText(L["Crafting Cost:"].." "..(TSMAPI:FormatTextMoneyIcon(item.cost, TSMAPI.Design:GetInlineColor("link"), true) or "---"))
+	Automatic.infoFrame.quantityText:SetText(L["Quantity Needed:"].." "..TSMAPI.Design:GetInlineColor("link")..item.quantity.."|r")
 	
 	local destroyingFilters = {TSM.DestroyingUtil:GetFilters(item.itemID)}
 	if #destroyingFilters > 0 and TSM.db.global.automaticDestroyingModes[destroyingFilters[1]] then
 		-- run a destroy search
 		destroyingFilters[4] = item.itemID
 		TSM.Destroying:StartNewSearch(destroyingFilters, parentFrame)
-		Automatic.infoFrame.modeText:SetText(L["Search Mode: |cff99ffffDestroying Search|r"])
+		Automatic.infoFrame.modeText:SetText(format(L["Search Mode: %sDestroying Search|r"], TSMAPI.Design:GetInlineColor("link")))
 		Automatic.searchMode = "Destroying"
 	else
 		-- run a regular search
 		TSM.Search:StartAutomaticSearch(link, parentFrame)
-		Automatic.infoFrame.modeText:SetText(L["Search Mode: |cff99ffffRegular Search|r"])
+		Automatic.infoFrame.modeText:SetText(format(L["Search Mode: %sRegular Search|r"], TSMAPI.Design:GetInlineColor("link")))
 		Automatic.searchMode = "Search"
 	end
 	
@@ -469,12 +421,6 @@ function Automatic:ProcessPurchase(itemString, numBought)
 			end, 0.2)
 		return true
 	else
-		Automatic.infoFrame.quantityText:SetText(L["Quantity Needed:"].." |cff99ffff"..Automatic.currItem.quantity.."|r")
-	end
-end
-
-function Automatic:TSM_UPDATE_FRAME_COLORS()
-	if Automatic.itemFrame then
-		Automatic.itemFrame.bar.texture:SetVertexColor(TSMAPI:GetBorderColor())
+		Automatic.infoFrame.quantityText:SetText(L["Quantity Needed:"].." "..TSMAPI.Design:GetInlineColor("link")..Automatic.currItem.quantity.."|r")
 	end
 end

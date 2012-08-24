@@ -1,3 +1,12 @@
+v1.3
+*The search should now be smarter when selecting the next item to buy.
+*Moved the dealfinding search to the "special searches" frame.
+*Added code to take advantage of some of the new scan speedups in LibAuctionScan.
+*Added option for selecting price source of % market value column in search results table.
+*Fixed a bug with items in imported lists not getting names.
+*Updated for the new TSM design.
+*Many other minor bug fixes and improvements.
+
 v1.2
 *Added special searches (currently Vendor and Disenchant).
 *Dramatically increased the speed at which Shopping can purchase items.

@@ -225,8 +225,8 @@ function private:ShowConfirmationFrame(mode)
 end
 
 function private:UpdateAuctionConfirmation()
-	local buyoutText = TSMAPI:FormatTextMoney(currentAuction.buyout, nil, true)
-	local itemBuyoutText = TSMAPI:FormatTextMoney(floor(currentAuction.buyout/currentAuction.count), nil, true)
+	local buyoutText = TSMAPI:FormatTextMoneyIcon(currentAuction.buyout, nil, true)
+	local itemBuyoutText = TSMAPI:FormatTextMoneyIcon(floor(currentAuction.buyout/currentAuction.count), nil, true)
 	local buttonText, infoText = GetConfirmationText()
 	
 	private.confirmationFrame.searchingText:SetText("")
@@ -239,7 +239,8 @@ function private:UpdateAuctionConfirmation()
 		private.confirmationFrame.postFrame.postInfo:SetText(format(L["You currently have %s of this item and it stacks up to %s."], currentAuction.postInfo.totalQuantity, currentAuction.postInfo.maxStackSize))
 	else
 		private.confirmationFrame.quantityText:SetText("x"..currentAuction.count)
-		private.confirmationFrame.buyoutText:SetText(L["Item Buyout:"].." "..itemBuyoutText.."\n"..L["Auction Buyout:"].." "..buyoutText)
+		private.confirmationFrame.buyoutText:SetText(L["Item Buyout:"].." "..itemBuyoutText)
+		private.confirmationFrame.buyoutText2:SetText(L["Auction Buyout:"].." "..buyoutText)
 		private.confirmationFrame.purchasedText:SetText((infoText or "") .. " Auction: "..currentAuction.num.."/"..currentAuction.numAuctions)
 	end
 	private.confirmationFrame:Enable()
@@ -376,14 +377,9 @@ end
 
 function private:CreateControlButtons(parent)
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-	})
-	frame:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
 	frame:SetHeight(24)
 	frame:SetWidth(390)
-	frame:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -20, 13)
+	frame:SetPoint("BOTTOMRIGHT", -20, 6)
 	
 	local function OnClick(button)
 		if private.confirmationFrame and private.confirmationFrame:IsVisible() then
@@ -394,7 +390,7 @@ function private:CreateControlButtons(parent)
 		end
 	end
 	
-	local button = GUI:CreateButton(frame, "TSMAHTabCancelButton", "action", 3, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabCancelButton")
 	button:SetPoint("TOPLEFT", 0, 0)
 	button:SetWidth(100)
 	button:SetHeight(24)
@@ -403,7 +399,7 @@ function private:CreateControlButtons(parent)
 	button:SetScript("OnClick", OnClick)
 	frame.cancel = button
 	
-	local button = GUI:CreateButton(frame, "TSMAHTabPostButton", "action", 3, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabPostButton")
 	button:SetPoint("TOPLEFT", 104, 0)
 	button:SetWidth(100)
 	button:SetHeight(24)
@@ -424,7 +420,7 @@ function private:CreateControlButtons(parent)
 	button:Show()
 	frame.post = button
 	
-	local button = GUI:CreateButton(frame, "TSMAHTabBuyoutButton", "action", 3, "CENTER")
+	local button = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHTabBuyoutButton")
 	button:SetPoint("TOPLEFT", 208, 0)
 	button:SetWidth(100)
 	button:SetHeight(24)
@@ -438,18 +434,12 @@ end
 
 function private:CreateConfirmationFrame(parent)
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
+	TSMAPI.Design:SetFrameBackdropColor(frame)
 	frame:Hide()
 	frame:SetPoint("CENTER")
 	frame:SetFrameStrata("DIALOG")
 	frame:SetWidth(300)
 	frame:SetHeight(150)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
 	frame.UpdateStrata = function()
 		frame:SetFrameStrata("DIALOG")
 		frame.bg:SetFrameStrata("HIGH")
@@ -460,7 +450,6 @@ function private:CreateConfirmationFrame(parent)
 				AuctionControl:HideAuctionConfirmation()
 			end
 		end)
-	TSMAPI:RegisterForColorChanges(frame)
 	
 	frame.Enable = function(self)
 		self.proceed:Enable()
@@ -474,6 +463,7 @@ function private:CreateConfirmationFrame(parent)
 		self.linkText:SetText("")
 		self.quantityText:SetText("")
 		self.buyoutText:SetText("")
+		self.buyoutText2:SetText("")
 		self.purchasedText:SetText("")
 		self.proceed:SetText("")
 		self.searchingText:SetText("")
@@ -485,6 +475,7 @@ function private:CreateConfirmationFrame(parent)
 			self:SetHeight(200)
 			self.purchasedText:Hide()
 			self.buyoutText:Hide()
+			self.buyoutText2:Hide()
 			self.quantityText:Hide()
 			self.postFrame:Show()
 		else
@@ -492,6 +483,7 @@ function private:CreateConfirmationFrame(parent)
 			self:SetHeight(150)
 			self.purchasedText:Show()
 			self.buyoutText:Show()
+			self.buyoutText2:Show()
 			self.quantityText:Show()
 			self.postFrame:Hide()
 		end
@@ -499,17 +491,14 @@ function private:CreateConfirmationFrame(parent)
 	
 	local bg = CreateFrame("Frame", nil, frame)
 	bg:SetFrameStrata("HIGH")
-	bg:SetPoint("TOPLEFT", parent.content, "TOPLEFT")
-	bg:SetPoint("BOTTOMRIGHT", parent.content, "BOTTOMRIGHT", 5, -30)
+	bg:SetPoint("TOPLEFT", parent.content)
+	bg:SetPoint("BOTTOMRIGHT", parent.content)
 	bg:EnableMouse(true)
-	bg:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-	})
-	bg:SetBackdropColor(0, 0, 0, 0.3)
+	TSMAPI.Design:SetFrameBackdropColor(bg)
+	bg:SetAlpha(.2)
 	frame.bg = bg
 	
-	local btn = GUI:CreateButton(frame, "TSMAHConfirmationActionButton", "action", 0, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHConfirmationActionButton")
 	btn:SetPoint("BOTTOMLEFT", 10, 10)
 	btn:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -2, 10)
 	btn:SetHeight(25)
@@ -521,7 +510,7 @@ function private:CreateConfirmationFrame(parent)
 		end)
 	frame.proceed = btn
 	
-	local btn = GUI:CreateButton(frame, nil, "action", 0, "CENTER")
+	local btn = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHConfirmationActionButton")
 	btn:SetPoint("BOTTOMLEFT", frame, "BOTTOM", 2, 10)
 	btn:SetPoint("BOTTOMRIGHT", -10, 10)
 	btn:SetHeight(25)
@@ -529,33 +518,37 @@ function private:CreateConfirmationFrame(parent)
 	btn:SetScript("OnClick", function() frame:Hide() end)
 	frame.close = btn
 	
-	local linkText = frame:CreateFontString()
+	local linkText = TSMAPI.GUI:CreateLabel(frame)
 	linkText:SetFontObject(GameFontNormal)
 	linkText:SetPoint("TOP", -10, -10)
 	frame.linkText = linkText
 	
-	local quantityText = frame:CreateFontString()
-	quantityText:SetFontObject(GameFontNormal)
-	quantityText:SetTextColor(1, 1, 1, 1)
+	local bg = frame:CreateTexture(nil, "BACKGROUND")
+	bg:SetPoint("TOPLEFT", linkText, -2, 2)
+	bg:SetPoint("BOTTOMRIGHT", linkText, 2, -2)
+	TSMAPI.Design:SetContentColor(bg)
+	linkText.bg = bg
+	bg:Show()
+	
+	local quantityText = TSMAPI.GUI:CreateLabel(frame)
 	quantityText:SetPoint("LEFT", linkText, "RIGHT")
 	frame.quantityText = quantityText
 	
-	local buyoutText = frame:CreateFontString()
-	buyoutText:SetFontObject(GameFontNormal)
-	buyoutText:SetTextColor(1, 1, 1, 1)
+	local buyoutText = TSMAPI.GUI:CreateLabel(frame)
 	buyoutText:SetPoint("TOPLEFT", 10, -41)
 	buyoutText:SetJustifyH("LEFT")
 	frame.buyoutText = buyoutText
 	
-	local purchasedText = frame:CreateFontString()
-	purchasedText:SetFontObject(GameFontNormal)
-	purchasedText:SetTextColor(1, 1, 1, 1)
+	local buyoutText2 = TSMAPI.GUI:CreateLabel(frame)
+	buyoutText2:SetPoint("TOPLEFT", buyoutText, "BOTTOMLEFT")
+	buyoutText2:SetJustifyH("LEFT")
+	frame.buyoutText2 = buyoutText2
+	
+	local purchasedText = TSMAPI.GUI:CreateLabel(frame)
 	purchasedText:SetPoint("TOPLEFT", 10, -70)
 	frame.purchasedText = purchasedText
 	
-	local searchingText = frame:CreateFontString()
-	searchingText:SetFontObject(GameFontNormal)
-	searchingText:SetTextColor(1, 1, 1, 1)
+	local searchingText = TSMAPI.GUI:CreateLabel(frame)
 	searchingText:SetPoint("CENTER")
 	frame.searchingText = searchingText
 	
@@ -612,9 +605,7 @@ function private:CreateConfirmationFrame(parent)
 	postFrame:SetAllPoints()
 	frame.postFrame = postFrame
 	
-	local priceBoxLabel = postFrame:CreateFontString()
-	priceBoxLabel:SetFontObject(GameFontNormal)
-	priceBoxLabel:SetTextColor(1, 1, 1, 1)
+	local priceBoxLabel = TSMAPI.GUI:CreateLabel(postFrame)
 	priceBoxLabel:SetPoint("TOPLEFT", 10, -50)
 	priceBoxLabel:SetText(L["Auction Buyout (Stack Price):"])
 	postFrame.priceBoxLabel = priceBoxLabel
@@ -625,14 +616,12 @@ function private:CreateConfirmationFrame(parent)
 	priceBox:SetWidth(120)
 	postFrame.priceBox = priceBox
 	
-	local stackInfoLabel = postFrame:CreateFontString()
-	stackInfoLabel:SetFontObject(GameFontNormal)
-	stackInfoLabel:SetTextColor(1, 1, 1, 1)
+	local stackInfoLabel = TSMAPI.GUI:CreateLabel(postFrame)
 	stackInfoLabel:SetPoint("TOPLEFT", 10, -80)
 	stackInfoLabel:SetText(L["Stack Info:"])
 	postFrame.stackInfoLabel = stackInfoLabel
 	
-	local numStacksBox = GUI:CreateInputBox(postFrame, "TSMPostNumStacksBox")
+	local numStacksBox = TSMAPI.GUI:CreateInputBox(postFrame, "TSMPostNumStacksBox")
 	numStacksBox:SetNumeric(true)
 	numStacksBox:SetPoint("TOPLEFT", 110, -75)
 	numStacksBox:SetHeight(20)
@@ -642,7 +631,7 @@ function private:CreateConfirmationFrame(parent)
 	numStacksBox:SetScript("OnEditFocusLost", OnFocusLost)
 	postFrame.numStacksBox = numStacksBox
 	
-	local numStacksMaxButton = GUI:CreateButton(postFrame, nil, "control", 0, "CENTER")
+	local numStacksMaxButton = TSMAPI.GUI:CreateButton(postFrame, 16)
 	numStacksMaxButton:SetPoint("TOPLEFT", 165, -75)
 	numStacksMaxButton:SetHeight(20)
 	numStacksMaxButton:SetWidth(40)
@@ -650,14 +639,12 @@ function private:CreateConfirmationFrame(parent)
 	numStacksMaxButton:SetScript("OnClick", OnMaxButtonClicked)
 	postFrame.numStacksMaxButton = numStacksMaxButton
 	
-	local stackInfoLabel = postFrame:CreateFontString()
-	stackInfoLabel:SetFontObject(GameFontNormal)
-	stackInfoLabel:SetTextColor(1, 1, 1, 1)
+	local stackInfoLabel = TSMAPI.GUI:CreateLabel(postFrame)
 	stackInfoLabel:SetPoint("TOPLEFT", 225, -80)
 	stackInfoLabel:SetText(L["stacks of"])
 	postFrame.stackInfoLabel2 = stackInfoLabel
 	
-	local stackSizeBox = GUI:CreateInputBox(postFrame, "TSMPostStackSizeBox")
+	local stackSizeBox = TSMAPI.GUI:CreateInputBox(postFrame, "TSMPostStackSizeBox")
 	stackSizeBox:SetNumeric(true)
 	stackSizeBox:SetPoint("TOPLEFT", 295, -75)
 	stackSizeBox:SetHeight(20)
@@ -667,7 +654,7 @@ function private:CreateConfirmationFrame(parent)
 	stackSizeBox:SetScript("OnEditFocusLost", OnFocusLost)
 	postFrame.stackSizeBox = stackSizeBox
 	
-	local stackSizeMaxButton = GUI:CreateButton(postFrame, nil, "control", 0, "CENTER")
+	local stackSizeMaxButton = TSMAPI.GUI:CreateButton(postFrame, 16)
 	stackSizeMaxButton:SetPoint("TOPLEFT", 350, -75)
 	stackSizeMaxButton:SetHeight(20)
 	stackSizeMaxButton:SetWidth(40)
@@ -675,7 +662,7 @@ function private:CreateConfirmationFrame(parent)
 	stackSizeMaxButton:SetScript("OnClick", OnMaxButtonClicked)
 	postFrame.stackSizeMaxButton = stackSizeMaxButton
 	
-	local postInfo = postFrame:CreateFontString()
+	local postInfo = TSMAPI.GUI:CreateLabel(postFrame)
 	postInfo:SetFontObject(GameFontNormal)
 	postInfo:SetTextColor(1, 1, 1, 1)
 	postInfo:SetPoint("TOPLEFT", 10, -110)

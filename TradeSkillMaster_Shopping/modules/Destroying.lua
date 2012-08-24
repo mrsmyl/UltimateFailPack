@@ -62,16 +62,16 @@ end
 
 function Destroying:CreateFilterFrame(parent)
 	local frame, parent = TSMAPI:CreateSecureChild(parent)
-	frame:SetPoint("TOPLEFT", 120, -45)
+	frame:SetPoint("TOPLEFT", 125, -15)
 	frame:SetHeight(30)
-	frame:SetPoint("TOPRIGHT", -20, -45)
+	frame:SetPoint("TOPRIGHT", -20, -15)
 	
-	local text = frame:CreateFontString()
-	text:SetFontObject(GameFontHighlight)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	TSMAPI.Design:SetWidgetLabelColor(text)
 	text:SetPoint("RIGHT", frame, "LEFT")
 	text:SetText(L["Mode:"])
 	
-	local cb = GUI:CreateCheckBox(frame, L["Even Stacks (Ore/Herbs)"], 250, {"TOPLEFT", -100, -30}, L["If checked, only 5/10/15/20 stacks of ore and herbs will be shown."])
+	local cb = GUI:CreateCheckBox(frame, L["Even Stacks (Ore/Herbs)"], 250, {"TOPLEFT", -40, -35}, L["If checked, only 5/10/15/20 stacks of ore and herbs will be shown."])
 	cb:SetValue(TSM.db.profile.evenStacks)
 	cb:SetCallback("OnValueChanged", function(_,_,value) TSM.db.profile.evenStacks = value end)
 	frame.evenStackCB = cb
@@ -141,18 +141,18 @@ function Destroying:CreateFilterFrame(parent)
 	frame.transformIcon = transformIcon
 	
 	
-	local dd = GUI:CreateDropdown(frame, nil, 150, {}, {"TOPLEFT", 220, 5}, L["Primary Filter"])
+	local dd = GUI:CreateDropdown(frame, nil, 200, {}, {"TOPLEFT", 220, 0}, L["Primary Filter"])
 	dd:SetCallback("OnValueChanged", function(_,_,value) Destroying.filter1 = value Destroying.filter2 = nil Destroying:UpdateFilters() end)
 	frame.filter1 = dd
 	
-	local dd = GUI:CreateDropdown(frame, nil, 200, {}, {"TOPLEFT", 390, 5}, L["Secondary Filter"])
+	local dd = GUI:CreateDropdown(frame, nil, 200, {}, {"TOPLEFT", 410, 0}, L["Secondary Filter"])
 	dd:SetCallback("OnValueChanged", function(_,_,value) Destroying.filter2 = value Destroying:UpdateFilters() end)
 	frame.filter2 = dd
 	
-	local btn = GUI:CreateButton(frame, "TSMAHDestroyingButton", "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", 610, 5)
-	btn:SetWidth(70)
-	btn:SetHeight(30)
+	local btn = TSMAPI.GUI:CreateButton(frame, 18, "TSMAHDestroyingButton")
+	btn:SetPoint("TOPLEFT", 600, -2)
+	btn:SetWidth(90)
+	btn:SetHeight(24)
 	btn:SetText(SEARCH)
 	btn:SetScript("OnClick", function() Destroying:StartNewSearch() end)
 	frame.searchButton = btn
@@ -216,30 +216,38 @@ function Destroying:CreateTopLabel(parent)
 		if linkText then
 			self.linkText.link = linkText
 			self.linkText:SetText(linkText)
+			if linkText == "" then
+				self.linkText.bg:Hide()
+			else
+				self.linkText.bg:Show()
+			end
 		end
 		
 		local linkWidth = self.linkText:GetWidth()
-		frame.text:SetPoint("BOTTOM", parent, "TOP", -linkWidth/2, 2)
+		frame.text:SetPoint("BOTTOM", parent, "TOP", -linkWidth/2, 15)
 	end
 
-	local text = frame:CreateFontString()
-	text:SetPoint("BOTTOM", parent, "TOP", 0, 2)
-	text:SetFontObject(GameFontNormal)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	text:SetPoint("BOTTOM", parent, "TOP", 0, 15)
 	text:SetJustifyH("CENTER")
 	text:SetJustifyV("CENTER")
-	text:SetTextColor(1, 1, 1, 1)
 	text:SetText("")
 	frame.text = text
 	
-	local text2 = frame:CreateFontString()
+	local text2 = TSMAPI.GUI:CreateLabel(frame)
 	text2:SetPoint("LEFT", frame.text, "RIGHT", 2, 0)
-	text2:SetFontObject(GameFontNormal)
 	text2:SetJustifyH("LEFT")
 	text2:SetJustifyV("CENTER")
-	text2:SetTextColor(1, 1, 1, 1)
 	text2:SetText("")
 	frame.linkText = text2
 	frame:SetAllPoints(frame.linkText)
+	
+	local bg = frame:CreateTexture(nil, "BACKGROUND")
+	bg:SetPoint("TOPLEFT", text2, -2, 2)
+	bg:SetPoint("BOTTOMRIGHT", text2, 2, -2)
+	TSMAPI.Design:SetContentColor(bg)
+	bg:Hide()
+	text2.bg = bg
 	
 	frame:SetScript("OnEnter", function(self)
 			local link = self.linkText.link
@@ -374,7 +382,7 @@ function Destroying:StartNewSearch(automaticData, parent)
 	if Destroying.mode ~= "prospect" then
 		Destroying.currentSearchData.targetString = select(2, GetItemInfo(Destroying.currentSearchData.itemID))
 	else
-		Destroying.currentSearchData.targetString = "|cff99ffff"..Destroying.filter1.." - "..Destroying.filter2.."|r"
+		Destroying.currentSearchData.targetString = TSMAPI.Design:GetInlineColor("link")..Destroying.filter1.." - "..Destroying.filter2.."|r"
 	end
 	
 	Destroying.searchST:ChangeCols(Destroying.mode)
@@ -444,7 +452,7 @@ function Destroying:ProcessScan(scanData, isComplete)
 		if numAuctions == 0 then
 			Destroying.topLabel:SetText(L["No items found that can be turned into:"], Destroying.currentSearchData.targetString)
 		else
-			Destroying.topLabel:SetText(format(L["Summary of all |cff99ffff%s|r auctions that can be turned into:"], numAuctions), Destroying.currentSearchData.targetString)
+			Destroying.topLabel:SetText(format(L["Summary of all %s auctions that can be turned into:"], TSMAPI.Design:GetInlineColor("link")..numAuctions.."|r"), Destroying.currentSearchData.targetString)
 		end
 		
 		if Destroying.isAutomaticMode then

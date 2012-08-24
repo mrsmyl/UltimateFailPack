@@ -1,6 +1,5 @@
 local TSM = select(2, ...)
 local Search = TSM:NewModule("Search", "AceEvent-3.0", "AceHook-3.0")
-local GUI = TSMAPI:GetGUIFunctions()
 local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Shopping") -- loads the localization table
 
 function Search:OnInitialize()
@@ -49,48 +48,39 @@ end
 
 function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
+	TSMAPI.Design:SetFrameBackdropColor(frame)
 	frame:Hide()
-	TSMAPI:RegisterForColorChanges(frame)
 	frame:SetAllPoints(contentFrame)
 	frame:SetFrameLevel(contentFrame:GetFrameLevel() + 5)
 	frame:SetScript("OnShow", function(self)
 			parent.savedSearchesButton:SetText(L["Hide Saved Searches"])
 			if Search.topLabel then Search.topLabel:Hide() end
-			Search:SetGoldText(self.goldText)
+			Search:SetGoldText(self.goldText, self.goldText2)
 		end)
 	frame:SetScript("OnHide", function()
 			parent.savedSearchesButton:SetText(L["Show Saved Searches"])
 			if Search.topLabel then Search.topLabel:Show() end
 		end)
 	frame:EnableMouse(true)
-		
-	local goldText = frame:CreateFontString()
-	goldText:SetFontObject(GameFontNormal)
-	goldText:SetPoint("BOTTOM", frame, "TOP", 0, 0)
+	
+	local goldText = TSMAPI.GUI:CreateLabel(frame)
+	goldText:SetPoint("BOTTOM", frame, "TOP", 0, 30)
 	goldText:SetJustifyH("CENTER")
-	goldText:SetJustifyV("CENTER")
-	goldText:SetHeight(40)
-	goldText:SetTextColor(1, 1, 1, 1)
+	goldText:SetJustifyV("TOP")
+	goldText:SetHeight(16)
 	frame.goldText = goldText
+	
+	local goldText2 = TSMAPI.GUI:CreateLabel(frame)
+	goldText2:SetPoint("TOP", goldText, "BOTTOM", 0)
+	goldText2:SetJustifyH("CENTER")
+	goldText2:SetJustifyV("TOP")
+	goldText2:SetHeight(16)
+	frame.goldText2 = goldText2
 
 	local recentFrame = CreateFrame("Frame", nil, frame)
-	recentFrame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
-	TSMAPI:RegisterForColorChanges(recentFrame)
-	recentFrame:SetPoint("TOPLEFT")
-	recentFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", 1, 0)
+	TSMAPI.Design:SetFrameColor(recentFrame)
+	recentFrame:SetPoint("TOPLEFT", 2, -2)
+	recentFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -1, 2)
 	
 	local buttonHeight = 16
 	local numButtons = floor(TSMAPI:SafeDivide(frame:GetHeight()-10, buttonHeight))
@@ -100,13 +90,13 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 		local row = CreateFrame("Button", nil, recentFrame)
 		row:RegisterForClicks("AnyUp")
 		if i == 0 then
-			row:SetPoint("TOPLEFT", 6, -8)
+			row:SetPoint("TOPLEFT", 4, -4)
 			row:SetHeight(buttonHeight+2)
 		else
-			row:SetPoint("TOPLEFT", 6, -(10+i*buttonHeight))
+			row:SetPoint("TOPLEFT", 4, -(10+i*buttonHeight))
 			row:SetHeight(buttonHeight)
 		end
-		row:SetWidth(recentFrame:GetWidth()-12)
+		row:SetWidth(recentFrame:GetWidth()-8)
 		
 		row:SetScript("OnClick", function(self, button)
 				if button == "LeftButton" then
@@ -135,16 +125,12 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
  				GameTooltip:Hide()
 			end)
 		
-		local tex = row:CreateTexture()
-		tex:SetPoint("TOPLEFT", 0, 0)
-		tex:SetPoint("BOTTOMRIGHT", 0, 0)
-		tex:SetTexture("Interface\\Buttons\\UI-Listbox-Highlight2")
-		tex:SetVertexColor(1, 1, 1, 0.3)
-		row:SetHighlightTexture(tex)
+		local tex = row:CreateTexture(nil, "HIGHLIGHT")
+		tex:SetAllPoints()
+		tex:SetTexture(0, 0, 0, .1)
+		tex:SetBlendMode("BLEND")
 		
-		local text = row:CreateFontString()
-		text:SetFontObject(GameFontHighlightSmall)
-		text:SetTextColor(1, 1, 1, 1)
+		local text = TSMAPI.GUI:CreateLabel(row)
 		text:SetJustifyH("LEFT")
 		text:SetJustifyV("CENTER")
 		text:SetPoint("BOTTOMRIGHT")
@@ -159,9 +145,13 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 		end
 		
 		if i == 0 then
-			row:GetFontString():SetFontObject(GameFontHighlight)
-			row:GetFontString():SetJustifyH("CENTER")
-			row:SetText(L["|cff99ffffRecent Searches"])
+			local fontString = row:GetFontString()
+			fontString:SetFont(TSMAPI.Design:GetBoldFont(), 18)
+			TSMAPI.Design:SetTitleTextColor(fontString)
+			fontString:SetShadowColor(0, 0, 0, 0)
+			fontString:SetJustifyH("Center")
+			row:SetFontString(fontString)
+			row:SetText(L["Recent Searches"])
 			row:Disable()
 		end
 		
@@ -180,38 +170,19 @@ function Search:CreateSearchSuggestionFrame(parent, contentFrame)
 		end)
 		
 	local savedFrame = CreateFrame("Frame", nil, frame)
-	savedFrame:SetPoint("TOPLEFT", frame, "TOP", -1, 0)
-	savedFrame:SetPoint("BOTTOMRIGHT")
+	savedFrame:SetPoint("TOPLEFT", frame, "TOP", 1, -2)
+	savedFrame:SetPoint("BOTTOMRIGHT", -2, 2)
 	
 	local infoText = CreateFrame("Frame", nil, savedFrame)
 	infoText:SetAllPoints()
 	savedFrame.infoText = infoText
-	local text = infoText:CreateFontString()
-	text:SetFontObject(GameFontNormal)
+	local text = TSMAPI.GUI:CreateLabel(infoText)
 	text:SetPoint("TOPLEFT", 10, -100)
 	text:SetPoint("TOPRIGHT", -10, -100)
 	text:SetHeight(100)
 	text:SetText(L["|cffffbb11No dealfinding or shopping lists found. You can create shopping/dealfinding lists through the TSM_Shopping options.\n\nTIP: You can search for multiple items at a time by separating them with a semicolon. For example: \"volatile life; volatile earth; volatile water\"|r"])
 	
 	savedFrame.st = Search:CreateListsST(savedFrame)
-	
-	local function OnDealfindingSearchButtonClick()
-		local lists = {}
-		for listName in pairs(TSM.db.profile.dealfinding) do
-			tinsert(lists, listName)
-		end
-		Search:StartDealfindingSearch(lists)
-	end
-	
-	local btn = GUI:CreateButton(savedFrame, nil, "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", savedFrame.st.frame, "BOTTOMLEFT", 10, -2)
-	btn:SetPoint("TOPRIGHT", savedFrame.st.frame, "BOTTOMRIGHT", -10, -2)
-	btn:SetHeight(20)
-	btn:SetText(L["Scan All Dealfinding Lists"])
-	btn:SetScript("OnClick", OnDealfindingSearchButtonClick)
-	btn.tooltip = L["Starts a dealfinding search which searches for all your dealfinding lists at once."]
-	savedFrame.dealfindingSearchButton = btn
-	
 	savedFrame:SetScript("OnUpdate", function(self)
 			local num = 0
 			for _ in pairs(TSM.db.profile.shopping) do
@@ -255,9 +226,9 @@ function Search:CreateListsST(parent)
 				if button == "LeftButton" then
 					local listName = data[rowNum].listName
 					if TSM.db.profile.shopping[listName] then
-						Search:StartShoppingSearch(listName)
+						Search:StartShoppingListSearch(listName)
 					elseif TSM.db.profile.dealfinding[listName] then
-						Search:StartDealfindingSearch(listName)
+						Search:StartDealfindingListSearch(listName)
 					end
 				elseif button == "RightButton" then
 					if IsShiftKeyDown() then
@@ -285,7 +256,7 @@ function Search:CreateListsST(parent)
 	}
 
 	local stCols = {
-		{name="|cff99ffff"..L["Shopping/Dealfinding Lists"], width=1, align="CENTER"},
+		{name=L["Shopping/Dealfinding Lists"], width=1, align="CENTER"},
 	}
 	
 	local function GetSTColInfo(width)
@@ -299,16 +270,15 @@ function Search:CreateListsST(parent)
 	
 	local ROW_HEIGHT = 20
 
-	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()), true)
+	local st = TSMAPI:CreateScrollingTable(GetSTColInfo(parent:GetWidth()), {TSMAPI.Design:GetBoldFont(), 15, "SetTitleTextColor"})
 	st.frame:SetParent(parent)
 	st.frame:SetPoint("TOPLEFT", 0, -20)
-	st.frame:SetPoint("BOTTOMRIGHT", 0, 30)
+	st.frame:SetPoint("BOTTOMRIGHT", 0, 0)
 	st.frame:SetScript("OnSizeChanged", function(_,width, height)
 			st:SetDisplayCols(GetSTColInfo(width))
 			st:SetDisplayRows(floor(height/ROW_HEIGHT), ROW_HEIGHT)
 		end)
-		
-	local font = GameFontHighlightSmall:GetFont()
+	
 	for i, row in ipairs(st.rows) do
 		row:SetHeight(ROW_HEIGHT)
 		local tex = row:CreateTexture()
@@ -325,7 +295,7 @@ function Search:CreateListsST(parent)
 		
 		for j, col in ipairs(row.cols) do
 			col.text:SetHeight(ROW_HEIGHT)
-			col.text:SetFont(font, 10)
+			col.text:SetFont(TSMAPI.Design:GetContentFont("small"))
 		end
 	end
 
@@ -380,15 +350,8 @@ end
 
 function Search:CreateSpecialSearchFrame(parent, contentFrame)
 	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetBackdrop({
-		bgFile = "Interface\\Buttons\\WHITE8X8",
-		tile = false,
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		edgeSize = 24,
-		insets = {left = 4, right = 4, top = 4, bottom = 4},
-	})
+	TSMAPI.Design:SetFrameColor(frame)
 	frame:Hide()
-	TSMAPI:RegisterForColorChanges(frame)
 	frame:SetAllPoints(contentFrame)
 	frame:SetFrameLevel(contentFrame:GetFrameLevel() + 5)
 	frame:SetScript("OnShow", function() parent.specialSearchesButton:SetText(L["Hide Special Searches"]) end)
@@ -396,12 +359,10 @@ function Search:CreateSpecialSearchFrame(parent, contentFrame)
 	frame:EnableMouse(true)
 	
 	local infoText = L["Below are various special searches that TSM_Shopping can perform. The scans will use data from your most recent scan (or import) if the data is less than an hour old. Data can come from TSM_AuctionDB or TSM_WoWuction. Otherwise, they will do a scan of the entire AH which may take several minutes."]
-	local text = frame:CreateFontString()
-	text:SetFontObject(GameFontNormal)
-	text:SetPoint("TOPLEFT", 10, -10)
-	text:SetPoint("TOPRIGHT", -10, -10)
-	text:SetHeight(100)
-	text:SetTextColor(1, 1, 1, 1)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	text:SetPoint("TOPLEFT", 4, -4)
+	text:SetPoint("TOPRIGHT", -4, -4)
+	text:SetHeight(120)
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("TOP")
 	frame.infoText = text
@@ -452,17 +413,18 @@ function Search:CreateSpecialSearchFrame(parent, contentFrame)
 		end)
 	
 	local specialSearches = {
-		{btnText=L["Vendor Search"], tag="vendor", desc=L["A vendor search will look for auctions which can be purchased and then sold to a vendor for a profit."], func=function() Search:StartVendorSearch(canUseScanData) end, enabled=true},
-		{btnText=L["Disenchant Search"], tag="disenchant", desc=L["A disenchant search will look for auctions which can be purchased and disenchanted for a profit."], func=function() Search:StartDisenchantSearch(canUseScanData) end, enabled=(select(4, GetAddOnInfo("TradeSkillMaster_AuctionDB")) == 1), disabledText="This search requires TSM_AuctionDB. If you already have it installed, make sure it's enabled and up to date."},
+		{btnText=L["Vendor Search"], tag="vendor", desc=L["A vendor search will look for auctions which can be purchased and then sold to a vendor for a profit."], func=function() Search:StartVendorSearch(canUseScanData) end},
+		{btnText=L["Disenchant Search"], tag="disenchant", desc=L["A disenchant search will look for auctions which can be purchased and disenchanted for a profit."], func=function() Search:StartDisenchantSearch(canUseScanData) end},
+		{btnText=L["Dealfinding Search"], tag="dealfinding", desc=L["Starts a dealfinding search which searches for all your dealfinding lists at once."], func=function() Search:StartDealfindingSearch(canUseScanData) end},
 	}
 	
-	local bar = TSMAPI:GetGUIFunctions():AddHorizontalBar(frame, -100, nil, true)
+	TSMAPI.GUI:CreateHorizontalLine(frame, -125, nil, true)
 	
 	for i, data in ipairs(specialSearches) do
-		local bar = TSMAPI:GetGUIFunctions():AddHorizontalBar(frame, -100-50*i, nil, true)
+		TSMAPI.GUI:CreateHorizontalLine(frame, -125-50*i, nil, true)
 	
-		local btn = GUI:CreateButton(frame, nil, "action2", 1, "CENTER")
-		btn:SetPoint("TOPLEFT", 10, -115-50*(i-1))
+		local btn = TSMAPI.GUI:CreateButton(frame, 16)
+		btn:SetPoint("TOPLEFT", 10, -135-50*(i-1))
 		btn:SetHeight(30)
 		btn:SetWidth(200)
 		btn:SetText(data.btnText)
@@ -471,21 +433,14 @@ function Search:CreateSpecialSearchFrame(parent, contentFrame)
 		btn.tooltip = data.desc
 		frame[data.tag.."Button"] = btn
 		
-		local text = frame:CreateFontString()
-		text:SetFontObject(GameFontNormal)
-		text:SetPoint("TOPLEFT", 230, -115-50*(i-1))
-		text:SetPoint("TOPRIGHT", -10, -115-50*(i-1))
+		local text = TSMAPI.GUI:CreateLabel(frame)
+		text:SetPoint("TOPLEFT", 230, -135-50*(i-1))
+		text:SetPoint("TOPRIGHT", -10, -135-50*(i-1))
 		text:SetHeight(30)
-		text:SetTextColor(1, 1, 1, 1)
 		text:SetJustifyH("LEFT")
 		text:SetJustifyV("TOP")
 		text:SetText(data.desc)
 		frame[data.tag.."DescText"] = text
-		
-		if not data.enabled then
-			btn:Disable()
-			text:SetText(data.disabledText)
-		end
 	end
 	
 	return frame
@@ -547,17 +502,17 @@ function Search:CreateSearchBar(parent)
 		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
 		GameTooltip:SetMinimumWidth(400)
 		GameTooltip:AddLine(L["Enter what you want to search for in this box. You can also use the following options for more complicated searches.\n"], 1, 1, 1, 1)
-		GameTooltip:AddLine(L["|cffffff00Multiple Search Terms:|r You can search for multiple things at once by simply separated them with a ';'. For example '|cff99ffffelementium ore; obsidium ore|r' will search for both elementium and obsidium ore.\n"], 1, 1, 1, 1)
-		GameTooltip:AddLine(L["|cffffff00Inline Filters:|r You can easily add common search filters to your search such as rarity, level, and item type. For example '|cff99ffffarmor/leather/epic/85/i350/i377|r' will search for all leather armor of epic quality that requires level 85 and has an ilvl between 350 and 377 inclusive. Also, '|cff99ffffinferno ruby/exact|r' will display only raw inferno rubys (none of the cuts).\n"], 1, 1, 1, 1)
+		GameTooltip:AddLine(format(L["|cffffff00Multiple Search Terms:|r You can search for multiple things at once by simply separated them with a ';'. For example '%selementium ore; obsidium ore|r' will search for both elementium and obsidium ore.\n"], TSMAPI.Design:GetInlineColor("link2")), 1, 1, 1, 1)
+		GameTooltip:AddLine(format(L["|cffffff00Inline Filters:|r You can easily add common search filters to your search such as rarity, level, and item type. For example '%sarmor/leather/epic/85/i350/i377|r' will search for all leather armor of epic quality that requires level 85 and has an ilvl between 350 and 377 inclusive. Also, '%sinferno ruby/exact|r' will display only raw inferno rubys (none of the cuts).\n"], TSMAPI.Design:GetInlineColor("link2"), TSMAPI.Design:GetInlineColor("link2")), 1, 1, 1, 1)
 		GameTooltip:Show()
 	end
 
 	local searchBarFrame, parent = TSMAPI:CreateSecureChild(parent)
 	searchBarFrame:Hide()
 
-	local eb = GUI:CreateInputBox(searchBarFrame)
-	eb:SetPoint("TOPLEFT", parent, "TOPLEFT", 80, -30)
-	eb:SetHeight(36)
+	local eb = TSMAPI.GUI:CreateInputBox(searchBarFrame)
+	eb:SetPoint("TOPLEFT", parent, "TOPLEFT", 90, -10)
+	eb:SetHeight(22)
 	eb:SetWidth(300)
 	eb:SetScript("OnShow", eb.SetFocus)
 	eb:SetScript("OnEnterPressed", OnEnterPressed)
@@ -577,9 +532,9 @@ function Search:CreateSearchBar(parent)
 		Search:StartRegularSearch(Search.searchBar.editBox:GetText())
 	end
 	
-	local btn = GUI:CreateButton(searchBarFrame, "TSMAHTabSearchButton", "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 2, -10)
-	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 2, 8)
+	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 18)
+	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 2, -2)
+	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 2, 2)
 	btn:SetWidth(80)
 	btn:SetText(SEARCH)
 	btn:SetScript("OnClick", OnSearchClick)
@@ -596,9 +551,9 @@ function Search:CreateSearchBar(parent)
 		end
 	end
 	
-	local btn = GUI:CreateButton(searchBarFrame, nil, "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 90, -10)
-	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 90, 8)
+	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 18)
+	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 90, -2)
+	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 90, 2)
 	btn:SetWidth(170)
 	btn:SetText(L["Show Saved Searches"])
 	btn:SetScript("OnClick", OnSavedSearchesButtonClick)
@@ -616,9 +571,9 @@ function Search:CreateSearchBar(parent)
 		end
 	end
 	
-	local btn = GUI:CreateButton(searchBarFrame, nil, "control", 1, "CENTER")
-	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 270, -10)
-	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 270, 8)
+	local btn = TSMAPI.GUI:CreateButton(searchBarFrame, 18)
+	btn:SetPoint("TOPLEFT", eb, "TOPRIGHT", 270, -2)
+	btn:SetPoint("BOTTOMLEFT", eb, "BOTTOMRIGHT", 270, 2)
 	btn:SetWidth(170)
 	btn:SetText(L["Show Special Searches"])
 	btn:SetScript("OnClick", OnSpecialSearchesButtonClick)
@@ -645,10 +600,8 @@ end
 function Search:CreateTopLabel(parent)
 	local frame = CreateFrame("Frame", nil, parent)
 
-	local text = frame:CreateFontString()
-	text:SetPoint("BOTTOM", parent, "TOP", 0, 5)
-	text:SetFontObject(GameFontNormal)
-	text:SetTextColor(1, 1, 1, 1)
+	local text = TSMAPI.GUI:CreateLabel(frame)
+	text:SetPoint("BOTTOM", parent, "TOP", 0, 10)
 	text:SetJustifyH("CENTER")
 	text:SetJustifyV("BOTTOM")
 	text:SetText("")
@@ -736,7 +689,7 @@ end
 function Search:UpdateTopLabel(page, numPages, numLeft)
 	local filterNum = Search.currentSearch.num - numLeft + 1
 	local temp = {(";"):split(Search.currentSearch.filter)}
-	local currentFilter = "\"|cff99ffff"..(temp[filterNum]):trim().."|r\""
+	local currentFilter = "\""..TSMAPI.Design:GetInlineColor("link")..(temp[filterNum]):trim().."|r\""
 	Search.topLabel.text:SetFormattedText(L["Scanning page %s of %s for filter %s of %s: %s"], page, numPages, filterNum, Search.currentSearch.num, currentFilter)
 end
 
@@ -769,9 +722,9 @@ function Search:UpdateSearchSTData()
 	TSMAPI:SetSTData(Search.searchST, results)
 end
 
-function Search:SetGoldText(fontString)
+function Search:SetGoldText(fontString, fontString2)
 	if GetNumAuctionItems("owner") == 0 then
-		TSMAPI:CreateTimeDelay("shoppingGoldText", 0.2, function() Search:SetGoldText(fontString) end)
+		TSMAPI:CreateTimeDelay("shoppingGoldText", .2, function() Search:SetGoldText(fontString, fontString2) end)
 		return
 	end
 
@@ -784,5 +737,8 @@ function Search:SetGoldText(fontString)
 			incomingTotal = incomingTotal + buyoutAmount
 		end
 	end
-	fontString:SetText(format(L["Total value of your auctions: %s\nIncoming gold: %s"], TSMAPI:FormatTextMoney(total), TSMAPI:FormatTextMoney(incomingTotal)))
+	
+	local line1, line2 = ("\n"):split(L["Total value of your auctions: %s\nIncoming gold: %s"])
+	fontString:SetText(format(line1, TSMAPI:FormatTextMoneyIcon(total)))
+	fontString2:SetText(format(line2, TSMAPI:FormatTextMoneyIcon(incomingTotal)))
 end

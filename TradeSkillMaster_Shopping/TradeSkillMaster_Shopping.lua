@@ -25,6 +25,7 @@ local savedDBDefaults = {
 		destroyingDefaultSort = 5,
 		autoExpandSingleResult = true,
 		dealfindingShowAboveMaxPrice = false,
+        searchMarketValue = "DBMarket",
 	},
 }
 
@@ -60,6 +61,41 @@ function TSM:OnInitialize()
 		end
 		TSMAPI:GetItemInfoCache(itemIDs, true)
 	end
+	
+	local function FixListNames()
+		local numLeft = 0
+		for listName, data in pairs(TSM.db.profile.shopping) do
+			if listName ~= "searchTerms" then
+				for itemID, itemData in pairs(data) do
+					if type(itemData.name) == "number" then
+						local name = GetItemInfo(itemID)
+						if name then
+							itemData.name = name
+						else
+							numLeft = numLeft + 1
+						end
+					end
+				end
+			end
+		end
+		for _, data in pairs(TSM.db.profile.dealfinding) do
+			for itemID, itemData in pairs(data) do
+				if type(itemData.name) == "number" then
+					local name = GetItemInfo(itemID)
+					if name then
+						itemData.name = name
+					else
+						numLeft = numLeft + 1
+					end
+				end
+			end
+		end
+	
+		if numLeft == 0 then
+			TSMAPI:CancelFrame("shoppingItemIDNames")
+		end
+	end
+	TSMAPI:CreateTimeDelay("shoppingItemIDNames", 5, FixListNames, 5)
 end
 
 function TSM:UpdateDB()
@@ -171,12 +207,12 @@ function TSM:UnformatTextMoney(value)
 	end
 end
 
-function TSM:StartScan(filters, obj)
+function TSM:StartScan(filters, obj, ShouldStop)
 	obj.searchST:SetData({})
 	obj.isScanning = #filters or true
 	
 	TSM.AuctionControl:SetCurrentAuction()
-	TSMAPI:StartScan(filters, function(...) obj:OnScanCallback(...) end, {sellerResolution=true, useItemStrings=true, missingSellerName="---", maxRetries=2})
+	TSMAPI:StartScan(filters, function(...) obj:OnScanCallback(...) end, {sellerResolution=true, useItemStrings=true, missingSellerName="---", maxRetries=2, ShouldStop=ShouldStop})
 end
 
 local function getIndex(t, value)
@@ -197,11 +233,11 @@ function TSM:GetAuctionSTRightClickWindow(parent, title)
 	
 	local window = AceGUI:Create("TSMWindow")
 	window.frame:SetParent(parent)
+	window.frame:SetFrameStrata("FULLSCREEN_DIALOG")
 	window:SetWidth(500)
 	window:SetHeight(200)
 	window:SetTitle(title)
 	window:SetLayout("Flow")
-	window:EnableResize(false)
 	window.frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
 	window:SetCallback("OnClose", function(self)
 			self:ReleaseChildren()

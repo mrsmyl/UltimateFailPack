@@ -216,7 +216,7 @@ function Config:OpenImportFrame(listType)
 			Config:UpdateTree()
 			Config:SelectTreePath(listType, listName)
 			f:Hide()
-			TSM:Print(format(L["Data Imported to Group: %s"], listName))
+			TSM:Printf(L["Data Imported to Group: %s"], listName)
 		end)
 	f:AddChild(btn)
 	

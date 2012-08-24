@@ -1,6 +1,5 @@
 local TSM = select(2, ...)
 local Search = TSM:GetModule("Search")
-local GUI = TSMAPI:GetGUIFunctions()
 local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Shopping") -- loads the localization table
 
 local specialSearchMode
@@ -193,10 +192,10 @@ function Search:UpdateRecentSearches(searchTerm)
 end
 
 -- start the scan
-function Search:StartScan(filters, lists)
+function Search:StartScan(filters, lists, ShouldStop)
 	if not Search:IsAutomaticMode() then Search.searchBar:Disable() end
 	Search.currentSearch = {filter=filters.currentFilter, num=(filters.num or #filters), lists=lists, filters=CopyTable(filters)}
-	TSM:StartScan(filters, Search)
+	TSM:StartScan(filters, Search, ShouldStop)
 end
 
 -- gets the price that the percent column is based off of ("market price")
@@ -210,7 +209,7 @@ function Search:SetMarketPrice(item)
 	elseif Search:IsAutomaticMode() then
 		item:SetMarketValue(TSM.Automatic.currItem.cost)
 	else
-		item:SetMarketValue(TSMAPI:GetData("market", item:GetItemID()))
+        item:SetMarketValue(TSMAPI:GetItemValue(item:GetItemString(), TSM.db.profile.searchMarketValue))
 	end
 end
 
@@ -219,7 +218,7 @@ function Search:IsAutomaticMode()
 end
 
 function Search:IsSpecialSearch()
-	local specialSearchModes = {Dealfinding=true, Vendor=true, Disenchant=true}
+	local specialSearchModes = {Vendor=true, Disenchant=true, Dealfinding=true}
 	return specialSearchModes[specialSearchMode]
 end
 
@@ -244,7 +243,7 @@ function Search:StartRegularSearch(searchTerm)
 end
 
 -- starts a shopping list search - started by clicking on a shopping list
-function Search:StartShoppingSearch(shoppingList)
+function Search:StartShoppingListSearch(shoppingList)
 	TSM.AuctionControl:HideAuctionConfirmation()
 	
 	local filterStrings = {}
@@ -278,7 +277,7 @@ function Search:StartShoppingSearch(shoppingList)
 end
 
 -- starts a dealfinding search - started by clicking on a dealfinding list or clicking on the "Dealfinding Search" button
-function Search:StartDealfindingSearch(dealfindingLists)
+function Search:StartDealfindingListSearch(dealfindingLists)
 	TSM.AuctionControl:HideAuctionConfirmation()
 	
 	local filters, filterStrings = {}, {}
@@ -360,9 +359,16 @@ function Search:StartVendorSearch(useScanData)
 		return TSM:Print(L["Nothing below vendor price from last scan."])
 	end
 	
+	local function ShouldStop(link, buyout)
+		local vendorPrice = select(11, GetItemInfo(link))
+		if vendorPrice then
+			return buyout > vendorPrice
+		end
+	end
+	
 	specialSearchMode = "Vendor"
 	Search.searchST:SetPctColText(L["% Vendor Price"])
-	Search:StartScan(filters, {L["Vendor Search"]})
+	Search:StartScan(filters, {L["Vendor Search"]}, useScanData and ShouldStop)
 end
 
 function Search:StartDisenchantSearch(useScanData)
@@ -403,9 +409,58 @@ function Search:StartDisenchantSearch(useScanData)
 		return TSM:Print(L["Nothing worth disechanting from last scan."])
 	end
 	
+	local function ShouldStop(link, buyout)
+		return buyout > TSMAPI:GetData("deValue", TSMAPI:GetItemID(link))
+	end
+	
 	specialSearchMode = "Disenchant"
 	Search.searchST:SetPctColText(L["% Disenchant Value"])
-	Search:StartScan(filters, {L["Disenchant Search"]})
+	Search:StartScan(filters, {L["Disenchant Search"]}, useScanData and ShouldStop)
+end
+
+function Search:StartDealfindingSearch(useScanData)
+	local lists = {}
+	for listName in pairs(TSM.db.profile.dealfinding) do
+		tinsert(lists, listName)
+	end
+	
+	if not useScanData then
+		TSM:Print(L["Performing a full scan due to no recent scan data being available. This may take several minutes."])
+		return Search:StartDealfindingListSearch(lists)
+	end
+
+	TSM.AuctionControl:HideAuctionConfirmation()
+	
+	local filters, filterStrings = {}, {}
+	
+	for itemID, data in pairs(TSMAPI:GetData("lastCompleteScan") or {}) do
+		local dealfindingData = TSM.Config:GetDealfindingData(itemID)
+		if dealfindingData and dealfindingData.maxPrice and data.minBuyout and dealfindingData.maxPrice >= data.minBuyout then
+			local filterData = TSMAPI:GetAuctionQueryInfo(itemID)
+			if filterData then
+				tinsert(filters, filterData)
+				tinsert(filterStrings, filterData.name)
+			end
+		end
+	end
+		
+	filters.num = #filters
+	filters.currentFilter = table.concat(filterStrings, "; ")
+	if #filters == 0 then
+		return TSM:Print(L["Nothing below dealfinding price from last scan."])
+	end
+	
+	local function ShouldStop(link, buyout)
+		local tmp = TSM.Config:GetDealfindingData(TSMAPI:GetItemID(link))
+		local maxPrice = tmp and tmp.maxPrice
+		if maxPrice then
+			return buyout > maxPrice
+		end
+	end
+	
+	specialSearchMode = "Dealfinding"
+	Search.searchST:SetPctColText(L["% Max Price"])
+	Search:StartScan(filters, {L["Dealfinding Search"]}, ShouldStop)
 end
 
 
@@ -535,12 +590,12 @@ function Search:ProcessScan(scanData, isComplete)
 			TSM.AuctionControl:SetCurrentAuction(Search.currentSearch.filter)
 		elseif Search.currentSearch.lists then
 			if #Search.currentSearch.lists == 1 then
-				Search.topLabel.text:SetFormattedText(L["Showing summary of all |cff99ffff%s|r auctions for list \"|cff99ffff%s|r\""], numAuctions, Search.currentSearch.lists[1])
+				Search.topLabel.text:SetFormattedText(L["Showing summary of all %s auctions for list \"%s\""], TSMAPI.Design:GetInlineColor("link")..numAuctions.."|r", TSMAPI.Design:GetInlineColor("link")..Search.currentSearch.lists[1].."|r")
 			else
-				Search.topLabel.text:SetFormattedText(L["Showing summary of all |cff99ffff%s|r auctions for \"|cff99ffffDealfinding Search|r\""], numAuctions)
+				Search.topLabel.text:SetFormattedText(L["Showing summary of all %s auctions for \"%sDealfinding Search|r\""], TSMAPI.Design:GetInlineColor("link")..numAuctions.."|r", TSMAPI.Design:GetInlineColor("link"))
 			end
 		else
-			Search.topLabel.text:SetFormattedText(L["Showing summary of all |cff99ffff%s|r auctions that match filter \"|cff99ffff%s|r\""], numAuctions, Search.currentSearch.filter)
+			Search.topLabel.text:SetFormattedText(L["Showing summary of all %s auctions that match filter \"%s\""], TSMAPI.Design:GetInlineColor("link")..numAuctions.."|r", TSMAPI.Design:GetInlineColor("link")..Search.currentSearch.filter.."|r")
 		end
 		
 		-- let the Automatic code know we are done
@@ -626,7 +681,7 @@ function Search:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
 	local rowButton
 	for i=1, #Search.searchST.filtered do
 		if Search.searchST.filtered[i] == stSelection then
-			rowButton = Search.searchST.rows[i-Search.searchST.offset].cols[1]
+			rowButton = Search.searchST.rows[i-Search.searchST.offset] and Search.searchST.rows[i-Search.searchST.offset].cols[1]
 			break
 		end
 	end

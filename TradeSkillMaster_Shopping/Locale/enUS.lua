@@ -72,8 +72,8 @@ L["If checked, only 5/10/15/20 stacks of ore and herbs will be shown. Note that 
 L["Shopping for:"] = true
 L["Crafting Cost:"] = true
 L["Quantity Needed:"] = true
-L["Search Mode: |cff99ffffDestroying Search|r"] = true
-L["Search Mode: |cff99ffffRegular Search|r"] = true
+L["Search Mode: %sDestroying Search|r"] = true
+L["Search Mode: %sRegular Search|r"] = true
 
 -- Config.lua
 
@@ -106,7 +106,7 @@ L["Price Per Target Item"] = true
 L["Specifies the default sorting for results in the \"Destroying\" feature."] = true
 L["Automatically Expand Single Result"] = true
 L["If the results of a search only contain one unique item, it will be automatically expanded to show all auctions of that item if this option is enabled."] = true
-L["Hide Results Above Dealfinding Price"] = true
+L["Show Results Above Dealfinding Price"] = true
 L["If checked, the results of a dealfinding scan will include items above the maximum price. This can be useful if you sometimes want to buy items that are just above your max price."] = true
 L["Posting Options"] = true
 L["The options below control the \"Post\" button that is shown at the bottom of the auction frame inside the \"Search\" feature."] = true
@@ -182,6 +182,8 @@ L["Switch List Type"] = true
 L["Switch Type"] = true
 L["Delete / Export List"] = true
 L["Delete List"] = true
+L["Search Results Market Value Price Source"] = true
+L["Specifies the market value price source for results in the \"Search\" feature."] = true
 
 -- Destroying.lua
 
@@ -211,7 +213,7 @@ L["Price Per Gem"] = true
 L["Price Per Ink"] = true
 L["Scanning page %s of %s for filter %s of %s..."] = true
 L["No items found that can be turned into:"] = true
-L["Summary of all |cff99ffff%s|r auctions that can be turned into:"] = true
+L["Summary of all %s auctions that can be turned into:"] = true
 
 -- ImportExport.lua
 
@@ -245,6 +247,7 @@ L["Performing a full scan due to no recent scan data being available. This may t
 L["Nothing below vendor price from last scan."] = true
 L["% Vendor Price"] = true
 L["Nothing worth disechanting from last scan."] = true
+L["Nothing below dealfinding price from last scan."] = true
 L["Disenchantable Weapons"] = true
 L["Disenchantable Armor"] = true
 L["% Disenchant Value"] = true
@@ -252,9 +255,9 @@ L["% Market Value"] = true
 L["Nothing to search for."] = true
 L["% Max Price"] = true
 L["% Expected Cost"] = true
-L["Showing summary of all |cff99ffff%s|r auctions for list \"|cff99ffff%s|r\""] = true
-L["Showing summary of all |cff99ffff%s|r auctions for \"|cff99ffffDealfinding Search|r\""] = true
-L["Showing summary of all |cff99ffff%s|r auctions that match filter \"|cff99ffff%s|r\""] = true
+L["Showing summary of all %s auctions for list \"%s\""] = true
+L["Showing summary of all %s auctions for \"Dealfinding Search|r\""] = true
+L["Showing summary of all %s auctions that match filter \"%s\""] = true
 L["Auction not found. Restarting search."] = true
 
 -- SearchGUI.lua
@@ -274,11 +277,13 @@ L["Vendor Search"] = true
 L["A vendor search will look for auctions which can be purchased and then sold to a vendor for a profit."] = true
 L["Disenchant Search"] = true
 L["A disenchant search will look for auctions which can be purchased and disenchanted for a profit."] = true
+L["Dealfinding Search"] = true
+L["Starts a dealfinding search which searches for all your dealfinding lists at once."] = true
 L["%s removed from recent searches."] = true
 L["Left-Click: |cffffffffRun this recent search.|r"] = true
 L["Right-Click: |cffffffffCreate shopping list from this recent search.|r"] = true
 L["Shift-Right-Click: |cffffffffRemove from recent searches.|r"] = true
-L["|cff99ffffRecent Searches"] = true
+L["Recent Searches"] = true
 L["|cffffbb11No dealfinding or shopping lists found. You can create shopping/dealfinding lists through the TSM_Shopping options.\n\nTIP: You can search for multiple items at a time by separating them with a semicolon. For example: \"volatile life; volatile earth; volatile water\"|r"] = true
 L["Left-Click: |cffffffffRun this shopping/dealfinding list.|r"] = true
 L["Right-Click: |cffffffffOpen the options for this shopping/dealfinding list|r"] = true
@@ -287,12 +292,10 @@ L["Shopping list deleted: \"%s\""] = true
 L["Dealfinding list deleted: \"%s\""] = true
 L["Shopping/Dealfinding Lists"] = true
 L["Enter what you want to search for in this box. You can also use the following options for more complicated searches.\n"] = true
-L["|cffffff00Multiple Search Terms:|r You can search for multiple things at once by simply separated them with a ';'. For example '|cff99ffffelementium ore; obsidium ore|r' will search for both elementium and obsidium ore.\n"] = true
-L["|cffffff00Inline Filters:|r You can easily add common search filters to your search such as rarity, level, and item type. For example '|cff99ffffarmor/leather/epic/85/i350/i377|r' will search for all leather armor of epic quality that requires level 85 and has an ilvl between 350 and 377 inclusive. Also, '|cff99ffffinferno ruby/exact|r' will display only raw inferno rubys (none of the cuts).\n"] = true
+L["|cffffff00Multiple Search Terms:|r You can search for multiple things at once by simply separated them with a ';'. For example '%selementium ore; obsidium ore|r' will search for both elementium and obsidium ore.\n"] = true
+L["|cffffff00Inline Filters:|r You can easily add common search filters to your search such as rarity, level, and item type. For example '%sarmor/leather/epic/85/i350/i377|r' will search for all leather armor of epic quality that requires level 85 and has an ilvl between 350 and 377 inclusive. Also, '%sinferno ruby/exact|r' will display only raw inferno rubys (none of the cuts).\n"] = true
 L["Show/Hide the saved searches frame. This frame shows all your recent searches as well as your shopping and dealfinding lists."] = true
 L["Show/Hide the special searches frame. This frame shows all the special searches such as vendor, disenchanting, resale, and more."] = true
-L["Scan All Dealfinding Lists"] = true
-L["Starts a dealfinding search which searches for all your dealfinding lists at once."] = true
 L["Price Per Item"] = true
 L["Price Per Stack"] = true
 L["Item Level"] = true

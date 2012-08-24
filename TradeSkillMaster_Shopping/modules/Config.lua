@@ -57,7 +57,7 @@ local function AddItemToList(eb, item, listType, list, try)
 	end
 	local ok, name, link = pcall(function() return GetItemInfo(itemID or item) end)
 	if not (ok and name and link) and not (itemID and itemID < 100000 and itemID > 0) then
-		TSMAPI:SetStatusText(format(L["The item you entered was invalid. See the tooltip for the \"%s\" editbox for info about how to add items."], L["Item to Add"]))
+		TSM:Printf(L["The item you entered was invalid. See the tooltip for the \"%s\" editbox for info about how to add items."], L["Item to Add"])
 		eb:SetFocus()
 		return
 	end
@@ -67,7 +67,7 @@ local function AddItemToList(eb, item, listType, list, try)
 	if listType == "dealfinding" then
 		for listName, items in pairs(TSM.db.profile.dealfinding) do
 			if items[itemID] then
-				TSMAPI:SetStatusText(format(L["Item is already in dealfinding list: %s"], listName))
+				TSM:Printf(L["Item is already in dealfinding list: %s"], listName)
 				eb:SetFocus()
 				return
 			end
@@ -88,12 +88,11 @@ end
 local function AddList(eb, listName, listType)
 	listName = listName:trim()
 	if not listName or listName == "" or TSM.db.profile[listType][listName] then
-		TSMAPI:SetStatusText(format(L["Invalid list name. A list with this name may already exist."]))
+		TSM:Printf(L["Invalid list name. A list with this name may already exist."])
 		eb:SetFocus()
 		return
 	end
 	
-	TSMAPI:SetStatusText()
 	if listType == "shopping" then
 		TSM.db.profile.shopping[listName] = {searchTerms={}}
 	else
@@ -161,13 +160,13 @@ function Config:UpdateTree()
 	
 	-- populate the dealfinding lists
 	for listName, items in pairs(TSM.db.profile.dealfinding) do
-		tinsert(dealfindingLists, {value=listName, text="|cff99ff99"..listName.."|r"})
+		tinsert(dealfindingLists, {value=listName, text=TSMAPI.Design:GetInlineColor("category")..listName.."|r"})
 	end
 	sort(dealfindingLists, function(a, b) return strlower(a.text) < strlower(b.text) end)
 	
 	-- populate the shopping lists
 	for listName, items in pairs(TSM.db.profile.shopping) do
-		tinsert(shoppingLists, {value=listName, text="|cffffffff"..listName.."|r"})
+		tinsert(shoppingLists, {value=listName, text=listName})
 	end
 	sort(shoppingLists, function(a, b) return strlower(a.text) < strlower(b.text) end)
 	
@@ -175,7 +174,6 @@ function Config:UpdateTree()
 end
 
 function Config:SelectTree(treeFrame, _, selection)
-	TSMAPI:SetStatusText()
 	treeFrame:ReleaseChildren()
 	local selectedParent, selectedChild, selectedSubChild = ("\001"):split(selection)
 	
@@ -235,6 +233,18 @@ function Config:SelectTree(treeFrame, _, selection)
 end
 
 function Config:LoadOptionsPage(container)
+    -- price sources for % of market value
+    local mktPriceSrc = CopyTable(TSMAPI:GetPriceSources())
+    -- remove irrelevant ones fromm the list
+    mktPriceSrc["AucMinBuyout"] = nil
+    mktPriceSrc["IACost"] = nil
+    mktPriceSrc["Crafting"] = nil
+    mktPriceSrc["Vendor"] = nil
+    mktPriceSrc["AucMinBuyout"] = nil
+    mktPriceSrc["DBMinBuyout"] = nil
+    mktPriceSrc["TUJGEMedian"] = nil
+    mktPriceSrc["wowuctionMinBuyout"] = nil
+
 	local function UnformatTextMoney(value)
 		local gold = tonumber(strmatch(value, "([0-9]+)|c([0-9a-fA-F]+)g|r") or strmatch(value, "([0-9]+)g"))
 		local silver = tonumber(strmatch(value, "([0-9]+)|c([0-9a-fA-F]+)s|r") or strmatch(value, "([0-9]+)s"))
@@ -277,13 +287,25 @@ function Config:LoadOptionsPage(container)
 						},
 						{
 							type = "Dropdown",
-							label = L["Destroying Results Default Sort (requires reload)"],
+							label = L["Search Results Market Value Price Source"],
 							relativeWidth = 0.5,
-							list = {L["Item"], L["Auctions"], L["Stack Size"], L["Seller"], L["Price Per Target Item"], L["Price Per Item/Stack"], L["% Market Value"]},
-							value = TSM.db.profile.destroyingDefaultSort,
-							callback = function(_,_,value) TSM.db.profile.destroyingDefaultSort = value end,
-							tooltip = L["Specifies the default sorting for results in the \"Destroying\" feature."],
+							list = mktPriceSrc,
+							value = TSM.db.profile.searchMarketValue,
+							callback = function(_,_,value) TSM.db.profile.searchMarketValue = value end,
+							tooltip = L["Specifies the market value price source for results in the \"Search\" feature."],
 						},
+                        {
+                            type = "Dropdown",
+                            label = L["Destroying Results Default Sort (requires reload)"],
+                            relativeWidth = 0.5,
+                            list = {L["Item"], L["Auctions"], L["Stack Size"], L["Seller"], L["Price Per Target Item"], L["Price Per Item/Stack"], L["% Market Value"]},
+                            value = TSM.db.profile.destroyingDefaultSort,
+                            callback = function(_,_,value) TSM.db.profile.destroyingDefaultSort = value end,
+                            tooltip = L["Specifies the default sorting for results in the \"Destroying\" feature."],
+                        },
+                        {
+                            type = "Spacer",
+                        },
 						{
 							type = "CheckBox",
 							label = L["Automatically Expand Single Result"],
@@ -293,7 +315,7 @@ function Config:LoadOptionsPage(container)
 						},
 						{
 							type = "CheckBox",
-							label = L["Hide Results Above Dealfinding Price"],
+							label = L["Show Results Above Dealfinding Price"],
 							relativeWidth = 0.5,
 							quickCBInfo = {TSM.db.profile, "dealfindingShowAboveMaxPrice"},
 							tooltip = L["If checked, the results of a dealfinding scan will include items above the maximum price. This can be useful if you sometimes want to buy items that are just above your max price."],
@@ -331,10 +353,9 @@ function Config:LoadOptionsPage(container)
 									local val = UnformatTextMoney(value)
 									if val then
 										TSM.db.profile.postUndercut = val
-										TSMAPI:SetStatusText()
 										self:ClearFocus()
 									else
-										TSMAPI:SetStatusText(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
+										TSM:Print(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
 										self:SetFocus()
 									end
 									self:SetText(TSMAPI:FormatTextMoney(TSM.db.profile.postUndercut))
@@ -491,7 +512,7 @@ function Config:LoadProfilesPage(container)
 		delete_desc = L["Delete existing and unused profiles from the database to save space, and cleanup the SavedVariables file."],
 		delete = L["Delete a Profile"],
 		profiles = L["Profiles"],
-		current = L["Current Profile:"] .. " |cff99ffff" .. TSM.db:GetCurrentProfile() .. "|r",
+		current = L["Current Profile:"] .. " " .. TSMAPI.Design:GetInlineColor("link") .. TSM.db:GetCurrentProfile() .. "|r",
 	}
 	
 	-- Popup Confirmation Window used in this module
@@ -539,7 +560,6 @@ function Config:LoadProfilesPage(container)
 				{
 					type = "Label",
 					text = "TradeSkillMaster_Shopping" .. "\n",
-					fontObject = GameFontNormalLarge,
 					fullWidth = true,
 					colorRed = 255,
 					colorGreen = 0,
@@ -548,13 +568,11 @@ function Config:LoadProfilesPage(container)
 				{
 					type = "Label",
 					text = text["intro"] .. "\n" .. "\n",
-					fontObject = GameFontNormal,
 					fullWidth = true,
 				},
 				{
 					type = "Label",
 					text = text["reset_desc"],
-					fontObject = GameFontNormal,
 					fullWidth = true,
 				},
 				{	--simplegroup1 for the reset button / current profile text
@@ -573,7 +591,6 @@ function Config:LoadProfilesPage(container)
 						{
 							type = "Label",
 							text = text["current"],
-							fontObject = GameFontNormal,
 						},
 					},
 				},
@@ -584,7 +601,6 @@ function Config:LoadProfilesPage(container)
 				{
 					type = "Label",
 					text = text["choose_desc"],
-					fontObject = GameFontNormal,
 					fullWidth = true,
 				},
 				{	--simplegroup2 for the new editbox / existing profiles dropdown
@@ -622,7 +638,6 @@ function Config:LoadProfilesPage(container)
 				{
 					type = "Label",
 					text = text["copy_desc"],
-					fontObject = GameFontNormal,
 					fullWidth = true,
 				},
 				{
@@ -645,7 +660,6 @@ function Config:LoadProfilesPage(container)
 				{
 					type = "Label",
 					text = text["delete_desc"],
-					fontObject = GameFontNormal,
 					fullWidth = true,
 				},
 				{
@@ -699,7 +713,7 @@ function Config:LoadDealfindingItemOptions(container, list)
 				callback = function(self,_,value)
 						local copper = TSM:UnformatTextMoney(value)
 						if not copper then
-							TSMAPI:SetStatusText(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
+							TSM:Print(L["Invalid money format entered, should be \"#g#s#c\", \"25g4s50c\" is 25 gold, 4 silver, 50 copper."])
 							self:SetFocus()
 						else
 							self:ClearFocus()
@@ -710,7 +724,6 @@ function Config:LoadDealfindingItemOptions(container, list)
 			},
 			{
 				type = "Label",
-				label = "",
 				relativeWidth = 0.01
 			},
 			{
@@ -777,7 +790,7 @@ end
 function Config:LoadShoppingItemOptions(container, list)
 	local function AddSearchTermToList(eb, _, line)
 		if not line or line:trim() == "" then
-			TSMAPI:SetStatusText(L["Invalid search term."])
+			TSM:Print(L["Invalid search term."])
 			eb:SetFocus()
 			return
 		end
@@ -796,7 +809,6 @@ function Config:LoadShoppingItemOptions(container, list)
 			end
 		end
 		
-		TSMAPI:SetStatusText()
 		SelectTreePath("shopping", list)
 	end
 
@@ -870,7 +882,6 @@ function Config:LoadShoppingItemOptions(container, list)
 			},
 			{
 				type = "Label",
-				label = "",
 				relativeWidth = 0.01
 			},
 			
@@ -942,7 +953,6 @@ function Config:LoadListManagement(container, listType, listName)
 	local otherType = listType == "dealfinding" and "shopping" or "dealfinding"
 	
 	local function SwitchType()
-		TSMAPI:SetStatusText()
 		TSM.db.profile[otherType][listName] = {}
 		
 		if otherType == "shopping" then
@@ -971,12 +981,11 @@ function Config:LoadListManagement(container, listType, listName)
 		newName = newName:trim()
 		-- make sure the list name is valid
 		if not newName or newName == "" or TSM.db.profile.dealfinding[newName] or TSM.db.profile.shopping[newName] then
-			TSMAPI:SetStatusText(format(L["Invalid folder name. A folder with this name may already exist."]))
+			TSM:Printf(L["Invalid folder name. A folder with this name may already exist."])
 			eb:SetFocus()
 			return
 		end
 		
-		TSMAPI:SetStatusText()
 		TSM.db.profile[listType][newName] = CopyTable(TSM.db.profile[listType][listName])
 		TSM.db.profile[listType][listName] = nil
 		SelectTreePath(listType, newName)
