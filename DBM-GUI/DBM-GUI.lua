@@ -38,7 +38,7 @@
 --
 --
 
-local revision =("$Revision: 7598 $"):sub(12, -3) 
+local revision =("$Revision: 7788 $"):sub(12, -3) 
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 
 local PanelPrototype = {}
@@ -2131,7 +2131,12 @@ do
 	function DBM_GUI:UpdateModList()
 		for k,addon in ipairs(DBM.AddOns) do
 			if not Categories[addon.category] then
-				Categories[addon.category] = DBM_GUI:CreateNewPanel(L["TabCategory_"..addon.category:upper()] or L.TabCategory_Other, nil, (addon.category:upper()=="CATA"))
+				-- Create a Panel for "Wrath of the Lich King" "Burning Crusade" ...
+				if tonumber((select(2, GetBuildInfo()))) >= 16017 then--Choose default expanded catagory based on build number. This is so we show Cata mods until sept 25th patch.
+					Categories[addon.category] = DBM_GUI:CreateNewPanel(L["TabCategory_"..addon.category:upper()] or L.TabCategory_Other, nil, (addon.category:upper()=="MOP"))
+				else
+					Categories[addon.category] = DBM_GUI:CreateNewPanel(L["TabCategory_"..addon.category:upper()] or L.TabCategory_Other, nil, (addon.category:upper()=="CATA"))
+				end
 				if L["TabCategory_"..addon.category:upper()] then
 					local ptext = Categories[addon.category]:CreateText(L["TabCategory_"..addon.category:upper()])
 					ptext:SetPoint('TOPLEFT', Categories[addon.category].frame, "TOPLEFT", 10, -10)
