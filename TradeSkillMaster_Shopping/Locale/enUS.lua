@@ -256,7 +256,7 @@ L["Nothing to search for."] = true
 L["% Max Price"] = true
 L["% Expected Cost"] = true
 L["Showing summary of all %s auctions for list \"%s\""] = true
-L["Showing summary of all %s auctions for \"Dealfinding Search|r\""] = true
+L["Showing summary of all %s auctions for \"%sDealfinding Search|r\""] = true
 L["Showing summary of all %s auctions that match filter \"%s\""] = true
 L["Auction not found. Restarting search."] = true
 

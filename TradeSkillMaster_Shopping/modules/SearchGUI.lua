@@ -447,6 +447,18 @@ function Search:CreateSpecialSearchFrame(parent, contentFrame)
 end
 
 function Search:CreateSearchBar(parent)
+	local function HandleModifiedItemClick(link)
+		local putIntoChat = Search.hooks.HandleModifiedItemClick(link)
+		if not putIntoChat and Search.searchBar:IsVisible() and not Search.searchBar.isDisabled and not Search.searchST.isShowingItemTooltip and TSMAPI:AHTabIsVisible() then
+			local name = GetItemInfo(link)
+			if name then
+				Search.searchBar.editBox:SetText(name)
+				Search.searchBar.button:Click()
+				return true
+			end
+		end
+		return putIntoChat
+	end
 	local function InsertLink(link)
 		local putIntoChat = Search.hooks.ChatEdit_InsertLink(link)
 		if not putIntoChat then
@@ -462,6 +474,7 @@ function Search:CreateSearchBar(parent)
 		return putIntoChat
 	end
 	Search:RawHook("ChatEdit_InsertLink", InsertLink, true)
+	Search:RawHook("HandleModifiedItemClick", HandleModifiedItemClick, true)
 	
 	local function RemoveFocusAndHighlight(self)
 		self:ClearFocus()
