@@ -171,7 +171,7 @@ function Cancel:ShouldCancel(index)
 	end
 	
 	
-	if item.reset ~= "none" and lowestBuyout <= item.threshold then
+	if item.reset ~= "none" and lowestBuyout < item.threshold then
 		-- item is below threshold so it was posted according to reset method
 		local resetBuyout
 		local resolution

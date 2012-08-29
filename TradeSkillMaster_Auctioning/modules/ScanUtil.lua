@@ -28,7 +28,7 @@ function Scan:ShouldIgnoreAuction(record)
 		if not TSM.itemReverseLookup[itemString] and TSM.itemReverseLookup[itemID] then
 			itemString = itemID
 		end
-		record.parent.group = TSM.Config:GetConfigObject(itemID)
+		record.parent.group = TSM.Config:GetConfigObject(itemString)
 	end
 	local group = record.parent.group
 	return (record.timeLeft <= group.minDuration or record.count > group.ignoreStacksOver or record.count < group.ignoreStacksUnder)
@@ -84,7 +84,6 @@ function Scan:ProcessAuctionData(scanData, newItem)
 		auctionData[newItem] = auction
 	end
 end
-
 
 -- This gets how many auctions are posted specifically on this tier, it does not get how many of the items they up at this tier
 -- but purely the number of auctions
