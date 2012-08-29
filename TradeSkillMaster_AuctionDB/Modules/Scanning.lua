@@ -475,7 +475,13 @@ function Scan:ProcessScanData(scanData)
 		TSM.db.factionrealm.lastCompleteScan = time()
 	end
 	
-	TSM.Data:ProcessData(data) -- fix queue param?
+	local co = coroutine.create(function() TSM.Data:ProcessData(data, isScanning == "GetAll Scan" or isScanning == "Full Scan") end)
+	
+	TSMAPI:CreateTimeDelay("adbProcessDelay", 0, function()
+			if not coroutine.resume(co) then
+				TSMAPI:CancelFrame("adbProcessDelay")
+			end
+		end, 0.1)
 end
 
 function Scan:ProcessImportedData(auctionData)
@@ -495,5 +501,5 @@ function Scan:ProcessImportedData(auctionData)
 		data[itemID] = {records=records, minBuyout=minBuyout, quantity=quantity}
 	end
 	TSM.db.factionrealm.lastCompleteScan = time()
-	TSM.Data:ProcessData(data)
+	TSM.Data:ProcessData(data, true)
 end

@@ -80,43 +80,21 @@ function Data:GetMarketValue(scans)
 	return totalWeight > 0 and floor(TSMAPI:SafeDivide(totalAmount, totalWeight) + 0.5) or 0
 end
 
-
-function Data:CleanMinBuyouts(queue)
-	if queue and #queue > 1 then -- they did a category scan
-		local scannedInfo = {}
-		for i=1, #queue do
-			scannedInfo[tostring(queue[i].class).."@"..tostring(queue[i].subClass)] = true
-		end
-	
-		local classLookup = {}
-		local subClassLookup = {}
-		for i, class in pairs({GetAuctionItemClasses()}) do
-			for j, subClass in pairs({GetAuctionItemSubClasses(i)}) do
-				subClassLookup[subClass] = j
-			end
-			classLookup[class] = i
-		end
-		
-		-- wipe all the minBuyout data of items that should have been scanned
-		for itemID, data in pairs(TSM.data) do
-			local className, subClassName = select(6, GetItemInfo(itemID))
-			if not className or scannedInfo[(classLookup[className] or "0").."@"..(subClassLookup[subClassName] or "0")] then
-				data.minBuyout = nil
-				data.currentQuantity = 0
-			end
-		end
-	else
+function Data:ProcessData(scanData, clearMinBuyouts)
+	local coNum = 0
+	local day = Data:GetDay()
+	if clearMinBuyouts then
 		-- wipe all the minBuyout data
 		for itemID, data in pairs(TSM.data) do
 			data.minBuyout = nil
 			data.currentQuantity = 0
+			coNum = coNum + 1
+			if coNum >= 5000 then
+				coroutine.yield()
+				coNum = 0
+			end
 		end
 	end
-end
-
-function Data:ProcessData(scanData, queue)
-	local day = Data:GetDay()
-	Data:CleanMinBuyouts(queue)
 	
 	-- go through each item and figure out the market value / update the data table
 	for itemID, data in pairs(scanData) do
@@ -134,6 +112,11 @@ function Data:ProcessData(scanData, queue)
 		TSM.data[itemID].lastScan = time()
 		TSM.data[itemID].minBuyout = data.minBuyout > 0 and data.minBuyout or nil
 		Data:UpdateMarketValue(TSM.data[itemID])
+		coNum = coNum + 1
+		if coNum >= 500 then
+			coroutine.yield()
+			coNum = 0
+		end
 	end
 end
 
