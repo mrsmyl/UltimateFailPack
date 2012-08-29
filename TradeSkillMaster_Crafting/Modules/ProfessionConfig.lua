@@ -857,6 +857,7 @@ function ProfessionConfig:LoadSubCraftsPage(container, slot)
 	craftsST.frame:SetPoint("BOTTOMLEFT", container.children[1].frame)
 	craftsST.frame:SetPoint("TOPRIGHT", container.children[1].children[1].frame, "BOTTOMRIGHT", 0, -20)
 	craftsST.frame:SetScript("OnSizeChanged", function(_,width, height)
+			if not craftsST.frame:IsVisible() then return end
 			craftsST:SetDisplayCols(GetColInfo(width))
 			craftsST:SetDisplayRows(floor(height/16), 16)
 		end)

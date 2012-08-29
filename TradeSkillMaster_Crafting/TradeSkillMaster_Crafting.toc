@@ -1,11 +1,11 @@
-﻿## Interface: 40300
+﻿## Interface: 50000
 ## Title: |cff00ff00TradeSkillMaster_Crafting|r
 ## Notes: Computes the profits of making various tradeskill crafts.
 ## Author: Sapu94
-## Version: v1.1.3
+## Version: v1.1.5
 ## SavedVariables: TradeSkillMaster_CraftingDB
 ## Dependency: TradeSkillMaster
-## X-Curse-Packaged-Version: v1.1.3
+## X-Curse-Packaged-Version: v1.1.5
 ## X-Curse-Project-Name: TradeSkillMaster_Crafting
 ## X-Curse-Project-ID: tradeskillmaster_crafting
 ## X-Curse-Repository-ID: wow/tradeskillmaster_crafting/mainline

@@ -105,17 +105,19 @@ end
 
 
 local vendorTrades = {
-	[37101] = {itemID=61978, quantity=1}, -- Ivory Ink
-	[39469] = {itemID=61978, quantity=1}, -- Moonglow Ink
-	[39774] = {itemID=61978, quantity=1}, -- Midnight Ink
-	[43116] = {itemID=61978, quantity=1}, -- Lion's Ink
-	[43118] = {itemID=61978, quantity=1}, -- Jadefire Ink
-	[43120] = {itemID=61978, quantity=1}, -- Celestial Ink
-	[43122] = {itemID=61978, quantity=1}, -- Shimmering Ink
-	[43124] = {itemID=61978, quantity=1}, -- Ethereal Ink
-	[43126] = {itemID=61978, quantity=1}, -- Ink of the Sea
-	[43127] = {itemID=61978, quantity=10}, -- Snowfall Ink
-	[61981] = {itemID=61978, quantity=10}, -- Inferno Ink
+	[37101] = {itemID=79254, quantity=1}, -- Ivory Ink
+	[39469] = {itemID=79254, quantity=1}, -- Moonglow Ink
+	[39774] = {itemID=79254, quantity=1}, -- Midnight Ink
+	[43116] = {itemID=79254, quantity=1}, -- Lion's Ink
+	[43118] = {itemID=79254, quantity=1}, -- Jadefire Ink
+	[43120] = {itemID=79254, quantity=1}, -- Celestial Ink
+	[43122] = {itemID=79254, quantity=1}, -- Shimmering Ink
+	[43124] = {itemID=79254, quantity=1}, -- Ethereal Ink
+	[43126] = {itemID=79254, quantity=1}, -- Ink of the Sea
+	[61978] = {itemID=79254, quantity=1}, -- Blackfallow Ink
+	[43127] = {itemID=79254, quantity=10}, -- Snowfall Ink
+	[61981] = {itemID=79254, quantity=10}, -- Inferno Ink
+	[79255] = {itemID=79254, quantity=10}, -- Starlight Ink
 }
 
 function Vendor:GetItemVendorTrade(matID)

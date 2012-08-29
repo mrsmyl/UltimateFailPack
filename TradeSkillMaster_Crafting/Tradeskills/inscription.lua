@@ -32,7 +32,7 @@ function Inscription:HasProfession()
 	end
 end
 
-local inkLookup = {[61978]=1, [43126]=2, [43124]=3, [43122]=4, [43120]=5, [43118]=6, [43116]=7, [39774]=8}
+local inkLookup = {[79254]=1, [61978]=2, [43126]=3, [43124]=4, [43122]=5, [43120]=6, [43118]=7, [43116]=8, [39774]=9}
 function Inscription:GetSlot(itemID, mats)
 	if not itemID then return end
 	
@@ -116,7 +116,7 @@ function Inscription:GetSlotList()
 	return Inscription["slotList"..tableNum]
 end
 
-Inscription.slotList1 = {L["Blackfallow Ink"], L["Ink of the Sea"], L["Ethereal Ink"], L["Shimmering Ink"], L["Celestial Ink"], L["Jadefire Ink"],
+Inscription.slotList1 = {L["Ink of Dreams"], L["Blackfallow Ink"], L["Ink of the Sea"], L["Ethereal Ink"], L["Shimmering Ink"], L["Celestial Ink"], L["Jadefire Ink"],
 	L["Lion's Ink"], L["Midnight Ink"], L["Inks"], L["Scrolls"], L["Armor"], L["Other"]}
 
 Inscription.slotList2 = {L["Inks"], L["Scrolls"], L["Armor"], L["Other"]}
@@ -129,205 +129,90 @@ do
 	end
 end
 
-Inscription.inks = {
-	[37101] = { -- Ivory Ink
-		herbs = {
-			{itemID = 2449, pigmentPerMill = 3},
-			{itemID = 2447, pigmentPerMill = 3},
-			{itemID = 765, pigmentPerMill = 2.5},
-		},
-		pigment = 39151,
-		pigmentPerInk = 1,
+Inscription.inks = CopyTable(TSMAPI.DestroyingData.mill[1])
+Inscription.inks[61981] = { -- Inferno Ink
+	herbs = {
+		{itemID = 52983, pigmentPerMill = 0.5},
+		{itemID = 52984, pigmentPerMill = 0.5},
+		{itemID = 52985, pigmentPerMill = 0.5},
+		{itemID = 52986, pigmentPerMill = 0.5},
+		{itemID = 52987, pigmentPerMill = 0.8},
+		{itemID = 52988, pigmentPerMill = 0.8},
 	},
-	[39469] = { -- Moonglow Ink
-		herbs = {
-			{itemID = 2449, pigmentPerMill = 3},
-			{itemID = 2447, pigmentPerMill = 3},
-			{itemID = 765, pigmentPerMill = 2.5},
-		},
-		pigment = 39151,
-		pigmentPerInk = 2,
+	pigment = 61980,
+	pigmentPerInk = 2,
+}
+Inscription.inks[43115] = { -- hunter's ink
+	herbs = {
+		{itemID = 785, pigmentPerMill = 0.25},
+		{itemID = 2450, pigmentPerMill = 0.25},
+		{itemID = 2452, pigmentPerMill = 2.5},
+		{itemID = 2453, pigmentPerMill = 0.5},
+		{itemID = 3820, pigmentPerMill = 0.5},
 	},
-	[39774] = { -- Midnight Ink
-		herbs = {
-			{itemID = 785, pigmentPerMill = 2.5},
-			{itemID = 2450, pigmentPerMill = 2.5},
-			{itemID = 2452, pigmentPerMill = 2.5},
-			{itemID = 2453, pigmentPerMill = 3},
-			{itemID = 3820, pigmentPerMill = 3},
-		},
-		pigment = 39334,
-		pigmentPerInk = 2,
+	pigment = 43103,
+	pigmentPerInk = 1,
+}
+Inscription.inks[43119] = { -- royal ink
+	herbs = {
+		{itemID = 3819, pigmentPerMill = 0.5},
+		{itemID = 3818, pigmentPerMill = 0.5},
+		{itemID = 3821, pigmentPerMill = 0.25},
+		{itemID = 3358, pigmentPerMill = 0.25},
 	},
-	[43116] = { -- Lion's Ink
-		herbs = {
-			{itemID = 3355, pigmentPerMill = 2.5},
-			{itemID = 3369, pigmentPerMill = 2.5},
-			{itemID = 3356, pigmentPerMill = 3},
-			{itemID = 3357, pigmentPerMill = 3},
-		},
-		pigment = 39338,
-		pigmentPerInk = 2,
+	pigment = 43105,
+	pigmentPerInk = 1,
+}
+Inscription.inks[43121] = { -- fiery ink
+	herbs = {
+		{itemID = 8845, pigmentPerMill = 0.5},
+		{itemID = 8846, pigmentPerMill = 0.5},
+		{itemID = 8839, pigmentPerMill = 0.5},
+		{itemID = 8836, pigmentPerMill = 0.5},
+		{itemID = 4625, pigmentPerMill = 0.5},
+		{itemID = 8838, pigmentPerMill = 0.5},
+		{itemID = 8831, pigmentPerMill = 0.5},
 	},
-	[43118] = { -- Jadefire Ink
-		herbs = {
-			{itemID = 3819, pigmentPerMill = 3},
-			{itemID = 3818, pigmentPerMill = 2.5},
-			{itemID = 3821, pigmentPerMill = 2.5},
-			{itemID = 3358, pigmentPerMill = 3.5},
-		},
-		pigment = 39339,
-		pigmentPerInk = 2,
+	pigment = 43106,
+	pigmentPerInk = 1,
+}
+Inscription.inks[43125] = { -- darkflame ink
+	herbs = {
+		{itemID = 22792, pigmentPerMill = 0.5},
+		{itemID = 22791, pigmentPerMill = 0.5},
+		{itemID = 22790, pigmentPerMill = 0.5},
+		{itemID = 22793, pigmentPerMill = 0.5},
+		{itemID = 22786, pigmentPerMill = 0.25},
+		{itemID = 22785, pigmentPerMill = 0.25},
+		{itemID = 22787, pigmentPerMill = 0.25},
+		{itemID = 22789, pigmentPerMill = 0.25},
 	},
-	[43120] = { -- Celestial Ink
-		herbs = {
-			{itemID = 4625, pigmentPerMill = 2.5},
-			{itemID = 8831, pigmentPerMill = 2.5},
-			{itemID = 8836, pigmentPerMill = 2.5},
-			{itemID = 8838, pigmentPerMill = 2.5},
-			{itemID = 8839, pigmentPerMill = 3},
-			{itemID = 8845, pigmentPerMill = 3},
-			{itemID = 8846, pigmentPerMill = 3},
-		},
-		pigment = 39340,
-		pigmentPerInk = 2,
+	pigment = 43108,
+	pigmentPerInk = 1,
+}
+Inscription.inks[43123] = { -- ink of the sky
+	herbs = {
+		{itemID = 13467, pigmentPerMill = 0.5},
+		{itemID = 13466, pigmentPerMill = 0.5},
+		{itemID = 13465, pigmentPerMill = 0.5},
+		{itemID = 13463, pigmentPerMill = 0.25},
+		{itemID = 13464, pigmentPerMill = 0.25},
 	},
-	[43122] = { -- Shimmering Ink
-		herbs = {
-			{itemID = 13464, pigmentPerMill = 2.5},
-			{itemID = 13463, pigmentPerMill = 2.5},
-			{itemID = 13465, pigmentPerMill = 3},
-			{itemID = 13466, pigmentPerMill = 3},
-			{itemID = 13467, pigmentPerMill = 3},
-		},
-		pigment = 39341,
-		pigmentPerInk = 2,
+	pigment = 43107,
+	pigmentPerInk = 1,
+}
+Inscription.inks[43127] = { -- snowfall ink
+	herbs = {
+		{itemID = 37921, pigmentPerMill = 0.25},
+		{itemID = 36901, pigmentPerMill = 0.25},
+		{itemID = 36907, pigmentPerMill = 0.25},
+		{itemID = 36904, pigmentPerMill = 0.25},
+		{itemID = 39970, pigmentPerMill = 0.25},
+		{itemID = 39969, pigmentPerMill = 0.25},
+		{itemID = 36903, pigmentPerMill = 0.5},
+		{itemID = 36906, pigmentPerMill = 0.5},
+		{itemID = 36905, pigmentPerMill = 0.5},
 	},
-	[43124] = { -- Ethereal Ink
-		herbs = {
-			{itemID = 22786, pigmentPerMill = 2.5},
-			{itemID = 22785, pigmentPerMill = 2.5},
-			{itemID = 22789, pigmentPerMill = 2.5},
-			{itemID = 22787, pigmentPerMill = 2.5}, -- Ragveil
-			{itemID = 22790, pigmentPerMill = 3},
-			{itemID = 22793, pigmentPerMill = 3},
-			{itemID = 22791, pigmentPerMill = 3},
-			{itemID = 22792, pigmentPerMill = 3},
-		},
-		pigment = 39342,
-		pigmentPerInk = 2,
-	},
-	[43126] = { -- Ink of the Sea
-		herbs = {
-			{itemID = 37921, pigmentPerMill = 2.5},
-			{itemID = 36901, pigmentPerMill = 2.5},
-			{itemID = 36907, pigmentPerMill = 2.5},
-			{itemID = 36904, pigmentPerMill = 2.5},
-			{itemID = 39970, pigmentPerMill = 2.5}, -- Fire Leaf, not sure about the pigment in these two
-			{itemID = 39969, pigmentPerMill = 2.5}, -- Fire Seed
-			{itemID = 36903, pigmentPerMill = 3},
-			{itemID = 36906, pigmentPerMill = 3},
-			{itemID = 36905, pigmentPerMill = 3},
-		},
-		pigment = 39343,
-		pigmentPerInk = 2,
-	},
-	[61978] = { -- Blackfallow Ink
-		herbs = {
-			{itemID = 52983, pigmentPerMill = 2.5},
-			{itemID = 52984, pigmentPerMill = 2.5},
-			{itemID = 52985, pigmentPerMill = 2.5},
-			{itemID = 52986, pigmentPerMill = 2.5},
-			{itemID = 52987, pigmentPerMill = 3},
-			{itemID = 52988, pigmentPerMill = 3},
-		},
-		pigment = 61979,
-		pigmentPerInk = 2,
-	},
-	[61981] = { -- Inferno Ink
-		herbs = {
-			{itemID = 52983, pigmentPerMill = 0.5},
-			{itemID = 52984, pigmentPerMill = 0.5},
-			{itemID = 52985, pigmentPerMill = 0.5},
-			{itemID = 52986, pigmentPerMill = 0.5},
-			{itemID = 52987, pigmentPerMill = 0.8},
-			{itemID = 52988, pigmentPerMill = 0.8},
-		},
-		pigment = 61980,
-		pigmentPerInk = 2,
-	},
-	[43115] = { -- hunter's ink
-		herbs = {
-			{itemID = 785, pigmentPerMill = 0.25},
-			{itemID = 2450, pigmentPerMill = 0.25},
-			{itemID = 2452, pigmentPerMill = 2.5},
-			{itemID = 2453, pigmentPerMill = 0.5},
-			{itemID = 3820, pigmentPerMill = 0.5},
-		},
-		pigment = 43103,
-		pigmentPerInk = 1,
-	},
-	[43119] = { -- royal ink
-		herbs = {
-			{itemID = 3819, pigmentPerMill = 0.5},
-			{itemID = 3818, pigmentPerMill = 0.5},
-			{itemID = 3821, pigmentPerMill = 0.25},
-			{itemID = 3358, pigmentPerMill = 0.25},
-		},
-		pigment = 43105,
-		pigmentPerInk = 1,
-	},
-	[43121] = { -- fiery ink
-		herbs = {
-			{itemID = 8845, pigmentPerMill = 0.5},
-			{itemID = 8846, pigmentPerMill = 0.5},
-			{itemID = 8839, pigmentPerMill = 0.5},
-			{itemID = 8836, pigmentPerMill = 0.5},
-			{itemID = 4625, pigmentPerMill = 0.5},
-			{itemID = 8838, pigmentPerMill = 0.5},
-			{itemID = 8831, pigmentPerMill = 0.5},
-		},
-		pigment = 43106,
-		pigmentPerInk = 1,
-	},
-	[43125] = { -- darkflame ink
-		herbs = {
-			{itemID = 22792, pigmentPerMill = 0.5},
-			{itemID = 22791, pigmentPerMill = 0.5},
-			{itemID = 22790, pigmentPerMill = 0.5},
-			{itemID = 22793, pigmentPerMill = 0.5},
-			{itemID = 22786, pigmentPerMill = 0.25},
-			{itemID = 22785, pigmentPerMill = 0.25},
-			{itemID = 22787, pigmentPerMill = 0.25},
-			{itemID = 22789, pigmentPerMill = 0.25},
-		},
-		pigment = 43108,
-		pigmentPerInk = 1,
-	},
-	[43123] = { -- ink of the sky
-		herbs = {
-			{itemID = 13467, pigmentPerMill = 0.5},
-			{itemID = 13466, pigmentPerMill = 0.5},
-			{itemID = 13465, pigmentPerMill = 0.5},
-			{itemID = 13463, pigmentPerMill = 0.25},
-			{itemID = 13464, pigmentPerMill = 0.25},
-		},
-		pigment = 43107,
-		pigmentPerInk = 1,
-	},
-	[43127] = { -- snowfall ink
-		herbs = {
-			{itemID = 37921, pigmentPerMill = 0.25},
-			{itemID = 36901, pigmentPerMill = 0.25},
-			{itemID = 36907, pigmentPerMill = 0.25},
-			{itemID = 36904, pigmentPerMill = 0.25},
-			{itemID = 39970, pigmentPerMill = 0.25},
-			{itemID = 39969, pigmentPerMill = 0.25},
-			{itemID = 36903, pigmentPerMill = 0.5},
-			{itemID = 36906, pigmentPerMill = 0.5},
-			{itemID = 36905, pigmentPerMill = 0.5},
-		},
-		pigment = 43109,
-		pigmentPerInk = 2,
-	},
+	pigment = 43109,
+	pigmentPerInk = 2,
 }

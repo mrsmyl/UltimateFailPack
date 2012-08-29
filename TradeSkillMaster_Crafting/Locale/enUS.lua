@@ -357,6 +357,7 @@ L["Misc Items"] = true
 L["Inks"] = true
 L["Scrolls"] = true
 L["Armor"] = true
+L["Ink of Dreams"] = true
 L["Blackfallow Ink"] = true
 L["Ink of the Sea"] = true
 L["Ethereal Ink"] = true
