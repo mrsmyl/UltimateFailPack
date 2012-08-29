@@ -38,6 +38,7 @@ local EditableColors={
 		"Druid",
 		"Hunter",
 		"Mage",
+		"Monk",
 		"Paladin",
 		"Priest",
 		"Rogue",
@@ -55,6 +56,7 @@ local ClassStrings={
 	["DRUID"]=true,
 	["HUNTER"]=true,
 	["MAGE"]=true,
+	["MONK"]=true,
 	["PALADIN"]=true,
 	["PRIEST"]=true,
 	["ROGUE"]=true,
@@ -165,7 +167,7 @@ function me:CreateWindowColorSelection(parent)
 
 	local theFrame=me.WindowColorOptions
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",0,-34)
 
@@ -206,7 +208,8 @@ function me:CreateWindowColorSelection(parent)
 	theFrame.ResetColButton=CreateFrame("Button",nil,theFrame,"OptionsButtonTemplate")
 	theFrame.ResetColButton:SetWidth(120)
 	theFrame.ResetColButton:SetHeight(18)
-	theFrame.ResetColButton:SetPoint("TOPLEFT",theFrame,"TOPLEFT",40,-210)
+--	theFrame.ResetColButton:SetPoint("TOPLEFT",theFrame,"TOPLEFT",40,-210)
+	theFrame.ResetColButton:SetPoint("BOTTOMLEFT",theFrame,"BOTTOMLEFT",40,12)
 	theFrame.ResetColButton:SetScript("OnClick",function() Recount:ResetDefaultWindowColors() end)
 	theFrame.ResetColButton:SetText(L["Reset Colors"])
 end
@@ -216,7 +219,7 @@ function me:CreateClassColorSelection(parent)
 
 	local theFrame=me.ClassColorOptions
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",200,-34)
 
@@ -255,7 +258,8 @@ function me:CreateClassColorSelection(parent)
 	theFrame.ResetColButton=CreateFrame("Button",nil,theFrame,"OptionsButtonTemplate")
 	theFrame.ResetColButton:SetWidth(120)
 	theFrame.ResetColButton:SetHeight(18)
-	theFrame.ResetColButton:SetPoint("TOPLEFT",theFrame,"TOPLEFT",40,-210)
+--	theFrame.ResetColButton:SetPoint("TOPLEFT",theFrame,"TOPLEFT",40,-210)
+	theFrame.ResetColButton:SetPoint("BOTTOMLEFT",theFrame,"BOTTOMLEFT",40,12)
 	theFrame.ResetColButton:SetScript("OnClick",function() Recount:ResetDefaultClassColors() end)
 	theFrame.ResetColButton:SetText(L["Reset Colors"])
 end
@@ -364,7 +368,7 @@ function me:SetupFilterOptions(parent)
 	me.FilterOptions=CreateFrame("Frame",nil,parent)
 	local theFrame=me.FilterOptions
 
-	theFrame:SetHeight(196)
+	theFrame:SetHeight(parent:GetHeight()-34-4)
 	theFrame:SetWidth(196)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",2,-34)
 
@@ -579,7 +583,7 @@ function me:CreateBarSelection(parent)
 
 	local theFrame=me.BarOptions
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",000,-34)
 
@@ -663,7 +667,7 @@ function me:CreateTextureSelection(parent)
 	local theFrame=me.TextureOptions
 	local BarTextures=SM:List("statusbar")
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",400,-34)
 
@@ -760,7 +764,7 @@ function me:CreateFontSelection(parent)
 	local theFrame=me.FontOptions
 	local Fonts=SM:List("font")
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",200,-34)
 
@@ -798,7 +802,7 @@ function me:SetupWindowOptions(parent)
 	me.WindowOptions=CreateFrame("Frame",nil,parent)
 	local theFrame=me.WindowOptions
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",200,-34)
 
@@ -840,7 +844,7 @@ end
 function me:SetupDeletionOptions(parent)
 	me.DeletionOptions=CreateFrame("Frame",nil,parent)
 	local theFrame=me.DeletionOptions
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",400,-34)
 	
@@ -905,7 +909,7 @@ end
 function me:SetupRealtimeOptions(parent)
 	me.RealtimeOptions=CreateFrame("Frame",nil,parent)
 	local theFrame=me.RealtimeOptions
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",400,-34)
 	
@@ -1010,7 +1014,7 @@ function me:SetupMiscOptions(parent)
 	me.MiscOptions=CreateFrame("Frame",nil,parent)
 	local theFrame=me.MiscOptions
 
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",200,-34)
 
@@ -1066,7 +1070,7 @@ function me:SetupButtonOptions(parent)
 	me.ButtonOptions=CreateFrame("Frame",nil,parent)
 	local theFrame=me.ButtonOptions
 
-	theFrame:SetHeight(196)
+	theFrame:SetHeight(parent:GetHeight()-34-4)
 	theFrame:SetWidth(196)
 	theFrame:SetPoint("TOPLEFT",parent,"TOPLEFT",0,-34)
 	--Reset
@@ -1280,7 +1284,7 @@ function me:CreateDataOptions(parent)
 	parent.Data=theFrame
 
 	theFrame:SetWidth(600)
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-22)
 	theFrame:SetPoint("TOP",parent,"TOP",0,-22)
 
 	local Tab=CreateFrame("FRAME",nil,parent)
@@ -1310,7 +1314,7 @@ function me:CreateAppearanceOptions(parent)
 	parent.Appearance=theFrame
 
 	theFrame:SetWidth(600)
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-22)
 	theFrame:SetPoint("TOP",parent,"TOP",0,-22)
 
 	local Tab=CreateFrame("FRAME",nil,parent)
@@ -1340,7 +1344,7 @@ function me:CreateColorOptions(parent)
 	parent.ColorOpt=theFrame
 
 	theFrame:SetWidth(600)
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-22)
 	theFrame:SetPoint("TOP",parent,"TOP",0,-22)
 
 	local Tab=CreateFrame("FRAME",nil,parent)
@@ -1387,7 +1391,7 @@ function me:CreateWindowOptions(parent)
 	Tab.Background:SetAllPoints(Tab)
 
 	theFrame:SetWidth(600)
-	theFrame:SetHeight(200)
+	theFrame:SetHeight(parent:GetHeight()-22)
 	theFrame:SetPoint("TOP",parent,"TOP",0,-22)
 
 	me:SetupButtonOptions(theFrame)
@@ -1397,13 +1401,14 @@ function me:CreateWindowOptions(parent)
 end
 
 function me:CreateConfigWindow()
-	me.ConfigWindow=Recount:CreateFrame("Recount_ConfigWindow",L["Config Recount"],286+16,600)
+	me.ConfigWindow=Recount:CreateFrame("Recount_ConfigWindow",L["Config Recount"],286+16+16,600)
 
 	local theFrame=me.ConfigWindow
 	
-	Recount.Colors:RegisterTexture("Other Windows","Title",Graph:DrawLine(theFrame,200,12,200,233+16,24,{0.5,0.0,0.0,1.0},"ARTWORK"),{r=0.5,g=0.5,b=0.5,a=1}) -- Elsia: Changed 32->12 for longer separators given no save/revert
-	Recount.Colors:RegisterTexture("Other Windows","Title",Graph:DrawLine(theFrame,400,12,400,233+16,24,{0.5,0.0,0.0,1.0},"ARTWORK"),{r=0.5,g=0.5,b=0.5,a=1})
-	Recount.Colors:RegisterTexture("Other Windows","Title",Graph:DrawLine(theFrame,2,233+16,598,233+16,24,{0.5,0.0,0.0,1.0},"ARTWORK"),{r=0.5,g=0.5,b=0.5,a=1})
+	local lineheight = 286+16+16 - 53
+	Recount.Colors:RegisterTexture("Other Windows","Title",Graph:DrawLine(theFrame,200,12,200,lineheight,24,{0.5,0.0,0.0,1.0},"ARTWORK"),{r=0.5,g=0.5,b=0.5,a=1}) -- Elsia: Changed 32->12 for longer separators given no save/revert
+	Recount.Colors:RegisterTexture("Other Windows","Title",Graph:DrawLine(theFrame,400,12,400,lineheight,24,{0.5,0.0,0.0,1.0},"ARTWORK"),{r=0.5,g=0.5,b=0.5,a=1})
+	Recount.Colors:RegisterTexture("Other Windows","Title",Graph:DrawLine(theFrame,2,lineheight,598,lineheight,24,{0.5,0.0,0.0,1.0},"ARTWORK"),{r=0.5,g=0.5,b=0.5,a=1})
 
 	theFrame:Hide()
 

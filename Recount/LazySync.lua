@@ -1,7 +1,7 @@
 LibStub:GetLibrary("AceComm-3.0"):Embed(Recount)
 LibStub:GetLibrary("AceSerializer-3.0"):Embed(Recount)
 
-local revision = tonumber(string.sub("$Revision: 1195 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1198 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -11,6 +11,10 @@ Recount.MinimumV=1 -- Because !BugGrabber sucks!
 local MinimumV = Recount.MinimumV
 
 local UnitGUID = UnitGUID
+
+-- Upvalues now take MOP compatibility into account
+local GetNumRaidMembers = GetNumRaidMembers or GetNumGroupMembers
+local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
 
 -- Elsia: This is straight from GUIDRegistryLib-0.1 by ArrowMaster.
 
@@ -50,6 +54,9 @@ end
 -- Elsia: Generic Sync code here
 
 function Recount:CheckVisible()
+
+	local GetNumRaidMembers = GetNumRaidMembers or GetNumGroupMembers
+	local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
 
 	local _ , instanceType = IsInInstance()
 	
@@ -137,6 +144,8 @@ function Recount:SendSelf(target)
 end
 
 function Recount:BroadcastLazySync()
+
+	local GetNumRaidMembers = GetNumRaidMembers or GetNumGroupMembers
 
 	if not Recount.lazysync and not Recount.SyncDebug then return end -- Elsia: Nothing to lazy sync
 
@@ -452,6 +461,9 @@ function Recount:OnCommReceive(prefix, Msgs, distribution, target)
 end
 
 function Recount:ConfigComm()
+
+	local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
+
 	Recount.VerTable={}
 	Recount.VerNum={}
 
@@ -490,6 +502,9 @@ function Recount:FreeComm()
 end
 
 function Recount:FlagSync()
+	local GetNumRaidMembers = GetNumRaidMembers or GetNumGroupMembers
+	local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
+
 	if GetNumRaidMembers() > 0 then
 		for i = 1, GetNumRaidMembers(), 1 do 
 			if UnitExists("raid"..i) then

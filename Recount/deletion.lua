@@ -1,12 +1,19 @@
 -- Elsia: For delete on instance entry
 -- Deletes data whenever a new, not the same instance is entered. This should safe-guard against corpse-run-reenters and the like.
-local revision = tonumber(string.sub("$Revision: 1115 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1201 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
+local TOC
+do
+	-- Because GetBuildInfo() still returns 40000 on the PTR
+	local major, minor, rev = strsplit(".", (GetBuildInfo()))
+	TOC = major*10000 + minor*100
+end
+
 local UnitIsGhost = UnitIsGhost
-local GetNumRaidMembers = GetNumRaidMembers
-local GetNumPartyMembers = GetNumPartyMembers
+local GetNumRaidMembers = GetNumRaidMembers or GetNumGroupMembers
+local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
 
 function Recount:DetectInstanceChange() -- Elsia: With thanks to Loggerhead
 
@@ -122,9 +129,13 @@ function Recount:InitPartyBasedDeletion()
 	if NumPartyMembers > 0 and NumRaidMembers == 0 then Recount.inGroup = true end
 	if NumRaidMembers > 0 then Recount.inRaid = true end
 
-	Recount:RegisterEvent("PARTY_MEMBERS_CHANGED","PartyMembersChanged")
-	
-	Recount:RegisterEvent("RAID_ROSTER_UPDATE","PartyMembersChanged")
+	if TOC >= 50000 then
+		Recount:RegisterEvent("GROUP_ROSTER_UPDATE", "PartyMembersChanged")
+	else
+		Recount:RegisterEvent("PARTY_MEMBERS_CHANGED","PartyMembersChanged")
+		
+		Recount:RegisterEvent("RAID_ROSTER_UPDATE","PartyMembersChanged")
+	end
 	Recount:UpdateZoneGroupFilter()
 end
 

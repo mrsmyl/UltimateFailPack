@@ -2,9 +2,11 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale( "Recount" )
 local me={}
 
-local revision = tonumber(string.sub("$Revision: 1067 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1199 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
+
+local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
 
 local ReportLocations={
 	{L["Say"],"SAY"},

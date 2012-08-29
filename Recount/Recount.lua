@@ -13,7 +13,7 @@ local FilterSize	= 20
 local RampUp		= 5
 local RampDown		= 10
       
-Recount.Version = tonumber(string.sub("$Revision: 1194 $", 12, -3))
+Recount.Version = tonumber(string.sub("$Revision: 1198 $", 12, -3))
 
 local UnitLevel = UnitLevel
 local UnitClass = UnitClass
@@ -24,8 +24,8 @@ local UnitName = UnitName
 local UnitGUID = UnitGUID
 local GetTime = GetTime
 local UnitIsFriend = UnitIsFriend
-local GetNumRaidMembers = GetNumRaidMembers
-local GetNumPartyMembers = GetNumPartyMembers
+local GetNumRaidMembers = GetNumRaidMembers or GetNumGroupMembers
+local GetNumPartyMembers = GetNumPartyMembers or GetNumSubgroupMembers
 
 local type = type
 local pairs = pairs

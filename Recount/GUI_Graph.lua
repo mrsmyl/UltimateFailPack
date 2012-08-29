@@ -5,7 +5,7 @@ local me={}
 
 local _
 
-local revision = tonumber(string.sub("$Revision: 1136 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1204 $", 12, -3))
 local Recount = _G.Recount
 if Recount.Version < revision then Recount.Version = revision end
 
@@ -940,8 +940,6 @@ function Recount:CreateGraphWindow()
 	theFrame.LineGraph.TimeRef=theFrame.LineGraph:CreateFontString(nil,"OVERLAY","GameFontNormal")
 	theFrame.LineGraph.TimeRef:SetPoint("TOP",theFrame.LineGraph,"TOP",0,-2)
 	theFrame.LineGraph.TimeRef:SetTextColor(1.0,1.0,1.0,1.0)
-
-
 
 	theFrame.GraphBackground=CreateFrame("Frame",nil,theFrame)
 	theFrame.GraphBackground:SetAllPoints(theFrame.LineGraph)
