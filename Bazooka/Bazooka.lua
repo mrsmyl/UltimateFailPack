@@ -1,6 +1,6 @@
 --[[
 Name: Bazooka
-Revision: $Revision: 216 $
+Revision: $Revision: 225 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/bazooka/
 SVN: svn://svn.wowace.com/wow/bazooka/mainline/trunk
@@ -10,9 +10,9 @@ License: Public Domain
 
 local AppName, Bazooka = ...
 local OptionsAppName = AppName .. "_Options"
-local VERSION = AppName .. "-v2.1.4"
+local VERSION = AppName .. "-v2.1.5"
 --[===[@debug@
-local VERSION = AppName .. "-r" .. ("$Revision: 216 $"):match("%d+")
+local VERSION = AppName .. "-r" .. ("$Revision: 225 $"):match("%d+")
 --@end-debug@]===]
 
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
@@ -40,6 +40,7 @@ end
 
 local _G = _G
 local IsAltKeyDown = _G.IsAltKeyDown
+local IsModifierKeyDown = _G.IsModifierKeyDown
 local GetCursorPosition = _G.GetCursorPosition
 local GetAddOnInfo = _G.GetAddOnInfo
 local GetScreenWidth = _G.GetScreenWidth
@@ -69,7 +70,7 @@ local Defaults =  {
 --  edgeTexture = "Blizzard Tooltip",
 --  edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
     edgeTexture = "None",
-    edgeFile = [[Interface\None]],
+    edgeFile = false,
     fontName = "Friz Quadrata TT",
     fontPath = GameFontNormal:GetFont(),
     minFrameWidth = 10,
@@ -1108,10 +1109,14 @@ function Bar:applyBGSettings()
             bg.bgFile = Defaults.bgFile
             LSM.RegisterCallback(self, "LibSharedMedia_Registered", "mediaUpdate")
         end
-        bg.edgeFile = LSM:Fetch("border", self.db.bgBorderTexture, true)
-        if not bg.edgeFile then
-            bg.edgeFile = Defaults.edgeFile
-            LSM.RegisterCallback(self, "LibSharedMedia_Registered", "mediaUpdate")
+        if self.db.bgBorderTexture == 'None' then -- hack for beta green thing
+            bg.edgeFile = false
+        else
+            bg.edgeFile = LSM:Fetch("border", self.db.bgBorderTexture, true)
+            if not bg.edgeFile then
+                bg.edgeFile = Defaults.edgeFile
+                LSM.RegisterCallback(self, "LibSharedMedia_Registered", "mediaUpdate")
+            end
         end
     else
         bg.bgFile = Defaults.bgFile
@@ -1364,19 +1369,32 @@ function Plugin:resetTipScale(tt)
     end
 end
 
-function Plugin:showTip()
+function Plugin:showTip(modifierKey, modifierState)
     if Bazooka.checkForceHide then
         Bazooka.checkForceHide:forceHideFrames(UIParent:GetChildren())
         Bazooka.checkForceHide = nil
     end
-    if self.db.disableTooltip or (self.db.disableTooltipInCombat and InCombatLockdown()) then
-        return
-    end
+    local origTipType = self.tipType
     if Bazooka.tipOwner then
         Bazooka.tipOwner:hideTip(true)
     end
     Bazooka.tipOwner = self
-    if Bazooka.db.profile.simpleTip and IsAltKeyDown() then
+    if Bazooka.db.profile.manualTooltipToggle then
+        if self.db.manualTooltip then
+            if not IsModifierKeyDown() then
+                return
+            end
+        elseif self.db.disableTooltip or (self.db.disableTooltipInCombat and InCombatLockdown()) then
+            return
+        end
+    else
+        if not (self.db.manualTooltip and IsModifierKeyDown()) 
+                and not (modifierKey and origTipType) 
+                and (self.db.disableTooltip or (self.db.disableTooltipInCombat and InCombatLockdown())) then
+            return
+        end
+    end
+    if Bazooka.db.profile.simpleTip and IsAltKeyDown() and not modifierKey then
         self.tipType = 'simple'
         local tt = setupTooltip(self.frame)
         tt:SetText(self.title)
@@ -1434,6 +1452,10 @@ function Plugin:hideTip(force)
     if not Bazooka.tipOwner then
         return
     end
+    Bazooka.tipOwner = nil
+    if not self.tipType then
+        return
+    end
     if self.tipType == 'simple' then
         local tt = setupTooltip()
         tt:Hide()
@@ -1455,6 +1477,7 @@ function Plugin:hideTip(force)
         tt:Hide()
         self:resetTipScale(tt)
     end
+    self.tipType = nil
     if self.db.forceHideTip then
         if force then
             self:forceHideFrames(UIParent:GetChildren())
@@ -1462,8 +1485,6 @@ function Plugin:hideTip(force)
             Bazooka.checkForceHide = self
         end
     end
-    Bazooka.tipOwner = nil
-    self.tipType = nil
 end
 
 function Plugin:getDropPlace(x, y)
@@ -1867,6 +1888,7 @@ function Bazooka:OnEnable(first)
     self:init()
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("MODIFIER_STATE_CHANGED")
     LDB.RegisterCallback(self, "LibDataBroker_DataObjectCreated", "dataObjectCreated")
 end
 
@@ -1921,6 +1943,13 @@ function Bazooka:PLAYER_REGEN_ENABLED()
         if plugin.db.enabled then
             plugin:toggleMouse(not plugin.db.disableMouseOutOfCombat)
         end
+    end
+end
+
+function Bazooka:MODIFIER_STATE_CHANGED(event, key, state)
+    local tipOwner = Bazooka.tipOwner
+    if tipOwner and (tipOwner.db.manualTooltip or Bazooka.db.profile.simpleTip) then
+        tipOwner:showTip(key, state)
     end
 end
 

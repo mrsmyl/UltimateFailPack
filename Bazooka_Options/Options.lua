@@ -696,6 +696,13 @@ local pluginOptionArgs = {
         disabled = "isDisabled",
         order = 190,
     },
+    manualTooltip = {
+        type = 'toggle',
+        name = L["Manual tooltip"],
+        desc = L["Show tooltip by pressing a modifier key"],
+        disabled = "isDisabled",
+        order = 195,
+    },
     disableTooltip = {
         type = 'toggle',
         name = L["Disable tooltip"],
@@ -1348,6 +1355,12 @@ do
                 type = 'toggle',
                 name = L["Enable simple tooltips"],
                 order = 20,
+            },
+            manualTooltipToggle = {
+                type = 'toggle',
+                name = L["Manual tooltip toggle mode"],
+                desc = L["Set if you want to hide the plugin tooltip when releasing the modifier key in manual tooltip mode"],
+                order = 25,
             },
             adjustFrames = {
                 type = 'toggle',

@@ -1,6 +1,6 @@
 --[[
 Name: LibJostle-3.0
-Revision: $Rev: 52 $
+Revision: $Rev: 55 $
 Author(s): ckknight (ckknight@gmail.com)
 Website: http://ckknight.wowinterface.com/
 Documentation: http://www.wowace.com/addons/libjostle-3-0/
@@ -10,7 +10,7 @@ License: LGPL v2.1
 --]]
 
 local MAJOR_VERSION = "LibJostle-3.0"
-local MINOR_VERSION = tonumber(("$Revision: 52 $"):match("(%d+)")) + 90000
+local MINOR_VERSION = tonumber(("$Revision: 55 $"):match("(%d+)")) + 90000
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub") end
 
@@ -427,7 +427,7 @@ function Jostle:Refresh(...)
 						offset = offset - TicketStatusFrame:GetHeight() * TicketStatusFrame:GetScale()
 					elseif frame == DEFAULT_CHAT_FRAME then
 						y = MainMenuBar:GetHeight() * MainMenuBar:GetScale() + 32
-						if PetActionBarFrame:IsShown() or ShapeshiftBarFrame:IsShown() then
+						if ShapeshiftBarFrame and (PetActionBarFrame:IsShown() or ShapeshiftBarFrame:IsShown()) then
 							offset = offset + ShapeshiftBarFrame:GetHeight() * ShapeshiftBarFrame:GetScale()
 						end
 						if MultiBarBottomLeft:IsShown() then
@@ -440,7 +440,7 @@ function Jostle:Refresh(...)
 						end
 					elseif frame == CastingBarFrame then
 						y = MainMenuBar:GetHeight() * MainMenuBar:GetScale() + 17
-						if PetActionBarFrame:IsShown() or ShapeshiftBarFrame:IsShown() then
+						if ShapeshiftBarFrame and (PetActionBarFrame:IsShown() or ShapeshiftBarFrame:IsShown()) then
 							offset = offset + ShapeshiftBarFrame:GetHeight() * ShapeshiftBarFrame:GetScale()
 						end
 						if MultiBarBottomLeft:IsShown() or MultiBarBottomRight:IsShown() then
