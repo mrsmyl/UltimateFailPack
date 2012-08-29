@@ -481,9 +481,9 @@ Outfitter.BANKED_FONT_COLOR = {r = 0.25, g = 0.2, b = 1.0}
 Outfitter.BANKED_FONT_COLOR_CODE = "|cff4033ff"
 Outfitter.OUTFIT_MESSAGE_COLOR = {r = 0.2, g = 0.75, b = 0.3}
 
-Outfitter.IsWoW4 = UnitGetIncomingHeals ~= nil
+Outfitter.IsWoW4 = true
 if Outfitter.IsWoW4 then
-	Outfitter.cItemLinkFormat = "|Hitem:(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+)|h%[([^%]]*)%]|h"
+	Outfitter.cItemLinkFormat = "|Hitem:(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+)|h%[([^%]]*)%]|h"
 else
 	Outfitter.cItemLinkFormat = "|Hitem:(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+)|h%[([^%]]*)%]|h"
 end
@@ -741,7 +741,6 @@ Outfitter.cSlotNames =
 	
 	"MainHandSlot",
 	"SecondaryHandSlot",
-	"RangedSlot",
 	
 	-- Last priority goes to items with no durability
 	
@@ -781,7 +780,6 @@ Outfitter.cSlotDisplayNames =
 	Trinket1Slot = Outfitter.cTrinket1SlotName,
 	MainHandSlot = MAINHANDSLOT,
 	SecondaryHandSlot = SECONDARYHANDSLOT,
-	RangedSlot = RANGEDSLOT,
 }
 
 Outfitter.cInvTypeToSlotName =
@@ -797,7 +795,6 @@ Outfitter.cInvTypeToSlotName =
 	INVTYPE_HOLDABLE = {SlotName = "SecondaryHandSlot"},
 	INVTYPE_LEGS = {SlotName = "LegsSlot"},
 	INVTYPE_NECK = {SlotName = "NeckSlot"},
-	INVTYPE_RANGED = {SlotName = "RangedSlot"},
 	INVTYPE_ROBE = {SlotName = "ChestSlot"},
 	INVTYPE_SHIELD = {SlotName = "SecondaryHandSlot"},
 	INVTYPE_SHOULDER = {SlotName = "ShoulderSlot"},
@@ -808,9 +805,6 @@ Outfitter.cInvTypeToSlotName =
 	INVTYPE_WEAPONMAINHAND = {SlotName = "MainHandSlot"},
 	INVTYPE_WEAPONOFFHAND = {SlotName = "SecondaryHandSlot"},
 	INVTYPE_WRIST = {SlotName = "WristSlot"},
-	INVTYPE_RANGEDRIGHT = {SlotName = "RangedSlot"},
-	INVTYPE_THROWN = {SlotName = "RangedSlot"},
-	INVTYPE_RELIC = {SlotName = "RangedSlot"},
 }
 
 Outfitter.cHalfAlternateStatSlot =
@@ -1116,7 +1110,6 @@ Outfitter.cCombatEquipmentSlots =
 --[[
 	MainHandSlot = true,
 	SecondaryHandSlot = true,
-	RangedSlot = true,
 ]]
 }
 
@@ -1193,11 +1186,11 @@ function Outfitter:OnHide()
 		self.QuickSlots:Close()
 	end
 	
-	if self.NameOutfitDialog:IsShown() then
+	if self.NameOutfitDialog and self.NameOutfitDialog:IsShown() then
 		self.NameOutfitDialog:Cancel()
 	end
 	
-	if self.RebuildOutfitDialog:IsShown() then
+	if self.RebuildOutfitDialog and self.RebuildOutfitDialog:IsShown() then
 		self.RebuildOutfitDialog:Cancel()
 	end
 	
@@ -4320,8 +4313,22 @@ function Outfitter:FindItemsInBagsForSlot(pSlotName, pIgnoreItems)
 	return vItems
 end
 
+function Outfitter:OpenNameOutfitDialog(pOutfit)
+	if not self.NameOutfitDialog then
+		self.NameOutfitDialog = Outfitter:New(Outfitter._NameOutfitDialog, OutfitterFrame)
+	end
+	self.NameOutfitDialog:Open(pOutfit)
+end
+
+function Outfitter:OpenRebuildOutfitDialog(pOutfit)
+	if not self.RebuildOutfitDialog then
+		self.RebuildOutfitDialog = Outfitter:New(Outfitter._RebuildOutfitDialog, OutfitterFrame)
+	end
+	self.RebuildOutfitDialog:Open(pOutfit)
+end
+
 function Outfitter:CreateNewOutfit()
-	Outfitter.NameOutfitDialog:Open(nil)
+	self:OpenNameOutfitDialog(nil)
 end
 
 function Outfitter:NewNakedOutfit(pName)
@@ -4763,6 +4770,7 @@ function Outfitter:UpdateShapeshiftState()
 	--self:TestMessage("Outfitter:UpdateShapeshiftState(): %d forms", vNumForms)
 	for vIndex = 1, vNumForms do
 		local vTexture, vName, vIsActive, vIsCastable = GetShapeshiftFormInfo(vIndex)
+		local _
 		
 		_, _, vTexture = vTexture:find("([^\\]+)$")
 		
@@ -5263,9 +5271,6 @@ function Outfitter:Initialize()
 		self.MinimapButton_SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
 	end
 	
-	self.NameOutfitDialog = Outfitter:New(Outfitter._NameOutfitDialog, OutfitterFrame)
-	self.RebuildOutfitDialog = Outfitter:New(Outfitter._RebuildOutfitDialog, OutfitterFrame)
-	
 	-- Move the Equipment Manager button in case the user wants to use both
 	
 	if GearManagerToggleButton then
@@ -5300,7 +5305,7 @@ function Outfitter:Initialize()
 	
 	self.EventLib:RegisterEvent("UNIT_AURA", self.UnitAuraChanged, self)
 	
-	hooksecurefunc("ShapeshiftBar_UpdateState", function () Outfitter.SchedulerLib:ScheduleUniqueTask(0.01, self.UpdateShapeshiftState, self) end)
+	--hooksecurefunc("ShapeshiftBar_UpdateState", function () Outfitter.SchedulerLib:ScheduleUniqueTask(0.01, self.UpdateShapeshiftState, self) end)
 	
 	-- For monitoring plaguelands and battlegrounds
 	
@@ -5435,7 +5440,7 @@ end
 function Outfitter:InitializeSettings()
 	gOutfitter_Settings =
 	{
-		Version = 18,
+		Version = 19,
 		Options = {},
 		LastOutfitStack = {},
 		LayerIndex = {},
@@ -6267,7 +6272,7 @@ function Outfitter.OutfitMenuActions:DELETE(pOutfit)
 end
 
 function Outfitter.OutfitMenuActions:RENAME(pOutfit)
-	self.NameOutfitDialog:Open(pOutfit)
+	Outfitter:OpenNameOutfitDialog(pOutfit)
 end
 
 function Outfitter.OutfitMenuActions:SCRIPT_SETTINGS(pOutfit)
@@ -6360,7 +6365,7 @@ function Outfitter.OutfitMenuActions:REBUILD(pOutfit)
 end
 
 function Outfitter.OutfitMenuActions:REBUILD_FOR(pOutfit)
-	self.RebuildOutfitDialog:Open(pOutfit)
+	Outfitter:OpenRebuildOutfitDialog(pOutfit)
 end
 
 function Outfitter.OutfitMenuActions:SET_CURRENT(pOutfit)
@@ -6517,16 +6522,16 @@ function Outfitter.PresetScriptDropdown_Initialize(pFrame)
 				local vCategory = vPresetScript.Category or vPresetScript.Class or "GENERAL"
 				
 				if vCategory == UIDROPDOWNMENU_MENU_VALUE then
-					UIDropDownMenu_AddButton({
-						text = vPresetScript.Name,
-						arg1 = pFrame,
-						arg2 = vPresetScript.ID,
-						value = vPresetScript.ID,
-						func = Outfitter.DropDown_OnClick,
-						tooltipTitle = vPresetScript.Name,
-						tooltipText = Outfitter:GetScriptDescription(vPresetScript.Script),
-						colorCode = NORMAL_FONT_COLOR_CODE,
-					}, UIDROPDOWNMENU_MENU_LEVEL)
+					local vItem = UIDropDownMenu_CreateInfo()
+					vItem.text = vPresetScript.Name
+					vItem.arg1 = pFrame
+					vItem.arg2 = vPresetScript.ID
+					vItem.value = vPresetScript.ID
+					vItem.func = Outfitter.DropDown_OnClick
+					vItem.tooltipTitle = vPresetScript.Name
+					vItem.tooltipText = Outfitter:GetScriptDescription(vPresetScript.Script)
+					vItem.colorCode = NORMAL_FONT_COLOR_CODE
+					UIDropDownMenu_AddButton(vItem, UIDROPDOWNMENU_MENU_LEVEL)
 				end
 			end
 		end
@@ -6542,13 +6547,13 @@ function Outfitter.PresetScriptDropdown_Initialize(pFrame)
 				
 				if vCategory ~= vNewCategory then
 					vCategory = vNewCategory
-					
-					UIDropDownMenu_AddButton({
-						text = Outfitter.cScriptCategoryName[vCategory] or Outfitter.cClassName[vCategory],
-						hasArrow = 1,
-						arg1= pFrame,
-						arg2 = vCategory,
-						value = vCategory}, UIDROPDOWNMENU_MENU_LEVEL)
+					local vItem = UIDropDownMenu_CreateInfo()
+					vItem.text = Outfitter.cScriptCategoryName[vCategory] or Outfitter.cClassName[vCategory]
+					vItem.hasArrow = 1
+					vItem.arg1= pFrame
+					vItem.arg2 = vCategory
+					vItem.value = vCategory
+					UIDropDownMenu_AddButton(vItem, UIDROPDOWNMENU_MENU_LEVEL)
 				end
 			end
 		end
@@ -6576,18 +6581,44 @@ function Outfitter.StatDropdown_Initialize(pFrame)
 			
 			for vStatIndex = 1, vNumStats do
 				local vStat = vCategory:GetIndexedStat(vStatIndex)
-				
-				UIDropDownMenu_AddButton({text = vStat.Name, arg1 = pFrame, arg2 = vStat, value = vStat, func = Outfitter.DropDown_OnClick}, UIDROPDOWNMENU_MENU_LEVEL)
+				local vItem = UIDropDownMenu_CreateInfo()
+				vItem.text = vStat.Name
+				vItem.arg1 = pFrame
+				vItem.arg2 = vStat
+				vItem.value = vStat
+				vItem.func = Outfitter.DropDown_OnClick
+				UIDropDownMenu_AddButton(vItem, UIDROPDOWNMENU_MENU_LEVEL)
 			end
 		end
 	else
-		UIDropDownMenu_AddButton({text = Outfitter.cUseCurrentOutfit, arg1 = pFrame, arg2 = 0, value = 0, func = Outfitter.DropDown_OnClick})
-		UIDropDownMenu_AddButton({text = Outfitter.cUseEmptyOutfit, arg1 = pFrame, arg2 = "EMPTY", value = "EMPTY", func = Outfitter.DropDown_OnClick})
-		
-		UIDropDownMenu_AddButton({text = " ", notCheckable = true, notClickable = true})
+		local vItem = UIDropDownMenu_CreateInfo()
+		vItem.text = Outfitter.cUseCurrentOutfit
+		vItem.arg1 = pFrame
+		vItem.arg2 = 0
+		vItem.value = 0
+		vItem.func = Outfitter.DropDown_OnClick
+		UIDropDownMenu_AddButton(vItem)
+		vItem = UIDropDownMenu_CreateInfo()
+		vItem.text = Outfitter.cUseEmptyOutfit
+		vItem.arg1 = pFrame
+		vItem.arg2 = "EMPTY"
+		vItem.value = "EMPTY"
+		vItem.func = Outfitter.DropDown_OnClick
+		UIDropDownMenu_AddButton(vItem)
+		vItem = UIDropDownMenu_CreateInfo()
+		vItem.text = " "
+		vItem.notCheckable = true
+		vItem.notClickable = true
+		UIDropDownMenu_AddButton(vItem)
 		
 		for _, vCategory in ipairs(Outfitter.StatCategories) do
-			UIDropDownMenu_AddButton({text = vCategory.Name, hasArrow = 1, arg1 = pFrame, arg2 = vCategory.CategoryID, value = vCategory.CategoryID})
+			local vItem = UIDropDownMenu_CreateInfo()
+			vItem.text = vCategory.Name
+			vItem.hasArrow = 1
+			vItem.arg1 = pFrame
+			vItem.arg2 = vCategory.CategoryID
+			vItem.value = vCategory.CategoryID
+			UIDropDownMenu_AddButton(vItem)
 		end
 	end
 end
@@ -6675,14 +6706,14 @@ function Outfitter.AutomationDropdown_Initialize(pFrame)
 				
 				if vCategory ~= vNewCategory then
 					vCategory = vNewCategory
-					
-					UIDropDownMenu_AddButton({
-						text = Outfitter.cScriptCategoryName[vCategory] or Outfitter.cClassName[vCategory],
-						hasArrow = 1,
-						arg1 = pFrame,
-						arg2 = vCategory,
-						colorCode = NORMAL_FONT_COLOR_CODE,
-						value = vCategory}, UIDROPDOWNMENU_MENU_LEVEL)
+					local vItem = UIDropDownMenu_CreateInfo()
+					vItem.text = Outfitter.cScriptCategoryName[vCategory] or Outfitter.cClassName[vCategory]
+					vItem.hasArrow = 1
+					vItem.arg1 = pFrame
+					vItem.arg2 = vCategory
+					vItem.colorCode = NORMAL_FONT_COLOR_CODE
+					vItem.value = vCategory
+					UIDropDownMenu_AddButton(vItem, UIDROPDOWNMENU_MENU_LEVEL)
 				end
 			end
 		end
@@ -6792,9 +6823,9 @@ function Outfitter.DropDown_SetSelectedValue(pDropDown, pValue)
 		if vItem.hasArrow then
 			local vSubMenuFrame = DropDownList2
 			
-			UIDROPDOWNMENU_OPEN_MENU = pDropDown
-			UIDROPDOWNMENU_MENU_VALUE = vItem.value
-			UIDROPDOWNMENU_MENU_LEVEL = 2
+			--UIDROPDOWNMENU_OPEN_MENU = pDropDown
+			--UIDROPDOWNMENU_MENU_VALUE = vItem.value
+			--UIDROPDOWNMENU_MENU_LEVEL = 2
 			
 			Outfitter:DropDownMenu_Initialize(pDropDown, pDropDown.initialize, nil, 2)
 			pDropDown:SetSelectedValue(pValue)
@@ -7141,6 +7172,21 @@ function Outfitter:CheckDatabase()
 		end
 		
 		self.Settings.Version = 18
+	end
+	
+	-- Remove ranged slot (WoW patch 5)
+	
+	if self.Settings.Version < 19 then
+		if self.Settings.Outfits then
+			for vCategoryID, vOutfits in pairs(self.Settings.Outfits) do
+				for vIndex, vOutfit in ipairs(vOutfits) do
+					if vOutfit.Items then
+						vOutfit.Items.RangedSlot = nil
+					end
+				end
+			end
+		end
+		self.Settings.Version = 19
 	end
 	
 	-- Repair missing settings
@@ -8634,67 +8680,50 @@ function Outfitter:SummonCompanionByName(pName, pDelay)
 end
 
 function Outfitter:GetCompanionIDByName(pName)
-	local vNumCompanions = GetNumCompanions("CRITTER")
+	local vNumPets = C_PetJournal.GetNumPets(false)
 	local vLowerName = pName:lower()
-	for vIndex = 1, vNumCompanions do
-		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
+	for vIndex = 1, vNumPets do
+		local vPetID, vSpeciesID, vIsOwned, vCustomName, vLevel, vFavorite, vIsRevoked, vName = C_PetJournal.GetPetInfoByIndex(vIndex, false)
 		if vName:lower() == vLowerName then
-			return vCreatureID
+			return vPetID
 		end
 	end
 end
 
 function Outfitter:GetSummonedCompanionID()
-	local vNumCompanions = GetNumCompanions("CRITTER")
-	for vIndex = 1, vNumCompanions do
-		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
-		if vIsSummoned then
-			return vCreatureID
-		end
-	end
+	return C_PetJournal.GetSummonedPetID()
 end
 
 function Outfitter:SummonCompanionByID(pID, pDelay)
 	if not pID then return end
-	local vNumCompanions = GetNumCompanions("CRITTER")
-	for vIndex = 1, vNumCompanions do
-		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
-		
-		if vCreatureID == pID then
-			if not vIsSummoned then
-				if pDelay then
-					Outfitter.SchedulerLib:ScheduleTask(2, function () CallCompanion("CRITTER", vIndex) end)
-				else
-					CallCompanion("CRITTER", vIndex)
-				end
-			end
-			
-			return true
+	local vIsSummoned = C_PetJournal.GetSummonedPetID() == pID
+	if not vIsSummoned then
+		if pDelay then
+			Outfitter.SchedulerLib:ScheduleTask(2, function () C_PetJournal.SummonPetByID(pID) end)
+		else
+			C_PetJournal.SummonPetByID(pID)
 		end
 	end
+	
+	return true
 end
 
 function Outfitter:DismissCompanionByID(pID, pDelay)
-	local vNumCompanions = GetNumCompanions("CRITTER")
-	for vIndex = 1, vNumCompanions do
-		local vCreatureID, vName, vSpellID, vIcon, vIsSummoned = GetCompanionInfo("CRITTER", vIndex)
-		
-		if vCreatureID == pID then
-			if vIsSummoned then
-				if pDelay then
-					Outfitter.SchedulerLib:ScheduleTask(2, function () CallCompanion("CRITTER", vIndex) end)
-				else
-					CallCompanion("CRITTER", vIndex)
-				end
-			end
-			
-			return true
+	if not pID then return end
+	local vIsSummoned = C_PetJournal.GetSummonedPetID() == pID
+	if vIsSummoned then
+		if pDelay then
+			Outfitter.SchedulerLib:ScheduleTask(2, function () C_PetJournal.SummonPetByID(pID) end)
+		else
+			C_PetJournal.SummonPetByID(pID)
 		end
 	end
+	
+	return true
 end
 
 function Outfitter:GetTalentTreeName(pIndex)
-	local _, vName = GetTalentTabInfo(pIndex)
+	local _, vName = GetSpecializationInfo(pIndex)
 	return vName
 end
 

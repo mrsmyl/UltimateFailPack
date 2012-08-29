@@ -57,6 +57,8 @@ function Outfitter._EditScriptDialog:Open(pOutfit, pShowSource)
 		end
 	end
 	
+	self:Show()
+	
 	local vScriptID = pOutfit.ScriptID or Outfitter:FindMatchingPresetScriptID(vScript)
 	self:SetPresetScriptID(vScriptID)
 	
@@ -67,8 +69,6 @@ function Outfitter._EditScriptDialog:Open(pOutfit, pShowSource)
 	else
 		self:SetPanelIndex(1) -- Show the settings panel
 	end
-	
-	self:Show()
 	
 	Outfitter.UIElementsLib:BeginDialog(self)
 end

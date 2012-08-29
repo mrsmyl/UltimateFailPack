@@ -953,12 +953,12 @@ end
 
 function Outfitter._OutfitMethodsEM:SaveEquipmentSet(pName, pIconTexture)
 	if Outfitter.Debug.NewItems then
-		Outfitter:TestMessage("%s:SaveEquipmentSet(%s)", pName, tostring(pIconIndex))
+		Outfitter:TestMessage("%s:SaveEquipmentSet(%s)", pName, tostring(pIconTexture))
 		Outfitter:DebugStack()
 	end
 	
-	if not pIconIndex then
-		pIconIndex = -1
+	if not pIconTexture then
+		pIconTexture = "INV_Misc_QuestionMark"
 	end
 	
 	Outfitter.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", Outfitter.SynchronizeEM, Outfitter)

@@ -58,8 +58,7 @@ function Outfitter._QuickSlots:Open(pSlotName, pHoveringOpen)
 	-- Position the window
 	
 	if pSlotName == "MainHandSlot"
-	or pSlotName == "SecondaryHandSlot"
-	or pSlotName == "RangedSlot" then
+	or pSlotName == "SecondaryHandSlot" then
 		self:SetPoint("TOPLEFT", vPaperDollSlotName, "BOTTOMLEFT", 0, 0)
 	else
 		self:SetPoint("TOPLEFT", vPaperDollSlotName, "TOPRIGHT", 5, 6)

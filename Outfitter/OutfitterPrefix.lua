@@ -3,6 +3,7 @@
 -- All rights reserved, unauthorized redistribution is prohibited
 ----------------------------------------
 
+local _
 _, Outfitter = ...
 
 Outfitter.DebugColorCode = "|cff99ffcc"

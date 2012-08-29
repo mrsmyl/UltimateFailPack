@@ -1,3 +1,134 @@
+local toggled = true
+local r,g,b,a = 1,0,1,1
+local options = {"foo", "bar", "foobar"}
+local optIndex = 1
+local rangeVal, rangeVal2 = 100, 10
+local inherits = {["inherittoggle"] = true}
+
+Outfitter.MinimapDropdownTable = {
+   type = "group",
+   name = "group",
+   desc = "group",
+   args = {
+      foo = {
+         type = "input",
+         name = "text",
+         desc = "text desc",
+         get = function(info) return "texting!" end,
+         set = function(info, v) end
+      },
+      inherit = {
+         type = "group",
+         name = "inheritance test",
+         desc = "inheritance test",
+         get = function(info) ChatFrame1:AddMessage(("Got getter, getting %s (%s)"):format(tostring(info[#info]), tostring(inherits[info[#info]]))); return inherits[info[#info]] end,
+         set = function(info, v) ChatFrame1:AddMessage("Got setter:" .. tostring(v)); inherits[info[#info]] = v end,
+         args = {
+            inherittoggle = {
+               type = "toggle",
+               name = "inherit toggle",
+               desc = "inherit toggle"
+            },
+         }
+      },
+      exec = {
+         type = "execute",
+         name = "Say hi",
+         desc = "Execute, says hi",
+         func = function() ChatFrame1:AddMessage("Hi!") end
+      },
+      range = {
+         type = "range",
+         name = "Range slider",
+         desc = "Range slider",
+         min = 0,
+         max = 800,
+         bigStep = 50,
+         get = function(info) return rangeVal end,
+         set = function(info, v) rangeVal = v end,                      
+      },
+      range2 = {
+         type = "range",
+         name = "Range slider 2",
+         desc = "Range slider 2",
+         min = 0,
+         max = 80,
+         bigStep = 5,
+         get = function(info) return rangeVal2 end,
+         set = function(info, v) rangeVal2 = v end,                     
+      },                
+      toggle = {
+         type = "toggle",
+         name = "Toggle",
+         desc = "Toggle",
+         get = function() return toggled end,
+         set = function(info, v) toggled = v end,
+         disabled = function(info) return not toggled end
+      },
+      toggle3 = {
+         type = "toggle",
+         name = "Tristate Toggle Tristate Toggle Tristate Toggle",
+         desc = "Tristate Toggle",
+         tristate = true,
+         get = function() return toggled end,
+         set = function(info, v) toggled = v end
+      },                
+      select = {
+         type = "select",
+         name = "select",
+         desc = "select desc",
+         values = options,
+         get = function(info) return optIndex end,
+         set = function(info, v) optIndex = v end
+      },
+      color = {
+         type = "color",
+         name = "color swatch",
+         desc = "color swatch desc",
+         get = function(info) return r,g,b,a end,
+         set = function(info, _r,_g,_b,_a) r,g,b,a = _r,_g,_b,_a end
+      },
+      foo3 = {
+         type = "group",
+         name = "group!",
+         desc = "group desc",
+         args = {
+            toggle3 = {
+               type = "toggle",
+               name = "Tristate Toggle Tristate Toggle Tristate Toggle",
+               desc = "Tristate Toggle",
+               tristate = true,
+               get = function() return toggled end,
+               set = function(info, v) toggled = v end
+            },  
+         }
+      },
+      foo4 = {
+         type = "group",
+         name = "inline group!",
+         desc = "inline group desc",
+         inline = "true",
+         args = {
+            foo2 = {
+               type = "input",
+               name = "text3",
+               desc = "text3 desc",
+               get = function(info) return "texting!" end,
+               set = function(info, v) end
+            }
+         },
+         order = 500
+      },                
+      close = {
+         type = "execute",
+         name = "Close",
+         desc = "Close this menu",
+         func = function(self)  end,
+         order = 1000
+      }
+   }
+}
+
 function Outfitter.MinimapButton_MouseDown(self)
 	-- Remember where the cursor was in case the user drags
 	
@@ -106,12 +237,39 @@ function Outfitter.MinimapButton_SetPositionAngle(pAngle)
 	
 	local vRadius = 80
 	
-	vCenterX = math.sin(vAngle) * vRadius
-	vCenterY = math.cos(vAngle) * vRadius
+	local vCenterX = math.sin(vAngle) * vRadius
+	local vCenterY = math.cos(vAngle) * vRadius
 	
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
 	
 	gOutfitter_Settings.Options.MinimapButtonAngle = vAngle
+end
+
+function Outfitter.MinimapButton_ToggleMenu(self)
+	if false then
+		if Outfitter.MinimapMenuFrame then
+			Outfitter.MinimapMenuFrame:Hide()
+			Outfitter.MinimapMenuFrame = nil
+		else
+			Outfitter.MinimapMenuFrame = LibStub("LibDropdown-1.0"):OpenAce3Menu(Outfitter.MinimapDropdownTable)
+			Outfitter.MinimapMenuFrame:SetPoint("TOPRIGHT", self, "TOPRIGHT", -20, -20)
+		end
+	else
+		if UIDROPDOWNMENU_OPEN_MENU == self and DropDownList1:IsShown() then
+			CloseDropDownMenus()
+		else
+			Outfitter.MinimapDropDown_OnLoad(self)
+			self.ChangedValueFunc = Outfitter.MinimapButton_ItemSelected
+			ToggleDropDownMenu(nil, nil, self, self, 22, 1)
+			
+			-- Hack to force the menu to position correctly.  UIDropDownMenu code
+			-- keeps thinking that it's off the screen and trying to reposition
+			-- it, which it does very poorly
+			
+			Outfitter.MinimapDropDown_AdjustScreenPosition(self)
+		end
+	end
+	PlaySound("igMainMenuOptionCheckBoxOn")
 end
 
 function Outfitter.MinimapButton_ItemSelected(pMenu, pValue)

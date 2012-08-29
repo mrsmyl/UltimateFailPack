@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 	
 	<Frame name="OutfitterDialogFrameTemplate" setAllPoints="true" virtual="true">
-		<Backdrop bgFile="Interface\Addons\GroupCalendar\Textures\DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+		<Backdrop bgFile="Interface\Addons\Outfitter\Textures\DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
 			<BackgroundInsets>
 				<AbsInset left="11" right="12" top="12" bottom="11"/>
 			</BackgroundInsets>
@@ -69,9 +69,6 @@
 					</Layer>
 				</Layers>
 				<Scripts>
-					<OnLoad>
-						Outfitter.OutfitBar.IconSetDropdown_OnLoad(self)
-					</OnLoad>
 					<OnShow>
 						Outfitter.OutfitBar.IconSetDropdown_OnLoad(self)
 					</OnShow>

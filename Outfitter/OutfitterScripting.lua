@@ -269,8 +269,8 @@ function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDe
 
 -- Unequip and return if they're not in an enabled spec
 
-if (not setting.Spec1 and GetActiveTalentGroup() == 1)
-or (not setting.Spec2 and GetActiveTalentGroup() == 2) then
+if (not setting.Spec1 and GetActiveSpecGroup() == 1)
+or (not setting.Spec2 and GetActiveSpecGroup() == 2) then
     equip = false
     return
 end
@@ -321,8 +321,8 @@ end
 
 -- Return if they're not in an enabled spec
 
-if (not setting.Spec1 and GetActiveTalentGroup() == 1)
-or (not setting.Spec2 and GetActiveTalentGroup() == 2) then
+if (not setting.Spec1 and GetActiveSpecGroup() == 1)
+or (not setting.Spec2 and GetActiveSpecGroup() == 2) then
     return
 end
 
@@ -372,8 +372,8 @@ end
 
 -- Return if they're not in an enabled spec
 
-if (not setting.Spec1 and GetActiveTalentGroup() == 1)
-or (not setting.Spec2 and GetActiveTalentGroup() == 2) then
+if (not setting.Spec1 and GetActiveSpecGroup() == 1)
+or (not setting.Spec2 and GetActiveSpecGroup() == 2) then
     return
 end
 
@@ -691,7 +691,7 @@ end
 		Category = "GENERAL",
 		Script = Outfitter:GenerateScriptHeader("ACTIVE_TALENT_GROUP_CHANGED", "Equips the outfit when you activate your primary talents")..
 [[
-equip = GetActiveTalentGroup() == 1
+equip = GetActiveSpecGroup() == 1
 ]],
 	},
 	{
@@ -700,7 +700,7 @@ equip = GetActiveTalentGroup() == 1
 		Category = "GENERAL",
 		Script = Outfitter:GenerateScriptHeader("ACTIVE_TALENT_GROUP_CHANGED", "Equips the outfit when you activate your secondary talents")..
 [[
-equip = GetActiveTalentGroup() == 2
+equip = GetActiveSpecGroup() == 2
 ]],
 	},
 	{
@@ -712,9 +712,9 @@ equip = GetActiveTalentGroup() == 2
 -- $SETTING Tree1={type="boolean", label=Outfitter:GetTalentTreeName(1), default=false}
 -- $SETTING Tree2={type="boolean", label=Outfitter:GetTalentTreeName(2), default=false}
 -- $SETTING Tree3={type="boolean", label=Outfitter:GetTalentTreeName(3), default=false}
-if GetPrimaryTalentTree() == 1 then equip = setting.Tree1
-elseif GetPrimaryTalentTree() == 2 then equip = setting.Tree2
-elseif GetPrimaryTalentTree() == 3 then equip = setting.Tree3 end
+if GetSpecialization() == 1 then equip = setting.Tree1
+elseif GetSpecialization() == 2 then equip = setting.Tree2
+elseif GetSpecialization() == 3 then equip = setting.Tree3 end
 ]],
 	},
 	{
@@ -1209,22 +1209,21 @@ end
 		Name = Outfitter.cSoloOutfit,
 		ID = "SOLO",
 		Category = "GENERAL",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD RAID_ROSTER_UPDATE PARTY_MEMBERS_CHANGED", Outfitter.cSoloOutfitDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD GROUP_ROSTER_UPDATE", Outfitter.cSoloOutfitDescription)..
 [[
 -- $SETTING EquipSolo={label="Equip when solo", type="boolean"}
 -- $SETTING EquipGroup={label="Equip when in a party", type="boolean"}
 -- $SETTING EquipRaid={label="Equip when in a raid", type="boolean"}
 
 if setting.EquipSolo
-and GetNumRaidMembers() == 0
-and GetNumPartyMembers() == 0 then
+and GetNumGroupMembers() == 0 then
     equip = true
 elseif setting.EquipGroup
-and GetNumRaidMembers() == 0
-and GetNumPartyMembers() ~= 0 then
+and GetNumGroupMembers() ~= 0
+and !IsInRaid() then
     equip = true
 elseif setting.EquipRaid
-and GetNumRaidMembers() ~= 0 then
+and IsInRaid() then
     equip = true
 elseif didEquip then
     equip = false
@@ -1626,11 +1625,11 @@ end
 if setting.Ragnaros and equip ~= nil and not IsFlying() then
     if equip then
         self.savedCompanionID = Outfitter:GetSummonedCompanionID()
-        Outfitter:SummonCompanionByID(51600, 0.2)
+        Outfitter:SummonCompanionByID(234441, 0.2)
     elseif self.savedCompanionID then
         Outfitter:SummonCompanionByID(self.savedCompanionID, 0.2)
     else
-        Outfitter:DismissCompanionByID(51600)
+        Outfitter:DismissCompanionByID(234441)
     end
 end
 ]],

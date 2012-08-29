@@ -214,7 +214,7 @@ function Outfitter._CreditFrame:Construct(pParent)
 	--self.TestTexture:SetTexture(1, 0, 0, 0.5)
 	
 	self.DestWidth = self:GetParent():GetWidth() - self.Width
-	self.DestHeight = self:GetParent():GetHeight() - self.Height
+	self.DestHeight = self:GetParent():GetHeight() - self.Height - 30
 	
 	self:SetScript("OnUpdate", self.OnUpdate)
 end

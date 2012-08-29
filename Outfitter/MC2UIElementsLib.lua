@@ -1266,7 +1266,16 @@ function Addon.UIElementsLib._DropDownMenuButton:Construct(pParent, pMenuFunc, p
 	
 	self.MenuFunc = pMenuFunc
 	self.OrigHeight = self:GetHeight()
-	UIDropDownMenu_Initialize(self, self.WoWMenuInitFunction)
+	
+	self.UseWoWMenus = true
+	if self.UseWoWMenus then
+		UIDropDownMenu_Initialize(self, self.WoWMenuInitFunction)
+	else
+		self.initialize = self.WoWMenuInitFunction
+		self.items = {}
+		self.currentLevelItems = self.items
+	end
+	
 	self:SetHeight(self.OrigHeight)
 end
 
@@ -1282,7 +1291,18 @@ function Addon.UIElementsLib._DropDownMenuButton:ToggleMenu()
 	self.xOffset = 0
 	self.yOffset = 9
 	
-	ToggleDropDownMenu(nil, nil, self)
+	if self.UseWoWMenus then
+		ToggleDropDownMenu(nil, nil, self)
+	else
+		self.items = {}
+		self.currentLevelItems = self.items
+		self:MenuFunc()
+		if not self.MenuFrame then
+			self.MenuFrame = CreateFrame("Frame", "UIElementLibMenuFrame", UIParent, "UIDropDownMenuTemplate")
+		end
+		EasyMenu(self.items, self.MenuFrame, self.relativeTo, self.xOffset, self.yOffset)
+		Addon:DebugMessage("Toggle")
+	end
 end
 
 --[[
@@ -1316,8 +1336,24 @@ info.fontObject = [FONT] -- font object replacement for Normal and Highlight
 info.menuTable = [TABLE] -- This contains an array of info tables to be displayed as a child menu
 ]]
 
+function Addon.UIElementsLib._DropDownMenuButton:CreateInfo()
+	if self.UseWoWMenus then
+		return UIDropDownMenu_CreateInfo()
+	else
+		return {}
+	end
+end
+
+function Addon.UIElementsLib._DropDownMenuButton:AddButton(pInfo, pLevel)
+	if self.UseWoWMenus then
+		UIDropDownMenu_AddButton(pInfo, pLevel)
+	else
+		table.insert(self.currentLevelItems, pInfo)
+	end
+end
+
 function Addon.UIElementsLib._DropDownMenuButton:AddNormalItem(pText, pID, pIcon, pChecked, pDisabled)
-	local vInfo = UIDropDownMenu_CreateInfo()
+	local vInfo = self:CreateInfo()
 	
 	vInfo.text = pText
 	vInfo.value = pID
@@ -1328,39 +1364,39 @@ function Addon.UIElementsLib._DropDownMenuButton:AddNormalItem(pText, pID, pIcon
 	vInfo.checked = pChecked
 	vInfo.disabled = pDisabled
 	
-	UIDropDownMenu_AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
+	self:AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
 end
 
 function Addon.UIElementsLib._DropDownMenuButton:AddCategoryItem(pText)
-	local vInfo = UIDropDownMenu_CreateInfo()
+	local vInfo = self:CreateInfo()
 	
 	vInfo.text = pText
 	vInfo.notClickable = true
 	vInfo.notCheckable = true
 	vInfo.colorCode = HIGHLIGHT_FONT_COLOR_CODE
 	
-	UIDropDownMenu_AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
+	self:AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
 end
 
 function Addon.UIElementsLib._DropDownMenuButton:AddChildMenu(pText, pID)
-	local vInfo = UIDropDownMenu_CreateInfo()
+	local vInfo = self:CreateInfo()
 	
 	vInfo.text = pText
 	vInfo.value = pID
 	vInfo.hasArrow = true
 	vInfo.colorCode = NORMAL_FONT_COLOR_CODE
 	
-	UIDropDownMenu_AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
+	self:AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
 end
 
 function Addon.UIElementsLib._DropDownMenuButton:AddDivider()
-	local vInfo = UIDropDownMenu_CreateInfo()
+	local vInfo = self:CreateInfo()
 	
 	vInfo.text = " "
 	vInfo.notCheckable = true
 	vInfo.notClickable = true
 	
-	UIDropDownMenu_AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
+	self:AddButton(vInfo, UIDROPDOWNMENU_MENU_LEVEL)
 end
 
 function Addon.UIElementsLib._DropDownMenuButton:ItemClicked(pValue)
@@ -1509,9 +1545,9 @@ function Addon.UIElementsLib._DropDownMenu:SetSelectedValue(pValue)
 		if vItem.hasArrow then
 			local vSubMenuFrame = DropDownList2
 			
-			UIDROPDOWNMENU_OPEN_MENU = self
-			UIDROPDOWNMENU_MENU_VALUE = vItem.value
-			UIDROPDOWNMENU_MENU_LEVEL = 2
+			--UIDROPDOWNMENU_OPEN_MENU = self
+			--UIDROPDOWNMENU_MENU_VALUE = vItem.value
+			--UIDROPDOWNMENU_MENU_LEVEL = 2
 			
 			UIDropDownMenu_Initialize(self, self.initialize, nil, 2)
 			UIDropDownMenu_SetSelectedValue(self, pValue)
@@ -1526,7 +1562,7 @@ function Addon.UIElementsLib._DropDownMenu:SetSelectedValue(pValue)
 			
 			-- Switch back to the root menu
 			
-			UIDROPDOWNMENU_OPEN_MENU = nil
+			--UIDROPDOWNMENU_OPEN_MENU = nil
 			UIDropDownMenu_Initialize(self, self.initialize, nil, 1)
 		end
 	end

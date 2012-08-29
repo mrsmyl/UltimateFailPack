@@ -1289,18 +1289,6 @@
 							<OnLoad>self.SlotName = "SecondaryHandSlot"</OnLoad>
 						</Scripts>
 					</CheckButton>
-					<CheckButton name="OutfitterEnableRangedSlot" inherits="OutfitterEnableTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="CharacterRangedSlot">
-								<Offset>
-									<AbsDimension x="-4" y="4"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>self.SlotName = "RangedSlot"</OnLoad>
-						</Scripts>
-					</CheckButton>
 				</Frames>
 				<Scripts>
 					<OnShow>
@@ -1345,21 +1333,7 @@
 				Outfitter.MinimapButton_MouseDown(self)
 			</OnMouseDown>
 			<OnMouseUp>
-				if UIDROPDOWNMENU_OPEN_MENU == self and DropDownList1:IsShown() then
-					CloseDropDownMenus()
-				else
-					Outfitter.MinimapDropDown_OnLoad(self)
-					self.ChangedValueFunc = Outfitter.MinimapButton_ItemSelected
-					ToggleDropDownMenu(nil, nil, self, self, 22, 1)
-					
-					-- Hack to force the menu to position correctly.  UIDropDownMenu code
-					-- keeps thinking that it's off the screen and trying to reposition
-					-- it, which it does very poorly
-					
-					Outfitter.MinimapDropDown_AdjustScreenPosition(self)
-				end
-				
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				Outfitter.MinimapButton_ToggleMenu(self)
 			</OnMouseUp>
 			<OnEnter>
 				Outfitter.AddNewbieTip(self, Outfitter.cMinimapButtonTitle, 1, 1, 1, Outfitter.cMinimapButtonDescription, 1)
@@ -1621,9 +1595,6 @@
 					</Layer>
 				</Layers>
 				<Scripts>
-					<OnLoad>
-						Outfitter.PresetScriptDropDown_OnLoad(self)
-					</OnLoad>
 					<OnShow>
 						Outfitter.PresetScriptDropDown_OnLoad(self)
 					</OnShow>

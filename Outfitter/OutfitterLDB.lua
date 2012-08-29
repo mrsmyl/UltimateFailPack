@@ -10,13 +10,6 @@ function Outfitter.LDB:Initialize()
 		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end
 	})
 	
-	self.Menu = CreateFrame("Frame", "OutfitterLDBMenu", UIParent)
-	self.Menu:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 100, -100)
-	self.Menu:SetWidth(100)
-	self.Menu:SetHeight(20)
-	Outfitter.MinimapDropDown_OnLoad(self.Menu)
-	self.Menu.ChangedValueFunc = Outfitter.MinimapButton_ItemSelected
-	
 	Outfitter:RegisterOutfitEvent("WEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
 	Outfitter:RegisterOutfitEvent("UNWEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
 	Outfitter:RegisterOutfitEvent("OUTFITTER_INIT", function (...) self:OutfitEvent(...) end)
@@ -24,6 +17,15 @@ end
 
 function Outfitter.LDB:OnClick(pFrame, pButton)
 	if pButton == "LeftButton" then
+		if not self.Menu then
+			self.Menu = CreateFrame("Frame", "OutfitterLDBMenu", UIParent)
+			self.Menu:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 100, -100)
+			self.Menu:SetWidth(100)
+			self.Menu:SetHeight(20)
+			Outfitter.MinimapDropDown_OnLoad(self.Menu)
+			self.Menu.ChangedValueFunc = Outfitter.MinimapButton_ItemSelected
+		end
+		
 		ToggleDropDownMenu(nil, nil, self.Menu, "cursor")
 		
 		-- Hack to force the menu to position correctly.  UIDropDownMenu code
