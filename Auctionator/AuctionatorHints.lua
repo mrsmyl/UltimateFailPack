@@ -914,7 +914,7 @@ hooksecurefunc (GameTooltip, "SetAuctionSellItem",
 
 hooksecurefunc (GameTooltip, "SetLootItem",
 	function (tip, slot)
-		if LootSlotIsItem(slot) then
+		if LootSlotHasItem(slot) then
 			local link, _, num = GetLootSlotLink(slot);
 			ShowTipWithPricing (tip, link, num);
 		end
