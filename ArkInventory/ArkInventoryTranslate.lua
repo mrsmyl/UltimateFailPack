@@ -143,14 +143,14 @@ local updateTable = {
 	
 	
 	
-	["LOCATION_MOUNT"] = function( value )
-		ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].Name = value
-		BINDING_NAME_ARKINV_TOGGLE_MOUNT = value
-	end,
-	["LOCATION_PET"] = function( value )
-		ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].Name = value
-		BINDING_NAME_ARKINV_TOGGLE_PET = value
-	end,
+--	["LOCATION_MOUNT"] = function( value )
+--		ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].Name = value
+--		BINDING_NAME_ARKINV_TOGGLE_MOUNT = value
+--	end,
+--	["LOCATION_PET"] = function( value )
+--		ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].Name = value
+--		BINDING_NAME_ARKINV_TOGGLE_PET = value
+--	end,
 	
 	
 	

@@ -14,7 +14,12 @@
  * faq - http://code.google.com/p/arkinventory/wiki/FAQ
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
- 
+*3.03.01 (29-AUG-2012)*
+ * changed - toc set to 50001
+ * added - battle pet category
+ * added - battle pet item and tooltip support
+ * removed - ability to summon pets (via window and ldb, will return in a later version)
+
 *3.02.95 (09-AUG-2012)*
  * fixed - removed ranged slot for mop beta
  * added - more checking of saved variables

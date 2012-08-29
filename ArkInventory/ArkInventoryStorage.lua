@@ -361,6 +361,8 @@ function ArkInventory:LISTEN_COMBAT_LEAVE( )
 		
 	end
 	
+	ArkInventory.LDB.Mounts:Update( )
+	
 end
 
 
@@ -1035,7 +1037,9 @@ function ArkInventory:LISTEN_ZONE_CHANGED( )
 end
 
 function ArkInventory:LISTEN_ACTIONBAR_UPDATE_USABLE_BUCKET( )
-	ArkInventory.LDB.Mounts:Update( )
+	if not ArkInventory.Global.Mode.Combat then
+		ArkInventory.LDB.Mounts:Update( )
+	end
 end
 
 function ArkInventory:LISTEN_ACTIONBAR_UPDATE_USABLE( event )
@@ -3059,7 +3063,7 @@ function ArkInventory.ObjectInfo( h )
 		return
 	end
 	
-	local class, v1, v2 = ArkInventory.ObjectStringDecode( h )
+	local class, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 = ArkInventory.ObjectStringDecode( h )
 	
 	if class == "item" then
 		
@@ -3082,6 +3086,14 @@ function ArkInventory.ObjectInfo( h )
 		local quality = 1
 		
 		return class, link, name, texture, quality
+		
+	elseif class == "battlepet" then
+		
+		local name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoBySpeciesID( v1 )
+		
+--		v1-speciesID, v2-level, v3-breedQuality, v4-maxHealth, v5-power, v6-speed, ?
+		
+		return class, h, name, icon, v3, v2, 0, "", "", 1, "", 0, v1, v4, v5, v6, v7, v8, v9, v10
 		
 	elseif class == "token" then
 		
@@ -3190,16 +3202,18 @@ end
 
 function ArkInventory.ObjectIDInternal( h )
 
-	local class, id, enchant, j1, j2, j3, j4, suffix, _, _, reforge = ArkInventory.ObjectStringDecode( h )
+	local class, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 = ArkInventory.ObjectStringDecode( h )
 	
 	if class == "item" then
-		return string.format( "%s:%s:%s:%s:%s:%s:%s:%s:%s", class, id, enchant, suffix, j1, j2, j3, j4, reforge )
+		return string.format( "%s:%s:%s:%s:%s:%s:%s:%s:%s", class, v1, v2, v7, v3, v4, v5, v6, v10 )
 	elseif class == "empty" or class == "spell" then
-		return string.format( "%s:%s", class, id )
+		return string.format( "%s:%s", class, v1 )
+	elseif class == "battlepet" then
+		return string.format( "%s:%s", class, v1 )
 	elseif class == "token" then
-		return string.format( "%s:%s:%s", class, id, suffix )
+		return string.format( "%s:%s:%s", class, v1, v7 )
 	else
-		error( string.format( "code failure: unknown class [%s] for object %s", class, h ) )
+		error( string.format( "code failure: uncoded class [%s] for object %s", class, h ) )
 	end
 	
 end
@@ -3210,7 +3224,7 @@ function ArkInventory.ObjectIDTooltip( h )
 	
 	--ArkInventory.Output( "class[", class, "] : [", v1, "] : [", v2, "]" )
 	
-	if class == "item" or class == "empty" or class == "spell" then
+	if class == "item" or class == "empty" or class == "spell" or class == "battlepet" then
 		return string.format( "%s:%s", class, v1 )
 	elseif class == "token" then
 		return string.format( "%s:%s", class, v1 )
@@ -3237,6 +3251,8 @@ function ArkInventory.ObjectIDCacheCategory( loc_id, bag_id, sb, h )
 	elseif class == "empty" then
 		return string.format( "%s:%s:%s", class, 0, soulbound )
 	elseif class == "spell" then
+		return string.format( "%s:%s:%s", class, v1, 0 )
+	elseif class == "battlepet" then
 		return string.format( "%s:%s:%s", class, v1, 0 )
 	elseif class == "token" then
 		return string.format( "%s:%s", class, v1 )

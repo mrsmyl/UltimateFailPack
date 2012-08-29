@@ -1,6 +1,6 @@
 -- (c) 2009-2011, all rights reserved.
--- $Revision: 913 $
--- $Date: 2012-08-09 20:30:33 +1000 (Thu, 09 Aug 2012) $
+-- $Revision: 930 $
+-- $Date: 2012-08-29 17:05:16 +1000 (Wed, 29 Aug 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 3.0295,
-		UIVersion = "3.2.95",
+		Version = 30301,
+		UIVersion = "3.3.1",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -284,8 +284,12 @@ ArkInventory.Const = { -- constants
 					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"],
 				},
 				[423] = {
-					["id"] = "SYSTEM_PET",
+					["id"] = "SYSTEM_PET_COMPANION",
 					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC_PET"],
+				},
+				[441] = {
+					["id"] = "SYSTEM_PET_BATTLE",
+					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_BATTLEPET"],
 				},
 				[428] = {
 					["id"] = "SYSTEM_REPUTATION",
@@ -1278,7 +1282,7 @@ BINDING_NAME_ARKINV_TOGGLE_BANK = ArkInventory.Localise["LOCATION_BANK"]
 BINDING_NAME_ARKINV_TOGGLE_VAULT = GUILD_BANK
 BINDING_NAME_ARKINV_TOGGLE_MAIL = MAIL_LABEL
 BINDING_NAME_ARKINV_TOGGLE_WEARING = ArkInventory.Localise["LOCATION_WEARING"]
-BINDING_NAME_ARKINV_TOGGLE_PET = ArkInventory.Localise["LOCATION_PET"]
+BINDING_NAME_ARKINV_TOGGLE_PET = ArkInventory.Localise["PET"]
 BINDING_NAME_ARKINV_TOGGLE_MOUNT = ArkInventory.Localise["LOCATION_MOUNT"]
 BINDING_NAME_ARKINV_TOGGLE_TOKEN = ArkInventory.Localise["LOCATION_TOKEN"]
 BINDING_NAME_ARKINV_TOGGLE_VOID = VOID_STORAGE
@@ -3080,7 +3084,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 	-- pets
 	if i.loc_id == ArkInventory.Const.Location.Pet then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_PET" )
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
 	end
 	
 	-- mounts
@@ -3095,6 +3099,11 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	
 	-- everything else
 	local class, _, itemName, _, itemRarity, _, _, itemType, itemSubType, _, itemEquipLoc = ArkInventory.ObjectInfo( i.h )
+	
+	-- battle pets
+	if class == "battlepet" then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE" )
+	end
 	
 	-- items only
 	if class ~= "item" then
@@ -3278,7 +3287,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		end
 		
 		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC_PET"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_PET"] ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET" )
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
 		end
 		
 		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC_MOUNT"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_MOUNT"] ) then
@@ -6697,8 +6706,12 @@ function ArkInventory.Frame_Companion_Item_OnClick( frame, button )
 				local name = ArkInventory.ObjectInfoName( i.h )
 				ArkInventory.OutputError( "Unable to cast ", name, ", access is restricted to blizzard code" )
 				
-			else
-			
+			elseif i.type == "CRITTER" then
+				
+				-- do nothing, cant call pets any more
+				
+			elseif i.type == "MOUNT" then
+				
 				local creatureID, creatureName, spellID, icon, active = GetCompanionInfo( i.type, i.slot_id )
 				
 				if active then
@@ -8285,8 +8298,9 @@ function ArkInventory.LocationOptionGetReal( loc_id, ... )
 		assert( p ~= nil, string.format( "bad code: %s is nil - please reload ui to reset the database or report to author if it continues", s ) )
 		
 		local k = select( i, ... )
-		assert( k ~= nil, string.format( "bad code: parameter %s is nil", i ) )
-		assert( type( k ) ~= "boolean", string.format( "bad code: parameter %s is boolean", i ) )
+		if ( ( type( k ) ~= "number" ) and ( type( k ) ~= "string" ) ) then
+			assert( true, string.format( "bad code: parameter %s is %s", i, type( k ) ) )
+		end
 		
 		s = string.format( "%s.%s", s, k )
 		p = p[k]
@@ -8317,8 +8331,9 @@ function ArkInventory.LocationOptionSetReal( loc_id, ... )
 		assert( p ~= nil, string.format( "bad code: %s is nil - please reload ui to reset database or report to author if it continues", s ) )
 		
 		local k = select( i, ... )
-		assert( k ~= nil, string.format( "bad code: parameter %s is nil", i ) )
-		assert( type( k ) ~= "boolean", string.format( "bad code: parameter %s is boolean", i ) )
+		if ( ( type( k ) ~= "number" ) and ( type( k ) ~= "string" ) ) then
+			assert( true, string.format( "bad code: parameter %s is %s", i, type( k ) ) )
+		end
 		
 		s = string.format( "%s.%s", s, k )
 		p = p[k]
@@ -8382,14 +8397,19 @@ function ArkInventory.GameTooltipSetHyperlink( frame, h )
 	
 	ArkInventory.GameTooltipSetPosition( frame )
 	
-	if class ~= "token" then
-		
-		GameTooltip:SetHyperlink( h )
-		
-	else
+	if class == "token" then
 		
 		local _, _, name = ArkInventory.ObjectInfo( h )
 		GameTooltip:SetText( h, 1, 1, 1, 1 )
+		
+	elseif class == "battlepet" then
+		
+		local _, _, _, _, breedQuality, level, _, _, _, _, _, _, speciesID, maxHealth, power, speed, customName = ArkInventory.ObjectInfo( h )
+		BattlePetToolTip_Show( speciesID, level, breedQuality, maxHealth, power, speed, customName )
+		
+	else
+		
+		GameTooltip:SetHyperlink( h )
 		
 	end
 	
