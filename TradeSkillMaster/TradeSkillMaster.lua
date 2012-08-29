@@ -31,19 +31,19 @@ local savedDBDefaults = {
 		openAllBags = true,
 		design = {
 			frameColors = {
-				frameBG = {backdrop={219, 219, 219, 1}, border={30, 30, 30, 1}},
-				frame = {backdrop={228, 228, 228, 1}, border={199, 199, 199, 1}},
-				content = {backdrop={60, 60, 60, 1}, border={40, 40, 40, 1}},
+				frameBG = {backdrop={24, 24, 24, .93}, border={30, 30, 30, 1}},
+				frame = {backdrop={24, 24, 24, 1}, border={255, 255, 255, 0.03}},
+				content = {backdrop={42, 42, 42, 1}, border={0, 0, 0, 0}},
 			},
 			textColors = {
-				iconRegion = {enabled={105, 105, 105, 1}},
-				text = {enabled={245, 244, 240, 1}, disabled={95, 98, 90, 1}},
-				label = {enabled={45, 44, 40, 1}, disabled={150, 148, 140, 1}},
-				title = {enabled={49, 56, 85, 1}},
+				iconRegion = {enabled={249, 255, 247, 1}},
+				text = {enabled={255, 254, 250, 1}, disabled={147, 151, 139, 1}},
+				label = {enabled={216, 225, 211, 1}, disabled={150, 148, 140, 1}},
+				title = {enabled={132, 219, 9, 1}},
 				link = {enabled={49, 56, 133, 1}},
 			},
 			inlineColors = {
-				link = {49, 56, 133, 1},
+				link = {153, 255, 255, 1},
 				link2 = {153, 255, 255, 1},
 				category = {36, 106, 36, 1},
 				category2 = {85, 180, 8, 1},
@@ -116,6 +116,12 @@ function TSM:OnInitialize()
 
 	TSM:CreateMainFrame()
 	TSM:InitializeTooltip()
+	lib:RegisterSlashCommand("version", function()
+			TSM:Print("TSM Version Info:")
+			for _, module in ipairs(TSM.registeredModules) do
+				print(module.name, "|cff99ffff"..module.version.."|r")
+			end
+		end, "Prints out the version numbers of all installed modules.")
 end
 
 function TSM:OnEnable()

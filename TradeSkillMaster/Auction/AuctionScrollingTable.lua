@@ -213,11 +213,9 @@ function TSMAPI:CreateAuctionsST(stParent, colInfo, customEvents)
 			row:SetNormalTexture(tex)
 		end
 		for j, col in ipairs(row.cols) do
+			col.text:SetFont(TSMAPI.Design:GetContentFont(), 13)
 			if j == 1 then
-				col.text:SetFont(TSMAPI.Design:GetContentFont(), 15)
 				col.text:SetHeight(BROWSE_ROW_HEIGHT)
-			else
-				col.text:SetFont(TSMAPI.Design:GetContentFont(), 13)
 			end
 			col.text:SetShadowColor(0, 0, 0, 0)
 		end

@@ -70,10 +70,11 @@ L["Changes the size of the auction frame. The size of the detached TSM auction f
 L["Detach TSM Tab by Default"] = true
 L["Open All Bags with Auction House"] = true
 L["If checked, your bags will be automatically opened when you open the auction house."] = true
-L["Light (Official TSM Theme)"] = true
+L["Light (by Ravanys - The Consortium)"] = true
 L["Goblineer (by Sterling - The Consortium)"] = true
 L["Jaded (by Ravanys - The Consortium)"] = true
-L["TSM Deck (by Jim Younkin - Power Word Gold)"] = true
+L["TSMDeck (by Jim Younkin - Power Word: Gold)"] = true
+L["TSM Classic (by Jim Younkin - Power Word: Gold)"] = true
 L["TSM Appearance Options"] = true
 L["Use the options below to change and tweak the appearance of TSM."] = true
 L["Import Appearance Settings"] = true
@@ -114,22 +115,6 @@ L["Looks like TradeSkillMaster has encountered an error. Please help the author 
 L["Error Info:"] = true
 L["Looks like TradeSkillMaster has encountered an error. Please help the author fix this error by following the instructions shown."] = true
 L["Additional error suppressed"] = true
-
--- Tips.lua
-
-L["There is a checkbox for hiding the minimap icon in the status page of the main TSM window."] = true
-L["The only required module of TradeSkillMaster is the main one (TradeSkillMaster). All others may be disabled if you are not using them."] = true
-L["Want more tips? Click on the \"New Tip\" button at the bottom of the status page."] = true
-L["Have you tried running a GetAll scan? It's the fastest possible way to scan by far so give it a shot!"] = true
-L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = true
-L["\"/tsm adbreset\" will reset AuctionDB's scan data. There is a confirmation prompt."] = true
-L["Auctioning's CancelAll scan can be used to quickly cancel specific items. Anything from items under a certain duration to specific items, to entire groups."] = true
-L["There is an option for hiding Auctioning's advanced options in the top \"Options\" page of the Auctioning page in the main TSM window."] = true
-L["If the Craft Management Window is too big, you can scale it down in the Crafting options."] = true
-L["Crafting can make Auctioning groups for you. Just click on a profession icon, a category, and then the \"Create Auctioning Groups\" button."] = true
-L["Any craft that is disabled in the category pages of one of the Crafting profession icons in the main TSM window won't show up in the Craft Management Window."] = true
-L["Crafting's on-hand queue will queue up the most profitable items you can make from the materials you have in your bags."] = true
-L["When using shopping to buy herbs for inks, it will automatically check if it's cheaper to buy herbs for blackfallow ink and trade down (this can be turned off)."] = true
 
 -- ItemData.lua
 

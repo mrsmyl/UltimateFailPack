@@ -168,6 +168,7 @@ local methods = {
 		btn.title = info.name
 		btn.info = info
 		btn.obj = self
+		info.frame = btn
 		
 		local image = btn:CreateTexture(nil, "BACKGROUND")
 		image:SetWidth(size)

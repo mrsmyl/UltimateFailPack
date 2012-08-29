@@ -346,3 +346,17 @@ function lib:CancelFrame(label)
 		delayFrame:SetScript("OnUpdate", nil)
 	end
 end
+
+local orig = ChatFrame_OnEvent
+function ChatFrame_OnEvent(self, event, ...)
+	local msg = select (1, ...)
+	if (event == "CHAT_MSG_SYSTEM") then
+		if (msg == ERR_AUCTION_STARTED) then		-- absorb the Auction Created message
+			return
+		end
+		if (msg == ERR_AUCTION_REMOVED) then		-- absorb the Auction Cancelled message
+			return
+		end
+	end
+	return orig(self, event, ...)
+end

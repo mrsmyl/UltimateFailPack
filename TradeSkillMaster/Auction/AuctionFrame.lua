@@ -44,7 +44,7 @@ function private:InitializeAHTab()
 	frame.isTSMTab = true
 	frame:SetPoint("LEFT", _G["AuctionFrameTab"..n-1], "RIGHT", -8, 0)
 	private.auctionFrameTab = frame
-		
+
 	PanelTemplates_SetNumTabs(AuctionFrame, n)
 	PanelTemplates_EnableTab(AuctionFrame, n)
 	AuctionFrame:SetMovable(TSM.db.profile.auctionFrameMovable)
@@ -428,6 +428,6 @@ do
 	end
 end
 
-function private:Validate()
-	return TSM.db and true -- tonumber(select(3, strfind(debugstack(), "([0-9]+)"))) == private.num
+function private.Validate()
+	return TSM.db and tonumber(select(3, strfind(debugstack(), "([0-9]+)"))) == private.num
 end
