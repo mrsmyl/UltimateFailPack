@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 659 $")
+			end, "$Revision: 669 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -36,6 +36,8 @@ local mobhealth
 
 local isMOP = select(4, _G.GetBuildInfo()) >= 50000
 local IsPartyLeader = IsPartyLeader;
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+
 if (select(4, _G.GetBuildInfo()) >= 50000) then
 	IsPartyLeader = function() return UnitIsGroupLeader("player") end
 end

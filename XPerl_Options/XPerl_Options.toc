@@ -1,4 +1,4 @@
-﻿## Interface: 40300
+﻿## Interface: 50001
 ## Title: X-Perl |cffeda55fOptions|r by |cFFFF8080Zek |cFF40FF40(LoadOnDemand)|r
 ## Title-ruRU: X-Perl |cffeda55fНастройки |cFF40FF40(LoadOnDemand)|r
 ## Title-zhCN: X-Perl |cffeda55f选项|r |cFF40FF40(LoadOnDemand)|r
@@ -15,7 +15,7 @@
 ## X-Curse-Project-Name: X-Perl UnitFrames
 ## X-Curse-Project-ID: xperl
 ## X-Curse-Repository-ID: wow/xperl/mainline
-## X-Curse-Packaged-Version: r667
+## X-Curse-Packaged-Version: r674
 ## X-Curse-Project-Name: X-Perl UnitFrames
 ## X-Curse-Project-ID: xperl
 ## X-Curse-Repository-ID: wow/xperl/mainline

@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 644 $")
+		end, "$Revision: 669 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -561,10 +561,19 @@ end
 
 -- XPerl_Party_UpdateLeader
 local function XPerl_Party_UpdateLeader(self)
-	if ("party"..GetPartyLeaderIndex() == self.partyid) then
-		self.nameFrame.leaderIcon:Show()
+
+	if (not isMOP) then
+		if ("party"..GetPartyLeaderIndex() == self.partyid) then
+			self.nameFrame.leaderIcon:Show()
+		else
+			self.nameFrame.leaderIcon:Hide()
+		end
 	else
-		self.nameFrame.leaderIcon:Hide()
+		if (UnitIsGroupLeader(self.partyid)) then
+			self.nameFrame.leaderIcon:Show()
+		else
+			self.nameFrame.leaderIcon:Hide()
+		end
 	end
 
 	local lootMethod

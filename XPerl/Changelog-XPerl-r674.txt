@@ -1,4 +1,76 @@
 ------------------------------------------------------------------------
+r674 | tharai | 2012-08-28 22:55:44 +0000 (Tue, 28 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.toc
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.toc
+   M /trunk/XPerl_Options/XPerl_Options.toc
+   M /trunk/XPerl_Party/XPerl_Party.toc
+   M /trunk/XPerl_PartyPet/XPerl_PartyPet.toc
+   M /trunk/XPerl_Player/XPerl_Player.toc
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.toc
+   M /trunk/XPerl_PlayerPet/XPerl_PlayerPet.toc
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.toc
+   M /trunk/XPerl_RaidFrames/XPerl_RaidFrames.toc
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.toc
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.toc
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.toc
+   M /trunk/XPerl_Target/XPerl_Target.toc
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.toc
+   M /trunk/localization.lua
+
+Toc bump
+Update version number in the localization.lua as well.
+------------------------------------------------------------------------
+r673 | tharai | 2012-08-28 22:20:07 +0000 (Tue, 28 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Usage.lua
+
+fix error
+------------------------------------------------------------------------
+r672 | tharai | 2012-08-27 15:37:23 +0000 (Mon, 27 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_Player/XPerl_Player.xml
+
+Better warlock bar stuff
+Also get rid of backdrop for druid bar.
+------------------------------------------------------------------------
+r671 | tharai | 2012-08-27 05:23:12 +0000 (Mon, 27 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+basic warlock shiz
+------------------------------------------------------------------------
+r670 | sontix | 2012-08-19 17:42:10 +0000 (Sun, 19 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+
+fixed wrong checkbox parenting / option name
+fixed missing deathknight checkbox in monitor module
+save frames position when using the align top function
+------------------------------------------------------------------------
+r669 | tharai | 2012-08-19 04:52:18 +0000 (Sun, 19 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Init.lua
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Crush some mop functions
+------------------------------------------------------------------------
+r668 | THARAI | 2012-08-16 10:51:22 +0000 (Thu, 16 Aug 2012) | 4 lines
+Changed paths:
+   M /trunk/XPerl_Init.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
+
+Fix errors
+
+Work on special power bar stuff
+Druid frame looks funky atm, but you can drag it and move it and the buffs around. Gonna need some feedback on what looks the best. Haven't narrowed down why only druid frame gets the special background while monk & pally dont.
+------------------------------------------------------------------------
 r667 | THARAI | 2012-08-15 09:22:18 +0000 (Wed, 15 Aug 2012) | 1 line
 Changed paths:
    M /trunk/XPerl.toc
@@ -194,22 +266,4 @@ Changed paths:
 
 Remove mana update from player again, use 
 UNIT_POWER_FREQUENT instead
-------------------------------------------------------------------------
-r640 | mysticalos | 2012-07-20 15:13:12 +0000 (Fri, 20 Jul 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-
-Small fix to player frame updating.
-------------------------------------------------------------------------
-r639 | THARAI | 2012-07-20 08:13:49 +0000 (Fri, 20 Jul 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
-
-reenable onupdate for targettargettarget since im too busy to use events at the moment.
-------------------------------------------------------------------------
-r638 | THARAI | 2012-07-10 22:26:19 +0000 (Tue, 10 Jul 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-
-Don't go through with mana update function, if power value has not changed. 
 ------------------------------------------------------------------------

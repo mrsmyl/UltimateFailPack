@@ -1,4 +1,4 @@
-﻿## Interface: 40300
+﻿## Interface: 50001
 ## Title: X-Perl |cffeda55fRaid Admin|r by |cFFFF8080Zek|r
 ## Title-ruRU: X-Perl |cffeda55fРейд админ|r
 ## Title-deDE: X-Perl |cffeda55fSchlachtzugsadmin|r
@@ -12,7 +12,7 @@
 ## X-License: GNU GPL v3, 29 June 2007
 ## SavedVariablesPerCharacter: XPerl_Admin, XPerl_CheckItems
 ## RequiredDeps: XPerl
-## X-Curse-Packaged-Version: r667
+## X-Curse-Packaged-Version: r674
 ## X-Curse-Project-Name: X-Perl UnitFrames
 ## X-Curse-Project-ID: xperl
 ## X-Curse-Repository-ID: wow/xperl/mainline

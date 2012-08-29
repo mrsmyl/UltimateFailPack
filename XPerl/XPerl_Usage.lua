@@ -5,9 +5,15 @@
 if (not XPerl_GetUsage) then
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 518 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 673 $")
 
 XPerl_Usage = {}
+
+
+local isMOP = select(4, _G.GetBuildInfo()) >= 50000
+local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+local GetPrimaryTalentTree  =  isMOP and GetSpecialization or GetPrimaryTalentTree 
 
 local new, del, copy = XPerl_GetReusableTable, XPerl_FreeTable, XPerl_CopyTable
 

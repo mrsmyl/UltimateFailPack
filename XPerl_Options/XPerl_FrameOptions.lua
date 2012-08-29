@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 644 $")
+XPerl_SetModuleRevision("$Revision: 670 $")
 
 local isMOP = select(4, _G.GetBuildInfo()) >= 50000
 local localGroups = LOCALIZED_CLASS_NAMES_MALE
@@ -1235,6 +1235,7 @@ function XPerl_Player_AlignTop()
 			local newTop = top / other:GetEffectiveScale()
 			other:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", otherLeft, newTop)
 			other:SetUserPlaced(true)
+			XPerl_SavePosition(other)
 		end
 	end
 

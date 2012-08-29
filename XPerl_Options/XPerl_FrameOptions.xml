@@ -4826,6 +4826,9 @@
 								self.configBase = "XPerlDB.player"
 								self.configIndex = "xpBar"
 								self.configClick = XPerl_Player_Reset
+								self.Validate = function()
+									XPerl_Options_EnableSibling(self,"XPDeficit")
+								end
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
@@ -4950,7 +4953,7 @@
 								self.flashFrame = XPerl_PlayergroupFrame
 								self.configBase = "XPerlDB.player"
 								self.configIndex = "partyNumber"
-								self.configClick = function() XPerl_Player_UpdateLeader(XPerl_Player) end
+								self.configClick = XPerl_Player_Reset
 								self.Validate = function()
 									XPerl_Options_EnableSibling(self,"WithName")
 								end
@@ -4970,7 +4973,7 @@
 								XPerl_OptionsSetMyText(self, "XPERL_CONF_RAID_PARTYWITHNAME")
 								self.configBase = "XPerlDB.player"
 								self.configIndex = "withName"
-								self.configClick = function() XPerl_Player_UpdateLeader(XPerl_Player) end
+								self.configClick = XPerl_Player_Reset
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
@@ -7064,6 +7067,7 @@
 										self.Validate = function()
 											XPerl_Options_EnableSibling(self, "BigBuffs")
 											XPerl_Options_EnableSibling(self, "BigDebuffs")
+											XPerl_Options_EnableSibling(self, "Above")
 										end
 									</OnLoad>
 								</Scripts>
@@ -9247,7 +9251,7 @@
 
 					<Slider name="$parent_TargetSize" inherits="XPerlSlider">
 						<Size>
-							<AbsDimension x="75" y="16"/>
+							<AbsDimension x="150" y="16"/>
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="$parent_Target" relativePoint="RIGHT">
@@ -9369,25 +9373,9 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parent_30yd" inherits="XPerlCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_InRaid" relativePoint="BOTTOMLEFT">
-								<Offset><AbsDimension x="0" y="6"/></Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								XPerl_OptionsSetMyText(self, "XPERL_CONF_PARTY_30YD")
-								self.configBase = "XPerlDB.party"
-								self.configIndex = "range30yard"
-								self.configClick = XPerl_Party_Set_Bits
-							</OnLoad>
-						</Scripts>
-					</CheckButton>
-
 					<CheckButton name="$parent_SmallRaid" inherits="XPerlCheckButtonTemplate">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_30yd" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_InRaid" relativePoint="BOTTOMLEFT">
 								<Offset><AbsDimension x="0" y="6"/></Offset>
 							</Anchor>
 						</Anchors>
@@ -9401,10 +9389,26 @@
 							</OnLoad>
 						</Scripts>
 					</CheckButton>
+					
+					<CheckButton name="$parent_30yd" inherits="XPerlCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_SmallRaid" relativePoint="BOTTOMLEFT">
+								<Offset><AbsDimension x="0" y="6"/></Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								XPerl_OptionsSetMyText(self, "XPERL_CONF_PARTY_30YD")
+								self.configBase = "XPerlDB.party"
+								self.configIndex = "range30yard"
+								self.configClick = XPerl_Party_Set_Bits
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
 
 					<Frame name="$parent_Healer" inherits="XPerl_Options_HealerModeTemplate">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_SmallRaid" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_30yd" relativePoint="BOTTOMLEFT">
 								<Offset><AbsDimension x="0" y="6"/></Offset>
 							</Anchor>
 						</Anchors>
@@ -9856,7 +9860,7 @@
 										XPerl_OptionsSetMyText(self, "XPERL_CONF_PARTY_PETLEVEL")
 										self.flashFrame = {XPerl_partypet1nameFramelevel, XPerl_partypet2nameFramelevel, XPerl_partypet3nameFramelevel, XPerl_partypet4nameFramelevel}
 										self.configBase = "XPerlDB.partypet"
-										self.configIndex = "name"
+										self.configIndex = "level"
 										self.configClick = XPerl_PartyPet_Reset
 									</OnLoad>
 								</Scripts>
@@ -13307,6 +13311,7 @@
 									XPerl_Options_EnableSibling(self, "Hunter")
 									XPerl_Options_EnableSibling(self, "Rogue")
 									XPerl_Options_EnableSibling(self, "Warrior")
+									XPerl_Options_EnableSibling(self, "DeathKnight")
 									XPerl_Options_EnableSibling(self, "LowMana")
 									XPerl_Options_EnableSibling(self, "HighMana")
 									XPerl_Options_EnableSibling(self, "UnitWidth")

@@ -11,8 +11,10 @@ local config = XPerlRaidMonConfig
 
 local isMOP = select(4, _G.GetBuildInfo()) >= 50000
 local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
 
-XPerl_SetModuleRevision("$Revision: 666 $")
+
+XPerl_SetModuleRevision("$Revision: 668 $")
 
 XPERL_RAIDMON_UNIT_WIDTH_MIN = 50
 XPERL_RAIDMON_UNIT_WIDTH_MAX = 150
