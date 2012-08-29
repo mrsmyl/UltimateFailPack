@@ -1234,6 +1234,25 @@ PawnCogwheelData90Rare =
 
 
 --========================================
+-- Level 90 legendary-quality crystals of fear
+--========================================
+PawnCrystalOfFearData90Legendary =
+{
+
+
+------------------------------------------------------------
+-- Crystals of Fear
+------------------------------------------------------------
+
+{ 89873, false, false, false, "Agility", 500 }, -- Crystallized Dread
+{ 89881, false, false, false, "Strength", 500 }, -- Crystallized Terror
+{ 89882, false, false, false, "Intellect", 500 }, -- Crystallized Horror
+
+
+}
+
+
+--========================================
 -- Level 90 crafted meta gems
 --========================================
 PawnMetaGemData90Rare =
@@ -1279,11 +1298,9 @@ PawnGemQualityLevels =
 	{ 85, PawnLocal.GemQualityLevel85Uncommon },
 	{ 86, PawnLocal.GemQualityLevel85Rare },
 	{ 87, PawnLocal.GemQualityLevel85Epic },
+	{ 90, PawnLocal.GemQualityLevel90Uncommon },
+	{ 91, PawnLocal.GemQualityLevel90Rare },
 }
-if IsEuropeanNumbers then -- WoW 5.0 compatibility ***
-	tinsert(PawnGemQualityLevels, { 90, PawnLocal.GemQualityLevel90Uncommon })
-	tinsert(PawnGemQualityLevels, { 91, PawnLocal.GemQualityLevel90Rare })
-end
 PawnGemQualityTables =
 {
 	[60] = PawnGemData60Common,
@@ -1306,10 +1323,8 @@ PawnMetaGemQualityLevels =
 	{ 71, PawnLocal.MetaGemQualityLevel70Rare },
 	{ 81, PawnLocal.MetaGemQualityLevel80Rare },
 	{ 86, PawnLocal.MetaGemQualityLevel85Rare },
+	{ 91, PawnLocal.MetaGemQualityLevel90Rare },
 }
-if IsEuropeanNumbers then -- WoW 5.0 compatibility ***
-	tinsert(PawnMetaGemQualityLevels, { 91, PawnLocal.MetaGemQualityLevel90Rare })
-end
 PawnMetaGemQualityTables =
 {
 	[71] = PawnMetaGemData70Rare,
@@ -1322,13 +1337,21 @@ PawnDefaultMetaGemQualityLevel = 86
 PawnCogwheelQualityLevels =
 {
 	{ 86, PawnLocal.CogwheelQualityLevel85Rare },
+	{ 91, PawnLocal.CogwheelQualityLevel90Rare },
 }
-if IsEuropeanNumbers then -- WoW 5.0 compatibility ***
-	tinsert(PawnCogwheelQualityLevels, { 91, PawnLocal.CogwheelQualityLevel90Rare }) -- *** note: these localized strings don't exist yet
-end
 PawnCogwheelQualityTables =
 {
 	[86] = PawnCogwheelData85Rare,
 	[91] = PawnCogwheelData90Rare,
 }
 PawnDefaultCogwheelGemQualityLevel = 86
+
+PawnCrystalOfFearQualityLevels =
+{
+	{ 93, EMPTY_SOCKET_HYDRAULIC }
+}
+PawnCrystalOfFearQualityTables =
+{
+	[93] = PawnCrystalOfFearData90Legendary,
+}
+PawnDefaultCrystalOfFearGemQualityLevel = 93

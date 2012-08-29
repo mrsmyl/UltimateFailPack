@@ -30,12 +30,38 @@ PawnUINoScale = "(none)" -- The name that shows up in lists of scales if you hav
 -- If only a name is present, the row becomes an uneditable header in the UI and is otherwise ignored.
 PawnStats =
 {
-	{"Base stats"},
+	{"Primary stats"},
 	{"Strength", "Strength", "The primary stat, Strength."},
 	{"Agility", "Agility", "The primary stat, Agility."},
 	{"Stamina", "Stamina", "The primary stat, Stamina."},
 	{"Intellect", "Intellect", "The primary stat, Intellect."},
 	{"Spirit", "Spirit", "The primary stat, Spirit."},
+	
+	{"Weapon stats"},
+	{"DPS", "Dps", "Weapon damage per second.  (If you want to value DPS differently for different types of weapons, see the \"Special weapon stats\" section.)", true},
+	{"Speed", "Speed", "Weapon speed, in seconds per swing.  (If you prefer fast weapons, this number should be negative.  See also: \"speed baseline\" in the \"Special weapon stats\" section.)", true},
+	
+	{"Hybrid stats"},
+	{"Crit", "CritRating", "Critical strike.  Affects melee attacks, ranged attacks, and spells."},
+	{"Haste", "HasteRating", "Haste.  Affects melee attacks, ranged attacks, and spells."},
+	{"Hit", "HitRating", "Hit.  Affects melee attacks, ranged attacks, and spells."},
+	{"Mastery", "MasteryRating", "Mastery.  Improves the unique bonus of your primary talent tree."},
+	
+	{"Offensive physical stats"},
+	{"Attack power", "Ap", "Attack power.  Not present on most items directly.  Does not include attack power that you will receive from Strength or Agility."},
+	{"Expertise", "ExpertiseRating", "Expertise.  Negates your enemy's Dodge and Parry stats."},
+	
+	{"Caster stats"},
+	{"Spell power", "SpellPower", "Spell power.  Present on caster weapons but not most armor.  Does not include the spell power that you will receive from Intellect."},
+	
+	{"Tank stats"},
+	{"Armor", "Armor", "Armor, regardless of item type.  Does not distinguish between base armor and bonus armor since items with bonus armor are obsolete."},
+	{"Dodge", "DodgeRating", "Tank stat."},
+	{"Parry", "ParryRating", "Tank stat."},
+	
+	{"PvP stats"},
+	{"PvP power", "SpellPenetration", "PvP power.  Causes your abilities to deal more damage to other players (but not creatures), and your healing spells to heal other players for more in some PvP situations."},
+	{"PvP resilience", "ResilienceRating", "PvP resilience.  Reduces the damage you take from other players' attacks.  Only effective versus other players."},
 	
 	{"Sockets"},
 	{"Red", "RedSocket", "An empty red socket.  Only counts for an item's base value.", true},
@@ -45,30 +71,6 @@ PawnStats =
 	{"Cogwheel", "CogwheelSocket", "An empty cogwheel socket, found on high-level crafted engineering goggles.  Only counts for an item's base value.", true},
 	{"Meta: stats", "MetaSocket", "An empty meta socket.  Only counts the stat bonus of a meta gem, not the additional effect.  The item's value will be the same whether or not the meta gem requirements are met.", true},
 	{"Meta: effect", "MetaSocketEffect", "A meta socket, whether empty or full.  Only counts the additional effect of a meta gem, not its stat bonus.", true},
-	
-	{"Weapon stats"},
-	{"DPS", "Dps", "Weapon damage per second.  (If you want to value DPS differently for different types of weapons, see the \"Special weapon stats\" section.)", true},
-	{"Speed", "Speed", "Weapon speed, in seconds per swing.  (If you prefer fast weapons, this number should be negative.  See also: \"speed baseline\" in the \"Special weapon stats\" section.)", true},
-	
-	{"Hybrid ratings"},
-	{"Hit", "HitRating", "Hit.  Affects melee attacks, ranged attacks, and spells."},
-	{"Crit", "CritRating", "Critical strike.  Affects melee attacks, ranged attacks, and spells."},
-	{"Haste", "HasteRating", "Haste.  Affects melee attacks, ranged attacks, and spells."},
-	{"Mastery", "MasteryRating", "Mastery.  Improves the unique bonus of your primary talent tree."},
-	
-	{"Offensive physical stats"},
-	{"Attack power", "Ap", "Attack power.  Not present on most items directly.  Does not include attack power that you will receive from Strength or Agility."},
-	{"Expertise", "ExpertiseRating", "Expertise.  Affects melee attacks.  In Mists of Pandaria, also affects ranged attacks."}, -- *** WoW 5.0 note
-	
-	{"Spell stats"},
-	{"Spell power", "SpellPower", "Spell power.  Present on caster weapons but not most armor.  Does not include the spell power that you will receive from Intellect."},
-	{"Spell penetration", "SpellPenetration", "Spell penetration.  Causes your spells to ignore some of your opponent's resistances.  Obsolete; replaced with PvP Power in Mists of Pandaria."}, -- *** WoW 5.0 note
-	
-	{"Defense stats"},
-	{"Armor", "Armor", "Armor, regardless of item type.  Does not distinguish between base armor and bonus armor since items with bonus armor are obsolete."},
-	{"Dodge", "DodgeRating", "Tank stat."},
-	{"Parry", "ParryRating", "Tank stat."},
-	{"PVP Resilience", "ResilienceRating", "Resilience rating.  Only effective versus other players"},
 	
 	{"Weapon types"},
 	{"Axe: 1H", "IsAxe", "Points to be assigned if the item is a one-handed axe."},
@@ -81,11 +83,9 @@ PawnStats =
 	{"Mace: 1H", "IsMace", "Points to be assigned if the item is a one-handed mace."},
 	{"Mace: 2H", "Is2HMace", "Points to be assigned if the item is a two-handed mace."},
 	{"Polearm", "IsPolearm", "Points to be assigned if the item is a polearm."},
-	{"Relic", "IsRelic", "Points to be assigned if the item is a relic-slot item.  Removed in Mists of Pandaria."}, -- *** pre-WoW 5.0 compatibility
 	{"Staff", "IsStaff", "Points to be assigned if the item is a staff."},
 	{"Sword: 1H", "IsSword", "Points to be assigned if the item is a one-handed sword."},
 	{"Sword: 2H", "Is2HSword", "Points to be assigned if the item is a two-handed sword."},
-	{"Thrown", "IsThrown", "Points to be assigned if the item is a thrown weapon."},
 	{"Wand", "IsWand", "Points to be assigned if the item is a wand."},
 	{"Off-hand weapon", "IsOffHand", "Points to be assigned if the item is any weapon that can only be held in the off-hand.  Does not apply to off-hand \"frill\" (caster) items, shields, or weapons that can be held in either hand."},
 	{"Off-hand frill", "IsFrill", "Points to be assigned if the item is a \"held in off hand\" caster off-hand item.  Does not apply to shields or weapons."},
@@ -368,7 +368,7 @@ PAWN_COMPARE_RIGHT_DEFAULT_KEY = "]" -- Default key to assign to this command
 PawnLocal =
 {
 	-- Basic language
-	["Or"] = "or ", -- Should end in a space.  Will be used in situations like this: "Critical Strike Rating or Haste Rating".
+	["Or"] = "or ", -- Should end in a space.  Will be used in situations like this: "Critical Strike or Haste".
 
 	-- General messages
 	["NeedNewerVgerCoreMessage"] = "Pawn needs a newer version of VgerCore.  Please use the version of VgerCore that came with Pawn.",
@@ -441,7 +441,7 @@ PawnLocal =
 	
 	-- Reforging Advisor
 	["ReforgeInstructionsNoReforge"] = "Do not reforge",
-	["ReforgeInstructions"] = "Reforge %s into %s", -- Reforge Critical Strike Rating into Haste Rating
+	["ReforgeInstructions"] = "Reforge %s into %s", -- Reforge Critical Strike into Haste
 	["ReforgeCappedStatWarning"] = "Use care when reforging Hit or Expertise.  Don't let your miss chance go above 0%.",
 	
 	-- Gem stuff
@@ -588,7 +588,6 @@ PawnIgnoreNames =
 PawnNormalizationRegexes =
 {
 	{"^([%w%s%.]+) %+(%d+)$", "+%2 %1"}, -- "Stamina +5" --> "+5 Stamina"
-	{"^(.*) [rR]ating(.*)$", "%1%2"}, -- "Critical strike rating" --> "Critical strike" (pre-WoW 5.0 compatibility) ***
 	{"^(.-)|r.*", "%1"}, -- For removing meta gem requirements
 }
 
@@ -623,8 +622,8 @@ PawnRegexes =
 	{PawnGameConstant(ITEM_QUALITY4_DESC)}, -- Epic
 	{PawnGameConstant(ITEM_QUALITY5_DESC)}, -- Legendary
 	{PawnGameConstant(ITEM_QUALITY7_DESC)}, -- Heirloom
-	{PawnGameConstant(ITEM_HEROIC)}, -- Heroic (Thrall's Chestguard of Triumph, level 258 version)
-	{PawnGameConstant(ITEM_HEROIC_EPIC)}, -- Heroic Epic (Thrall's Chestguard of Triumph, level 258 version, with colorblind mode on)
+	{PawnGameConstant(ELITE)}, -- Elite (one version of Kaolan's Withering Necklace)
+	{"^" .. PawnGameConstantUnwrapped(ITEM_HEROIC)}, -- Heroic (Thrall's Chestguard of Triumph, level 258 version) (can be followed with a rarity in colorblind mode, or "Elite")
 	{PawnGameConstant(RAID_FINDER)}, -- Raid Finder
 	{"^" .. ITEM_LEVEL}, -- Item Level 200
 	{PawnGameConstant(ITEM_UNSELLABLE)}, -- No sell price
@@ -669,7 +668,6 @@ PawnRegexes =
 	{PawnGameConstant(PRIME_GLYPH)}, -- Prime Glyph
 	{PawnGameConstant(REFORGED)}, -- Reforged
 	{PawnGameConstant(PawnLocal.CogwheelName)}, -- Cogwheel
-	{"^Relic$"},
 	{"^Mount$"}, -- Cenarion War Hippogryph
 	{"^Classes:"},
 	{"^Races:"},
@@ -691,13 +689,12 @@ PawnRegexes =
 	{"^Equip: Experience gained", "XpBoost", 1, PawnMultipleStatsFixed}, -- Experience-granting heirloom items
 	{PawnGameConstant(INVTYPE_RANGED), "IsRanged", 1, PawnMultipleStatsFixed}, -- Ranged
 	{"^Projectile$", "IsRanged", 1, PawnMultipleStatsFixed}, -- Projectile
-	{PawnGameConstant(INVTYPE_THROWN), "IsRanged", 1, PawnMultipleStatsFixed}, -- Thrown
 	{PawnGameConstant(INVTYPE_WEAPON), "IsOneHand", 1, PawnMultipleStatsFixed}, -- One-Hand
 	{PawnGameConstant(INVTYPE_2HWEAPON), "IsTwoHand", 1, PawnMultipleStatsFixed}, -- Two-Hand
 	{PawnGameConstant(INVTYPE_WEAPONMAINHAND), "IsMainHand", 1, PawnMultipleStatsFixed}, -- Main Hand
 	{PawnGameConstant(INVTYPE_WEAPONOFFHAND), "IsOffHand", 1, PawnMultipleStatsFixed}, -- Off Hand
 	{PawnGameConstant(INVTYPE_HOLDABLE), "IsFrill", 1, PawnMultipleStatsFixed}, -- Held In Off-Hand
-	{"^(%d-) %- (%d-) Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Standard weapon
+	{"^([%d%.,]+) %- ([%d%.,]+) Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Standard weapon (heirlooms can have decimal points in their damage values)
 	{"^%+?(%d-) %- (%d-) Fire Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
 	{"^%+?(%d-) %- (%d-) Shadow Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
 	{"^%+?(%d-) %- (%d-) Nature Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand, Thunderfury
@@ -727,23 +724,22 @@ PawnRegexes =
 	{"^Equip: Increases your expertise by (%d+)%.$", "ExpertiseRating"}, -- Earthwarden
 	{"^%+?(%d+) Expertise$", "ExpertiseRating"}, -- Guardian's Shadow Crystal
 	{"^Equip: Increases your critical strike by (%d+)%.$", "CritRating"},
-	{"^%+?(%d+) Critical [Ss]trike%.?$", "CritRating"}, -- One head enchantment is "20 Critical strike rating." with a dot and lowercase
+	{"^%+?(%d+) Critical [Ss]trike%.?$", "CritRating"},
 	{"^Scope %(%+(%d+) Critical Strike%)$", "CritRating"},
-	{"^%+?(%d+) Ranged Critical Strike$", "CritRating"}, -- Heartseeker Scope (untested); Pawn doesn't distinguish between ranged and hybrid crit rating
+	{"^%+?(%d+) Ranged Critical Strike$", "CritRating"}, -- Heartseeker Scope (untested); Pawn doesn't distinguish between ranged and hybrid crit
 	{"^Equip: Increases your hit by (%d+)%.$", "HitRating"}, -- Don Julio's Band
 	{"^%+?(%d+) Hit$", "HitRating"}, -- 3% hit scope
 	{"^Surefooted$", "HitRating", 10, PawnMultipleStatsFixed}, -- Enchantment (untested); has additional effects
 	{"^Accuracy$", "HitRating", 25, PawnMultipleStatsFixed, "CritRating", 25, PawnMultipleStatsFixed}, -- weapon enchantment
-	{"^Equip: Increases your resilience by (%d+)%.$", "ResilienceRating"}, -- pre-WoW 5.0 compatibility ***
 	{"^Equip: Increases your pvp resilience by (%d+)%.$", "ResilienceRating"},
-	{"^%+?(%d+) Resilience$", "ResilienceRating"}, -- Sublime Mystic Dawnstone -- pre-WoW 5.0 compatibility ***
-	{"^%+?(%d+) PvP Resilience$", "ResilienceRating"}, -- Sublime Mystic Dawnstone
-	{"^%+?(%d+) PvP Power$", "SpellPenetration"}, -- Stormy Chalcedony -- pre-WoW 5.0 compatibility (spell penetration -> PvpPower in 5.0)
+	{"^%+?(%d+) PvP Resilience$", "ResilienceRating"}, -- Mystic Dawnstone
+	{"^Equip: Increases your pvp power by (%d+)%.$", "SpellPenetration"}, -- Bloodthirsty Gladiator's Ringmail Gauntlets
+	{"^%+?(%d+) PvP Power$", "SpellPenetration"}, -- Stormy Chalcedony
 	{"^Counterweight %(%+(%d+) Haste%)", "HasteRating"},
 	{"^Equip: Increases your haste by (%d+)%.$", "HasteRating"}, -- Swiftsteel Shoulders
 	{"^%+?(%d+) Haste$", "HasteRating"}, -- Leggings of the Betrayed
-	{"^Equip: Increases your mastery by (%d+)%.", "MasteryRating"}, -- Elementium Poleaxe (4.0) (pre-WoW 5.0 compatibility: *** Do not include $; mastery rating used to include the name of your mastery on the item.)
-	{"^%+?(%d+) Mastery$", "MasteryRating"}, -- Zen Dream Emerald (4.0 / Cataclysm).
+	{"^Equip: Increases your mastery by (%d+)%.$", "MasteryRating"}, -- Elementium Poleaxe
+	{"^%+?(%d+) Mastery$", "MasteryRating"}, -- Zen Dream Emerald
 	{"^Equip: Increases attack power by (%d+)%.$", "Ap"},
 	{"^%+?(%d+) Attack Power$", "Ap"},
 	{"^%+?(%d+) [mM]ana [pP]er 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- Lesser Sledgemace of the Elder (counting 1 MP5 = 2 Spirit)
@@ -766,7 +762,6 @@ PawnRegexes =
 	{"^Equip: Increases spell power by (%d+)%.$", "SpellPower"}, -- Overlaid Chain Spaulders
 	{"^%+?(%d+) Spell Power$", "SpellPower"}, -- Reckless Monarch Topaz; enchantments
 	{"^Equip: Increases spell penetration by (%d+)%.$", "SpellPenetration"}, -- Frostfire Robe, Wrathful Gladiator's Grimoire
-	{"^%+?(%d+) Spell Penetration$", "SpellPenetration"}, -- Radiant Talasite -- *** removed in WoW 5.0
 	{"^%+(%d+) Arcane Spell Damage$", "SpellPower"}, -- ...of Arcane Wrath
 	{"^%+(%d+) Fire Spell Damage$", "SpellPower"}, -- ...of Fiery Wrath
 	{"^%+(%d+) Frost Spell Damage$", "SpellPower"}, -- ...of Frozen Wrath
@@ -779,6 +774,7 @@ PawnRegexes =
 	{PawnGameConstant(EMPTY_SOCKET_NO_COLOR), "PrismaticSocket", 1, PawnMultipleStatsFixed}, -- maybe unused?
 	{PawnGameConstant(EMPTY_SOCKET_META), "MetaSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_COGWHEEL), "CogwheelSocket", 1, PawnMultipleStatsFixed}, -- level 85 epic Engineering crafted helms
+	--{PawnGameConstant(EMPTY_SOCKET_HYDRAULIC), "ShaTouchedSocket", 1, PawnMultipleStatsFixed}, -- Sha-Touched items (not yet supported)
 	{"^\"Only fits in a meta gem slot%.\"$", "MetaSocketEffect", 1, PawnMultipleStatsFixed}, -- Actual meta gems, not the socket
 
 	-- ========================================
@@ -824,10 +820,8 @@ PawnRightHandRegexes =
 	{"^Gun$", "IsGun", 1, PawnMultipleStatsFixed},
 	{"^Mace$", "IsMace", 1, PawnMultipleStatsFixed},
 	{"^Polearm$", "IsPolearm", 1, PawnMultipleStatsFixed},
-	{"^Relic$", "IsRelic", 1, PawnMultipleStatsFixed},
 	{"^Staff$", "IsStaff", 1, PawnMultipleStatsFixed},
 	{"^Sword$", "IsSword", 1, PawnMultipleStatsFixed},
-	{"^Thrown$", "IsThrown", 1, PawnMultipleStatsFixed},
 	{"^Wand$", "IsWand", 1, PawnMultipleStatsFixed},
 	{"^Cloth$", "IsCloth", 1, PawnMultipleStatsFixed},
 	{"^Leather$", "IsLeather", 1, PawnMultipleStatsFixed},

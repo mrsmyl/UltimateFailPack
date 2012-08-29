@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.6: WoW 5.0 compatibility
+-- Version 1.6.2: additional fixes for the live version of patch 5.0
 ------------------------------------------------------------
 
 
-PawnVersion = 1.600
+PawnVersion = 1.602
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -93,12 +93,10 @@ local PawnItemEquipLocToSlot1 =
 	INVTYPE_SHIELD = 17,
 	INVTYPE_2HWEAPON = 16,
 	INVTYPE_WEAPONMAINHAND = 16,
+	INVTYPE_RANGED = 16,
+	INVTYPE_RANGEDRIGHT = 16,
 	INVTYPE_WEAPONOFFHAND = 17,
 	INVTYPE_HOLDABLE = 17,
-	INVTYPE_RANGED = 18,
-	INVTYPE_THROWN = 18,
-	INVTYPE_RANGEDRIGHT = 18,
-	INVTYPE_RELIC = 18,
 	INVTYPE_TABARD = 19,
 }
 local PawnItemEquipLocToSlot2 = 
@@ -120,6 +118,9 @@ local PawnStatFriendlyNames = -- Currently only contains stat names used for ref
 	["ParryRating"] = ITEM_MOD_PARRY_RATING_SHORT,
 	["Spirit"] = ITEM_MOD_SPIRIT_SHORT,
 }
+
+-- Don't taint the global variable "_".
+local _
 
 
 ------------------------------------------------------------
@@ -160,7 +161,7 @@ function PawnInitialize()
 	
 	-- WoW 5.0 compatibility: remove commas from all of the parsing regexes.
 	if LARGE_NUMBER_SEPERATOR then
-		local Regex
+		local Regex, _
 		for _, Regex in pairs(PawnRegexes) do
 			Regex[1] = gsub(Regex[1], ",", "")
 		end
@@ -228,6 +229,9 @@ function PawnInitialize()
 	hooksecurefunc(GameTooltip, "SetTradePlayerItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetTradePlayerItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetTradeSkillItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetTradeSkillItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetTradeTargetItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetTradeTargetItem", ...) end)
+	hooksecurefunc(GameTooltip, "SetVoidItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetVoidItem", ...) end)
+	hooksecurefunc(GameTooltip, "SetVoidDepositItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetVoidDepositItem", ...) end)
+	hooksecurefunc(GameTooltip, "SetVoidWithdrawalItem", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetVoidWithdrawalItem", ...) end)
 	hooksecurefunc(GameTooltip, "SetTrainerService",
 		function(self, Index)
 			local ItemLink = GetTrainerServiceItemLink(Index)
@@ -247,7 +251,7 @@ function PawnInitialize()
 			if PawnGetHyperlinkType(ItemLink) ~= "item" then return end
 			PawnUpdateTooltip("ItemRefTooltip", "SetHyperlink", ItemLink, ...)
 		end)
-	VgerCore.HookInsecureScript(ItemRefTooltip, "OnEnter", function() _, PawnLastHoveredItem = ItemRefTooltip:GetItem() end)
+	VgerCore.HookInsecureScript(ItemRefTooltip, "OnEnter", function() local _; _, PawnLastHoveredItem = ItemRefTooltip:GetItem() end)
 	VgerCore.HookInsecureScript(ItemRefTooltip, "OnLeave", function() PawnLastHoveredItem = nil end)
 	VgerCore.HookInsecureScript(ItemRefTooltip, "OnMouseUp",
 		function(object, button)
@@ -258,19 +262,20 @@ function PawnInitialize()
 		end)
 	
 	-- The loot roll window
-	if GroupLootFrame1IconFrame then
-		local LootRollClickHandler =
-			function(object, button)
-				if button == "RightButton" then
-					local ItemLink = GetLootRollItemLink(object:GetParent().rollID)
-					PawnUI_SetCompareItemAndShow(2, ItemLink)
-				end
-			end
-		GroupLootFrame1IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-		GroupLootFrame2IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-		GroupLootFrame3IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-		GroupLootFrame4IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	end
+	-- No longer works in WoW 5.0... needs to be rebuilt for the new loot roll system.  :(
+	--if GroupLootFrame1IconFrame then
+	--	local LootRollClickHandler =
+	--		function(object, button)
+	--			if button == "RightButton" then
+	--				local ItemLink = GetLootRollItemLink(object:GetParent().rollID)
+	--				PawnUI_SetCompareItemAndShow(2, ItemLink)
+	--			end
+	--		end
+	--	GroupLootFrame1IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	--	GroupLootFrame2IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	--	GroupLootFrame3IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	--	GroupLootFrame4IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	--end
 	
 	-- The "currently equipped" tooltips (two, in case of rings, trinkets, and dual wielding)
 	hooksecurefunc(ShoppingTooltip1, "SetHyperlinkCompareItem", function(self, ItemLink, ...) PawnUpdateTooltip("ShoppingTooltip1", "SetHyperlinkCompareItem", ItemLink, ...) PawnAttachIconToTooltip(ShoppingTooltip1, true) end)
@@ -334,7 +339,7 @@ function PawnOnLogout()
 		-- The user has disabled all upgrade options, so clear out all upgrade information.
 		PawnInvalidateBestItems()
 	else
-		local Scale
+		local Scale, _
 		for _, Scale in pairs(PawnCommon.Scales) do
 			local CharacterOptions = Scale.PerCharacterOptions[PawnPlayerFullName]
 			if CharacterOptions and not CharacterOptions.Visible then
@@ -636,6 +641,7 @@ function PawnGetCachedItem(ItemLink, ItemName, NumLines)
 	if PawnCommon.Debug then return end
 
 	-- Otherwise, search the item cache for this item.
+	local _
 	for _, CachedItem in pairs(PawnItemCache) do
 		if (not NumLines) or (NumLines == CachedItem.NumLines) then
 			if ItemLink and CachedItem.Link then
@@ -670,7 +676,7 @@ end
 
 -- Clears only the calculated values for items in the cache, retaining things like stats.
 function PawnClearCacheValuesOnly()
-	local CachedItem
+	local CachedItem, _
 	-- First, the main item cache.
 	if PawnItemCache then
 		for _, CachedItem in pairs(PawnItemCache) do
@@ -832,6 +838,10 @@ function PawnGetItemData(ItemLink)
 	-- using different styles of links that all point to the same item.
 	ItemID = PawnGetItemIDFromLink(ItemLink)
 	local ItemName, NewItemLink, ItemRarity, ItemLevel, _, _, _, _, InvType, ItemTexture = GetItemInfo(ItemLink)
+	if InvType == "INVTYPE_RELIC" or InvType == "INVTYPE_THROWN" then
+		-- Relics might have sockets and therefore "stats" but they aren't equippable so they shouldn't get values, so just bail out now.
+		return
+	end
 	if NewItemLink then
 		ItemLink = NewItemLink
 	else
@@ -972,7 +982,7 @@ function PawnGetItemDataFromTooltip(TooltipName, MethodName, Param1, ...)
 	if not Tooltip then return end
 	
 	-- If we have a tooltip, try to get an item link from it.
-	local ItemLink, ItemID, ItemLevel
+	local ItemLink, ItemID, ItemLevel, _
 	if (MethodName == "SetHyperlink") and Param1 then
 		-- Special case: if the method is SetHyperlink, then we already have an item link.
 		-- (Normally, GetItem will work, but SetHyperlink is used by some mod compatibility code.)
@@ -1214,6 +1224,7 @@ function PawnAddValuesToTooltip(Tooltip, ItemValues, UpgradeInfo, BestItemFor, S
 	end
 
 	-- Loop through all of the item value subtables.
+	local Entry, _
 	for _, Entry in pairs(ItemValues) do
 		local ScaleName, Value, UnenchantedValue, LocalizedName = Entry[1], Entry[2], Entry[3], Entry[7]
 		local Scale = PawnCommon.Scales[ScaleName]
@@ -1242,7 +1253,7 @@ function PawnAddValuesToTooltip(Tooltip, ItemValues, UpgradeInfo, BestItemFor, S
 			end
 			
 			-- Add upgrade info to the tooltip if this item is an upgrade.
-			local ThisUpgrade, WasUpgrade
+			local ThisUpgrade, WasUpgrade, _
 			if UpgradeInfo then
 				for _, ThisUpgrade in pairs(UpgradeInfo) do
 					if ThisUpgrade.ScaleName == ScaleName then
@@ -1299,8 +1310,9 @@ function PawnGetInventoryItemValues(UnitName)
 	local TotalItemLevel, TotalItemLevelIgnoringRarity = 0, 0
 	local SlotStats
 	local Slot
-	for Slot = 1, 18 do
-		if Slot ~= 4 then -- Skip slots 0, 4, and 19 (they're not gear).
+	local _
+	for Slot = 1, 17 do
+		if Slot ~= 4 then -- Skip slots 0, 4, 18, and 19 (they're not gear).
 			-- REVIEW: The item level of the ranged slot appears to be ignored for Ulduar vehicle scaling, at least for shamans.
 			local ItemID = GetInventoryItemID(UnitName, Slot)
 			local Item = PawnGetItemDataForInventorySlot(Slot, false, UnitName)
@@ -1332,7 +1344,7 @@ function PawnGetInventoryItemValues(UnitName)
 				-- If we have an item link but no item data, then the player HAS an item in that slot but we don't have data.
 				-- So we should just bail out now to avoid reporting inaccurate totals.  BUT, we should go ahead and query for
 				-- information on the other items before we do so that we have everything by the next time this is called.
-				while Slot <= 18 do
+				while Slot <= 17 do
 					Item = PawnGetItemDataForInventorySlot(Slot, false, UnitName)
 					Slot = Slot + 1
 				end
@@ -1349,8 +1361,8 @@ function PawnGetInventoryItemValues(UnitName)
 	end
 	sort(TotalValues, PawnItemValueCompare)
 	-- Return our totals.
-	TotalItemLevel = math.floor(TotalItemLevel / 17 + .05)
-	TotalItemLevelIgnoringRarity = math.floor(TotalItemLevelIgnoringRarity / 17 + .05)
+	TotalItemLevel = math.floor(TotalItemLevel / 16 + .05)
+	TotalItemLevelIgnoringRarity = math.floor(TotalItemLevelIgnoringRarity / 16 + .05)
 	return TotalValues, Count, TotalItemLevel, TotalItemLevelIgnoringRarity
 end
 
@@ -1484,6 +1496,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 
 	-- First, check for the ignored item names: for example, any item that starts with "Design:" should
 	-- be ignored, because it's a jewelcrafting design, not a real item with stats.
+	local ThisName, _
 	for _, ThisName in pairs(PawnIgnoreNames) do
 		if strsub(ItemName, 1, strlen(ThisName)) == ThisName then
 			-- This is a known ignored item name; don't return any stats.
@@ -1505,6 +1518,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 		--	IsKillLine = true
 		--end
 		if not IsKillLine then
+			local ThisKillLine
 			for _, ThisKillLine in pairs(PawnKillLines) do
 				if strfind(LeftLineText, ThisKillLine) then
 					-- This is a known ignored kill line; stop now.
@@ -1531,6 +1545,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 				IgnoreErrors = true
 			end
 			-- WoW 5.0 compatibility: remove commas from all tooltip lines.
+			-- REVIEW: This isn't the right solution for non-English versions.
 			if LARGE_NUMBER_SEPERATOR then
 				CurrentParseText = gsub(CurrentParseText, ",", "")
 			end
@@ -1560,6 +1575,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 				
 				-- First, check to see if it starts with any of the ignore prefixes, such as "Use:".
 				local IgnoreLine = false
+				local ThisPrefix
 				for _, ThisPrefix in pairs(PawnSeparatorIgnorePrefixes) do
 					if strsub(CurrentParseText, 1, strlen(ThisPrefix)) == ThisPrefix then
 						-- We know that this line doesn't contain a complex stat, so ignore it.
@@ -1582,6 +1598,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 					local InnerUnderstood = nil
 					
 					while Pos < strlen(CurrentParseText) do
+						local ThisSeparator
 						for _, ThisSeparator in pairs(PawnSeparators) do
 							NextPos = strfind(CurrentParseText, ThisSeparator, Pos, false)
 							if NextPos then
@@ -1763,6 +1780,7 @@ function PawnLookForSingleStat(RegexTable, Stats, ThisString, DebugMessages)
 	-- First, perform a series of normalizations on the string.  For example, "Stamina +5" should
 	-- be converted to "+5 Stamina" so we don't need two strings for everything.
 	ThisString = strtrim(ThisString)
+	local Entry
 	for _, Entry in pairs(PawnNormalizationRegexes) do
 		local Regex, Replacement = unpack(Entry)
 		local OldString = ThisString
@@ -1902,6 +1920,7 @@ end
 --		Returns {}, {} if the string was ignored.
 function PawnFindStringInRegexTable(String, RegexTable)
 	if (String == nil) or (String == "") or (String == " ") then return {}, {} end
+	local Entry
 	for _, Entry in pairs(RegexTable) do
 		local StartPos, EndPos, m1, m2, m3, m4, m5 = strfind(String, Entry[1])
 		if StartPos then return Entry, { m1, m2, m3, m4, m5 } end
@@ -2320,6 +2339,10 @@ function PawnCorrectScaleErrors(ScaleName)
 	end
 	ThisScale.BaseArmor = nil
 	ThisScale.BonusArmor = nil
+	
+	-- Pawn 1.6.1 removed IsRelic and IsThrown
+	ThisScale.IsRelic = nil
+	ThisScale.IsThrown = nil
 end
 
 -- Replaces one incorrect stat with a correct stat.
@@ -2385,6 +2408,7 @@ function PawnAttachIconToTooltip(Tooltip, AttachAbove, ItemLink)
 	if PawnCommon.ShowTooltipIcons then
 		-- Don't retrieve an item link if one was passed in.
 		if not ItemLink then
+			local _
 			_, ItemLink = Tooltip:GetItem()
 		end
 		if ItemLink then
@@ -2523,7 +2547,7 @@ function PawnFindBestGems(ScaleName, FindRed, FindYellow, FindBlue, FindMeta, Fi
 	end
 	
 	-- Go through the list of gems, checking each item that matches one of the find criteria.
-	local GemTable, GemData, ThisGem
+	local GemTable, GemData, ThisGem, _
 	if FindMeta then
 		GemTable = PawnMetaGemQualityTables[PawnCommon.Scales[ScaleName].MetaGemQualityLevel]
 	elseif FindCogwheel then
@@ -2623,10 +2647,21 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 	-- Is this item an heirloom that will continue to either scale or provide an XP boost?
 	local IsScalingHeirloom = (UnitLevel("player") <= PawnGetMaxLevelItemIsUsefulHeirloom(Item))
 	
+	local _
 	local UpgradeTable, BestItemTable, SecondBestItemTable
 	local ScaleName, Scale
 	for ScaleName, Scale in pairs(PawnCommon.Scales) do
 		InvType = Item.InvType -- need to reset this here since it gets nil'ed out in the coming while loop
+		if InvType == "INVTYPE_RANGED"  or InvType == "INVTYPE_RANGEDRIGHT" then
+			-- Wands are one-handed weapons and all other ranged weapons are two-handed weapons.  We can't tell
+			-- the difference based on the InvType alone.
+			if Item.Stats and Item.Stats.IsWand then
+				InvType = "INVTYPE_WEAPONMAINHAND"
+			else
+				InvType = "INVTYPE_2HWEAPON"
+			end
+		end
+		
 		if PawnIsScaleVisible(ScaleName) and not
 			(Scale.DoNotShow1HUpgrades and (InvType == "INVTYPE_WEAPON" or InvType == "INVTYPE_WEAPONMAINHAND" or InvType == "INVTYPE_WEAPONOFFHAND" or InvType == "INVTYPE_SHIELD" or InvType == "INVTYPE_HOLDABLE")) and not
 			(Scale.DoNotShow2HUpgrades and InvType == "INVTYPE_2HWEAPON") and
@@ -2657,9 +2692,6 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 			elseif InvType == "INVTYPE_ROBE" then
 				-- Robes are chest armor.
 				InvType = "INVTYPE_CHEST"
-			elseif InvType == "INVTYPE_THROWN" or InvType == "INVTYPE_RANGEDRIGHT" then
-				-- Thrown weapons are ranged weapons.
-				InvType = "INVTYPE_RANGED"
 			elseif InvType == "INVTYPE_SHIELD" or InvType == "INVTYPE_HOLDABLE" then
 				-- Treat shields and held in off hand items the same as off-hand weapons since they go into the same slot.
 				InvType = "INVTYPE_WEAPONOFFHAND"
@@ -2849,8 +2881,14 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 			InvType = "INVTYPE_WEAPONOFFHAND"
 		elseif InvType == "INVTYPE_ROBE" then
 			InvType = "INVTYPE_CHEST"
-		elseif InvType == "INVTYPE_THROWN" or InvType == "INVTYPE_RANGEDRIGHT" then
-			InvType = "INVTYPE_RANGED"
+		elseif InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT" then
+			-- Wands are one-handed weapons and all other ranged weapons are two-handed weapons.  We can't tell
+			-- the difference based on the InvType alone.
+			if Item.Stats and Item.Stats.IsWand then
+				InvType = "INVTYPE_WEAPONMAINHAND"
+			else
+				InvType = "INVTYPE_2HWEAPON"
+			end
 		end
 		
 		-- Okay, now do the calculations.
@@ -2894,7 +2932,7 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 	
 	-- Obviously, check the player's currently equipped gear.
 	local Slot, PreviousItemID
-	for Slot = 1, 18 do if Slot ~= 4 and Slot ~= 13 and Slot ~= 14 then -- Skip slots 0 (ammo), 4 (shirt), 13-14 (trinkets), and 19 (tabard)
+	for Slot = 1, 17 do if Slot ~= 4 and Slot ~= 13 and Slot ~= 14 then -- Skip slots 0 (ammo), 4 (shirt), 13-14 (trinkets), 18 (ranged/relic), and 19 (tabard)
 		local Item = PawnGetItemDataForInventorySlot(Slot, true, "player")
 		if Item then
 			CheckItem(ScaleName, BestItems, Item, PreviousItemID)
@@ -2911,7 +2949,7 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 			wipe(ItemsInSet)
 			GetEquipmentSetItemIDs(GetEquipmentSetInfo(i), ItemsInSet)
 			PreviousItemID = nil
-			for Slot = 1, 18 do if Slot ~= 4 and Slot ~= 13 and Slot ~= 14 then
+			for Slot = 1, 17 do if Slot ~= 4 and Slot ~= 13 and Slot ~= 14 then
 				local ItemID = ItemsInSet[Slot]
 				if ItemID and ItemID > 0 then
 					local Item = PawnGetItemData("item:" .. ItemID)
@@ -3061,8 +3099,9 @@ function PawnOnItemLost(ItemID)
 		InvType = "INVTYPE_WEAPONOFFHAND"
 	elseif InvType == "INVTYPE_ROBE" then
 		InvType = "INVTYPE_CHEST"
-	elseif InvType == "INVTYPE_THROWN" or InvType == "INVTYPE_RANGEDRIGHT" then
-		InvType = "INVTYPE_RANGED"
+	elseif InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT" then
+		-- A ranged weapon could be one-handed (weapons) or two-handed (everything else) but it always goes in the main hand.
+		InvType = "INVTYPE_WEAPONMAINHAND"
 	end
 	local InvType2 = nil
 	if InvType == "INVTYPE_WEAPON" then
@@ -3124,7 +3163,7 @@ end
 --	List: The same table passed in, with one additional field added: { ..., Result }
 --		Result: "upgrade" if the item is an upgrade, "vendor" if the item is the most valuable choice, "trinket" if the item is a trinket, or nil if none of the above.
 function PawnFindInterestingItems(List)
-	local Info
+	local Info, _
 	local HighestValue, HighestValueInfo = 0, nil
 	local DoNotVendor
 	
@@ -3238,7 +3277,7 @@ function PawnFindOptimalReforgingCore(ScaleName, Scale, Values, Stats, NoInstruc
 	local ReforgeTo
 	if not NoInstructions then ReforgeTo = { } end
 	local BestValue = 0
-	local Stat = nil
+	local Stat, _
 	for _, Stat in pairs(PawnReforgeableStats) do
 		if not Stats[Stat] then
 			local Value = Values[Stat]
@@ -3334,7 +3373,7 @@ function PawnConcatenateWithConjunction(Table, Conjunction)
 	else
 		local Concatenated = ""
 		local Index = 1
-		local Item
+		local Item, _
 		for _, Item in ipairs(Table) do
 			if Index == Size then
 				Concatenated = Concatenated .. Conjunction .. Item
@@ -3356,11 +3395,10 @@ function PawnPlayerUsesCogwheels()
 		)
 end
 
--- Returns true if the player is at the level cap based on which expansions they own.
+-- Returns true if the player is at the level cap based on which expansions they own and have installed.
 function PawnPlayerIsAtMaxLevel()
-	local LevelCap = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()]
-	if LevelCap == nil then LevelCap = 85 end -- *** WoW 4.3 compatibility (people who preordered Mists will be expansion level 4, but the table doesn't have a value for 4)
-	return UnitLevel("player") >= LevelCap
+	local LevelCap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
+	return UnitLevel("player") >= MAX_PLAYER_LEVEL
 end
 
 -- Returns the maximum level an item is a useful heirloom item, or 0 if it never is.  As long as the player's level
@@ -3395,7 +3433,7 @@ end
 
 -- Common code for scale resetting functions.
 function PawnResetScalesCore(ResetCustomScales, ResetProviderScales)
-	local ScaleName, Scale
+	local ScaleName, Scale, _
 	local ScalesToRemove = {}
 	for ScaleName, Scale in pairs(PawnCommon.Scales) do
 		if (ResetProviderScales and Scale.Provider) or (ResetCustomScales and ScaleProvider == nil) then tinsert(ScalesToRemove, ScaleName) end
@@ -3982,7 +4020,7 @@ end
 -- to a slightly darker color.
 function PawnSetScaleColor(ScaleName, HexColor)
 	if (not ScaleName) or (ScaleName == "") then
-		VgerCore.Fail("ScaleName cannot be empty.  Usage: rrggbb = PawnGetScaleColor(\"ScaleName\", Unenchanted)")
+		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnGetScaleColor(\"ScaleName\", \"rrggbb\")")
 		return nil
 	end
 	local Scale = PawnCommon.Scales[ScaleName]
@@ -4121,6 +4159,7 @@ function PawnInitializePlugins()
 	
 	-- Go through the list of scale providers and call their initialization function.  They'll create all of their
 	-- scales as necessary.
+	local Provider, _
 	for _, Provider in pairs(PawnScaleProviders) do
 		if Provider.Function then
 			-- After we call each provider's initialization function, empty it out so that function can be
@@ -4231,8 +4270,9 @@ function PawnGetBestItemID(ScaleName, InvType, Index, DoNotRescan)
 		InvType = "INVTYPE_WEAPONOFFHAND"
 	elseif InvType == "INVTYPE_ROBE" then
 		InvType = "INVTYPE_CHEST"
-	elseif InvType == "INVTYPE_THROWN" or InvType == "INVTYPE_RANGEDRIGHT" then
-		InvType = "INVTYPE_RANGED"
+	elseif InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT" then
+		-- All ranged weapons go in the main hand now.
+		InvType = "INVTYPE_WEAPONMAINHAND"
 	end
 	local BestData = BestItems[InvType]
 	if not BestData then return nil end

@@ -26,6 +26,9 @@ local PawnUITotalScaleLines = 0
 local PawnUITotalComparisonLines = 0
 local PawnUITotalGemLines = 0
 
+-- Don't taint the global variable "_".
+local _
+
 ------------------------------------------------------------
 -- "Constants"
 ------------------------------------------------------------
@@ -46,14 +49,14 @@ local PawnUIFrameNeedsScaleSelector = { true, true, true, true, false, false, fa
 
 
 -- The 1-based indes of the stat headers for gems.
-PawnUIStats_RedSocketIndex = 8
-PawnUIStats_YellowSocketIndex = 9
-PawnUIStats_BlueSocketIndex = 10
-PawnUIStats_PrismaticSocketIndex = 11
-PawnUIStats_CogwheelSocketIndex = 12
-PawnUIStats_MetaSocketIndex = 13
-PawnUIStats_MetaSocketEffectIndex = 14
-PawnUIStats_SocketBonusBefore = 15
+PawnUIStats_RedSocketIndex = 28
+PawnUIStats_YellowSocketIndex = 29
+PawnUIStats_BlueSocketIndex = 30
+PawnUIStats_PrismaticSocketIndex = 31
+PawnUIStats_CogwheelSocketIndex = 32
+PawnUIStats_MetaSocketIndex = 33
+PawnUIStats_MetaSocketEffectIndex = 34
+PawnUIStats_SocketBonusBefore = 35
 
 
 ------------------------------------------------------------
@@ -193,7 +196,7 @@ function PawnUIFrame_ScaleSelector_Refresh()
 	PawnUITotalScaleLines = 0
 
 	-- Get a sorted list of scale data and display it all.
-	local NewSelectedScale, FirstScale, ScaleData, LastHeader
+	local NewSelectedScale, FirstScale, ScaleData, LastHeader, _
 	for _, ScaleData in pairs(PawnGetAllScalesEx()) do
 		local ScaleName = ScaleData.Name
 		if ScaleName == PawnUICurrentScale then NewSelectedScale = ScaleName end
@@ -992,7 +995,7 @@ function PawnUI_CompareTab_Refresh()
 	PawnUI_CompareItems()
 	-- Then, update the best in slot shortcuts.
 	local Item = PawnUIComparisonItems[2]
-	local ItemEquipLoc = nil
+	local ItemEquipLoc, _
 	if Item then _, _, _, _, _, _, _, _, ItemEquipLoc = GetItemInfo(Item.Link) end
 	PawnUI_SetShortcutBestItem(3, ItemEquipLoc)
 	PawnUI_SetShortcutBestItem(4, ItemEquipLoc)
@@ -1024,10 +1027,11 @@ function PawnUI_SetCompareItem(Index, ItemLink)
 			local UnenchantedLink = PawnUnenchantItemLink(ItemLink)
 			if UnenchantedLink then ItemLink = UnenchantedLink end
 			Item = PawnGetItemData(ItemLink)
-			VgerCore.Assert(Item, "Failed to get item data while setting an comparison item!")
+			-- If Item is nil, then that item isn't actually a valid item with stats, so we shouldn't allow it in the compare UI.
+			if not Item then return end
 		end
 	end
-	local ItemName, ItemRarity, ItemEquipLoc, ItemTexture
+	local ItemName, ItemRarity, ItemEquipLoc, ItemTexture, _
 	local SlotID1, SlotID2
 	if ItemLink then
 		ItemName, _, ItemRarity, _, _, _, _, _, ItemEquipLoc, ItemTexture = GetItemInfo(ItemLink)
@@ -1628,7 +1632,7 @@ function PawnUIFrame_GemQualityDropDown_Initialize()
 	if PawnUICurrentScale == PawnUINoScale then return end
 	
 	-- Add the item quality levels to the dropdown.
-	local QualityData
+	local QualityData, _
 	for _, QualityData in pairs(PawnGemQualityLevels) do
 		UIDropDownMenu_AddButton({
 			func = PawnUIFrame_GemQualityDropDown_ItemClicked,
@@ -1643,7 +1647,7 @@ function PawnUIFrame_MetaGemQualityDropDown_Initialize()
 	if PawnUICurrentScale == PawnUINoScale then return end
 	
 	-- Add the item quality levels to the dropdown.
-	local QualityData
+	local QualityData, _
 	for _, QualityData in pairs(PawnMetaGemQualityLevels) do
 		UIDropDownMenu_AddButton({
 			func = PawnUIFrame_MetaGemQualityDropDown_ItemClicked,
@@ -1670,7 +1674,7 @@ function PawnUIFrame_GemQualityDropDown_SelectQualityLevel(QualityLevel)
 	
 	-- Painfully stupid: manually update the text on the dropdown to handle the case where the
 	-- user has just switched scales and the gem quality level needs to be updated.
-	local QualityData
+	local QualityData, _
 	for _, QualityData in pairs(PawnGemQualityLevels) do
 		if QualityData[1] == QualityLevel then
 			UIDropDownMenu_SetText(PawnUIFrame_GemQualityDropDown, QualityData[2])
@@ -1684,7 +1688,7 @@ function PawnUIFrame_MetaGemQualityDropDown_SelectQualityLevel(QualityLevel)
 	
 	-- Painfully stupid: manually update the text on the dropdown to handle the case where the
 	-- user has just switched scales and the gem quality level needs to be updated.
-	local QualityData
+	local QualityData, _
 	for _, QualityData in pairs(PawnMetaGemQualityLevels) do
 		if QualityData[1] == QualityLevel then
 			UIDropDownMenu_SetText(PawnUIFrame_MetaGemQualityDropDown, QualityData[2])
@@ -1710,6 +1714,7 @@ function PawnUI_ShowBestGems()
 	
 	-- Otherwise, we're good -- show the gem list.
 	local ShownGems = false
+	local _
 
 	if #(PawnScaleBestGems[PawnUICurrentScale].RedSocket) > 0 then
 		PawnUI_AddGemHeaderLine(format(PawnUIFrame_FindGemColorHeader_Text, RED_GEM))
@@ -2221,7 +2226,7 @@ function PawnUI_LootUpgradeAdvisor_OnShow(self)
 		local ShowScaleNames = (NumUpgrades <= 3) -- If the item upgrades two or three scales, show a less detailed tooltip showing the upgrade percentages.
 		if ShowScaleNames then
 			local UpgradeText = PawnLocal.LootUpgradeAdvisorHeader
-			local ThisUpgradeData
+			local ThisUpgradeData, _
 			for _, ThisUpgradeData in pairs(UpgradeInfo) do
 				local ScaleName = ThisUpgradeData.ScaleName
 				local SetAnnotation = ""

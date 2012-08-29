@@ -128,11 +128,13 @@ a completely new scale:</p>
 	(of course), and no benefit from ranged attack power.&nbsp; This druid could 
 	set up a scale called &quot;attack power&quot; that adds those numbers up 
 	automatically: Strength = 2, Agility = 1, Attack power = 1, and Feral AP = 1.</li>
-	<li>Many people have a set of resistance gear, but deciding between an 
-	item that has 15 resistance and another that has 10 resistance but 
-	also a bunch of nice stats can be hard.&nbsp; You can set up a scale that helps 
-	you decide whether those extra few points of resistance are worth 
-	sacrificing all of those stats.</li>
+	<li>A healer might have one set of gear for long fights where mana 
+	regeneration is very important, and another set of gear for shorter fights 
+	where burst healing and throughput is more important.&nbsp; A scale designed 
+	to pick gear for the former might value spirit highly and crit a little 
+	higher, and the latter might value haste and intellect the highest.&nbsp; 
+	(Of course, each healing class has different mechanics, but you get the 
+	idea.)</li>
 </ul>
 <p>Or, maybe, someone has already shared a <strong>Pawn scale tag</strong> with you, so that you 
 can use a scale that they created or found themselves.</p>
@@ -400,7 +402,7 @@ Meta gems are also special, since they contain both stats and a secondary effect
 value to both parts individually, though by default Pawn will automatically pick a value for the stats
 portion of the gem for you.
 </p>
-<p>By default, Pawn assumes that you'll use rare-quality (blue) level 80 gems.&nbsp; 
+<p>By default, Pawn assumes that you'll use rare-quality (blue) level 85 gems.&nbsp; 
 You can change this for each of your scales individually on the Gems tab.&nbsp; The following
 table shows how many stats the gems of each "tier" have.</p>
 <table>
@@ -409,7 +411,7 @@ table shows how many stats the gems of each "tier" have.</p>
 	</tr>
 	<tr>
 		<td><b>Gem quality</b></td>
-		<td><b>Number of base stats</b></td>
+		<td><b>Stats</b></td>
 	</tr>
 	<tr>
 		<td>White (vendor)</td>
@@ -443,7 +445,7 @@ table shows how many stats the gems of each "tier" have.</p>
 	</tr>
 	<tr>
 		<td><b>Gem quality</b></td>
-		<td><b>Number of base stats</b></td>
+		<td><b>Stats</b></td>
 	</tr>
 	<tr>
 		<td>Green (crafted)</td>
@@ -473,7 +475,7 @@ table shows how many stats the gems of each "tier" have.</p>
 	</tr>
 	<tr>
 		<td><b>Gem quality</b></td>
-		<td><b>Number of base stats</b></td>
+		<td><b>Stats</b></td>
 	</tr>
 	<tr>
 		<td>Green (crafted)</td>
@@ -492,16 +494,53 @@ table shows how many stats the gems of each "tier" have.</p>
 		<td>67</td>
 	</tr>
 	<tr>
-		<td>Blue (BoP Engineer crafted)</td>
+		<td>Blue (BoP crafted cogwheel)</td>
 		<td>208</td>
 	</tr>
 </table>
+<br />
+<table>
+	<tr>
+		<td colspan="2"><i>Gems at level 90</i></td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td><b>Gem quality</b></td>
+		<td><b>Primary stats</b></td>
+		<td><b>Secondary stats</b></td>
+	</tr>
+	<tr>
+		<td>Green (crafted)</td>
+		<td>120</td>
+		<td>240</td>
+	</tr>
+	<tr>
+		<td>Green (perfect crafted)</td>
+		<td>160</td>
+		<td>320</td>
+	</tr>
+	<tr>
+		<td>Blue (crafted)</td>
+		<td>160</td>
+		<td>320</td>
+	</tr>
+	<tr>
+		<td>Epic (BoP JC-only crafted)</td>
+		<td>320</td>
+		<td>480</td>
+	</tr>
+	<tr>
+		<td>Blue (BoP crafted cogwheel)</td>
+		<td>&nbsp;</td>
+		<td>600</td>
+	</tr>
+	<tr>
+		<td>Legendary (BoP Crystal of Fear)</td>
+		<td>500</td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
 
-<h3>Resistances</h3>
-<p>For resistances, there&#39;s an &quot;all resistances&quot; stat and individual resistances.&nbsp; The +3 All Resistances cloak 
-	enchantment would add three points of &quot;all resistances&quot; to the cloak, but no points 
-	of &quot;fire resistance.&quot;&nbsp; If you&#39;re putting together a scale for fire resistance, 
-	give points to both &quot;all resistances&quot; and &quot;fire resistances.&quot;</p>
 <h3>Weapon speed</h3>
 <p>Weapon speed can work a little differently than the other stats.&nbsp; Some 
 people value weapon speed based on how much faster or slower a weapon is than a 
@@ -616,9 +655,6 @@ and Pawn.</p>
 <h2>Known issues</h2>
 <h3>Top issues in the latest version</h3>
 <ul>
-	<li>The Loot Upgrade Advisor sometimes does not appear when the item that dropped is one that your character has never 
-	seen before.&nbsp; (The server hasn&#39;t sent Pawn the stats for the item yet so 
-	Pawn doesn&#39;t know that it&#39;s good.)</li>
 	<li>The Quest Upgrade Advisor doesn&#39;t suggest any items (with an upgrade or 
 	vendor icon) when one of the quest items is an item your character has never 
 	seen before.&nbsp; (If you accept the quest and then check your quest log, 
@@ -629,6 +665,32 @@ and Pawn.</p>
 	<a href="Version%20history.htm"><em>version history</em></a><em> document.</em></li>
 </ul>
 <h2>Updates</h2>
+<h3>Version 1.6.2</h3>
+<ul>
+	<li>Fixed a bug where weapon damage on heirloom weapons would not get 
+	properly recognized and counted (and would spam your chat log with an 
+	error).</li>
+	<li>Fixed a bug where an error could occur when hovering over certain gemmed 
+	relic items.</li>
+	<li>Fixed a harmless error that could appear when trying to put a relic or 
+	throwing weapon into the slots in the Compare tab.&nbsp; (You just can't let 
+	that vendor trash go, can you?)</li>
+</ul>
+<h3>Version 1.6.1</h3>
+<ul>
+	<li>Added support for Pawn values on items in Void Storage.</li>
+	<li>The spell penetration stat has been converted into the PvP power stat.&nbsp; 
+	Any scales that had spell penetration now have PvP power in its place.</li>
+	<li>The IsRelic and IsThrown stats are now gone, with no replacement (since relic 
+	items and thrown weapons are now vendor trash).</li>
+	<li>The stats list on the Values tab has been reorganized slightly.</li>
+	<li>The Pawn window is now jade-colored and includes high-resolution art for 
+	those of us with 30" monitors.</li>
+	<li>Elite- and Heroic Elite-quality items will no longer show an unnecessary 
+	(?) icon in Mists of Pandaria.</li>
+	<li>The Loot Upgrade Advisor is still not functional in this version.&nbsp; 
+	I will need to rebuild it for WoW 5.0.</li>
+</ul>
 <h3>Version 1.6</h3>
 <ul>
 	<li>Initial compatibility with Mists of Pandaria and World of Warcraft 5.0.&nbsp; 
@@ -651,12 +713,9 @@ and Pawn.</p>
 		<li>Fixed an issue where monks would get errors when hovering over 
 		armor.</li>
 		<li>The Loot Upgrade Advisor is not functional in WoW 5.0.</li>
-		<li>If you want to build a PvP scale for a strength- or agility-based 
-		class right now, note that the PvP Power stat will be listed in Pawn as 
-		Spell Penetration until closer to the 5.0 launch.</li>
 	</ul>
 	</li>
-	<li>Worked around a Blizzard bug that was causing Pawn to no longer function 
+	<li>Fixed a bug that was causing Pawn to no longer function 
 	properly after preordering Mists of Pandaria.</li>
 	<li>Added the new level 90 Mists of Pandaria gems to the Gems tab if you're 
 	using Pawn on Mists of Pandaria or the 5.0 PTRs.</li>
