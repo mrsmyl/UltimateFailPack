@@ -1,5 +1,5 @@
 --[[
-	Copyright (c) 2009, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
+	Copyright (c) 2009-2012, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
 	All rights reserved.
 ]]
 local StateBar = Bartender4.StateBar.prototype
@@ -45,6 +45,7 @@ function ActionBar:UpdateButtonConfig()
 
 	self.buttonConfig.showGrid = self.config.showgrid
 	self.buttonConfig.clickOnDown = Bartender4.db.profile.onkeydown
+	self.buttonConfig.flyoutDirection = self.config.flyoutDirection
 
 	if tonumber(self.id) == 1 then
 		for i, button in self:GetAll() do
@@ -112,7 +113,7 @@ function ActionBar:UpdateButtons(numbuttons)
 	for i = (#buttons+1), numbuttons do
 		local absid = (self.id - 1) * 12 + i
 		buttons[i] = LAB10:CreateButton(absid, format("BT4Button%d", absid), self, nil)
-		for k = 1,11 do
+		for k = 1,14 do
 			buttons[i]:SetState(k, "action", (k - 1) * 12 + i)
 		end
 		buttons[i]:SetState(0, "action", absid)
@@ -141,6 +142,7 @@ function ActionBar:UpdateButtons(numbuttons)
 
 		if i == 12 then
 			buttons[i]:SetState(11, "custom", customExitButton)
+			buttons[i]:SetState(12, "custom", customExitButton)
 		end
 	end
 
@@ -209,6 +211,17 @@ end
 function ActionBar:SetGrid(state)
 	if state ~= nil then
 		self.config.showgrid = state
+	end
+	self:UpdateButtonConfig()
+end
+
+function ActionBar:GetFlyoutDirection()
+	return self.config.flyoutDirection
+end
+
+function ActionBar:SetFlyoutDirection(state)
+	if state ~= nil then
+		self.config.flyoutDirection = state
 	end
 	self:UpdateButtonConfig()
 end

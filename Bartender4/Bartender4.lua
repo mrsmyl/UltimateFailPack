@@ -1,5 +1,5 @@
 --[[
-	Copyright (c) 2009, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
+	Copyright (c) 2009-2012, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
 	All rights reserved.
 ]]
 local AceAddon = LibStub("AceAddon-3.0")
@@ -9,6 +9,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Bartender4")
 
 local LDB = LibStub("LibDataBroker-1.1", true)
 local LDBIcon = LibStub("LibDBIcon-1.0", true)
+local LibDualSpec = LibStub("LibDualSpec-1.0", true)
 
 local defaults = {
 	profile = {
@@ -33,6 +34,10 @@ function Bartender4:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
 	self.db.RegisterCallback(self, "OnProfileCopied", "UpdateModuleConfigs")
 	self.db.RegisterCallback(self, "OnProfileReset", "UpdateModuleConfigs")
+
+	if LibDualSpec then
+		LibDualSpec:EnhanceDatabase(Bartender4.db, "Bartender4")
+	end
 
 	self:SetupOptions()
 
@@ -106,20 +111,27 @@ function Bartender4:HideBlizzard()
 	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomLeft"] = nil
 	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomRight"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
-	UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = nil
+	UIPARENT_MANAGED_FRAME_POSITIONS["StanceBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["PossessBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = nil
 
-	MainMenuBar:UnregisterAllEvents()
-	MainMenuBar:Hide()
-	MainMenuBar:SetParent(UIHider)
+	--MainMenuBar:UnregisterAllEvents()
+	--MainMenuBar:Hide()
+	--MainMenuBar:SetParent(UIHider)
+	MainMenuBar:EnableMouse(false)
+
+	local animations = {MainMenuBar.slideOut:GetAnimations()}
+	animations[1]:SetOffset(0,0)
+
+	animations = {OverrideActionBar.slideOut:GetAnimations()}
+	animations[1]:SetOffset(0,0)
 
 	--MainMenuBarArtFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	--MainMenuBarArtFrame:UnregisterEvent("BAG_UPDATE")
-	MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED")
+	--MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED")
 	--MainMenuBarArtFrame:UnregisterEvent("KNOWN_CURRENCY_TYPES_UPDATE")
 	--MainMenuBarArtFrame:UnregisterEvent("CURRENCY_DISPLAY_UPDATE")
-	MainMenuBarArtFrame:UnregisterEvent("ADDON_LOADED")
+	--MainMenuBarArtFrame:UnregisterEvent("ADDON_LOADED")
 	--MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERING_VEHICLE")
 	--MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERED_VEHICLE")
 	--MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITING_VEHICLE")
@@ -127,18 +139,23 @@ function Bartender4:HideBlizzard()
 	MainMenuBarArtFrame:Hide()
 	MainMenuBarArtFrame:SetParent(UIHider)
 
-	--MainMenuExpBar:UnregisterAllEvents()
-	--MainMenuExpBar:Hide()
+	MainMenuExpBar:UnregisterAllEvents()
+	MainMenuExpBar:Hide()
+	MainMenuExpBar:SetParent(UIHider)
 
-	ShapeshiftBarFrame:UnregisterAllEvents()
-	ShapeshiftBarFrame:Hide()
-	ShapeshiftBarFrame:SetParent(UIHider)
+	ReputationWatchBar:UnregisterAllEvents()
+	ReputationWatchBar:Hide()
+	ReputationWatchBar:SetParent(UIHider)
 
-	BonusActionBarFrame:UnregisterAllEvents()
-	BonusActionBarFrame:Hide()
-	BonusActionBarFrame:SetParent(UIHider)
+	StanceBarFrame:UnregisterAllEvents()
+	StanceBarFrame:Hide()
+	StanceBarFrame:SetParent(UIHider)
 
-	PossessBarFrame:UnregisterAllEvents()
+	--BonusActionBarFrame:UnregisterAllEvents()
+	--BonusActionBarFrame:Hide()
+	--BonusActionBarFrame:SetParent(UIHider)
+
+	--PossessBarFrame:UnregisterAllEvents()
 	PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
 
@@ -151,6 +168,8 @@ function Bartender4:HideBlizzard()
 	else
 		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
 	end
+
+	self:RegisterPetBattleDriver()
 end
 
 function Bartender4:InitializeProfile()
@@ -192,23 +211,41 @@ function Bartender4:UpdateModuleConfigs()
 	end
 end
 
+function Bartender4:RegisterPetBattleDriver()
+	if not self.petBattleController then
+		self.petBattleController = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+		self.petBattleController:SetAttribute("_onstate-petbattle", [[
+			if newstate == "petbattle" then
+				for i=1,6 do
+					local button, vbutton = ("CLICK BT4Button%d:LeftButton"):format(i), ("ACTIONBUTTON%d"):format(i)
+					for k=1,select("#", GetBindingKey(button)) do
+						local key = select(k, GetBindingKey(button))
+						self:SetBinding(true, key, vbutton)
+					end
+					-- do the same for the default UIs bindings
+					for k=1,select("#", GetBindingKey(vbutton)) do
+						local key = select(k, GetBindingKey(vbutton))
+						self:SetBinding(true, key, vbutton)
+					end
+				end
+			else
+				self:ClearBindings()
+			end
+		]])
+		RegisterStateDriver(self.petBattleController, "petbattle", "[petbattle]petbattle;nopetbattle")
+	end
+end
+
 function Bartender4:UpdateBlizzardVehicle()
 	if self.db.profile.blizzardVehicle then
-		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITED_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-		local vehicleModule = Bartender4:GetModule("Vehicle", true)
-		vehicleModule:Disable()
-		vehicleModule.blizzardVehicle = true
-
+		MainMenuBar:SetParent(UIParent)
+		OverrideActionBar:SetParent(UIParent)
 		if not self.vehicleController then
 			self.vehicleController = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
 			self.vehicleController:SetAttribute("_onstate-vehicle", [[
 				if newstate == "vehicle" then
 					for i=1,6 do
-						local button, vbutton = ("CLICK BT4Button%d:LeftButton"):format(i), ("VehicleMenuBarActionButton%d"):format(i)
+						local button, vbutton = ("CLICK BT4Button%d:LeftButton"):format(i), ("OverrideActionBarButton%d"):format(i)
 						for k=1,select("#", GetBindingKey(button)) do
 							local key = select(k, GetBindingKey(button))
 							self:SetBindingClick(true, key, vbutton)
@@ -227,17 +264,8 @@ function Bartender4:UpdateBlizzardVehicle()
 		end
 		RegisterStateDriver(self.vehicleController, "vehicle", "[vehicleui]vehicle;novehicle")
 	else
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERING_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERED_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITING_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITED_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-
-		local vehicleModule = Bartender4:GetModule("Vehicle")
-		vehicleModule.blizzardVehicle = nil
-		if vehicleModule.db and vehicleModule.db.profile.enabled then
-			vehicleModule:Enable()
-		end
+		MainMenuBar:SetParent(self.UIHider)
+		OverrideActionBar:SetParent(self.UIHider)
 		if self.vehicleController then
 			UnregisterStateDriver(self.vehicleController, "vehicle")
 		end

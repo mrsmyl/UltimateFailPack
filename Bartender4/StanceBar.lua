@@ -1,5 +1,5 @@
 --[[
-	Copyright (c) 2009, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
+	Copyright (c) 2009-2012, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
 	All rights reserved.
 ]]
 local L = LibStub("AceLocale-3.0"):GetLocale("Bartender4")
@@ -185,7 +185,7 @@ local function onEnter(self, ...)
 end
 
 function StanceBarMod:CreateStanceButton(id)
-	local button = setmetatable(CreateFrame("CheckButton", "BT4StanceButton" .. id, self.bar, "ShapeshiftButtonTemplate"), StanceButton_MT)
+	local button = setmetatable(CreateFrame("CheckButton", "BT4StanceButton" .. id, self.bar, "StanceButtonTemplate"), StanceButton_MT)
 	button.parent = self.bar
 	button:SetID(id)
 	button.icon = _G[button:GetName() .. "Icon"]

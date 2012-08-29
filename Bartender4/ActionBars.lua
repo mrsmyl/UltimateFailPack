@@ -1,5 +1,5 @@
 --[[
-	Copyright (c) 2009, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
+	Copyright (c) 2009-2012, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
 	All rights reserved.
 ]]
 local L = LibStub("AceLocale-3.0"):GetLocale("Bartender4")
@@ -13,6 +13,7 @@ local abdefaults = {
 		buttons = 12,
 		hidemacrotext = false,
 		showgrid = false,
+		flyoutDirection = "UP",
 	}, Bartender4.StateBar.defaults),
 	[1] = {
 		states = {
@@ -21,8 +22,8 @@ local abdefaults = {
 			actionbar = false,
 			stance = {
 				DRUID = { bear = 9, cat = 7, prowl = 8 },
-				WARRIOR = { battle = 7, def = 8, berserker = 9 },
-				ROGUE = { stealth = 7, shadowdance = 7 }
+				ROGUE = { stealth = 7 },
+				MONK = { tiger = 7, ox = 8, serpent = 9 },
 			},
 		},
 		visibility = {

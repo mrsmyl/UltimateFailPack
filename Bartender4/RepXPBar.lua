@@ -1,5 +1,5 @@
 --[[
-	Copyright (c) 2009, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
+	Copyright (c) 2009-2012, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
 	All rights reserved.
 ]]
 local L = LibStub("AceLocale-3.0"):GetLocale("Bartender4")
@@ -82,12 +82,6 @@ function XPBarMod:OnEnable()
 		self.bar.content:SetParent(self.bar)
 		self.bar.content:Show()
 		self.bar.content:SetFrameLevel(self.bar:GetFrameLevel() + 1)
-
-		hooksecurefunc("VehicleMenuBar_MoveMicroButtons", function()
-			self.bar.content:SetParent(self.bar)
-			self.bar.content:Show()
-			self.bar:PerformLayout()
-		end)
 	end
 	self.bar:Enable()
 	self:ToggleOptions()

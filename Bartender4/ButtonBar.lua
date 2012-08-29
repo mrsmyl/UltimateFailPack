@@ -1,5 +1,5 @@
 --[[
-	Copyright (c) 2009, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
+	Copyright (c) 2009-2012, Hendrik "Nevcairiel" Leppkes < h.leppkes at gmail dot com >
 	All rights reserved.
 ]]
 --[[ Generic Template for a Bar which contains Buttons ]]
@@ -238,7 +238,7 @@ function ButtonBar:UpdateButtonLayout()
 		end
 	end
 
-	if not LBF then
+	if not LBF and not Masque then
 		for i = 1, #buttons do
 			local button = buttons[i]
 			if button.icon and self.config.skin.Zoom then
