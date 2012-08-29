@@ -20,7 +20,7 @@ local private = {}
 function AutoMail:OnEnable()
 	local button = CreateFrame("Button", nil, MailFrame, "UIPanelButtonTemplate")
 	button:SetHeight(26)
-	button:SetWidth(250)
+	button:SetWidth(255)
 	button:SetText(L["TradeSkillMaster_Mailing: Auto-Mail"])
 	button:SetFrameStrata("HIGH")
 	button:SetScript("OnEnter", function(self)
@@ -35,11 +35,11 @@ function AutoMail:OnEnable()
 	button:SetScript("OnClick", function(self)
 			private:StartAutoMailing()
 		end)
-	button:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 70, 13)
+	button:SetPoint("TOPLEFT", 55, 25)
 	button.tooltip = L["Runs TradeSkillMaster_Mailing's auto mailer, the last patch of mails will take ~10 seconds to send.\n\n[WARNING!] You will not get any confirmation before it starts to send mails, it is your own fault if you mistype your bankers name."]
 	private.button = button
 	
-	if ElvUI then
+	if ElvUI and ElvUI[1] then
 		ElvUI[1]:GetModule("Skins"):HandleButton(button)
 	end
 end

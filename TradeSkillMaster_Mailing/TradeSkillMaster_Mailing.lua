@@ -67,7 +67,7 @@ function TSM:SetupOpenMailButton()
 	button:SetText(L["Open All"])
 	button:SetHeight(24)
 	button:SetWidth(130)
-	button:SetPoint("BOTTOM", InboxFrame, "CENTER", -10, -165)
+	button:SetPoint("BOTTOM", -20, 100)
 	button:SetScript("OnClick", function(self) private:StartAutoLooting() end)
 	private.button = button
 	
@@ -133,10 +133,10 @@ function TSM:SetupOpenMailButton()
 	
 	private.cacheFrame.text = private.cacheFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	private.cacheFrame.text:SetFont(GameFontHighlight:GetFont(), 30, "THICKOUTLINE")
-	private.cacheFrame.text:SetPoint("CENTER", MailFrame, "TOPLEFT", 40, -35)
+	private.cacheFrame.text:SetPoint("CENTER", MailFrame, "TOPLEFT", 25, -20)
 	
 	private.totalMail = MailFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	private.totalMail:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", -60 + (foundOtherMailAddon and -24 or 0), -18)
+	private.totalMail:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", -28, -6)
 
 	TSM:RegisterEvent("MAIL_CLOSED")
 	TSM:RegisterEvent("MAIL_INBOX_UPDATE")
@@ -159,12 +159,6 @@ function private:StartAutoLooting()
 end
 
 function private:AutoLoot()
-	-- BeanCounter hides the close button while it is running.
-	if not InboxCloseButton:IsVisible() then
-		TSMAPI:CreateTimeDelay("mailWaitDelay", 0.3, private.AutoLoot)
-		return
-	end
-	
 	-- Already looted everything after the invalid indexes we had, so fail it
 	if private.lootIndex > 1 and private.lootIndex > GetInboxNumItems() then
 		if private.resetIndex then
