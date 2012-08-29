@@ -2,6 +2,7 @@
  Accountant
     Originally by Sabaki (sabaki@gmail.com)
     Redone by urnati - 3.0
+	Mists of Pandaria updates by Thorismud 4.0
   
 	Tracks your incoming / outgoing cash
 
@@ -862,6 +863,8 @@ function SC.RegisterEvents(self)
 
 	self:RegisterEvent("AUCTION_HOUSE_SHOW");
 	self:RegisterEvent("AUCTION_HOUSE_CLOSED");
+--	self:RegisterEvent("BLACK_MARKET_OPEN");
+--	self:RegisterEvent("BLACK_MARKET_CLOSE");
 
 	self:RegisterEvent("PLAYER_MONEY");
 
@@ -1028,6 +1031,7 @@ function SC.LoadSavedData()
 	SC.data["TAXI"] = {Title = ACCLOC_TAXI};
 	SC.data["REPAIRS"] = {Title = ACCLOC_REPAIR};
 	SC.data["OTHER"] = {Title = ACCLOC_OTHER};
+--	SC.data["BMAH"] = {Title = ACCLOC_BMAH};
 --	SC.data["SYSTEM"] = {Title = ACCLOC_SYS};
 
 	for key,value in next,SC.data do
@@ -1613,6 +1617,8 @@ function SC.OnEvent(event, arg1)
 --	SC.Print("Accountant: event"
 --		..event
 --		.." mode '"..SC.mode.."'"); 
+		-- !! IMPORTANT - Still need to check if the BLack market sends different messages. yes/no
+		-- !! Find out a way to keep Black market and AH refunds in different boxes.
 		-- Quel's fix: when we open a mail message, see if this is a successfull Auction. 
 		if (nil ~= InboxFrame.openMailID) then
 			a, b, sender, subject, money = GetInboxHeaderInfo(InboxFrame.openMailID);
@@ -1636,8 +1642,17 @@ function SC.OnEvent(event, arg1)
 		SC.mode = "";
 	elseif event == "AUCTION_HOUSE_SHOW" then
 		SC.mode = "AH";
+		
 	elseif event == "AUCTION_HOUSE_CLOSED" then
 		SC.mode = "";
+	--elseif event == "BLACK_MARKET_OPEN" then
+	--	SC.mode = "BMAH";
+		--debug
+		--DEFAULT_CHAT_FRAME:AddMessage("Ding, something works!");
+	--elseif event == "BLACK_MARKET_CLOSE" then
+	--	SC.mode = "";
+		--debug
+		--DEFAULT_CHAT_FRAME:AddMessage("Ding, something works again.!");
 	elseif event == "PLAYER_MONEY" then
 		SC.UpdateLog();
 		SC:LDB_Update()

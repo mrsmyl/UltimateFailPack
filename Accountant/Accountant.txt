@@ -1,6 +1,6 @@
-## Interface: 50001
-## Title: Accountant 4.05.50001
-## Version: 4.05.50001
+## Interface: 50000
+## Title: Accountant 4.01.50000 alpha
+## Version: 4.01.50000 alpha
 ## Author: thorismud
 ## Description: Logs where your WoW gold goes
 ## DefaultState: enabled

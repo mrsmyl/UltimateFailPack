@@ -29,6 +29,7 @@ ACCLOC_OTHER		=	"Unknown";
 ACCLOC_REPAIR		=	"Repair Costs";
 ACCLOC_AUC			=	"Auction House";
 ACCLOC_SYS			=	"Other System";
+ACCLOC_BMAH			=	"Black Market";
 
 -- Buttons
 ACCLOC_RESET		=	"Clear Data";
