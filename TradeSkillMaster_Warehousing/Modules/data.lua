@@ -40,16 +40,13 @@ function data:ScanSrcForCrafting(container, craftGroup, data)
                 if craftGroup and data[id] then
                     if TSM.db.factionrealm.CraftingGroups[craftGroup][id] then
                         local total = TSM.db.factionrealm.CraftingGroups[craftGroup][id] + quan
-                        --print ("total=",total)
                         if total < data[id] then
                             TSM.db.factionrealm.CraftingGroups[craftGroup][id] = total
                         elseif total >= data[id] then
                             TSM.db.factionrealm.CraftingGroups[craftGroup][id] = data[id]
                         end
                     else
-                       -- print ("id=",id,"quan=", quan)
                         TSM.db.factionrealm.CraftingGroups[craftGroup][id] = quan
-                        --print ("id=",id, "global=", TSM.db.factionrealm.CraftingGroups[craftGroup][id])
                     end
                 end
                                    
@@ -94,8 +91,6 @@ end-- function
 --------------------------------------------------
 -- Now I will unindex my own table, so it is    -- 
 -- compatible with my own code....              --
--- new stuff:                                   --
---TSMAPI:GetData("totalplayerauctions", itemID) --
 --------------------------------------------------
 function data:unIndexTableWarehousing(grp)
     local newgrp = {}
@@ -143,8 +138,16 @@ function data:unIndexTableAuctioning2(src,t)
         local auctions = TSMAPI:GetData("totalplayerauctions", id)
         local q = 0
         
-        if bagState[id] then q = needed - (auctions + bagState[id])
-        else q = needed - auctions  end
+        if auctions and needed then
+            if bagState[id] then 
+                q = needed - (auctions + bagState[id])
+            else 
+                q = needed - auctions  
+            end
+        elseif needed then
+            q = needed
+        end
+        
         if ( q > 0 )then
             table.insert(grp, {item = id, quantity =  q} )
         end
@@ -178,7 +181,7 @@ function data:unIndexTableCrafting(craftGrp,grpName)
     end
 
     local zeros = 0
-    local grp = {}--TSM.db.factionrealm.WarehousingGroups[grpName]
+    local grp = {}
     local zeros = {}
      
     for _, item in ipairs(craftGrp) do 
@@ -197,12 +200,13 @@ function data:unIndexTableCrafting(craftGrp,grpName)
         table.insert (zeros, {item = id, quantity = item[2]})            
 
     end
+    
     if TSM.db.global.ShowLogData then
         for i,v in ipairs(grp) do
             local sName, link, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo( v.item )
         end
     end
-    print(zeros, #grp, #craftGrp )
+
     if #zeros == #craftGrp then
         TSM.db.factionrealm.CraftingGroups[grpName] = {}
         return zeros, scanTable

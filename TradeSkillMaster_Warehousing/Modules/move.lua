@@ -56,7 +56,7 @@ function move:moveGroup(src, dest, grp)
     local emptySlots = move:GetEmptySlots(dest)
 
     local grpData,srcData = move:getGroupTable(grp,src,isGuildBank)
-
+    
     if srcData and grpData and emptySlots then 
         TSM:Print("Begin")
         move:reset()
@@ -124,9 +124,6 @@ bagEvent:SetScript("OnUpdate", function(self, elapsed)
     end
 end)
 
-
---shamelessly stolen from gathering, 
---but I renamed it so Sapu notice ;)
 local timeout = CreateFrame("frame")
 timeout:Hide()
 timeout.timeout = 2
@@ -162,8 +159,9 @@ function move:moveItem()
     if not move:areBanksVisible() then return end
     
     local _, link = GetItemInfo( m.srcItem)
+    
     if m.srcQuan > m.need then
-        
+    
         local destBag = TSM.util:canGoInBag(m.srcItem, m.dest)
         local destSlot = m.dest[destBag][#m.dest[destBag]] 
         TSM.util.splitContainerItemSrc(m.srcBag, m.srcSlot, m.need)
@@ -183,17 +181,13 @@ function move:moveItem()
    
     m.src[m.srcItem][m.srcIndex].quantity = m.src[m.srcItem][m.srcIndex].quantity - m.srcQuan
     if m.src[m.srcItem][m.srcIndex].quantity == 0 then m.src[m.srcItem][m.srcIndex] = nil end
+    
+    bagEvent:Show()
 
-    if m.count == 4 then
-        bagEvent:Show()
-        m.count = 1
-    else
-        m.count = m.count + 1
-        move:moveStuff(m.grp,m.src,m.dest) 
-    end
 end
 
 function move:moveStuff(grp,src,dest)
+        
     if not move:areBanksVisible() then return end
     
     m.grp = grp
@@ -201,13 +195,12 @@ function move:moveStuff(grp,src,dest)
     m.dest = dest
     
     if #m.grp >= m.grpIndex then --iterator
-       
+        
         m.srcItem = m.grp[m.grpIndex].item
         
-        if not m.need then
-            m.need = m.grp[m.grpIndex].quantity
-        end
-
+        local _, link = GetItemInfo( m.srcItem)
+        if not m.need then m.need = m.grp[m.grpIndex].quantity end
+        
         if m.need == 0 or ( m.src[ m.srcItem] and #m.src[ m.srcItem] == 0 ) then  
             m.src[m.srcItem] = nil 
             m.grpIndex = m.grpIndex + 1
@@ -223,13 +216,13 @@ function move:moveStuff(grp,src,dest)
             m.srcSlot   = m.src[m.srcItem][m.srcIndex].slot
             m.srcQuan   = m.src[m.srcItem][m.srcIndex].quantity
             
+            local _, link = GetItemInfo( m.srcItem)
             move:moveItem()
             
         else
-             m.grpIndex = m.grpIndex + 1
+             m.need = 0
              move:moveStuff(m.grp,m.src,m.dest)
-        end
-         --print (m.srcItem,m.need)   
+        end  
     else
         --we are done now
         timeout:Show()
@@ -255,6 +248,7 @@ function move:reset()
 end
 
 function move:getGroupTable(grpName,src,isGuildBank)
+
     if grpName == "all" then
         return TSM.data:getEmptyRestoreGroup(src ,isGuildBank),TSM.data:ScanSrc(src)
     elseif grpName == "restore" then
@@ -278,7 +272,7 @@ function move:getGroupTable(grpName,src,isGuildBank)
             end
         elseif string.lower(module) == "crafting" then
             local data = TSMAPI:GetData("shopping", grp)
-            if data then
+            if data and grp then
                 local newData,stuff = TSM.data:unIndexTableCrafting(data,grp) 
                 return newData, TSM.data:ScanSrcForCrafting(src,grp,stuff)
             end

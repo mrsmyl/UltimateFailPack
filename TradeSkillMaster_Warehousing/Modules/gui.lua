@@ -171,7 +171,7 @@ local function populateMenu()
     ddTable = {}
     for _,prof in ipairs(tradeSkills) do
         local total,_ = TSMAPI:GetData("shopping", prof.name)
-        if #total > 0 then table.insert (ddTable, prof.name) end
+        if total and #total > 0 then table.insert (ddTable, prof.name) end
     end
     return ddTable
 end

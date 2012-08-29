@@ -96,9 +96,9 @@ local tradeSkills = {
 local function DoCellUpdate(_, cellFrame, _, _, _, rowNum, _, isVisible, st)
 
     if not isVisible then
-            -- frame isn't shown so clear the text and hide the icon
-            if cellFrame.icon then cellFrame.icon:Hide() end
-            return
+        -- frame isn't shown so clear the text and hide the icon
+        if cellFrame.icon then cellFrame.icon:Hide() end
+        return
     end
     
     
@@ -337,14 +337,7 @@ function bankui:resetPoints(frameType,container)
 end
 
 function bankui:DrawScrollFrame (container)
-    --[[ 
-    if bagST then
-        bagST:Hide()
-        bankui:updateST()
-        bagST:Show()
-        return
-    end  
-    ]]
+
     local ROW_HEIGHT = 20
     local stCols
 
@@ -462,8 +455,3 @@ function bankui:getWarehouseTable(grp)
         end
     end
 end
-
-
-
-
-

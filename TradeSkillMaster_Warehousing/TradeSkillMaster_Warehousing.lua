@@ -159,7 +159,6 @@ function TSM:SetLogFlag ()
 end
 
 function TSM:SetCraftGroup(grp)
-   -- print (grp)
     craftGroup = grp
 end
 
@@ -186,7 +185,6 @@ end
             end
         end
     end
-
     craftGroup = nil
 end
  -- Make sure the item isn't soulbound
