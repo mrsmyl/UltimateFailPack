@@ -93,7 +93,22 @@ function Brother:ADDON_LOADED()
 	
 	-- Done
 	self:UnregisterEvent('ADDON_LOADED')
-	self.ADDON_LOADED = nil
+	self:VERSION_UPDATES()
+	self.ADDON_LOADED, self.VERSION_UPDATES = nil
+end
+
+function Brother:VERSION_UPDATES()
+	if not BrotherBags.version then
+		for realm, players in pairs(BrotherBags) do
+			for _, player in pairs(players) do
+				for i, id in pairs(player.vault or {}) do
+					player.vault[i] = tostring(id)
+				end
+			end
+		end
+	end
+	
+	BrotherBags.version = 1
 end
 
 function Brother:PLAYER_LOGIN()
@@ -166,7 +181,8 @@ function Brother:VOID_STORAGE_CLOSE()
 	self.atVault = nil
 
   	for i = 1, VAULT_SLOTS do
-    	Player.vault[i] = GetVoidItemInfo(i)
+		local id = GetVoidItemInfo(i)
+    	Player.vault[i] = id and tostring(id) or nil
   	end
   end
 end
