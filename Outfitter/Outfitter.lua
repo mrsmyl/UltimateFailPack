@@ -805,6 +805,10 @@ Outfitter.cInvTypeToSlotName =
 	INVTYPE_WEAPONMAINHAND = {SlotName = "MainHandSlot"},
 	INVTYPE_WEAPONOFFHAND = {SlotName = "SecondaryHandSlot"},
 	INVTYPE_WRIST = {SlotName = "WristSlot"},
+	INVTYPE_RANGED = {SlotName = "MainHandSlot"},
+	INVTYPE_RANGEDRIGHT = {SlotName = "MainHandSlot"},
+	INVTYPE_THROWN = {SlotName = "MainHandSlot"},
+	INVTYPE_RELIC = {SlotName = "MainHandSlot"},
 }
 
 Outfitter.cHalfAlternateStatSlot =
@@ -1851,20 +1855,7 @@ function Outfitter:DeleteSelectedOutfit()
 end
 
 function Outfitter:TalentsChanged()
-	if self.PlayerClass == "WARRIOR" then
-		local vNumTalents = GetNumTalents(2)
-		
-		for vTalentIndex = 1, vNumTalents do
-			local vTalentName, vIconPath, vTier, vColumn, vCurrentRank, vMaxRank, vIsExceptional, vMeetsPrereq = GetTalentInfo(2, vTalentIndex)
-			
-			if vIconPath == "Interface\\Icons\\Ability_Warrior_TitansGrip" then
-				self.CanDualWield2H = vCurrentRank == 1
-				break
-			end
-		end
-	else
-		self.CanDualWield2H = false
-	end
+	self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
 end
 
 function Outfitter:SetScript(pOutfit, pScript)

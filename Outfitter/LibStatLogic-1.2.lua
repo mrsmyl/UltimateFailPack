@@ -27,7 +27,7 @@ Debug:
   /sldebug
 ]]
 
-local MAJOR = "LibStatLogic-1.2"
+local MAJOR = "LibStatLogic-1.2MC"
 local MINOR = "$Revision: 65 $"
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
@@ -6482,7 +6482,7 @@ end
 -- ArmorSpecActive =
 -- nil: You have an empty or non-spec armor slot
 -- 0: Appropreate armor in all slots but unspeced
--- 1, 2, 3: Appropreate armor in all slots, then its your GetPrimaryTalentTree()
+-- 1, 2, 3: Appropreate armor in all slots, then its your GetSpecialization()
 local ArmorSpecActive = nil
 local playerArmorType = ArmorSpecClasses[playerClass]
 -- Don't set any scripts if cloth class
@@ -6506,7 +6506,7 @@ if playerArmorType then
       if (select(7, GetItemInfo(item))) ~= playerArmorType then return end
     end
     -- all pass
-    ArmorSpecActive = GetPrimaryTalentTree() or 0
+    ArmorSpecActive = GetSpecialization() or 0
   end
   -- we will schedule this since PLAYER_EQUIPMENT_CHANGED fires multiple times when you switch whole sets
   ArmorSpecFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -10519,7 +10519,7 @@ function StatLogic:GetEffectFromMastery(mastery, specid, class)
   self:argCheck(mastery, 2, "number")
   self:argCheck(specid, 3, "nil", "number")
   if type(specid) ~= "number" or specid < 1 or specid > 3 then
-    specid = GetPrimaryTalentTree()
+    specid = GetSpecialization()
     if not specid then return 0 end
   end
   -- argCheck for invalid input
