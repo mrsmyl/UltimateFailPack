@@ -16,16 +16,16 @@ GatherMate.mapData = LibStub("LibMapData-1.0")
 local node_ids = {
 	["Fishing"] = {
 		[NL["Floating Wreckage"]] 				= 101, -- treasure.tga
-		[NL["Patch of Elemental Water"]] 		= 102, -- purewater.tga
-		[NL["Floating Debris"]] 				= 103, -- debris.tga
-		[NL["Oil Spill"]] 						= 104, -- oilspill.tga
+		--[NL["Patch of Elemental Water"]] 		= 102, -- purewater.tga
+		[NL["Floating Debris Pool"]]			= 103, -- debris.tga
+		--[NL["Oil Spill"]] 					= 104, -- oilspill.tga
 		[NL["Firefin Snapper School"]] 			= 105, -- firefin.tga
 		[NL["Greater Sagefish School"]] 		= 106, -- greatersagefish.tga
 		[NL["Oily Blackmouth School"]] 			= 107, -- oilyblackmouth.tga
 		[NL["Sagefish School"]] 				= 108, -- sagefish.tga
 		[NL["School of Deviate Fish"]] 			= 109, -- firefin.tga
 		[NL["Stonescale Eel Swarm"]] 			= 110, -- eel.tga
-		[NL["Muddy Churning Water"]] 			= 111, -- ZG only fishing node
+		--[NL["Muddy Churning Water"]] 			= 111, -- ZG only fishing node
 		[NL["Highland Mixed School"]] 			= 112, -- fishhook.tga
 		[NL["Pure Water"]] 						= 113, -- purewater.tga
 		[NL["Bluefish School"]] 				= 114, -- bluefish,tga
@@ -48,26 +48,26 @@ local node_ids = {
 		[NL["Musselback Sculpin School"]]		= 130,
 		[NL["Nettlefish School"]]				= 131,
 		[NL["Strange Pool"]]					= 132,
-		[NL["Schooner Wreckage"]]				= 133,
-		[NL["Waterlogged Wreckage"]]			= 134,
-		[NL["Bloodsail Wreckage"]]				= 135,
+		[NL["Schooner Wreckage Pool"]]			= 133,
+		[NL["Waterlogged Wreckage Pool"]]		= 134,
+		[NL["Bloodsail Wreckage Pool"]]			= 135,
 		-- Begin tediuous prefix mapping
-		[NL["Lesser Sagefish School"]]			= 136, -- sagefish.tga
-		[NL["Lesser Oily Blackmouth School"]] 	= 137, -- oilyblackmouth.tga
-		[NL["Sparse Oily Blackmouth School"]] 	= 138, -- oilyblackmouth.tga
-		[NL["Abundant Oily Blackmouth School"]]	= 139, -- oilyblackmouth.tga
-		[NL["Teeming Oily Blackmouth School"]]	= 140, -- oilyblackmouth.tga
-		[NL["Lesser Firefin Snapper School"]] 	= 141, -- firefin.tga
-		[NL["Sparse Firefin Snapper School"]] 	= 142, -- firefin.tga
-		[NL["Abundant Firefin Snapper School"]]	= 143, -- firefin.tga
-		[NL["Teeming Firefin Snapper School"]] 	= 144, -- firefin.tga
-		[NL["Lesser Floating Debris"]] 			= 145, -- debris.tga
-		[NL["Sparse Schooner Wreckage"]]		= 146,
-		[NL["Abundant Bloodsail Wreckage"]]		= 147,
-		[NL["Teeming Floating Wreckage"]]		= 148,
+		--[NL["Lesser Sagefish School"]]		= 136, -- sagefish.tga
+		--[NL["Lesser Oily Blackmouth School"]] = 137, -- oilyblackmouth.tga
+		--[NL["Sparse Oily Blackmouth School"]] = 138, -- oilyblackmouth.tga
+		--[NL["Abundant Oily Blackmouth School"]]	= 139, -- oilyblackmouth.tga
+		--[NL["Teeming Oily Blackmouth School"]]= 140, -- oilyblackmouth.tga
+		--[NL["Lesser Firefin Snapper School"]] = 141, -- firefin.tga
+		--[NL["Sparse Firefin Snapper School"]] = 142, -- firefin.tga
+		--[NL["Abundant Firefin Snapper School"]]= 143, -- firefin.tga
+		--[NL["Teeming Firefin Snapper School"]]= 144, -- firefin.tga
+		--[NL["Lesser Floating Debris"]] 		= 145, -- debris.tga
+		--[NL["Sparse Schooner Wreckage"]]		= 146,
+		--[NL["Abundant Bloodsail Wreckage"]]	= 147,
+		--[NL["Teeming Floating Wreckage"]]		= 148,
 		-- Placeholder till i can verify names
 		[NL["Albino Cavefish School"]]			= 149,
-		[NL["Algaefin Rockfish School"]]		= 150,
+		--[NL["Algaefin Rockfish School"]]		= 150,
 		[NL["Blackbelly Mudfish School"]]		= 151,
 		[NL["Fathom Eel Swarm"]]				= 152,
 		[NL["Highland Guppy School"]]			= 153,
@@ -84,6 +84,9 @@ local node_ids = {
 		[NL["Redbelly Mandarin School"]]		= 163,
 		[NL["Reef Octopus Swarm"]]				= 164,
 		[NL["Floating Shipwreck Debris"]]		= 165,
+		[NL["Jewel Danio School"]]				= 166,
+		[NL["Spinefish School"]]				= 167,
+		[NL["Tiger Gourami School"]]			= 168,
 	},
 	["Mining"] = {
 		[NL["Copper Vein"]] 					= 201,
@@ -120,7 +123,7 @@ local node_ids = {
 		[NL["Rich Saronite Deposit"]]			= 232,
 -- Cata nodes
 		[NL["Obsidium Deposit"]]				= 233,
-		[NL["Huge Obsidian Slab"]]				= 234,
+		--[NL["Huge Obsidian Slab"]]			= 234,
 		[NL["Pure Saronite Deposit"]] 			= 235,
 		[NL["Elementium Vein"]]					= 236,
 		[NL["Rich Elementium Vein"]]			= 237,
@@ -131,6 +134,10 @@ local node_ids = {
 		[NL["Rich Ghost Iron Deposit"]] 		= 242,
 		[NL["Black Trillium Deposit"]]			= 243,
 		[NL["White Trillium Deposit"]]			= 244,
+		[NL["Kyparite Deposit"]]				= 245,
+		[NL["Rich Kyparite Deposit"]]			= 246,
+		[NL["Trillium Vein"]]					= 247,
+		[NL["Rich Trillium Vein"]]				= 248,
 		-- Kyparite Ore needs to find out what this spawns from
 	},
 	["Extract Gas"] = {
@@ -158,7 +165,7 @@ local node_ids = {
 		[NL["Fadeleaf"]] 						= 413,
 		[NL["Goldthorn"]] 						= 414,
 		[NL["Khadgar's Whisker"]] 				= 415,
-		[NL["Wintersbite"]] 					= 416,
+		--[NL["Wintersbite"]] 					= 416,
 		[NL["Firebloom"]] 						= 417,
 		[NL["Purple Lotus"]] 					= 418,
 		--[NL["Wildvine"]] 						= 419, -- found in purple lotus nodes
@@ -170,9 +177,9 @@ local node_ids = {
 		[NL["Golden Sansam"]] 					= 425,
 		[NL["Dreamfoil"]] 						= 426,
 		[NL["Mountain Silversage"]] 			= 427,
-		[NL["Plaguebloom"]] 					= 428,
+		--[NL["Plaguebloom"]] 					= 428,
 		[NL["Icecap"]] 							= 429,
-		[NL["Bloodvine"]] 						= 430, -- zg bush loot
+		--[NL["Bloodvine"]] 					= 430, -- zg bush loot
 		[NL["Black Lotus"]] 					= 431,
 		[NL["Felweed"]] 						= 432,
 		[NL["Dreaming Glory"]] 					= 433,
@@ -187,7 +194,7 @@ local node_ids = {
 		[NL["Netherdust Bush"]] 				= 442,
 		[NL["Adder's Tongue"]]					= 443,
 		--[NL["Constrictor Grass"]]				= 444, -- drop form others
-		--[NL["Deadnettle"]]						= 445, --looted from other plants
+		--[NL["Deadnettle"]]					= 445, --looted from other plants
 		[NL["Goldclover"]]						= 446,
 		[NL["Icethorn"]]						= 447,
 		[NL["Lichbloom"]]						= 448,
@@ -225,9 +232,9 @@ local node_ids = {
 		[NL["Buccaneer's Strongbox"]] 			= 508,
 		[NL["Large Mithril Bound Chest"]] 		= 509,
 		[NL["Large Darkwood Chest"]] 			= 510,
-		[NL["Un'Goro Dirt Pile"]] 				= 511,
+		--[NL["Un'Goro Dirt Pile"]] 			= 511,
 		[NL["Bloodpetal Sprout"]] 				= 512,
-		[NL["Blood of Heroes"]] 				= 513,
+		--[NL["Blood of Heroes"]] 				= 513,
 		[NL["Practice Lockbox"]] 				= 514,
 		[NL["Battered Footlocker"]] 			= 515,
 		[NL["Waterlogged Footlocker"]] 			= 516,
@@ -259,6 +266,7 @@ local node_ids = {
 		[NL["Dart's Nest"]]						= 542,
 		[NL["Razormaw Matriarch's Nest"]]		= 543,
 		[NL["Ravasaur Matriarch's Nest"]]		= 544,
+		[NL["Dark Soil"]]						= 545,
 	},
 	["Archaeology"] = {
 		-- cata archeolgy objects
@@ -306,19 +314,19 @@ local rare_spawns = {
 	[232] = {[231]=true}, -- rich saronite node
 	[230] = {[231]=true}, -- titanium node
 	[441] = {[440]=true}, --flame cap
-	[136] = {[108]=true}, -- sage fish
-	[137] = {[107]=true}, --oily
-	[138] = {[107]=true}, --oily
-	[139] = {[107]=true}, --oily
-	[140] = {[107]=true}, --oily
-	[141] = {[105]=true}, --snapper
-	[142] = {[105]=true}, --snapper
-	[143] = {[105]=true}, --snapper
-	[144] = {[105]=true}, --snapper
-	[145] = {[103]=true}, --debris
-	[146] = {[133]=true}, --schooner
-	[147] = {[135]=true}, --bloodsail
-	[148] = {[101]=true}, -- floating wreckage
+	--[136] = {[108]=true}, -- sage fish
+	--[137] = {[107]=true}, --oily
+	--[138] = {[107]=true}, --oily
+	--[139] = {[107]=true}, --oily
+	--[140] = {[107]=true}, --oily
+	--[141] = {[105]=true}, --snapper
+	--[142] = {[105]=true}, --snapper
+	--[143] = {[105]=true}, --snapper
+	--[144] = {[105]=true}, --snapper
+	--[145] = {[103]=true}, --debris
+	--[146] = {[133]=true}, --schooner
+	--[147] = {[135]=true}, --bloodsail
+	--[148] = {[101]=true}, -- floating wreckage
 	[239] = {[233]=true}, -- obsidian
 	[237] = {[236]=true}, -- rich elementium
 	[238] = {[236]=true}, -- pyrtite
@@ -357,16 +365,16 @@ Display:SetSkillProfession("Archaeology", L["Archaeology"])
 local node_textures = {
 	["Fishing"] = {
 		[101] = icon_path.."Fish\\treasure.tga",
-		[102] = icon_path.."Fish\\purewater.tga",
+		--[102] = icon_path.."Fish\\purewater.tga",
 		[103] = icon_path.."Fish\\debris.tga",
-		[104] = icon_path.."Fish\\oilspill.tga",
+		--[104] = icon_path.."Fish\\oilspill.tga",
 		[105] = icon_path.."Fish\\firefin.tga",
 		[106] = icon_path.."Fish\\greater_sagefish.tga",
 		[107] = icon_path.."Fish\\oilyblackmouth.tga",
 		[108] = icon_path.."Fish\\sagefish.tga",
 		[109] = icon_path.."Fish\\firefin.tga",
 		[110] = icon_path.."Fish\\eel.tga",
-		[111] = icon_path.."Fish\\net.tga",
+		--[111] = icon_path.."Fish\\net.tga",
 		[112] = icon_path.."Fish\\fish_hook.tga",
 		[113] = icon_path.."Fish\\purewater.tga",
 		[114] = icon_path.."Fish\\bluefish.tga",
@@ -391,22 +399,22 @@ local node_textures = {
 		[133] = icon_path.."Fish\\treasure.tga",
 		[134] = icon_path.."Fish\\treasure.tga",
 		[135] = icon_path.."Fish\\treasure.tga",
-		[136] = icon_path.."Fish\\sagefish.tga",
-		[137] = icon_path.."Fish\\oilyblackmouth.tga",
-		[138] = icon_path.."Fish\\oilyblackmouth.tga",
-		[139] = icon_path.."Fish\\oilyblackmouth.tga",
-		[140] = icon_path.."Fish\\oilyblackmouth.tga",
-		[141] = icon_path.."Fish\\firefin.tga",
-		[142] = icon_path.."Fish\\firefin.tga",
-		[143] = icon_path.."Fish\\firefin.tga",
-		[144] = icon_path.."Fish\\firefin.tga",
-		[145] = icon_path.."Fish\\debris.tga",
-		[146] = icon_path.."Fish\\treasure.tga",
-		[147] = icon_path.."Fish\\treasure.tga",
-		[148] = icon_path.."Fish\\treasure.tga",
+		--[136] = icon_path.."Fish\\sagefish.tga",
+		--[137] = icon_path.."Fish\\oilyblackmouth.tga",
+		--[138] = icon_path.."Fish\\oilyblackmouth.tga",
+		--[139] = icon_path.."Fish\\oilyblackmouth.tga",
+		--[140] = icon_path.."Fish\\oilyblackmouth.tga",
+		--[141] = icon_path.."Fish\\firefin.tga",
+		--[142] = icon_path.."Fish\\firefin.tga",
+		--[143] = icon_path.."Fish\\firefin.tga",
+		--[144] = icon_path.."Fish\\firefin.tga",
+		--[145] = icon_path.."Fish\\debris.tga",
+		--[146] = icon_path.."Fish\\treasure.tga",
+		--[147] = icon_path.."Fish\\treasure.tga",
+		--[148] = icon_path.."Fish\\treasure.tga",
 		-- Placeholder graphics
 		[149] = icon_path.."Fish\\salmon.tga",
-		[150] = icon_path.."Fish\\goby.tga",
+		--[150] = icon_path.."Fish\\goby.tga",
 		[151] = icon_path.."Fish\\mudfish.tga",
 		[152] = icon_path.."Fish\\feel.tga",
 		[153] = icon_path.."Fish\\hguppy.tga",
@@ -422,7 +430,10 @@ local node_textures = {
 		[162] = icon_path.."Fish\\paddle_fish.tga",
 		[163] = icon_path.."Fish\\redbelly.tga",
 		[164] = icon_path.."Fish\\reef_octopus.tga",
-		[165] = icon_path.."Fish\\treasure.tga",
+		[165] = icon_path.."Fish\\debris.tga",
+		[166] = icon_path.."Fish\\jewel.tga",
+		[167] = icon_path.."Fish\\spine.tga",
+		[168] = icon_path.."Fish\\tiger.tga",
 	},
 	["Mining"] = {
 		[201] = icon_path.."Mine\\copper.tga",
@@ -459,7 +470,7 @@ local node_textures = {
 		[231] = icon_path.."Mine\\saronite.tga",
 		[232] = icon_path.."Mine\\saronite.tga",
 		[233] = icon_path.."Mine\\obsidian.tga",
-		[234] = icon_path.."Mine\\store_tablet.tga",
+		--[234] = icon_path.."Mine\\store_tablet.tga",
 		[235] = icon_path.."Mine\\saronite.tga",
 		[236] = icon_path.."Mine\\elementium.tga",
 		[237] = icon_path.."Mine\\elementium.tga",
@@ -468,8 +479,12 @@ local node_textures = {
 		[240] = icon_path.."Mine\\pyrite.tga",
 		[241] = icon_path.."Mine\\ghostiron.tga",
 		[242] = icon_path.."Mine\\ghostiron.tga",
-		[243] = icon_path.."Mine\\black_trilium.tga",
+		[243] = icon_path.."Mine\\black_trillium.tga",
 		[244] = icon_path.."Mine\\white_trillium.tga",
+		[245] = icon_path.."Mine\\kyparite.tga",
+		[246] = icon_path.."Mine\\kyparite.tga",
+		[247] = icon_path.."Mine\\white_trillium.tga",
+		[248] = icon_path.."Mine\\black_trillium.tga",
 	},
 	["Extract Gas"] = {
 		[301] = icon_path.."Gas\\windy_cloud.tga",
@@ -496,7 +511,7 @@ local node_textures = {
 		[413] = icon_path.."Herb\\fadeleaf.tga",
 		[414] = icon_path.."Herb\\goldthorn.tga",
 		[415] = icon_path.."Herb\\khadgars_whisker.tga",
-		[416] = icon_path.."Herb\\wintersbite.tga",
+		--[416] = icon_path.."Herb\\wintersbite.tga",
 		[417] = icon_path.."Herb\\firebloom.tga",
 		[418] = icon_path.."Herb\\purple_lotus.tga",
 		[419] = icon_path.."Herb\\purple_lotus.tga",
@@ -508,9 +523,9 @@ local node_textures = {
 		[425] = icon_path.."Herb\\golden_sansam.tga",
 		[426] = icon_path.."Herb\\dreamfoil.tga",
 		[427] = icon_path.."Herb\\mountain_silversage.tga",
-		[428] = icon_path.."Herb\\plaguebloom.tga",
+		--[428] = icon_path.."Herb\\plaguebloom.tga",
 		[429] = icon_path.."Herb\\icecap.tga",
-		[430] = icon_path.."Herb\\purple_lotus.tga",
+		--[430] = icon_path.."Herb\\purple_lotus.tga",
 		[431] = icon_path.."Herb\\black_lotus.tga",
 		[432] = icon_path.."Herb\\felweed.tga",
 		[433] = icon_path.."Herb\\dreaming_glory.tga",
@@ -549,8 +564,7 @@ local node_textures = {
 		[464] = icon_path.."Herb\\snow_lily.tga",
 		[465] = icon_path.."Herb\\silkweed.tga",
 		[466] = icon_path.."Herb\\green_tea_leaf.tga",
-		[467] = icon_path.."Herb\\raid_poppy.tga",
-		[467] = icon_path.."Herb\\raid_poppy.tga",
+		[467] = icon_path.."Herb\\rain_poppy.tga",
 		[468] = icon_path.."Herb\\shaherb.tga",
 	},
 	["Treasure"] = {
@@ -564,9 +578,9 @@ local node_textures = {
 		[508] = icon_path.."Treasure\\chest.tga",
 		[509] = icon_path.."Treasure\\chest.tga",
 		[510] = icon_path.."Treasure\\chest.tga",
-		[511] = icon_path.."Treasure\\soil.tga",
+		--[511] = icon_path.."Treasure\\soil.tga",
 		[512] = icon_path.."Treasure\\sprout.tga",
-		[513] = icon_path.."Treasure\\blood.tga",
+		--[513] = icon_path.."Treasure\\blood.tga",
 		[514] = icon_path.."Treasure\\footlocker.tga",
 		[515] = icon_path.."Treasure\\footlocker.tga",
 		[516] = icon_path.."Treasure\\footlocker.tga",
@@ -598,6 +612,7 @@ local node_textures = {
 		[542] = icon_path.."Treasure\\red_raptor.tga",
 		[543] = icon_path.."Treasure\\red_raptor.tga",
 		[544] = icon_path.."Treasure\\green_raptor.tga",
+		[545] = icon_path.."Treasure\\soil.tga",
 	},
 	["Archaeology"] = {
 		[601] = icon_path.."Archaeology\\shovel.tga",
@@ -653,7 +668,7 @@ local node_minharvest = {
 		[231] = 400,
 		[232] = 425,
 		[233] = 425,
-		[234] = 450,
+		--[234] = 450,
 		[235] = 450,
 		[236] = 475,
 		[237] = 500,
@@ -664,6 +679,10 @@ local node_minharvest = {
 		[242] = 550,
 		[243] = 550,
 		[244] = 550,
+		[245] = 550,
+		[246] = 575,
+		[247] = 600,
+		[248] = 600,
 	},
 	["Extract Gas"] = {
 		[301] = 305,
@@ -690,7 +709,7 @@ local node_minharvest = {
 		[413] = 160,
 		[414] = 170,
 		[415] = 160,
-		[416] = 195,
+		--[416] = 195,
 		[417] = 205,
 		[418] = 210,
 		[419] = 210,
@@ -702,9 +721,9 @@ local node_minharvest = {
 		[425] = 260,
 		[426] = 270,
 		[427] = 280,
-		[428] = 285,
+		--[428] = 285,
 		[429] = 290,
-		[430] = 300,
+		--[430] = 300,
 		[431] = 300,
 		[432] = 300,
 		[433] = 315,
@@ -726,8 +745,7 @@ local node_minharvest = {
 		[449] = 385,
 		[450] = 375,
 		[451] = 360,
-		[452] = 415,
-		[452] = 425,
+		[452] = 400,
 		[453] = 425,
 		[454] = 195,
 		[455] = 285,
@@ -737,12 +755,12 @@ local node_minharvest = {
 		[459] = 475,
 		[460] = 525,
 		[461] = 500,
-		[462] = 500,
-		[463] = 500,
-		[464] = 500,
-		[465] = 500,
+		[462] = 550,
+		[463] = 600,
+		[464] = 575,
+		[465] = 545,
 		[466] = 500,
-		[467] = 500,
+		[467] = 525,
 		[468] = 575,
 	},
 }

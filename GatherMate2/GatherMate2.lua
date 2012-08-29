@@ -105,8 +105,25 @@ function GatherMate:OnInitialize()
 		self:UpgradePhasing()
 		self.db.global.data_version = 1
 	end
+	-- depractaion scan
+	if self.db.global.data_version == 1 then
+		self:RemoveDepracatedNodes()
+		self.db.global.data_version = 2
+	end
 end
 
+function GatherMate:RemoveDepracatedNodes()
+	for database,storage in pairs(self.gmdbs) do
+		for zone,data in pairs(storage) do
+			for coord,value in pairs(data) do
+				local name = self:GetNameForNode(database,value)
+				if not name then
+					data[coord] = nil
+				end
+			end
+		end
+	end
+end
 
 function GatherMate:UpgradePhasing()
 	for database,storage in pairs(self.gmdbs) do
@@ -382,6 +399,7 @@ function GatherMate:CleanupDB()
 			end
 		end
 	end
+	self:RemoveDepracatedNodes()
 	self:SendMessage("GatherMate2Cleanup")
 	self:Print(L["Cleanup Complete."])
 end

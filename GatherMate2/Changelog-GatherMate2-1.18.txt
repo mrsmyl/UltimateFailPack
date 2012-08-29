@@ -1,0 +1,24 @@
+tag 1.18
+ecf1b2b06f2f54fa6a4de239d3adc21599f88c69
+Hendrik Leppkes <h.leppkes@gmail.com>
+2012-08-28 07:12:16 +0200
+
+Tag as 1.18
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Update toc for 5.0
+	- Fix italian locale file and actually load it.
+Sal Scotto:
+	- fixed Frozen herb min level to 400
+	- Renamed a texture and updates constants
+	- Updated skill levels for herbs, Thanks Yoshimo
+	- fixed typo in rain_poppy icon name
+	- formmated a comment, to get a repackage with locaizer updates
+	- Added dark soil treasure node
+	- fixed typo in deprcation check
+	- After an Import we run a deprcation check as well as when we run a cleanup db
+	- Removed a bunch of depracted nodes, and added a few missing fishing nodes for mist. deprcated nodes i.e. no longer exists should be removed from your db automatically
+	- Added some more MOP mineral nodes
