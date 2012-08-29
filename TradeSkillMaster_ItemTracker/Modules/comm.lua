@@ -45,7 +45,9 @@ function Comm:DoSync()
 	friends = {}
 	for i=1, GetNumFriends() do
 		local name, _, _, _, isOnline = GetFriendInfo(i)
-		friends[strlower(GetFriendInfo(i))] = isOnline
+		if name then
+			friends[strlower(name)] = isOnline
+		end
 	end
 	for name in pairs(TSM.db.factionrealm.charactersToSync) do
 		if friends[name] then
