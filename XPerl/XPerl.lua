@@ -6,8 +6,8 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 669 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 669 $")
+XPerl_SetModuleRevision("$Revision: 679 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 679 $")
  
 --Some local copies for speed
 local strsub = strsub
@@ -48,6 +48,8 @@ local isMOP = select(4, _G.GetBuildInfo()) >= 50000
 local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
 local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
 local GetPrimaryTalentTree  =  isMOP and GetSpecialization or GetPrimaryTalentTree 
+
+local GetNumTalentTabs = isMOP and GetNumSpecializations or GetNumTalentTabs
 
 --[===[@debug@
 local function d(...)
@@ -1476,7 +1478,7 @@ local function GetTalentPosition(findName)
 end
 
 local function GetTalentValueByName(name)
-	local group = GetActiveTalentGroup()
+	local group = GetActiveSpecGroup()
 	local tab, index = GetTalentPosition(name)
 	if (index) then
 		local name, iconPath, tier, column, currentRank, maxRank, isExceptional, meetsPrereq = GetTalentInfo(tab, index, nil, nil, group)

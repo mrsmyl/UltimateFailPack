@@ -8,6 +8,7 @@
 	<Script file="localization.zhTW.lua"/>
 	<Script file="localization.koKR.lua"/>
 	<Script file="localization.ruRU.lua"/>
+	<Script file="localization.itIT.lua"/>
 	<Script file="XPerl_RaidMonitor.lua"/>
 
 	<Button name="XPerl_RaidMonitor_BasicButton" virtual="true">

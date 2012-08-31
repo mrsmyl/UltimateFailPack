@@ -2,116 +2,133 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-if (GetLocale() == "zhCN") then
-XPerl_LongDescription	= "全新外观的玩家状态框，包括玩家、宠物、队伍、团队、目标、目标的目标、焦点、团队"
+if (GetLocale() == "itIT") then
+XPerl_ProductName		= "|cFFD00000X-Perl|r UnitFrames"
+XPerl_ShortProductName	= "|cFFD00000X-Perl|r"
+XPerl_Author			= "|cFFFF8080Zek|r"
+XPerl_Description		= XPerl_ProductName.." di "..XPerl_Author
+XPerl_VersionNumber 	= "3.5.3"
+XPerl_Version			= XPerl_Description.." - "..XPerl_VersionNumber
+XPerl_LongDescription	= "Sostituzione dell'UnitFrame del Personaggio, Famiglio, Gruppo, Bersaglio, Bersaglio del Bersaglio, Focus e Incursioni"
+XPerl_ModMenuIcon		= "Interface\\Icons\\INV_Misc_Gem_Pearl_02"
 
---XPERL_COMMS_PREFIX		= "X-Perl"
-XPERL_MINIMAP_HELP1	= "|c00FFFFFF左键点击|r打开选项（并解锁框体）"
-XPERL_MINIMAP_HELP2	= "|c00FFFFFF右键点击|r拖动图标"
-XPERL_MINIMAP_HELP3	= "\r团队成员: |c00FFFF80%d|r\r小队成员: |c00FFFF80%d|r"
-XPERL_MINIMAP_HELP4	= "\r你是此 队伍/团队 队长"
-XPERL_MINIMAP_HELP5	= "|c00FFFFFFAlt|r  X-Perl 内存占用"
-XPERL_MINIMAP_HELP6	= "|c00FFFFFF+Shift|r  X-Perl 启用以来的内存占用"
+XPERL_COMMS_PREFIX		= "X-Perl"
+XPERL_MINIMAP_HELP1		= "|c00FFFFFFClick Sinistro|r per le opzioni (e per |c0000FF00sbloccare le finestre|r)"
+XPERL_MINIMAP_HELP2		= "|c00FFFFFFClick Destro|r per spostare questa icona"
+XPERL_MINIMAP_HELP3		= "\rMembri reali dell'incursione: |c00FFFF80%d|r\rMembri reali del gruppo: |c00FFFF80%d|r"
+XPERL_MINIMAP_HELP4		= "\rSei il capogruppo/capoincursione reale"
+XPERL_MINIMAP_HELP5		= "|c00FFFFFFAlt|r per info sull'uso di memoria di X-Perl"
+XPERL_MINIMAP_HELP6		= "|c00FFFFFF+Maiusc|r per l'uso di memoria di X-Perl dall'avvio"
 
-XPERL_MINIMENU_OPTIONS	= "选项"
-XPERL_MINIMENU_ASSIST	= "显示助手窗口"
-XPERL_MINIMENU_CASTMON	= "显示施法监控窗口"
-XPERL_MINIMENU_RAIDAD	= "显示团队管理窗口"
-XPERL_MINIMENU_ITEMCHK	= "显示物品检查窗口"
-XPERL_MINIMENU_RAIDBUFF = "团队Buff"
-XPERL_MINIMENU_ROSTERTEXT="名单文字"
-XPERL_MINIMENU_RAIDSORT = "分组设置"
-XPERL_MINIMENU_RAIDSORT_GROUP = "按照队伍"
-XPERL_MINIMENU_RAIDSORT_CLASS = "按照职业"
+XPERL_MINIMENU_OPTIONS	= "Opzioni"
+XPERL_MINIMENU_ASSIST	= "Visualizza finestra assist"
+XPERL_MINIMENU_CASTMON	= "Visualizza monitor dei lanci delle magie"
+XPERL_MINIMENU_RAIDAD	= "Visualizza Amministratore Incursione"
+XPERL_MINIMENU_ITEMCHK	= "Visualizza Controllo Oggetti"
+XPERL_MINIMENU_RAIDBUFF = "Buff Incursione"
+XPERL_MINIMENU_ROSTERTEXT="Roster Text"
+XPERL_MINIMENU_RAIDSORT = "Riorganizzazione Incursione"
+XPERL_MINIMENU_RAIDSORT_GROUP = "Organizza per gruppo"
+XPERL_MINIMENU_RAIDSORT_CLASS = "Organizza per classe"
 
-XPERL_TYPE_NOT_SPECIFIED = "未指定"
-XPERL_TYPE_PET		= PET		--"宠物"
-XPERL_TYPE_BOSS		= "首领"
-XPERL_TYPE_RAREPLUS	= "银英"
-XPERL_TYPE_ELITE	= "精英"
-XPERL_TYPE_RARE		= "稀有"
+XPERL_TYPE_NOT_SPECIFIED = "Non specificato"
+XPERL_TYPE_PET		= PET			-- "Pet"
+XPERL_TYPE_BOSS 	= "Boss"
+XPERL_TYPE_RAREPLUS = "Raro+"
+XPERL_TYPE_ELITE	= "Elite"
+XPERL_TYPE_RARE 	= "Raro"
 
 -- Zones
-XPERL_LOC_ZONE_SERPENTSHRINE_CAVERN = "毒蛇神殿"
-XPERL_LOC_ZONE_BLACK_TEMPLE = "黑暗神殿"
-XPERL_LOC_ZONE_HYJAL_SUMMIT = "海加尔峰"
-XPERL_LOC_ZONE_KARAZHAN = "卡拉赞"
-XPERL_LOC_ZONE_SUNWELL_PLATEAU = "太阳之井高地"
-XPERL_LOC_ZONE_ULDUAR = "奥杜尔"
-XPERL_LOC_ZONE_TRIAL_OF_THE_CRUSADER = "十字军的试炼"
-XPERL_LOC_ZONE_ICECROWN_CITADEL = "冰冠堡垒"
-XPERL_LOC_ZONE_RUBY_SANCTUM = "红玉圣殿"
+XPERL_LOC_ZONE_SERPENTSHRINE_CAVERN	= "Serpentshrine Cavern"
+XPERL_LOC_ZONE_BLACK_TEMPLE			= "Black Temple"
+XPERL_LOC_ZONE_HYJAL_SUMMIT			= "Hyjal Summit"
+XPERL_LOC_ZONE_KARAZHAN				= "Karazhan"
+XPERL_LOC_ZONE_SUNWELL_PLATEAU		= "Sunwell Plateau"
+XPERL_LOC_ZONE_NAXXRAMAS			= "Naxxramas"
+XPERL_LOC_ZONE_OBSIDIAN_SANCTUM		= "The Obsidian Sanctum"
+XPERL_LOC_ZONE_EYE_OF_ETERNITY		= "The Eye of Eternity"
+XPERL_LOC_ZONE_ULDUAR				= "Ulduar"
+XPERL_LOC_ZONE_TRIAL_OF_THE_CRUSADER= "Trial of the Crusader"
+XPERL_LOC_ZONE_ICECROWN_CITADEL		= "Icecrown Citadel"
+XPERL_LOC_ZONE_RUBY_SANCTUM			= "The Ruby Sanctum"
+--Any zones 4.x and higher can all be localized from EJ, in 5.0, even these above zones are in EJ which means the rest can go bye bye too
 
 -- Status
-XPERL_LOC_DEAD		= DEAD		--"死亡"
-XPERL_LOC_GHOST		= "幽灵"
-XPERL_LOC_FEIGNDEATH	= "假死"
-XPERL_LOC_OFFLINE	= PLAYER_OFFLINE	--"离线"
-XPERL_LOC_RESURRECTED	= "已被复活"
-XPERL_LOC_SS_AVAILABLE	= "灵魂已保存"
-XPERL_LOC_UPDATING	= "更新中"
-XPERL_LOC_ACCEPTEDRES	= "已接受"
-XPERL_RAID_GROUP		= "小队 %d"
-XPERL_RAID_GROUPSHORT	= "%d 队"
+XPERL_LOC_DEAD		= DEAD			-- "Dead"
+XPERL_LOC_GHOST 	= "Spirito"
+XPERL_LOC_FEIGNDEATH	= "Finta morte"
+XPERL_LOC_OFFLINE	= PLAYER_OFFLINE	-- "Offline"
+XPERL_LOC_RESURRECTED	= "Riportato in vita"
+XPERL_LOC_SS_AVAILABLE	= "SS Disponibile"
+XPERL_LOC_UPDATING	= "In aggiornamento"
+XPERL_LOC_ACCEPTEDRES	= "Accettata"		-- Res accepted
+XPERL_RAID_GROUP	= "Gruppo %d"
+XPERL_RAID_GROUPSHORT	= "G%d"
 
-XPERL_LOC_NONEWATCHED	= "无监控"
+XPERL_LOC_NONEWATCHED	= "none watched"
 
-XPERL_LOC_STATUSTIP	= "状态提示: "		-- Tooltip explanation of status highlight on unit
+XPERL_LOC_STATUSTIP = "Status Highlights: " 	-- Tooltip explanation of status highlight on unit
 XPERL_LOC_STATUSTIPLIST = {
-	HOT = "持续治疗",
-	AGGRO = "你仇恨过高了",
-	MISSING = "你的职业 buff 消失",
-	HEAL = "正被治疗",
-	SHIELD = "盾"
+	HOT = "Heal over Time",
+	AGGRO = "Aggro",
+	MISSING = "Missing your class' buff",
+	HEAL = "Being healed",
+	SHIELD = "Shielded"
 }
 
-XPERL_OK            	= "确定"
-XPERL_CANCEL        	= "取消"
+XPERL_OK		= "OK"
+XPERL_CANCEL		= "Annulla"
 
-XPERL_LOC_LARGENUMDIV	= 10000
-XPERL_LOC_LARGENUMTAG	= "W"
-XPERL_LOC_HUGENUMDIV	= 100000000
-XPERL_LOC_HUGENUMTAG	= "WW"
+XPERL_LOC_LARGENUMDIV	= 1000
+XPERL_LOC_LARGENUMTAG	= "K"
+XPERL_LOC_HUGENUMDIV	= 1000000
+XPERL_LOC_HUGENUMTAG	= "M"
 
-BINDING_HEADER_XPERL = "X-Perl 快捷键"
-BINDING_NAME_TOGGLERAID = "切换团队窗口"
-BINDING_NAME_TOGGLERAIDSORT = "切换团队排列方式"
-BINDING_NAME_TOGGLERAIDPETS = "切换团队宠物窗口"
-BINDING_NAME_TOGGLEOPTIONS = "切换选项窗"
-BINDING_NAME_TOGGLEBUFFTYPE = "切换增益/减益/无"
-BINDING_NAME_TOGGLEBUFFCASTABLE = "切换显示可施加/解除的增益/减益魔法"
-BINDING_NAME_TEAMSPEAKMONITOR = "显示 Teamspeak 监控图标"
-BINDING_NAME_TOGGLERANGEFINDER = "切换距离侦测"
+BINDING_HEADER_XPERL = XPerl_ProductName
+BINDING_NAME_TOGGLERAID = "Abilita/Disattiva Raid Windows"
+BINDING_NAME_TOGGLERAIDSORT = "Abilita/Disattiva riorganizzazione per classe/gruppo"
+BINDING_NAME_TOGGLERAIDPETS = "Abilita/Disattiva Raid Pets"
+BINDING_NAME_TOGGLEOPTIONS = "Abilita/Disattiva finestra opzioni"
+BINDING_NAME_TOGGLEBUFFTYPE = "Abilita/Disattiva Buffs/Debuffs/none"
+BINDING_NAME_TOGGLEBUFFCASTABLE = "Abilita/Disattiva Castable/Curable"
+BINDING_NAME_TEAMSPEAKMONITOR = "Teamspeak Monitor"
+BINDING_NAME_TOGGLERANGEFINDER = "Abilita/Disattiva Range Finder"
 
-XPERL_KEY_NOTICE_RAID_BUFFANY = "显示所有的增益/减益魔法"
-XPERL_KEY_NOTICE_RAID_BUFFCURECAST = "只显示可施放/解除的的增益/减益魔法"
-XPERL_KEY_NOTICE_RAID_BUFFS = "显示团队增益魔法"
-XPERL_KEY_NOTICE_RAID_DEBUFFS = "显示团队减益魔法"
-XPERL_KEY_NOTICE_RAID_NOBUFFS = "不显示团队增益/减益魔法"
+XPERL_KEY_NOTICE_RAID_BUFFANY = "Visualizza tutti i benefici/penalità"
+XPERL_KEY_NOTICE_RAID_BUFFCURECAST = "Visualizza solo benefici lanciabili/curabili o Only castable/curable buffs or debuffs shown"
+XPERL_KEY_NOTICE_RAID_BUFFS = "Raid Buffs shown"
+XPERL_KEY_NOTICE_RAID_DEBUFFS = "Raid Debuffs shown"
+XPERL_KEY_NOTICE_RAID_NOBUFFS = "No raid buffs shown"
 
-XPERL_DRAGHINT1		= "|c00FFFFFF点击|r 改变窗口比例"
-XPERL_DRAGHINT2		= "|c00FFFFFFShift+单击|r 改变窗口大小"
+XPERL_DRAGHINT1		= "|c00FFFFFFFai Click|r per riscalare la finestra"
+XPERL_DRAGHINT2		= "|c00FFFFFFFai Maiusc+Click|r per ridimensionare la finestra"
 
 -- Usage
-XPerlUsageNameList = {XPerl = "主体文件", XPerl_Player = "玩家", XPerl_PlayerPet = "玩家宠物", XPerl_Target = "目标", XPerl_TargetTarget = "目标的目标", XPerl_Party = "队伍", XPerl_PartyPet = "队友宠物", XPerl_RaidFrames = "团队框", XPerl_RaidHelper = "团队助手", XPerl_RaidAdmin = "团队管理", XPerl_TeamSpeak = "TS监视", XPerl_RaidMonitor = "团队监控", XPerl_RaidPets = "团队宠物", XPerl_ArcaneBar = "施法条", XPerl_PlayerBuffs = "玩家增益", XPerl_GrimReaper = "死神之收割"}
+XPerlUsageNameList	= {XPerl = "Core", XPerl_Player = "Player", XPerl_PlayerPet = "Pet", XPerl_Target = "Target", XPerl_TargetTarget = "Target's Target", XPerl_Party = "Party", XPerl_PartyPet = "Party Pets", XPerl_RaidFrames = "Raid Frames", XPerl_RaidHelper = "Raid Helper", XPerl_RaidAdmin = "Raid Admin", XPerl_TeamSpeak = "TS Monitor", XPerl_RaidMonitor = "Raid Monitor", XPerl_RaidPets = "Raid Pets", XPerl_ArcaneBar = "Arcane Bar", XPerl_PlayerBuffs = "Player Buffs", XPerl_GrimReaper = "Grim Reaper"}
 XPERL_USAGE_MEMMAX	= "UI Mem Max: %d"
-XPERL_USAGE_MODULES	= "模块: "
-XPERL_USAGE_NEWVERSION	= "*新版本"
-XPERL_USAGE_AVAILABLE	= "%s |c00FFFFFF%s|r 可下载使用"
+XPERL_USAGE_MODULES = "Moduli: "
+XPERL_USAGE_NEWVERSION	= "*Una nuova versione"
+XPERL_USAGE_AVAILABLE	= "%s |c00FFFFFF%s|r è disponibile per il download"
 
-XPERL_CMD_HELP		= "|c00FFFF80Usage: |c00FFFFFF/xperl menu | lock | unlock | config list | config delete <realm> <name>"
-XPERL_CANNOT_DELETE_CURRENT = "无法删除当前配置"
-XPERL_CONFIG_DELETED		= "删除配置信息: %s/%s"
-XPERL_CANNOT_FIND_DELETE_TARGET = "找不到要删除的配置信息: (%s/%s)"
-XPERL_CANNOT_DELETE_BADARGS = "请输入服务器以及玩家名"
-XPERL_CONFIG_LIST		= "配置列表:"
-XPERL_CONFIG_CURRENT		= " (当前)"
+XPERL_CMD_MENU		= "menu"
+XPERL_CMD_OPTIONS	= "opzioni"
+XPERL_CMD_LOCK		= "blocca"
+XPERL_CMD_UNLOCK	= "sblocca"
+XPERL_CMD_CONFIG	= "configurazioni"
+XPERL_CMD_LIST		= "elenca"
+XPERL_CMD_DELETE	= "elimina"
+XPERL_CMD_HELP		= "|c00FFFF80Utilizzo: |c00FFFFFF/xperl menu | blocca | sblocca | configurazioni elenca | configurazioni elimina <reame> <nome>"
+XPERL_CANNOT_DELETE_CURRENT = "Impossibile cancellare la tua configurazione corrente"
+XPERL_CONFIG_DELETED		= "Configurazione di %s/%s cancellata"
+XPERL_CANNOT_FIND_DELETE_TARGET = "Impossibile trovare configurazione da cancellare (%s/%s)"
+XPERL_CANNOT_DELETE_BADARGS = "Prego scrivi il del reame e quello del personaggio"
+XPERL_CONFIG_LIST		= "Elenco configurazioni:"
+XPERL_CONFIG_CURRENT		= " (In uso)"
 
-XPerl_DefaultRangeSpells.ANY = {item = "厚灵纹布绷带"}
+XPERL_RAID_TOOLTIP_WITHBUFF	= "Con buff: (%s)"
+XPERL_RAID_TOOLTIP_WITHOUTBUFF	= "Senza buff: (%s)"
+XPERL_RAID_TOOLTIP_BUFFEXPIRING	= "%s ha usato %s che finisce in %s"	-- Name, buff name, time to expire
 
-XPERL_RAID_TOOLTIP_WITHBUFF	= "有该buff的成员： (%s)"
-XPERL_RAID_TOOLTIP_WITHOUTBUFF	= "无该buff的成员： (%s)"
-XPERL_RAID_TOOLTIP_BUFFEXPIRING	= "%s的%s将在%s后过期"	-- Name, buff name, time to expire
 
 local isMOP = select(4, _G.GetBuildInfo()) >= 50000
  
@@ -294,5 +311,4 @@ XPerl_ArcaneExclusions = {
 }
 
 end
-
 end

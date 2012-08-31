@@ -1,4 +1,108 @@
 ------------------------------------------------------------------------
+r688 | tharai | 2012-08-31 12:15:16 +0000 (Fri, 31 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/localization.deDE.lua
+   M /trunk/localization.esES.lua
+   M /trunk/localization.frFR.lua
+   M /trunk/localization.koKR.lua
+   M /trunk/localization.lua
+   M /trunk/localization.ruRU.lua
+   M /trunk/localization.zhCN.lua
+   M /trunk/localization.zhTW.lua
+
+localization updates
+Bump version number so people stop crying about issues that have been fixed.
+------------------------------------------------------------------------
+r687 | asixandur | 2012-08-31 08:06:15 +0000 (Fri, 31 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+More itIT work, I won't finish that before the end of next week (so many strings)
+------------------------------------------------------------------------
+r686 | tharai | 2012-08-30 21:08:35 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Shadow priest power bar.
+------------------------------------------------------------------------
+r685 | tharai | 2012-08-30 18:37:40 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Fix focus frame issues.
+------------------------------------------------------------------------
+r684 | tharai | 2012-08-30 18:13:01 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Init.lua
+
+Remove some invalid spellids
+------------------------------------------------------------------------
+r683 | tharai | 2012-08-30 16:17:28 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Hack together talent display.
+------------------------------------------------------------------------
+r682 | asixandur | 2012-08-30 06:06:20 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   A /trunk/XPerl_Options/localization.itIT.lua
+   M /trunk/localization.itIT.lua
+
+Some more work on the itIT Locale
+------------------------------------------------------------------------
+r681 | tharai | 2012-08-30 04:28:31 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+remove some unused events, comment out some combo point code.
+------------------------------------------------------------------------
+r680 | asixandur | 2012-08-30 04:24:57 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Globals.xml
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.xml
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.xml
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.xml
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.xml
+   A /trunk/localization.itIT.lua
+
+First itIT locale file
+------------------------------------------------------------------------
+r679 | tharai | 2012-08-30 04:04:09 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+More lua changes.
+------------------------------------------------------------------------
+r678 | tharai | 2012-08-30 04:01:27 +0000 (Thu, 30 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Fix loot issues.
+------------------------------------------------------------------------
+r677 | tharai | 2012-08-29 15:58:54 +0000 (Wed, 29 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+more api changes.
+------------------------------------------------------------------------
+r676 | tharai | 2012-08-29 00:13:11 +0000 (Wed, 29 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Seriously, I always forget to recomment this stuff out.
+------------------------------------------------------------------------
+r675 | tharai | 2012-08-29 00:12:04 +0000 (Wed, 29 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Fix master loot icon in raid. Haven't tested in 5man only.
+------------------------------------------------------------------------
 r674 | tharai | 2012-08-28 22:55:44 +0000 (Tue, 28 Aug 2012) | 2 lines
 Changed paths:
    M /trunk/XPerl.toc
@@ -259,11 +363,4 @@ Changed paths:
    M /trunk/XPerl_Target/XPerl_Target.lua
 
 Improve target onevent performance.
-------------------------------------------------------------------------
-r641 | THARAI | 2012-07-21 16:15:52 +0000 (Sat, 21 Jul 2012) | 2 lines
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-
-Remove mana update from player again, use 
-UNIT_POWER_FREQUENT instead
 ------------------------------------------------------------------------

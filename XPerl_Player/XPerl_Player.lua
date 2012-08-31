@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 672 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 686 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -237,14 +237,30 @@ function XPerl_Player_UpdateLeader(self)
 
 	-- Loot Master
 	local method, index
-	if (UnitInParty("party1") or UnitInRaid("player")) then
-		method, index = GetLootMethod()
-	end
-	if (method == "master" and index == 0) then
-		nf.masterIcon:Show()
-	else
-		nf.masterIcon:Hide()
-	end
+	--if (UnitInParty("party1") or UnitInRaid("player")) then
+		method, pindex,rindex = GetLootMethod()
+	--end
+	
+	if (method == "master") then
+		--Check pindex if not in raid
+		--if (not UnitInRaid("player")) then
+		
+		--end
+		local ml;
+		
+		if (rindex ~= nil) then
+			ml = UnitIsUnit("raid"..rindex, "player");
+		elseif (pindex == 0) then
+			ml = true;
+		end
+		
+		
+		if (ml) then
+			nf.masterIcon:Show()
+		else
+			nf.masterIcon:Hide()
+		end
+	end 
 
 	-- Leader
 	if (IsPartyLeader()) then
@@ -1303,6 +1319,7 @@ function XPerl_Player_Set_Bits(self)
 	XPerl_Player_SetupDK(self)
 	--XPerl_Player_SetupMoonkin(self)
 	XPerl_Player_InitPaladin(self)
+	XPerl_Player_InitPriest(self)
 	XPerl_Player_InitMonk(self)
 	XPerl_Player_InitMoonkin(self)
 	--XPerl_Player_SetupWarlock(self)
@@ -1473,6 +1490,28 @@ function XPerl_Player_InitPaladin(self)
 		
 	end
 end
+--XPerl_Player_InitPriest
+function XPerl_Player_InitPriest(self)
+	if ( select(2,UnitClass("player")) == "PRIEST") then
+
+		--if (not PaladinPowerBar or PaladinPowerBar:GetParent() ~= PlayerFrame or not PaladinPowerBar:IsShown() or not pconf.showRunes ) then
+			-- Only hijack runes if not already done so by another mod
+		--	return
+		--end
+
+		
+		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
+		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
+		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
+		PriestBarFrame:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 0,5)
+		self.runes.unit = "player"
+		PriestBarFrame:SetParent(self.runes)--XPerl_Player)
+
+		
+	end
+end
+
+
 -- XPerl_Player_InitMonk
 function XPerl_Player_InitMonk(self)
 	if ( select(2,UnitClass("player")) == "MONK") then

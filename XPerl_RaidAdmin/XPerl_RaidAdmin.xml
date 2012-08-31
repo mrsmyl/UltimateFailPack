@@ -8,6 +8,7 @@
 	<Script file="Localization.zhTW.lua"/>
 	<Script file="Localization.koKR.lua"/>
 	<Script file="Localization.ruRU.lua"/>
+	<Script file="localization.itIT.lua"/>
 	<Script file="XPerl_RaidAdmin.lua"/>
 	<Script file="..\XPerl\XPerl_Usage.lua"/>
 

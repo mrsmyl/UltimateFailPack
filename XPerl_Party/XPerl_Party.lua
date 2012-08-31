@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 669 $")
+		end, "$Revision: 678 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -47,9 +47,9 @@ function XPerl_Party_Events_OnLoad(self)
 	-- Added UNIT_POWER/UNIT_MAXPOWER to events list for 4.0 (By PlayerLin)
 	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "RAID_ROSTER_UPDATED", "PARTY_MEMBERS_CHANGED",
 			"UNIT_PHASE", "UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
-			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
+			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"RAID_TARGET_UPDATE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_LOGIN", "UNIT_THREAT_LIST_UPDATE",
-			"PLAYER_TARGET_CHANGED"}
+			"PLAYER_TARGET_CHANGED","PARTY_LOOT_METHOD_CHANGED"}
 	for i,event in pairs(events) do
 		self:RegisterEvent(event)
 	end
@@ -561,7 +561,7 @@ end
 
 -- XPerl_Party_UpdateLeader
 local function XPerl_Party_UpdateLeader(self)
-
+	
 	if (not isMOP) then
 		if ("party"..GetPartyLeaderIndex() == self.partyid) then
 			self.nameFrame.leaderIcon:Show()
@@ -576,14 +576,18 @@ local function XPerl_Party_UpdateLeader(self)
 		end
 	end
 
+	
 	local lootMethod
 	local lootMaster
 	lootMethod, lootMaster = GetLootMethod()
-	if (self.partyid == "party"..(lootMaster or "nil")) then
-		self.nameFrame.masterIcon:Show()
-	else
-		self.nameFrame.masterIcon:Hide()
-	end	
+	
+	if (lootMethod == "master") then
+		if (self.partyid == "party"..lootMaster) then
+			self.nameFrame.masterIcon:Show()
+		else
+			self.nameFrame.masterIcon:Hide()
+		end	
+	end
 	-- Removed the call to UpdateAllAssignedRoles because UpdateLeader() is called by UpdateDisplay()
 	-- and UpdateDisplay() already call the UpdateAssignedRoles() function
 end
@@ -939,8 +943,44 @@ end
 -- 		end
 -- 	end
 -- end
+    local function list_iter (t)
+      local i = 0
+      local n = table.getn(t)
+      return function ()
+               i = i + 1
+               if i <= n then return t[i] end
+             end
+    end
 
-XPerl_Party_Events.PARTY_LOOT_METHOD_CHANGED	= XPerl_Party_Events.PARTY_LEADER_CHANGED
+
+function XPerl_Party_Events:PARTY_LOOT_METHOD_CHANGED()
+	
+	local lootMethod, pindex,rindex = GetLootMethod()
+	
+	if (lootMethod == "master") then
+	
+		for i,frame in pairs(PartyFrames) do
+			if (frame.partyid) then
+			
+				if (rindex == nil) then
+					if (frame.partyid == "party"..pindex) then
+						frame.nameFrame.masterIcon:Show()
+					else
+						frame.nameFrame.masterIcon:Hide()
+					end	
+				else
+					--If we are also in a raid group
+					if (UnitIsUnit("raid"..rindex,frame.partyid)) then
+						frame.nameFrame.masterIcon:Show()
+					else
+						frame.nameFrame.masterIcon:Hide()
+					end	
+					
+				end
+			end
+		end
+	end
+end
 
 -- RAID_TARGET_UPDATE
 function XPerl_Party_Events:RAID_TARGET_UPDATE()

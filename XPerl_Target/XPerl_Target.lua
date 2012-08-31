@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 669 $")
+			end, "$Revision: 685 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -254,7 +254,7 @@ local function XPerl_Target_DebuffUpdate(self)
 	local partyid = self.partyid
 	if (GetComboPoints(UnitHasVehicleUI("player") and "vehicle" or "player", partyid) == 0) then
 		local numDebuffs = 0
-		if (playerClass == "WARRIOR") then
+		--[[if (playerClass == "WARRIOR") then
 			numDebuffs = TargetDebuffInformation(XPERL_SPELL_SUNDER)
 		elseif (playerClass == "MAGE") then
 			if (select(5,GetTalentTabInfo(3)) > select(5,GetTalentTabInfo(2))) then
@@ -262,7 +262,7 @@ local function XPerl_Target_DebuffUpdate(self)
 			else
 				numDebuffs = TargetDebuffInformation(XPERL_SPELL_FIREV)
 			end
-		end
+		end]]--
 
 		local r, g, b = GetComboColour(numDebuffs)
 		if (tconf.combo.enable) then
@@ -482,11 +482,12 @@ end
 -- XPerl_Target_UpdateTalents
 local XPerl_Target_UpdateTalents
 do
-	local function ShowSpec(self, spec, s1, s2, s3)
+	local function ShowSpec(self, spec)--, s1, s2, s3)
 		if (self.conf.talentsAsText and type(spec) == "string") then
 			self.creatureTypeFrame.text:SetText(spec)
 		else
-			self.creatureTypeFrame.text:SetFormattedText("%d / %d / %d", s1, s2, s3)
+			--self.creatureTypeFrame.text:SetFormattedText("%d / %d / %d", s1, s2, s3)
+			self.creatureTypeFrame.text:SetText(spec)
 		end
 		self.creatureTypeFrame:SetWidth(self.creatureTypeFrame.text:GetStringWidth() + 10)
 		self.creatureTypeFrame:Show()
@@ -501,7 +502,7 @@ do
 		function UpdateTalentsLGT(self)
 			local spec, s1, s2, s3 = LGT:GetUnitTalentSpec(self.partyid)
 			if (spec) then
-				ShowSpec(self, spec, s1, s2, s3)
+				ShowSpec(self, spec)--, s1, s2, s3)
 				return true
 			end
 		end
@@ -559,35 +560,34 @@ do
 					return
 				else
 					local cached = talentCache[name]
-					local name1, name2, name3, num1, num2, num3, iconTexture, background
+					--local name1, name2, name3, num1, num2, num3, iconTexture, background
+					local name1, name2, name3, group, iconTexture, background
 					if (cached) then
-						num1, name1, num2, name2, num3, name3 = unpack(cached)
+						name1, name2, name3, group = unpack(cached)
 					elseif (inspectReady and guid == UnitGUID(partyid)) then
-						local group = GetActiveTalentGroup(remoteInspectNeeded)
+						--local group = GetSpecialization(remoteInspectNeeded)
 						local remoteInspectNeeded = not UnitIsUnit("player", partyid) or nil
-						_, name1, _, iconTexture, num1, background = GetTalentTabInfo(1, remoteInspectNeeded, nil, group)
-						_, name2, _, iconTexture, num2, background = GetTalentTabInfo(2, remoteInspectNeeded, nil, group)
-						_, name3, _, iconTexture, num3, background = GetTalentTabInfo(3, remoteInspectNeeded, nil, group)
+						--group = GetSpecialization(true)
+						group =  GetInspectSpecialization("target")
+						--print(group)
+						name1 = group and select(2, GetSpecializationInfoByID(group)) or "None"
+						
+						
+						--_, name1, _, iconTexture, num1, background = GetSpecializationInfo(1, remoteInspectNeeded, nil, group)
+						--_, name2, _, iconTexture, num2, background = GetSpecializationInfo(2, remoteInspectNeeded, nil, group)
+						--_, name3, _, iconTexture, num3, background = GetSpecializationInfo(3, remoteInspectNeeded, nil, group)
 						inspectReady = nil
 					end
 
-					if (name1 and name2 and name3) then
-						if (num1 ~= 0 or num2 ~= 0 or num3 ~= 0) then
+					
+					if (name1) then
 							if (not cached) then
-								talentCache[name] = {num1, name1, num2, name2, num3, name3}
+								talentCache[name] = {name1, name2, name3, group}
 							end
-							local title
-							if (num1 > num2 and num1 > num3) then
-								title = name1
-							elseif (num2 > num1 and num2 > num3) then
-								title = name2
-							elseif (num3 > num1 and num3 > num2) then
-								title = name3
-							end
-							ShowSpec(self, title, num1, num2, num3)
-							return
-						end
+							ShowSpec(self, name1)
 					end
+					
+
 
 					if (not cached) then
 						if (LTQ) then
@@ -879,10 +879,12 @@ local function XPerl_Target_UpdateLeader(self)
 		end
 
 	elseif (UnitInParty(partyid)) then
-		local index = GetPartyLeaderIndex()
-		if (index > 0) then
-			leader = UnitIsUnit(partyid, "party"..index)
-		end
+		--local index = GetPartyLeaderIndex()
+		--if (index > 0) then
+		--	leader = UnitIsUnit(partyid, "party"..index)
+		--end
+		
+		leader = UnitIsGroupLeader(partyid);
 	end
 
 	if (leader) then
@@ -892,9 +894,12 @@ local function XPerl_Target_UpdateLeader(self)
 	end
 
 	-- We can't determine who is master looter in raid if not in current party... :(
+	--Don't think this is the case anymore.... -- Cexikitin
 	local ml
-	if (UnitInParty("party1") or UnitInRaid("player")) then
-		local method, index = GetLootMethod()
+	--if (UnitInParty("party1") or UnitInRaid("player")) then
+	
+		method, pindex,rindex = GetLootMethod()
+		--[[local method, index = GetLootMethod()
 
 		if (method == "master" and index) then
 			if (index == 0 and UnitIsUnit("player", partyid)) then
@@ -902,8 +907,23 @@ local function XPerl_Target_UpdateLeader(self)
 			elseif (index >= 1 and index <= 4) then
 				ml = UnitIsUnit(partyid, "party"..index)
 			end
+		end]]--
+		--print(rindex)
+		--print(partyid)
+		
+		if (method == "master") then
+			if (rindex ~= nil) then
+				if (UnitIsUnit("raid"..rindex, partyid)) then
+					ml = true
+				end
+			else
+				if (UnitIsUnit("party"..pindex, partyid) or (pindex == 0 and UnitIsUnit("player", partyid))) then
+					ml = true
+				end
+			end
 		end
-	end
+		
+	--end
 
 	if (ml) then
 		self.nameFrame.masterIcon:Show()
@@ -1047,7 +1067,7 @@ XPerl_ShowMessage("EXTRA EVENT")
 	local unitid = select(1,...);
 	if (strsub(event, 1, 5) == "UNIT_") then
 	
-	 	if (unitid == "target") then
+	 	if (unitid == "target" or unitid == "focus") then
 		--print(event)
 			func(self, ...)
 		end

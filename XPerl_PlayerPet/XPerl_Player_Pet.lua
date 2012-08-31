@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 648 $")
+		end, "$Revision: 681 $")
 local XPerl_Player_Pet_HighlightCallback
 
 -- XPerl_Player_Pet_OnLoad
@@ -66,10 +66,10 @@ function XPerl_Player_Pet_OnLoad(self)
 
 	--RegisterUnitWatch(self)
         --Added UNIT_POWER/UNIT_MAXPOWER shit on events list by PlayerLin
-	local events = {"UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_MAXENERGY", "UNIT_MAXMANA", "UNIT_MAXRUNIC_POWER",
+	local events = {
 					"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_POWER",
 					"UNIT_MAXPOWER", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
-					"UNIT_MANA", "UNIT_ENERGY", "UNIT_RUNIC_POWER", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE",
+					"UNIT_FACTION", "UNIT_PORTRAIT_UPDATE",
 					"UNIT_FLAGS", "UNIT_DYNAMIC_FLAGS", "UNIT_AURA",
 					"UNIT_PET", "PET_ATTACK_START", "UNIT_COMBAT", "UNIT_SPELLMISS", "VARIABLES_LOADED",
 					"PLAYER_REGEN_ENABLED", "PLAYER_ENTERING_WORLD", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE",
