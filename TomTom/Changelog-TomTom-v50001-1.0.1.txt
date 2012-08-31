@@ -1,0 +1,13 @@
+tag v50001-1.0.1
+bf94c2b3851b4413359903ddc3cc95e26f997a08
+James Whitehead II <jnwhiteh@gmail.com>
+2012-08-29 22:00:24 +0100
+
+Tagging v50001-1.0.1
+
+
+--------------------
+
+James Whitehead II:
+	- Update libraries
+	- Fix integer overflow issue

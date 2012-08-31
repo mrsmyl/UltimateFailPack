@@ -7,7 +7,7 @@
 -- Simple localization table for messages
 local L = TomTomLocals
 local ldb = LibStub("LibDataBroker-1.1")
-local astrolabe = DongleStub("TTAstrolabe-1.0")
+local astrolabe = DongleStub("Astrolabe-1.0")
 local lmd = LibStub("LibMapData-1.0")
 
 local addonName, addon = ...
@@ -198,7 +198,7 @@ function TomTom:GetKeyArgs(m, f, x, y, title)
 	local x = x * 10000
 	local y = y * 10000
 
-    local key = string.format("%d:%d:%d:%d:%s", m, f, x*10e4, y*10e4, tostring(title))
+    local key = string.format("%d:%d:%s:%s:%s", m, f, x*10e4, y*10e4, tostring(title))
 	return key
 end
 
