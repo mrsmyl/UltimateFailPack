@@ -1,0 +1,77 @@
+------------------------------------------------------------------------
+r277 | yossa | 2012-08-31 20:18:36 +0000 (Fri, 31 Aug 2012) | 1 line
+Changed paths:
+   A /tags/2.31 (from /trunk:276)
+
+Tagging as 2.31
+------------------------------------------------------------------------
+r276 | yossa | 2012-08-31 20:16:58 +0000 (Fri, 31 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/UI/MainFrame.lua
+
+Skillet:
+-
+
+------------------------------------------------------------------------
+r275 | yossa | 2012-08-31 20:12:11 +0000 (Fri, 31 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/.pkgmeta
+
+Skillet:
+-libdialog repo fix
+
+------------------------------------------------------------------------
+r274 | yossa | 2012-08-31 20:05:08 +0000 (Fri, 31 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/UI/MainFrame.lua
+
+Skillet:
+- check nil
+
+------------------------------------------------------------------------
+r273 | yossa | 2012-08-31 19:01:02 +0000 (Fri, 31 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+
+Skillet:
+- version up
+
+------------------------------------------------------------------------
+r272 | yossa | 2012-08-31 19:00:31 +0000 (Fri, 31 Aug 2012) | 4 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+   M /trunk/SkilletData.lua
+   M /trunk/SkilletPlugin.lua
+   M /trunk/UI/MainFrame.lua
+   M /trunk/UI/RecipeNotes.lua
+   M /trunk/UI/Sorting.lua
+   M /trunk/UI/Utils.lua
+
+Skillet:
+- use lib dialog
+- cleaned usage of global _ - taint in glyph ui
+
+------------------------------------------------------------------------
+r271 | yossa | 2012-08-31 18:58:20 +0000 (Fri, 31 Aug 2012) | 3 lines
+Changed paths:
+   M /trunk/.pkgmeta
+
+Skillet:
+- libdialog
+
+------------------------------------------------------------------------
+r268 | yossa | 2012-08-23 20:53:00 +0000 (Thu, 23 Aug 2012) | 4 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+   M /trunk/SkilletData.lua
+   M /trunk/UI/MerchantWindow.lua
+   M /trunk/UI/MerchantWindow.xml
+
+Skillet:
+- bugfix for WoW 5.0
+- added /skillet reset to reset window position
+
+------------------------------------------------------------------------

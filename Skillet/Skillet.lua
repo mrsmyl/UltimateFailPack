@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ]]--
 
-local MAJOR_VERSION = "2.3"
-local MINOR_VERSION = ("$Revision: 268 $"):match("%d+") or 1
-local DATE = string.gsub("$Date: 2012-08-23 20:53:00 +0000 (Thu, 23 Aug 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
+local MAJOR_VERSION = "2.31"
+local MINOR_VERSION = ("$Revision: 273 $"):match("%d+") or 1
+local DATE = string.gsub("$Date: 2012-08-31 19:01:02 +0000 (Fri, 31 Aug 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
 
 Skillet = LibStub("AceAddon-3.0"):NewAddon("Skillet", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
 Skillet.title   = "Skillet"
@@ -529,7 +529,8 @@ end
 function Skillet:OnInitialize()
 	self.db = AceDB:New("SkilletDB", defaults)
 
-	_,_,_,self.wowVersion = GetBuildInfo();
+	local _,_,_,wowVersion = GetBuildInfo();
+	self.wowVersion = wowVersion
 
 	self:InitializeDatabase((UnitName("player")), false)  --- force clean rescan for now
 

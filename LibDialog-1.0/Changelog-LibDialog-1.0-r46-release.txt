@@ -1,0 +1,8 @@
+2011-10-03  James D. Callahan III  <darkenelf@gmail.com>
+
+[31887cda4fea] [r46-release]
+* LibDialog-1.0.lua:
+
+Added support for dialog durations.
+
+
