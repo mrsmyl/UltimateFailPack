@@ -422,9 +422,9 @@ function HealBot_Action_SetrSpell()
 			HealBot_rSpell=HEALBOT_RESURRECTION
 			x=HEALBOT_RESURRECTION
 		end
-		if HealBot_GetSpellId(HEALBOT_CURE_DISEASE) then 
-			HealBot_dSpell=HEALBOT_CURE_DISEASE
-			x=HEALBOT_CURE_DISEASE
+		if HealBot_GetSpellId(HEALBOT_PURIFY) then 
+			HealBot_dSpell=HEALBOT_PURIFY
+			x=HEALBOT_PURIFY
 		end
 		if HealBot_GetSpellId(HEALBOT_POWER_WORD_FORTITUDE) then 
 			HealBot_bSpell=HEALBOT_POWER_WORD_FORTITUDE
@@ -439,9 +439,9 @@ function HealBot_Action_SetrSpell()
 			HealBot_rSpell=HEALBOT_ANCESTRALSPIRIT
 			x=HEALBOT_ANCESTRALSPIRIT
 		end
-		if HealBot_GetSpellId(HEALBOT_CLEANSE_SPIRIT) then 
-			HealBot_dSpell=HEALBOT_CLEANSE_SPIRIT
-			x=HEALBOT_CLEANSE_SPIRIT
+		if HealBot_GetSpellId(HEALBOT_PURIFY_SPIRIT) then 
+			HealBot_dSpell=HEALBOT_PURIFY_SPIRIT
+			x=HEALBOT_PURIFY_SPIRIT
 		end
 		if HealBot_GetSpellId(HEALBOT_EARTH_SHIELD) then 
 			HealBot_bSpell=HEALBOT_EARTH_SHIELD
@@ -450,6 +450,23 @@ function HealBot_Action_SetrSpell()
 		if HealBot_GetSpellId(HEALBOT_HEALING_WAVE) then 
 			HealBot_hSpell=HEALBOT_HEALING_WAVE
 			x=HEALBOT_HEALING_WAVE
+		end
+    elseif strsub(HealBot_PlayerClassEN,1,4)=="MONK" then
+		if HealBot_GetSpellId(HEALBOT_RESUSCITATE) then 
+			HealBot_rSpell=HEALBOT_RESUSCITATE
+			x=HEALBOT_RESUSCITATE
+		end
+		if HealBot_GetSpellId(HEALBOT_DETOX) then 
+			HealBot_dSpell=HEALBOT_DETOX
+			x=HEALBOT_DETOX
+		end
+		if HealBot_GetSpellId(HEALBOT_LEGACY_EMPEROR) then 
+			HealBot_bSpell=HEALBOT_LEGACY_EMPEROR
+			x=HEALBOT_LEGACY_EMPEROR
+		end
+		if HealBot_GetSpellId(HEALBOT_SOOTHING_MIST) then 
+			HealBot_hSpell=HEALBOT_SOOTHING_MIST
+			x=HEALBOT_SOOTHING_MIST
 		end
     elseif strsub(HealBot_PlayerClassEN,1,4)=="WARL" then
 		if HealBot_GetSpellId(HEALBOT_UNENDING_BREATH) then 
@@ -790,18 +807,25 @@ end
 
 local hbPetLevel = 1
 function HealBot_CorrectPetHealth(unit,hlth,maxhlth,hbGUID)
+    if maxhlth==0 then maxhlth=hlth end
     if not hbGUID then return maxhlth end
     if not HealBot_PetMaxH[hbGUID] then
         hbPetLevel=UnitLevel(unit)
-        if hbPetLevel>70 then
-            if hlth<3550 then
-                HealBot_PetMaxH[hbGUID]=hbPetLevel*50
+        if hbPetLevel>80 then
+            if hlth<8100 then
+                HealBot_PetMaxH[hbGUID]=hbPetLevel*100
+            else
+                HealBot_PetMaxH[hbGUID]=hlth;
+            end
+        elseif hbPetLevel>70 then
+            if hlth<5325 then
+                HealBot_PetMaxH[hbGUID]=hbPetLevel*75
             else
                 HealBot_PetMaxH[hbGUID]=hlth;
             end
         elseif hbPetLevel>60 then
-            if hlth<2745 then
-                HealBot_PetMaxH[hbGUID]=hbPetLevel*45
+            if hlth<3050 then
+                HealBot_PetMaxH[hbGUID]=hbPetLevel*50
             else
                 HealBot_PetMaxH[hbGUID]=hlth;
             end
@@ -1277,6 +1301,9 @@ function HealBot_Action_HBText(hlth,maxhlth,unitName,unit,healin, hbGUID)
         if Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin]==1 and Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin]==2 and UnitClass(unit) then
             if Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin]==1 then
                 hbRole=UnitGroupRolesAssigned(unit)    
+                if hbRole=="NONE" and HealBot_UnitRole[hbGUID] then
+                    hbRole=HealBot_UnitRole[hbGUID]
+                end
                 if hbRole=="DAMAGER" then
                     clTxt=HEALBOT_WORD_DAMAGER
                 elseif hbRole=="HEALER" then
@@ -1605,7 +1632,7 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         if Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin]==1 and Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin]==1 then
             icon15:SetTexture([[Interface\AddOns\HealBot\Images\icon_class.tga]]);
         else
-           -- icon15:SetTexCoord(0,1,0,1);
+        --    icon15:SetTexCoord(0,1,0,1);
             icon15:SetAlpha(0);
         end
         if Healbot_Config_Skins.HoTonBar[Healbot_Config_Skins.Current_Skin]==1 then
@@ -1988,8 +2015,9 @@ function HealBot_Action_CheckRange(unit, button)
         end
         if HealBot_UnitRange[unit]==-2 then
             --HealBot_AddDebug("HealBot_UnitRange[unit]==-2 unit="..unit)
-            if HealBot_UnitGUID(unit) then
-                HealBot_Action_RefreshButton(button, HealBot_UnitGUID(unit))
+            xGUID=HealBot_UnitGUID(unit)
+            if xGUID then
+                HealBot_Action_RefreshButton(button, xGUID)
             elseif unit==button.guid then
                 HealBot_Action_RefreshButton(button, button.guid)
             end
@@ -2758,6 +2786,7 @@ local hbClassCols = {
           ["DRUI"] = {r=1.0,  g=0.49, b=0.04, },
           ["HUNT"] = {r=0.67, g=0.83, b=0.45, },
           ["MAGE"] = {r=0.41, g=0.8,  b=0.94, },
+          ["MONK"] = {r=0.0,  g=1.0,  b=0.59, },
           ["PALA"] = {r=0.96, g=0.55, b=0.73, },
           ["PRIE"] = {r=1.0,  g=1.0,  b=1.0,  },
           ["ROGU"] = {r=1.0,  g=0.96, b=0.41, },
@@ -3752,6 +3781,7 @@ local HealBot_Mounts = {
     [97359]="F",
     [98204]="G",
     [98727]="G",
+    [129552]="G",
 };
 -- Codes
 --

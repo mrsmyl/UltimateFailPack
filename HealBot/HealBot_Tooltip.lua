@@ -190,23 +190,25 @@ function HealBot_Action_RefreshTooltip(unit, state)
     if HealBot_Globals.Tooltip_ShowTarget==1 then
         if uName then
             r,g,b=HealBot_Action_RetHealBot_ClassCol(xGUID, unit)
-            if UnitClass(unit) then
+            if UnitClass(unit) and UnitClass(unit)~=uName then
                 if HealBot_Globals.QueryTalents==1 and not HealBot_InspectUnit and HealBot_UnitSpec[xGUID] and (doTalentRequest[xGUID] or 0)==1 then
                     if HealBot_UnitSpec[xGUID]==" " or not HealBot_IsFighting then
                         HealBot_InspectUnit=true
                         HealBot_TalentQuery(unit)
                     end
                 end
-                text = HealBot_UnitSpec[xGUID] or " " 
-                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,"Level "..UnitLevel(unit)..text..UnitClass(unit),r,g,b,1)                
-            else 
+                text = HealBot_UnitSpec[xGUID] or "" 
+                HealBot_Tooltip_SetLine(linenum,text..uName,r,g,b,1,"Level "..UnitLevel(unit).." "..UnitClass(unit),r,g,b,1)                
+            elseif UnitLevel(unit) then
+                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,"Level "..UnitLevel(unit),r,g,b,1)    
+            else
                 HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1)     
             end      
       
             zone=nil;
             if HealBot_PlayerName==uName or UnitIsVisible(unit) then
                 zone=GetRealZoneText();
-            elseif GetNumRaidMembers()>0 and unit~="target" then
+            elseif GetNumGroupMembers()>0 and unit~="target" then
                 if strsub(unit,1,4)~="raid" then
                     if UnitInRaid(unit) then
                         for r=1,40 do
@@ -440,38 +442,14 @@ local retSpellName, retSpellNameShow=nil, nil
 function HealBot_Tooltip_setspellName(unit, spellName, uName)
     retSpellName, retSpellNameShow=spellName, spellName
     if spellName and not hbCommands[strlower(spellName)] then
-        if spellName==HEALBOT_HOLY_WORD_CHASTISE then 
-            if HealBot_HasUnitBuff(HEALBOT_CHAKRA_HEAL, "player", "player") then
-                retSpellNameShow=HEALBOT_HOLY_WORD_SERENITY
-                if HealBot_Globals.Tooltip_ShowCD==1 then
-                    z, x, _ = GetSpellCooldown(HEALBOT_HOLY_WORD_SERENITY);
-                    if x and x>1 then 
-                        z = HealBot_Comm_round(x-(GetTime()-z),1)
-                        retSpellNameShow=retSpellNameShow..HEALBOT_TOOLTIP_CD..z..HEALBOT_TOOLTIP_SECS 
-                    end
-                end
-            elseif HealBot_HasUnitBuff(HEALBOT_CHAKRA_POH, "player", "player") then
-                retSpellNameShow=HEALBOT_HOLY_WORD_SANCTUARY
-                if HealBot_Globals.Tooltip_ShowCD==1 then
-                    z, x, _ = GetSpellCooldown(HEALBOT_HOLY_WORD_SANCTUARY);
-                    if x and x>1 then 
-                        z = HealBot_Comm_round(x-(GetTime()-z),1)
-                        retSpellNameShow=retSpellNameShow..HEALBOT_TOOLTIP_CD..z..HEALBOT_TOOLTIP_SECS 
-                    end
-                end
-            else
-                retSpellName, retSpellNameShow = HealBot_Tooltip_GetHealSpell(unit,spellName,uName)
-            end
-        else
-            x=GetMacroIndexByName(spellName)
-            if x==0 then 
-                retSpellName, retSpellNameShow = HealBot_Tooltip_GetHealSpell(unit,spellName,uName) 
-                if retSpellName and HealBot_Globals.Tooltip_ShowCD==1 then
-                    z, x, _ = GetSpellCooldown(retSpellName);
-                    if x and x>1 then 
-                        z = HealBot_Comm_round(x-(GetTime()-z),1)
-                        retSpellNameShow=retSpellNameShow..HEALBOT_TOOLTIP_CD..z..HEALBOT_TOOLTIP_SECS 
-                    end
+        x=GetMacroIndexByName(spellName)
+        if x==0 then 
+            retSpellName, retSpellNameShow = HealBot_Tooltip_GetHealSpell(unit,spellName,uName) 
+            if retSpellName and HealBot_Globals.Tooltip_ShowCD==1 then
+                z, x, _ = GetSpellCooldown(retSpellName);
+                if x and x>1 then 
+                    z = HealBot_Comm_round(x-(GetTime()-z),1)
+                    retSpellNameShow=retSpellNameShow..HEALBOT_TOOLTIP_CD..z..HEALBOT_TOOLTIP_SECS 
                 end
             end
         end
@@ -751,7 +729,9 @@ end
 
 function HealBot_Tooltip_GetHealSpell(unit,pattern,unitName)
  
-    if not HealBot_Spells[pattern] then
+    if HealBot_Globals.spellIDs[pattern] then
+        id = HealBot_Globals.spellIDs[pattern];
+    elseif not HealBot_Spells[pattern] then
         id = HealBot_GetSpellId(pattern);
     elseif HealBot_Spells[pattern].id then
         id = HealBot_Spells[pattern].id

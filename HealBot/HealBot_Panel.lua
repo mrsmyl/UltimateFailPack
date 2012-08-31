@@ -312,6 +312,7 @@ local HealBot_ClassIconCoord = {
     WARLOCK = {2,4},
     PALADIN = {3,1},
     DEATHKNIGHT = {3,2},
+    MONK = {3,3},
     DEFAULT = {4,4}};
     
 local role_tex_file = "Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES.blp"
@@ -337,8 +338,20 @@ function HealBot_Action_SetClassIconTexture(button, unit, hbGUID)
     bar = HealBot_Action_HealthBar(button);
     if not bar then return end
     iconName = _G[bar:GetName().."Icon15"];   
-    unitRole=UnitGroupRolesAssigned(unit)    
-    if Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin]==1 and unitRole~="NONE" then
+    a=0
+    if Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin]==1 then
+        unitRole=UnitGroupRolesAssigned(unit)  
+        if unitRole=="NONE" then
+            xGUID=HealBot_UnitGUID(unit)
+            if xGUID and HealBot_UnitRole[xGUID] then
+                unitRole=HealBot_UnitRole[xGUID]
+            end
+        end
+        if unitRole=="DAMAGER" or unitRole=="HEALER" or unitRole=="TANK" or unitRole=="LEADER" then
+            a=1
+        end
+    end
+    if a==1 then
         iconName:SetTexture(role_tex_file);
         a,b,c,d = getRoleTexCoord(unitRole);
         iconName:SetTexCoord(a,b,c,d);
@@ -350,6 +363,7 @@ function HealBot_Action_SetClassIconTexture(button, unit, hbGUID)
         iconName:SetTexCoord(left,left+0.25,top,top+0.25);
     end
 end
+
 
 local thisX=nil
 local HealBot_ResetHeaderSkinDone={}
@@ -715,10 +729,11 @@ end
 
 function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
 
-    local nraid=GetNumRaidMembers();
+    local nraid=GetNumGroupMembers();
     local MyHealTargets=nil
     numHeaders = 0
     TempMaxH=9;
+    if not IsInRaid() then nraid=0 end;
   
     for x,_ in pairs(HealBot_TrackNames) do
         HealBot_TrackNames[x]=nil;
@@ -834,6 +849,9 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                         end
                     else
 						aRole = UnitGroupRolesAssigned(xUnit)
+                        if aRole=="NONE" and HealBot_UnitRole[xGUID] then
+                            aRole=HealBot_UnitRole[xGUID]
+                        end
 						if aRole=="TANK" then
 							HealBot_unitRole[xGUID]=hbRole[HEALBOT_MAINTANK]
 							HealBot_addExtraTank(xGUID)
@@ -844,6 +862,9 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
 						else
 							HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORDS_UNKNOWN]
 						end
+                    end
+                    if not HealBot_UnitRole[xGUID] then
+                        if aRole=="DAMAGER" or aRole=="HEALER" or aRole=="TANK" then HealBot_UnitRole[xGUID]=aRole end
                     end
                     if (not online and not HealBot_Action_retUnitOffline(xGUID)) or HealBot_Action_retUnitOffline(xGUID) then
                         HealBot_Action_UnitIsOffline(xGUID)
@@ -857,6 +878,9 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                     xGUID=HealBot_UnitGUID(xUnit)
                     HealBot_GroupGUID[xGUID]=1
                     aRole = UnitGroupRolesAssigned(xUnit)
+                    if aRole=="NONE" and HealBot_UnitRole[xGUID] then
+                        aRole=HealBot_UnitRole[xGUID]
+                    end
                     if aRole=="TANK" then
                         HealBot_unitRole[xGUID]=hbRole[HEALBOT_MAINTANK]
                         HealBot_addExtraTank(xGUID)
@@ -866,6 +890,9 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                         HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORD_DPS]
                     else
                         HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORDS_UNKNOWN]
+                    end
+                    if not HealBot_UnitRole[xGUID] then
+                        if aRole=="DAMAGER" or aRole=="HEALER" or aRole=="TANK" then HealBot_UnitRole[xGUID]=aRole end
                     end
                     if (not UnitIsConnected(xUnit) and not HealBot_Action_retUnitOffline(xGUID)) or HealBot_Action_retUnitOffline(xGUID) then
                         HealBot_Action_UnitIsOffline(xGUID)
@@ -956,7 +983,7 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                     end
                 else
                     for _,xUnit in ipairs(HealBot_Action_HealGroup) do
-                        xGUID=UnitGUID(xUnit);
+                        xGUID=HealBot_UnitGUID(xUnit);
                         if xGUID and not HealBot_TrackNames[xGUID] then
                             if HealBot_MainTanks[xGUID] or ((HealBot_unitRole[xGUID] or "x")==hbRole[HEALBOT_MAINTANK]) then
                                 HealBot_MainTanks[xGUID]=xUnit
@@ -1031,7 +1058,7 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                     end
                 else
                     for _,xUnit in ipairs(HealBot_Action_HealGroup) do
-                        xGUID=UnitGUID(xUnit);
+                        xGUID=HealBot_UnitGUID(xUnit);
                         if xGUID and not HealBot_TrackNames[xGUID] then
                             if HealBot_MainTanks[xGUID] or ((HealBot_unitRole[xGUID] or "x")==hbRole[HEALBOT_MAINASSIST]) then
                                 HealBot_MainTanks[xGUID]=xUnit
@@ -1488,7 +1515,7 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                         xUnit=units[j];
                         if UnitExists(xUnit) then
                             class,classEN = UnitClass(xUnit)
-                            xGUID=UnitGUID(xUnit)
+                            xGUID=HealBot_UnitGUID(xUnit)
                             TempUnitMaxH=UnitHealthMax(xUnit)
                         else
                             classEN = "WARRIOR";

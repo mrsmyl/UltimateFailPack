@@ -177,7 +177,7 @@ function HealBot_Comms_Zone()
     elseif HealBotAddonMsgType==4 then
         HealBot_AddChat(HEALBOT_CHAT_ADDONID.."AddonComms=WHISPER")
     end
-    HealBot_AddChat(HEALBOT_CHAT_ADDONID.."#Raid="..GetNumRaidMembers().."   #Party="..GetNumPartyMembers())
+    HealBot_AddChat(HEALBOT_CHAT_ADDONID.."#Group="..GetNumGroupMembers())
 end
 
 local mult = 0

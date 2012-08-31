@@ -53,6 +53,7 @@ local HealBot_Options_BuffTxt_List = {
     HEALBOT_DRUID,
     HEALBOT_HUNTER,
     HEALBOT_MAGE,
+    HEALBOT_MONK,
     HEALBOT_PALADIN,
     HEALBOT_PRIEST,
     HEALBOT_ROGUE,
@@ -95,6 +96,10 @@ local HealBot_Buff_Spells_Total_List = {
         HEALBOT_MOLTEN_ARMOR,
         HEALBOT_FOCUS_MAGIC,
     },
+    ["MONK"] = {
+        HEALBOT_LEGACY_EMPEROR,
+      --  HEALBOT_LEGACY_WHITETIGER,
+    },
     ["PALA"] = {
         HEALBOT_BLESSING_OF_MIGHT,
         HEALBOT_BLESSING_OF_KINGS,
@@ -104,13 +109,7 @@ local HealBot_Buff_Spells_Total_List = {
         HEALBOT_HAND_OF_SALVATION,
         HEALBOT_RIGHTEOUS_FURY,
         HEALBOT_DEVOTION_AURA,
-        HEALBOT_RETRIBUTION_AURA,
-        HEALBOT_AURA_MASTERY,
-        HEALBOT_CONCENTRATION_AURA,
-        HEALBOT_CRUSADER_AURA,
-        HEALBOT_RESISTANCE_AURA,
         HEALBOT_BEACON_OF_LIGHT,
-        HEALBOT_SACRED_SHIELD,
         HEALBOT_SEAL_OF_RIGHTEOUSNESS,
         HEALBOT_SEAL_OF_JUSTICE,
         HEALBOT_SEAL_OF_INSIGHT,
@@ -129,7 +128,9 @@ local HealBot_Buff_Spells_Total_List = {
         HEALBOT_SHADOW_PROTECTION,
         HEALBOT_SHADOWFORM,
         HEALBOT_VAMPIRIC_EMBRACE,
-		HEALBOT_CHAKRA,
+		HEALBOT_CHAKRA_SANCTUARY,
+        HEALBOT_CHAKRA_SERENITY,
+        HEALBOT_CHAKRA_CHASTISE,
     },
     ["ROGU"] = {
     },
@@ -190,22 +191,14 @@ function HealBot_Options_InitBuffList()
 end
 
 local HealBot_Debuff_Spells = {
-  ["PALA"] = {
-    HEALBOT_CLEANSE,
-                      },
-  ["DRUI"] = {
-    HEALBOT_REMOVE_CORRUPTION,
-                    },
-  ["PRIE"] = {
-    HEALBOT_CURE_DISEASE,
-    HEALBOT_DISPEL_MAGIC,
-                     },
-  ["SHAM"] = {
-    HEALBOT_CLEANSE_SPIRIT,
-                       },
+  ["PALA"] = {HEALBOT_CLEANSE,},
+  ["DRUI"] = {HEALBOT_REMOVE_CORRUPTION, HEALBOT_NATURES_CURE,},
+  ["PRIE"] = {HEALBOT_PURIFY,},
+  ["SHAM"] = {HEALBOT_PURIFY_SPIRIT,},
   ["HUNT"] = {},
   ["MAGE"] = {HEALBOT_REMOVE_CURSE,},
   ["ROGU"] = {},
+  ["MONK"] = {HEALBOT_DETOX,},
   ["WARL"] = {},
   ["WARR"] = {},
   ["DEAT"] = {},
@@ -217,6 +210,7 @@ local HealBot_Racial_Debuff_Spells = {
   ["Nig"] = {},
   ["Gno"] = {},
   ["Dra"] = {},
+  ["Pan"] = {},
   ["Orc"] = {},
   ["Sco"] = {}, -- Undead
   ["Tau"] = {},
@@ -230,37 +224,26 @@ local HealBot_Debuff_Types = {
   [HEALBOT_CLEANSE] = {HEALBOT_DISEASE_en, HEALBOT_POISON_en, HEALBOT_MAGIC_en},
   [HEALBOT_REMOVE_CURSE] = {HEALBOT_CURSE_en},
   [HEALBOT_REMOVE_CORRUPTION] = {HEALBOT_CURSE_en, HEALBOT_POISON_en},
-  [HEALBOT_CURE_DISEASE] = {HEALBOT_DISEASE_en},
-  [HEALBOT_DISPEL_MAGIC] = {HEALBOT_MAGIC_en},
+  [HEALBOT_NATURES_CURE] = {HEALBOT_MAGIC_en, HEALBOT_CURSE_en, HEALBOT_POISON_en},
+  [HEALBOT_PURIFY] = {HEALBOT_MAGIC_en, HEALBOT_DISEASE_en},
   [HEALBOT_PURIFICATION_POTION] = {HEALBOT_CURSE_en, HEALBOT_DISEASE_en, HEALBOT_POISON_en},
   [HEALBOT_ANTI_VENOM] = {HEALBOT_POISON_en},
   [HEALBOT_POWERFUL_ANTI_VENOM] = {HEALBOT_POISON_en},
   [HEALBOT_ELIXIR_OF_POISON_RES] = {HEALBOT_POISON_en},
   [HEALBOT_STONEFORM] = {HEALBOT_DISEASE_en, HEALBOT_POISON_en},
-  [HEALBOT_CLEANSE_SPIRIT] = {HEALBOT_CURSE_en},
+  [HEALBOT_PURIFY_SPIRIT] = {HEALBOT_MAGIC_en, HEALBOT_CURSE_en},
+  [HEALBOT_DETOX] = {HEALBOT_DISEASE_en, HEALBOT_POISON_en},
 }
 
 function HealBot_Options_setDebuffTypes()
-    if strsub(HealBot_PlayerClassEN,1,4)=="SHAM" then
-        if HealBot_HasTalent(3,12,HEALBOT_IMPROVED_CLEANSE_SPIRIT)==1 then
-            HealBot_Debuff_Types[HEALBOT_CLEANSE_SPIRIT] = {HEALBOT_MAGIC_en, HEALBOT_CURSE_en}
-        else
-            HealBot_Debuff_Types[HEALBOT_CLEANSE_SPIRIT] = {HEALBOT_CURSE_en}
-        end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="PRIE" then
-        HealBot_setluVar("BodyAndSoul",HealBot_HasTalent(2,14,HEALBOT_BODY_AND_SOUL))
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="DRUI" then
-        if HealBot_HasTalent(3,17,HEALBOT_NATURES_CURE)==1 then
-            HealBot_Debuff_Types[HEALBOT_REMOVE_CORRUPTION] = {HEALBOT_MAGIC_en, HEALBOT_CURSE_en, HEALBOT_POISON_en}
-        else
-            HealBot_Debuff_Types[HEALBOT_REMOVE_CORRUPTION] = {HEALBOT_CURSE_en, HEALBOT_POISON_en}
-        end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="PALA" then
+    if strsub(HealBot_PlayerClassEN,1,4)=="PALA" then
         if HealBot_HasTalent(1,14,HEALBOT_SACRED_CLEANSING)==1 then
             HealBot_Debuff_Types[HEALBOT_CLEANSE] = {HEALBOT_DISEASE_en, HEALBOT_POISON_en, HEALBOT_MAGIC_en}
         else
             HealBot_Debuff_Types[HEALBOT_CLEANSE] = {HEALBOT_DISEASE_en, HEALBOT_POISON_en}
         end
+    elseif strsub(HealBot_PlayerClassEN,1,4)=="MONK" then
+        HealBot_AddDebug("--> Need to check MONK spec, see HealBot_Options_setDebuffTypes()")
     end
 end
 
@@ -503,7 +486,6 @@ function HealBot_Options_setNewSkin(newSkinName)
     Healbot_Config_Skins.ShowHoTicons[newSkinName] = Healbot_Config_Skins.ShowHoTicons[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIcon[newSkinName] = Healbot_Config_Skins.ShowRaidIcon[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIconStar[newSkinName] = Healbot_Config_Skins.ShowRaidIconStar[Healbot_Config_Skins.Current_Skin]
-    Healbot_Config_Skins.ShowRole[newSkinName] = Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] 
     Healbot_Config_Skins.ShowRaidIconCircle[newSkinName] = Healbot_Config_Skins.ShowRaidIconCircle[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIconDiamond[newSkinName] = Healbot_Config_Skins.ShowRaidIconDiamond[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowRaidIconTriangle[newSkinName] = Healbot_Config_Skins.ShowRaidIconTriangle[Healbot_Config_Skins.Current_Skin]
@@ -518,6 +500,7 @@ function HealBot_Options_setNewSkin(newSkinName)
     Healbot_Config_Skins.HoTx2Bar[newSkinName] = Healbot_Config_Skins.HoTx2Bar[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowClassOnBar[newSkinName] = Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowClassType[newSkinName] = Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin]
+    Healbot_Config_Skins.ShowRole[newSkinName] = Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] 
     Healbot_Config_Skins.ShowNameOnBar[newSkinName] = Healbot_Config_Skins.ShowNameOnBar[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.ShowHealthOnBar[newSkinName] = Healbot_Config_Skins.ShowHealthOnBar[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.BarHealthIncHeals[newSkinName] = Healbot_Config_Skins.BarHealthIncHeals[Healbot_Config_Skins.Current_Skin]
@@ -693,7 +676,6 @@ function HealBot_Options_DeleteSkin_OnClick(self)
         Healbot_Config_Skins.UseFluidBars[hbDelSkinName] = nil
         Healbot_Config_Skins.BarFreq[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowHoTicons[hbDelSkinName] = nil
-        Healbot_Config_Skins.ShowRole[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowRaidIcon[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowRaidIconStar[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowRaidIconCircle[hbDelSkinName] = nil
@@ -710,6 +692,7 @@ function HealBot_Options_DeleteSkin_OnClick(self)
         Healbot_Config_Skins.HoTx2Bar[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowClassOnBar[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowClassType[hbDelSkinName] = nil
+        Healbot_Config_Skins.ShowRole[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowNameOnBar[hbDelSkinName] = nil
         Healbot_Config_Skins.ShowHealthOnBar[hbDelSkinName] = nil
         Healbot_Config_Skins.BarHealthIncHeals[hbDelSkinName] = nil
@@ -1667,7 +1650,7 @@ function HealBot_Options_DisableCheck()
         z=0
     elseif HealBot_Config.DisableSolo==0 then
         z=1
-    elseif GetNumRaidMembers()==0 and GetNumPartyMembers()==0 then
+    elseif GetNumGroupMembers()==0 then
         z=1
     else
         z=0
@@ -2137,14 +2120,13 @@ function HealBot_Options_ShowClassOnBarType_OnClick(self,id)
     end
 end
 
+function HealBot_Options_ProtectPvP_OnClick(self)
+    HealBot_Globals.ProtectPvP = self:GetChecked() or 0;
+end
+
 function HealBot_Options_ShowRoleOnBar_OnClick(self)
     Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] = self:GetChecked() or 0;
     HealBot_setOptions_Timer(150)
-end
-
-
-function HealBot_Options_ProtectPvP_OnClick(self)
-    HealBot_Globals.ProtectPvP = self:GetChecked() or 0;
 end
 
 --------------------------------------------------------------------------------
@@ -3216,6 +3198,14 @@ local HealBot_Options_SelectHealSpellsCombo_List = {
     HEALBOT_MENDPET,
     HEALBOT_HEALTH_FUNNEL,
     HEALBOT_HOLY_WORD_SERENITY,
+    HEALBOT_SOOTHING_MIST,
+    HEALBOT_ZEN_MEDITATION,
+    HEALBOT_LIFE_COCOON,
+    HEALBOT_ENVELOPING_MIST,
+    HEALBOT_REVIVAL,
+    HEALBOT_RENEWING_MIST,
+    HEALBOT_UPLIFT,
+    HEALBOT_SURGING_MIST,
 }
 local hbHelpHealSelect=nil
 local hbHealDDlist=nil
@@ -3289,12 +3279,13 @@ local HealBot_Options_SelectOtherSpellsCombo_List = {
     HEALBOT_INNERVATE,
     HEALBOT_TREE_OF_LIFE,
     HEALBOT_ANCESTRALSPIRIT,
+    HEALBOT_RESUSCITATE,
     HEALBOT_CLEANSE,
     HEALBOT_REMOVE_CURSE,
     HEALBOT_REMOVE_CORRUPTION,
-    HEALBOT_CURE_DISEASE,
-    HEALBOT_DISPEL_MAGIC,
-    HEALBOT_CLEANSE_SPIRIT,
+    HEALBOT_NATURES_CURE,
+    HEALBOT_PURIFY,
+    HEALBOT_PURIFY_SPIRIT,
     HEALBOT_LIFE_TAP,
     HEALBOT_DIVINE_SHIELD,
     HEALBOT_DIVINE_PROTECTION,
@@ -3307,6 +3298,7 @@ local HealBot_Options_SelectOtherSpellsCombo_List = {
 	HEALBOT_WATER_SHIELD,
 	HEALBOT_WATER_BREATHING,
 	HEALBOT_WATER_WALKING,
+    HEALBOT_DETOX,
 }
 local hbHelpOtherSelect=nil
 local hbOtherDDlist=nil
@@ -3797,7 +3789,6 @@ local HealBot_Options_Class_HoTctlName_List = {
     [HEALBOT_DIVINE_HYMN]=HEALBOT_PRIEST,
 	[HEALBOT_HEALING_RAIN]=HEALBOT_SHAMAN,
     [HEALBOT_INNER_FOCUS]=HEALBOT_PRIEST,
-    [HEALBOT_CHAKRA]=HEALBOT_PRIEST,
     [HEALBOT_SERENDIPITY]=HEALBOT_PRIEST,
     [HEALBOT_RIPTIDE]=HEALBOT_SHAMAN,
     [HEALBOT_TRANQUILITY]=HEALBOT_DRUID,
@@ -3831,7 +3822,6 @@ local HealBot_Options_Class_HoTctlName_List = {
     [HEALBOT_FLASH_OF_LIGHT]=HEALBOT_PALADIN,
     [HEALBOT_LIGHT_BEACON]=HEALBOT_PALADIN,
     [HEALBOT_CONVICTION]=HEALBOT_PALADIN,
-    [HEALBOT_SACRED_SHIELD]=HEALBOT_PALADIN,
 	[HEALBOT_GUARDED_BY_THE_LIGHT]=HEALBOT_PALADIN,
     [HEALBOT_GUARDIAN_ANCIENT_KINGS]=HEALBOT_PALADIN,
     [HEALBOT_WORD_OF_GLORY]=HEALBOT_PALADIN,
@@ -3985,6 +3975,7 @@ end
 local HealBot_Options_FilterHoTctl_List = {
     HEALBOT_DRUID,
     HEALBOT_PALADIN,
+    HEALBOT_MONK,
     HEALBOT_PRIEST,
     HEALBOT_SHAMAN,
     HEALBOT_DEATHKNIGHT,
@@ -4163,16 +4154,17 @@ end
 
 local HealBot_Options_EmergencyFilter_List = {
     HEALBOT_CLASSES_ALL,
+    HEALBOT_DEATHKNIGHT,
     HEALBOT_DRUID,
     HEALBOT_HUNTER,
     HEALBOT_MAGE,
+    HEALBOT_MONK,
     HEALBOT_PALADIN,
     HEALBOT_PRIEST,
     HEALBOT_ROGUE,
     HEALBOT_SHAMAN,
     HEALBOT_WARLOCK,
     HEALBOT_WARRIOR,
-    HEALBOT_DEATHKNIGHT,
     HEALBOT_CLASSES_MELEE,
     HEALBOT_CLASSES_RANGES,
     HEALBOT_CLASSES_HEALERS,
@@ -5024,8 +5016,8 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
         Healbot_Config_Skins.HideBars[skinName] = tonumber(tmpMsg[39])
         Healbot_Config_Skins.HideIncTank[skinName] = tonumber(tmpMsg[40])
         Healbot_Config_Skins.HideIncFocus[skinName] = tonumber(tmpMsg[41])
-        Healbot_Config_Skins.FrameScale[skinName] = tonumber(tmpMsg[42])   
-        Healbot_Config_Skins.ShowRole[skinName] = tonumber(tmpMsg[43])         
+        Healbot_Config_Skins.FrameScale[skinName] = tonumber(tmpMsg[42])        
+        Healbot_Config_Skins.ShowRole[skinName] = tonumber(tmpMsg[43])   
     end
 end
 
@@ -7130,7 +7122,7 @@ function HealBot_Options_Buff_Reset()
     for k=1,10 do
         if BuffDropDownClass[HealBot_Options_getDropDownId_bySpec(k)] and BuffDropDownClass[HealBot_Options_getDropDownId_bySpec(k)]>1 then
             id=HealBot_GetSpellId(BuffTextClass[HealBot_Options_getDropDownId_bySpec(k)]);
-            sName,_ = HealBot_GetSpellName(id);
+            sName = HealBot_GetSpellName(id);
 
             if sName then
                 if not spells[sName] then
@@ -7310,6 +7302,8 @@ function HealBot_Options_Buff_Reset()
                 HealBot_buffbarcolr[sName]=buffbarcolrClass[k];
                 HealBot_buffbarcolg[sName]=buffbarcolgClass[k];
                 HealBot_buffbarcolb[sName]=buffbarcolbClass[k];
+            elseif id then
+                HealBot_AddDebug("Not found buff for spell id"..id)
             end
             HealBot_setOptions_Timer(30)
         end
@@ -8772,8 +8766,8 @@ function HealBot_Options_SetSkins()
         HealBot_Options_FontName:SetValue(fontsIndex[Healbot_Config_Skins.btextfont[Healbot_Config_Skins.Current_Skin]] or 0)
         HealBot_Options_FontHeight:SetValue(Healbot_Config_Skins.btextheight[Healbot_Config_Skins.Current_Skin] or 10)
         HealBot_Options_ShowClassOnBarType_OnClick(nil,Healbot_Config_Skins.ShowClassType[Healbot_Config_Skins.Current_Skin] or 2)
-        HealBot_Options_ShowClassOnBar:SetChecked(Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin] or 1)
         HealBot_Options_ShowRoleOnBar:SetChecked(Healbot_Config_Skins.ShowRole[Healbot_Config_Skins.Current_Skin] or 0)
+        HealBot_Options_ShowClassOnBar:SetChecked(Healbot_Config_Skins.ShowClassOnBar[Healbot_Config_Skins.Current_Skin] or 1)
         HealBot_Options_ShowNameOnBar:SetChecked(Healbot_Config_Skins.ShowNameOnBar[Healbot_Config_Skins.Current_Skin] or 1)
         HealBot_Options_ShowHealthOnBar:SetChecked(Healbot_Config_Skins.ShowHealthOnBar[Healbot_Config_Skins.Current_Skin] or 1)
         HealBot_Options_BarTextInClassColour:SetChecked(Healbot_Config_Skins.SetClassColourText[Healbot_Config_Skins.Current_Skin] or 1)
