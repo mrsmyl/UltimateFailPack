@@ -36,7 +36,7 @@ function ItemSlot:CanReuseBlizzardBagSlots()
 end
 
 
---[[ Frame Events ]]--
+--[[ Click Events ]]--
 
 function ItemSlot:OnClick (button)	
 	if IsModifiedClick() then
@@ -73,27 +73,20 @@ function ItemSlot:OnDrag()
 	self:OnClick('LeftButton')
 end
 
-function ItemSlot:OnEnter()
-	local link = self:GetItem()
-	if link then
-		self:AnchorTooltip()
-		
-		if self.bag == 'vault' then
-			GameTooltip:SetVoidItem(self:GetID())
-		elseif self.bag then
-			GameTooltip:SetVoidDepositItem(self:GetID())
-		else
-			GameTooltip:SetVoidWithdrawalItem(self:GetID())
-		end
 
-		if IsModifiedClick('DRESSUP') then
-			ShowInspectCursor()
-		else
-			ResetCursor()
-		end
+--[[ Tooltip ]]--
+
+function ItemSlot:ShowTooltip()
+	if self.bag == 'vault' then
+		GameTooltip:SetVoidItem(self:GetID())
+	elseif self.bag then
+		GameTooltip:SetVoidDepositItem(self:GetID())
 	else
-		GameTooltip:Hide()
-		ResetCursor()
+		GameTooltip:SetVoidWithdrawalItem(self:GetID())
+	end
+
+	if IsModifiedClick('DRESSUP') then
+		ShowInspectCursor()
 	end
 end
 

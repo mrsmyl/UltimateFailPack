@@ -10,7 +10,6 @@ local Frame = Bagnon:NewClass('VaultFrame', 'Frame', Bagnon.Frame)
 --[[ Events ]]--
 
 function Frame:OnShow()
-	IsVoidStorageReady()
 	PlaySound('UI_EtherealWindow_Open')
 
 	self:UpdateLook()
@@ -18,14 +17,6 @@ function Frame:OnShow()
 	self:RegisterMessage('SHOW_TRANSFER_FRAME')
 	self:RegisterMessage('SHOW_ITEM_FRAME')
 	self:SHOW_ITEM_FRAME()
-	
-	if not CanUseVoidStorage() then
-		if Bagnon.VAULT_COST > GetMoney() then
-			StaticPopup_Show('BAGNON_CANNOT_PURCHASE_VAULT')
-		else
-			StaticPopup_Show('BAGNON_VAULT_PURCHASE')
-		end
-	end
 end
 
 function Frame:OnHide()

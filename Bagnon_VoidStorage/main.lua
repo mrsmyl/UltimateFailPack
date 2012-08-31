@@ -15,7 +15,16 @@ function VoidStorage:OnEnable()
 end
 
 function VoidStorage:VOID_STORAGE_OPEN()
+	IsVoidStorageReady()
 	Bagnon.FrameSettings:Get('voidstorage'):Show()
+	
+	if not CanUseVoidStorage() then
+		if Bagnon.VAULT_COST > GetMoney() then
+			StaticPopup_Show('BAGNON_CANNOT_PURCHASE_VAULT')
+		else
+			StaticPopup_Show('BAGNON_VAULT_PURCHASE')
+		end
+	end
 end
 
 function VoidStorage:VOID_STORAGE_CLOSE()
