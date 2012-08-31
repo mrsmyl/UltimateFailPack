@@ -19,12 +19,14 @@ L["Adds a contact list next to the To: field."] = true
 L["AH-related mail"] = true
 L["Allows you to copy the contents of a mail."] = true
 L["Alts"] = true
+L["Auto-Attach similar items on Control-Click"] = true
 L["Autofill last person mailed"] = true
 L["Auto-Send on Alt-Click"] = true
 L["BlackBook"] = true
 L["Block incoming trade requests while in a mail session."] = true
 L["CarbonCopy"] = true
 L["|cffeda55fAlt-Click|r to send this item to %s."] = true
+L["|cffeda55fControl-Click|r to attach similar items."] = true
 L["|cffeda55fCtrl-Click|r to return it to sender."] = true
 L["|cffeda55fShift-Click|r to take the contents."] = true
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -118,12 +120,14 @@ L["Adds a contact list next to the To: field."] = "Setzt eine Kontaktliste neben
 L["AH-related mail"] = "Auktionshaus Nachrichten"
 L["Allows you to copy the contents of a mail."] = "Erlaubt Dir die Inhalte einer Nachricht zu kopieren."
 L["Alts"] = "Twinks"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "Autoeinfügen des Namens der zuletzt angeschriebenen Person."
 L["Auto-Send on Alt-Click"] = "Auto-Senden bei Alt-Klick"
 L["BlackBook"] = "Schwarzes Buch"
 L["Block incoming trade requests while in a mail session."] = "Blockt eingehende Handelsversuche von Spielern solange der Briefkasten geöffnet ist."
 L["CarbonCopy"] = "Kopie"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt+Klick|r um diesen Gegenstand an %s zu senden."
+L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fStrg-Klick|r um ähnliche Gegenstände anzuhängen."
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fStrg+Klick|r um diesen Gegenstand zurückzusenden."
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift+Klick|r um Gegenstand zu entnehmen."
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -212,7 +216,7 @@ L["Some Messages May Have Been Skipped."] = "Einige Nachrichten können ausgelas
 L["There are %i more messages not currently shown."] = "Es gibt %i weitere Nachrichten die im Moment nicht angezeigt werden."
 L["There are %i more messages not currently shown. More should become available in %i seconds."] = "Es gibt %i weitere Nachrichten die im Moment nicht angezeigt werden. Weitere sollten in %i Sekunden verfügbar sein."
 L["TradeBlock"] = "Handelsblock"
--- L["Use Mr.Plow after opening"] = "Use Mr.Plow after opening"
+L["Use Mr.Plow after opening"] = "Benutze Mr.Plow (zusatz Addon) nach dem öffnen"
 L["Use Postal's auto-complete"] = "Postal's autom. Vervollständigung verwenden"
 L["Verbose mode"] = "Ausführlicher Modus"
 L["Wire"] = "AutoGold"
@@ -230,12 +234,14 @@ L["Adds a contact list next to the To: field."] = "Añade una lista de contactos
 L["AH-related mail"] = "Correo relacionado con la Casa de Subastas"
 L["Allows you to copy the contents of a mail."] = "Te permite copiar el contenido de un correo."
 L["Alts"] = "Alts"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "AutoRellenar última persona enviada por correo"
 L["Auto-Send on Alt-Click"] = "Auto-Enviar con Alt-click"
 L["BlackBook"] = "Libro Negro"
 L["Block incoming trade requests while in a mail session."] = "Bloquea las solicitudes entrantes de comercio mientras se está en una sesión de correo."
 L["CarbonCopy"] = "CopiaCarboncillo"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-Clic|r para enviar este objeto a %s"
+-- L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fControl-Click|r to attach similar items."
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-Clic|r para devolverlo al que te lo ha enviado"
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fMayúsculas-Clic|r para coger el contenido"
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -342,12 +348,14 @@ L["Adds a contact list next to the To: field."] = "Ajoute une liste des contacts
 L["AH-related mail"] = "Courriers relatifs à l'HV"
 L["Allows you to copy the contents of a mail."] = "T'autorises de copier le contenu d'un courrier."
 L["Alts"] = "Rerolls"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "Resaisir la dernière personne contactée"
 L["Auto-Send on Alt-Click"] = "Envoi auto. au Alt-clic gauche"
 L["BlackBook"] = "BlackBook"
 L["Block incoming trade requests while in a mail session."] = "Bloque les demandes d'échange lors de la consultation du courrier."
 L["CarbonCopy"] = "Copie identique"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-clic gauche|r pour envoyer cet objet à %s."
+L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fContrôle+Clic|r pour attacher les objets similaires."
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-clic gauche|r pour renvoyer à l'expéditeur."
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fMaj-clic gauche|r pour prendre le contenu."
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -380,7 +388,7 @@ L[ [=[|cFFFFCC00*|r Simple filters are available for various mail types.
 L[ [=[|cFFFFCC00*|r This module will list your contacts, friends, guild mates, alts and track the last 10 people you mailed.
 |cFFFFCC00*|r It will also autocomplete all names in your BlackBook.]=] ] = [=[|cFFFFCC00*|r Ce module affichera vos contacts, vos amis, vos guild mates, vos rerolls ainsi que les 10 dernières personnes contactées.
 |cFFFFCC00*|r Il remplira également automatiquement tous les noms présents dans votre BlackBook.]=]
-L["Chat Output"] = "Sortie de chat" -- Needs review
+L["Chat Output"] = "Sortie de chat"
 L["Choose"] = "Choisir"
 L["Clear list"] = "Effacer la liste"
 L["Collected"] = "Récupéré"
@@ -436,7 +444,7 @@ L["Some Messages May Have Been Skipped."] = "Certains messages n'ont peut-être 
 L["There are %i more messages not currently shown."] = "Il y a %i messages supplémentaires non-affichés"
 L["There are %i more messages not currently shown. More should become available in %i seconds."] = "Il ya des messages %i de plus ne sont pas actuellement affichés."
 L["TradeBlock"] = "TradeBlock"
--- L["Use Mr.Plow after opening"] = "Use Mr.Plow after opening"
+L["Use Mr.Plow after opening"] = "Utilisez Mr.Plow après l'ouverture"
 L["Use Postal's auto-complete"] = "Utiliser l'auto-complétion de Postal"
 L["Verbose mode"] = "Mode verbose"
 L["Wire"] = "Wire"
@@ -454,12 +462,14 @@ L["Adds a contact list next to the To: field."] = "다음 접속 목록에 추�
 L["AH-related mail"] = "경매장 우편"
 L["Allows you to copy the contents of a mail."] = "편지의 내용을 복사합니다."
 L["Alts"] = "다른 캐릭터"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "마지막 수신자 자동 완성"
 L["Auto-Send on Alt-Click"] = "Alt-클릭으로 자동 보냄"
 L["BlackBook"] = "주소록"
 L["Block incoming trade requests while in a mail session."] = "우편함을 열고 있는 동안 거래 요청을 차단합니다."
 L["CarbonCopy"] = "복사본"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-클릭|r %s님에게 아이템 보냄"
+-- L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fControl-Click|r to attach similar items."
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-클릭|r 아이템 반송"
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift-클릭|r 아이템 수취"
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -566,12 +576,14 @@ L["Adds a contact list next to the To: field."] = "Добавляет списо
 L["AH-related mail"] = "Аукционные письма"
 L["Allows you to copy the contents of a mail."] = "Позволяет скопировать содержимое письма."
 L["Alts"] = "Альты"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "Ввести в строку адреса ник последнего, кому было отправлено письмо"
 L["Auto-Send on Alt-Click"] = "Автопосылка по Alt+Щелчок мыши"
 L["BlackBook"] = "Черный список"
 L["Block incoming trade requests while in a mail session."] = "Блокировать все запросы на торговлю во время отправки массовой почты"
 L["CarbonCopy"] = "Скрытая копия"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt+Щелчок|r выслать предмет в адрес %s."
+-- L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fControl-Click|r to attach similar items."
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl+Щелчок|r вернуть отправителю."
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift+Щелчок|r взять содержимое."
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -678,14 +690,16 @@ L["Adds a contact list next to the To: field."] = "添加联系人列表到收�
 L["AH-related mail"] = "拍卖相关邮件"
 L["Allows you to copy the contents of a mail."] = "允许你复制信的内容物。"
 L["Alts"] = "小号"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "自动填写最后的收件人"
-L["Auto-Send on Alt-Click"] = "Alt-点击 自动发送"
+L["Auto-Send on Alt-Click"] = "Alt-点击自动发送"
 L["BlackBook"] = "黑名单"
 L["Block incoming trade requests while in a mail session."] = "在进行邮件操作中阻止交易请求。"
 L["CarbonCopy"] = "复本"
-L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-点击|r 将该物品发送给%s。"
-L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-点击|r 将信退给发件人。"
-L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift-点击|r 获得该邮件的内容副本。"
+L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-点击|r将该物品发送给%s。"
+L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fCtrl-点击|r附加类似物品。"
+L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-点击|r将信退给发件人。"
+L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift-点击|r获得该邮件的内容副本。"
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
 |cFFFFCC00*|r You can Shift-Click 2 checkboxes to mass select every mail between the 2 checkboxes.
 |cFFFFCC00*|r You can Ctrl-Click a checkbox to mass select or unselect every mail from that sender.
@@ -721,12 +735,12 @@ L["Choose"] = "选择"
 L["Clear list"] = "清空列表"
 L["Collected"] = "已收取"
 L["Contacts"] = "联系人"
-L["Copy From"] = "从...复制"
+L["Copy From"] = "从…复制"
 L["Copy this mail"] = "复制这封信"
 L["Delete"] = "删除"
-L["Disable Blizzard's auto-completion popup menu"] = "关闭Blizzard的自动完成弹出菜单"
+L["Disable Blizzard's auto-completion popup menu"] = "关闭暴雪的自动完成弹出菜单"
 L["DoNotWant"] = "不想要"
-L["Enable Alt-Click to send mail"] = "允许 Alt-点击 发送邮件"
+L["Enable Alt-Click to send mail"] = "允许 Alt-点击发送邮件"
 L["Exclude randoms you interacted with"] = "防止你随意地受到影响"
 L["Express"] = "快件"
 L["Friends"] = "好友"
@@ -740,8 +754,8 @@ L["Name auto-completion options"] = "姓名自动完成选项"
 L["New Profile"] = "新配置"
 L["New Profile Name:"] = "新配置名称："
 L["Non-AH related mail"] = "非拍卖相关邮件"
-L["Not all messages are shown, refreshing mailbox soon to continue Open All..."] = "尚有邮件未能显示，请重整收件匣后继续开启..."
-L["Not taking more items as there are now only %d regular bagslots free."] = "无法拿取更多物品, 目前仅有 %d 个背包位置."
+L["Not all messages are shown, refreshing mailbox soon to continue Open All..."] = "尚有邮件未能显示，请重整收件匣后继续开启…"
+L["Not taking more items as there are now only %d regular bagslots free."] = "无法拿取更多物品，目前仅有 %d 个背包位置。"
 L["Open"] = "打开"
 L["OpenAll"] = "打开所有"
 L["Open All"] = "打开所有"
@@ -754,13 +768,13 @@ L["Open all Outbid on mail"] = "打开所有超过出价的邮件"
 L["Opening Speed"] = "收信速度"
 L["Other options"] = "其他选项"
 L["Part %d"] = "第 %d 组"
-L["Please post bugs or suggestions at the wowace forums thread at |cFF00FFFFhttp://forums.wowace.com/showthread.php?t=3909|r. When posting bugs, indicate your locale and Postal's version number v%s."] = "请到Wowace的论坛|cFF00FFFFhttp://forums.wowace.com/showthread.php?t=3909|r报告Bug或者提交建议。报告Bug时请说明Postal的版本 v%s。"
+L["Please post bugs or suggestions at the wowace forums thread at |cFF00FFFFhttp://forums.wowace.com/showthread.php?t=3909|r. When posting bugs, indicate your locale and Postal's version number v%s."] = "请到 WowAce 的论坛|cFF00FFFFhttp://forums.wowace.com/showthread.php?t=3909|r 报告 Bug 或者提交建议。报告 Bug 时请说明 Postal 的版本 v%s。"
 L["Prints the amount of money collected during a mail session."] = "显示在一次邮件操作中所收到的金币。"
 L["Processing Message"] = "正在处理邮件"
 L["Profile"] = "配置"
 L["Rake"] = "收款显示"
 L["Recently Mailed"] = "最近邮寄"
-L["Refreshing mailbox..."] = "重新整理收件匣..."
+L["Refreshing mailbox..."] = "重新整理收件匣…"
 L["Remove Contact"] = "删除联系人"
 L["Reset Profile"] = "重置配置"
 L["Return"] = "退信"
@@ -770,9 +784,9 @@ L["Shows a clickable visual icon as to whether a mail will be returned or delete
 L["Skipping"] = "忽略"
 L["Some Messages May Have Been Skipped."] = "部分邮件可能被忽略。"
 L["There are %i more messages not currently shown."] = "还有 %i 或更多的邮件没有显示。"
-L["There are %i more messages not currently shown. More should become available in %i seconds."] = "当前还有 %i  条信息没有显示. 将在 %i 内显示."
+L["There are %i more messages not currently shown. More should become available in %i seconds."] = "当前还有 %i  条信息没有显示。将在 %i 内显示。"
 L["TradeBlock"] = "阻止交易"
-L["Use Mr.Plow after opening"] = "打开邮件后使用 Mr.Plow 插件进行背包整理" -- Needs review
+L["Use Mr.Plow after opening"] = "打开邮件后使用 Mr.Plow 插件进行背包整理"
 L["Use Postal's auto-complete"] = "使用 Postal 的自动完成"
 L["Verbose mode"] = "消息模式"
 L["Wire"] = "填充标题"
@@ -790,12 +804,14 @@ L["Adds a contact list next to the To: field."] = "在收件人輸入框旁邊�
 L["AH-related mail"] = "拍賣相關信件"
 L["Allows you to copy the contents of a mail."] = "允許你複製信的內容物。"
 L["Alts"] = "分身"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "自動填寫最後曾郵寄的人名"
 L["Auto-Send on Alt-Click"] = "Alt-點擊 自動發送"
 L["BlackBook"] = "聯絡人名冊"
 L["Block incoming trade requests while in a mail session."] = "在處理信件期間拒絕交易要求。"
 L["CarbonCopy"] = "複本"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-點擊: |r將物品寄給%s。"
+L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fCtrl-點擊|r附加類似物品。"
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-點擊: |r返回信件。"
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift-點擊: |r收取信件。"
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -902,12 +918,14 @@ L["Adds a contact list next to the To: field."] = "Adiciona uma lista de contato
 L["AH-related mail"] = "Carta relacionada à CL"
 L["Allows you to copy the contents of a mail."] = "Permite a você copiar o conteúdo de uma carta."
 L["Alts"] = "Alts"
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
 L["Autofill last person mailed"] = "Auto-preencher última pessoa enviada"
 L["Auto-Send on Alt-Click"] = "Auto-enviar com Alt-Clique"
 L["BlackBook"] = "LivroNegro"
 L["Block incoming trade requests while in a mail session."] = "Bloquear pedidos de negociar quando estiver numa sessão de correio."
 L["CarbonCopy"] = "CópiaCarbono"
 L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-Click|r para enviar este item para %s."
+-- L["|cffeda55fControl-Click|r to attach similar items."] = "|cffeda55fControl-Click|r to attach similar items."
 L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-Click|r para retorná-lo ao remetente."
 L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift-Click|r para pegar o conteúdo."
 L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
@@ -1000,6 +1018,120 @@ L["Use Mr.Plow after opening"] = "Usar Mr.Plow depois de abrir"
 L["Use Postal's auto-complete"] = "Usar o auto-completar do Postal"
 L["Verbose mode"] = "Modo verbal"
 L["Wire"] = "Telegrama"
+
+return
+end
+
+local L = AL3:NewLocale("Postal", "itIT")
+if L then
+L["A button that collects all attachments and coins from mail."] = "Un pulsante per raccogliere tutti gli allegati e le monete dalle lettere." -- Needs review
+L["Add check boxes to the inbox for multiple mail operations."] = "Aggiungere caselle di controllo per la posta in arrivo per le operazioni di posta multipla." -- Needs review
+L["Add Contact"] = "Aggiungi contatto" -- Needs review
+L["Add multiple item mail tooltips"] = "Aggiunge più voci ai tooltip della lettera" -- Needs review
+L["Adds a contact list next to the To: field."] = "Aggiunge una lista dei contatti vicino al campo To:" -- Needs review
+L["AH-related mail"] = "Lettera dalla casa d'aste" -- Needs review
+L["Allows you to copy the contents of a mail."] = "Ti permette di copiare il contenuto di una lettera" -- Needs review
+L["Alts"] = "Alts" -- Needs review
+-- L["Auto-Attach similar items on Control-Click"] = "Auto-Attach similar items on Control-Click"
+L["Autofill last person mailed"] = "Completa automaticamente l'ultima persona a cui hai scritto" -- Needs review
+L["Auto-Send on Alt-Click"] = "Auto invio con Alt-Click" -- Needs review
+L["BlackBook"] = "Lista" -- Needs review
+L["Block incoming trade requests while in a mail session."] = "Blocca le richieste di commercio mentre si stanno leggendo le lettere." -- Needs review
+L["CarbonCopy"] = "CopiaCarbone" -- Needs review
+L["|cffeda55fAlt-Click|r to send this item to %s."] = "|cffeda55fAlt-Click|r per spedire questo oggetto a %s." -- Needs review
+L["|cffeda55fControl-Click|r to attach similar items."] = "Control-Click per allegare oggetti simili" -- Needs review
+L["|cffeda55fCtrl-Click|r to return it to sender."] = "|cffeda55fCtrl-Click|r per rimandarla al mittente." -- Needs review
+L["|cffeda55fShift-Click|r to take the contents."] = "|cffeda55fShift-Click|r per prendere il contenuto." -- Needs review
+L[ [=[|cFFFFCC00*|r Selected mail will be batch opened or returned to sender by clicking Open or Return.
+|cFFFFCC00*|r You can Shift-Click 2 checkboxes to mass select every mail between the 2 checkboxes.
+|cFFFFCC00*|r You can Ctrl-Click a checkbox to mass select or unselect every mail from that sender.
+|cFFFFCC00*|r Select will never delete any mail (mail without text is auto-deleted by the game when all attached items and gold are taken).
+|cFFFFCC00*|r Select will skip CoD mails and mails from Blizzard.
+|cFFFFCC00*|r Disable the Verbose option to stop the chat spam while opening mail.]=] ] = [=[|cFFFFCC00*|r Le lettere selezionate saranno aperte o rimandate al mittente cliccando su Apri o Rimanda
+|cFFFFCC00*|r Con Shift-Click puoi selezionare due caselle di controllo per selezionare tutte le lettere tra le due caselle.
+|cFFFFCC00*|r Con Ctrl-Click su una casella ci controllo puoi selezionare o deselezionare tutte le lettere di quel mittente.
+|cFFFFCC00*|r Seleziona non cancellerà mai nessuna lettera (le lettere senza testo saranno cancellate automaticamente dal gioco quando sono stati presi tutti gli allegati e le monete).
+|cFFFFCC00*|r Seleziona salterà tutte le lettere CoD e le lettere da Blizzard.
+|cFFFFCC00*|r Disabilita l'opzione Parole per fermare lo spam durante l'apertura delle lettere]=] -- Needs review
+L[ [=[|cFFFFCC00*|r Shift-Click to take item/money from mail.
+|cFFFFCC00*|r Ctrl-Click to return mail.
+|cFFFFCC00*|r Alt-Click to move an item from your inventory to the current outgoing mail (same as right click in default UI).
+|cFFFFCC00*|r Mousewheel to scroll the inbox.]=] ] = [=[|cFFFFCC00*|r Shift-Click per prendere gli oggetti/le monete dalle lettere.
+|cFFFFCC00*|r Ctrl-Click per rimandare le lettere.
+|cFFFFCC00*|r Alt-Click per muovere un oggetto dall'inventario alla corrente lettera in uscita (come il tasto destro del mouse nell' UI di default).
+|cFFFFCC00*|r Rotellina del mouse per scorrere la casella di posta.]=] -- Needs review
+L[ [=[|cFFFFCC00*|r Simple filters are available for various mail types.
+|cFFFFCC00*|r Shift-Click the Open All button to override the filters and take ALL mail.
+|cFFFFCC00*|r OpenAll will never delete any mail (mail without text is auto-deleted by the game when all attached items and gold are taken).
+|cFFFFCC00*|r OpenAll will skip CoD mails and mails from Blizzard.
+|cFFFFCC00*|r Disable the Verbose option to stop the chat spam while opening mail.]=] ] = [=[|cFFFFCC00*|r Semplici filtri sono disponibili per vari tipi di lettere.
+|cFFFFCC00*|r Shift-Click sul bottone Apri Tutto per non tener conto dei filtri e raccogliere TUTTE le lettere.
+|cFFFFCC00*|r Apri Tutto non cancellerà mai nessuna lettera (le lettere senza testo saranno cancellate automaticamente dal gioco quando sono stati presi tutti gli allegati e le monete).
+|cFFFFCC00*|r Apri Tutto salterà tutte le lettere CoD e le lettere da Blizzard.
+|cFFFFCC00*|r Disabilita l'opzione Parole per bloccare lo spam in chat durante l'apertura delle lettere]=] -- Needs review
+L[ [=[|cFFFFCC00*|r This module will list your contacts, friends, guild mates, alts and track the last 10 people you mailed.
+|cFFFFCC00*|r It will also autocomplete all names in your BlackBook.]=] ] = [=[|cFFFFCC00*|r Questo modulo elencherà i tuoi contatti, gli amici, i compagni di gilda, gli alts e le ultime 10 persone a cui avrai scritto.
+|cFFFFCC00*|r Completerà anche automaticamente tutti i nomi presenti nella Lista.]=] -- Needs review
+L["Chat Output"] = "Uotput chat" -- Needs review
+L["Choose"] = "Scegli" -- Needs review
+L["Clear list"] = "Pulisci lista" -- Needs review
+L["Collected"] = "Raccolti" -- Needs review
+L["Contacts"] = "Contatti" -- Needs review
+L["Copy From"] = "Copia da" -- Needs review
+L["Copy this mail"] = "Copia questa lettera" -- Needs review
+L["Delete"] = "Cancella" -- Needs review
+L["Disable Blizzard's auto-completion popup menu"] = "Disabilita il menù popup di auto-completamento della Blizzard" -- Needs review
+L["DoNotWant"] = "NonLoVoglio" -- Needs review
+L["Enable Alt-Click to send mail"] = "Abilita Alt-Click per mandare le lettere" -- Needs review
+L["Exclude randoms you interacted with"] = "Esculdi random con cui hai interagito" -- Needs review
+L["Express"] = "Veloce" -- Needs review
+L["Friends"] = "Amici" -- Needs review
+L["Guild"] = "Gilda" -- Needs review
+L["Help"] = "Aiuto" -- Needs review
+L["In Progress"] = "In lavorazione" -- Needs review
+L["Keep free space"] = "Mantieni uno spazio libero" -- Needs review
+L["Mouse click short cuts for mail."] = "tasti di scelta rapida per le lettere." -- Needs review
+L["Mousewheel to scroll Inbox"] = "Rotellina del mouse per scorrere la posta in arrivo" -- Needs review
+L["Name auto-completion options"] = "Opzioni di auto-completamento del nome" -- Needs review
+L["New Profile"] = "Nuovo Profilo" -- Needs review
+L["New Profile Name:"] = "Nome del Nuovo Profilo:" -- Needs review
+L["Non-AH related mail"] = "Lettera non della casa d'aste" -- Needs review
+L["Not all messages are shown, refreshing mailbox soon to continue Open All..."] = "Non tutti i messaggi sono stati mostrati, ricaricama casella postale per continuare Apri Tutto" -- Needs review
+L["Not taking more items as there are now only %d regular bagslots free."] = "Non prende altri oggetti se ci sono solo %d posti in borsa liberi" -- Needs review
+L["Open"] = "Apri" -- Needs review
+L["OpenAll"] = "Apri tutto" -- Needs review
+L["Open All"] = "ApriTutto" -- Needs review
+L["Open all Auction cancelled mail"] = "Apri tutte le lettere annullate della casa d'aste" -- Needs review
+L["Open all Auction expired mail"] = "Apri tutte le lettere scadute della casa d'aste" -- Needs review
+L["Open all Auction successful mail"] = "Apri tutte le lettere di successo della casa d'aste" -- Needs review
+L["Open all Auction won mail"] = "Apri tutte le lettere di vincita della casa d'aste" -- Needs review
+L["Open all mail with attachments"] = "Apri tutte le lettere con allegati" -- Needs review
+L["Open all Outbid on mail"] = "Apri tutte le lettere di offerta sperata (outbid)" -- Needs review
+L["Opening Speed"] = "Velocità d'apertura" -- Needs review
+L["Other options"] = "Altre opzioni" -- Needs review
+L["Part %d"] = "parte %d" -- Needs review
+L["Please post bugs or suggestions at the wowace forums thread at |cFF00FFFFhttp://forums.wowace.com/showthread.php?t=3909|r. When posting bugs, indicate your locale and Postal's version number v%s."] = "Per favore riporta bug o suggerimenti al thread del forum wowace |cFF00FFFFhttp://forums.wowace.com/showthread.php?t=3909|r. Quando riporti un bug, indica la localizzazione e la versione v%s di Postal." -- Needs review
+L["Prints the amount of money collected during a mail session."] = "Scrivi l'ammontare di monete raccolte durante una sessione di posta" -- Needs review
+L["Processing Message"] = "Messaggio in lavorazione" -- Needs review
+L["Profile"] = "Profilo" -- Needs review
+L["Rake"] = "Somma" -- Needs review
+L["Recently Mailed"] = "Spedite Recentemente" -- Needs review
+L["Refreshing mailbox..."] = "Ricaricamento casella postale" -- Needs review
+L["Remove Contact"] = "Rimuovi Contatto" -- Needs review
+L["Reset Profile"] = "Resetta il profilo" -- Needs review
+L["Return"] = "Rimanda" -- Needs review
+L["Select"] = "Seleziona" -- Needs review
+L["Set subject field to value of coins sent if subject is blank."] = "Indica l'ammontare di monete mandate nel campo del soggetto se è lasciato bianco" -- Needs review
+L["Shows a clickable visual icon as to whether a mail will be returned or deleted on expiry."] = "Mostra un'icona visiva cliccabile se una lettera verrà restituita o scancellata alla scadanza." -- Needs review
+L["Skipping"] = "saltare" -- Needs review
+L["Some Messages May Have Been Skipped."] = "Qualche messaggio potrebbe essere stato saltato." -- Needs review
+L["There are %i more messages not currently shown."] = "Ci sono più di %i messaggi non correntemente mostrati." -- Needs review
+L["There are %i more messages not currently shown. More should become available in %i seconds."] = "Ci sono più di %i messaggi non correntemente mostrati. Altri saranno visibili in %i secondi." -- Needs review
+L["TradeBlock"] = "BloccaCommercio" -- Needs review
+L["Use Mr.Plow after opening"] = "Usa Mr.Plow appena aperto" -- Needs review
+L["Use Postal's auto-complete"] = "Usa l'auto-completamento di Postal" -- Needs review
+L["Verbose mode"] = "Modalità Verbose" -- Needs review
+L["Wire"] = "telegramma" -- Needs review
 
 return
 end
