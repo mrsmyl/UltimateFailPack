@@ -12,8 +12,8 @@ local floor    = math.floor
 
 local GetFactionInfo        = _G.GetFactionInfo
 local GetNumFactions        = _G.GetNumFactions
-local GetNumPartyMembers    = _G.GetNumPartyMembers
-local GetNumRaidMembers     = _G.GetNumRaidMembers
+local GetNumGroupMembers    = _G.GetNumGroupMembers
+local GetNumSubgroupMembers = _G.GetNumSubgroupMembers
 local GetWatchedFactionInfo = _G.GetWatchedFactionInfo
 local GetXPExhaustion       = _G.GetXPExhaustion
 local IsResting             = _G.IsResting
@@ -249,7 +249,18 @@ NS.HexColors = {
 	Blueish  = "04adcb",
 }
 
-function NS:Colorize(color, text) return NS.HexColors[color] and ("|cff" .. NS.HexColors[color] .. tostring(text) .. "|r") or tostring(text) end
+function NS:Colorize(color, text) 
+	if not text then
+		text = tostring(text)
+	end
+	
+	if NS.HexColors[color] then
+		text = text:gsub("(.*)(|r)", "%1%2|cff" .. NS.HexColors[color])
+		text = "|cff" .. NS.HexColors[color] .. tostring(text) .. "|r"
+	end
+	
+	return text
+end
 
 -- aux variables
 local countInitial = 0
@@ -655,6 +666,7 @@ function BrokerXPBar:InitialAnchoring()
 	else
 		self.Bar:SetSetting("Texture", self:GetSetting("ExternalTexture") and self:GetSetting("Texture") or nil)
 		self:UpdateWatchedFactionIndex()
+		self:UpdateStanding()
 	end
 end
 
@@ -906,7 +918,7 @@ function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, xpMsg)
 	local kill = 0
 	local mob
 	
-	if GetNumRaidMembers() > 0 then
+	if GetNumGroupMembers() > 0 then
 		mob, kxp, rpxp = smatch(xpMsg, XPGAIN_RAID)
 		
 		if not mob then
@@ -916,7 +928,7 @@ function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, xpMsg)
 		if not mob then
 			mob, kxp, pxp, bonusType, rpxp = smatch(xpMsg, XPGAIN_RAID_PENALTY)
 		end
-	elseif GetNumPartyMembers() > 0 then
+	elseif GetNumSubgroupMembers() > 0 then
 		mob, kxp, gxp = smatch(xpMsg, XPGAIN_GROUP)
 		
 		if not mob then
