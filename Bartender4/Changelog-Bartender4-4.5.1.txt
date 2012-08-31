@@ -1,0 +1,19 @@
+tag 4.5.1
+eef816ce6e3ca843348c748a4e37c828d6c06f9a
+Hendrik Leppkes <h.leppkes@gmail.com>
+2012-08-30 17:32:52 +0200
+
+Tag as 4.5.1
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Adjust backdrop size of the reputation and xp bars
+	- Fix the XP bar
+	- Fix the reputation bar
+	- Properly hide the MainMenuBarMaxLevelBar
+	- Add [overridebar] to the conditions for vehicle/possess paging.
+	- Remove old TODO file
+	- Remove obsolete totem bar.
+	- Try to determine the correct vehicle/possess bar from the games frames.

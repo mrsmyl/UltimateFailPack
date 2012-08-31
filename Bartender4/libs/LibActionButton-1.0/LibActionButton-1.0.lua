@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ]]
 local MAJOR_VERSION = "LibActionButton-1.0"
-local MINOR_VERSION = 29
+local MINOR_VERSION = 30
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -957,6 +957,7 @@ function Update(self)
 			self:SetAlpha(0.0)
 		end
 		self.cooldown:Hide()
+		self:SetChecked(0)
 	end
 
 	-- Add a green border if button is an equipped item
