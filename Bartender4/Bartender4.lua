@@ -28,6 +28,8 @@ local defaults = {
 
 Bartender4.CONFIG_VERSION = 3
 
+local createLDBLauncher
+
 function Bartender4:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("Bartender4DB", defaults)
 	self.db.RegisterCallback(self, "OnNewProfile", "InitializeProfile")
@@ -139,14 +141,14 @@ function Bartender4:HideBlizzard()
 	MainMenuBarArtFrame:Hide()
 	MainMenuBarArtFrame:SetParent(UIHider)
 
-	MainMenuExpBar:UnregisterAllEvents()
+	--MainMenuExpBar:UnregisterAllEvents()
 	MainMenuExpBar:Hide()
 	MainMenuExpBar:SetParent(UIHider)
 
 	MainMenuBarMaxLevelBar:Hide()
 	MainMenuBarMaxLevelBar:SetParent(UIHider)
 
-	ReputationWatchBar:UnregisterAllEvents()
+	--ReputationWatchBar:UnregisterAllEvents()
 	ReputationWatchBar:Hide()
 	ReputationWatchBar:SetParent(UIHider)
 

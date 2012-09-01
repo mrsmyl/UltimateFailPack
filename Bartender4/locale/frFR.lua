@@ -71,7 +71,7 @@ L["Create a copy of the auto-generated conditionals in the custom configuration 
 L["CTRL"] = "CTRL"
 L["Custom Conditionals"] = "Conditionnelles personnalisées"
 L["Default Bar State"] = "État par défaut de la barre"
--- L["Direction of the button flyouts on this bar (eg. summon demon/pet)"] = "Direction of the button flyouts on this bar (eg. summon demon/pet)"
+L["Direction of the button flyouts on this bar (eg. summon demon/pet)"] = "Direction du déroulement des boutons sur cette barre (par ex., invocation de familier/démon)." -- Needs review
 L["Disable any reaction to mouse events on this bar, making the bar click-through."] = "Désactive toute action de la souris sur cette barre, permettant de cliquer au travers."
 L["Disabled"] = "Désactivée"
 L["Disabled in Combat"] = "Désactivée en combat"
@@ -104,7 +104,7 @@ L["Fade Out"] = "Fondu"
 L["Fade Out Alpha"] = "Transparence du fondu"
 L["Fade Out Delay"] = "Délai du fondu"
 L["FAQ"] = "FAQ"
--- L["Flyout Direction"] = "Flyout Direction"
+L["Flyout Direction"] = "Direction de déroulement" -- Needs review
 L["Focus-Cast by modifier"] = "Ciblage focal. par modificateur"
 L["Focus-Cast Modifier"] = "Modificateur ciblage focal."
 L["Frequently Asked Questions"] = "Questions fréquemment posées."

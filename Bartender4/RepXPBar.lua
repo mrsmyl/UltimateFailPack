@@ -32,20 +32,11 @@ function RepBarMod:OnEnable()
 		hooksecurefunc("ReputationWatchBar_Update",  function() self.bar:PerformLayout() end)
 
 		self.bar.content:SetParent(self.bar)
-		self.bar.content:Show()
 		self.bar.content:SetFrameLevel(self.bar:GetFrameLevel() + 1)
 	end
 	self.bar:Enable()
 	self:ToggleOptions()
 	self:ApplyConfig()
-
-	-- make the reputation bar functional again
-	ReputationWatchBar:GetScript("OnLoad")(ReputationWatchBar)
-	ReputationWatchBar_Update()
-end
-
-function RepBarMod:OnDisable()
-	ReputationWatchBar:UnregisterAllEvents()
 end
 
 function RepBarMod:ApplyConfig()
@@ -91,20 +82,11 @@ function XPBarMod:OnEnable()
 		self.bar.content = MainMenuExpBar
 
 		self.bar.content:SetParent(self.bar)
-		self.bar.content:Show()
 		self.bar.content:SetFrameLevel(self.bar:GetFrameLevel() + 1)
 	end
 	self.bar:Enable()
 	self:ToggleOptions()
 	self:ApplyConfig()
-
-	-- make the XP bar functional again
-	MainMenuExpBar:GetScript("OnLoad")(MainMenuExpBar)
-	ExpBar_Update()
-end
-
-function XPBarMod:OnDisable()
-	MainMenuExpBar:UnregisterAllEvents()
 end
 
 XPBarMod.ApplyConfig = RepBarMod.ApplyConfig
