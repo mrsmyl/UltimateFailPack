@@ -1,13 +1,26 @@
 ------------------------------------------------------------------------
-r346 | arkayenro | 2012-08-29 07:29:53 +0000 (Wed, 29 Aug 2012) | 6 lines
+r348 | arkayenro | 2012-09-01 10:50:55 +0000 (Sat, 01 Sep 2012) | 4 lines
 Changed paths:
-   A /tags/3.03.01 (from /trunk:345)
+   A /tags/3.03.02 (from /trunk:347)
 
-*3.03.01 (29-AUG-2012)*
- * changed - toc set to 50001
- * added - battle pet category
- * added - battle pet item and tooltip support
- * removed - ability to summon pets (via window and ldb, will return in a later version)
+*3.03.02 (01-SEP-2012)*
+ * fixed - issue with herbalism skill translation
+ * fixed - issue with fishing skill translation
+
+------------------------------------------------------------------------
+r347 | arkayenro | 2012-09-01 10:48:09 +0000 (Sat, 01 Sep 2012) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryTranslate.lua
+   M /trunk/Locale/game.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/Modules/ArkInventoryRulesExample/ArkInventoryRulesExample.toc
+   M /trunk/VersionHistory.txt
+
+*3.03.02 (01-SEP-2012)*
+ * fixed - issue with herbalism skill translation
+ * fixed - issue with fishing skill translation
 
 ------------------------------------------------------------------------
 r345 | arkayenro | 2012-08-29 07:25:08 +0000 (Wed, 29 Aug 2012) | 6 lines
