@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CoreMain.lua 5224 2011-10-06 00:35:53Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CoreMain.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -36,16 +36,14 @@
 --[[
 	See CoreAPI.lua for a description of the modules API
 ]]
+local AucAdvanced = AucAdvanced
 if not AucAdvanced then return end
 
 if (not AucAdvancedData) then AucAdvancedData = {} end
 if (not AucAdvancedLocal) then AucAdvancedLocal = {} end
 if (not AucAdvancedConfig) then AucAdvancedConfig = {} end
 
-local private = {}
-
-local _, internalStore = AucAdvanced.GetCoreModule() -- Don't need a module but do need the addon internal storage area.
-if not internalStore then return end -- Someone has explicitely broken us
+local _, internal = AucAdvanced.GetCoreModule() -- Don't need a module but do need the addon internal storage area.
 
 
 -- For our modular stats system, each stats engine should add their
@@ -59,10 +57,10 @@ if (not AucAdvancedLocal.Stats) then AucAdvancedLocal.Stats = {} end
 local DebugLib = LibStub("DebugLib")
 
 local tooltip
-local flagBlockTooltip = true
+local ALTCHATLINKTOOLTIP_OPEN
+local ScheduleMessage -- function("event", delay)
 
-function private.OnTooltip(tip, item, quantity, name, hyperlink, quality, ilvl, rlvl, itype, isubtype, stack, equiploc, texture)
-	if flagBlockTooltip then return end
+local function OnTooltip(tip, item, quantity, name, hyperlink, quality, ilvl, rlvl, itype, isubtype, stack, equiploc, texture)
 	if not tip then return end
 	if AucAdvanced.Settings.GetSetting("ModTTShow") then
 		if AucAdvanced.Settings.GetSetting("ModTTShow") == "never" then
@@ -153,7 +151,7 @@ function private.OnTooltip(tip, item, quantity, name, hyperlink, quality, ilvl, 
 	tooltip:ClearFrame(tip)
 end
 
-function private.ClickBagHook(hookParams, returnValue, self, button, ignoreShift)
+local function HookClickBag(hookParams, returnValue, self, button, ignoreShift)
 	if button == "RightButton" and IsAltKeyDown() and AucAdvanced.Settings.GetSetting("clickhook.enable") then
 		if AuctionFrame and AuctionFrameBrowse and AuctionFrameBrowse:IsVisible() then
 			local bag = self:GetParent():GetID()
@@ -172,7 +170,7 @@ function private.ClickBagHook(hookParams, returnValue, self, button, ignoreShift
 	end
 end
 
-function private.ClickLinkHook(self, item, link, button)
+local function HookClickLink(self, item, link, button)
 	if button == "RightButton" and IsAltKeyDown() and AucAdvanced.Settings.GetSetting("clickhook.enable") then
 		if AuctionFrame and AuctionFrameBrowse and AuctionFrameBrowse:IsVisible() then
 			if link:match("item:%d") then
@@ -188,8 +186,7 @@ function private.ClickLinkHook(self, item, link, button)
 	end
 end
 
-local ALTCHATLINKTOOLTIP_OPEN
-function private.AltChatLinkTooltipHook(link, text, button, chatFrame)
+local function HookAltChatLinkTooltip(link, text, button, chatFrame)
 	if button == "LeftButton"
 	and AucAdvanced.Settings.GetSetting("core.tooltip.altchatlink_leftclick")
 	and link:sub(1, 4) == "item" then
@@ -197,46 +194,42 @@ function private.AltChatLinkTooltipHook(link, text, button, chatFrame)
 	end
 end
 
-function private.HookAH()
+local function HookAH()
+	Stubby.UnregisterAddOnHook("Blizzard_AuctionUI", "Auc-Advanced")
 	hooksecurefunc("AuctionFrameBrowse_Update", AucAdvanced.API.ListUpdate)
 	AucAdvanced.SendProcessorMessage("auctionui")
 end
 
-function private.HookTT()
-	tooltip = AucAdvanced.GetTooltip()
-	tooltip:Activate()
-	tooltip:AddCallback(private.OnTooltip, 600)
-	tooltip:AltChatLinkRegister(private.AltChatLinkTooltipHook)
-	ALTCHATLINKTOOLTIP_OPEN = tooltip:AltChatLinkConstants()
-end
-
-function private.OnLoad(addon)
+local function OnLoad(addon)
 	addon = addon:lower()
 
 	-- Check if the actual addon itself is loading
-	if (addon == "auc-advanced") then
-		Stubby.RegisterAddOnHook("Blizzard_AuctionUi", "Auc-Advanced", private.HookAH)
-		Stubby.RegisterFunctionHook("ContainerFrameItemButton_OnModifiedClick", -200, private.ClickBagHook)
-		hooksecurefunc("ChatFrame_OnHyperlinkShow", private.ClickLinkHook)
-
-		private.HookTT()
+	if addon == "auc-advanced" then
 		--updated saved variables format
-		if not AucAdvancedConfig["version"] then AucAdvanced.Settings.upgradeSavedVariables() end
-
-		for pos, module in ipairs(AucAdvanced.EmbeddedModules) do
-			-- These embedded modules have also just been loaded
-			private.OnLoad(module)
-		end
+		internal.Settings.upgradeSavedVariables()
 
 		-- Load the dummy CoreModule
 		AucAdvanced.CoreModuleOnLoad(addon)
 	end
 
-	-- Notify the actual module if it exists
+	-- Look for a matching module
 	local auc, sys, eng = strsplit("-", addon)
+	local moduleLib
 	if auc == "auc" and sys and eng then
-		local engineLib = AucAdvanced.GetModule(sys, eng, "OnLoad")
-		if engineLib then engineLib.OnLoad(addon) end
+		moduleLib = AucAdvanced.GetModule(sys, eng)
+	end
+	if not moduleLib then
+		moduleLib = internal.Util.GetModuleForName(addon)
+	end
+
+	-- Notify the actual module if it exists
+	if moduleLib and moduleLib.OnLoad then
+		moduleLib.OnLoad(addon)
+	end
+
+	-- Notify all processors that an auctioneer addon has loaded
+	if moduleLib or (auc == "auc" and sys and #sys > 0) then -- identify names in both "auc-name" and "auc-system-name" formats
+		AucAdvanced.SendProcessorMessage("load", addon)
 	end
 
 	-- Check all modules' load triggers and pass event to processors
@@ -249,80 +242,103 @@ function private.OnLoad(addon)
 		end
 	end
 
-	-- Notify all processors that an auctioneer addon has loaded
-	if auc == "auc" and sys and #sys > 0 then -- identify names in both "auc-name" and "auc-system-name" formats
-		AucAdvanced.SendProcessorMessage("load", addon)
+	if moduleLib then
+		internal.Util.SendModuleCallbacks(moduleLib)
+	end
+
+	if addon == "auc-advanced" then
+		for pos, module in ipairs(AucAdvanced.EmbeddedModules) do
+			-- These embedded modules have also just been loaded
+			OnLoad(module)
+		end
 	end
 end
 
-function private.OnUnload()
+local function OnUnload()
 	local modules = AucAdvanced.GetAllModules("OnUnload")
 	for pos, engineLib in ipairs(modules) do
 		engineLib.OnUnload()
 	end
 end
 
-private.Schedule = {}
-function private.OnEvent(self, event, arg1, arg2, ...)
-	if (event == "ADDON_LOADED") then
-		private.OnLoad(arg1)
-		AucAdvanced.ResetSPMArray()
-	elseif (event == "PLAYER_LOGIN") then
-		-- (used as an alternative to "ADDON_LOADED", to delay loading scandata.
-		-- as of 3.2 the LoadAddOn()  API  returned nil, nil when using "ADDON_LOADED" event)
-		-- Check to see if we need to load scandata
-		if AucAdvanced.Settings.GetSetting("scandata.force") then
-			AucAdvanced.Scan.LoadScanData()
-		end
-	elseif (event == "AUCTION_HOUSE_SHOW") then
-		AucAdvanced.SendProcessorMessage("auctionopen")
-	elseif (event == "AUCTION_HOUSE_CLOSED") then
-		AucAdvanced.SendProcessorMessage("auctionclose")
-		AucAdvanced.Scan.AHClosed()
-	elseif (event == "PLAYER_LOGOUT") then
-		AucAdvanced.Scan.Logout()
-		private.OnUnload()
+local function OnEnteringWorld(frame)
+	frame:UnregisterEvent("PLAYER_ENTERING_WORLD") -- we only want the first instance of this event
+	OnEnteringWorld = nil
+
+	if not AucAdvanced or AucAdvanced.ABORTLOAD then
+		-- something's gone wrong - silently abort loading (any error should have been reported elsewhere)
+		return
+	end
+
+	frame:RegisterEvent("ITEM_LOCK_CHANGED")
+	frame:RegisterEvent("BAG_UPDATE")
+	-- Following items are for experimental scan processor modifications
+	frame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
+	frame:RegisterEvent("AUCTION_OWNED_LIST_UPDATE")
+
+	Stubby.RegisterAddOnHook("Blizzard_AuctionUI", "Auc-Advanced", HookAH)
+	Stubby.RegisterFunctionHook("ContainerFrameItemButton_OnModifiedClick", -200, HookClickBag)
+	hooksecurefunc("ChatFrame_OnHyperlinkShow", HookClickLink)
+
+	tooltip = AucAdvanced.GetTooltip()
+	tooltip:Activate()
+	tooltip:AddCallback(OnTooltip, 600)
+	tooltip:AltChatLinkRegister(HookAltChatLinkTooltip)
+	ALTCHATLINKTOOLTIP_OPEN = tooltip:AltChatLinkConstants()
+
+	-- CoreResources must be activated first, in case other modules need to use the resources
+	internal.Resources.Activate()
+
+	-- send general activate message
+	AucAdvanced.SendProcessorMessage("gameactive")
+
+	if AucAdvanced.Settings.GetSetting("scandata.force") then
+		AucAdvanced.Scan.LoadScanData()
+	end
+end
+
+local function OnEvent(self, event, arg1, arg2, ...)
+	if event == "AUCTION_ITEM_LIST_UPDATE" then
+		internal.Scan.NotifyItemListUpdated()
+	elseif event == "AUCTION_OWNED_LIST_UPDATE" then
+		internal.Scan.NotifyOwnedListUpdated()
 	elseif (event == "ITEM_LOCK_CHANGED" and arg2) or event == "BAG_UPDATE" then
 		if arg1 >= 0 and arg1 <= 4 then
-			private.Schedule["inventory"] = GetTime() + 0.05 -- collect multiple events for same bag change using a slight delay
+			ScheduleMessage("inventory", 0.05) -- collect multiple events for same bag change using a slight delay
 		end
+	elseif event == "ADDON_LOADED" then
+		OnLoad(arg1)
+	elseif event == "PLAYER_LOGOUT" then
+		internal.Scan.Logout()
+		OnUnload()
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD") -- we only want the first instance of this event
-		flagBlockTooltip = nil -- Unblock tooltips: this flag prevented us from trying to draw a tooltip while the game was still loading
-	elseif event == "AUCTION_ITEM_LIST_UPDATE" then
-		if internalStore.Scan then internalStore.Scan.NotifyItemListUpdated() end
-	elseif event == "AUCTION_OWNED_LIST_UPDATE" then
-		if internalStore.Scan then internalStore.Scan.NotifyOwnedListUpdated() end
+		OnEnteringWorld(self)
 	end
 end
 
-function private.OnUpdate(...)
-	if not next(private.Schedule) then return end
-	local now = GetTime()
-	for event, trigger in pairs(private.Schedule) do
-		if now >= trigger then
-			AucAdvanced.SendProcessorMessage(event, trigger)
-			private.Schedule[event] = nil
+local EventFrame = CreateFrame("Frame")
+EventFrame:RegisterEvent("ADDON_LOADED")
+EventFrame:RegisterEvent("PLAYER_LOGOUT")
+EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+EventFrame:SetScript("OnEvent", OnEvent)
+
+do -- ScheduleMessage handler
+	local scheduled = {}
+	ScheduleMessage = function(event, delay) -- declared local above
+		scheduled[event] = GetTime() + delay
+	end
+	local function OnUpdate(...)
+		if not next(scheduled) then return end
+		local now = GetTime()
+		for event, trigger in pairs(scheduled) do
+			if now >= trigger then
+				AucAdvanced.SendProcessorMessage(event, trigger)
+				scheduled[event] = nil
+			end
 		end
 	end
+	EventFrame:SetScript("OnUpdate", OnUpdate)
 end
-
-private.Frame = CreateFrame("Frame")
-private.Frame:RegisterEvent("ADDON_LOADED")
-private.Frame:RegisterEvent("AUCTION_HOUSE_SHOW")
-private.Frame:RegisterEvent("AUCTION_HOUSE_CLOSED")
-private.Frame:RegisterEvent("ITEM_LOCK_CHANGED")
-private.Frame:RegisterEvent("BAG_UPDATE")
-private.Frame:RegisterEvent("PLAYER_LOGOUT")
-private.Frame:RegisterEvent("PLAYER_LOGIN")
-private.Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-private.Frame:SetScript("OnEvent", private.OnEvent)
-private.Frame:SetScript("OnUpdate", private.OnUpdate)
-
--- Following items are for experimental scan processor modifications
-private.Frame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE");
-private.Frame:RegisterEvent("AUCTION_OWNED_LIST_UPDATE");
-
 
 
 -- Auctioneer's debug functions
@@ -387,4 +403,4 @@ function AucAdvanced.Debug.Assert(test, message)
 	return DebugLib.Assert(addonName, test, message)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreMain.lua $", "$Rev: 5224 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreMain.lua $", "$Rev: 5335 $")

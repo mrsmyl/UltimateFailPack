@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Outlier Filter
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: OutlierFilter.lua 5187 2011-06-29 15:51:33Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: OutlierFilter.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -116,21 +116,6 @@ function lib.AuctionFilter(operation, itemData)
 	if price < maxcap then return false end
 
 	-- Otherwise this item needs to be filtered
-	-- We need to see if this auction is to be ignored or not.
-	if nLog then
-		nLog.AddMessage(
-			"auc-"..libType.."-"..libName,
-			"AuctionFilter",
-			N_INFO,
-			"Filtered Data",
-			"Auction Filter Removed Data for ", itemData.itemName,
-			" from ", (itemData.sellerName or "UNKNOWN"),
-			", quality ", tostring(quality or 0),
-			", item level ", tostring(itemData.itemLevel or 0),
-			".\n",
-			"Price ", price, " > Cap ", maxcap
-		)
-	end
 	return true
 end
 
@@ -223,4 +208,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Filter-Outlier/OutlierFilter.lua $", "$Rev: 5187 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Filter-Outlier/OutlierFilter.lua $", "$Rev: 5335 $")

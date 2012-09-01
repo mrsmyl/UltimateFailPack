@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: Swatter.lua 316 2011-10-01 17:16:46Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: Swatter.lua 328 2012-08-16 15:33:18Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -41,7 +41,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="5.13.5258"
+Swatter.Version="5.14.5335"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "5.1.DEV"
 end
@@ -74,7 +74,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 316 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 328 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -157,12 +157,16 @@ local function OnError(msg, frame, stack, etype, ...)
 		msg = "Unknown Error"
 	end
 	if type(frame) == "string" then
-		frame = Swatter.NamedFrame(name) or Swatter.nilFrame
+		frame = Swatter.NamedFrame(frame) or Swatter.nilFrame
 	elseif type(frame) ~= "table" or type(frame.GetName) ~= "function" then
 		frame = Swatter.nilFrame
 	end
 	if type(stack) ~= "string" or stack == "" then
 		stack = debugstack(3, 20, 20)
+	end
+	local locals = debuglocals(4)
+	if locals == "" then
+		locals = nil
 	end
 
 	local context
@@ -182,6 +186,7 @@ local function OnError(msg, frame, stack, etype, ...)
 			addons = addons,
 			message = msg,
 			stack = stack,
+			locals = locals,
 			count = 0,
 		})
 		id = #(SwatterData.errors)
@@ -433,6 +438,19 @@ function Swatter.ErrorShow(pos)
 	Swatter.ErrorDisplay()
 end
 
+local ERROR_FORMAT = [[|cffff5533Date:|r %s
+|cffff5533ID:|r %d
+|cffff5533Error occured in:|r %s
+|cffff5533Count:|r %s
+|cffff5533Message:|r %s
+|cffff5533Debug:|r
+%s
+|cffff5533Locals:|r
+%s
+|cffff5533AddOns:|r
+%s
+]]
+
 function Swatter.ErrorDisplay(id)
 	if id then Swatter.Error.pos = id else id = Swatter.Error.pos end
 	Swatter.ErrorUpdate()
@@ -459,6 +477,7 @@ function Swatter.ErrorDisplay(id)
 	local timestamp = err.timestamp or "Unavailable"
 	local addlist = err.addons or "  Unavailable"
 	local context = err.context or "Anonymous"
+	local locals = err.locals or "None"
 
 	local message = err.message:gsub("(.-):(%d+): ", "%1 line %2:\n   "):gsub("Interface(\\%w+\\)", "..%1"):gsub(": in function `(.-)`", ": %1"):gsub("|", "||"):gsub("{{{", "|cffff8855"):gsub("}}}", "|r")
 	--Hide users account name if it is a saved variable related error
@@ -470,7 +489,8 @@ function Swatter.ErrorDisplay(id)
 	local errPos = id - Swatter.loadCount
 	if errPos <= 0 then errPos = errPos - 1 end
 
-	Swatter.Error.curError = "|cffff5533Date:|r "..timestamp.."\n|cffff5533ID:|r "..errPos.."\n|cffff5533Error occured in:|r "..context.."\n|cffff5533Count:|r "..count.."\n|cffff5533Message:|r "..message.."\n|cffff5533Debug:|r\n"..trace.."\n|cffff5533AddOns:|r\n"..addlist.."\n"
+	--Swatter.Error.curError = "|cffff5533Date:|r "..timestamp.."\n|cffff5533ID:|r "..errPos.."\n|cffff5533Error occured in:|r "..context.."\n|cffff5533Count:|r "..count.."\n|cffff5533Message:|r "..message.."\n|cffff5533Debug:|r\n"..trace.."\n|cffff5533Locals:|r\n"..locals.."\n|cffff5533AddOns:|r\n"..addlist.."\n"
+	Swatter.Error.curError = ERROR_FORMAT:format(timestamp, errPos, context, count, message, trace, locals, addlist)
 	Swatter.Error.selected = false
 	Swatter.ErrorUpdate()
 	Swatter.Error:Show()

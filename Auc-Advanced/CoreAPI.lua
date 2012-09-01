@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Advanced
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CoreAPI.lua 5232 2011-11-23 17:47:17Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CoreAPI.lua 5231 2011-11-18 22:01:36Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -1129,4 +1129,4 @@ do
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreAPI.lua $", "$Rev: 5232 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreAPI.lua $", "$Rev: 5231 $")

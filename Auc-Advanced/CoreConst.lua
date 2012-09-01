@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CoreConst.lua 5117 2011-03-20 17:45:18Z Prowell $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CoreConst.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -33,7 +33,7 @@
 ]]
 if not AucAdvanced then return end
 
-AucAdvanced.Const = {
+local lib = {
 	PlayerName = UnitName("player"),
 	PlayerRealm = GetRealmName(),
 	PlayerFaction = UnitFactionGroup("player"),
@@ -123,7 +123,7 @@ AucAdvanced.Const = {
 
 	ScanPosLabels = {"LINK", "ILEVEL", "ITYPE", "ISUB", "IEQUIP", "PRICE", "TLEFT", "TIME", "NAME", "TEXTURE", "COUNT", "QUALITY", "CANUSE", "ULEVEL", "MINBID", "MININC",
 		"BUYOUT", "CURBID", "AMHIGH", "SELLER", "FLAG", "ID", "ITEMID", "SUFFIX", "FACTOR", "ENCHANT", "SEED" },
-	
+
 	FLAG_DIRTY = 1,
 	FLAG_UNSEEN = 2,
 	FLAG_FILTER = 4,
@@ -132,25 +132,29 @@ AucAdvanced.Const = {
 	SUBCLASSES = { },
 	CLASSESREV = { }, -- Table mapping names to index in CLASSES table
 	SUBCLASSESREV = { }, -- Table mapping from CLASS and SUBCLASSES names to index number in SUBCLASSES
+
+	MAXSKILLLEVEL = 600,
+	MAXUSERLEVEL = 90,
+	MAXITEMLEVEL = 510,
 }
 
-AucAdvanced.Const.InvTypes = AucAdvanced.Const.EquipEncode -- backward compatibility - deprecated entry
+lib.InvTypes = lib.EquipEncode -- backward compatibility - deprecated entry
 
-AucAdvanced.Const.ServerKeyHome = AucAdvanced.Const.PlayerRealm .."-".. AucAdvanced.Const.PlayerFaction
-AucAdvanced.Const.ServerKeyNeutral = AucAdvanced.Const.PlayerRealm .."-Neutral"
-if AucAdvanced.Const.PlayerFaction == "Alliance" then
-	AucAdvanced.Const.OpposingFaction = "Horde"
+lib.ServerKeyHome = lib.PlayerRealm .."-".. lib.PlayerFaction
+lib.ServerKeyNeutral = lib.PlayerRealm .."-Neutral"
+if lib.PlayerFaction == "Alliance" then
+	lib.OpposingFaction = "Horde"
 else
-	AucAdvanced.Const.OpposingFaction = "Alliance"
+	lib.OpposingFaction = "Alliance"
 end
-AucAdvanced.Const.ServerKeyOpposing = AucAdvanced.Const.PlayerRealm .."-".. AucAdvanced.Const.OpposingFaction
+lib.ServerKeyOpposing = lib.PlayerRealm .."-".. lib.OpposingFaction
 
-for i = 1, #AucAdvanced.Const.CLASSES do
-	AucAdvanced.Const.CLASSESREV[AucAdvanced.Const.CLASSES[i]] = i
-	AucAdvanced.Const.SUBCLASSESREV[AucAdvanced.Const.CLASSES[i]] = {}
-	AucAdvanced.Const.SUBCLASSES[i] = { GetAuctionItemSubClasses(i) }
-	for j = 1, #AucAdvanced.Const.SUBCLASSES[i] do
-		AucAdvanced.Const.SUBCLASSESREV[AucAdvanced.Const.CLASSES[i]][AucAdvanced.Const.SUBCLASSES[i][j]] = j
+for i = 1, #lib.CLASSES do
+	lib.CLASSESREV[lib.CLASSES[i]] = i
+	lib.SUBCLASSESREV[lib.CLASSES[i]] = {}
+	lib.SUBCLASSES[i] = { GetAuctionItemSubClasses(i) }
+	for j = 1, #lib.SUBCLASSES[i] do
+		lib.SUBCLASSESREV[lib.CLASSES[i]][lib.SUBCLASSES[i][j]] = j
 	end
 end
 
@@ -159,11 +163,11 @@ local function CompileInvTypes(...)
 		-- each type has 2 args: token name(i), display in list(i+1)
 		local equipLoc = select(i, ...)
 		local invTypeIndex = (i+1)/2
-		local equipCode = AucAdvanced.Const.EquipEncode[equipLoc]
+		local equipCode = lib.EquipEncode[equipLoc]
 
-		AucAdvanced.Const.EquipLocToInvIndex[equipLoc] = invTypeIndex
+		lib.EquipLocToInvIndex[equipLoc] = invTypeIndex
 		if equipCode then
-			AucAdvanced.Const.EquipCodeToInvIndex[equipCode] = invTypeIndex
+			lib.EquipCodeToInvIndex[equipCode] = invTypeIndex
 		else
 			-- All possible entries should exist in the table - warn if a missing entry is detected
 			print("AucAdvanced CoreConst error: missing EquipCode for Equip Location "..equipLoc)
@@ -173,9 +177,15 @@ end
 
 CompileInvTypes(GetAuctionInvTypes(2, 1))
 
--- todo: what is this used by?
-AucAdvanced.Defaults = {
-	Scanner = "Simple",
-}
+--[ Hybrid code for transition from WoW4.3 to WoW5.0 - remove after 5.0 goes live
+local _,_,_,tocVersion = GetBuildInfo()
+if tocVersion < 50001 then
+	lib.MAXSKILLLEVEL = 525
+	lib.MAXUSERLEVEL = 85
+	lib.MAXITEMLEVEL = 416
+end
+--]]
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreConst.lua $", "$Rev: 5117 $")
+AucAdvanced.Const = lib
+
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreConst.lua $", "$Rev: 5335 $")

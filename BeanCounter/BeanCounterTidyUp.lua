@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: BeanCounterTidyUp.lua 5131 2011-04-27 20:30:08Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: BeanCounterTidyUp.lua 5268 2012-01-22 23:15:00Z Nechckn $
 	URL: http://auctioneeraddon.com/
 	
 	BeanCounterTidyUp - Database clean up and maintenance functions
@@ -28,12 +28,12 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.13/BeanCounter/BeanCounterTidyUp.lua $","$Rev: 5131 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/BeanCounterTidyUp.lua $","$Rev: 5268 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local lib = BeanCounter
 local private = lib.Private
 local private, print, get, set, _BC = lib.getLocals()
-local pairs,ipairs,next,select,type = pairs,ipairs,next,select,type
+local pairs,ipairs,next,select,type,random,date = pairs,ipairs,next,select,type,random,date
 local strsplit = strsplit
 
 local function debugPrint(...)
@@ -42,42 +42,44 @@ local function debugPrint(...)
     end
 end
 
---create a task list if a player account lacks it or it needs to be reset
-function private.createplayerplan()
-	return {
-		["sortArray"] = time() + random(86400, 432000),
-		["prunePostedDB"] = time() + random(86400, 432000),
-		["compactDB"] = time() + random(86400, 432000),
-	}
+function private.maintenanceTasks()
+	--check for tasks that need to run.
+	for server, serverData in pairs(BeanCounterDB) do
+		for player, playerData in pairs(serverData) do
+			private.startPlayerMaintenance(server, player)
+		end
+	end
 end
+
 local runServerTaskOnce = true
 --[[Checks each players last run time and runs maintaince functions if apprp.  Adds a random amount of days and reschedules]]
 function private.startPlayerMaintenance(server, player)
-	if not BeanCounterDBSettings[server][player]["maintenance"] then
-		BeanCounterDBSettings[server][player]["maintenance"] = private.createplayerplan()
-	end
-	local main = BeanCounterDBSettings[server][player]["maintenance"]
 	local currentTime = time()
+	local RND = currentTime + random(86400, 432000)
+	--get schedule values or create new value that will run task NOW
+	local sortArray = get("tasks.sortArray", server, player) or 0
+	local prunePostedDB = get("tasks.prunePostedDB", server, player) or 0
+	local compactDB = get("tasks.compactDB", server, player) or 0
+	
 	--we use random to add 1-5 days to the fixed intervals. This should keep all the tasks from occuring in the same login in general
-	for task, lastRun in pairs(main) do
-		if task == "sortArray" and lastRun + 2592000 < currentTime then --run monthly
-			private.sortArrayByDate(server, player)
-			main[task] = currentTime + random(86400, 432000)
-		
-		elseif task == "prunePostedDB" and lastRun + 1296000 < currentTime then --run every 14 days
-			private.prunePostedDB(server, player)
-			main[task] = currentTime + random(86400, 432000)
-		
-		elseif task == "compactDB" and lastRun + 2592000 < currentTime then --run monthly
-			private.compactDB(server, player)
-			main[task] = currentTime + random(86400, 432000)			
-		end
+	if sortArray + 2592000 < currentTime then --run monthly
+		private.sortArrayByDate(server, player)
+		set("tasks.sortArray", RND, server, player)
 	end
+	if prunePostedDB + 1296000 < currentTime then --run every 14 days
+		private.prunePostedDB(server, player)
+		set("tasks.prunePostedDB", RND, server, player)
+	end
+	if compactDB + 2592000 < currentTime then --run monthly
+		private.compactDB(server, player)
+		set("tasks.compactDB", RND, server, player)	
+	end
+	
 	--check for non player tasks
 	if runServerTaskOnce then
 		runServerTaskOnce = false
 		local refresh = get("tasks.refreshItemIDArray")
-		if refresh and refresh then--+ 604800 < currentTime then--every 7 days
+		if refresh and refresh + 604800 < currentTime then--every 7 days
 			private.refreshItemIDArray()
 			private.pruneItemNameArray()
 			set("tasks.refreshItemIDArray", time())
@@ -205,7 +207,7 @@ function private.compactDB(server, player)
 			end
 		end
 	end
---~ 	debugPrint("Finished compressing Databases", server, player)
+	debugPrint("Finished compressing Databases", server, player)
 end
 function private.removeUniqueID(datatoCompress, DB, server, player)
 	local TIME = time()--no need to call this for every loop
@@ -254,7 +256,7 @@ function private.sortArrayByDate(server, player)
 			end
 		end
 	end
---~ 	debugPrint("Finished sorting database", server, player)
+	debugPrint("Finished sorting database", server, player)
 end
 --Prune Old keys from postedXXXX tables
 --First we find a itemID that needs pruning then we check all other keys for that itemID and prune.
@@ -286,7 +288,7 @@ function private.prunePostedDB(server, player)
 			end
 		end
 	end
---~ 	debugPrint("Finished Cleaning Posted Databases", server, player)
+	debugPrint("Finished Cleaning Posted Databases", server, player)
 end
 --deletes all entries matching a itemLink from database for that server
 function private.deleteExactItem(itemLink)
@@ -328,48 +330,53 @@ local integrityClean, integrityCount = true, 1
 	if not server then server = private.realmName end
 	local tbl
 	debugPrint(integrityCount)
-	for player, v in pairs(BeanCounterDB[server])do
-		for DB, data in pairs(v) do
-			for itemID, value in pairs(data) do
-				for itemString, data in pairs(value) do
-					local _, itemStringLength = itemString:gsub(":", ":")
-					--check that the data is a string and table
-					if type(itemString) ~= "string"  or  type(data) ~= "table" then
-						BeanCounterDB[server][player][DB][itemID][itemString] = nil
-						debugPrint("Failed: Invalid format", DB, data, "", itemString)
-						integrityClean = false
-					elseif itemStringLength > 10 then --Bad itemstring purge
-						debugPrint("Failed: Invalid itemString", DB, data, "", itemString)
-						local _, link = GetItemInfo(itemString) --ask server for a good itemlink
-						local itemStringNew = lib.API.getItemString(link) --get NEW itemString from itemlink
-						if itemStringNew then
-							debugPrint(itemStringNew, "New link recived replacing")
+	for player, playerData in pairs(BeanCounterDB[server])do
+		for DB, data in pairs(playerData) do
+			if type(data) ~= "table" then
+				debugPrint("Failed: Not a table", server, player, DB)
+				playerData[DB] = {}
+			else
+				for itemID, value in pairs(data) do
+					for itemString, data in pairs(value) do
+						local _, itemStringLength = itemString:gsub(":", ":")
+						--check that the data is a string and table
+						if type(itemString) ~= "string"  or  type(data) ~= "table" then
+							BeanCounterDB[server][player][DB][itemID][itemString] = nil
+							debugPrint("Failed: Invalid format", DB, data, "", itemString)
+							integrityClean = false
+						elseif itemStringLength > 10 then --Bad itemstring purge
+							debugPrint("Failed: Invalid itemString", DB, data, "", itemString)
+							local _, link = GetItemInfo(itemString) --ask server for a good itemlink
+							local itemStringNew = lib.API.getItemString(link) --get NEW itemString from itemlink
+							if itemStringNew then
+								debugPrint(itemStringNew, "New link recived replacing")
+								BeanCounterDB[server][player][DB][itemID][itemStringNew] = data
+								BeanCounterDB[server][player][DB][itemID][itemString] = nil
+							else
+								debugPrint(itemString, "New link falied purging item")
+								BeanCounterDB[server][player][DB][itemID][itemString] = nil
+							end
+							integrityClean = false
+						elseif itemStringLength < 9 then
+							local itemStringNew = itemString..":80"
 							BeanCounterDB[server][player][DB][itemID][itemStringNew] = data
 							BeanCounterDB[server][player][DB][itemID][itemString] = nil
+							integrityClean = false
 						else
-							debugPrint(itemString, "New link falied purging item")
-							BeanCounterDB[server][player][DB][itemID][itemString] = nil
-						end
-						integrityClean = false
-					elseif itemStringLength < 9 then
-						local itemStringNew = itemString..":80"
-						BeanCounterDB[server][player][DB][itemID][itemStringNew] = data
-						BeanCounterDB[server][player][DB][itemID][itemString] = nil
-						integrityClean = false
-					else
-						for index, text in pairs(data) do
-							tbl = {strsplit(";", text)}
-							--check entries for missing data points, skip any DB we havnt made a key for
-							if integrity[DB] then
-								if #integrity[DB] ~= #tbl then
-									debugPrint("Failed: Number of entries invalid", player, DB, #tbl, text)
-									table.remove(data, index)
-									integrityClean = false
-								elseif complete and private.IC(tbl, DB) then
-									--do a full check type() = check
-									debugPrint("Failed type() check", player, DB, index, text)
-									table.remove(data, index)
-									integrityClean = false
+							for index, text in pairs(data) do
+								tbl = {strsplit(";", text)}
+								--check entries for missing data points, skip any DB we havnt made a key for
+								if integrity[DB] then
+									if #integrity[DB] ~= #tbl then
+										debugPrint("Failed: Number of entries invalid", player, DB, #tbl, text)
+										table.remove(data, index)
+										integrityClean = false
+									elseif complete and private.IC(tbl, DB) then
+										--do a full check type() = check
+										debugPrint("Failed type() check", player, DB, index, text)
+										table.remove(data, index)
+										integrityClean = false
+									end
 								end
 							end
 						end
@@ -384,7 +391,7 @@ local integrityClean, integrityCount = true, 1
 		integrityClean = true
 		private.integrityCheck(complete, server)
 	else
-		print("BeanCounter Integrity Check Completed after:",integrityCount, "passes")
+		print("BeanCounter Integrity Check Completed after:",integrityCount, "passes", complete)
 		integrityClean, integrityCount = true, 1
 		--set("util.beancounter.integrityCheckComplete", true)
 		--set("util.beancounter.integrityCheck", true)

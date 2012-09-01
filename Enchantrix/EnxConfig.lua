@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
+	Version: 5.14.5335 (KowariOnCrutches)
 	Revision: $Id: EnxConfig.lua 3576 2008-10-10 03:07:13Z aesir $
 	URL: http://enchantrix.org/
 
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Enchantrix/EnxConfig.lua $", "$Rev: 3576 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxConfig.lua $", "$Rev: 3576 $")
 
 -- Global functions
 local addonLoaded		-- Enchantrix.Config.AddonLoaded()

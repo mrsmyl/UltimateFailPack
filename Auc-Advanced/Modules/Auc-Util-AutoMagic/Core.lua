@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: Core.lua 5224 2011-10-06 00:35:53Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: Core.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -359,6 +359,13 @@ local BindTypes = {
 	[ITEM_SOULBOUND] = "Bound",
 	[ITEM_BIND_ON_PICKUP] = "Bound",
 }
+--tooltip checks soulbound status
+function lib.isSoulbound(bag, slot)
+	ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+	ScanTip:ClearLines()
+	ScanTip:SetBagItem(bag, slot)
+	return BindTypes[ScanTip2:GetText()] or BindTypes[ScanTip3:GetText()]
+end
 
 lib.vendorlist = {}
 function lib.vendorAction(autovendor)
@@ -366,6 +373,7 @@ function lib.vendorAction(autovendor)
 		 playerArmorType = lib.playerArmor()--create the players localized usable armor
 	end
 	empty(lib.vendorlist) --this needs to be cleared on every vendor open
+--~ 	local  ignoredItemsFound --used to alert players that some vendor items were skipped
 	for bag=0,4 do
 		for slot=1,GetContainerNumSlots(bag) do
 			if (GetContainerItemLink(bag,slot)) then
@@ -381,35 +389,40 @@ function lib.vendorAction(autovendor)
 					ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
 					ScanTip:ClearLines()
 					ScanTip:SetBagItem(bag, slot)
-					local soulbound = BindTypes[ScanTip2:GetText()] or BindTypes[ScanTip3:GetText()]
-					--autovendor  is used to sell without confirmation.
-					if autovendor then
-						if get("util.automagic.autoselllist") and get("util.automagic.autoselllistnoprompt") and lib.autoSellList[ itemID ] then
-							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
-						elseif itemRarity == 0 and get("util.automagic.autosellgrey") and get("util.automagic.autosellgreynoprompt") then
-							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
-						elseif soulbound and get("util.automagic.vendorunusablebop") and get("util.automagic.autosellbopnoprompt") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
-							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
-						elseif get("util.automagic.autosellreason") and get("util.automagic.autosellreasonnoprompt") then
-							local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
-							if reason and text then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
+					local soulbound = lib.isSoulbound(bag, slot)
+					--item is ignored then skip it. Stops ignored items from showing on vedor list
+--~ 					if not get("util.automagic.vidignored"..itemID) then
+						--autovendor  is used to sell without confirmation.
+						if autovendor then
+							if get("util.automagic.autoselllist") and get("util.automagic.autoselllistnoprompt") and lib.autoSellList[ itemID ] then
+								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
+							elseif itemRarity == 0 and get("util.automagic.autosellgrey") and get("util.automagic.autosellgreynoprompt") then
+								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
+							elseif soulbound and get("util.automagic.vendorunusablebop") and get("util.automagic.autosellbopnoprompt") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
+								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
+							elseif get("util.automagic.autosellreason") and get("util.automagic.autosellreasonnoprompt") then
+								local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
+								if reason and text then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
+								end
+							end
+						else
+							if get("util.automagic.autoselllist") and lib.autoSellList[ itemID ] then
+								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
+							elseif itemRarity == 0 and get("util.automagic.autosellgrey") then
+								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
+							elseif soulbound and get("util.automagic.vendorunusablebop") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
+								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
+							elseif get("util.automagic.autosellreason") then
+								local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
+								if reason and text then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
+								end
 							end
 						end
-					else
-						if get("util.automagic.autoselllist") and lib.autoSellList[ itemID ] then
-							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
-						elseif itemRarity == 0 and get("util.automagic.autosellgrey") then
-							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
-						elseif soulbound and get("util.automagic.vendorunusablebop") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
-							lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
-						elseif get("util.automagic.autosellreason") then
-							local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
-							if reason and text then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
-							end
-						end
-					end
+--~ 					else
+--~ 						ignoredItemsFound = true
+--~ 					end
 					--clear tooltip for this loop
 					ScanTip:Hide()
 				end
@@ -421,6 +434,10 @@ function lib.vendorAction(autovendor)
 	else
 		lib.ASCPrompt()
 	end
+	if ignoredItemsFound then
+		print("Automagic skipped items on vendoring ignore list")
+	end
+
 end
 
 function lib.disenchantAction()
@@ -607,4 +624,37 @@ function lib.getReason(itemLink, itemName, itemCount, text)
 	return
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5224 $")
+--User buttons
+function lib.customAction(button)
+	MailFrameTab_OnClick(nil, 2)
+	for bag=0,4 do
+		for slot=1,GetContainerNumSlots(bag) do
+			if (GetContainerItemLink(bag,slot)) then
+				local itemLink = GetContainerItemLink(bag,slot)
+				local itemCount = GetContainerItemInfo(bag, slot)
+				if (itemLink == nil) then return end
+				if itemCount == nil then itemCount = 1 end
+
+
+				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+				local itemID = GetContainerItemID(bag, slot)
+				local settings = get("util.automagic.SavedMailButtons")
+				local buttonName = button:GetText()
+				if settings and settings[buttonName] then
+					for i, data in pairs (settings[buttonName]) do
+						if data[2] == itemID and not lib.isSoulbound(bag, slot) then
+							if (get("util.automagic.chatspam")) then
+								print("AutoMagic has loaded", itemName, " from custom button.")
+							end
+							UseContainerItem(bag, slot)
+						end
+					end
+				end
+
+			end
+		end
+	end
+end
+
+
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5335 $")

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
+	Version: 5.14.5335 (KowariOnCrutches)
 	Revision: $Id: AskPrice.lua 5160 2011-05-14 20:01:15Z kandoko $
 	URL: http://auctioneeraddon.com/
 
@@ -597,4 +597,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5160 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5160 $")

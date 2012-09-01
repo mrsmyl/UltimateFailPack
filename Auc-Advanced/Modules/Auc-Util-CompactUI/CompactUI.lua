@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer - Price Level Utility module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CompactUI.lua 5254 2011-12-17 23:11:05Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CompactUI.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a price level indicator
@@ -77,6 +77,7 @@ function private.OnLoadRunOnce()
 	default("util.compactui.tooltiphelp", true)
 	default("util.compactui.collapse", false)
 	default("util.compactui.bidrequired", true)
+	default("util.compactui.priceperitem", false)
 	default("util.browseoverride.activated", false)
 end
 function lib.OnLoad()
@@ -404,9 +405,12 @@ function private.HookAH()
 
 	local check = CreateFrame("CheckButton", nil, AuctionFrameBrowse, "OptionsCheckButtonTemplate")
 	private.PerItem = check
-	check:SetChecked(false)
+	check:SetChecked(get("util.compactui.priceperitem"))
 	check:SetPoint("TOPLEFT", tex, "TOPLEFT", 5, -5)
-	check:SetScript("OnClick", AuctionFrameBrowse_Update)
+	check:SetScript("OnClick", function()
+		set("util.compactui.priceperitem", check:GetChecked())
+		AuctionFrameBrowse_Update()
+	end)
 	tinsert(private.candy, check)
 
 	local text = AuctionFrameBrowse:CreateFontString(nil,nil,"GameFontNormal")
@@ -546,14 +550,12 @@ function private.RetrievePage()
 
 			local name, texture, count, quality, canUse, level,
 				levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount,
-				highBidder, owner  = GetAuctionItemInfo("list", i)
-			local itemName, itemLink, itemRarity, itemLevel,
-				itemMinLevel, itemType, itemSubType, itemStackCount,
-				itemEquipLoc, itemTexture = GetItemInfo(link)
+				highBidder, owner, saleStatus, itemId  = GetAuctionItemInfo("list", i)
+			local _, _, _, itemLevel, itemMinLevel = GetItemInfo(itemId)
 
 			if levelColHeader == "ITEM_LEVEL_ABBR" then
 				itemLevel = level
-			else
+			elseif levelColHeader == "REQ_LEVEL_ABBR" then
 				itemMinLevel = level
 			end
 			itemLevel = tonumber(itemLevel) or 1 -- extra safety checking - these values may be used by our sort function
@@ -594,7 +596,7 @@ function private.RetrievePage()
 
 			item[3] = count
 			item[4] = texture
-			item[5] = itemRarity
+			item[5] = quality
 			item[6] = name
 			item[7] = link
 			item[8] = itemMinLevel
@@ -791,7 +793,11 @@ function private.MyAuctionFrameUpdate()
 		BrowseSearchCountText:Hide()
 	end
 
-	private.PageNum:SetText(("%d/%d"):format(AuctionFrameBrowse.page+1, ceil(totalAuctions/pagesize)))
+	if pagesize > 0 then -- temp hotfix {COMP-30}
+		private.PageNum:SetText(("%d/%d"):format(AuctionFrameBrowse.page+1, ceil(totalAuctions/pagesize)))
+	else
+		private.PageNum:SetText("1")
+	end
 	FauxScrollFrame_Update(BrowseScrollFrame, numBatchAuctions, NUM_BROWSE_TO_DISPLAY, AUCTIONS_BUTTON_HEIGHT)
 	BrowseScrollFrame:Show()
 	AucAdvanced.API.ListUpdate()
@@ -863,4 +869,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5254 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5335 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: Mail-GUI.lua 4556 2009-12-03 22:20:32Z Kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: Mail-GUI.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -96,41 +96,10 @@ function lib.makeMailGUI()
 	lib.mguibtmrules:SetJustifyH("LEFT")
 	lib.mguibtmrules:SetWidth(101)
 	lib.mguibtmrules:SetHeight(10)
-	lib.mguibtmrules:SetPoint("TOPLEFT",  lib.ammailgui, "TOPLEFT", 8, -16)
+	lib.mguibtmrules:SetPoint("TOPLEFT",  lib.ammailgui, "TOPLEFT", 18, -16)
 	lib.ammailgui.mguibtmrules = lib.mguibtmrules
 
-	lib.ammailgui.loadde = CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
-	lib.ammailgui.loadde:SetText(("Disenchant"))
-	lib.ammailgui.loadde:SetPoint("TOPLEFT", lib.mguibtmrules, "BOTTOMLEFT", 0, 1)
-	lib.ammailgui.loadde:SetScript("OnClick", lib.disenchantAction)
-	lib.ammailgui.loadde:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui.loadde, "Add all items tagged \nfor DE to the mail.") end)
-	lib.ammailgui.loadde:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
---[[	lib.ammailgui.mailto = CreateFrame("EditBox", "", lib.ammailgui, "InputBoxTemplate")
-	lib.ammailgui.mailto:SetPoint("TOPLEFT", lib.ammailgui.loaddemats, "BOTTOMRIGHT", 0, -12)
-	lib.ammailgui.mailto:SetAutoFocus(false)
-	lib.ammailgui.mailto:SetHeight(15)
-	lib.ammailgui.mailto:SetWidth(100)
-	lib.ammailgui.mailto:SetMaxLetters(12)
-	--lib.ammailgui.loaddemailto:SetScript("OnEnterPressed", silvertocopper)
-	--lib.ammailgui.loaddemailto:SetScript("OnTabPressed", silvertocopper)
-
-	lib.mguimailtotxt = lib.ammailgui:CreateFontString(four, "OVERLAY", "NumberFontNormalYellow")
-	lib.mguimailtotxt:SetText("Set Recipient to:")
-	lib.mguimailtotxt:SetJustifyH("LEFT")
-	lib.mguimailtotxt:SetWidth(101)
-	lib.mguimailtotxt:SetHeight(10)
-	lib.mguimailtotxt:SetPoint("TOPRIGHT",  lib.ammailgui.mailto, "TOPLEFT", 0, -25)
-	--lib.mguimailfor:SetPoint("TOPRIGHT", lib.ammailgui.loadprospect, "BOTTOMRIGHT", 0, 0)
-	lib.ammailgui.mguimailtotxt = lib.mguimailtotxt]]
-
-	lib.ammailgui.loadprospect = CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
-	lib.ammailgui.loadprospect:SetText(("Prospect"))
-	lib.ammailgui.loadprospect:SetPoint("TOPLEFT", lib.ammailgui.loadde, "BOTTOMLEFT", 0, 0)
-	lib.ammailgui.loadprospect:SetScript("OnClick", lib.prospectAction)
-	lib.ammailgui.loadprospect:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui.loadprospect, "Add all items tagged \nfor Prospect to the mail.") end)
-	lib.ammailgui.loadprospect:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
+	
 	lib.mguimailfor = lib.ammailgui:CreateFontString(three, "OVERLAY", "NumberFontNormalYellow")
 	lib.mguimailfor:SetText("Misc:")
 	lib.mguimailfor:SetJustifyH("LEFT")
@@ -139,33 +108,448 @@ function lib.makeMailGUI()
 	lib.mguimailfor:SetPoint("TOPLEFT",  lib.mguibtmrules, "TOPRIGHT", 25, 0)
 	--lib.mguimailfor:SetPoint("TOPRIGHT", lib.ammailgui.loadprospect, "BOTTOMRIGHT", 0, 0)
 	lib.ammailgui.mguimailfor = lib.mguimailfor
-
-	lib.ammailgui.loadgems = CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
-	lib.ammailgui.loadgems:SetText(("Gems"))
-	lib.ammailgui.loadgems:SetPoint("TOPLEFT", lib.mguimailfor, "BOTTOMLEFT", 0, 0)
-	lib.ammailgui.loadgems:SetScript("OnClick", lib.gemAction)
-	lib.ammailgui.loadgems:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui.loadgems, "Add all Gems to the mail.") end)
-	lib.ammailgui.loadgems:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	
-	lib.ammailgui.loadherb = CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
-	lib.ammailgui.loadherb:SetText(("Herbs"))
-	lib.ammailgui.loadherb:SetPoint("LEFT", lib.ammailgui.loadgems, "RIGHT", 0, 0)
-	lib.ammailgui.loadherb:SetScript("OnClick", lib.herbAction)
-	lib.ammailgui.loadherb:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui.loadherb, "Add all items classified \nas herbs to the mail.") end)
-	lib.ammailgui.loadherb:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	
+	lib.createMailButton("Disenchant", "Add all items tagged \nfor DE to the mail.", lib.disenchantAction)
+	lib.createMailButton("Gems", "Add all Gems to the mail.", lib.gemAction)
+	lib.createMailButton("Herbs", "Add all items classified \nas herbs to the mail", lib.herbAction)
+	lib.createMailButton("Prospect", "Add all items tagged \nfor Prospect to the mail.", lib.prospectAction)
+	lib.createMailButton("Chant Mats", "Add all Enchanting mats \nto the mail.", lib.dematAction)
+	lib.createMailButton("Pigments", "Add all Pigments \nto the mail.", lib.pigmentAction)
+	
+	--Lets make the Reason code based buttons a  different color Blue for SUI rule based, Green for default lists
+	do
+		local function buttonrecolor(button, green)
+			button:SetNormalTexture("Interface\\GLUES\\Common\\Glue-Panel-Button-Up-Blue")
+			button:SetPushedTexture("Interface\\GLUES\\Common\\Glue-Panel-Button-Down-Blue")
+			button:SetHighlightTexture("Interface\\GLUES\\Common\\Glue-Panel-Button-Highlight-Blue")
+			
+			local tex = button:GetNormalTexture()
+			tex:SetTexCoord(0,.56,.1,.56)
+			if green then
+				tex:SetVertexColor(0,1,0,1)
+			end		
+		end
 		
-	lib.ammailgui.loaddemats = CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
-	lib.ammailgui.loaddemats:SetText(("Chant Mats"))
-	lib.ammailgui.loaddemats:SetPoint("TOPLEFT", lib.ammailgui.loadgems, "BOTTOMLEFT", 0, 0)
-	lib.ammailgui.loaddemats:SetScript("OnClick", lib.dematAction)
-	lib.ammailgui.loaddemats:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui.loaddemats, "Add all Enchanting mats \nto the mail.") end)
-	lib.ammailgui.loaddemats:SetScript("OnLeave", function() GameTooltip:Hide() end)
+		buttonrecolor(lib.ammailgui.Button1)
+		buttonrecolor(lib.ammailgui.Button2, true)
+		buttonrecolor(lib.ammailgui.Button3, true)
+		buttonrecolor(lib.ammailgui.Button4)
+		buttonrecolor(lib.ammailgui.Button5, true)
+		buttonrecolor(lib.ammailgui.Button6, true)
+	end
 	
-	lib.ammailgui.loadpigment = CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
-	lib.ammailgui.loadpigment:SetText(("Pigments"))
-	lib.ammailgui.loadpigment:SetPoint("LEFT", lib.ammailgui.loaddemats, "RIGHT", 0, 0)
-	lib.ammailgui.loadpigment:SetScript("OnClick", lib.pigmentAction)
-	lib.ammailgui.loadpigment:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui.loadpigment, "Add all Pigments \nto the mail.") end)
-	lib.ammailgui.loadpigment:SetScript("OnLeave", function() GameTooltip:Hide() end)
+--[[Create  CustomMailerFrame]]
+		
+	lib.CustomMailerFrame = CreateFrame("Frame", "", UIParent)
+	local frame = lib.CustomMailerFrame
+	frame:Hide()	
+		
+	frame:SetFrameStrata("HIGH")
+	frame:SetBackdrop({
+		bgFile = "Interface/Tooltips/ChatBubble-Background",
+		edgeFile = "Interface/Tooltips/ChatBubble-BackDrop",
+		tile = true, tileSize = 32, edgeSize = 32,
+		insets = { left = 32, right = 32, top = 32, bottom = 32 }
+	})
+	frame:SetBackdropColor(0,0,0, 1)
+
+	frame:SetPoint("CENTER", UIParent, "CENTER")
+	frame:SetWidth(640)
+	frame:SetHeight(450)
+
+	frame:SetMovable(true)
+	frame:EnableMouse(true)
+	frame.Drag = CreateFrame("Button", nil, frame)
+	frame.Drag:SetPoint("TOPLEFT", frame, "TOPLEFT", 10,-5)
+	frame.Drag:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10,-5)
+	frame.Drag:SetHeight(6)
+	frame.Drag:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar")
+
+	frame.Drag:SetScript("OnMouseDown", function() frame:StartMoving() end)
+	frame.Drag:SetScript("OnMouseUp", function() frame:StopMovingOrSizing() end)
+
+	frame.DragBottom = CreateFrame("Button",nil, frame)
+	frame.DragBottom:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10,5)
+	frame.DragBottom:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10,5)
+	frame.DragBottom:SetHeight(6)
+	frame.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar")
+
+	frame.DragBottom:SetScript("OnMouseDown", function() frame:StartMoving() end)
+	frame.DragBottom:SetScript("OnMouseUp", function() frame:StopMovingOrSizing() end)
+
+
+	local	title = frame:CreateFontString(aamCustomMailertitle, "OVERLAY", "GameFontNormalLarge")
+	title:SetText("AutoMagic: Custom Mailer Setup")
+	title:SetJustifyH("CENTER")
+	title:SetWidth(300)
+	title:SetHeight(10)
+	title:SetPoint("TOPLEFT",  frame, "TOPLEFT", 0, -17)
+	frame.title = title
+
+	--Close Button
+	frame.closeButton = CreateFrame("Button", nil, frame, "OptionsButtonTemplate")
+	frame.closeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -530, 10)
+	frame.closeButton:SetText("Close")
+	frame.closeButton:SetScript("OnClick",  function() frame:Hide() end)
+
+	local SelectBox = LibStub:GetLibrary("SelectBox")
+	local ScrollSheet = LibStub:GetLibrary("ScrollSheet")
+	
+	function frame.slotclear()
+		frame.slot:SetNormalTexture("Interface\\Buttons\\UI-EmptySlot-Disabled")
+		frame.slot.help:SetText("Drop item into box")
+		frame.slot.workingItem = nil
+		frame.addButton:Disable()
+		frame.removeButton:Disable()
+		lib.MailListUpdate()
+	end
+	function frame.slotadd(itemID, add)
+		if not itemID then frame.slotclear() return end
+		local _, itemLink, _, _, _, _, _, _, _, itemTexture = GetItemInfo(itemID)
+		frame.slot:SetNormalTexture(itemTexture)
+		frame.slot.help:SetText(itemLink)
+		frame.slot.workingItem = itemID
+		if add then
+			frame.addButton:Enable()
+			frame.removeButton:Disable()
+		else
+			frame.addButton:Disable()
+			frame.removeButton:Enable()			
+		end
+		lib.MailListUpdate()
+	end
+		
+	frame.resultlist = CreateFrame("Frame", nil, frame)
+	frame.resultlist:SetBackdrop({
+		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = true, tileSize = 32, edgeSize = 16,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 }
+	})
+
+	frame.resultlist:SetBackdropColor(0, 0, 0.0, 0.5)
+	frame.resultlist:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 270, 400)
+	frame.resultlist:SetPoint("TOPRIGHT", frame, "TOPLEFT",630, 0)
+	frame.resultlist:SetPoint("BOTTOM", frame, "BOTTOM", 0, 10)
+
+	frame.resultlist.sheet = ScrollSheet:Create(frame.resultlist, {
+		{ ('Item'), "TOOLTIP", 170 },
+		{ "Item ID", "NUMBER", 170 },
+		{"", "TEXT", 0.001 }, --metadata thats not used in visual display
+	})
+	frame.resultlist.sheet.enableselect = true
+
+	--After we have finished creating the scrollsheet and all saved settings have been applied set our event processor
+	function frame.resultlist.sheet.Processor(callback, self, button, column, row, order, curDir, ...)
+		if (callback == "OnEnterCell")  then
+		--	lib.ASCOnEnter(button, row, column)
+		elseif (callback == "OnLeaveCell") then
+			GameTooltip:Hide()
+		elseif (callback == "OnClickCell") then
+			local itemID = frame.resultlist.sheet:GetSelection()[2]
+			frame.slotadd(itemID)
+		elseif (callback == "OnMouseDownCell") then
+		--	lib.ASCSelect()
+		end
+	end
+	--use our custom sort method not scrollsheets
+	frame.resultlist.sheet.CustomSort = lib.CustomSort
+
+	--parse saved buttons into the scrollframe format for display
+	function lib.MailListUpdate()
+		local settings = frame.buttonList.SavedButtons
+		local selection = frame.buttonList.sheet:GetSelection()[1]
+		--parse 
+		local B, D = {},{}
+		for button, dataTable in pairs(settings) do
+			table.insert(B, {button})
+			if selection == button then
+				D = dataTable			
+			end
+		end
+		if selection then 
+			frame.workingname:SetText("|Cff00ffff Items Mailed by|r |Cffff0000"..selection:upper())
+			frame.removeListButton:Enable()
+		else
+			frame.workingname:SetText("|Cff00ffff Select a Button from the LEFT list")
+			frame.removeListButton:Disable()
+		end
+		--update and render scrollframes
+		frame.buttonList.sheet:SetData(B)
+		frame.resultlist.sheet:SetData(D)
+		
+		frame.buttonList.sheet:Render()
+		frame.resultlist.sheet:Render()
+	end
+	--Edit box for changing/creating lists
+	frame.listEditBox = CreateFrame("EditBox", "", frame, "InputBoxTemplate")
+	frame.listEditBox:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+	frame.listEditBox:SetAutoFocus(true)
+	frame.listEditBox:Hide()
+	frame.listEditBox:SetHeight(15)
+	frame.listEditBox:SetFrameStrata("DIALOG")
+	frame.listEditBox:SetWidth(30)
+	frame.listEditBox:SetScript("OnEscapePressed", function(self) self:Hide() end)
+	frame.listEditBox:SetScript("OnEnterPressed", function(self)
+						local sheet = frame.buttonList.sheet
+						local Old = frame.listEditBox.OrigText
+						local text = self:GetText()
+						local settings = frame.buttonList.SavedButtons
+
+						if not settings[text] then
+							--if new line or hidden we will have a nil. So add a new entry to the data
+							if Old == nil then
+								settings[text] = {}
+								lib.createMailButton(text, "Add all items on this \list to the mail.", lib.customAction)
+							else
+								for i, name in pairs(sheet.data) do
+									if name == Old then
+										sheet.data[i] = self:GetText()
+										settings[text] = settings[Old]
+										settings[Old] = nil
+										break
+									end
+								end
+							end
+						else
+							print("Button Name "..text.." already exists")
+						end
+						lib.MailListUpdate()
+						frame.listEditBox:Hide()
+					end)
+				
+	
+	--Frame for displaying the lists
+	frame.buttonList = CreateFrame("Frame", nil, frame)
+	frame.buttonList:SetBackdrop({
+		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = true, tileSize = 32, edgeSize = 16,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 }
+	})
+
+	frame.buttonList:SetBackdropColor(0, 0, 0.0, 0.5)
+	frame.buttonList:SetWidth(140)
+	frame.buttonList:SetHeight(250)
+	frame.buttonList:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10, 30)
+
+	frame.buttonList.sheet = ScrollSheet:Create(frame.buttonList, {
+--~ 		{ ('Add'), "TEXT", 30 },
+		{ ('Button Name'), "TOOLTIP", 100 },
+		{"", "TEXT", 0.001 }, --metadata thats not used in visual display
+	})
+	frame.buttonList.sheet.enableselect = true
+	
+	frame.listEditBox:SetParent(frame.buttonList.sheet.content)
+
+	frame.buttonList.SavedButtons = get("util.automagic.SavedMailButtons")
+	if not frame.buttonList.SavedButtons then
+		frame.buttonList.SavedButtons = {}
+		SavedButtons = set("util.automagic.SavedMailButtons", frame.buttonList.SavedButtons)
+	end
+	
+	--After we have finished creating the scrollsheet and all saved settings have been applied set our event processor
+	function frame.buttonList.sheet.Processor(callback, self, button, column, row, order, curDir, ...)
+		if (callback == "OnEnterCell")  then
+		--	lib.ASCOnEnter(button, row, column)
+		elseif (callback == "OnLeaveCell") then
+			GameTooltip:Hide()
+		elseif (callback == "OnClickCell") then
+			local clickedFrame = self.rows[row][column]
+			local text = clickedFrame:GetText()
+			
+			lib.MailListUpdate()
+			if not clickedFrame:IsVisible() then text = nil end --Old data is still in the frames, just hidden
+			
+			if IsShiftKeyDown() then
+				frame.listEditBox:ClearAllPoints()
+				frame.listEditBox:SetAllPoints(clickedFrame)
+				frame.listEditBox:ClearFocus() --clear focus then set so we highlight current text
+				frame.listEditBox:Show()
+				frame.listEditBox:SetFocus()
+				frame.listEditBox.OrigText = text
+				
+				if not text then text = "" end
+				frame.listEditBox:SetText(text)
+			end
+		elseif (callback == "OnMouseDownCell") then
+			
+		end
+	end
+	
+	frame.buttonList.help = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	frame.buttonList.help:ClearAllPoints()
+	frame.buttonList.help:SetPoint("LEFT", frame.buttonList, "TOPRIGHT", 0, -90)
+	frame.buttonList.help:SetText("|Cff00ffff To add a|r \n|CffffffffNEW Button|r \n|Cffffff00SHIFT click|r|Cff00ffff on any empty spot in the |Cffffff00LEFT |Cff00fffflist\n\n\n To |CffffffffEDIT |Cff00ffff the name of a button just |Cffffff00SHIFT click|r|Cff00ffff on it in the |Cffffff00LEFT |Cff00fffflist \n\n\n  |CffFF0000BUTTON NAMES WILL NOT UPDATE TILL RELOAD")
+	frame.buttonList.help:SetWidth(120)
+
+	
+	--Itemicon/slot
+	frame.slot = CreateFrame("Button", "autoMagicSlotFrame", frame, "PopupButtonTemplate")
+	frame.slot:SetPoint("TOPLEFT", frame, "TOPLEFT", 23, -50)
+	frame.slot:SetWidth(38)
+	frame.slot:SetHeight(38)
+	frame.slot:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square.blp")
+	frame.slot:SetScript("OnClick", frame.slotclear)
+	frame.slot:SetScript("OnReceiveDrag", function(self, data) 
+					local objtype, itemID = GetCursorInfo()
+					ClearCursor()
+					if objtype == "item" then
+						frame.slotadd(itemID, true)
+					end
+				end)
+
+	frame.slot.help = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	frame.slot.help:SetPoint("LEFT", frame.slot, "RIGHT", 2, 7)
+	frame.slot.help:SetText(("Drop item into box")) --"Drop item into box to search."
+	frame.slot.help:SetWidth(100)
+
+	frame.workingname = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	frame.workingname:SetPoint("BOTTOM", frame.resultlist, "TOP", 0, 0)
+	frame.workingname:SetText("|Cff00ffff")
+	frame.workingname:SetWidth(200)
+		
+	
+	frame.removeListButton = CreateFrame("Button", nil, frame, "OptionsButtonTemplate")
+	frame.removeListButton:SetPoint("BOTTOM", frame.buttonList, "TOP", 0, 0)
+	frame.removeListButton:SetWidth(160)
+	frame.removeListButton:SetText("Remove selected list")
+	frame.removeListButton:Disable()
+	frame.removeListButton:SetScript("OnClick",  function() 
+					local settings = frame.buttonList.SavedButtons
+					local buttonName = frame.buttonList.sheet:GetSelection()[1]
+					if settings and buttonName then
+						settings[buttonName] = nil
+					end
+					lib.MailListUpdate()
+				end)
+		
+	frame.addButton = CreateFrame("Button", nil, frame, "OptionsButtonTemplate")
+	frame.addButton:SetPoint("TOPLEFT", frame.slot, "BOTTOMLEFT", 0,-10)
+	frame.addButton:SetText(("Add"))
+	frame.addButton:Disable()
+	frame.addButton:SetScript("OnClick",  function()
+					local itemID = frame.slot.workingItem
+					local settings = frame.buttonList.SavedButtons
+					local selection = frame.buttonList.sheet:GetSelection()[1]
+					if itemID and settings and selection then
+						local _, itemLink = GetItemInfo(itemID)
+						local exists
+						for i, data in pairs(settings[selection]) do
+							if data[2] == itemID then
+								exists = true
+								break
+							end
+						end
+						if not exists then
+							table.insert(settings[selection], {itemLink, itemID})
+						else
+							print(itemLink, "already on list")
+						end
+					end
+					frame.slotclear()
+				end)
+	frame.addButton:SetScript("OnEnter", function() lib.buttonTooltips( frame.addButton, "Click to add Item to this list.") end)
+	frame.addButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	
+
+	frame.removeButton = CreateFrame("Button", nil, frame, "OptionsButtonTemplate")
+	frame.removeButton:SetPoint("LEFT", frame.addButton, "RIGHT", 0, 0)
+	frame.removeButton:SetText("Remove")
+	frame.removeButton:Disable()
+	frame.removeButton:SetScript("OnClick", function(self)
+		local settings = frame.buttonList.SavedButtons
+		local buttonName = frame.buttonList.sheet:GetSelection()[1]
+		local selection = frame.resultlist.sheet:GetSelection()[1]
+
+		--parse
+		for button, dataTable in pairs(settings) do
+			for i, data in pairs(dataTable) do
+				if selection == data[1] then
+					print(data[1])
+					table.remove(dataTable, i)
+					break
+				end
+
+			end
+		end
+		frame.slotclear()
+	end)
+	
+	--create buttons
+	for buttonName in pairs(frame.buttonList.SavedButtons) do
+		lib.createMailButton(buttonName, "Add all items on this \list to the mail.", lib.customAction)
+	end
+	
+
+	--Add Config button to mail window
+	lib.ammailgui.configureButton = CreateFrame("Button", nil, lib.ammailgui)
+	lib.ammailgui.configureButton:SetPoint("TOPLEFT", lib.ammailgui, "TOPLEFT", -15,0)
+	lib.ammailgui.configureButton:SetHeight(30)
+	lib.ammailgui.configureButton:SetWidth(30)
+	lib.ammailgui.configureButton:SetNormalTexture("Interface\\GossipFrame\\HealerGossipIcon")
+	lib.ammailgui.configureButton:SetHighlightTexture("Interface\\GossipFrame\\BinderGossipIcon")
+	
+	
+	lib.ammailgui.configureButton:SetScript("OnClick", function() 
+											if frame:IsVisible() then 
+												frame:Hide() 
+											else 
+												frame:Show()
+											end 
+										end)
+	lib.ammailgui.configureButton:SetScript("OnEnter", function(self) 
+								GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT") 
+								GameTooltip:SetText("Click to add new mail buttons")
+							end)
+	lib.ammailgui.configureButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	
+	
+	lib.MailListUpdate()
+	
 end
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-AutoMagic/Mail-GUI.lua $", "$Rev: 4556 $")
+
+
+lib.ammailgui.ButtonCount = 1
+lib.ammailgui.ButtonRow = 1
+lib.ammailgui.ButtonTotal = 1
+function lib.createMailButton(name, tooltip, click)
+	--if we have finished a row start a new one
+	if lib.ammailgui.ButtonCount > 3 then 
+		lib.ammailgui.ButtonRow = lib.ammailgui.ButtonRow + 1
+		lib.ammailgui.ButtonCount = 1
+	end
+	local total = lib.ammailgui.ButtonTotal 
+	local buttonRef = "Button"..total
+	
+	lib.ammailgui[buttonRef]= CreateFrame("Button", "", lib.ammailgui, "OptionsButtonTemplate")
+	lib.ammailgui[buttonRef]:SetText(name)
+	lib.ammailgui[buttonRef]:SetScript("OnEnter", function() lib.buttonTooltips( lib.ammailgui[buttonRef], tooltip) end)
+	lib.ammailgui[buttonRef]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	lib.ammailgui[buttonRef]:SetScript("OnClick", click)
+		
+	
+	if lib.ammailgui.ButtonCount == 1 then --anchor to starting point
+		local spacer = -24
+		if lib.ammailgui.ButtonTotal == 1 then spacer = -28 end --first row is padded more
+		lib.ammailgui[buttonRef]:SetPoint("TOPLEFT", lib.ammailgui, "TOPLEFT", 10, spacer * lib.ammailgui.ButtonRow)
+	else
+		local prevButton =  "Button"..total-1
+		lib.ammailgui[buttonRef]:SetPoint("LEFT", lib.ammailgui[prevButton], "RIGHT", 10, 0)
+	end
+	
+	--set frame height for player added buttons
+	if lib.ammailgui.ButtonRow > 2 then
+		local width = 24 * (lib.ammailgui.ButtonRow -2)
+		lib.ammailgui:SetHeight(75 + width)
+	end
+		
+	lib.ammailgui.ButtonTotal = lib.ammailgui.ButtonTotal + 1
+	lib.ammailgui.ButtonCount = lib.ammailgui.ButtonCount + 1
+end
+
+
+
+
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AutoMagic/Mail-GUI.lua $", "$Rev: 5335 $")

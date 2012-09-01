@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - StatPurchased
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: StatPurchased.lua 5154 2011-05-13 23:15:57Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: StatPurchased.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -134,6 +134,7 @@ function lib.ScanProcessors.delete(operation, itemData, oldData)
 
 	local pricedata = private.GetPriceData(GetFaction())
 	local itemType, itemId, property, factor = decode(itemData.link)
+	if itemType ~= "item" then return end
 	if (factor ~= 0) then property = property.."x"..factor end
 	if not pricedata.daily[itemId] then pricedata.daily[itemId] = "" end
 	local stats = private.UnpackStats(pricedata.daily[itemId])
@@ -665,4 +666,4 @@ function private.InitData()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Stat-Purchased/StatPurchased.lua $", "$Rev: 5154 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Stat-Purchased/StatPurchased.lua $", "$Rev: 5335 $")

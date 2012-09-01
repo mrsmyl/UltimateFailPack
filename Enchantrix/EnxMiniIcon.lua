@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: EnxMiniIcon.lua 5000 2010-11-07 19:38:24Z ccox $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: EnxMiniIcon.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://enchantrix.org/
 
 	Minimap Icon
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Enchantrix/EnxMiniIcon.lua $", "$Rev: 5000 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxMiniIcon.lua $", "$Rev: 5335 $")
 
 local settings = Enchantrix.Settings
 
@@ -38,7 +38,7 @@ Icon on the minimap related bits
 
 ]]
 
-local miniIcon = CreateFrame("Button", "", Minimap);
+local miniIcon = CreateFrame("Button", "EnxMiniMapIcon", Minimap);
 Enchantrix.MiniIcon = miniIcon
 miniIcon.enxMoving = false
 

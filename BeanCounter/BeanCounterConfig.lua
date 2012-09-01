@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: BeanCounterConfig.lua 5122 2011-04-05 22:08:09Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: BeanCounterConfig.lua 5268 2012-01-22 23:15:00Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	BeanCounterConfig - Controls Configuration data
@@ -28,50 +28,18 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.13/BeanCounter/BeanCounterConfig.lua $","$Rev: 5122 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/BeanCounterConfig.lua $","$Rev: 5268 $","5.1.DEV.", 'auctioneer', 'libs')
 
 --Most of this code is from enchantrix by ccox
 local lib = BeanCounter
-local private, print, _, _, _BC = lib.getLocals()
-local gui, settings
+local private, print, get, set, _BC = lib.getLocals()
+local gui, settings, _
+local date, format = date, format
 
 local function debugPrint(...)
     if get("util.beancounter.debugConfig") then
         private.debugPrint("BeanCounterConfig",...)
     end
-end
-
-local function getUserSig()
-	local userSig = string.format("users.%s.%s", GetRealmName(), UnitName("player"))
-	return userSig
-end
-
-local function getUserProfileName()
-	if (not settings) then settings = BeanCounterDBSettings end
-	local userSig = getUserSig()
-	return settings[userSig] or "Default"
-end
-
-local function getUserProfile()
-	if (not settings) then settings = BeanCounterDBSettings end
-	local profileName = getUserProfileName()
-	if (not settings["profile."..profileName]) then
-		if profileName ~= "Default" then
-			profileName = "Default"
-			settings[getUserSig()] = "Default"
-		end
-		if profileName == "Default" then
-			settings["profile."..profileName] = {}
-		end
-	end
-	return settings["profile."..profileName]
-end
-
-
-local function cleanse( profile )
-	if (profile) then
-		profile = {}
-	end
 end
 
 
@@ -105,6 +73,7 @@ private.settingDefaults = {
 	["util.beancounter.debugFrames"] = true,
 	["util.beancounter.debugAPI"] = true,
 	["util.beancounter.debugSearch"] = true,
+	["util.beancounter.debugTidyUp"] = true,
 
 	["util.beacounter.invoicetime"] = 5,
 	["util.beancounter.mailrecolor"] = "off",
@@ -147,25 +116,46 @@ private.settingDefaults = {
     }
 
 local function getDefault(setting)
-	local a,b,c = strsplit(".", setting)
-
-	-- basic settings
-	if (a == "show") then return true end
-	if (b == "enable") then return true end
-
 	-- lookup the simple settings
 	local result = private.settingDefaults[setting];
-
 	return result
 end
 
 function lib.GetDefault(setting)
 	local val = getDefault(setting);
-	return val;
+	return val
 end
-local tbl = {}
-local function setter(setting, value)
-	if (not settings) then settings = BeanCounterDBSettings end
+
+
+function private.DateStringUpdate(value)
+	if not value then value = "%c" end
+	local tbl = {}
+	for w in string.gmatch(value, "%%(.)" ) do --look for the date commands prefaced by %
+		tinsert(tbl, w)
+	end
+
+	local valid, invalid = {['a']= 1,['A'] =1,['b'] =1,['B'] =1,['c']=1,['d']=1,['H']=1,['I']=1,['m']=1,['M']=1,['p']=1,['S']=1,['U']=1,['w']=1,['x']=1,['X']=1,['y']=1,['Y']=1} --valid date commands
+
+	for i,v in pairs(tbl) do
+		if not valid[v] then  invalid = v break end
+	end
+	--Prevent processing if we have an invalid command
+	if invalid then
+		print("Invalid Date Format", "%"..invalid)
+		value = "%c"
+		gui.elements.dateString:SetText(value)
+	end
+	gui.elements.dateStringdisplay.textEl:SetText(_BC('C_DateStringExample').." "..date(value, time()))
+
+	return value
+end
+
+
+local function setter(setting, value, server, player)
+	if not setting then debugPrint("No setting passed DEBUG STRING REMOVE", setting, value, server, player) return end
+	if type(setting) ~= "string" then debugPrint( setting, value, type(setting) ) return end
+	
+	local DB = BeanCounterDBSettings
 	-- turn value into a canonical true or false
 	if value == 'on' then
 		value = true
@@ -173,29 +163,18 @@ local function setter(setting, value)
 		value = false
 	end
 
-	-- for defaults, just remove the value and it'll fall through
-	if (value == 'default') or (value == getDefault(setting)) then
-		-- Don't save default values
-		value = nil
+	-- Don't save default values, still need to pass nil values on
+	if value ~= nil and (value == 'default' or value == getDefault(setting)) then
+		return
 	end
 
 	--button to check database integrity pushed
-	if (setting == "database.validate") then
-		print("Checking")
-		private.integrityCheck(true)
-		value = nil
-	elseif (setting == "database.sort") then
-		private.sortArrayByDate()
-		value = time()
-	
-	--settings for gui
-	elseif (setting ==  "monthstokeepdata") then
+	if (setting ==  "monthstokeepdata") then
 		local text = format("Enable purging transactions older than %s months from the database. \nYou must hold the SHIFT key to check this box since this will DELETE data.", gui.elements.monthstokeepdata:GetValue()/100 or 48)
 		gui.elements.oldDataExpireEnabled.textEl:SetText(text)
 		
-		--Always uncheck and set valure to off when they change the slider value as a safety precaution
-		local db = getUserProfile()
-		db["oldDataExpireEnabled"] = false
+		--Always uncheck and set value to off when they change the slider value as a safety precaution
+		DB["oldDataExpireEnabled"] = false
 		gui.elements.oldDataExpireEnabled:SetChecked(false)
 	elseif (setting ==  "oldDataExpireEnabled") and value then
 		if not IsShiftKeyDown() then --We wont allow the user to check this box unless shift key is down
@@ -204,176 +183,54 @@ local function setter(setting, value)
 			return
 		end 
 	end
-	
-	
+		
 	--This is used to do the DateString
-	local a,b = strsplit(".", setting)
-	if (a == "dateString") then --used to update the Config GUI when a user enters a new date string
-		if not value then value = "%c" end
-		tbl = {}
-		for w in string.gmatch(value, "%%(.)" ) do --look for the date commands prefaced by %
-			tinsert(tbl, w)
-		end
-
-		local valid, invalid = {['a']= 1,['A'] =1,['b'] =1,['B'] =1,['c']=1,['d']=1,['H']=1,['I']=1,['m']=1,['M']=1,['p']=1,['S']=1,['U']=1,['w']=1,['x']=1,['X']=1,['y']=1,['Y']=1} --valid date commands
-
-		for i,v in pairs(tbl) do
-			 if not valid[v] then  invalid = v break end
-		end
-		if invalid then print("Invalid Date Format", "%"..invalid)  return end --Prevent processing if we have an invalid command
-
-		local text = gui.elements.dateString:GetText()
-		gui.elements.dateStringdisplay.textEl:SetText(_BC('C_DateStringExample').." "..date(text, 1196303661))
+	if (setting == "dateString") then --used to update the Config GUI when a user enters a new date string
+		value = private.DateStringUpdate(value)
 	end
-
-	--[[Check for profile changes or store settings ]]
-
-	if (a == "profile") then
-		if (setting == "profile.save") then
-			value = gui.elements["profile.name"]:GetText()
-
-			-- Create the new profile
-			settings["profile."..value] = {}
-
-			-- Set the current profile to the new profile
-			settings[getUserSig()] = value
-			-- Get the new current profile
-			local newProfile = getUserProfile()
-
-			-- Clean it out and then resave all data
-			cleanse(newProfile)
-			gui:Resave()
-
-			-- Add the new profile to the profiles list
-			local profiles = settings["profiles"]
-			if (not profiles) then
-				profiles = { "Default" }
-				settings["profiles"] = profiles
-			end
-
-			-- Check to see if it already exists
-			local found = false
-			for pos, name in ipairs(profiles) do
-				if (name == value) then found = true end
-			end
-
-			-- If not, add it and then sort it
-			if (not found) then
-				table.insert(profiles, value)
-				table.sort(profiles)
-			end
-
-			print("ChatSavedProfile",value)
-
-		elseif (setting == "profile.delete") then
-			-- User clicked the Delete button, see what the select box's value is.
-			value = gui.elements["profile"].value
-
-			-- If there's a profile name supplied
-			if (value) then
-				-- Clean it's profile container of values
-				cleanse(settings["profile."..value])
-
-				-- Delete it's profile container
-				settings["profile."..value] = nil
-
-				-- Find it's entry in the profiles list
-				local profiles = settings["profiles"]
-				if (profiles) then
-					for pos, name in ipairs(profiles) do
-						-- If this is it, then extract it
-						if (name == value and name ~= "Default") then
-							table.remove(profiles, pos)
-						end
-					end
-				end
-
-				-- If the user was using this one, then move them to Default
-				if (getUserProfileName() == value) then
-					settings[getUserSig()] = 'Default'
-				end
-
-				print("ChatDeletedProfile",value)
-
-			end
-
-		elseif (setting == "profile.default") then
-			-- User clicked the reset settings button
-
-			-- Get the current profile from the select box
-			value = gui.elements["profile"].value
-
-			-- Clean it's profile container of values
-			settings["profile."..value] = {}
-
-			print("ChatResetProfile",value)
-
-		elseif (setting == "profile") then
-			-- User selected a different value in the select box, get it
-			value = gui.elements["profile"].value
-
-			-- Change the user's current profile to this new one
-			settings[getUserSig()] = value
-
-			print("ChatUsingProfile",value)
-
-		end
-
-		-- Refresh all values to reflect current data
-		gui:Refresh()
-	else
-		-- Set the value for this setting in the current profile
-		local db = getUserProfile()
-		db[setting] = value
-		--setUpdated()
+	-- Set the value for this setting
+	if server and player then
+		if not DB[server] then DB[server] = {} end
+		if not DB[server][player] then DB[server][player] = {} end
+		
+		DB[server][player][setting] = value
+		return
 	end
-
+	--general setting not player specific
+	DB[setting] = value
 end
 
 function lib.SetSetting(...)
 	setter(...)
-	if (gui) then
+	if (gui) then-- Refresh all values to reflect current data
 		gui:Refresh()
 	end
 end
 
-local function getter(setting)
-	if (not settings) then settings = BeanCounterDBSettings end
+local function getter(setting, server, player)
 	if not setting then return end
+	local DB = BeanCounterDBSettings
 
-	local a,b,c = strsplit(".", setting)
-	if (a == 'profile') then
-		if (b == 'profiles') then
-			local pList = settings["profiles"]
-			if (not pList) then
-				pList = { "Default" }
-			end
-			return pList
+	
+	if server and player then
+		if DB[server] and DB[server][player] then
+			return DB[server][player][setting]
 		end
 	end
-
-	
-	
-	if (setting == 'profile') then
-		return getUserProfileName()
-	end
-	local db = getUserProfile()
-	if ( db[setting] ~= nil ) then
-		return db[setting]
+	--non server specific settings
+	if ( DB[setting] ~= nil ) then
+		return DB[setting]
 	else
 		return getDefault(setting)
 	end
 end
 
-function lib.GetSetting(setting, default)
-	local option = getter(setting)
-	if ( option ~= nil ) then
-		return option
-	else
-		return default
-	end
+function lib.GetSetting(setting, server, player)
+	local option = getter(setting, server, player)
+	return option
 end
-local _, _, get, set, _ = lib.getLocals()--now we can set our get, set locals to the above functions
+--set as local at top of file
+_, _, get, set, _ = lib.getLocals()--now we can set our get, set locals to the above functions
 private.setter = setter
 private.getter = getter
 function lib.MakeGuiConfig()
@@ -459,12 +316,22 @@ function lib.MakeGuiConfig()
 	lib.Id = id
 	gui:MakeScrollable(id)
 	gui:AddControl(id, "Header",     0,    _BC('C_BeanCounterDatabaseMaintenance')) --"BeanCounter Database Maintenance"
-	gui:AddControl(id, "Subhead",    0,    _BC('C_Resortascendingtime')) --"Resort all entries by ascending time"
-	gui:AddControl(id, "Button",     0, 1, "database.sort", _BC('C_ResortDatabase')) --"Resort Database"
-	gui:AddTip(id, _BC('TTResort Database'))--"This will scan Beancounter's Data sort all entries in ascending time order. This helps speed up the database compression functions"
+
+	
+--~ 	local sort, prune, compact = get("sortArray", private.serverName, private.playerName) or 0 , get("prunePostedDB", private.serverName, private.playerName) or 0, get("compactDB", private.serverName, private.playerName) or 0
+--~ 	local a = "The next database sort for %s is scheduled to occur in %s day(s)"
+--~ 	local b = "The pruning of the posted database for %s is scheduled to occur in %s day(s)"
+--~ 	local c = "The compacting and purging for %s is scheduled to occur in %s day(s)"
+--~ 	gui:AddControl(id, "Subhead",    0,   a:format(private.playerName, floor( (sort - time() )/86400)))
+--~ 	gui:AddControl(id, "Subhead",    0,   b:format(private.playerName, floor( (prune - time() )/86400)))
+--~ 	gui:AddControl(id, "Subhead",    0,   c:format(private.playerName, floor( (compact - time() )/86400)))
+
 
 	gui:AddControl(id, "Subhead",    0,    _BC('C_ScanDatabase')) --"Scan Database for errors: Use if you have errors when searching BeanCounter. \n Backup BeanCounter's saved variables before using."
-	gui:AddControl(id, "Button",     0, 1, "database.validate", _BC('C_ValidateDatabase')) --"Validate Database"
+	--makes button call a function rather than a SV
+	local valButton = gui:AddControl(id, "Button",     0, 1, function(...)end, _BC('C_ValidateDatabase')) 
+	valButton:SetScript("OnClick", function() private.integrityCheck(true) end)
+	
 	gui:AddTip(id, _BC('TTValidateDatabase')) --"This will scan Beancounter's Data and attempt to correct any error it may find. Use if you are getting errors on search"
 
 	gui:AddControl(id, "Subhead",    0,    _BC('C_DatabaseLength')) --"Determines how long BeanCounter will save Auction House Transactions."
@@ -474,10 +341,10 @@ function lib.MakeGuiConfig()
 
 	id = gui:AddTab("BeanCounter Debug")
 	gui:AddControl(id, "Header",     0,    "BeanCounter Debug")
-	gui:AddControl(id, "Checkbox",   0, 1, "util.beancounter.debug", "Turn on BeanCounter Debugging.")
-	gui:AddControl(id, "Subhead",    0,    "Reports From Specific Modules")
-
 	gui:AddControl(id, "Checkbox",   0, 1, "util.beancounter.debug", "Turn on BeanCounter Debugging text. Dont check unless asked to do so")
+	
+	gui:AddControl(id, "Subhead",    0,    "Reports From Specific Modules")
+	
 	gui:AddControl(id, "Checkbox",   0, 2, "util.beancounter.debugMail", "Mail")
 	gui:AddControl(id, "Checkbox",   0, 2, "util.beancounter.debugCore", "Core")
 	gui:AddControl(id, "Checkbox",   0, 2, "util.beancounter.debugConfig", "Config")

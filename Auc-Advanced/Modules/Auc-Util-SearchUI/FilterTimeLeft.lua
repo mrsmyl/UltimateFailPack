@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Filter IgnoreTimeLeft
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: FilterTimeLeft.lua 5232 2011-11-23 17:47:17Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: FilterTimeLeft.lua 5229 2011-11-03 13:10:05Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -109,4 +109,4 @@ function lib.PostFilter(item, searcher, buyorbid)
 	return false
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/FilterTimeLeft.lua $", "$Rev: 5232 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/FilterTimeLeft.lua $", "$Rev: 5229 $")

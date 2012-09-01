@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: Appraiser.lua 5241 2011-11-30 19:05:41Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: Appraiser.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -53,6 +53,7 @@ local GetItemInfo = GetItemInfo
 local pricecache -- cache for GetPrice; only used in certain circumstances
 local tooltipcache = {} -- cache for ProcessTooltip
 
+--[[
 function lib.Processor(callbackType, ...)
 	if (callbackType == "tooltip") then
 		lib.ProcessTooltip(...)
@@ -108,6 +109,7 @@ function lib.Processor(callbackType, ...)
 		pricecache = nil -- stop using cache when search ends
 	end
 end
+--]]
 
 lib.Processors = {}
 function lib.Processors.tooltip(callbackType, ...)
@@ -155,14 +157,19 @@ function lib.Processors.inventory(callbackType, ...)
 	end
 end
 
-function lib.Processors.scanstats(callbackType, ...)
+function lib.Processors.scanstats()
+	-- flush all caches
 	if private.frame then
 		private.frame.cache = {}
-		-- caution: other modules may not yet have flushed their caches
-		-- flag to update our display next OnUpdate
-		private.frame.scanstatsEvent = true
 	end
 	wipe(tooltipcache)
+end
+
+function lib.Processors.scanfinish()
+	-- schedule a refresh of the frame
+	if private.frame then
+		private.frame.scanFinished = true
+	end
 end
 
 function lib.Processors.postresult(callbackType, ...)
@@ -316,7 +323,7 @@ function lib.OnLoad()
 	AucAdvanced.Settings.SetDefault("util.appraiser.round.subtract", 1)
 	AucAdvanced.Settings.SetDefault("util.appraiser.bid.markdown", 10)
 	AucAdvanced.Settings.SetDefault("util.appraiser.bid.subtract", 0)
-	AucAdvanced.Settings.SetDefault("util.appraiser.bid.deposit", true)
+	AucAdvanced.Settings.SetDefault("util.appraiser.bid.deposit", false)
 	AucAdvanced.Settings.SetDefault("util.appraiser.bid.vendor", true)
 	AucAdvanced.Settings.SetDefault("util.appraiser.color", true)
 	AucAdvanced.Settings.SetDefault("util.appraiser.colordirection","RIGHT")
@@ -340,6 +347,9 @@ function lib.OnLoad()
 	AucAdvanced.Settings.SetDefault("util.appraiser.columnwidth.".._TRANS('APPR_Interface_CurBid'), 65) --CurBid
 	AucAdvanced.Settings.SetDefault("util.appraiser.columnwidth.".._TRANS('APPR_Interface_Buyout'), 67) --Buyout
 	AucAdvanced.Settings.SetDefault("util.appraiser.columnwidth.BLANK", 0.05)
+
+	local localName = _TRANS('APPR_Interface_Appraiser')
+	function lib.GetLocalName() return localName end
 end
 
 function lib.CanSupplyMarket()
@@ -515,4 +525,4 @@ function lib.GetOwnAuctionDetails()
 end
 Stubby.RegisterEventHook("AUCTION_OWNED_LIST_UPDATE", "Auc-Util-Appraiser", lib.GetOwnAuctionDetails)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-Appraiser/Appraiser.lua $", "$Rev: 5241 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-Appraiser/Appraiser.lua $", "$Rev: 5335 $")

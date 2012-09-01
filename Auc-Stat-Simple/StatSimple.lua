@@ -1,7 +1,7 @@
 --[[
 Auctioneer - StatSimple
-Version: 5.13.5258 (BoldBandicoot)
-Revision: $Id: StatSimple.lua 5154 2011-05-13 23:15:57Z kandoko $
+Version: 5.14.5335 (KowariOnCrutches)
+Revision: $Id: StatSimple.lua 5335 2012-08-28 03:40:54Z mentalpower $
 URL: http://auctioneeraddon.com/
 
 This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -105,6 +105,7 @@ function lib.ScanProcessors.create(operation, itemData, oldData)
 	-- In this case, we're only interested in the initial create, other
 	-- Get the signature of this item and find it's stats.
 	local itemType, itemId, property, factor = AucAdvanced.DecodeLink(itemData.link)
+	if itemType ~= "item" then return end
 	if (factor ~= 0) then property = property.."x"..factor end
 
 	local data = private.GetPriceData(GetFaction())
@@ -672,4 +673,4 @@ function private.InitData()
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Stat-Simple/StatSimple.lua $", "$Rev: 5154 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Stat-Simple/StatSimple.lua $", "$Rev: 5335 $")

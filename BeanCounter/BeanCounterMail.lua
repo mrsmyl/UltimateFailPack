@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: BeanCounterMail.lua 5135 2011-04-30 16:10:42Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: BeanCounterMail.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	BeanCounterMail - Handles recording of all auction house related mail
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.13/BeanCounter/BeanCounterMail.lua $","$Rev: 5135 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/BeanCounterMail.lua $","$Rev: 5335 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local lib = BeanCounter
 local private, print, get, set, _BC = lib.getLocals() --_BC localization function
@@ -97,17 +97,18 @@ GetInboxText = private.PreGetInboxTextHook
 
 --New function to hide/unhide mail GUI.
 local HideMailGUI
+local MailCloseButton = InboxCloseButton or MailFrameCloseButton -- temp dual-mode patch for differences between WoW4.3 and WoW5.0
 function private.HideMailGUI( hide )
 	if hide then
 		HideMailGUI = true
-		InboxCloseButton:Hide()
+		MailCloseButton:Hide()
 		InboxFrame:Hide()
 		MailFrameTab2:Hide()
 		private.MailGUI:Show()
 		private.wipeSearchCache() --clear the search cache, we are updating data so it is now outdated
 	else
 		HideMailGUI = false
-		InboxCloseButton:Show()
+		MailCloseButton:Show()
 		InboxFrame:Show()
 		MailFrameTab2:Show()
 		private.MailGUI:Hide()
@@ -261,7 +262,7 @@ function private.matchDB(text)
 		if text == name then
 			itemID = string.split(":", itemKey)
 			local itemLink = lib.API.createItemLinkFromArray(itemKey)
-			--debugPrint("|CFFFFFF00Searching",data,"for",text,"Sucess: link is",itemLink)
+			debugPrint("|CFFFFFF00Searching",data,"for",text,"Sucess: link is",itemLink, "itemID is ", itemID)
 			return itemID, itemLink
 		end
 	end
@@ -468,6 +469,11 @@ function private.findFailedBids(itemID, itemLink, gold)
 	gold = tonumber(gold)
 	if not itemLink then debugPrint("Failed auction ItemStrig nil", itemID, itemLink) return end
 	local DBitemID, DBSuffix = lib.API.decodeLink(itemLink)
+	--DEBUG string for http://jira.norganna.org/browse/BCNT-327
+	if not itemID or not private.playerData["postedBids"] or not private.playerData["postedBids"][itemID] then 
+		debugPrint("Missing critical data for FailedBid lookup.", itemID, private.playerData["postedBids"], private.playerData["postedBids"][itemID]) 
+		return
+	end
 	for itemString,v in pairs (private.playerData["postedBids"][itemID]) do
 		local SearchID, SearchSuffix = lib.API.decodeLink(itemString)
 		if SearchID == DBitemID and  SearchSuffix == DBSuffix then

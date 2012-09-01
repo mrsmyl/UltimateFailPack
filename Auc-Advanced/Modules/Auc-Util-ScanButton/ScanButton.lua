@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Button module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: ScanButton.lua 5153 2011-05-13 19:01:25Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: ScanButton.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a textual scan progress
@@ -228,7 +228,10 @@ function private.UpdateScanProgress(state, _, _, _, _, _, _, scansQueued)
 			if not progressBarOptions.pending or progressBarOptions.pending < pending then
 				progressBarOptions.pending = pending or 0
 			end
-			local value = (100 - pending * 100 / progressBarOptions.pending) or 0
+			local value = 0
+			if progressBarOptions.pending >= 1 then -- avoid Div0
+				value = (100 - pending * 100 / progressBarOptions.pending)
+			end
 			AucAdvanced.API.ProgressBars("ScanButtonLuaStopCount", value, true, pending.." scans remaining", progressBarOptions)
 		end
 	end
@@ -543,4 +546,4 @@ function private.AuctionFrameFilters_UpdateClasses()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-ScanButton/ScanButton.lua $", "$Rev: 5153 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-ScanButton/ScanButton.lua $", "$Rev: 5335 $")

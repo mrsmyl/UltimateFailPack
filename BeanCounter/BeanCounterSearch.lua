@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: BeanCounterSearch.lua 5210 2011-07-19 19:07:52Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: BeanCounterSearch.lua 5204 2011-07-16 22:07:44Z kandoko $
 
 	BeanCounterSearch - Search routines for BeanCounter data
 	URL: http://auctioneeraddon.com/
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.13/BeanCounter/BeanCounterSearch.lua $","$Rev: 5210 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/BeanCounterSearch.lua $","$Rev: 5204 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local lib = BeanCounter
 local private, print, get, set, _BC = lib.getLocals()

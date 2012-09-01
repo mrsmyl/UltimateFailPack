@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Scan Finish module
-	Version: 5.13.5258 (BoldBandicoot)
+	Version: 5.14.5335 (KowariOnCrutches)
 	Revision: $Id: ScanFinish.lua 5153 2011-05-13 19:01:25Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -292,4 +292,4 @@ function private.ConfigChanged()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5153 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5153 $")

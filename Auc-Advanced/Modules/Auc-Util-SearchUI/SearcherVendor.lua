@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Vendor
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: SearcherVendor.lua 5170 2011-05-31 10:14:23Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: SearcherVendor.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -57,7 +57,7 @@ function lib:MakeGuiConfig(gui)
 
 	local last = gui:GetLast(id)
 
-	gui:AddControl(id, "MoneyFramePinned",  0, 1, "vendor.profit.min", 1, 99999999, "Minimum Profit")
+	gui:AddControl(id, "MoneyFramePinned",  0, 1, "vendor.profit.min", 1, 999999999, "Minimum Profit")
 	gui:AddControl(id, "Slider",            0, 1, "vendor.profit.pct", 0, 100, .5, "Min Discount: %0.01f%%")
 
 	gui:SetLast(id, last)
@@ -66,7 +66,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "Checkbox",          0.56, 1, "vendor.allow.buy", "Allow Buyouts")
 	gui:AddControl(id, "Checkbox",          0.42, 1, "vendor.maxprice.enable", "Enable individual maximum price:")
 	gui:AddTip(id, "Limit the maximum amount you want to spend with the Vendor searcher")
-	gui:AddControl(id, "MoneyFramePinned",  0.42, 2, "vendor.maxprice", 1, 99999999, "Maximum Price for Vendor")
+	gui:AddControl(id, "MoneyFramePinned",  0.42, 2, "vendor.maxprice", 1, 999999999, "Maximum Price for Vendor")
 end
 
 function lib.Search(item)
@@ -102,4 +102,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearcherVendor.lua $", "$Rev: 5170 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearcherVendor.lua $", "$Rev: 5335 $")

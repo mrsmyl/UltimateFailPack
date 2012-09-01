@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CorePost.lua 5148 2011-05-11 16:01:47Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CorePost.lua 5292 2012-04-27 00:01:28Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -71,6 +71,8 @@ local GetItemInfo = GetItemInfo
 local ScanTip = CreateFrame("GameTooltip", "AppraiserTip", UIParent, "GameTooltipTemplate")
 local ScanTip2 = _G["AppraiserTipTextLeft2"]
 local ScanTip3 = _G["AppraiserTipTextLeft3"]
+local ScanTip4 = _G["AppraiserTipTextLeft4"]
+local ScanTip5 = _G["AppraiserTipTextLeft5"]
 
 -- control constants used in the posting mechanism
 local LAG_ADJUST = (4 / 1000)
@@ -86,13 +88,16 @@ local PROMPT_MIN_WIDTH = 400
 local BindTypes = {
 	[ITEM_SOULBOUND] = "Bound",
 	[ITEM_BIND_QUEST] = "Quest",
-	[ITEM_BIND_ON_PICKUP] = "Bound",
+--	[ITEM_BIND_ON_PICKUP] = "Bound", -- {ADV-641}
 	[ITEM_CONJURED] = "Conjured",
-	[ITEM_ACCOUNTBOUND] = "Accountbound",
-	[ITEM_BIND_TO_ACCOUNT] = "Accountbound",
-	[ITEM_BIND_TO_BNETACCOUNT] = "Accountbound",
+--	[ITEM_BIND_TO_ACCOUNT] = "Accountbound",
+--	[ITEM_BIND_TO_BNETACCOUNT] = "Accountbound",
 	[ITEM_BNETACCOUNTBOUND] = "Accountbound",
 }
+if ITEM_ACCOUNTBOUND then
+	-- may be obsolete, check in case it is removed by a patch
+	BindTypes[ITEM_ACCOUNTBOUND] = "Accountbound"
+end
 
 -- Info for handling UI_ERROR_MESSAGE errors
 local UIKnownErrors = {
@@ -477,6 +482,7 @@ function lib.IsAuctionable(bag, slot)
 	ScanTip:ClearLines()
 	ScanTip:SetBagItem(bag, slot)
 	local test = BindTypes[ScanTip2:GetText()] or BindTypes[ScanTip3:GetText()]
+		or BindTypes[ScanTip4:GetText()] or BindTypes[ScanTip5:GetText()]
 	ScanTip:Hide()
 	if test then
 		return false, test
@@ -692,7 +698,7 @@ do
 	function private.SigLockUpdate()
 		if not lockedsigs then return end
 		-- use longer timeout delays if connectivity is bad, but always at least 1 second
-		-- todo: is the lag adjustment really neccessary or useful?
+		-- todo: is the lag adjustment really necessary or useful?
 		local _,_, lag = GetNetStats()
 		lag = max(lag * LAG_ADJUST, 1)
 		if GetTime() > lastlocktime + lag * SIGLOCK_TIMEOUT then
@@ -1356,4 +1362,4 @@ private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CorePost.lua $", "$Rev: 5148 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CorePost.lua $", "$Rev: 5292 $")

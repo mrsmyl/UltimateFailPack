@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: BeanCounter
-	Revision: $Id: BeanCounterStrings.lua 5258 2012-01-01 06:07:42Z Nechckn $
-	Version: 5.13.5258 (BoldBandicoot)
+	Revision: $Id: BeanCounterStrings.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.14.5335 (KowariOnCrutches)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -1027,15 +1027,15 @@ BeanCounterLocalizations = {
 		["C_ValidateDatabase"]	= "Validar Base de Dados";
 
 		-- Section: Generic Strings
-		["NoRe-Color"]	= "Sem recolorir";
-		["off"]	= "desligado";
+		["NoRe-Color"]	= "Não Recolorir";
+		["off"]	= "desl";
 		["Ok"]	= "Ok";
-		["on"]	= "ligado";
+		["on"]	= "lig";
 		["Re-ColorIcons"]	= "Recolorir ícones";
-		["Re-ColorIconsandText"]	= "Recolorir ícones e texto";
-		["Re-ColorText"]	= "Recolorir texto";
-		["TooltipFailed"]	= "Incapaz de pegar informações do tooltip";
-		["UiNeutralCheckBox"]	= "Mostrar dados da Casa de Leilões neutros";
+		["Re-ColorIconsandText"]	= "Recolorir Ícones e Texto";
+		["Re-ColorText"]	= "Recolorir Texto";
+		["TooltipFailed"]	= "Incapaz de pegar Informações da Dica";
+		["UiNeutralCheckBox"]	= "Exibir dados neutros";
 
 		-- Section: Help Text
 		["A_BeanCountersTooltip"]	= "BeanCounter armazenará o motivo que um item foi comprado e mostrará no tooltip.";
@@ -1078,6 +1078,65 @@ BeanCounterLocalizations = {
 		["TTMailRecolor"]	= "Escolha como o correio vai aparecer depois que o BeanCounter escanear a Caixa de Correio.";
 		["TTModTTShow"]	= "Esta opção irá mostrar o tooltip extra do BeanCounter somente se o Alt for pressionado.";
 		["TTOpenconfig"]	= "Abre a janela de configuração do BeanCounter";
+		["TTResort Database"]	= "Isto escaneará os Dados do Beancounter e organizará todas as entradas em ordem ascendente. Isto ajuda a aumentar a velocidade das funções de compressão do banco de dados.";
+		["TTShowBeginnerTooltips"]	= "Exibe as dicas de iniciante ao passar do mouse.";
+		["TTShowReasonPurchase"]	= "Liga a IU de pesquisa para motivo de um item ter sido comprado na dica.";
+		["TTValidateDatabase"]	= "Sito varrerá os Dados do Beancounter e tentaqrá corrigir quaisquer erros que possa encontrar. Utilize se está recebendo erros ao pesquisar.";
+		["TT_AuctionCheck"]	= "Exibe itens vendidos na Casa de Leilões.";
+		["TT_AuctionFailedCheck"]	= "Exibir itens que você falhou em vender.";
+		["TT_BeanCounterAHTab"]	= "Clique-direito para exibir o BeanCounter numa janela externa.";
+		["TT_BeanCounterSelectBox"]	= "Filtrar resultados de pesquisa por servidors, jogador ou facção.";
+		["TT_BidCheck"]	= "Exibir itens comprados na casa de Leilões.";
+		["TT_BidFailedCheck"]	= "Exibir itens nos quais você foi superdo.";
+		["TT_ClassicCheck"]	= "Exibir resultados do Banco de Dados Clássico do Beancounter.";
+		["TT_ExactCheck"]	= "Apenas corresponder o texto exato na caixa de pesquisa.";
+		["TT_ItemIconBox"]	= "Solte um item aqui para começar uma pesquisa por ele. Exibe o ícone de pesquisa atual se possível.";
+		["TT_ScrollHeader"]	= "\nCliqueDireito+Arraste para Mover ALT+CliqueDireito para Redimensionar CTRL+CliqueDireito para Resetar";
+		["TT_SearchBox"]	= "Digite as consultas de pesquisa aqui ou deixe em branco para pesquisar tudo";
+
+		-- Section: User Interface
+		["UiAddonTitle"]	= "BeacnCounter: Banco de Dados do Histórico de Leilões";
+		["UiAucExpired"]	= "Leilão Expirado";
+		["UiAucSuccessful"]	= "Leilão Bem-sucedido";
+		["UiAuctions"]	= "Leilões";
+		["UiAuctionTransaction"]	= "Leilão";
+		["UiBids"]	= "Lances";
+		["UiBidTransaction"]	= "Lance";
+		["UiBuyerSellerHeader"]	= "Comprador/Vendedor";
+		["UiBuyTransaction"]	= "Compra";
+		["UiClassicCheckBox"]	= "Exibir dados clássicos do BC.";
+		["UiData"]	= "Dados";
+		["UiDateHeader"]	= "Data";
+		["UiDepositTransaction"]	= "Depósito";
+		["UiDone"]	= "Pronto";
+		["UiExactNameSearch"]	= "Busca por nome exato";
+		["UiFailedAuctions"]	= "Leilões Falhados";
+		["UiFee"]	= "Taxa";
+		["UiMailFrameRecording"]	= "O BeanCounter está registrando seu correio";
+		["UiMailFrameWait1"]	= "Por favor não feche a janela de correio ou";
+		["UiMailFrameWait2"]	= "Itens de Leilão não serão registrados";
+		["UiNameHeader"]	= "Item";
+		["UiNetHeader"]	= "Líq";
+		["UiNetPerHeader"]	= "Líq Por";
+		["UiOutbid"]	= "Superar";
+		["UiOutbids"]	= "Lances superados";
+		["UiPriceHeader"]	= "Preço";
+		["UiPriceper"]	= "Preço/Por";
+		["UiPricePerHeader"]	= "Cabeçalho de Preço";
+		["UiPurchases"]	= "Compras";
+		["UiQuantityHeader"]	= "Qtde";
+		["UiReason"]	= "Motivo";
+		["UiSales"]	= "Vendas";
+		["UiSearch"]	= "Pesquisa";
+		["UiSearchForLabel"]	= "Pesquisar por:";
+		["UiSellTransaction"]	= "Vender";
+		["UiServer"]	= "Servidor";
+		["UiTransactions"]	= "Transações";
+		["UiTransactionsLabel"]	= "Transações:";
+		["UiTransactionTypeHeader"]	= "Tipo";
+		["UiWealth"]	= "Vida";
+		["UiWononBid"]	= "Ganhos nos Lances";
+		["UiWononBuyout"]	= "Ganhos no Arremate";
 
 	};
 
@@ -1167,7 +1226,7 @@ BeanCounterLocalizations = {
 		["Re-ColorIconsandText"]	= "Изменить цвет иконок и текста";
 		["Re-ColorText"]	= "Изменить цвет текста";
 		["TooltipFailed"]	= "Не удалось получить информацию для всплывающей подсказки";
-		["UiNeutralCheckBox"]	= "Показать нейтральные данные аукциона";
+		["UiNeutralCheckBox"]	= "Нейтральные аукционы АО";
 
 		-- Section: Help Text
 		["A_BeanCountersTooltip"]	= "BeanCounter сохраняет причины покупки предметов и отображает их в подсказке.";
@@ -1189,7 +1248,7 @@ BeanCounterLocalizations = {
 		["TTDataExpireEnabled"]	= "Данные, созданные ранее указонного периода будут УДАЛЕНЫ";
 		["TT_ColorizeSearch"]	= "Эта настройка изменяет цвета отображения предметов в окне поиска BeanCounter.";
 		["TT_MaxDisplayedResults"]	= "Это управляет общим числом результатов, отображаемых в окне прокрутки.";
-		["TT_neutralCheck"]	= "Показать результаты из Neutral Blackwater Аукционного дома\n";
+		["TT_neutralCheck"]	= "Показать данные нейтральных аукционов домов АО\n";
 		["TT_OpacityLevel"]	= "Управляет уровнем прозрачности цветных линеек в окне поиска BeanCounter (если они разрешены)";
 		["TT_sendtosearch"]	= "Данные, введенные в окне поиска BeanCounter добавляются в окно просмотра Аукциона.";
 
@@ -1242,7 +1301,7 @@ BeanCounterLocalizations = {
 		["UiDepositTransaction"]	= "Депозит";
 		["UiDone"]	= "Завершить";
 		["UiExactNameSearch"]	= "Поиск точного совпадения";
-		["UiFailedAuctions"]	= "Неудавщиеся аукционы";
+		["UiFailedAuctions"]	= "Не состоявшиеся аукционы";
 		["UiFee"]	= "Оплата";
 		["UiMailFrameRecording"]	= "BeanCounter сканирует вашу почту";
 		["UiMailFrameWait1"]	= "Пожалуйста, не закрывайте почтовое окно, иначе";

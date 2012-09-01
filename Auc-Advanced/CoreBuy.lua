@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CoreBuy.lua 5241 2011-11-30 19:05:41Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CoreBuy.lua 5236 2011-11-30 11:22:08Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -708,4 +708,4 @@ private.Prompt.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-Frien
 private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreBuy.lua $", "$Rev: 5241 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreBuy.lua $", "$Rev: 5236 $")

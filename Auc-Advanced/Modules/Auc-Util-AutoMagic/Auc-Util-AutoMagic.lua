@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: Auc-Util-AutoMagic.lua 4894 2010-10-03 21:23:07Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: Auc-Util-AutoMagic.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -127,6 +127,9 @@ function lib.OnLoad()
 	
 
 	default("util.automagic.displaybeginerTooltips", true)
+	
+	--create mail frames
+	lib.makeMailGUI()
 end
 
 	-- define what event fires what function
@@ -226,6 +229,10 @@ function lib.SetupConfigGui(gui)
 		gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
 		gui:AddControl(id, "Button",     0, 1, "util.automagic.autosellgui", _TRANS('AAMU_Interface_AutoSellList')) --"Auto-Sell List"
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellList')) --'Check the box to view the Auto-Sell configuration GUI.'
+		
+		
+		gui:AddControl(id, "Button",    0, 1, function() lib.CustomMailerFrame:Show() end, _TRANS('AAMU_Interface_MailButtons')) --
+		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_MailButtons')) --'Check the box to view the Auto-Sell configuration GUI.'
 
 
 		gui:AddControl(id, "Header",     0,    _TRANS('AAMU_Interface_GUIOptions')) --" GUI options"
@@ -283,7 +290,6 @@ function lib.mailClosed() --Fires on mail box closed event & hides mailgui
 end
 
 function lib.mailGUI() --Function is called from lib.mailShow()
-	lib.makeMailGUI()
 	lib.ammailgui:Show()
 end
 
@@ -746,4 +752,4 @@ function lib.ClientItemCacheRefresh(link)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 4894 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5335 $")

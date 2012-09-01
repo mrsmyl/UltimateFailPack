@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 local LIBNAME = "LibExtraTip"
 local VERSION_MAJOR = 1
-local VERSION_MINOR = 321
+local VERSION_MINOR = 323
 -- Minor Version cannot be a SVN Revison in case this library is used in multiple repositories
 -- Should be updated manually with each (non-trivial) change
 
@@ -37,7 +37,7 @@ local LIBSTRING = LIBNAME.."_"..VERSION_MAJOR.."_"..VERSION_MINOR
 local lib = LibStub:NewLibrary(LIBNAME.."-"..VERSION_MAJOR, VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibExtraTip.lua $","$Rev: 319 $","5.12.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibExtraTip.lua $","$Rev: 324 $","5.12.DEV.", 'auctioneer', 'libs')
 
 -- Call function to deactivate any outdated version of the library.
 -- (calls the OLD version of this function, NOT the one defined in this
@@ -253,7 +253,7 @@ end
 
 	if we are updating, keep the old hookStore table IF it has the right version, so that we can reuse the hook stubs
 --]]
-local HOOKSTORE_VERSION = "A"
+local HOOKSTORE_VERSION = "B"
 if not lib.hookStore or lib.hookStore.version ~= HOOKSTORE_VERSION then
 	lib.hookStore = {version = HOOKSTORE_VERSION}
 end
@@ -282,17 +282,17 @@ local function hook(tip, method, prehook, posthook)
 	lib.hookStore[tip][method] = control
 	-- install hook stub
 	local stub = function(...)
-		local h
+		local hook
 		-- prehook
-		h = control[1]
-		if h then h(...) end
+		hook = control[1]
+		if hook then hook(...) end
 		-- original hook
-		local a,b,c,d = orig(...)
+		local a,b,c,d,e,f,g,h,i,j,k = orig(...)
 		-- posthook
-		h = control[2]
-		if h then h(...) end
+		hook = control[2]
+		if hook then hook(...) end
 		-- return values from original
-		return a,b,c,d
+		return a,b,c,d,e,f,g,h,i,j,k
 	end
 	tip[method] = stub
 	--[[
@@ -647,6 +647,23 @@ function lib:Deactivate()
 			end
 		end
 	end
+
+	-- deactivate and discard any existing extra tooltips
+	-- (should be extremely rare that any would exist at this point
+	-- therefore minimal code just to prevent errors in those rare instances)
+	if self.tooltipRegistry then
+		for _, reg in pairs(self.tooltipRegistry) do
+			local tip = reg.extraTip
+			if tip then
+				tip:Hide()
+				tip:Release()
+			end
+			reg.extraTip = nil
+			reg.extraTipUsed = nil
+
+		end
+	end
+	self.extraTippool = nil
 end
 
 --[[ INTERNAL USE ONLY

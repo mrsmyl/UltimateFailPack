@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - iLevel Standard Deviation Statistics module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: iLevel.lua 5154 2011-05-13 23:15:57Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: iLevel.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -109,9 +109,9 @@ function lib.ScanProcessors.create(operation, itemData, oldData)
 
 	-- Get the signature of this item and find it's stats.
 	local iLevel, quality, equipPos = itemData.itemLevel, itemData.quality, itemData.equipPos
-	if quality < 1 then return end
 	if not equipPos then return end
 	if equipPos < 1 then return end
+	if quality < 1 then return end
 	local itemSig = ("%d:%d"):format(equipPos, quality)
 
 	local serverKey = GetFaction()
@@ -530,4 +530,4 @@ function private.PackStats(data)
 	return concat(tmp, ",", 1, ntmp)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Stat-iLevel/iLevel.lua $", "$Rev: 5154 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Stat-iLevel/iLevel.lua $", "$Rev: 5335 $")

@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: EnxUtil.lua 5138 2011-05-01 02:04:22Z ccox $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: EnxUtil.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://enchantrix.org/
 
 	General utility functions
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Enchantrix/EnxUtil.lua $", "$Rev: 5138 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxUtil.lua $", "$Rev: 5335 $")
 
 -- Global functions
 local getItems
@@ -699,7 +699,7 @@ function createProfiler(name)
 end
 
 Enchantrix.Util = {
-	Revision			= "$Revision: 5138 $",
+	Revision			= "$Revision: 5335 $",
 
 	GetItems			= getItems,
 	GetItemType			= getItemType,
@@ -757,9 +757,23 @@ function Enchantrix.Util.DisenchantSkillRequiredForItemLevel(level, quality)
 		return 0
 	end
 	
+-- ccox - Panda items, this is partly guesswork
+	if (quality == 2 and level >= 340) then
+		-- all greens
+		return 475;					-- 384 - 460
+	elseif (quality == 3 and level >= 390) then
+		-- blues
+		if (level > 425) then
+			return 550;
+		else
+			return 525;
+		end
+	elseif (level >= 420) then
+		-- all epics
+		return 525;					-- 420 - 516		525 armor, 575 weapons - well, it's less screwed up than it was; a few more weeks and Blizz will get it right
 
-	-- ccox - Cataclysm items, this is partly guesswork
-	if (level >= 270) then
+	-- Cataclysm items
+	elseif (level >= 270) then
 		if (quality == 3) then
 			-- all blues
 			return 450;				-- 279 - 346
@@ -768,11 +782,11 @@ function Enchantrix.Util.DisenchantSkillRequiredForItemLevel(level, quality)
 			return 425;				-- 270 - 318
 		else
 			-- all epics
-			return 475;				-- 353 - 372
+			return 475;				-- 346 - 416
 		end
 		
 	elseif (level >= 200) then
-		-- rares still bugged Nov 2009, and Nov 2010, guess they're going to stay that way
+		-- rares still bugged Nov 2011, guess they're going to stay that way
 		if (quality ~= 3) then
 			return 375;
 		else
@@ -785,7 +799,7 @@ function Enchantrix.Util.DisenchantSkillRequiredForItemLevel(level, quality)
 			return 350;
 		else
 			return 325;
-		end			-- ccox - rare/blue items are still 325 due to a Blizzard bug, hope it gets fixed soon
+		end
 
 	elseif (level >= 130) then
 		return 325;
@@ -883,63 +897,24 @@ function Enchantrix.Util.GetUserSkillByName( name )
 	end
 
 	local resultRank = 0
-	--[[ WOW 3.0  WOTLK server version runs the old code path SHIM REMOVE]]
-	if GetNumSkillLines then
-		local MyExpandedHeaders = {}
-		local i, j
-
-
-		-- search the skill tree for the named skill
-		for i=0, GetNumSkillLines(), 1 do
-			local skillName, header, isExpanded, skillRank = GetSkillLineInfo(i)
-			-- expand the header if necessary
-			if ( header and not isExpanded ) then
-				MyExpandedHeaders[i] = skillName
-			end
-		end
-
-		ExpandSkillHeader(0)
-		for i=1, GetNumSkillLines(), 1 do
-			local skillName, header, _, skillRank = GetSkillLineInfo(i)
-			-- check for the skill name
-			if (skillName and not header) then
-				if (skillName == name) then
-					resultRank = skillRank
-					-- no need to look at the rest of the skills
-					break
-				end
-			end
-		end
-
-		-- close headers expanded during search process
-		for i=0, GetNumSkillLines() do
-			local skillName, header, isExpanded = GetSkillLineInfo(i)
-			for j in pairs(MyExpandedHeaders) do
-				if ( header and skillName == MyExpandedHeaders[j] ) then
-					CollapseSkillHeader(i)
-					MyExpandedHeaders[j] = nil
-				end
-			end
-		end
-	else
+	
 	--WOW 4.0 Cataclysm uses the new profession system
-		local prof1, prof2 = GetProfessions()
-		local skillName1, _, rank1
-		local skillName2, _, rank2
-		if prof1 then
-			skillName1, _, rank1= GetProfessionInfo(prof1)
-		end
-		if prof2 then
-			skillName2, _, rank2 = GetProfessionInfo(prof2)
-		end
-
-		if name == skillName1 then
-			resultRank = rank1
-		elseif name == skillName2 then
-			resultRank = rank2
-		end
+	local prof1, prof2 = GetProfessions()
+	local skillName1, _, rank1
+	local skillName2, _, rank2
+	if prof1 then
+		skillName1, _, rank1= GetProfessionInfo(prof1)
+	end
+	if prof2 then
+		skillName2, _, rank2 = GetProfessionInfo(prof2)
 	end
 
+	if name == skillName1 then
+		resultRank = rank1
+	elseif name == skillName2 then
+		resultRank = rank2
+	end
+	
 	Enchantrix.Util.SkillCacheRank[ name ] = resultRank
 	Enchantrix.Util.SkillCacheTimeStamp[ name ] = GetTime()
 
@@ -974,6 +949,7 @@ local function balanceEssencePrices(scanReagentTable, style)
 		[22447] = 22446,	-- planar
 		[34056] = 34055,	-- cosmic
 		[52718] = 52719,	-- celestial
+--		[74250] = 74251,	-- Mysterious	-- greater doesn't seem to be used
 	};
 
 	for lesser, greater in pairs(essenceTable) do

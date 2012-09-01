@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CoreModule.lua 5210 2011-07-19 19:07:52Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CoreModule.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -51,9 +51,10 @@ local modules = {}
 
 -- This is an initial creation function.  Create and return items once.  Expect the caller to store that value for use.
 function lib.GetCoreModule(moduleName)
-	local x = {}
+	local x
 	if (moduleName) then
 		if (modules[moduleName]) then return end
+		x = {}
 		modules[moduleName] = x
 	end
 	return x, internal
@@ -153,4 +154,4 @@ function lib.CoreModuleOnLoad(addon)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreModule.lua $", "$Rev: 5210 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreModule.lua $", "$Rev: 5335 $")

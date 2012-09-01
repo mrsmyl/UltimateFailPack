@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher EnchantMats
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: SearcherEnchantMats.lua 5039 2010-12-11 21:12:17Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: SearcherEnchantMats.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -81,6 +81,13 @@ local GCELESTIAL = 52719
 local LCELESTIAL = 52718
 local MAELSTROM = 52722
 
+local SHA_CRYSTAL = 74248
+local ETHERAL = 74247
+local SETHERAL = 74252
+local SPIRIT = 74249
+--local GMYSTERIOUS = 74251		-- doesn't seem to be used
+local MYSTERIOUS = 74250
+
 -- a table we can check for item ids
 local validReagents =
 	{
@@ -126,12 +133,17 @@ local validReagents =
 	[GCELESTIAL] = true,
 	[LCELESTIAL] = true,
 	[HYPNOTIC] = true,
+	[SHA_CRYSTAL] = true,
+	[ETHERAL] = true,
+	[SETHERAL] = true,
+	[SPIRIT] = true,
+	[MYSTERIOUS] = true,
 	}
 
 -- Set our defaults
 default("enchantmats.level.custom", false)
 default("enchantmats.level.min", 0)
-default("enchantmats.level.max", 525)
+default("enchantmats.level.max", Const.MAXSKILLLEVEL)
 default("enchantmats.allow.bid", true)
 default("enchantmats.allow.buy", true)
 default("enchantmats.maxprice", 10000000)
@@ -169,18 +181,27 @@ default("enchantmats.PriceAdjust."..SGLOWING, 100)
 default("enchantmats.PriceAdjust."..SGLIMMERING, 100)
 default("enchantmats.PriceAdjust."..VOID, 100)
 default("enchantmats.PriceAdjust."..NEXUS, 100)
+
 default("enchantmats.PriceAdjust."..DREAM_SHARD, 100)
 default("enchantmats.PriceAdjust."..SDREAM_SHARD, 100)
 default("enchantmats.PriceAdjust."..INFINITE, 100)
 default("enchantmats.PriceAdjust."..GCOSMIC, 100)
 default("enchantmats.PriceAdjust."..LCOSMIC, 100)
 default("enchantmats.PriceAdjust."..ABYSS, 100)
+
 default("enchantmats.PriceAdjust."..HEAVENLY_SHARD, 100)
 default("enchantmats.PriceAdjust."..SHEAVENLY_SHARD, 100)
 default("enchantmats.PriceAdjust."..HYPNOTIC, 100)
 default("enchantmats.PriceAdjust."..GCELESTIAL, 100)
 default("enchantmats.PriceAdjust."..LCELESTIAL, 100)
 default("enchantmats.PriceAdjust."..MAELSTROM, 100)
+
+default("enchantmats.PriceAdjust."..SPIRIT, 100)
+default("enchantmats.PriceAdjust."..MYSTERIOUS, 100)
+default("enchantmats.PriceAdjust."..SETHERAL, 100)
+default("enchantmats.PriceAdjust."..ETHERAL, 100)
+default("enchantmats.PriceAdjust."..SHA_CRYSTAL, 100)
+
 
 function private.doValidation()
 	if not resources.isEnchantrixLoaded then
@@ -229,7 +250,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "Checkbox",          0.56, 1, "enchantmats.allow.buy", "Allow Buyouts")
 	gui:AddControl(id, "Checkbox",          0.42, 1, "enchantmats.maxprice.enable", "Enable individual maximum price:")
 	gui:AddTip(id, "Limit the maximum amount you want to spend with the EnchantMats searcher")
-	gui:AddControl(id, "MoneyFramePinned",  0.42, 2, "enchantmats.maxprice", 1, 99999999, "Maximum Price for EnchantMats")
+	gui:AddControl(id, "MoneyFramePinned",  0.42, 2, "enchantmats.maxprice", 1, 999999999, "Maximum Price for EnchantMats")
 
 	gui:AddControl(id, "Label",             0.42, 1, nil, "Price Valuation Method:")
 	gui:AddControl(id, "Selectbox",         0.42, 1, resources.selectorPriceModelsEnx, "enchantmats.model")
@@ -237,8 +258,8 @@ function lib:MakeGuiConfig(gui)
 
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",          0, 1, "enchantmats.level.custom", "Use custom enchanting skill levels")
-	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.min", 0, 525, 25, "Minimum skill: %s")
-	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.max", 25, 525, 25, "Maximum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.min", 0, Const.MAXSKILLLEVEL, 25, "Minimum skill: %s")
+	gui:AddControl(id, "Slider",            0, 2, "enchantmats.level.max", 25, Const.MAXSKILLLEVEL, 25, "Maximum skill: %s")
 
 	-- spacer to allow for all the controls on the right hand side
 	gui:AddControl(id, "Note",              0, 0, nil, 40, "")
@@ -246,6 +267,7 @@ function lib:MakeGuiConfig(gui)
 	-- aka "what percentage of estimated value am I willing to pay for this reagent"?
 	gui:AddControl(id, "Subhead",          0,    "Reageant Price Modification")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..MYSTERIOUS, 0, 200, 1, "Mysterious Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GCELESTIAL, 0, 200, 1, "Greater Celestial Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GCOSMIC, 0, 200, 1, "Greater Cosmic Essence %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..GPLANAR, 0, 200, 1, "Greater Planar Essence %s%%" )
@@ -264,6 +286,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LASTRAL, 0, 200, 1, "Lesser Astral Essence %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LMAGIC, 0, 200, 1, "Lesser Magic Essence %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SPIRIT, 0, 200, 1, "Spirit Dust %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..HYPNOTIC, 0, 200, 1, "Hypnotic Dust %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..INFINITE, 0, 200, 1, "Infinite Dust %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..ARCANE, 0, 200, 1, "Arcane Dust %s%%" )
@@ -273,6 +296,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SOUL, 0, 200, 1, "Soul Dust %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..STRANGE, 0, 200, 1, "Strange Dust %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..ETHERAL, 0, 200, 1, "Ethereal Shard %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..HEAVENLY_SHARD, 0, 200, 1, "Heavenly Shard %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..DREAM_SHARD, 0, 200, 1, "Dream Shard %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LPRISMATIC, 0, 200, 1, "Large Prismatic Shard %s%%" )
@@ -281,6 +305,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LGLOWING, 0, 200, 1, "Large Glowing Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..LGLIMMERING, 0, 200, 1, "Large Glimmering Shard %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SETHERAL, 0, 200, 1, "Small Ethereal Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SHEAVENLY_SHARD, 0, 200, 1, "Small Heavenly Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SDREAM_SHARD, 0, 200, 1, "Small Dream Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SPRISMATIC, 0, 200, 1, "Small Prismatic Shard %s%%")
@@ -289,6 +314,7 @@ function lib:MakeGuiConfig(gui)
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SGLOWING, 0, 200, 1, "Small Glowing Shard %s%%")
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SGLIMMERING, 0, 200, 1, "Small Glimmering Shard %s%%")
 
+	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..SHA_CRYSTAL, 0, 200, 1, "Sha Crystal %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..MAELSTROM, 0, 200, 1, "Maelstrom Crystal %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..ABYSS, 0, 200, 1, "Abyss Crystal %s%%" )
 	gui:AddControl(id, "WideSlider", 0, 1, "enchantmats.PriceAdjust."..VOID, 0, 200, 1, "Void Crystal %s%%" )
@@ -386,4 +412,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearcherEnchantMats.lua $", "$Rev: 5039 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearcherEnchantMats.lua $", "$Rev: 5335 $")

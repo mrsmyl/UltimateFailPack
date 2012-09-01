@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: EnxStorage.lua 5136 2011-05-01 01:33:33Z ccox $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: EnxStorage.lua 5268 2012-01-22 23:15:00Z Nechckn $
 	URL: http://enchantrix.org/
 
 	Database functions and saved variables.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Enchantrix/EnxStorage.lua $", "$Rev: 5136 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxStorage.lua $", "$Rev: 5268 $")
 
 --[[
 Usages:
@@ -649,9 +649,10 @@ function saveNonDisenchantable(itemLink)
 	if (not NonDisenchantables[sig]) then
 		if (Enchantrix.Settings.GetSetting('chatShowFindings')) then
 			Enchantrix.Util.ChatPrint(_ENCH("FrmtFoundNotDisenchant"):format(itemLink))
+			--Enchantrix.Util.DebugPrintQuick( itemLink, sig, NonDisenchantables[sig] )
 		end
-		NonDisenchantablesLocal[sig] = value;
-		NonDisenchantables[sig] = value;
+		NonDisenchantablesLocal[sig] = true;
+		NonDisenchantables[sig] = true;
 	end
 end
 

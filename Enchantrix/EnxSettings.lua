@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: EnxSettings.lua 5007 2010-11-10 07:25:24Z Hirsute $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: EnxSettings.lua 5292 2012-04-27 00:01:28Z Nechckn $
 	URL: http://enchantrix.org/
 
 	Settings GUI
@@ -63,7 +63,7 @@ Usage:
 
 ]]
 
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Enchantrix/EnxSettings.lua $", "$Rev: 5007 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxSettings.lua $", "$Rev: 5292 $")
 
 local lib = {}
 Enchantrix.Settings = lib
@@ -159,6 +159,7 @@ local settingDefaults = {
 
 	['export.aucadv'] = true, -- Send our price values to Auctioneer as stats
 	['ModTTShow'] = "always",
+	['AltChatlinkTooltip'] = false,
 }
 
 local function getDefault(setting)
@@ -534,6 +535,8 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Subhead",     0,	_ENCH('ModTTShow')) --"Show Tooltip:"
 	gui:AddControl(id, "Selectbox", 0, 1, { { "always", _ENCH('ModTTShow_always') }, {"alt", _ENCH('ModTTShow_alt') }, { "noalt", _ENCH('ModTTShow_noalt') }, {"shift", _ENCH('ModTTShow_shift') }, {"noshift", _ENCH('ModTTShow_noshift')}, {"ctrl", _ENCH('ModTTShow_ctrl')},{"noctrl", _ENCH('ModTTShow_noctrl')}, { "never", _ENCH('ModTTShow_never')} }, "ModTTShow")
 	gui:AddTip(id, _ENCH('ModTTShow_Help')) --"Determines Tooltip behavior. Always: Show Enchantrix's Tooltip every time. When <mod> is pressed: Only show Enchantrix's tooltip if the specified modifier is pressed. When <mod> is not pressed: Only show Enchantrix's tooltip if the specified modifier is not pressed. Never: Never show Enchantrix's tooltip."	
+	gui:AddControl(id, "Checkbox",   0, 1, "AltChatlinkTooltip", _ENCH('GuiAltChatlink'))--"Open tooltips from chat links with Alt left-clicks"
+	gui:AddTip(id, _ENCH('HelpAltChatlink'))--"Enables opening a tooltip by left-clicking on an item link in chat while the Alt key is pressed."
 	gui:AddControl(id, "Checkbox",   0, 1, "TooltipShowDisenchantLevel", _ENCH("GuiDELevels") )
 	gui:AddControl(id, "Checkbox",   0, 1, "ToolTipEmbedInGameTip", _ENCH("HelpEmbed") )
 	gui:AddControl(id, "Checkbox",   0, 1, "TooltipShowDisenchantMats", _ENCH("GuiDEMaterials") )

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: AprSettings.lua 5186 2011-06-29 15:46:18Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: AprSettings.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -187,6 +187,18 @@ function lib.RoundBuy(value)
 	end
 end
 
+function lib.RoundBuyBid(buy, bid)
+	-- Combines RoundBuy and RoundBid, with a check to ensure bid doesn't exceed buy
+	buy = lib.RoundBuy(buy)
+	bid = lib.RoundBid(bid)
+
+	if buy > 0 and bid > buy then
+		bid = buy
+	end
+
+	return buy, bid
+end
+
 local scrollItems = {}
 function lib.UpdateList() -- dead code?
 	local n = #scrollItems
@@ -320,14 +332,14 @@ function private.SetupConfigGui(gui)
 	end
 	--This is the Tooltip tab provided by aucadvanced so all tooltip configuration is in one place
 	local tooltipID = AucAdvanced.Settings.Gui.tooltipID
-	
+
 	--now we create a duplicate of these in the tooltip frame
 	private.addTooltipControls(id)
 	if tooltipID then private.addTooltipControls(tooltipID) end
-	
+
 	gui:AddControl(id, "Checkbox",     0, 1, "util.appraiser.displayauctiontab", _TRANS('APPR_Interface_ShowAppraiserTab') )--Show Appraiser tab at the Auction House
 	gui:AddTip(id, _TRANS('APPR_HelpTooltip_ShowAppraiserTab') )--Shows the appraiser tab on the auction house
-	
+
 	gui:AddControl(id, "Subhead",      0,    _TRANS('APPR_Interface_AppraiserFrameColoration') ) --Appraiser frame coloration
 	gui:AddControl(id, "Checkbox",   0, 1, "util.appraiser.color", _TRANS('APPR_Interface_ColorAppraiserPriceLevel') )--Color Appraiser items by their PriceLevel data
 	gui:AddTip(id, _TRANS('APPR_HelpTooltip_ColorAppraiserPriceLevel') )--This option will use information from PriceLevel to tint the current auction valuations by how far above/below the current priceing model's mean in shades from red to blue.
@@ -548,4 +560,4 @@ function private.SetupConfigGui(gui)
 	private.guiId = id
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 5186 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 5335 $")

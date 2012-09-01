@@ -2,8 +2,8 @@
 ## Interface: 40300
 ## Dependancies: Auc-Advanced
 ##
-## Version: 5.13.5258 (BoldBandicoot)
-## Revision: $Id: Auc-Util-Example.toc 5241 2011-11-30 19:05:41Z Nechckn $
+## Version: 5.14.5335 (KowariOnCrutches)
+## Revision: $Id: Auc-Util-Example.toc 5234 2011-11-24 04:54:19Z Nechckn $
 ## URL: http://auctioneeraddon.com/
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer

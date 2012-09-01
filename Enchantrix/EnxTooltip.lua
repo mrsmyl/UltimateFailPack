@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: EnxTooltip.lua 5188 2011-06-29 16:14:04Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: EnxTooltip.lua 5292 2012-04-27 00:01:28Z Nechckn $
 	URL: http://enchantrix.org/
 
 	Tooltip functions.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Enchantrix/EnxTooltip.lua $", "$Rev: 5188 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxTooltip.lua $", "$Rev: 5292 $")
 
 -- Global functions
 local addonLoaded	-- Enchantrix.Tooltip.AddonLoaded()
@@ -38,6 +38,9 @@ local tooltipFormat	-- Enchantrix.Tooltip.Format
 local itemTooltip
 local enchantTooltip
 local hookItemTooltip, hookSpellTooltip
+local callbackAltChatLinkTooltip
+
+local ALTCHATLINKTOOLTIP_OPEN
 
 local tooltip = LibStub("nTipHelper:1")
 
@@ -46,6 +49,8 @@ function addonLoaded()
 	tooltip:Activate()
 	tooltip:AddCallback( { type = "item", callback = hookItemTooltip }, 400)
 	tooltip:AddCallback( { type = "spell", callback = hookSpellTooltip }, 400)
+	tooltip:AltChatLinkRegister(callbackAltChatLinkTooltip)
+	ALTCHATLINKTOOLTIP_OPEN = tooltip:AltChatLinkConstants()
 end
 
 tooltipFormat = {
@@ -733,8 +738,19 @@ function hookSpellTooltip(tipFrame, link, name, rank)
 	tooltip:ClearFrame(tipFrame)
 end
 
+function callbackAltChatLinkTooltip(link, text, button, chatFrame)
+	if button == "LeftButton" and Enchantrix.Settings.GetSetting('AltChatlinkTooltip') then
+		local linkType = link:sub(1, 5)
+		-- only do one string.sub to limit the number of temp strings created
+		-- the test strings must all contain exactly 5 characters
+		if linkType == "item:" or linkType == "spell" or linkType == "encha" then
+			return ALTCHATLINKTOOLTIP_OPEN
+		end
+	end
+end
+
 Enchantrix.Tooltip = {
-	Revision		= "$Revision: 5188 $",
+	Revision		= "$Revision: 5292 $",
 
 	AddonLoaded		= addonLoaded,
 	Format			= tooltipFormat,

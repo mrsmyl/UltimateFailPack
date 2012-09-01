@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: SearchRealTime.lua 5246 2011-12-05 21:54:54Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: SearchRealTime.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This Auctioneer module allows the user to search the current Browse tab
@@ -33,24 +33,31 @@
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 --]]
 
+local AddOnName = ...
+local embedpath
+AddOnName = AddOnName:lower()
+if AddOnName == "auc-util-searchui" then
+	embedpath = "Interface\\AddOns\\"
+elseif AddOnName == "auc-advanced" then
+	embedpath = "Interface\\AddOns\\Auc-Advanced\\Modules\\"
+else
+	return -- unknown location, cannot continue
+end
+
 local lib, parent, private = AucSearchUI.NewSearcher("RealTime")
 if not lib then return end
-local print,decode,_,_,replicate,empty,_,_,_,debugPrint,fill = AucAdvanced.GetModuleLocals()
+local AucPrint,decode,_,_,replicate,empty,_,_,_,debugPrint,fill = AucAdvanced.GetModuleLocals()
 local get,set,default,Const = AucSearchUI.GetSearchLocals()
-lib.tabname = "realtime"
+lib.tabname = "RealTime"
 
-local Const = AucAdvanced.Const
---default assumption is that we're not embedded.  This is checked later.
-local embedded = false
-local embedpath = "Interface\\AddOns\\"
 private.IsScanning = false
-private.count = 0
-private.searchertable = {}
 private.ItemTable = {}
-private.interval = 20
+private.searchertable = {}
+private.buttontable = {}
 private.offset = 0
-private.topScan = false
 private.IsRefresh = false
+private.pageCount = -1 -- signal value, to indicate not previously tested
+private.scannedPage = -1
 
 default("realtime.always", true)
 default("realtime.reload.enable", true)
@@ -63,9 +70,9 @@ default("realtime.alert.showwindow", true)
 default("realtime.alert.sound", "DoorBell")
 default("realtime.skipresults", false)
 
-local SearchUIgui
-function lib:MakeGuiConfig(gui)
-	SearchUIgui = gui
+function private.MakeGuiConfig(gui)
+	private.MakeGuiConfig = nil
+	private.SearchUIgui = gui
 	local id = gui:AddTab(lib.tabname, "Options")
 	gui:MakeScrollable(id)
 
@@ -105,102 +112,134 @@ function lib:MakeGuiConfig(gui)
 		end
 	end
 end
+function lib:MakeGuiConfig(gui)
+	if private.MakeGuiConfig then private.MakeGuiConfig(gui) end
+end
+
+lib.Processor = {
+	config = function(sub, setting, value)
+		-- perform certain resets on config change
+
+		-- Changes that affect RTSButtons status
+		if sub == "changed" and setting == "realtime.reload.enable" then
+			for _, button in ipairs(private.buttontable) do
+				button:SetState()
+			end
+		end
+	end,
+
+	auctionopen = function()
+		lib.SetTimerInterval(get("realtime.reload.interval"))
+	end,
+}
 
 --lib.RefreshPage()
 --role: refreshes the page based on settings, and updates private.lastPage, private.interval, and private.manualSearchPause
 function lib.RefreshPage()
-	private.interval = get("realtime.reload.interval")
-
 	--Check to see if the AH is open for business
 	if not (AuctionFrame and AuctionFrame:IsVisible()) then
-		private.interval = 1 --Try again in one second
-		return
-	end
-
-	--Check to see if we can send a query
-	if not (CanSendAuctionQuery()) then
-		private.interval = 1 --try again in one second
+		lib.SetTimerInterval(120) -- basically do nothing - we wait for auctionopen event
 		return
 	end
 
 	--Check to see if AucAdv is already scanning
 	if AucAdvanced.Scan.IsScanning() or AucAdvanced.Scan.IsPaused() then
-		private.timer = 0
-		private.interval = get("realtime.reload.manpause")
+		lib.SetTimerInterval(get("realtime.reload.manpause"))
+		private.findLast = nil
 		return
 	end
 
+	--Check to see if we can send a query
+	if not (CanSendAuctionQuery()) then
+		lib.SetTimerInterval(1) --try again in one second
+		return
+	end
+
+	lib.SetTimerInterval(get("realtime.reload.interval"))
+
 	--Get the current number of auctions and pages
-	local pageCount, totalCount = GetNumAuctionItems("list")
-	local totalPages = math.floor((totalCount-1)/NUM_AUCTION_ITEMS_PER_PAGE)
+	local count, totalCount = GetNumAuctionItems("list")
+	local totalPages = floor((totalCount-1)/NUM_AUCTION_ITEMS_PER_PAGE)
 	if (totalPages < 0) then
 		totalPages = 0
 	end
 
-	--set the AH page count to a signal value, if this is our first time
-	if (not private.pageCount) then
-		private.pageCount = -1
-	end
-
-	--Decide whether we are just starting to use the Realtime queries (as opposed to piggybacking), which means we are going to do a few quick scans to get to the last page
-	if (totalPages ~= private.pageCount) then
+	-- Detect change of number of pages, and go into findLast mode to find the (new) last page quickly
+	if totalPages ~= private.pageCount then
 		private.pageCount = totalPages
-		private.interval = 3 --cut short the delay, we want to get to the last page quickly
+		private.findLast = true
 	end
 
-	--every 5 pages, go back one just to doublecheck that nothing got by us
-	private.offset = (private.offset + 1) % 5
-	local offset = 0
-	if private.offset == 0 then
-		offset = 1
-	end
+	local page = private.pageCount
 
-	local page = private.pageCount - offset
-	if page < 0 then
-		page = 0
-	end
-	if get("realtime.reload.topscan") then
-		private.topScan = not private.topScan --flip the variable, so we alternate first and last pages
+	if private.findLast then
+		private.topScan = nil
 	else
-		private.topScan = false --make sure we don't topScan if we don't want to
+		if get("realtime.reload.topscan") then
+			private.topScan = not private.topScan -- flip the variable, so we alternate first and last pages
+			if private.topScan then
+				page = 0
+			end
+		else
+			private.topScan = nil -- make sure we don't topScan if we don't want to
+		end
+		if page > 0 then
+			--every 5 pages, go back one just to doublecheck that nothing got by us
+			private.offset = (private.offset + 1) % 5
+			if private.offset == 0 then
+				page = page - 1
+				private.findLast = true
+			end
+		end
 	end
-	if private.topScan then
-		page = 0
-	end
+
 	AuctionFrameBrowse.page = page
+	private.scannedPage = page
 	SortAuctionClearSort("list")
+	if private.topScan then
+		-- When top scanning, sort auctions by time left
+		SortAuctionSetSort("list", "duration")
+	end
 	private.IsRefresh = true
 	AucAdvanced.Scan.SetAuctioneerQuery()
 	QueryAuctionItems("", "", "", nil, nil, nil, page, nil, nil)
+	lib.SignalRTSButton()
 end
 
---private.OnUpdate()
---checks whether it's time to refresh the page
+-- private.OnUpdate()
+-- checks whether it's time to refresh the page
+-- called from the OnUpdate script of the currently visible RTSButton
 function private.OnUpdate(me, elapsed)
-	if (not private.lastTry) then
-		private.lastTry = 0
-	end
-	if not private.interval then
-		private.interval = 6
-	end
-	if not private.timer then
-		private.timer = 0
-	else
-		private.timer = private.timer + elapsed
-
-		--Check whether enough time has elapsed to do anything
-		if private.timer < private.interval then
-			return
-		end
-		private.timer = private.timer - private.interval
-		private.lastTry = private.lastTry - private.interval
+	-- Bail out immediately if we're not scanning
+	if not private.IsScanning then
+		return
 	end
 
-	--if we've gotten to this point, it's time to refresh the page
-	if (private.IsScanning) and (get("realtime.reload.enable")) then
+	-- We use GetTime() to check how long since last update, instead of using elapsed
+	-- Workaround for the possibility of OnUpdate getting called multiple times per frame
+	local now = GetTime()
+
+	--Check whether enough time has elapsed to do anything
+	if now - private.lasttime < private.interval then
+		return
+	end
+	private.lasttime = now
+
+	if get("realtime.reload.enable") then
+		-- if we've gotten to this point, it's time to refresh the page
 		lib.RefreshPage()
+	else
+		-- at this point we are waiting to see if the user enables scanning
+		-- keep checking at short intervals
+		private.interval = 2
 	end
 end
+
+function lib.SetTimerInterval(interval)
+	private.interval = interval
+	private.lasttime = GetTime()
+end
+lib.SetTimerInterval(2) -- initialize
 
 --lib.FinishedPage()
 --called by AucAdv via SearchUI main when a page is done
@@ -210,18 +249,15 @@ function lib.FinishedPage()
 	--if we don't have searching while browsing on, then don't do anything if we're not actively refreshing
 	local always = get("realtime.always")
 	if not private.IsRefresh then
-		private.timer = 0
-		private.interval = get("realtime.reload.manpause")
+		lib.SetTimerInterval(get("realtime.reload.manpause"))
+		private.findLast = nil
 	end
 	if (not private.IsScanning)
-			or ((not always) and (not private.IsRefresh))
-			or ((not always) and (AucAdvanced.Scan.IsScanning())) then
-			private.timer = 0
-			private.interval = get("realtime.reload.manpause")
-			private.IsRefresh = false
-		return
-	else
+			or (not always and (not private.IsRefresh or AucAdvanced.Scan.IsScanning())) then
+		lib.SetTimerInterval(get("realtime.reload.manpause"))
 		private.IsRefresh = false
+		private.findLast = nil
+		return
 	end
 	--scan the current page
 	lib.ScanPage()
@@ -231,103 +267,124 @@ end
 	lib.ScanPage()
 	Called: from lib.FinishedPage, when AA is done with a page
 	Function: Scans current AH page for bargains
-	Note: will return if current page has >50 auctions on it
+	Note: will return if current page has > NUM_AUCTION_ITEMS_PER_PAGE auctions on it
+	(NUM_AUCTION_ITEMS_PER_PAGE defined as 50 in Blizzard_AuctionUI.lua)
 ]]
 function lib.ScanPage()
-	if not private.IsScanning then return end
+	local isRefresh = private.IsRefresh
 	private.IsRefresh = false
-	local batch, totalCount
-	batch, totalCount = GetNumAuctionItems("list")
-	if batch > 50 then
+	if not private.IsScanning then return end
+	local batch, totalCount = GetNumAuctionItems("list")
+	if batch > NUM_AUCTION_ITEMS_PER_PAGE then
 		-- we don't want to freeze the computer by trying to process a getall, so return
+		return
+	end
+	if batch == 0 then -- found an empty page
+		if isRefresh and totalCount > 0 then
+			lib.SetTimerInterval(.5) -- immediate refresh to find the last page
+			private.findLast = true
+		end
 		return
 	end
 
 	--this is a new page, so no alert sound has been played for it yet
 	private.playedsound = false
-	--store the current pagecount
-	private.pageCount = math.floor((totalCount-1)/NUM_AUCTION_ITEMS_PER_PAGE)
 
-	--Put all the searchers that are activated into our local table, so that the get()s are only called every page, not every auction
-	for name, searcher in pairs(AucSearchUI.Searchers) do
-		if get("realtime.use."..name) then
-			table.insert(private.searchertable, searcher)
+	if isRefresh and private.findLast then
+		-- in findLast mode - hunting for the last page
+		local topPage = floor((totalCount-1)/NUM_AUCTION_ITEMS_PER_PAGE)
+		if topPage < 0 then
+			topPage = 0
+		end
+		if private.scannedPage == topPage then
+			private.findLast = nil -- found the last page
+		else
+			lib.SetTimerInterval(3) -- short interval to find the last page quickly
 		end
 	end
+
+	--Put all the searchers that are activated into a local table, so that the get()s are only called every page, not every auction
+	for name, searcher in pairs(AucSearchUI.Searchers) do
+		if get("realtime.use."..name) then
+			tinsert(private.searchertable, searcher)
+		end
+	end
+	local skipresults = get("realtime.skipresults")
 	for i = 1, batch do
 		local link = GetAuctionItemLink("list", i)
 		if link then
-			local name, _, count, quality, canUse, level, levelColHeader, minBid, minInc, buyout, curBid, isHigh, owner = GetAuctionItemInfo("list", i)
-			local _, _, quality, iLevel, _, iType, iSubType, stack, iEquip = GetItemInfo(link)
-			iEquip = Const.EquipEncode[iEquip]
-			local timeleft = GetAuctionItemTimeLeft("list", i)
-			local _, id, suffix, factor, enchant, seed = AucAdvanced.DecodeLink(link)
-			owner = owner or ""
-			count = count or 1
+			local linkType, id, suffix, factor, enchant, seed = AucAdvanced.DecodeLink(link)
+			if linkType == "item" then -- temp fix: ignore battlepets
+				local name, _, count, quality, canUse, level, levelColHeader, minBid, minInc, buyout, curBid, isHigh, owner = GetAuctionItemInfo("list", i)
+				local _, _, quality, iLevel, _, iType, iSubType, stack, iEquip = GetItemInfo(link)
+				iEquip = Const.EquipEncode[iEquip]
+				local timeleft = GetAuctionItemTimeLeft("list", i)
+				owner = owner or ""
+				count = count or 1
 
-			local price
-			if curBid > 0 then
-				price = curBid + minInc
-				if buyout > 0 and price > buyout then
-					price = buyout
+				local price
+				if curBid > 0 then
+					price = curBid + minInc
+					if buyout > 0 and price > buyout then
+						price = buyout
+					end
+				elseif minBid > 0 then
+					price = minBid
+				else
+					price = 1
 				end
-			elseif minBid > 0 then
-				price = minBid
-			else
-				price = 1
-			end
-			if not level or levelColHeader ~= "REQ_LEVEL_ABBR" then
-				level = 1
-			end
+				if not level or levelColHeader ~= "REQ_LEVEL_ABBR" then
+					level = 1
+				end
 
-			-- put the data into a table laid out the same way as the AAdv Scandata, as that's what the searchers need
-			private.ItemTable[Const.LINK]    = link
-			private.ItemTable[Const.ILEVEL]  = iLevel
-			private.ItemTable[Const.ITYPE]   = iType
-			private.ItemTable[Const.ISUB]    = iSubType
-			private.ItemTable[Const.IEQUIP]  = iEquip
-			private.ItemTable[Const.PRICE]   = price
-			private.ItemTable[Const.TLEFT]   = timeleft
-			private.ItemTable[Const.NAME]    = name
-			private.ItemTable[Const.COUNT]   = count
-			private.ItemTable[Const.QUALITY] = quality
-			private.ItemTable[Const.CANUSE]  = canUse
-			private.ItemTable[Const.ULEVEL]  = level
-			private.ItemTable[Const.MINBID]  = minBid
-			private.ItemTable[Const.MININC]  = minInc
-			private.ItemTable[Const.BUYOUT]  = buyout
-			private.ItemTable[Const.CURBID]  = curBid
-			private.ItemTable[Const.AMHIGH]  = isHigh
-			private.ItemTable[Const.SELLER]  = owner
-			private.ItemTable[Const.ITEMID]  = id
-			private.ItemTable[Const.SUFFIX]  = suffix
-			private.ItemTable[Const.FACTOR]  = factor
-			private.ItemTable[Const.ENCHANT]  = enchant
-			private.ItemTable[Const.SEED]  = seed
+				-- put the data into a table laid out the same way as the AAdv Scandata, as that's what the searchers need
+				private.ItemTable[Const.LINK]    = link
+				private.ItemTable[Const.ILEVEL]  = iLevel
+				private.ItemTable[Const.ITYPE]   = iType
+				private.ItemTable[Const.ISUB]    = iSubType
+				private.ItemTable[Const.IEQUIP]  = iEquip
+				private.ItemTable[Const.PRICE]   = price
+				private.ItemTable[Const.TLEFT]   = timeleft
+				private.ItemTable[Const.NAME]    = name
+				private.ItemTable[Const.COUNT]   = count
+				private.ItemTable[Const.QUALITY] = quality
+				private.ItemTable[Const.CANUSE]  = canUse
+				private.ItemTable[Const.ULEVEL]  = level
+				private.ItemTable[Const.MINBID]  = minBid
+				private.ItemTable[Const.MININC]  = minInc
+				private.ItemTable[Const.BUYOUT]  = buyout
+				private.ItemTable[Const.CURBID]  = curBid
+				private.ItemTable[Const.AMHIGH]  = isHigh
+				private.ItemTable[Const.SELLER]  = owner
+				private.ItemTable[Const.ITEMID]  = id
+				private.ItemTable[Const.SUFFIX]  = suffix
+				private.ItemTable[Const.FACTOR]  = factor
+				private.ItemTable[Const.ENCHANT]  = enchant
+				private.ItemTable[Const.SEED]  = seed
 
-			local skipresults = get("realtime.skipresults")
-			for i, searcher in pairs(private.searchertable) do
-				if AucSearchUI.SearchItem(searcher.name, private.ItemTable, false, skipresults) then
-					private.alert(private.ItemTable[Const.LINK], private.ItemTable["cost"], private.ItemTable["reason"])
-					if skipresults then
-						AucAdvanced.Buy.QueueBuy(private.ItemTable[Const.LINK],
-							private.ItemTable[Const.SELLER],
-							private.ItemTable[Const.COUNT],
-							private.ItemTable[Const.MINBID],
-							private.ItemTable[Const.BUYOUT],
-							private.ItemTable["cost"],
-							AucSearchUI.Private.cropreason(private.ItemTable["reason"]),
-							true -- do not trigger a search if CoreBuy is unable to find this auction
-							)
-					else
-						AucSearchUI.Private.repaintSheet()
+				for i, searcher in pairs(private.searchertable) do
+					if AucSearchUI.SearchItem(searcher.name, private.ItemTable, false, skipresults) then
+						private.alert(private.ItemTable[Const.LINK], private.ItemTable["cost"], private.ItemTable["reason"])
+						if skipresults then
+							AucAdvanced.Buy.QueueBuy(private.ItemTable[Const.LINK],
+								private.ItemTable[Const.SELLER],
+								private.ItemTable[Const.COUNT],
+								private.ItemTable[Const.MINBID],
+								private.ItemTable[Const.BUYOUT],
+								private.ItemTable["cost"],
+								AucSearchUI.Private.cropreason(private.ItemTable["reason"]),
+								true -- do not trigger a search if CoreBuy is unable to find this auction
+								)
+						else
+							AucSearchUI.Private.repaintSheet()
+						end
 					end
 				end
 			end
 		end
-		AucSearchUI.CleanTable(private.ItemTable)
+		wipe(private.ItemTable)
 	end
-	AucSearchUI.CleanTable(private.searchertable)
+	wipe(private.searchertable)
 end
 
 --private.alert()
@@ -336,15 +393,15 @@ end
 --(subject to options)
 function private.alert(link, cost, reason)
 	if get("realtime.alert.chat") then
-		print("SearchUI: "..reason..": Found "..link.." for "..AucAdvanced.Coins(cost, true))
+		AucPrint("SearchUI: "..reason..": Found "..link.." for "..AucAdvanced.Coins(cost, true))
 	end
 	if get("realtime.alert.showwindow") and (not get("realtime.skipresults")) then
 		AucSearchUI.Show()
-		if SearchUIgui then
-			if SearchUIgui.tabs.active then
-				SearchUIgui:ContractFrame(SearchUIgui.tabs.active)
+		if private.SearchUIgui then
+			if private.SearchUIgui.tabs.active then
+				private.SearchUIgui:ContractFrame(private.SearchUIgui.tabs.active)
 			end
-			SearchUIgui:ClearFocus()
+			private.SearchUIgui:ClearFocus()
 		end
 	end
 	local SoundPath = get("realtime.alert.sound")
@@ -361,63 +418,169 @@ function private.alert(link, cost, reason)
 end
 
 --[[
-	private.ButtonPressed()
-	Called: when the control button gets pushed
-	function: switches on/off btmscanning
-]]
-function private.ButtonPressed(self, button)
-	if button == "LeftButton" then
-		if private.IsScanning then
-			private.IsScanning = false
-			private.button.control.tex:SetTexCoord(0, .5, 0, 1)
-		else
+	lib.SetScanning(boolean)
+	Turn RTS bottom/top scanning on or off
+	Note: active RTS scanning can only occur if one of the RTS buttons is visible
+--]]
+function lib.SetScanning(active)
+	if active then
+		if not private.IsScanning then
 			private.IsScanning = true
-			private.interval = 1 --we're starting the scan, so no need to wait
-			private.button.control.tex:SetTexCoord(0.5, 1, 0, 1)
+			lib.SetTimerInterval(.5) -- just started scanning so do first scan immediately
 		end
+	else
+		private.IsScanning = false
+	end
+	for _, button in ipairs(private.buttontable) do
+		button:SetState()
+	end
+end
+
+-- Scripts for RTSButtons
+local function OnClick(self, button)
+	if button == "LeftButton" then
+		lib.SetScanning(not private.IsScanning)
 	elseif button == "RightButton" then
-		AucSearchUI.Toggle()
+		if self.hasRight then
+			AucSearchUI.Toggle()
+		end
+	end
+end
+local function OnEnter(self)
+	local text
+	if private.IsScanning then
+		text = "Click to stop RealTime Search"
+	else
+		text = "Click to start RealTime Search"
+	end
+	if self.hasRight then
+		text = text .. "\nRight-Click to open SearchUI"
+	end
+	GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+	GameTooltip:SetText(text)
+end
+local function OnLeave(self)
+	GameTooltip:Hide()
+end
+local function SetState(self)
+	if private.IsScanning then
+		self.tex:SetTexCoord(0.5, 1, 0, 1)
+		if not self.isSpiking and get("realtime.reload.enable") then
+			self.pulse:Play()
+		else
+			self.pulse:Stop()
+		end
+	else
+		self.tex:SetTexCoord(0, .5, 0, 1)
+		self.pulse:Stop()
+		self.spike:Stop()
+	end
+end
+local function OnSpikeFinished(self)
+	-- pulse is temporarily disabled while spiking; restart pulse animation when spike ends
+	self.button.isSpiking = nil
+	self.button:SetState()
+end
+
+--[[
+	lib.CreateRTSButton(parent, norightclick)
+	Create a new RTS scan toggle button to add to a GUI
+	Caller will need to anchor it using SetPoint
+	parent (frame) - parent to use when creating the new button
+	norightclick (boolean) - if true, disables right-clicking the button to open the SearchUI panel
+	Note: active RTS scanning can only occur if one of these buttons is visible
+--]]
+function lib.CreateRTSButton(parent, norightclick)
+	local right = not norightclick -- invert and force type to boolean
+
+	local button = CreateFrame("Button", nil, parent, "OptionsButtonTemplate")
+	button:SetWidth(22)
+	button:SetHeight(18)
+	if right then
+		button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	else
+		button:RegisterForClicks("LeftButtonUp")
+	end
+	button.hasRight = right
+	button:SetScript("OnClick", OnClick)
+	button:SetScript("OnEnter", OnEnter)
+	button:SetScript("OnLeave", OnLeave)
+	button:SetScript("OnUpdate", private.OnUpdate)
+	button.tex = button:CreateTexture(nil, "OVERLAY")
+	button.tex:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -2)
+	button.tex:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 2)
+	button.tex:SetTexture(embedpath.."Auc-Util-SearchUI\\Textures\\SearchButton")
+	button.tex:SetVertexColor(1, 0.9, 0.1)
+
+	-- continuous animation to indicate that RTS is active
+	local pulse = button.tex:CreateAnimationGroup()
+	pulse:SetLooping("REPEAT")
+	local pulse1 = pulse:CreateAnimation("Alpha")
+	pulse1:SetStartDelay(1)
+	pulse1:SetChange(-0.8)
+	pulse1:SetDuration(.5)
+	pulse1:SetOrder(1)
+	local pulse2 = pulse:CreateAnimation("Alpha")
+	pulse2:SetChange(0.8)
+	pulse2:SetDuration(.5)
+	pulse2:SetOrder(2)
+	button.pulse = pulse
+
+	-- single animation to indicate that RTS has refreshed the page
+	local spike = button.tex:CreateAnimationGroup()
+	local spike1 = spike:CreateAnimation("Scale")
+	spike1:SetOrigin("CENTER", 0, 0)
+	spike1:SetScale(.1, .1)
+	spike1:SetDuration(.1)
+	spike1:SetOrder(1)
+	local spike2 = spike:CreateAnimation("Scale")
+	spike2:SetOrigin("CENTER", 0, 0)
+	spike2:SetScale(10, 10)
+	spike2:SetDuration(1.5)
+	spike2:SetSmoothing("OUT") -- animation will be initially fast, then slowing
+	spike2:SetOrder(2)
+	spike.button = button -- save so we don't have to drill up through GetParent()'s
+	spike:SetScript("OnFinished", OnSpikeFinished)
+	button.spike = spike
+
+	button.SetState = SetState
+	button:SetState()
+
+	tinsert(private.buttontable, button)
+
+	return button
+end
+
+--[[
+	lib.SignalRTSButton()
+	Cause the RTS button to display a one-off animation, to indicate that the scan page has changed
+	Only applies to the current visible button
+--]]
+function lib.SignalRTSButton()
+	for _, button in ipairs(private.buttontable) do
+		if button:IsVisible() then
+			-- internally this is called a Spike
+			button.isSpiking = true
+			button.pulse:Stop() -- don't pulse while spiking
+			button.spike:Stop() -- reset if it's already playing
+			button.spike:Play()
+			return
+		end
 	end
 end
 
 --[[
 	lib.HookAH()
-	Called when the AH opens for the first time
-	function: to create the control button on the AH, to the left of the regular ScanButtons
+	Called from SearchMain when the AH opens for the first time
+	function: to create the control button on the AH, to the right of the regular ScanButtons
 ]]
 function lib.HookAH()
-	private.button = CreateFrame("Frame", nil, AuctionFrameBrowse)
-	private.button:SetPoint("TOPRIGHT", AuctionFrameBrowse, "TOPLEFT", 310, -15)
-	private.button:SetWidth(26)
-	private.button:SetHeight(18)
-
-	private.button.control = CreateFrame("Button", nil, private.button, "OptionsButtonTemplate")
-	private.button.control:SetPoint("TOPLEFT", private.button, "TOPLEFT", 0, 0)
-	private.button.control:SetWidth(22)
-	private.button.control:SetHeight(18)
-	private.button.control:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-	private.button.control:SetScript("OnClick", private.ButtonPressed)
-	private.button.control:SetScript("OnUpdate", private.OnUpdate)
-	private.button.control.tex = private.button.control:CreateTexture(nil, "OVERLAY")
-	private.button.control.tex:SetPoint("TOPLEFT", private.button.control, "TOPLEFT", 4, -2)
-	private.button.control.tex:SetPoint("BOTTOMRIGHT", private.button.control, "BOTTOMRIGHT", -4, 2)
-	private.button.control:SetScript("OnEnter", function()
-			GameTooltip:SetOwner(private.button.control, "ANCHOR_TOPRIGHT")
-			GameTooltip:SetText("Click to start Realtime Search\nRightclick to open SearchUI")
-		end)
-	private.button.control:SetScript("OnLeave", function()
-			GameTooltip:Hide()
-		end)
-
-	--Figure out whether we're embedded or not.  If we are, adjust the path to the texture accordingly.
-	for _, module in ipairs(AucAdvanced.EmbeddedModules) do
-		if module == "Auc-Util-SearchUI"  then
-			embedpath = "Interface\\AddOns\\Auc-Advanced\\Modules\\"
-		end
-	end
-	private.button.control.tex:SetTexture(embedpath.."Auc-Util-SearchUI\\Textures\\SearchButton")
-	private.button.control.tex:SetTexCoord(0,.5, 0, 1)
-	private.button.control.tex:SetVertexColor(1, 0.9, 0.1)
+	if private.HookAH then private.HookAH() end
+end
+function private.HookAH()
+	private.HookAH = nil -- prevent calling more than once
+	local BrowseRTSButton = lib.CreateRTSButton(AuctionFrameBrowse)
+	BrowseRTSButton:SetPoint("TOPRIGHT", AuctionFrameBrowse, "TOPLEFT", 310, -15)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5246 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5335 $")

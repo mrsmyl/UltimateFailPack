@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher General
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: SearcherGeneral.lua 5244 2011-12-03 18:36:18Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: SearcherGeneral.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -97,9 +97,9 @@ default("general.subtype", "All")
 default("general.quality", -1)
 default("general.timeleft", 0)
 default("general.ilevel.min", 0)
-default("general.ilevel.max", 410)
+default("general.ilevel.max", Const.MAXITEMLEVEL)
 default("general.ulevel.min", 0)
-default("general.ulevel.max", 85)
+default("general.ulevel.max", Const.MAXUSERLEVEL)
 default("general.seller", "")
 default("general.seller.exact", false)
 default("general.seller.regexp", false)
@@ -132,7 +132,7 @@ function lib:MakeGuiConfig(gui)
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",   0.11, 0, "general.name.exact", "Exact")
 	gui:SetLast(id, last)
-	gui:AddControl(id, "Checkbox",   0.21, 0, "general.name.regexp", "Regexp")
+	gui:AddControl(id, "Checkbox",   0.21, 0, "general.name.regexp", "Lua Pattern")
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",   0.35, 0, "general.name.invert", "Invert")
 
@@ -153,16 +153,16 @@ function lib:MakeGuiConfig(gui)
 
 	last = gui:GetLast(id)
 	gui:SetControlWidth(0.37)
-	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.min", 0, 410, 1, "Min item level")
+	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.min", 0, Const.MAXITEMLEVEL, 1, "Min item level")
 	gui:SetControlWidth(0.37)
-	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.max", 0, 410, 1, "Max item level")
+	gui:AddControl(id, "NumeriSlider",     0,   1, "general.ilevel.max", 0, Const.MAXITEMLEVEL, 1, "Max item level")
 	cont = gui:GetLast(id)
 
 	gui:SetLast(id, last)
 	gui:SetControlWidth(0.17)
-	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.min", 0, 85, 1, "Min user level")
+	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.min", 0, Const.MAXUSERLEVEL, 1, "Min user level")
 	gui:SetControlWidth(0.17)
-	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.max", 0, 85, 1, "Max user level")
+	gui:AddControl(id, "NumeriSlider",     0.6, 0, "general.ulevel.max", 0, Const.MAXUSERLEVEL, 1, "Max user level")
 
 	gui:SetLast(id, cont)
 
@@ -173,7 +173,7 @@ function lib:MakeGuiConfig(gui)
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",   0.13, 0, "general.seller.exact", "Exact")
 	gui:SetLast(id, last)
-	gui:AddControl(id, "Checkbox",   0.23, 0, "general.seller.regexp", "Regexp")
+	gui:AddControl(id, "Checkbox",   0.23, 0, "general.seller.regexp", "Lua Pattern")
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Checkbox",   0.37, 0, "general.seller.invert", "Invert")
 
@@ -361,4 +361,4 @@ function private.PriceSearch(buybid, price)
 	end
 	return false
 end
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5244 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5335 $")

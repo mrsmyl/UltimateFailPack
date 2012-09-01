@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: SearchMain.lua 5254 2011-12-17 23:11:05Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: SearchMain.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This Addon provides a Search tab on the AH interface, which allows
@@ -37,7 +37,6 @@ local AucAdvanced = AucAdvanced
 local lib,parent,private = AucAdvanced.NewModule(libType, libName)
 if not lib then return end
 local aucPrint,decode,_,_,replicate,_,get,set,default,debugPrint,fill, _TRANS = AucAdvanced.GetModuleLocals()
-local debugPrint = AucAdvanced.Debug.DebugPrint
 
 local empty = wipe
 local ipairs,pairs,type,select = ipairs,pairs,type,select
@@ -50,11 +49,8 @@ local tinsert,tremove = tinsert,tremove
 -- Our official name:
 AucSearchUI = lib
 
-function lib.GetName()
-	return libName
-end
-
 local Const = AucAdvanced.Const
+local coreResources = AucAdvanced.Resources -- the resources table inherited from AucAdvanced core
 local gui
 private.data = {}
 private.sheetData = {}
@@ -76,29 +72,27 @@ private.tleft = {
 
 lib.CleanTable = wipe -- for compatibility
 
-local resources = {}
+local resources = {} -- the resources table passed on to the Searcher & Filter submodules
 lib.Resources = resources
-local flagResourcesUpdateRequired = false
-local flagScanStats = false
+local flagScanFinished = false
 local flagRescan
 
 -- Faction Resources
 -- Commonly used values which change depending whether you are at home or neutral Auctionhouse
 -- Modules should expect these to always contain valid values; nil tests should not be required
+-- Actually handled by CoreResources, but we copy them into our own table for backward compatibility
 resources.Realm = Const.PlayerRealm -- will not change during session
 function private.UpdateFactionResources()
-	local serverKey, _, Faction = AucAdvanced.GetFaction()
-	if serverKey ~= resources.serverKey then
-		-- store new settings
-		resources.Faction = Faction
-		resources.faction = Faction:lower() -- lowercase for GetDepositCost
-		resources.serverKey = serverKey
-		resources.CutAdjust = 1 - AucAdvanced.cutRate -- multiply price by .CutAdjust to subtract the AH brokerage fees
-		-- notify the change
-		lib.NotifyCallbacks("resources", "faction", serverKey)
+	resources.Faction = coreResources.CurrentFaction
+	resources.faction = resources.Faction:lower() -- lowercase (deprecated - no longer needed by GetDepositCost)
+	resources.serverKey = coreResources.ServerKeyCurrent
+	resources.CutAdjust = coreResources.AHCutAdjust -- multiply price by .CutAdjust to subtract the AH brokerage fees
+	if private.isSearching then
+		-- if we're part way through a search, cancel it as we don't want to do the rest of the search with a different serverKey
+		private.SearchCancel = true
 	end
+	lib.NotifyCallbacks("resources", "faction", resources.serverKey)
 end
--- todo: we really should update when Zone changes, but there in't a processor event for that
 
 -- Selectbox Resources
 --[[ Usages:
@@ -260,12 +254,15 @@ function lib.Processors.auctionclose(callbackType, ...)
 	if private.isAttached then
 		lib.DetachFromAH()
 	end
-	flagResourcesUpdateRequired = true
+	lib.NotifyCallbacks("auctionclose")
 end
 
 function lib.Processors.auctionopen(callbackType, ...)
-	flagResourcesUpdateRequired = true
+	lib.NotifyCallbacks("auctionopen")
 end
+
+lib.Processors.serverkey = private.UpdateFactionResources
+lib.Processors.factionselect = private.UpdateFactionResources
 
 function lib.Processors.auctionui(callbackType, ...)
 	if lib.Searchers.RealTime then
@@ -273,11 +270,9 @@ function lib.Processors.auctionui(callbackType, ...)
 	end
 
 	--we need to make sure that the GUI is made by the time the AH opens, as RealTime could be trying to add lines to it.
-	if not gui then
-		lib.MakeGuiConfig()
-	end
+	lib.MakeGuiConfig()
 
-	lib.CreateAuctionFrames()
+	private.CreateAuctionFrames()
 end
 
 function lib.Processors.pagefinished(callbackType, ...)
@@ -290,13 +285,9 @@ function lib.Processors.bidcancelled(callbackType, ...)
 	private.bidcancelled(...)
 end
 
-function lib.Processors.tooltip(callbackType, ...)
-	lib.ProcessTooltip(...)
-end
-
-function lib.Processors.scanstats(callbackType, ...)
+function lib.Processors.scanfinish(callbackType, ...)
 	-- pass the message in next OnUpdate
-	flagScanStats = true
+	flagScanFinished = true
 end
 
 function lib.Processors.scanprogress(callbackType, ...)
@@ -311,7 +302,7 @@ function lib.Processors.buyqueue(callbackType, ...)
 	end
 end
 
-function lib.ProcessTooltip(tooltip, name, hyperlink, quality, quantity, cost, additional)
+function lib.Processors.tooltip(callbackType, tooltip, name, hyperlink, quality, quantity, cost, additional)
 	if not additional or additional.event ~= "SetAuctionItem" then
 		--this isn't an auction, so we're not interested
 		return
@@ -342,10 +333,12 @@ function lib.ProcessTooltip(tooltip, name, hyperlink, quality, quantity, cost, a
 		level = 1
 	end
 	owner = owner or ""
+	local linkType, itemid, suffix, factor, enchant, seed = AucAdvanced.DecodeLink(hyperlink)
+	if linkType ~= "item" then return end -- temp fix: ignore battlepet links
 	local timeleft = GetAuctionItemTimeLeft("list", id)
 	local _, _, _, iLevel, _, iType, iSubType, stack, iEquip = GetItemInfo(hyperlink)
+	if not iType then return end
 	iEquip = Const.EquipEncode[iEquip]
-	local _, itemid, suffix, factor, enchant, seed = AucAdvanced.DecodeLink(hyperlink)
 	local ItemTable = {}
 	-- put the data into a table laid out the same way as the AAdv Scandata, as that's what the searchers need
 	ItemTable[Const.LINK]    = hyperlink
@@ -544,9 +537,7 @@ function lib.GetSetting(setting, default)
 end
 
 function lib.Show()
-	if not gui then --no need to make the GUI if it already exists
-		lib.MakeGuiConfig()
-	end
+	lib.MakeGuiConfig()
 	gui:Show()
 	private.UpdateFactionResources()
 end
@@ -1059,7 +1050,8 @@ function lib.DetachFromAH()
 	private.isAttached = nil
 end
 
-function lib.CreateAuctionFrames()
+function private.CreateAuctionFrames()
+	private.CreateAuctionFrames = nil
 	if not lib.GetSetting("global.createtab") then return end
 
 	local frame = CreateFrame("Frame", "AucAdvSearchUiAuctionFrame", AuctionFrame)
@@ -1116,7 +1108,7 @@ function lib.CreateAuctionFrames()
 	frame.backing:SetBackdropColor(0,0,0, 0.60)
 
 	frame.scanslabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	frame.scanslabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 72, -20)
+	frame.scanslabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 72, -19)
 	frame.scanslabel:SetText("Pending Scans")
 	frame.scanscount = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	frame.scanscount:ClearAllPoints()
@@ -1133,10 +1125,18 @@ function lib.CreateAuctionFrames()
 			frame.scanscount:SetText(scansQueued)
 		end
 	end
+
+	if lib.Searchers.RealTime then
+		local RTSButton = lib.Searchers.RealTime.CreateRTSButton(frame, true) -- norightclick option
+		RTSButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -15)
+	end
 end
 
 function lib.MakeGuiConfig()
-	if gui then return end
+	if private.MakeGuiConfig then private.MakeGuiConfig() end
+end
+function private.MakeGuiConfig()
+	private.MakeGuiConfig = nil
 
 	local Configator = LibStub("Configator")
 	local ScrollSheet = LibStub("ScrollSheet")
@@ -1321,28 +1321,9 @@ function lib.MakeGuiConfig()
 				gui.frame.buyout:Disable()
 				gui.frame.buyoutbox:SetText(AucAdvanced.Coins(0, true))
 			end
-
-			if private.data.bid then
-				MoneyInputFrame_SetCopper(gui.frame.bidbox, private.data.bid)
-				gui.frame.bid:Enable()
-				gui.frame.bidbox:Show()
-			else
-				MoneyInputFrame_SetCopper(gui.frame.bidbox, 0)
-				gui.frame.bid:Disable()
-				gui.frame.bidbox:Hide()
-			end
-		elseif private.data.curbid then--bid price was changed, so make sure that it's allowable
-			if MoneyInputFrame_GetCopper(gui.frame.bidbox) < ceil(private.data.curbid*1.05) then
-				MoneyInputFrame_SetCopper(gui.frame.bidbox, ceil(private.data.curbid*1.05))
-			end
-			gui.frame.bid:Enable()
+			gui.frame.bid.ClearBid() -- reset bid box to force following UpdateEnable to recalculate it
 		end
-		--if bid >= buyout, it's going to be a buyout anyway, so disable bid button to indicate that
-		if private.data.buyout and (private.data.buyout > 0) and (MoneyInputFrame_GetCopper(gui.frame.bidbox) >= private.data.buyout) then
-			MoneyInputFrame_SetCopper(gui.frame.bidbox, private.data.buyout)
-			gui.frame.bid:Disable()
-			gui.frame.bidbox:Hide()
-		end
+		gui.frame.bid.UpdateEnable()
 		gui.frame.purchase.updateEnable()
 	end
 
@@ -1525,13 +1506,13 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "WideSlider",       0, 1, "processpriority", 10, 100, 10, "Search process priority: %s")
 	gui:AddControl(id, "Subhead",          0,    "Purchase Settings")
 	gui:AddControl(id, "Checkbox",         0, 1, "reserve.enable", "Enable reserve amount:")
-	gui:AddControl(id, "MoneyFramePinned", 0, 2, "reserve", 0, 99999999, "Reserve Amount")
+	gui:AddControl(id, "MoneyFramePinned", 0, 2, "reserve", 0, 999999999, "Reserve Amount")
 	gui:AddTip(id, "Sets the amount that you don't want your cash-on-hand to fall below")
 	gui:AddControl(id, "Checkbox",         0, 1, "maxprice.enable", "Enable maximum price:")
-	gui:AddControl(id, "MoneyFramePinned", 0, 2, "maxprice", 1, 99999999, "Maximum Price")
+	gui:AddControl(id, "MoneyFramePinned", 0, 2, "maxprice", 1, 999999999, "Maximum Price")
 	gui:AddTip(id, "Sets the amount that you don't want to spend more than")
 
-	id = gui:AddTab("Global Settings", "Settings")
+	id = gui:AddTab("Global Settings", "Options")
 	gui:MakeScrollable(id)
 	gui:AddControl(id, "Header",           0,    "Setup global options")
 
@@ -1547,8 +1528,6 @@ function lib.MakeGuiConfig()
 
 	gui:AddControl(id, "Subhead",          0,    "Integration")
 	gui:AddControl(id, "Checkbox",          0, 1, "global.createtab", "Create tab in auction house (requires restart)")
-
---	gui:SetScript("OnKeyDown", lib.UpdateControls) --Why are we intercepting all keystrokes, this affects other addons that are not in dialog level
 
 	gui.frame.purchase = CreateFrame("Button", nil, gui.frame, "OptionsButtonTemplate")
 	gui.frame.purchase:SetPoint("BOTTOMLEFT", gui, "BOTTOMLEFT", 170, 35)
@@ -1567,7 +1546,7 @@ function lib.MakeGuiConfig()
 				gui.frame.purchase:Disable()
 			end
 		else
-			if (gui.frame.bid:IsEnabled()==1) or (gui.frame.buyout:IsEnabled()==1) then
+			if gui.frame.bid.CanBid() or gui.frame.buyout:IsEnabled() then
 				gui.frame.purchase:Enable()
 			else
 				gui.frame.purchase:Disable()
@@ -1588,8 +1567,6 @@ function lib.MakeGuiConfig()
 		end
 		gui.frame.purchase.updateEnable()
 	end
-	Stubby.RegisterEventHook("MODIFIER_STATE_CHANGED", "Auc-Util-SearchUI", gui.frame.purchase.updateDisplay)
-
 
 	gui.frame.notnow = CreateFrame("Button", nil, gui.frame, "OptionsButtonTemplate")
 	gui.frame.notnow:SetPoint("TOP", gui.frame.purchase, "BOTTOM", 0, -2)
@@ -1689,18 +1666,95 @@ function lib.MakeGuiConfig()
 	gui.frame.buyoutbox:SetPoint("LEFT", gui.frame.buyout, "RIGHT", 0, 0)
 	gui.frame.buyoutbox:SetWidth(100)
 
-	gui.frame.bid = CreateFrame("Button", nil, gui.frame, "OptionsButtonTemplate")
-	gui.frame.bid:SetPoint("LEFT", gui.frame.purchase, "RIGHT", 5, 0)
-	gui.frame.bid:SetText("Bid")
-	gui.frame.bid:SetScript("OnClick", private.bidauction)
-	gui.frame.bid:Disable()
-	gui.frame.bid.TooltipText = "Bid on selected auction using custom price"
-	gui.frame.bid:SetScript("OnEnter", showTooltipText)
-	gui.frame.bid:SetScript("OnLeave", hideTooltip)
+	do -- bid button and bid box
+		local bidbutton = CreateFrame("Button", nil, gui.frame, "OptionsButtonTemplate")
+		gui.frame.bid = bidbutton
+		bidbutton:SetPoint("LEFT", gui.frame.purchase, "RIGHT", 5, 0)
+		local bidbox = CreateFrame("Frame", "AucAdvSearchUIBidBox", gui.frame, "MoneyInputFrameTemplate")
+		gui.frame.bidbox = bidbox
+		bidbox:SetPoint("LEFT", bidbutton, "RIGHT", 10, 2)
 
-	gui.frame.bidbox = CreateFrame("Frame", "AucAdvSearchUIBidBox", gui.frame, "MoneyInputFrameTemplate")
-	gui.frame.bidbox:SetPoint("LEFT", gui.frame.bid, "RIGHT", 10, 2)
-	MoneyInputFrame_SetOnValueChangedFunc(gui.frame.bidbox, lib.UpdateControls)
+		bidbutton:SetText("Bid")
+		bidbutton:Disable()
+		bidbutton.TooltipText = "Bid on selected auction using custom price\nAlt click to reset bid price to default value"
+		bidbutton:SetScript("OnEnter", showTooltipText)
+		bidbutton:SetScript("OnLeave", hideTooltip)
+		bidbutton:SetScript("OnClick", function(self)
+			if self.toggleReset then
+				MoneyInputFrame_SetCopper(bidbox, private.data.bid) -- will trigger UpdateEnable via OnValueChangedFunc
+			else
+				private.bidauction()
+			end
+		end)
+		MoneyInputFrame_SetCopper(bidbox, 0)
+		bidbox:Hide()
+
+		-- functions controlling status of bid button and bidbox (attached to gui.frame.bid)
+		bidbutton.ClearBid = function()
+			bidbutton.itemCanBid = nil
+			bidbutton:Disable()
+			bidbox:Hide()
+			MoneyInputFrame_SetCopper(bidbox, 0)
+			-- Purchase button needs to be updated whenever itemCanBid changes
+			gui.frame.purchase.updateEnable()
+		end
+		bidbutton.CanBid = function()
+			return bidbutton.itemCanBid
+		end
+		bidbutton.UpdateEnable = function()
+			local price = private.data.bid
+			local buyout = private.data.buyout
+
+			if not (price and buyout) or (buyout > 0 and price >= buyout) then
+				-- no item selected, or only possible to 'buyout' item
+				if bidbutton.itemCanBid then
+					bidbutton.ClearBid()
+				end
+				return
+			end
+
+			if not bidbutton.itemCanBid then
+				bidbutton.itemCanBid = true
+				bidbox:Show()
+				-- Purchase button needs to be updated whenever itemCanBid changes
+				gui.frame.purchase.updateEnable()
+			end
+			local curbid = MoneyInputFrame_GetCopper(bidbox)
+			if curbid == 0 then -- flagged to be (re)set to default bid price
+				curbid = price
+				-- will trigger another call to UpdateEnable, but only after the current execution thread has finished
+				MoneyInputFrame_SetCopper(bidbox, curbid)
+			end
+
+			if bidbutton.toggleReset then -- in 'Reset Bid' mode
+				if curbid ~= price then
+					bidbutton:Enable()
+				else
+					bidbutton:Disable()
+				end
+			else
+				if curbid < price or (buyout > 0 and curbid >= buyout) then
+					bidbutton:Disable()
+				else
+					bidbutton:Enable()
+				end
+			end
+		end
+		bidbutton.UpdateDisplay = function()
+			local reset = IsAltKeyDown() and not IsShiftKeyDown() and not IsControlKeyDown()
+			if reset ~= bidbutton.toggleReset then
+				bidbutton.toggleReset = reset
+				if reset then
+					bidbutton:SetText("Reset Bid")
+				else
+					bidbutton:SetText("Bid")
+				end
+				bidbutton.UpdateEnable()
+			end
+		end
+
+		MoneyInputFrame_SetOnValueChangedFunc(bidbox, bidbutton.UpdateEnable)
+	end -- of bid button/box cluster
 
 	gui.frame.progressbar = CreateFrame("STATUSBAR", nil, gui.frame, "TextStatusBar")
 	gui.frame.progressbar:SetWidth(400)
@@ -1729,6 +1783,14 @@ function lib.MakeGuiConfig()
 	gui.frame.progressbar.cancel:SetPoint("TOPLEFT", gui.frame.progressbar, "TOPRIGHT", -25, -5)
 	gui.frame.progressbar.cancel:SetText("X")
 	gui.frame.progressbar.cancel:SetScript("OnClick", private.cancelSearch)
+
+
+	Stubby.RegisterEventHook("MODIFIER_STATE_CHANGED", "Auc-Util-SearchUI", function ()
+		if gui.frame:IsVisible() then
+			gui.frame.purchase.updateDisplay()
+			gui.frame.bid.UpdateDisplay()
+		end
+	end)
 
 	-- Alert our searchers?
 	for name, searcher in pairs(lib.Searchers) do
@@ -2007,6 +2069,7 @@ local PerformSearch = function()
 		return
 	end
 
+	private.SearchCancel = nil
 	if gui.tabs.active then
 		gui:ContractFrame(gui.tabs.active)
 	end
@@ -2028,8 +2091,9 @@ local PerformSearch = function()
 	however GetTime *does* work across yields
 	--]]
 	local processingTime = 90 * (lib.GetSetting("processpriority")/100)^2 + 10 -- time in milliseconds (possible range 10.9 - 100)
-	local GetTime, debugprofilestop = GetTime, debugprofilestop
+	local GetTime, debugprofilestop, time = GetTime, debugprofilestop, time
 	local nextPause = debugprofilestop() + processingTime
+	local lastTime = time()
 	local repaintSheet = false
 	local nextRepaint = 0	-- no delay for first repaint
 
@@ -2037,7 +2101,7 @@ local PerformSearch = function()
 	AucAdvanced.SendProcessorMessage("searchbegin", searcherName)
 	lib.NotifyCallbacks("search", "begin", searcherName)
 	for i, data in ipairs(image) do
-		if debugprofilestop() > nextPause then
+		if debugprofilestop() > nextPause or time() > lastTime then
 			gui.frame.progressbar:SetValue((i/imagesize)*1000)
 			if repaintSheet and GetTime() >= nextRepaint then -- using GetTime here as this needs to track time across yields
 				local b=debugprofilestop()
@@ -2051,6 +2115,7 @@ local PerformSearch = function()
 			coroutine.yield()
 
 			nextPause = debugprofilestop() + processingTime
+			lastTime = time()
 
 			if private.SearchCancel then
 				private.SearchCancel = nil
@@ -2098,14 +2163,8 @@ function private.OnUpdate(self, elapsed)
 			coSearch = nil
 		end
 	end
-	if flagResourcesUpdateRequired then
-		-- Update Faction resources following Auctionhouse open or close (to handle Neutral AH)
-		-- Delayed until OnUpdate handler to give GetFaction time to update its own internal settings
-		flagResourcesUpdateRequired = false
-		private.UpdateFactionResources()
-	end
-	if flagScanStats then
-		flagScanStats = false
+	if flagScanFinished then
+		flagScanFinished = false
 		lib.NotifyCallbacks("postscanupdate")
 	end
 
@@ -2128,4 +2187,4 @@ end
 private.updater = CreateFrame("Frame", nil, UIParent)
 private.updater:SetScript("OnUpdate", private.OnUpdate)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Util-SearchUI/SearchMain.lua $", "$Rev: 5254 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearchMain.lua $", "$Rev: 5335 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: CoreUtil.lua 5254 2011-12-17 23:11:05Z Nechckn $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: CoreUtil.lua 5335 2012-08-28 03:40:54Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -34,11 +34,13 @@
 if not AucAdvanced then return end
 
 local lib = AucAdvanced
-local private = {}
-local coremodule = AucAdvanced.GetCoreModule("CoreUtil")
-if not coremodule then return end -- Someone has explicitely broken us
+local private, internalUtil = {}, {}
+local coremodule, internal = AucAdvanced.GetCoreModule("CoreUtil")
+if not (coremodule and internal) then return end -- Someone has explicitely broken us
+internal.Util = internalUtil
 local tooltip = LibStub("nTipHelper:1")
 local Const = lib.Const
+local Resources = lib.Resources
 
 local _G = _G
 local pairs, ipairs, tinsert, wipe = pairs, ipairs, tinsert, wipe
@@ -55,14 +57,10 @@ end
 
 coremodule.Processors = {}
 function coremodule.Processors.auctionopen()
-	private.isAHOpen = true
 	-- temporary check
 	if private.checkAuthorizedModules then
 		private.checkAuthorizedModules()
 	end
-end
-function coremodule.Processors.auctionclose()
-	private.isAHOpen = false
 end
 function coremodule.Processors.newmodule(event, libType, libName)
 	-- the only newmodule messages should come from AucAdvanced.NewModule
@@ -211,7 +209,7 @@ do
 		if not pricemodels then
 			-- delay creating table until function is first called, to give all modules a chance to load first
 			pricemodels = {}
-			tinsert(pricemodels,{"market", lib.localizations("UCUT_Interface_MarketValue")})--Market value {Reusing Undercut's existing localization string}
+			tinsert(pricemodels,{"market", lib.localizations("ADV_Interface_MarketPrice")})--Market Price
 			local algoList, algoNames = AucAdvanced.API.GetAlgorithms()
 			for pos, name in ipairs(algoList) do
 				tinsert(pricemodels,{name, format(lib.localizations("ADV_Interface_Algorithm_Price"), algoNames[pos])})--%s Price
@@ -279,47 +277,17 @@ do -- Faction and ServerKey related functions
 	end
 
 	function lib.GetFaction()
-		local factionGroup = lib.GetFactionGroup()
-		if not factionGroup then return end
-		if factionGroup ~= lib.curFactionGroup then
-			local curFaction
-			if (factionGroup == "Neutral") then
-				lib.cutRate = 0.15
-				lib.depositRate = 0.25 -- deprecated
-				curFaction = Const.ServerKeyNeutral
-			else
-				lib.cutRate = 0.05
-				lib.depositRate = 0.05 -- deprecated
-				curFaction = Const.ServerKeyHome
-			end
-			lib.curFaction = curFaction -- deprecated (it's a serverKey, so calling it curFaction is confusing)
-			lib.curFactionGroup = factionGroup
-			lib.curServerKey = curFaction
-		end
-		return lib.curServerKey, Const.PlayerRealm, factionGroup
+		-- Compatibility function
+		return Resources.ServerKeyCurrent, Const.PlayerRealm, Resources.CurrentFaction
 	end
 
-	local zonefactions = {}
 	function lib.GetFactionGroup()
-		if private.isAHOpen or not lib.Settings.GetSetting("alwaysHomeFaction") then
-			local currentZone = GetMinimapZoneText()
-			local factionGroup = zonefactions[currentZone]
-			if not factionGroup then
-				SetMapToCurrentZone()
-				local map = GetMapInfo()
-				if ((map == "Tanaris") or (map == "Winterspring") or (map == "Stranglethorn") or (map == "TheCapeOfStranglethorn")) then
-					factionGroup = "Neutral"
-				else
-					factionGroup = Const.PlayerFaction
-				end
-				zonefactions[currentZone] = factionGroup
-			end
-			return factionGroup
-		end
-		return Const.PlayerFaction
+		-- Compatibility function
+		return Resources.CurrentFaction
 	end
 
 	function private.FactionOnLoad()
+		private.FactionOnLoad = nil
 		local alliance = lib.localizations("ADV_Interface_FactionAlliance")
 		local horde = lib.localizations("ADV_Interface_FactionHorde")
 		local neutral = lib.localizations("ADV_Interface_FactionNeutral")
@@ -488,7 +456,7 @@ Recommended method:
   local libType, libName = "myType", "myName"
   local lib,parent,private = AucAdvanced.NewModule(libType, libName)
   if not lib then return end
-  local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
+  local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
 
 --]]
 
@@ -508,6 +476,11 @@ do -- Module Functions
 		util = "Util",
 		Util = "Util",
 	}
+	local moduleOnLoadNames
+	local moduleLoadCallbacks
+
+	-- constants
+	local MODULE_LOADED = "^loaded"
 
 	function private.checkAuthorizedModules()
 		-- check the publicly accessible modules tables, notifying of any modules that have been inserted directly
@@ -523,6 +496,37 @@ do -- Module Functions
 						tostring(moduleName), type(moduleTable), typeName))
 				end
 			end
+		end
+	end
+
+	-- Functions for special access by other Core modules
+	function internalUtil.GetModuleForName(addonName)
+		-- Allows CoreMain OnLoad handler to match an AddOn name to the related module, if one exists
+		-- Must *not* be called from anywhere else
+		-- The match is based on the AddOn name (5th parameter) supplied to NewModule
+		if not moduleOnLoadNames then return end
+		local module = moduleOnLoadNames[addonName] -- expect addonName to be all lowercase
+		if not module then return end
+		moduleOnLoadNames[addonName] = nil
+		if not next(moduleOnLoadNames) then moduleOnLoadNames = nil end -- delete lookup table if empty
+		return module
+	end
+
+	function internalUtil.SendModuleCallbacks(module)
+		-- Specified module has fully loaded:
+		-- Flag it as loaded
+		module[MODULE_LOADED] = true
+		-- Flush the SPM cache
+		private.ResetSPMArray()
+		-- Send all the callbacks
+		if not moduleLoadCallbacks then return end
+		local moduleName = module:GetName():lower()
+		local list = moduleLoadCallbacks[moduleName]
+		if not list then return end
+		moduleLoadCallbacks[moduleName] = nil
+		if not next(moduleLoadCallbacks) then moduleLoadCallbacks = nil end -- delete lookup table if empty
+		for _, callback in ipairs(list) do
+			pcall(callback, module)
 		end
 	end
 
@@ -568,19 +572,21 @@ do -- Module Functions
 	--[[
 
 	Usage:
-	  local lib,parent,private = AucAdvanced.NewModule(libType, libName)
-	  local lib,parent = AucAdvanced.NewModule(libType, libName, nil, true) -- no Private table created
-	  local lib,parent,private = AucAdvanced.NewModule(libType, libName, libTable) -- caller may optionally provide its own libTable
+	  local lib,parent[,private] = AucAdvanced.NewModule(libtype, libName [, libTable, noExtras, addonName])
 
 	  libType must be one of "Filter" "Match" "Stat" "Util"
 	  libName must be unique (and may not be one of "Filter" "Match" "Stat" "Util")
+	  libTable (optional) table to be used as the lib; this may already contain entries
+	  noExtras (optional) boolean: true will prevent the creation of certain 'convenience' entries (currently only the Private subtable)
+	  addonName (optional) if provided must exactly match the name of the AddOn calling this function
+	    (not needed if the AddOn name matches the Module name, according to the "Auc-libType-libName" convention)
 
 	  Note: ### for debugging purposes NewModule will currently throw errors for invalid parameters
 	  the caller should still check for a nil return from NewModule as shown in the example above
 		(even though a nil return is technically not possible with the current version)
 
 	--]]
-	function lib.NewModule(libType, libName, libTable, noPrivate)
+	function lib.NewModule(libType, libName, libTable, noExtras, addonName)
 		local tmp = moduleTypeLookup[libType] -- use a temp variable so we can report libType in the error message
 		if not tmp then
 			error("Invalid libType specified for NewModule: "..tostring(libType), 2)
@@ -603,6 +609,20 @@ do -- Module Functions
 		local typeTable = lib.Modules[libType] -- ### temp
 		assert(typeTable) -- ### temp
 		assert(not typeTable[libName]) -- ### temp
+		if addonName then
+			if type(addonName) ~= "string" then
+				error("AddOn name must be a string or nil for NewModule", 2)
+			end
+			addonName = addonName:lower()
+			if moduleOnLoadNames and moduleOnLoadNames[addonName] then
+				error("AddOn name already registered with NewModule", 2)
+			end
+			-- if addonName matches the Auc naming convention we do not need to take any special action with it
+			-- also explicitly block "auc-advanced" as only Core modules should use that name, and they get special handling
+			if addonName == "auc-advanced" or addonName == strjoin("-", "Auc", libType, libName):lower() then
+				addonName = nil
+			end
+		end
 
 		local module = libTable or {}
 		module.libName = libName
@@ -612,13 +632,20 @@ do -- Module Functions
 		if not module.GetLocalName then -- don't create if it already exists
 			module.GetLocalName = module.GetName
 		end
-		if not noPrivate and not module.Private then
+		if not noExtras and not module.Private then
 			module.Private = {} -- assign a private table if it is wanted and does not already exist
 		end
 
 		UpdateModuleTables(module, libName, libType, lowerName)
+		if addonName then
+			if not moduleOnLoadNames then
+				moduleOnLoadNames = {}
+			end
+			moduleOnLoadNames[addonName] = module
+		end
 
 		private.resetPriceModels()
+		private.ResetSPMArray()
 
 		private.newmoduleCheckName = libName -- ### temp
 		lib.SendProcessorMessage("newmodule", libType, libName)
@@ -749,6 +776,67 @@ do -- Module Functions
 		return modules
 	end
 
+	--[[
+
+	Usage:
+	  AucAdvanced.RegisterModuleCallback(moduleName, callbackFunction)
+
+	  Used when you want to access features of another module, which will not be available until that module has fully loaded
+	  Particularly useful when your module may load before the module you want to access
+
+	  callbackFunction should be of the form:
+		function callbackFunction(moduleLib)
+
+	  Note: if the module is already loaded the callback will be triggered before this function returns
+
+	--]]
+	function lib.RegisterModuleCallback(moduleName, callback)
+		if type(moduleName) ~= "string" then
+			error("Module name must for a string for RegisterModuleCallback", 2)
+		end
+		if type(callback) ~= "function" then
+			error("Callback must be a function for RegisterModuleCallback", 2)
+		end
+		moduleName = moduleName:lower()
+
+		local module = lib.GetModule(moduleName)
+		if module and module[MODULE_LOADED] then
+			-- already loaded, fire callback immediately
+			pcall(callback, module)
+			return
+		end
+
+		if not moduleLoadCallbacks then
+			moduleLoadCallbacks = {}
+		end
+		local list = moduleLoadCallbacks[moduleName]
+		if not list then
+			list = {}
+			moduleLoadCallbacks[moduleName] = list
+		end
+		tinsert(list, callback)
+	end
+
+	--[[
+
+	Usage:
+	  AucAdvanced.NotifyModuleLoaded(moduleLib [, loadName])
+
+	  Optional function to flag a module as Loaded, where the auto-detection features do not work
+	  i.e. where the AddOn name does not match the Auc-LibType-LibName convention, and was not supplied to NewModule
+
+	  Should *only* be called by the AddOn that created the module
+
+	--]]
+	function lib.NotifyModuleLoaded(module, loadName)
+		if module[MODULE_LOADED] then return end
+
+		loadName = loadName or module:GetName() -- if loadName not provided, use module name instead
+		lib.SendProcessorMessage("load", loadName:lower()) -- always lowercase, to emulate CoreMain OnLoad
+
+		internalUtil.SendModuleCallbacks(module) -- also sets Loaded flag
+	end
+
 end -- end of Module Functions
 
 
@@ -814,8 +902,8 @@ function lib.SendProcessorMessage(spmMsg, ...)
 	end
 end
 
-function lib.ResetSPMArray()
-	spmArray = {}
+function private.ResetSPMArray()
+	wipe(spmArray)
 end
 
 -- Returns the tooltip helper
@@ -833,4 +921,4 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Auc-Advanced/CoreUtil.lua $", "$Rev: 5254 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreUtil.lua $", "$Rev: 5335 $")

@@ -1,7 +1,7 @@
 --[[
 	Configator - A library to help you create a gui config
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: Configator.lua 312 2011-06-14 07:33:25Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: Configator.lua 330 2012-08-27 05:57:03Z Esamynn $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -54,11 +54,11 @@ USAGE:
 ]]
 
 local LIBRARY_VERSION_MAJOR = "Configator"
-local LIBRARY_VERSION_MINOR = 26
+local LIBRARY_VERSION_MINOR = 27
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/Configator.lua $","$Rev: 312 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/Configator.lua $","$Rev: 330 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local kit = {}
 
@@ -1321,7 +1321,6 @@ function kit:AddControl(id, cType, column, ...)
 		self:GetSetting(el)
 		control = el
 		last = el
-
 	elseif (cType == "Button") then
 		local level, setting, text = ...
 		local indent = 10 * (level or 1)
@@ -1513,11 +1512,11 @@ function kit:AddControl(id, cType, column, ...)
 		el = CreateFrame("Frame", frameName, content, "MoneyInputFrameTemplate")
 		el.isMoneyFrame = true
 
--- NOTE - ccox - 2007-11-18
--- TabLink is not working correctly, causes an error when tabbing out of copper field in money input frame
---		lib:TabLink(frame, el)
+		-- NOTE - ccox - 2007-11-18
+		-- TabLink is not working correctly, causes an error when tabbing out of copper field in money input frame
+		--     lib:TabLink(frame, el)
 
--- for the time being, set to cycle around the fields of the current money frame
+		-- for the time being, set to cycle around the fields of the current money frame
 		MoneyInputFrame_SetPreviousFocus(el, _G[frameName.."Copper"])
 		MoneyInputFrame_SetNextFocus(el, _G[frameName.."Gold"])
 
@@ -1569,9 +1568,17 @@ function kit:AddControl(id, cType, column, ...)
 			f.func = function()
 				self:ChangeSetting(obj)
 			end
+			f.cancelFunc = function(previousValues)
+				f:SetColorRGB(previousValues.r, previousValues.g, previousValues.b);
+				if ( f.hasOpacity ) then
+					OpacitySliderFrame:SetValue(previousValues.a)
+				end
+				self:ChangeSetting(obj, true)
+			end
 			f.opacityFunc = f.func
 			f:SetFrameStrata("TOOLTIP")
 			f:SetToplevel("TRUE")
+			f.previousValues = {r = obj.r, g = obj.g, b = obj.b, a=obj.a}
 			f:Show()
 		end)
 		self.elements[setting] = el
@@ -1802,7 +1809,8 @@ function kit:ChangeSetting(element, ...)
 			MoneyInputFrame_SetCopper( element, value );
 		end
 	elseif (element.stype == "ColorSelect" or element.stype == "ColorSelectAlpha") then
-		if (ColorPickerFrame:IsVisible()) then
+		local isCancel = ...
+		if (ColorPickerFrame:IsVisible() or isCancel) then
 			local r,g,b = ColorPickerFrame:GetColorRGB()
 			local a = 1
 			if element.stype == "ColorSelectAlpha" then

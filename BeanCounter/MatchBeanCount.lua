@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - BeanCounter Matcher module
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: MatchBeanCount.lua 4828 2010-07-21 22:20:18Z Prowell $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: MatchBeanCount.lua 5283 2012-03-26 20:54:26Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer Matcher module which will modify the Appraiser
@@ -36,55 +36,33 @@
 --	AucAdvanced.Print("BeanCounter not loaded")
 --	return
 --end
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.13/BeanCounter/MatchBeanCount.lua $","$Rev: 4828 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/MatchBeanCount.lua $","$Rev: 5283 $","5.1.DEV.", 'auctioneer', 'libs')
 
 if not AucAdvanced then return end
 
 local libType, libName = "Match", "BeanCount"
-local lib,parent,private = AucAdvanced.NewModule(libType, libName)
+local AddOnName = ...
+local lib,parent,private = AucAdvanced.NewModule(libType, libName, nil, nil, AddOnName)
 if not lib then return end
 local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill = AucAdvanced.GetModuleLocals()
 
-function lib.Processor(callbackType, ...)
-	if (callbackType == "tooltip") then
-		--Called when the tooltip is being drawn.
-		private.ProcessTooltip(...)
-	elseif (callbackType == "config") then
-		--Called when you should build your Configator tab.
-		private.SetupConfigGui(...)
-	elseif (callbackType == "listupdate") then
-		--Called when the AH Browse screen receives an update.
-	elseif (callbackType == "configchanged") then
-		--Called when your config options (if Configator) have been changed.
-		lib.ClearMatchArrayCache()
-	elseif callbackType == "scanstats" then
-		-- AH has been scanned
-		lib.ClearMatchArrayCache()
-	elseif callbackType == "auctionclose" then
-		lib.ClearMatchArrayCache()	-- this is mostly to conserve RAM, we don't really need to wipe the cache here
-	end
-end
 lib.Processors = {}
+--[[
 function lib.Processors.tooltip(callbackType, ...)
 	--Called when the tooltip is being drawn.
 	private.ProcessTooltip(...)
 end
+--]]
 function lib.Processors.config(callbackType, ...)
 	--Called when you should build your Configator tab.
-	private.SetupConfigGui(...)
+	if private.SetupConfigGui then private.SetupConfigGui(...) end
 end
-function lib.Processors.configchanged(callbackType, ...)
+function lib.Processors.configchanged()
 	--Called when your config options (if Configator) have been changed.
 	lib.ClearMatchArrayCache()
 end
-function lib.Processors.scanstats(callbackType, ...)
-	-- AH has been scanned
-	lib.ClearMatchArrayCache()
-end
-function lib.Processors.auctionclose(callbackType, ...)
-	lib.ClearMatchArrayCache()	-- this is mostly to conserve RAM, we don't really need to wipe the cache here
-end
-
+lib.Processors.scanstats = lib.Processors.configchanged -- AH has been scanned
+lib.Processors.auctionclose = lib.Processors.configchanged -- this is mostly to conserve RAM, we don't really need to wipe the cache here
 
 
 local frame = CreateFrame("Frame", "MatchBeanCountHelperFrame")
@@ -98,9 +76,7 @@ frame:RegisterEvent("MAIL_CLOSED")
 local matchArrayCache = {}
 
 function lib.ClearMatchArrayCache()	-- called from processor
-	if next(matchArrayCache) then
-		matchArrayCache = {}
-	end
+	wipe(matchArrayCache)
 end
 
 function lib.GetMatchArray(hyperlink, marketprice, serverKey)
@@ -169,9 +145,11 @@ end
 
 local array = {}
 
+--[[
 function private.ProcessTooltip(frame, name, hyperlink, quality, quantity, cost, additional)
 
 end
+--]]
 
 --function lib.OnLoad()
 	--This function is called when your variables have been loaded.
@@ -192,6 +170,7 @@ end
 --[[ Local functions ]]--
 
 function private.SetupConfigGui(gui)
+	private.SetupConfigGui = nil
 	-- The defaults for the following settings are set in the lib.OnLoad function
 	local id = gui:AddTab(libName, libType.." Modules")
 	--gui:MakeScrollable(id)

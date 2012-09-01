@@ -1,8 +1,8 @@
 ﻿--[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: InfMain.lua 5181 2011-06-14 08:03:26Z brykrys $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: InfMain.lua 5268 2012-01-22 23:15:00Z Nechckn $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	License:
@@ -27,9 +27,9 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.13/Informant/InfMain.lua $","$Rev: 5181 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Informant/InfMain.lua $","$Rev: 5268 $")
 
-INFORMANT_VERSION = "5.13.5258"
+INFORMANT_VERSION = "5.14.5335"
 if (INFORMANT_VERSION == "<".."%version%>") then
 	INFORMANT_VERSION = "5.2.DEV"
 end
@@ -167,7 +167,7 @@ function getItem(itemID, static)
 	if cache[itemID] then return cache[itemID] end
 	
 	local baseData = self.database[itemID]
-	local buy, class, quality, stack, additional, usedby, quantity, limited, merchantlist,soulbind,specialbind
+	local buy, sell, class, quality, stack, additional, usedby, quantity, limited, merchantlist,soulbind,specialbind
 	local itemName, itemLink, itemQuality, itemLevel, itemUseLevel, itemType, itemSubType, itemStackSize, itemEquipLoc, itemTexture = GetItemInfo(tonumber(itemID))
 
 	if (baseData) then

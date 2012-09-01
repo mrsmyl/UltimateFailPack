@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.13.5258 (BoldBandicoot)
-	Revision: $Id: BeanCounterUpdate.lua 5123 2011-04-06 20:34:59Z kandoko $
+	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: BeanCounterUpdate.lua 5268 2012-01-22 23:15:00Z Nechckn $
 	URL: http://auctioneeraddon.com/
 
 	BeanCounterUpdate - Upgrades the Beancounter Database to latest version
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.13/BeanCounter/BeanCounterUpdate.lua $","$Rev: 5123 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/BeanCounterUpdate.lua $","$Rev: 5268 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local libName = "BeanCounter"
 local libType = "Util"
@@ -55,12 +55,6 @@ function private.UpgradeDatabaseVersion()
 		--validate the DB for this server after all upgrades have completed
 		if performedUpdate then --only if we actually had to update
 			private.integrityCheck(true, server)
-		end
-	end
-	--check for tasks that need to run.
-	for server, serverData in pairs(BeanCounterDB) do
-		for player, playerData in pairs(serverData) do
-			private.startPlayerMaintenance(server, player)
 		end
 	end
 end
@@ -139,6 +133,11 @@ function private.startPlayerUpgrade(server, player, playerData)
  		private.update._3_02(server, player) --clear any data from the vendor tables
  		performedUpdate = true
 	end
+	if version < 3.03 then
+ 		private.update._3_03(server, player) --Removes the "profile.Default" table
+ 		performedUpdate = true
+	end
+	
 end
 
 function private.update._2_01(server, player)
@@ -386,4 +385,17 @@ function private.update._3_02(server, player)
 	BeanCounterDB[server][player]["vendorsell"] = {}
 	BeanCounterDB[server][player]["vendorbuy"] = {}	
 	BeanCounterDBSettings[server][player].version = 3.02
+end
+--new configuration settings/parser rewrite. Removes the "profile.Default" table, removes "maintenance" table
+function private.update._3_03(server, player)
+	if BeanCounterDBSettings["profile.Default"] then
+		for setting, value in pairs(BeanCounterDBSettings["profile.Default"]) do
+			BeanCounterDBSettings[setting] = value
+		end
+		BeanCounterDBSettings["profile.Default"] = nil
+	end
+	if BeanCounterDBSettings and BeanCounterDBSettings[server] and BeanCounterDBSettings[server][player] then
+		BeanCounterDBSettings[server][player].maintenance = nil
+		BeanCounterDBSettings[server][player].version = 3.03
+	end	
 end
