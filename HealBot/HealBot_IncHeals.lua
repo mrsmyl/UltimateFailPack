@@ -1,6 +1,7 @@
 local hbHealsIn={}
 local xGUID=nil
 local xUnit=nil
+local _
 
 function HealBot_IncHeals_retHealsIn(hbGUID)
     return hbHealsIn[hbGUID] or 0

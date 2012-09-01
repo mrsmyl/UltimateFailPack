@@ -94,6 +94,7 @@ local HealBot_BottomAnchors=false
 local HealBot_cpName={}
 local HealBot_cpData={}
 local HealBot_cpOn=false
+local _
 
 local hbRole={ [HEALBOT_MAINTANK]=3,
                [HEALBOT_MAINASSIST]=4,

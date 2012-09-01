@@ -78,6 +78,7 @@ local HealBot_curGUID=nil
 local HealBot_Hightlight={}
 local HealBot_GUID={}
 local HealBot_Reserved={}
+local _
 
 -- Register Default HealBot Media
 for i = 1, #HealBot_Default_Textures do

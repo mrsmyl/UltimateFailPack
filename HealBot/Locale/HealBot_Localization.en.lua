@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "5.0.4.1";
+HEALBOT_VERSION = "5.0.4.2";
 
 -------------
 -- ENGLISH --
@@ -64,6 +64,7 @@ HEALBOT_LIVING_SEED                     = GetSpellInfo(48496) or "Living Seed";
 HEALBOT_REGROWTH                        = GetSpellInfo(8936) or "Regrowth";
 HEALBOT_HEALING_TOUCH                   = GetSpellInfo(5185) or "Healing Touch";
 HEALBOT_NOURISH                         = GetSpellInfo(50464) or "Nourish";
+HEALBOT_CENARION_WARD                   = GetSpellInfo(102351) or "Cenarion Ward";
 
 HEALBOT_FLASH_OF_LIGHT                  = GetSpellInfo(19750) or "Flash of Light";
 HEALBOT_WORD_OF_GLORY                   = GetSpellInfo(85673) or "Word of Glory";
@@ -89,6 +90,7 @@ HEALBOT_HOLY_WORD_CHASTISE              = GetSpellInfo(88625) or "Holy Word: Cha
 HEALBOT_HOLY_WORD_SERENITY              = GetSpellInfo(88684) or "Holy Word: Serenity"; -- Heal
 -- HEALBOT_HOLY_WORD_ASPIRE                = GetSpellInfo(88682) or "Holy Word: Aspire"; -- Renew - 88682
 HEALBOT_HOLY_WORD_SANCTUARY             = GetSpellInfo(88685) or "Holy Word: Sanctuary"; -- PoH 
+HEALBOT_CASCADE                         = GetSpellInfo(121135) or "Cascade"
 
 HEALBOT_HEALING_WAVE                    = GetSpellInfo(331) or "Healing Wave";
 HEALBOT_HEALING_SURGE                   = GetSpellInfo(8004) or "Healing Surge";
@@ -123,6 +125,7 @@ HEALBOT_THORNS                          = GetSpellInfo(467) or "Thorns";
 HEALBOT_NATURES_GRASP                   = GetSpellInfo(16689) or "Nature's Grasp";
 HEALBOT_OMEN_OF_CLARITY                 = GetSpellInfo(16864) or "Omen of Clarity";
 HEALBOT_BARKSKIN                        = GetSpellInfo(22812) or "Barkskin";
+HEALBOT_IRONBARK                        = GetSpellInfo(102342) or "Ironbark";
 HEALBOT_SURVIVAL_INSTINCTS              = GetSpellInfo(61336) or "Survival Instincts";
 HEALBOT_FRENZIED_REGEN                  = GetSpellInfo(22842) or "Frenzied Regeneration";
 HEALBOT_INNERVATE                       = GetSpellInfo(29166) or "Innervate";
@@ -150,7 +153,7 @@ HEALBOT_HANDOFPROTECTION                = GetSpellInfo(1022) or "Hand of Protect
 HEALBOT_BEACON_OF_LIGHT                 = GetSpellInfo(53563) or "Beacon of Light";
 HEALBOT_LIGHT_BEACON                    = GetSpellInfo(53651) or "Light's Beacon";
 HEALBOT_CONVICTION                      = GetSpellInfo(20049) or "Conviction";
---HEALBOT_SACRED_SHIELD                   = GetSpellInfo(53601) or "Sacred Shield";
+HEALBOT_SACRED_SHIELD                   = GetSpellInfo(20925) or "Sacred Shield";
 HEALBOT_LAY_ON_HANDS                    = GetSpellInfo(633) or "Lay on Hands";
 HEALBOT_INFUSION_OF_LIGHT               = GetSpellInfo(53569) or "Infusion of Light";
 HEALBOT_SPEED_OF_LIGHT                  = GetSpellInfo(85495) or "Speed of Light";
@@ -185,6 +188,10 @@ HEALBOT_ARDENT_DEFENDER                 = GetSpellInfo(31850) or "Ardent Defende
 HEALBOT_HOLY_SHIELD                     = GetSpellInfo(20925) or "Holy Shield"
 HEALBOT_GUARDED_BY_THE_LIGHT            = GetSpellInfo(85646) or "Guarded by the Light";
 HEALBOT_GUARDIAN_ANCIENT_KINGS          = GetSpellInfo(86150) or "Guardian of Ancient Kings";
+HEALBOT_ETERNAL_FLAME                   = GetSpellInfo(114163) or "Eternal Flame";
+HEALBOT_HAND_OF_PURITY                  = GetSpellInfo(114039) or "Hand of Purity";
+HEALBOT_HOLY_PRISM                      = GetSpellInfo(114165) or "Holy Prism";
+HEALBOT_EXECUTION_SENTENCE              = GetSpellInfo(114157) or "Execution Sentence";
 
 HEALBOT_POWER_WORD_SHIELD               = GetSpellInfo(17) or "Power Word: Shield";
 HEALBOT_POWER_WORD_BARRIER              = GetSpellInfo(62618) or "Power Word: Barrier";
@@ -217,6 +224,7 @@ HEALBOT_GRACE                           = GetSpellInfo(47516) or "Grace";
 HEALBOT_LEAP_OF_FAITH                   = GetSpellInfo(73325) or "Leap of Faith";
 HEALBOT_EVANGELISM                      = GetSpellInfo(81661) or "Evangelism";
 HEALBOT_ARCHANGEL                       = GetSpellInfo(87151) or "Archangel";
+HEALBOT_SPIRITSHELL                     = GetSpellInfo(114908) or "Spirit Shell";
 
 HEALBOT_CHAINHEALHOT                    = GetSpellInfo(70809) or "Chain Heal";
 HEALBOT_TIDAL_WAVES                     = GetSpellInfo(51562) or "Tidal Waves";

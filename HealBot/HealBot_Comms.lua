@@ -16,6 +16,7 @@ local i,v,x,z=nil,nil,nil,nil
 local g=nil
 local HBclient=nil
 local HB_errtext=nil
+local _
 
 function HealBot_Comms_SendAddonMsg(addon_id, msg, aType, pName)
     if aType==1 then

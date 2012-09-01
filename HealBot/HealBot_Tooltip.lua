@@ -52,6 +52,7 @@ local tp=nil
 local mana, maxmana = nil, nil
 local doTalentRequest={}
 local hbGameTooltip = CreateFrame("GameTooltip", "hbGameTooltip", nil, "GameTooltipTemplate")
+local _
 
 function HealBot_Tooltip_Clear_CheckBuffs()
     for x,_ in pairs(HealBot_CheckBuffs) do
