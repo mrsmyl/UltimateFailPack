@@ -1,9 +1,19 @@
 ------------------------------------------------------------------------
-r277 | yossa | 2012-08-31 20:18:36 +0000 (Fri, 31 Aug 2012) | 1 line
+r279 | yossa | 2012-09-01 21:42:15 +0000 (Sat, 01 Sep 2012) | 1 line
 Changed paths:
-   A /tags/2.31 (from /trunk:276)
+   A /tags/2.32 (from /trunk:278)
 
-Tagging as 2.31
+Tagging as 2.32
+------------------------------------------------------------------------
+r278 | yossa | 2012-09-01 08:46:10 +0000 (Sat, 01 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+   M /trunk/SkilletData.lua
+
+Skillet:
+- toc
+
 ------------------------------------------------------------------------
 r276 | yossa | 2012-08-31 20:16:58 +0000 (Fri, 31 Aug 2012) | 3 lines
 Changed paths:
