@@ -1,5 +1,5 @@
 
-Overachiever v0.65
+Overachiever v0.66
 ==============================
 
 Author: Tuhljin
@@ -106,6 +106,14 @@ Change log
 ==========
 
 The change log lists changes of particular note to users, not every change made.
+
+v0.66
+- Updated for WoW patch 5.0.4.
+- Unfortunately, the WoW API no longer supports grabbing item IDs from "Tastes Like Chicken" and "It's Happy Hour
+  Somewhere". Consequently, we cannot automatically detect new consumable items added to the list of those that give
+  credit toward these achievements. Overachiever will instead use whatever list the character had before (saved from
+  using Overachiever previously) or, if that is unavailable, a default list of items based on data collected in a prior
+  version of WoW.
 
 v0.65
 - Updated for WoW patch 4.3.
@@ -496,4 +504,3 @@ v0.12
 
 v0.11
 - Initial release.
-

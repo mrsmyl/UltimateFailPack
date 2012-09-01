@@ -164,9 +164,9 @@ local function displayAchievement(button, frame, achievement, index, selectionID
 -- This function is based on AchievementButton_DisplayAchievement, with only a few alterations as needed.
 -- Things to always do before calling this:  Overachiever.RecentReminders_Check()  AND  In_Guild_View = isUIInGuildView()
 -- To do after calling this:  delayedToggleView()
-  local id, name, points, completed, month, day, year, description, flags, icon, rewardText
+  local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy
   if (achievement) then
-    id, name, points, completed, month, day, year, description, flags, icon, rewardText = GetAchievementInfo(achievement);
+    id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = GetAchievementInfo(achievement);
   end
   if ( not id ) then
     button:Hide();
@@ -179,6 +179,19 @@ local function displayAchievement(button, frame, achievement, index, selectionID
   button.element = true;
 
   if ( button.id ~= id ) then
+    local saturatedStyle;
+    if ( bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT ) then
+      button.accountWide = true;
+      saturatedStyle = "account";
+    else
+      button.accountWide = nil;
+      if ( IN_GUILD_VIEW ) then
+        saturatedStyle = "guild";
+      else
+        saturatedStyle = "normal";
+      end
+    end
+
     local guildach = isGuildAchievement(id)
     setButtonGuildView(button, guildach)
     if (In_Guild_View) then
@@ -206,17 +219,28 @@ local function displayAchievement(button, frame, achievement, index, selectionID
     else
       button.shield.icon:SetTexture([[Interface\AchievementFrame\UI-Achievement-Shields-NoPoints]]);
     end
+    
+    if ( isGuild ) then
+      button.shield.points:Show();
+      button.shield.wasEarnedByMe = nil;
+      button.shield.earnedBy = nil;
+    else
+      button.shield.wasEarnedByMe = not (completed and not wasEarnedByMe);
+      button.shield.earnedBy = earnedBy;
+    end
+
     button.description:SetText(description);
     button.hiddenDescription:SetText(description);
     button.numLines = ceil(button.hiddenDescription:GetHeight() / ACHIEVEMENTUI_FONTHEIGHT);
     button.icon.texture:SetTexture(icon);
-    if ( completed and not button.completed ) then
+    if ( completed or wasEarnedByMe ) then
       button.completed = true;
       button.dateCompleted:SetText(string.format(SHORTDATE, day, month, year));
       button.dateCompleted:Show();
       button:Saturate();
-    elseif ( completed ) then
-      button.dateCompleted:SetText(string.format(SHORTDATE, day, month, year));
+      if ( button.saturatedStyle ~= saturatedStyle ) then
+        button:Saturate();
+      end
     else
       button.completed = nil;
       button.dateCompleted:Hide();
@@ -279,7 +303,7 @@ local function displayAchievement(button, frame, achievement, index, selectionID
     else
       button:Expand(height);
     end
-    if ( not completed ) then
+    if ( not completed or (not wasEarnedByMe and not isGuild) ) then
       button.tracked:Show();
     end
   elseif ( button.selected ) then

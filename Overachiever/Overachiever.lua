@@ -36,6 +36,20 @@ do
 end
 local GetAchievementInfo = Overachiever.GetAchievementInfo
 
+-- Overcome problem where GetAchievementCriteriaInfo throws an error if the achievement ID or criteria number is invalid:
+do
+  local GAI = GetAchievementCriteriaInfo
+  function Overachiever.GetAchievementCriteriaInfo(...)
+    if (pcall(GAI, ...)) then
+      return GAI(...); -- Calling it again instead of saving values from previous call seems to be better since we would have to deal with new tables, unpack, manipulating the table for unpack to actually work as expected, etc.
+      --tremove(achievementInfo, 1)
+      --achievementInfo[#achievementInfo+1] = ''; -- Inserting this on the end is necessary for unpack to work as expected if there are any nil values in the table.
+      --return unpack(achievementInfo)
+    end
+  end
+end
+local GetAchievementCriteriaInfo = Overachiever.GetAchievementCriteriaInfo
+
 
 local function copytab(from, to)
   for k,v in pairs(from) do
@@ -746,15 +760,39 @@ do
   end
 
   function achbtnOnEnter(self)
+    local id, tipset, guildtip = self.id, 0
     GameTooltip:SetOwner(self, "ANCHOR_NONE")
     GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 8, 0)
     GameTooltip:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+
+	-- This section based on part of AchievementShield_OnEnter:
+	if ( self.accountWide ) then
+		if ( self.completed ) then
+			GameTooltip:AddLine(ACCOUNT_WIDE_ACHIEVEMENT_COMPLETED);
+		else
+			GameTooltip:AddLine(ACCOUNT_WIDE_ACHIEVEMENT);
+		end
+		tipset = 1
+		GameTooltip:Show();
+	end
+	if ( (tipset == 0 or not self.completed) and self.shield.earnedBy ) then
+		GameTooltip:AddLine(format(ACHIEVEMENT_EARNED_BY,self.shield.earnedBy));
+		local me = UnitName("player")
+		if ( not self.shield.wasEarnedByMe ) then
+			GameTooltip:AddLine(format(ACHIEVEMENT_NOT_COMPLETED_BY, me));
+		elseif ( me ~= self.shield.earnedBy ) then
+			GameTooltip:AddLine(format(ACHIEVEMENT_COMPLETED_BY, me));
+		end
+		GameTooltip:Show();
+		tipset = 1
+	end
+
+
     checkGuildMembersTooltip(self)
 
     -- This guild data doesn't pop up as consistently as I'd like but the same thing happens with the default UI and after running tests with the relevant events and functions, it seems to be a Blizzard bug.
     -- Generally, if there's anything to display, selecting the achievement and then moving the cursor away and back will make it work for that achievement. (Same workaround goes for default UI.)
 
-    local id, tipset, guildtip = self.id, 0
     if (GameTooltip:NumLines() > 0) then  tipset, guildtip = 1, true;  end
     button = self
 
@@ -845,7 +883,7 @@ function Overachiever.OnEvent(self, event, arg1, ...)
   if (event == "PLAYER_ENTERING_WORLD") then
     Overachiever.MainFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     Overachiever.MainFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-
+    
     BuildCategoryInfo()
     BuildCategoryInfo = nil
 
@@ -869,7 +907,7 @@ function Overachiever.OnEvent(self, event, arg1, ...)
         Overachiever_CharVars_Default.Pos_AchievementWatchFrame = nil
       end
     end
-
+    
     if (Overachiever_CharVars) then
       oldver = tonumber(Overachiever_CharVars.Version)
       if (oldver < 0.40) then  Overachiever_CharVars.Pos_AchievementWatchFrame = nil;  end
@@ -904,7 +942,7 @@ function Overachiever.OnEvent(self, event, arg1, ...)
     
     local StartTime
     if (Overachiever_Debug) then  StartTime = GetTime();  end
-
+    
     Overachiever.BuildItemLookupTab(THIS_VERSION)
     Overachiever.BuildItemLookupTab = nil
 

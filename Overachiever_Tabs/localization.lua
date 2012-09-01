@@ -711,105 +711,80 @@ L.SUBZONES = {
 	end
 
 elseif (locale == "ptBR") then  -- Brazilian Portuguese
-L["SEARCH_ANY"] = [=[Qualquer um abaixo:
-Abas]=]
--- L["SEARCH_CRITERIA"] = ""
-L["SEARCH_DESC"] = [=[Descrição:
-Abas]=]
--- L["SEARCH_FULLLIST"] = ""
-L["SEARCH_FULLLIST_TIP"] = [=[Inclui na busca conquistas que não estão normalmente listadas na interface padrão do usuário, como aqueles exclusivos à facção oposta, conquistas indisponíveis, etc.
-Abas]=]
-L["SEARCH_HELP"] = "Use essa aba para pesquisar conquistas. Voce pode também pesquisa-los por nome ou ID usando a barra de comandos. Veja o arquivo readme.txt do Overachiever para mais detalhes." -- Needs review
-L["SEARCH_NAME"] = [=[Nome:
-Abas]=]
-L["SEARCH_RESET"] = [=[Reiniciar
-Abas]=]
-L["SEARCH_RESULTS"] = "Achado %s |4achievement:achievements;." -- Needs review
-L["SEARCH_REWARD"] = [=[Recompensa:
-Abas]=]
-L["SEARCH_SUBMIT"] = [=[Pesquisar
-Abas]=]
-L["SEARCH_TAB"] = [=[Pesquisar
-Abas]=]
-L["SEARCH_TYPE"] = [=[Tipo:
-Abas]=]
-L["SEARCH_TYPE_ALL"] = [=[Todos
-Abas]=]
-L["SEARCH_TYPE_GUILD"] = [=[Guilda
-Abas]=]
-L["SEARCH_TYPE_INDIV"] = [=[Pessoal
-Abas]=]
-L["SUGGESTIONS_EMPTY"] = "Overachiever não possui sugestões para você nesse momento."
-L["SUGGESTIONS_EMPTY_TRADESKILL"] = [=[%s: Overachiever não tem sugestão para você neste momento.
-Abas]=] -- Needs review
-L["SUGGESTIONS_HELP"] = "As Conquistas sugeridas estão listadas aqui de acordo com a sua localização. Mas também estão listadas as conquistas que você procurou com o aplicativo nos ultimos 2 minutos ou que o cronômetro começou recentemente."
-L["SUGGESTIONS_LOCATION"] = [=[Localização:
-Abas]=]
-L["SUGGESTIONS_LOCATION_NOSUBZONE"] = [=[(não especificado)
-Abas]=]
-L["SUGGESTIONS_LOCATION_SUBZONE"] = [=[Subzona:
-Abas]=]
--- L["SUGGESTIONS_LOCATION_TIP"] = ""
--- L["SUGGESTIONS_LOCATION_TIP2"] = ""
-L["SUGGESTIONS_REFRESH"] = [=[Atualizar
-Abas]=]
--- L["SUGGESTIONS_RESULTS"] = ""
-L["SUGGESTIONS_RESULTS_TRADESKILL"] = [=[%s: %d |4sugestão:sugestões; Encontrada.
-Abas]=] -- Needs review
-L["SUGGESTIONS_TAB"] = [=[Sugestões
-Abas]=]
--- L["TAB_HELP"] = ""
-L["TAB_SORT"] = "Classificar por:" -- Needs review
+L["SEARCH_ANY"] = "Qualquer acima:" -- Needs review
+L["SEARCH_CRITERIA"] = "Critérios" -- Needs review
+L["SEARCH_DESC"] = "Descrição:"
+L["SEARCH_FULLLIST"] = "Incluir conquistas|nocultas" -- Needs review
+L["SEARCH_FULLLIST_TIP"] = "Inclui na busca conquistas que não estão normalmente listadas na interface padrão do usuário, como aqueles exclusivos à facção oposta, conquistas indisponíveis, etc." -- Needs review
+L["SEARCH_HELP"] = "Use essa aba para pesquisar conquistas. Voce pode também pesquisa-los por nome ou ID usando a barra de comandos. Veja o arquivo readme.txt do Overachiever para mais detalhes."
+L["SEARCH_NAME"] = "Nome:" -- Needs review
+L["SEARCH_RESET"] = "Reiniciar" -- Needs review
+L["SEARCH_RESULTS"] = "%s |4conquista encontrada:conquistas encontradas;." -- Needs review
+L["SEARCH_REWARD"] = "Recompensa:"
+L["SEARCH_SUBMIT"] = "Pesquisar"
+L["SEARCH_TAB"] = "Pesquisar"
+L["SEARCH_TYPE"] = "Tipo:"
+L["SEARCH_TYPE_ALL"] = "Todas"
+L["SEARCH_TYPE_GUILD"] = "De Guilda" -- Needs review
+L["SEARCH_TYPE_INDIV"] = "Pessoais" -- Needs review
+L["SUGGESTIONS_EMPTY"] = "O Overachiever não tem sugestões para você neste momento."
+L["SUGGESTIONS_EMPTY_TRADESKILL"] = "%s: O Overachiever não tem sugestões para você neste momento."
+L["SUGGESTIONS_HELP"] = "As conquistas sugeridas estão listadas aqui de acordo com a sua localização. Também estão listadas as conquistas das quais você foi lembrado com uma dica de tela nos últimos 2 minutos ou cujo cronômetro começou recentemente."
+L["SUGGESTIONS_LOCATION"] = "Local:" -- Needs review
+L["SUGGESTIONS_LOCATION_NOSUBZONE"] = "(não especificado)"
+L["SUGGESTIONS_LOCATION_SUBZONE"] = "Subzona:" -- Needs review
+L["SUGGESTIONS_LOCATION_TIP"] = "Substituir Zona/Instância Atual" -- Needs review
+L["SUGGESTIONS_LOCATION_TIP2"] = "Deixe em branco para mostrar sugestões para seu local atual ou comece a digitar para mostrar sugestões com base no nome de uma zona ou instância. Pressione |cffffffffTab|r para alternar entre locais que correspondem ao texto à esquerda do cursor. |cffffffffShift+Tab|r alterna na ordem inversa. Se o cursor estiver na posição mais à esquerda possível, alterna entre todos os locais válidos." -- Needs review
+L["SUGGESTIONS_REFRESH"] = "Atualizar"
+L["SUGGESTIONS_RESULTS"] = "%d |4sugestão encontrada:sugestões encontradas;."
+L["SUGGESTIONS_RESULTS_TRADESKILL"] = "%s: %d |4sugestão encontrada:sugestões encontradas;."
+L["SUGGESTIONS_TAB"] = "Sugestões"
+L["TAB_HELP"] = "|cffffffffCtrl-clique|r em uma conquista para ir ao seu devido lugar na IU padrão.|n|nUm |cfffffffffundo azul|r significa que a conquista faz parte de uma série da qual você não completou um passo anterior.|n|nUm |cfffffffffundo vermelho|r significa que a conquista não pode ser encontrada na IU padrão para este personagem por ser exclusiva à facção oposta ou por ser uma Proeza Memorável.|n|nUm |cfffffffffundo verde|r significa que um lembrete desta conquista foi exibido recentemente em uma dica de tela ou tem um cronômetro que começou recentemente."
+L["TAB_SORT"] = "Classificar por:"
 L["TAB_SORT_COMPLETE"] = "Data completada" -- Needs review
--- L["TAB_SORT_ID"] = ""
--- L["TAB_SORT_NAME"] = ""
--- L["TAB_SORT_POINTS"] = ""
--- L["WATCH_CLEAR"] = ""
-L["WATCH_COPY"] = [=[Copiar Para:
-Abas]=]
--- L["WATCH_COPY_TIP"] = ""
-L["WATCH_DEFAULTLIST"] = [=[Lista Padrão:
-Abas]=]
--- L["WATCH_DEFAULTLIST_TIP"] = ""
-L["WATCH_DELETE"] = [=[Deletar 
-Abas]=]
--- L["WATCH_DISPLAYEDLIST"] = ""
--- L["WATCH_EMPTY"] = ""
--- L["WATCH_EMPTY_SHORT"] = ""
--- L["WATCH_ERR_INVALIDID"] = ""
--- L["WATCH_HELP"] = ""
-L["WATCH_LIST_GLOBAL"] = [=[Global 
-Abas]=]
--- L["WATCH_LIST_PERCHAR"] = ""
-L["WATCH_NEW"] = [=[Novo 
-Abas]=]
--- L["WATCH_POPUP_CLEARLIST"] = ""
-L["WATCH_POPUP_DELETELIST"] = [=[Tem certeza de que deseja excluir permanentemente a lista de observação de conquistas atual
-Abas]=]
--- L["WATCH_POPUP_NEWLIST"] = ""
--- L["WATCH_TAB"] = ""
+L["TAB_SORT_ID"] = "ID"
+L["TAB_SORT_NAME"] = "Nome"
+L["TAB_SORT_POINTS"] = "Valor de pontos"
+L["WATCH_CLEAR"] = "Limpar" -- Needs review
+L["WATCH_COPY"] = "Copiar Para:"
+L["WATCH_COPY_TIP"] = "Quando ativado, se você der um |cffffffffshift+alt+clique|r em uma conquista nesta aba, ela será adicionada à lista especificada. " -- Needs review
+L["WATCH_DEFAULTLIST"] = "Lista Padrão:"
+L["WATCH_DEFAULTLIST_TIP"] = "A lista especificada será a Lista Exibida no início de cada sessão." -- Needs review
+L["WATCH_DELETE"] = "Excluir" -- Needs review
+L["WATCH_DISPLAYEDLIST"] = "Lista Exibida:" -- Needs review
+L["WATCH_EMPTY"] = "Sua lista de conquistas vigiadas está vazia. Alt+clique em uma conquista em outra aba ou em um link para uma conquista em uma conversa para vigiá-la."
+L["WATCH_EMPTY_SHORT"] = "Lista Vazia"
+L["WATCH_ERR_INVALIDID"] = "\"%s\" foi removida da Lista de Conquistas Vigiadas: Uma conquista com este ID não pôde ser encontrada." -- Needs review
+L["WATCH_HELP"] = "Crie sua lista de conquistas vigiadas dando um |cffffffffalt+clique|r em conquistas nas outras abas ou em links de conquistas em uma conversa."
+L["WATCH_LIST_GLOBAL"] = "Global"
+L["WATCH_LIST_PERCHAR"] = "Este personagem"
+L["WATCH_NEW"] = "Nova" -- Needs review
+L["WATCH_POPUP_CLEARLIST"] = "Tem certeza de que deseja limpar o conteúdo da lista de conquistas vigiadas atual?"
+L["WATCH_POPUP_DELETELIST"] = "Tem certeza de que deseja excluir permanentemente a lista de observação de conquistas atuais?"
+L["WATCH_POPUP_NEWLIST"] = "Digite o nome da sua nova lista de conquistas vigiadas:"
+L["WATCH_TAB"] = "Vigiar"
 L.SUBZONES = {
 	["Argent Pavilion"] = "Abas → SUBZONAS",
 	["Argent Tournament Grounds"] = "Abas → SUBZONAS",
-	["Formation Grounds"] = "Abas → SUBZONAS",
+	["Formation Grounds"] = "Campos de Formação", -- Needs review
 	["Razorscale's Aerie"] = "Abas → SUBZONAS",
 	["Silver Covenant Pavilion"] = "Abas → SUBZONAS",
 	["Sunreaver Pavilion"] = "Abas → SUBZONAS",
 	["The Alliance Valiants' Ring"] = "Abas → SUBZONAS",
 	["The Argent Valiants' Ring"] = "Abas → SUBZONAS",
 	["The Aspirants' Ring"] = "Abas → SUBZONAS",
-	["The Assembly of Iron"] = "Abas → SUBZONAS",
-	["The Celestial Planetarium"] = "Abas → SUBZONAS",
-	["The Clash of Thunder"] = "Abas → SUBZONAS",
-	["The Colossal Forge"] = "Abas → SUBZONAS",
-	["The Conservatory of Life"] = "Abas → SUBZONAS",
-	["The Descent into Madness"] = "Abas → SUBZONAS",
-	["The Halls of Winter"] = "Abas → SUBZONAS",
+	["The Assembly of Iron"] = "A Assembleia de Ferro", -- Needs review
+	["The Celestial Planetarium"] = "O Planetário Celestial", -- Needs review
+	["The Clash of Thunder"] = "Abas → SUBZONAS", -- Needs review
+	["The Colossal Forge"] = "Abas → SUBZONAS", -- Needs review
+	["The Conservatory of Life"] = "Abas → SUBZONAS", -- Needs review
+	["The Descent into Madness"] = "Abas → SUBZONAS", -- Needs review
+	["The Halls of Winter"] = "Abas → SUBZONAS", -- Needs review
 	["The Horde Valiants' Ring"] = "Abas → SUBZONAS",
-	["The Observation Ring"] = "Abas → SUBZONAS",
-	["The Prison of Yogg-Saron"] = "Abas → SUBZONAS",
+	["The Observation Ring"] = "Abas → SUBZONAS", -- Needs review
+	["The Prison of Yogg-Saron"] = "Abas → SUBZONAS", -- Needs review
 	["The Ring of Champions"] = "Abas→SUBZONAS",
-	["The Scrapyard"] = "Abas → SUBZONAS",
+	["The Scrapyard"] = "Abas → SUBZONAS", -- Needs review
 	["The Shattered Walkway"] = "Abas → SUBZONAS",
 	["The Spark of Imagination"] = "Abas → SUBZONAS",
 }
