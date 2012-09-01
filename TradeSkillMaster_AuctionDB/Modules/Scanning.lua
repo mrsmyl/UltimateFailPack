@@ -475,13 +475,7 @@ function Scan:ProcessScanData(scanData)
 		TSM.db.factionrealm.lastCompleteScan = time()
 	end
 	
-	local co = coroutine.create(function() TSM.Data:ProcessData(data, isScanning == "GetAll Scan" or isScanning == "Full Scan") end)
-	
-	TSMAPI:CreateTimeDelay("adbProcessDelay", 0, function()
-			if not coroutine.resume(co) then
-				TSMAPI:CancelFrame("adbProcessDelay")
-			end
-		end, 0.1)
+	TSM.Data:ProcessData(data, isScanning == "GetAll Scan" or isScanning == "Full Scan")
 end
 
 function Scan:ProcessImportedData(auctionData)

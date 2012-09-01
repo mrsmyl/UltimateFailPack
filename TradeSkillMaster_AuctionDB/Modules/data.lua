@@ -81,43 +81,49 @@ function Data:GetMarketValue(scans)
 end
 
 function Data:ProcessData(scanData, clearMinBuyouts)
-	local coNum = 0
 	local day = Data:GetDay()
 	if clearMinBuyouts then
 		-- wipe all the minBuyout data
 		for itemID, data in pairs(TSM.data) do
 			data.minBuyout = nil
 			data.currentQuantity = 0
-			coNum = coNum + 1
-			if coNum >= 5000 then
-				coroutine.yield()
-				coNum = 0
+		end
+	end
+	
+	local scanDataList = {}
+	for itemID, data in pairs(scanData) do
+		tinsert(scanDataList, {itemID, data})
+	end
+	
+	-- go through each item and figure out the market value / update the data table
+	local index = 1
+	local function DoDataProcessing()
+		for i = 1, 500 do
+			local itemID, data = unpack(scanDataList[index])
+			TSM.data[itemID] = TSM.data[itemID] or {scans={}, seen=0}
+			local marketValue = Data:CalculateMarketValue(data.records)
+			
+			if type(TSM.data[itemID].scans[day]) == "number" then
+				TSM.data[itemID].scans[day] = {TSM.data[itemID].scans[day]}
+			end
+			TSM.data[itemID].scans[day] = TSM.data[itemID].scans[day] or {}
+			tinsert(TSM.data[itemID].scans[day], marketValue)
+			
+			TSM.data[itemID].seen = ((TSM.data[itemID].seen or 0) + data.quantity)
+			TSM.data[itemID].currentQuantity = data.quantity
+			TSM.data[itemID].lastScan = time()
+			TSM.data[itemID].minBuyout = data.minBuyout > 0 and data.minBuyout or nil
+			Data:UpdateMarketValue(TSM.data[itemID])
+			
+			index = index + 1
+			if index > #scanDataList then
+				TSMAPI:CancelFrame("adbProcessDelay")
+				break
 			end
 		end
 	end
 	
-	-- go through each item and figure out the market value / update the data table
-	for itemID, data in pairs(scanData) do
-		TSM.data[itemID] = TSM.data[itemID] or {scans={}, seen=0}
-		local marketValue = Data:CalculateMarketValue(data.records)
-		
-		if type(TSM.data[itemID].scans[day]) == "number" then
-			TSM.data[itemID].scans[day] = {TSM.data[itemID].scans[day]}
-		end
-		TSM.data[itemID].scans[day] = TSM.data[itemID].scans[day] or {}
-		tinsert(TSM.data[itemID].scans[day], marketValue)
-		
-		TSM.data[itemID].seen = ((TSM.data[itemID].seen or 0) + data.quantity)
-		TSM.data[itemID].currentQuantity = data.quantity
-		TSM.data[itemID].lastScan = time()
-		TSM.data[itemID].minBuyout = data.minBuyout > 0 and data.minBuyout or nil
-		Data:UpdateMarketValue(TSM.data[itemID])
-		coNum = coNum + 1
-		if coNum >= 500 then
-			coroutine.yield()
-			coNum = 0
-		end
-	end
+	TSMAPI:CreateTimeDelay("adbProcessDelay", 0, DoDataProcessing, 0.1)
 end
 
 function Data:CalculateMarketValue(records)
