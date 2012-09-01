@@ -70,10 +70,10 @@ function TSM:OnInitialize()
 	-- whenver '/tsm' or '/tradeskillmaster' is typed by the user, TSM:ChatCommand() will be called
    TSM:RegisterChatCommand("tsm", "ChatCommand")
 	TSM:RegisterChatCommand("tradeskillmaster", "ChatCommand")
-	
+
 	-- embed LibAuctionScan into TSMAPI
 	LibStub("LibAuctionScan-1.0"):Embed(lib)
-	
+
 	-- create / register the minimap button
 	TSM.LDBIcon = LibStub("LibDataBroker-1.1", true) and LibStub("LibDBIcon-1.0", true)
 	local TradeSkillMasterLauncher = LibStub("LibDataBroker-1.1", true):NewDataObject("TradeSkillMasterMinimapIcon", {
@@ -110,7 +110,7 @@ function TSM:OnInitialize()
 				tt:AddLine(format(L["%sDrag%s to move this button"], cs, ce))
 			end,
 		})
-	
+
 	lib:RegisterReleasedModule("TradeSkillMaster", TSM.version, GetAddOnMetadata("TradeSkillMaster", "Author"), L["Provides the main central frame as well as APIs for all TSM modules."], TSM.versionKey)
 	lib:RegisterIcon(L["Status"], "Interface\\Icons\\Achievement_Quests_Completed_04", function(...) TSM:LoadOptions(...) end, "TradeSkillMaster", "options")
 
@@ -172,7 +172,7 @@ function TSM:ChatCommand(oInput)
 			extraValue = extraValue .. " " .. inputs[i]
 		end
 	end
-	
+
 	if input == "" then	-- '/tsm' opens up the main window to the status page
 		TSM.Frame:Show()
 		if #TSM.Frame.children > 0 then
@@ -192,7 +192,7 @@ function TSM:ChatCommand(oInput)
 			TSM:Print(L["Slash Commands:"])
 			print("|cffffaa00"..L["/tsm|r - opens the main TSM window."])
 			print("|cffffaa00"..L["/tsm help|r - Shows this help listing"])
-			
+
 			for _, v in ipairs(private.slashCommands) do
 				print("|cffffaa00/tsm "..v.cmd.."|r - "..v.desc)
 			end
@@ -214,7 +214,7 @@ function lib:RegisterReleasedModule(moduleName, version, authors, desc, versionK
 	if not (moduleName and version and authors and desc) then
 		return nil, "invalid args", moduleName, version, authors, desc
 	end
-	
+
 	tinsert(TSM.registeredModules, {name=moduleName, version=version, authors=authors, desc=desc, versionKey=versionKey})
 end
 
@@ -239,7 +239,7 @@ function lib:RegisterSlashCommand(cmd, loadFunc, desc)
 	if not desc then
 		desc = L["No help provided."]
 	end
-	
+
 	if not loadFunc then
 		return nil, "no function provided"
 	elseif not cmd then
@@ -247,7 +247,7 @@ function lib:RegisterSlashCommand(cmd, loadFunc, desc)
 	elseif cmd=="test" or cmd=="debug" or cmd=="help" or cmd=="" then
 		return nil, "reserved command provided"
 	end
-	
+
 	tinsert(private.slashCommands, {cmd=cmd, loadFunc=loadFunc, desc=desc})
 end
 
@@ -261,7 +261,7 @@ function lib:GetData(label, ...)
 	if private.modData[label] then
 		return private.modData[label](self, ...)
 	end
-	
+
 	return nil, "no data for that label"
 end
 
@@ -288,7 +288,7 @@ local function UpdateCache()
 			tremove(itemsToCache, i)
 		end
 	end
-	
+
 	if #itemsToCache == 0 then
 		lib:CancelFrame("TSMItemInfoCache")
 	end

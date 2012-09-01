@@ -1,5 +1,5 @@
 
-local MAJOR, MINOR = "LibAuctionScan-1.0", 1
+local MAJOR, MINOR = "LibAuctionScan-1.0", 2
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -280,16 +280,6 @@ do
 			end
 		end
 
-		if scanOptions.ShouldStop then
-			-- sort the auction house by buyout < name
-			SortAuctionsAscending("name")
-			SortAuctionsAscending("buyout")
-		else
-			-- sort the auction house by name < buyout
-			SortAuctionsAscending("buyout")
-			SortAuctionsAscending("name")
-		end
-
 		if not status.AH then
 			return -1 -- the auction house isn't open (return code -1)
 		elseif type(scanQueue) ~= "table" or #scanQueue == 0 then
@@ -338,11 +328,6 @@ do
 		status.isScanning = true -- used to prevent functions from running when we're not supposed to be scanning
 		status.callbackHandler = callbackHandler
 		status.options = scanOptions -- any special options for this scan
-		status.ShouldStop = function(link, count, buyout)
-			if scanOptions.ShouldStop and link and select(8, GetItemInfo(link)) == count and buyout then
-				return scanOptions.ShouldStop(link, buyout/count)
-			end
-		end
 
 		--starts scanning
 		private:SendQuery()
@@ -427,60 +412,22 @@ do
 		status.timeDelay = 0
 		DoCallback("SCAN_STATUS_UPDATE", status.page+1, totalPages, #status.filterList)
 		PopulatePageTemp()
-		local isDone = false
 		
 		-- now that we know our query is good, time to verify and then store our data
 		for _, v in ipairs(temp) do
-			local newItem, shouldStop = private:AddAuctionRecord(v.index)
-			if newItem and status.filter.isCombinedFilter then
-				if type(newItem) == "table" then
-					for _, itemString in ipairs(newItem) do
-						DoCallback("NEW_ITEM_DATA", {item=itemString, data=status.data, filter=status.filter})
-						status.filter.scanTemp.didCallback[itemString] = true
-					end
-				else
-					DoCallback("NEW_ITEM_DATA", {item=newItem, data=status.data, filter=status.filter})
-					status.filter.scanTemp.didCallback[newItem] = true
-				end
-				
-				isDone = true
-				for _, itemString in ipairs(status.filter.arg) do
-					if not status.filter.scanTemp.didCallback[itemString] then
-						isDone = false
-						break
-					end
-				end
-			elseif shouldStop and not status.filter.isCombinedFilter and not newItem then
-				isDone = true
-				status.filter.exactOnly = not status.options.ShouldStop and "done"
-				break
-			end
+			private:AddAuctionRecord(v.index)
 		end
 		
-		if not isDone or status.filter.exactOnly == "done" then
-			-- This query has more pages to scan
-			-- increment the page # and send the new query
-			if status.filter.exactOnly ~= "done" and totalPages > (status.page + 1) then
-				status.page = status.page + 1
-				private:SendQuery()
-				return
-			end
-
-			
-			if not status.filter.isCombinedFilter then
-				DoCallback("QUERY_FINISHED", {filter=status.filter, data=status.data, left=#status.filterList})
-			else
-				-- do callbacks for the last item and items that weren't on the AH
-				if status.filter.scanTemp.currentItem then
-					DoCallback("NEW_ITEM_DATA", {item=status.filter.scanTemp.currentItem.itemString, data=status.data, filter=status.filter})
-				end
-				for _, item in ipairs(status.filter.arg) do
-					if not status.data[item] then
-						DoCallback("NEW_ITEM_DATA", {item=item, data=status.data, filter=status.filter})
-					end
-				end
-			end
+		-- This query has more pages to scan
+		-- increment the page # and send the new query
+		if totalPages > (status.page + 1) then
+			status.page = status.page + 1
+			private:SendQuery()
+			return
 		end
+
+		
+		DoCallback("QUERY_FINISHED", {filter=status.filter, data=status.data, left=#status.filterList})
 		
 		-- done with this filter so remove it
 		private:RemoveCurrentFilter()
@@ -514,38 +461,9 @@ do
 		local timeLeft = GetAuctionItemTimeLeft("list", index)
 		local link = GetAuctionItemLink("list", index)
 		local itemString = GetItemString(link)
-		local newItem
 		
 		if not itemString then return end
-
-		if status.filter.isCombinedFilter then
-			status.filter.scanTemp.currentItem = status.filter.scanTemp.currentItem or {}
-			if status.filter.scanTemp.currentItem.name ~= name then
-				newItem = status.filter.scanTemp.currentItem.itemString
-				status.filter.scanTemp.currentItem = {name=name, itemString=itemString}
-				if status.filter.scanTemp[name] then
-					DoCallback("SCAN_ERROR", name)
-				end
-				status.filter.scanTemp[name] = true
-			elseif status.filter.scanTemp.currentItem.itemString ~= itemString then
-				if type(status.filter.scanTemp.currentItem.itemString) == "table" then
-					local isNew = true
-					for _, v in ipairs(status.filter.scanTemp.currentItem.itemString) do
-						if v == itemString then
-							isNew = false
-							break
-						end
-					end
-					
-					if isNew then
-						tinsert(status.filter.scanTemp.currentItem.itemString, itemString)
-					end
-				else
-					local oldItemString = status.filter.scanTemp.currentItem.itemString
-					status.filter.scanTemp.currentItem.itemString = {oldItemString, itemString}
-				end
-			end
-		elseif status.filter.isItemIDFilter then
+		if status.filter.isItemIDFilter then
 			itemString = itemID
 		end
 
@@ -555,12 +473,6 @@ do
 			status.data[itemString]:SetItemLink(link)
 		end
 		status.data[itemString]:AddAuctionRecord(count, minBid, minIncrement, buyout, bid, highBidder, seller or status.options.missingSellerName, timeLeft)
-
-		local exactOnly = status.filter.exactOnly ~= 0 and status.filter.exactOnly
-		if exactOnly and not status.filter.isCombinedFilter and not newItem and not status.options.ShouldStop then
-			return nil, strlower(name) > strlower(status.filter.name)
-		end
-		return newItem, status.ShouldStop(link, count, buyout)
 	end
 
 	-- stops the scan when we are finished scanning, it was interrupted, or somebody stopped it
@@ -694,7 +606,6 @@ do
 			status.data = {} -- the data we've scanned so far
 			status.isScanning = "getAll" -- used to prevent functions from running when we're not supposed to be scanning
 			status.callbackHandler = callbackHandler
-			status.ShouldStop = function() end
 		
 			QueryAuctionItems("", "", "", nil, nil, nil, nil, nil, nil, true)
 			

@@ -19,7 +19,7 @@ L["Allows you to quickly and easily empty your mailbox as well as automatically 
 L["Any craft that is disabled in the category pages of one of the Crafting profession icons in the main TSM window won't show up in the Craft Management Window."] = "Qualquer habilidade desabilitada na página de categorias do ícone da profissão na janela principal do TSM não será mostrado na janela de controle de produção."
 L["Attach TSM Tab"] = "Anexar Aba do TSM" -- Needs review
 L["Auctionator - Auction Value"] = "Auctionator - Valor de Leilão" -- Needs review
-L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = "AuctionD pode colocar informaçãoes de valor de mercado, arremate mínimo e número de vezes que foi visto na dica de interface do item. Você pode habilitar/desabilitar essa funcionalidade na aba opções da página do AuctionDB."
+L["AuctionDB can put market value, min buyout, and seen count info into item tooltips. You can turn this on / off in the options tab of the AuctionDB page."] = "AuctionDB pode colocar informaçãoes de valor de mercado, arremate mínimo e número de vezes que foi visto na dica de interface do item. Você pode habilitar/desabilitar essa funcionalidade na aba opções da página do AuctionDB." -- Needs review
 L["AuctionDB - Market Value"] = "AuctionDB - Valor de Mercado" -- Needs review
 L["AuctionDB - Minimum Buyout"] = "AuctionDB - Arremate Mínimo" -- Needs review
 L["Auctioneer - Appraiser"] = "Auctioneer - Avaliador" -- Needs review
@@ -171,7 +171,7 @@ If you ever need help with TSM, check out the resources listed on the first page
 
 Se você alguma vez precisar de ajuda com o TSM, verifique as fontes de informação listadas na primeira página da janela princiapl do TSM (digite /tsm ou clique no ícone do minimapa)!]=] -- Needs review
 L["When using shopping to buy herbs for inks, it will automatically check if it's cheaper to buy herbs for blackfallow ink and trade down (this can be turned off)."] = "Quando usando \"Fazendo Compras\" para comprar ervas ou tintas, checará automaticamente se é mais barato comprar ervas para tinta Negropardo e trocar por outras (está opção pode ser desabilitada)"
-L["Wrath - Blue Quality"] = "Ira - Qualidade Azul" -- Needs review
-L["Wrath - Epic Quality"] = "Ira - Qualidade Épica" -- Needs review
-L["Wrath Gems"] = "Gemas de Ira" -- Needs review
-L["Wrath - Green Quality"] = "Ira - Qualidade Verde" -- Needs review
+L["Wrath - Blue Quality"] = "Wrath - Qualidade Azul" -- Needs review
+L["Wrath - Epic Quality"] = "Wrath - Qualidade Épica" -- Needs review
+L["Wrath Gems"] = "Wrath Gemas" -- Needs review
+L["Wrath - Green Quality"] = "Wrath - Qualidade Verde" -- Needs review

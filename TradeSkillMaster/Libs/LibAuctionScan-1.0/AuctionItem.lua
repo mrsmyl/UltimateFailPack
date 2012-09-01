@@ -44,7 +44,7 @@ local function SafeDivide(a, b)
 		elseif a > 0 then
 			return -math.huge
 		else
-			return log(-1)
+			return 0
 		end
 	end
 	

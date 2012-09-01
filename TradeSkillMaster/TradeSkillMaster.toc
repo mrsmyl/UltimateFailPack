@@ -2,16 +2,16 @@
 ## Title: |cff00fe00TradeSkillMaster|r
 ## Notes: Core addon for the TradeSkillMaster suite. Does nothing without modules installed.
 ## Author: Sapu94
-## Version: v1.4.4
+## Version: v1.4.5
 ## SavedVariables: TradeSkillMasterDB
-## OptionalDeps: Ace3
-## X-Embeds: Ace3
-## X-Curse-Packaged-Version: v1.4.4
+## OptionalDeps: Ace3, LibDataBroker-1.1, LibDBIcon-1.0, LibExtraTip, TipHelper, lib-st, LibAuctionScan-1.0, LibParse, LibCompress
+## X-Embeds: Ace3, LibDataBroker-1.1, LibDBIcon-1.0, LibExtraTip, TipHelper, lib-st, LibAuctionScan-1.0, LibParse, LibCompress
+## X-Curse-Packaged-Version: v1.4.5
 ## X-Curse-Project-Name: TradeSkillMaster
 ## X-Curse-Project-ID: tradeskill-master
 ## X-Curse-Repository-ID: wow/tradeskill-master/mainline
 
-
+#@no-lib-strip@
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\AceAddon-3.0\AceAddon-3.0.xml
@@ -25,14 +25,17 @@ Libs\AceLocale-3.0\AceLocale-3.0.xml
 Libs\AceConsole-3.0\AceConsole-3.0.xml
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
-Libs\LibExtraTip\Load.xml
-Libs\TipHelper\Load.xml
 Libs\lib-st\lib-st.xml
 Libs\LibAuctionScan-1.0\Load.xml
 Libs\LibParse\load.xml
 Libs\AceComm-3.0\AceComm-3.0.xml
 Libs\AceSerializer-3.0\AceSerializer-3.0.xml
 Libs\LibCompress\lib.xml
+#@end-no-lib-strip@
+
+## Embeded libraries not on CurseForge
+Libs\LibExtraTip\Load.xml
+Libs\TipHelper\Load.xml
 
 Locale\enUS.lua
 Locale\deDE.lua
