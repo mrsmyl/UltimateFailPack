@@ -44,6 +44,7 @@ function Manage:StartScan(GUIRef, options)
 	end
 	
 	local toRemove = {}
+	local usesCommonSearchTerms = false
 	for i, query in ipairs(scanList) do
 		if type(query) == "table" then
 			local filter = TSMAPI:GetCommonAuctionQueryInfo(query.items, query.name)
@@ -52,6 +53,7 @@ function Manage:StartScan(GUIRef, options)
 				filter.arg = CopyTable(query.items)
 				scanList[i] = filter
 				totalToScan = totalToScan + #query.items
+				usesCommonSearchTerms = true
 			else
 				tinsert(toRemove, i)
 			end
@@ -90,9 +92,21 @@ function Manage:StartScan(GUIRef, options)
 			end
 			return type(b) == "table"
 		end)
+		
+	if usesCommonSearchTerms and not TSM.db.global.hideCSTWarning then
+		StaticPopupDialogs["TSMAucCSTWarning"] = {
+			text = "|cff99ffffIMPORTANT:|r Patch 5.0.4 introduced a bug on Blizzard's end with AH sorting that affects common search terms. As a result, the scan will potentially appear to freeze for several moments, but will eventually resume.\n\nSee |cff99ffffhttp://bit.ly/UcGTic|r for more info. Click 'Ignore' to never see this warning again.",
+			button1 = "OK",
+			button2 = "Ignore",
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = false,
+			OnCancel = function() TSM.db.global.hideCSTWarning = true end,
+		}
+		TSMAPI:ShowStaticPopupDialog("TSMAucCSTWarning")
+	end
 	
 	Manage:RegisterMessage("TSMAuc_QUERY_FINISHED", "MessageHandler")
-	Manage:RegisterMessage("TSMAuc_NEW_ITEM_DATA", "MessageHandler")
 	Manage:RegisterMessage("TSMAuc_SCAN_COMPLETE", "MessageHandler")
 	Manage:RegisterMessage("TSMAuc_SCAN_INTERRUPTED", "MessageHandler")
 	Manage:RegisterMessage("TSMAuc_SCAN_NEW_PAGE", "MessageHandler")
@@ -156,7 +170,7 @@ function Manage:ProcessNoScanItems(scanList)
 	
 	for i=startNum, endNum do
 		local doUpdate = (i == endNum or i == 1)
-		Manage:MessageHandler("TSMAuc_NEW_ITEM_DATA", scanList[i], doUpdate and "doUpdate" or "noUpdate")
+		Manage:MessageHandler("TSMAuc_QUERY_FINISHED", scanList[i], doUpdate and "doUpdate" or "noUpdate")
 	end
 	
 	if endNum == totalToScan then
@@ -180,7 +194,7 @@ function Manage:OnGUIEvent(event)
 end
 
 function Manage:MessageHandler(msg, arg1, arg2)
-	if msg == "TSMAuc_QUERY_FINISHED" or msg == "TSMAuc_NEW_ITEM_DATA" then
+	if msg == "TSMAuc_QUERY_FINISHED" then
 		totalScanned = totalScanned + 1
 		if mode == "Reset" then
 			GUI.statusBar:UpdateStatus(TSMAPI:SafeDivide(totalScanned, totalToScan)*100)

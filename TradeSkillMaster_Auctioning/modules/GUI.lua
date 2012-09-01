@@ -104,7 +104,6 @@ function private:Show(frame, button, options)
 		end
 		
 		GUI:RegisterMessage("TSMAuc_QUERY_FINISHED", private.UpdateTables)
-		GUI:RegisterMessage("TSMAuc_NEW_ITEM_DATA", private.UpdateTables)
 		TSMAPI:StopScan()
 		
 		if private.mode == "Post" or private.mode == "Cancel" or private.mode == "Reset" then

@@ -42,22 +42,39 @@ function Scan:ShouldScan(itemString, mode, groups)
 	return not (isGroupDisabled or isGroupNoCancel or isGroupCustomDisabled)
 end
 
+local callbacks = {}
+local function SendCallbacks()
+	if #callbacks == 0 then return TSMAPI:CancelFrame("tsmAucScanMsgBuffer") end
+	local msg, args = unpack(callbacks[1])
+	tremove(callbacks, 1)
+	Scan:SendMessage(msg, unpack(args))
+end
+
 function Scan:OnCallback(event, data, arg2)
 	local msg, args = nil, {}
 	if event == "QUERY_FINISHED" then
-		Scan:ProcessAuctionData(data.data, data.filter.arg)
+		if type(data.filter.arg) == "table" then
+			for _, itemString in ipairs(data.filter.arg) do
+				-- only process this item if we meant to search for it
+				if data.data[itemString] then
+					Scan:ProcessAuctionData(data.data, itemString)
+					msg = "TSMAuc_"..event
+					args = {itemString, data.data}
+					tinsert(callbacks, {msg, args})
+					TSMAPI:CreateTimeDelay("tsmAucScanMsgBuffer", 0, SendCallbacks, 0.02)
+				else
+					msg = "TSMAuc_"..event
+					args = {itemString, data.data}
+					tinsert(callbacks, {msg, args})
+					TSMAPI:CreateTimeDelay("tsmAucScanMsgBuffer", 0, SendCallbacks, 0.02)
+				end
+			end
+			return
+		else
+			Scan:ProcessAuctionData(data.data, data.filter.arg)
+		end
 		msg = "TSMAuc_"..event
 		args = {data.filter.arg, data.data}
-   elseif event == "NEW_ITEM_DATA" then
-		for _, itemString in ipairs(data.filter.arg) do
-			-- only process this item if we meant to search for it
-			if itemString == data.item then
-				Scan:ProcessAuctionData(data.data, data.item)
-				msg = "TSMAuc_"..event
-				args = {data.item, data.data}
-				break
-			end
-		end
 	elseif event == "SCAN_COMPLETE" or event == "SCAN_INTERRUPTED" then
 		msg = "TSMAuc_"..event
 	elseif event == "SCAN_STATUS_UPDATE" then
@@ -68,7 +85,8 @@ function Scan:OnCallback(event, data, arg2)
 	end
 	
 	if msg then
-		TSMAPI:CreateTimeDelay("aucScanMsgDelay"..random(), 0.05, function() Scan:SendMessage(msg, unpack(args)) end)
+		tinsert(callbacks, {msg, args})
+		TSMAPI:CreateTimeDelay("tsmAucScanMsgBuffer", 0, SendCallbacks, 0.02)
 	end
 end
 
