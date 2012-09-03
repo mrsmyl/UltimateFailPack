@@ -870,7 +870,6 @@ end
 
 function HealBot_GetSpellName(id)
     if (not id) then return nil end
-    if id==9991 then return HEALBOT_HOLY_WORD_SERENITY end
     sName, sRank, icon, powerCost, isFunnel, powerType, castingTime, minRange, maxRange = GetSpellInfo(id);
     if (not sName) then
         return nil;
@@ -881,9 +880,6 @@ end
 
 function HealBot_GetSpellId(spellName)
     if (not spellName) then return nil end
-    if spellName==HEALBOT_HOLY_WORD_SERENITY and strsub(HealBot_PlayerClassEN,1,4)=="PRIE" and HealBot_HasTalent(2,16,HEALBOT_REVELATIONS)>0 then
-        return 9991
-    end
     skillType, spellId = GetSpellBookItemInfo(spellName)
     if not skillType then
         if HealBot_Spells[spellName] and HealBot_Spells[spellName].Level and tonumber(HealBot_Spells[spellName].Level)<=UnitLevel("player") then
@@ -2046,6 +2042,13 @@ function HealBot_configClassHoT(class, race)
     else
         HealBot_Watch_HoT[HEALBOT_SPIRITSHELL]=nil
     end
+    if hbClassHoTwatch[HEALBOT_DIVINE_INSIGHT]==3 then
+        HealBot_Watch_HoT[HEALBOT_DIVINE_INSIGHT]="A"
+    elseif hbClassHoTwatch[HEALBOT_DIVINE_INSIGHT]==2 and class==HealBot_Class_En[HEALBOT_PRIEST] then
+        HealBot_Watch_HoT[HEALBOT_DIVINE_INSIGHT]="C"
+    else
+        HealBot_Watch_HoT[HEALBOT_DIVINE_INSIGHT]=nil
+    end
     if hbClassHoTwatch[HEALBOT_GLYPH_PRAYER_OF_HEALING]==3 then
         HealBot_Watch_HoT[HEALBOT_GLYPH_PRAYER_OF_HEALING]="A"
     elseif hbClassHoTwatch[HEALBOT_GLYPH_PRAYER_OF_HEALING]==2 and class==HealBot_Class_En[HEALBOT_PRIEST] then
@@ -2297,6 +2300,13 @@ function HealBot_configClassHoT(class, race)
         HealBot_Watch_HoT[HEALBOT_HAND_OF_PURITY]="C"
     else
         HealBot_Watch_HoT[HEALBOT_HAND_OF_PURITY]=nil
+    end
+    if hbClassHoTwatch[HEALBOT_DIVINE_PURPOSE]==3 then
+        HealBot_Watch_HoT[HEALBOT_DIVINE_PURPOSE]="A"
+    elseif hbClassHoTwatch[HEALBOT_DIVINE_PURPOSE]==2 and class==HealBot_Class_En[HEALBOT_PALADIN] then
+        HealBot_Watch_HoT[HEALBOT_DIVINE_PURPOSE]="C"
+    else
+        HealBot_Watch_HoT[HEALBOT_DIVINE_PURPOSE]=nil
     end
     if hbClassHoTwatch[HEALBOT_HOLY_SHIELD]==3 then
         HealBot_Watch_HoT[HEALBOT_HOLY_SHIELD]="A"

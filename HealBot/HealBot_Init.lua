@@ -164,6 +164,7 @@ function HealBot_Init_Spells_Defaults(class)
         
         [HEALBOT_HOLY_SHOCK] = { 
             id = 20473, CastTime = 0, Mana = 35, Level = 10},
+           
         
     };
     
@@ -324,6 +325,10 @@ function HealBot_Init_Spells_Defaults(class)
             
         [HEALBOT_LEAP_OF_FAITH] = {
             id = 73325, CastTime = 0, Mana = 155, Level = 85},
+            
+        [HEALBOT_HOLY_WORD_SERENITY] = {
+            id = 88684, CastTime = 0, Mana = 2, Level = 20},
+            
     };
     
     local _, talent = GetTalentRowSelectionInfo(4)

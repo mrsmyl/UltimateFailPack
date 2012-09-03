@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "5.0.4.2";
+HEALBOT_VERSION = "5.0.4.3";
 
 -------------
 -- ENGLISH --
@@ -183,7 +183,7 @@ HEALBOT_DEVOTION_AURA                   = GetSpellInfo(465) or "Devotion Aura";
 --HEALBOT_CONCENTRATION_AURA              = GetSpellInfo(19746) or "Concentration Aura";
 --HEALBOT_CRUSADER_AURA                   = GetSpellInfo(32223) or "Crusader Aura";
 HEALBOT_DIVINE_PROTECTION               = GetSpellInfo(498) or "Divine Protection";
-HEALBOT_ILLUMINATED_HEALING             = GetSpellInfo(76669) or "Illuminated Healing";
+HEALBOT_ILLUMINATED_HEALING             = GetSpellInfo(86273) or "Illuminated Healing";
 HEALBOT_ARDENT_DEFENDER                 = GetSpellInfo(31850) or "Ardent Defender";
 HEALBOT_HOLY_SHIELD                     = GetSpellInfo(20925) or "Holy Shield"
 HEALBOT_GUARDED_BY_THE_LIGHT            = GetSpellInfo(85646) or "Guarded by the Light";
@@ -192,10 +192,11 @@ HEALBOT_ETERNAL_FLAME                   = GetSpellInfo(114163) or "Eternal Flame
 HEALBOT_HAND_OF_PURITY                  = GetSpellInfo(114039) or "Hand of Purity";
 HEALBOT_HOLY_PRISM                      = GetSpellInfo(114165) or "Holy Prism";
 HEALBOT_EXECUTION_SENTENCE              = GetSpellInfo(114157) or "Execution Sentence";
+HEALBOT_DIVINE_PURPOSE                  = GetSpellInfo(86172) or "Divine Purpose";
 
 HEALBOT_POWER_WORD_SHIELD               = GetSpellInfo(17) or "Power Word: Shield";
 HEALBOT_POWER_WORD_BARRIER              = GetSpellInfo(62618) or "Power Word: Barrier";
-HEALBOT_ECHO_OF_LIGHT                   = GetSpellInfo(77485) or "Echo of Light";
+HEALBOT_ECHO_OF_LIGHT                   = GetSpellInfo(77489) or "Echo of Light";
 HEALBOT_GUARDIAN_SPIRIT                 = GetSpellInfo(47788) or "Guardian Spirit";
 HEALBOT_LEVITATE                        = GetSpellInfo(1706) or "Levitate";
 HEALBOT_DIVINE_AEGIS                    = GetSpellInfo(47509) or "Divine Aegis";
@@ -225,6 +226,7 @@ HEALBOT_LEAP_OF_FAITH                   = GetSpellInfo(73325) or "Leap of Faith"
 HEALBOT_EVANGELISM                      = GetSpellInfo(81661) or "Evangelism";
 HEALBOT_ARCHANGEL                       = GetSpellInfo(87151) or "Archangel";
 HEALBOT_SPIRITSHELL                     = GetSpellInfo(114908) or "Spirit Shell";
+HEALBOT_DIVINE_INSIGHT                  = GetSpellInfo(109175) or "Divine Insight";
 
 HEALBOT_CHAINHEALHOT                    = GetSpellInfo(70809) or "Chain Heal";
 HEALBOT_TIDAL_WAVES                     = GetSpellInfo(51562) or "Tidal Waves";
