@@ -1,9 +1,10 @@
 ﻿--
 -- AutoBar
 -- http://muffinmangames.com
+-- Various Artists
 --
 
-if (GetLocale() == "ptBR") then
+if (GetLocale() == "itIT") then
 	AutoBar.locale = {
 		["AutoBar"] = "AutoBar",
 		["CONFIG_WINDOW"] = "Configuration Window",

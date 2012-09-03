@@ -512,7 +512,7 @@ if (GetLocale() == "enUS") then
 		["Spell.Buff.Weapon"] = "Buff Spells: Weapon";
 		["Spell.Class.Buff"] = "Class Buff";
 		["Spell.Class.Pet"] = "Class Pet";
-		["Spell.Class.Pets2"] = "Call Pet";
+		["Spell.Class.Pets2"] = "Pet Combat";
 		["Spell.Class.Pets3"] = "Pet Misc";
 		["Spell.Crafting"] = "Crafting";
 		["Spell.Critter"] = "Pet Spells";

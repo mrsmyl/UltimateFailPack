@@ -13,6 +13,7 @@ if AutoBar.revision < REVISION then
 	AutoBar.date = ('$Date: 2010/11/13 03:23:25 $'):match('%d%d%d%d%-%d%d%-%d%d')
 end
 
+local _
 
 local AceOO = AceLibrary("AceOO-2.0")
 local BZ = LibStub("LibBabble-Zone-3.0"):GetLookupTable()

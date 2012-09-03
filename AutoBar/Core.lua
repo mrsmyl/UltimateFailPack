@@ -45,6 +45,7 @@ local AceEvent = AceLibrary("AceEvent-2.0")
 local LBF = LibStub("LibButtonFacade", true)
 local AceCfgDlg = LibStub("AceConfigDialog-3.0")
 local L
+local _
 
 -- If the Debug library is available then use it
 if AceLibrary:HasInstance("AceDebug-2.0") then
@@ -92,7 +93,6 @@ function AutoBar:OnInitialize()
 	BINDING_NAME_AutoBarButtonFoodCombo_X = L["AutoBarButtonFoodCombo"]
 	BINDING_NAME_AutoBarButtonBuff_X = L["AutoBarButtonBuff"]
 	BINDING_NAME_AutoBarButtonBuffWeapon1_X = L["AutoBarButtonBuffWeapon1"]
-	BINDING_NAME_AutoBarButtonBuffWeapon2_X = L["AutoBarButtonBuffWeapon2"]
 	BINDING_NAME_AutoBarButtonCharge_X = L["AutoBarButtonCharge"]
 	BINDING_NAME_AutoBarButtonClassBuff_X = L["AutoBarButtonClassBuff"]
 	BINDING_NAME_AutoBarButtonShields_X = L["AutoBarButtonShields"]
@@ -141,7 +141,6 @@ function AutoBar:OnInitialize()
 
 	BINDING_HEADER_AutoBarClassBarHunter = L["AutoBarClassBarHunter"]
 	BINDING_NAME_AutoBarButtonFoodPet_X = L["AutoBarButtonFoodPet"]
-	BINDING_NAME_AutoBarButtonSting_X = L["AutoBarButtonSting"]
 	BINDING_NAME_AutoBarButtonSeal_X = L["AutoBarButtonSeal"]
 	BINDING_NAME_AutoBarButtonTrap_X = L["AutoBarButtonTrap"]
 
@@ -161,7 +160,6 @@ function AutoBar:OnInitialize()
 	BINDING_NAME_AutoBarButtonTotemWater_X = L["AutoBarButtonTotemWater"]
 
 	BINDING_HEADER_AutoBarClassBarWarlock = L["AutoBarClassBarWarlock"]
-	BINDING_NAME_AutoBarButtonWarlockStones_X = L["AutoBarButtonWarlockStones"]
 
 	BINDING_HEADER_AutoBarClassBarWarrior = L["AutoBarClassBarWarrior"]
 
