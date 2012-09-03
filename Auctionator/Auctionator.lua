@@ -167,9 +167,10 @@ end
 
 function Atr_EventHandler(self, event, ...)
 
---	if (zc.StringStartsWith (event, "UNIT", "BAG")) then
---		zz (event, ...);
---	end
+	--if (zc.StringStartsWith (event, "UNIT", "BAG")) then
+	--if (true) then
+	--	zz (event, ...);
+	--end
 
 	if (event == "VARIABLES_LOADED")			then	Atr_OnLoad(); 						end;
 	if (event == "ADDON_LOADED")				then	Atr_OnAddonLoaded(...); 			end;
@@ -1917,11 +1918,19 @@ local aoa_count = 0
 
 function Atr_OnAuctionUpdate (...)
 
---	zz (aoa_count, "Atr_OnAuctionUpdate", ...);
+	local numBatchAuctions, totalAuctions = Atr_GetNumAuctionItems("list");
+
+	--zz (aoa_count, "Atr_OnAuctionUpdate", numBatchAuctions, totalAuctions, ...);
 	aoa_count = aoa_count + 1
 	
+--	if (gAtr_FullScanState == ATR_FS_STARTED or gAtr_FullScanState == ATR_FS_ANALYZING) then
+--		Atr_FullScanAnalyze()
+--		return
+--	end
+
 	if (gAtr_FullScanState == ATR_FS_STARTED or gAtr_FullScanState == ATR_FS_ANALYZING) then
-		Atr_FullScanAnalyze()
+		gAtr_FullScanState = ATR_FS_ANALYZING
+		--gAtr_FullScanState = ATR_FS_CLEANING_UP
 		return
 	end
 
@@ -2710,6 +2719,8 @@ function Atr_OnUpdate(self, elapsed)
 	if (zc.periodic (self, "idle_lastUpdate", 0.2, elapsed)) then
 		Atr_Idle (self, elapsed);
 	end
+
+
 end
 
 
@@ -2723,10 +2734,12 @@ function Atr_Idle(self, elapsed)
 		Atr_ShowRecTooltip();
 	end
 
-
+	
 	if (gAtr_FullScanState ~= ATR_FS_NULL) then
 		Atr_FullScanFrameIdle();
+		return
 	end
+
 	
 	if (verCheckMsgState == 0) then
 		verCheckMsgState = time();

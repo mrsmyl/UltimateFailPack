@@ -1231,7 +1231,7 @@ function Atr_FullScanStart()
 	
 	if (canQueryAll) then
 	
-		Atr_FullScanStatus:SetText (ZT("Scanning").."...");
+		Atr_FullScanStatus:SetText (ZT("Waiting for auction data").."...");
 		Atr_FullScanStartButton:Disable();
 		Atr_FullScanDone:Disable();
 	
@@ -1251,6 +1251,8 @@ function Atr_FullScanStart()
 		gNumUpdated = 0;
 
 		QueryAuctionItems ("", nil, nil, 0, 0, 0, 0, 0, 0, true);
+		
+		zz ("QueryAuctionItems called");
 	end
 
 end
@@ -1330,7 +1332,7 @@ function Atr_FullScanAnalyze()
 		zz ("AUCTIONATOR_DC_PAUSE: ", AUCTIONATOR_DC_PAUSE)
 	end
 
---	zz ("gAtr_FullScanPosition:", gAtr_FullScanPosition)
+	zz ("gAtr_FullScanPosition:", gAtr_FullScanPosition)
 
 	local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus
 
@@ -1385,7 +1387,6 @@ function Atr_FullScanAnalyze()
 			end
 
 			if (x % 1000 == 0) then
-				Atr_FullScanStatus:SetText (ZT("Processing"));
 				if (x < numBatchAuctions) then
 					gAtr_FullScanPosition = x + 1;
 					return;
@@ -1395,7 +1396,7 @@ function Atr_FullScanAnalyze()
 
 	end
 
-	Atr_FullScanStatus:SetText (ZT("Updating"));
+	Atr_FullScanStatus:SetText (ZT("Updating database"));
 	zz ("Updating")
 
 	local numEachQual = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -1459,8 +1460,6 @@ function Atr_FullScanAnalyze()
 	gAtr_FullScanDur = time()- gAtr_FullScanStart;
 
 	Atr_FullScanMoreDetails();
-
-	Atr_FullScanStatus:SetText (ZT("Cleaning up"));
 
 	Atr_FullScanDone:Enable();
 	Atr_FullScanStatus:SetText ("");
@@ -1569,13 +1568,28 @@ end
 
 function Atr_FullScanFrameIdle()
 
+
+	if (gAtr_FullScanState == ATR_FS_ANALYZING) then
+		Atr_FullScanAnalyze()
+	end
+	
 	if (gAtr_FullScanState == ATR_FS_STARTED) then
 
 		local btext = Atr_FullScanStatus:GetText ();
 		
 		if (btext) then
 			gAtr_FullScanDur = time()- gAtr_FullScanStart;
-			Atr_FullScanStatus:SetText (string.format ("Scanning (%s)", Atr_FullScan_GetDurString()));
+			Atr_FullScanStatus:SetText (string.format ("Waiting for auction data (%s)", Atr_FullScan_GetDurString()));
+		end
+	end
+
+	if (gAtr_FullScanState == ATR_FS_ANALYZING) then
+
+		local btext = Atr_FullScanStatus:GetText ();
+		
+		if (btext) then
+			gAtr_FullScanDur = time()- gAtr_FullScanStart;
+			Atr_FullScanStatus:SetText (string.format ("Analyzing data (%s)", Atr_FullScan_GetDurString()));
 		end
 	end
 

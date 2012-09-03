@@ -846,13 +846,13 @@ local function ShowTipWithPricing (tip, link, num)
 		local itemID = zc.ItemIDfromLink (link);
 		itemID = tonumber(itemID);
 	
-		local bonding = Atr_GetBonding(itemID);
-		local isBOP   = (bonding == 1);
-		local isQuest = (bonding == 4 or bonding == 5);
+		local bondtype = Atr_GetBondType(itemID);
 		
-		if (isBOP) then
+		if (bondtype == ATR_BIND_ON_PICKUP) then
 			tip:AddDoubleLine (ZT("Auction")..xstring, "|cFFFFFFFF"..ZT("BOP").."  ");		
-		elseif (isQuest) then
+		elseif (bondtype == ATR_BINDS_TO_ACCOUNT) then
+			tip:AddDoubleLine (ZT("Auction")..xstring, "|cFFFFFFFF"..ZT("BOA").."  ");		
+		elseif (bondtype == ATR_QUEST_ITEM) then
 			tip:AddDoubleLine (ZT("Auction")..xstring, "|cFFFFFFFF"..ZT("Quest Item").."  ");		
 		elseif (auctionPrice ~= nil) then
 			tip:AddDoubleLine (ZT("Auction")..xstring, "|cFFFFFFFF"..zc.priceToMoneyString (auctionPrice));
