@@ -1,0 +1,12 @@
+tag v50001-1.0.2
+b6da88b330d6073d8d4b543d140ad69bb3e34f59
+James Whitehead II <jnwhiteh@gmail.com>
+2012-09-02 09:17:44 +0100
+
+Tagging v50001-1.0.2
+
+
+--------------------
+
+James Whitehead II:
+	- Prevent integer overflow for crazy arrow
