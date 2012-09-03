@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ]]
 local MAJOR_VERSION = "LibActionButton-1.0"
-local MINOR_VERSION = 30
+local MINOR_VERSION = 31
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -1061,6 +1061,10 @@ function UpdateUsable(self)
 end
 
 function UpdateCount(self)
+	if not self:HasAction() then
+		self.count:SetText("")
+		return
+	end
 	if self:IsConsumableOrStackable() then
 		local count = self:GetCount()
 		if count > (self.maxDisplayCount or 9999) then

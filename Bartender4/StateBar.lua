@@ -36,7 +36,7 @@ function Bartender4.StateBar:Create(id, config, name)
 
 	if playerclass == "DRUID" or playerclass == "ROGUE" then
 		bar:RegisterEvent("PLAYER_TALENT_UPDATE")
-		bar:RegisterEvent("PLAYER_LEAVE_COMBAT")
+		bar:RegisterEvent("PLAYER_REGEN_ENABLED")
 		bar:RegisterEvent("GLYPH_UPDATED")
 		bar:SetScript("OnEvent", StateBar.OnEvent)
 	end
@@ -57,8 +57,8 @@ function StateBar:OnEvent(event, ...)
 		else
 			self:UpdateStates()
 		end
-	elseif event == "PLAYER_LEAVE_COMBAT" then
-		if self.updateStateOnCombatLeave then
+	elseif event == "PLAYER_REGEN_ENABLED" then
+		if self.updateStateOnCombatLeave and not InCombatLockdown() then
 			self.updateStateOnCombatLeave = nil
 			self:UpdateStates()
 		end
@@ -94,8 +94,9 @@ local DefaultStanceMap = setmetatable({}, { __index = function(t,k)
 		}
 	elseif k == "ROGUE" then
 		newT = {
-			{ id = "stealth", name = GetSpellInfo(1784), index = 1 },
+			-- shadowdance needs to be before stealth in the list, otherwise the condition is overwritten
 			{ id = "shadowdance", name = ("%s / %s"):format((GetSpellInfo(51713)), (GetSpellInfo(1856))), index = -1, type = "form" },
+			{ id = "stealth", name = GetSpellInfo(1784), index = 1 },
 		}
 	elseif k == "PRIEST" then
 		newT = {
@@ -104,6 +105,7 @@ local DefaultStanceMap = setmetatable({}, { __index = function(t,k)
 	elseif k == "WARLOCK" then
 		newT = {
 			{ id = "metamorphosis", name = GetSpellInfo(103958), index = 1, type = "form"},
+			--{ id = "darkapotheosis", name = GetSpellInfo(114168), index = 2, type = "form"}, -- this should work, but for some reason it doesn't.
 		}
 	elseif k == "MONK" then
 		newT = {
