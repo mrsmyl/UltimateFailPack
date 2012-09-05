@@ -191,15 +191,15 @@ function HealBot_Action_RefreshTooltip(unit, state)
     if HealBot_Globals.Tooltip_ShowTarget==1 then
         if uName then
             r,g,b=HealBot_Action_RetHealBot_ClassCol(xGUID, unit)
-            if UnitClass(unit) and UnitClass(unit)~=uName then
-                if HealBot_Globals.QueryTalents==1 and not HealBot_InspectUnit and HealBot_UnitSpec[xGUID] and (doTalentRequest[xGUID] or 0)==1 then
+            if UnitClass(unit) and UnitIsPlayer(unit) then
+                if HealBot_Globals.QueryTalents==1 and not HealBot_InspectUnit and HealBot_UnitSpec[xGUID] and (doTalentRequest[xGUID] or 1)==1 then
                     if HealBot_UnitSpec[xGUID]==" " or not HealBot_IsFighting then
                         HealBot_InspectUnit=true
                         HealBot_TalentQuery(unit)
                     end
                 end
                 text = HealBot_UnitSpec[xGUID] or "" 
-                HealBot_Tooltip_SetLine(linenum,text..uName,r,g,b,1,"Level "..UnitLevel(unit).." "..UnitClass(unit),r,g,b,1)                
+                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,"Level "..UnitLevel(unit).." "..text.." "..UnitClass(unit),r,g,b,1)                
             elseif UnitLevel(unit) then
                 HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,"Level "..UnitLevel(unit),r,g,b,1)    
             else

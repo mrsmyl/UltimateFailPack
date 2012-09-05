@@ -148,7 +148,7 @@ local xGUID = nil
 local utGUID=nil
 local uClass=nil
 local LSM = LibStub("LibSharedMedia-3.0")
---local TalentQuery = LibStub:GetLibrary("LibTalentQuery-1.0")
+local TalentQuery = LibStub:GetLibrary("LibTalentQuery-1.0")
 local HealBot_PlayerBuff={}
 local HealBot_CheckBuffs = {}
 local HealBot_ShortBuffs = {}
@@ -1744,12 +1744,12 @@ function HealBot_OnEvent_VariablesLoaded(self)
 	elseif strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_DEATHKNIGHT] then
 		HealBot_ShortBuffs[HEALBOT_HORN_OF_WINTER]=true
     end
-   -- TalentQuery.RegisterCallback(self, "TalentQuery_Ready", function(event, name, realm, unitid, guid)
-   --     HealBot_OnEvent(self, "TalentQuery_Ready", name, realm, unitid, guid)
-   -- end);
-   -- TalentQuery.RegisterCallback(self, "TalentQuery_Ready_Outsider", function(event, name, realm, unitid, guid)
-   --     HealBot_OnEvent(self, "TalentQuery_Ready_Outsider", name, realm, unitid, guid)
-   -- end);
+    TalentQuery.RegisterCallback(self, "TalentQuery_Ready", function(event, name, realm, unitid, guid)
+        HealBot_OnEvent(self, "TalentQuery_Ready", name, realm, unitid, guid)
+    end);
+    TalentQuery.RegisterCallback(self, "TalentQuery_Ready_Outsider", function(event, name, realm, unitid, guid)
+        HealBot_OnEvent(self, "TalentQuery_Ready_Outsider", name, realm, unitid, guid)
+    end);
   --  HealBot_Options_Init(1)
     HealBot_Options_Init(9)
     HealBot_setOptions_Timer(60)
@@ -4680,7 +4680,7 @@ function HealBot_retHbFocus(unitName)
 end
 
 function HealBot_OnEvent_ReadyCheck(self,unitName,timer)
-    local isLeader = IsRaidLeader() or IsRaidOfficer() or IsPartyLeader()
+    local isLeader = UnitIsGroupAssistant() or UnitIsGroupLeader()
     if isLeader then
         HealBot_luVars["rcEnd"]=nil
 		HealBot_luVars["isLeader"]=true
@@ -4856,8 +4856,8 @@ end
 
 function HealBot_TalentQuery(unit)
     if unit and UnitIsVisible(unit) and UnitIsConnected(unit) and CheckInteractDistance(unit, 1) and CanInspect(unit) then 
-        NotifyInspect(unit); 
-       -- TalentQuery:Query(unit)
+       -- NotifyInspect(unit); 
+       TalentQuery:Query(unit)
     end
 end
 
@@ -4876,16 +4876,15 @@ function HealBot_GetTalentInfo(hbGUID, unit)
     if HealBot_UnitID[hbGUID] then
         s,r=nil,nil
         if hbGUID==HealBot_PlayerGUID then
-            uClass=HealBot_PlayerClassEN
-            i = GetSpecialization(false)
+            i = GetSpecialization()
             if i then
-                _, s, _, _, _, r = select(5,GetSpecializationInfo(i,false,false)) 
+                _, s, _, _, _, r = GetSpecializationInfo(i,false,false) 
             end
         else
-            _,uClass=UnitClass(unit)
-            i = GetSpecialization(true)
+            i = GetInspectSpecialization(unit)
             if i then
-                _, s, _, _, _, r = select(5,GetSpecializationInfo(i,true,false)) 
+                _, s = GetSpecializationInfoByID(i) 
+                r = GetSpecializationRoleByID(i)
             end
         end
         if s then
@@ -4902,8 +4901,6 @@ function HealBot_GetTalentInfo(hbGUID, unit)
                 HealBot_UnitRole[hbGUID] = s
             end
             HealBot_talentSpam(hbGUID,"update",0)
-                HealBot_AddDebug("HealBot_Config.CurrentSpec="..HealBot_Config.CurrentSpec)
-                
         end
     end
   --  ClearInspectPlayer()
