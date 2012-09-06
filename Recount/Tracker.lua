@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1207 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1211 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -208,7 +208,7 @@ local AbsorbSpellDuration =
     [77535] = 10, -- Blood Shield (DK)
 	-- Druid
 	[62606] = 10, -- Savage Defense proc. (Druid) Tooltip of the original spell doesn't clearly state that this is an absorb, but the buff does.
-	[110570] = 5, -- Anti-Magic Shell (DK swap ability) (may have unverified aura trigger), MOP beta
+	[110570] = 5, -- Anti-Magic Shell (DK swap ability) (may have unverified aura trigger), MOP
 	-- Mage
 	[11426] = 60, -- Ice Barrier (Mage) Rank 1
 	[13031] = 60,
@@ -241,15 +241,15 @@ local AbsorbSpellDuration =
 	[10225] = 30,
 	[27128] = 30,
 	[43010] = 30, -- Rank 7
-	[1463] = 8, -- Incanter's Ward (Mage) (may have unverified aura trigger), MOP Beta
-	-- Monk, MOP beta
-	[116849] = 12, -- Life Cocoon (may have unverified aura trigger), MOP beta
-	[123402] = 30, -- Guard (Ox Stance, Brewmaster) (may have unverified aura trigger), MOP Beta
+	[1463] = 8, -- Incanter's Ward (Mage) (may have unverified aura trigger), MOP
+	-- Monk, MOP
+	[116849] = 12, -- Life Cocoon (may have unverified aura trigger), MOP
+	[123402] = 30, -- Guard (Ox Stance, Brewmaster) (may have unverified aura trigger), MOP
 	-- Paladin
 	[58597] = 6, -- Sacred Shield (Paladin) proc (Fixed, thanks to Julith)
 	[86273] = 6, -- Illuminated Healing
 	[88063] = 6, -- Guarded by the Light
-	[65148] = 5.67, -- Sacred Shield (Paladin) proc, MOP beta
+	[65148] = 5.67, -- Sacred Shield (Paladin) proc, MOP
 	-- Priest
 	[17] = 30, -- Power Word: Shield (Priest) Rank 1
 	[592] = 30,
@@ -273,9 +273,11 @@ local AbsorbSpellDuration =
 	[47788] = 10, -- Guardian Spirit  (Priest) (50 nominal absorb, this may not show in the CL)
 	[62618] = 25, -- Power Word: Barrier
 	[81781] = 25,
+	[109964] = 15, -- Spirit Shell (Priest) base. MOP
+	[114908] = 15, -- Spirit Shell (Priest) proc, MOP
 	-- Shaman
---	[108270] = 30, -- Stone Bulwark Totem (confirmed to be base spell, not aura), MOP Beta
-	[114893] = 30, -- Stone Bulwark Totem Aura (confirmed), MOP Beta
+--	[108270] = 30, -- Stone Bulwark Totem (confirmed to be base spell, not aura), MOP
+	[114893] = 30, -- Stone Bulwark Totem Aura (confirmed), MOP
 	-- Warlock
 	[7812] = 30, -- Sacrifice (warlock) Rank 1
 	[19438] = 30,
@@ -292,13 +294,13 @@ local AbsorbSpellDuration =
 	[28610] = 30,
 	[47890] = 30,
 	[47891] = 30, -- Rank 6
-	[6229] = 30, -- Twilight Ward (partially confirmed), MOP Beta
-	[110913] = 10, -- Dark Bargain (partially confirmed, may not be an absorb), MOP Beta
-	[91711] = 30, -- Nether Ward (may have unverified aura trigger), MOP Beta
+	[6229] = 30, -- Twilight Ward (partially confirmed), MOP
+	[110913] = 10, -- Dark Bargain (partially confirmed, may not be an absorb), MOP
+	[91711] = 30, -- Nether Ward (may have unverified aura trigger), MOP
 	-- Warrior
-	[112048] = 6, -- Shield Barrier (confirmed), MOP Beta
+	[112048] = 6, -- Shield Barrier (confirmed), MOP
 	-- Enchants
-	[116631] = 10, -- Enchant Weapon - Colossus (Aura proc, unconfirmed), MOP Beta
+	[116631] = 10, -- Enchant Weapon - Colossus (Aura proc, unconfirmed), MOP
 	-- Consumables
 	[29674] = 86400, -- Lesser Ward of Shielding
 	[29719] = 86400, -- Greater Ward of Shielding (these have infinite duration, set for a day here :P)
