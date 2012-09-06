@@ -14,13 +14,10 @@ setfenv(1, WIM);
 
 -- Core information
 addonTocName = "WIM";
-version = "3.4.2";
+version = "3.6.0";
 beta = false; -- flags current version as beta.
 debug = false; -- turn debugging on and off.
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
-
--- WOTLK check by CKKnight (we'll keep this around for now...)
-isPTR = select(4, _G.GetBuildInfo()) >= 30100;
 
 -- is Private Server?
 isPrivateServer = not (string.match(_G.GetCVar("realmList"), "worldofwarcraft.com$")
@@ -409,8 +406,7 @@ function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
 	end
     end
 	for i=1, _G.BNGetNumFriends() do
-	    local id, name, surname = _G.BNGetFriendInfo(i);
-	    name = name.." "..surname;
+	    local id, name = _G.BNGetFriendInfo(i);--in mop surname is removed and replaced by battletag and name & surname are combined into name
 	    if(name) then
 		env.cache[env.realm][env.character].friendList[name] = 2; --[set place holder for quick lookup
 		if(windows.active.whisper[name]) then

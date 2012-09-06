@@ -1,0 +1,40 @@
+------------------------------------------------------------------------
+r329 | sylvanaar | 2012-09-03 14:23:53 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   A /tags/3.6 (from /trunk:328)
+
+Tagging as 3.6
+------------------------------------------------------------------------
+r328 | mysticalos | 2012-08-28 14:49:37 +0000 (Tue, 28 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Modules/Filters.lua
+   M /trunk/Modules/History.lua
+   M /trunk/Modules/WhisperEngine.lua
+   M /trunk/Sources/Options/OptionsTookKit.lua
+   M /trunk/WIM.lua
+   M /trunk/WIM.toc
+
+Remove 4.x compat hacks, bump toc
+------------------------------------------------------------------------
+r327 | mysticalos | 2012-08-03 22:22:06 +0000 (Fri, 03 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/Modules/History.lua
+   M /trunk/Modules/WhisperEngine.lua
+   M /trunk/WIM.lua
+
+More MoP fixes. BNGetFriendInfo(). presenceID, name, surname-->presenceID, name&surname, battleTag
+Fixed another instance of BNTokenCombineGivenAndSurname --> BNTokenFindName
+------------------------------------------------------------------------
+r326 | mysticalos | 2012-08-03 17:58:49 +0000 (Fri, 03 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Modules/WhisperEngine.lua
+
+5.x changed some bnet apis again (renamed one). Update for MoP to restore whisper sending. still need more work though, they seem to redirect realid whispers to battletags now, so even if you start a conversation with a realid surname, their replies are their battletag. since battletags are available in realid api now, maybe solution is to just convert all realid whispers to battletag on send to avoid two whisper window issue when they reply?
+------------------------------------------------------------------------
+r325 | mysticalos | 2012-07-20 03:11:29 +0000 (Fri, 20 Jul 2012) | 2 lines
+Changed paths:
+   M /trunk/WIM.lua
+
+*Update version string in client since it's quite wrong. while at it, bump it since this is do for tagging anyways for a 3.6.0
+*Pretty sure wow 3.x is no longer in beta, so going to remove that while at it. :)
+------------------------------------------------------------------------

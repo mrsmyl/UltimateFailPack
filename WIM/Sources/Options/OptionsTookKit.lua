@@ -62,7 +62,7 @@ local function SetFullSize(self)
 end
 
 local function CreateButton(parent, text, fun)
-    local button = CreateFrame("Button", parent:GetName()..statObject("Button"), parent, "UIPanelButtonTemplate2");
+    local button = CreateFrame("Button", parent:GetName()..statObject("Button"), parent, "UIPanelButtonTemplate");
     button.text = _G[button:GetName().."Text"];
     button.text:SetText(text);
     button:SetWidth(button.text:GetStringWidth()+40);
