@@ -1,0 +1,12 @@
+tag v1.5.29
+a0adc1616867984bd81bfcc557754073797f1a75
+Dorwido <darkz@gmx.de>
+2012-09-05 11:27:21 +0200
+
+5.0 update
+
+
+--------------------
+
+Dorwido:
+	- updated toc and astrolabe library
