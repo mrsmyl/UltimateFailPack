@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 686 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 710 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -113,12 +113,9 @@ function XPerl_Player_OnLoad(self)
 
 	XPerl_Player_InitDK(self)
 	XPerl_Player_SetupDK(self)
-
 	XPerl_Player_InitMoonkin(self)
-	--XPerl_Player_SetupMoonkin(self)
-
 	XPerl_Player_InitWarlock(self)
-	--XPerl_Player_SetupWarlock(self)
+	
 
 	XPerl_RegisterHighlight(self.highlight, 3)
 	
@@ -531,13 +528,13 @@ local function XPerl_Player_DruidBarUpdate(self)
 	end
 
 	local form = GetShapeshiftFormID()
-	--if (self.runes ~= nil) then
+	if (self.runes ~= nil) then
 		if (form and form ~= MOONKIN_FORM) or GetPrimaryTalentTree() ~= 1 or (not pconf or not pconf.showRunes) then 
 			self.runes:Hide()
 		else
 			self.runes:Show()
 		end
-	--end
+	end
 
 	if (InCombatLockdown()) then
 		XPerl_ProtectedCall(XPerl_Player_DruidBarUpdate, self)
@@ -1322,6 +1319,7 @@ function XPerl_Player_Set_Bits(self)
 	XPerl_Player_InitPriest(self)
 	XPerl_Player_InitMonk(self)
 	XPerl_Player_InitMoonkin(self)
+	XPerl_Player_InitWarlock(self)
 	--XPerl_Player_SetupWarlock(self)
 
 	self.highlight:ClearAllPoints()
@@ -1397,19 +1395,23 @@ local SPELL_POWER_HOLY_POWER = _G.SPELL_POWER_HOLY_POWER
 
 local specialframe;
 
-local function MakeMoveable(self)
-		self.runes:SetMovable(true)
-		self.runes:RegisterForDrag("LeftButton")
+local function MakeMoveable(what)
+		--self.runes:SetMovable(true)
+		
+		what:SetMovable(true)
+		--self.runes:RegisterForDrag("LeftButton")
+		what:RegisterForDrag("LeftButton")
 		--specialframe:SetMovable(true)
 		
-		self.runes:SetScript("OnDragStart",
+		what:SetScript("OnDragStart",
 			function(self)
 				if (not pconf.dockRunes) then
 					--specialframe:StartMoving()
 					self:StartMoving()
 				end
 			end)
-		self.runes:SetScript("OnDragStop",
+			--self.runes
+		what:SetScript("OnDragStop",
 			function(self)
 				if (not pconf.dockRunes) then
 					--specialframe:StopMovingOrSizing()
@@ -1424,49 +1426,25 @@ end
 -- XPerl_Player_InitWarlock
 function XPerl_Player_InitWarlock(self)
 	if ( select(2,UnitClass("player")) == "WARLOCK" )  then
-		--[[self.shards = CreateFrame("Frame", "XPerl_Player", self)
-		
-		self.shards:SetMovable(true)
-		self.shards:RegisterForDrag("LeftButton")
-		self.shards:SetScript("OnDragStart",
-			function(self)
-				if (not pconf.dockRunes) then
-					self:StartMoving()
-				end
-			end)
-		self.shards:SetScript("OnDragStop",
-			function(self)
-				if (not pconf.dockRunes) then
-					self:StopMovingOrSizing()
-					XPerl_SavePosition(self)
-				end
-			end)
 
-		self.shards.unit = "player"
-			
-		ShardBarFrame:SetParent(self.shards)
-		ShardBarFrame:ClearAllPoints()
-		ShardBarFrame:SetPoint("TOPLEFT", XPerl_Player, "TOPLEFT", 5, -5)
-		ShardBarFrame:SetScale(0.7)
-
-		ShardBarFrameShard2:ClearAllPoints()
-		ShardBarFrameShard3:ClearAllPoints()
-		ShardBarFrameShard2:SetPoint("TOPLEFT", ShardBarFrameShard1, "TOPLEFT", 28, 0)
-		ShardBarFrameShard3:SetPoint("TOPLEFT", ShardBarFrameShard2, "TOPLEFT", 28, 0)]]--
-		
+	
+		if (not WarlockPowerFrame or WarlockPowerFrame:GetParent() ~= PlayerFrame or not WarlockPowerFrame:IsShown() or not pconf.showRunes ) then
+			-- Only hijack runes if not already done so by another mod
+			return
+		end
+	
 		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
 		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
 		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
 		WarlockPowerFrame:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 20,1)
 		self.runes.unit = "player"
-		WarlockPowerFrame:SetParent(self.runes)--XPerl_Player)
-		
-		--self.runes:SetBackdrop(nil)
+		WarlockPowerFrame:SetParent(self.runes)
+		--MakeMoveable(self)
 
 		
 	end
 	
-	XPerl_Player_InitWarlock = nil
+	--XPerl_Player_InitWarlock = nil
 end
 
 
@@ -1486,7 +1464,7 @@ function XPerl_Player_InitPaladin(self)
 		PaladinPowerBar:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 0,6)
 		self.runes.unit = "player"
 		PaladinPowerBar:SetParent(self.runes)--XPerl_Player)
-
+		--MakeMoveable(self)
 		
 	end
 end
@@ -1494,10 +1472,10 @@ end
 function XPerl_Player_InitPriest(self)
 	if ( select(2,UnitClass("player")) == "PRIEST") then
 
-		--if (not PaladinPowerBar or PaladinPowerBar:GetParent() ~= PlayerFrame or not PaladinPowerBar:IsShown() or not pconf.showRunes ) then
+		if (not PriestBarFrame or PriestBarFrame:GetParent() ~= PlayerFrame or not PriestBarFrame:IsShown() or not pconf.showRunes ) then
 			-- Only hijack runes if not already done so by another mod
-		--	return
-		--end
+			return
+		end
 
 		
 		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
@@ -1506,7 +1484,7 @@ function XPerl_Player_InitPriest(self)
 		PriestBarFrame:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 0,5)
 		self.runes.unit = "player"
 		PriestBarFrame:SetParent(self.runes)--XPerl_Player)
-
+		--MakeMoveable(self)
 		
 	end
 end
@@ -1524,7 +1502,7 @@ function XPerl_Player_InitMonk(self)
 		MonkHarmonyBar:SetPoint("TOPLEFT", self.statsFrame, "BOTTOMLEFT", 75,15)
 		self.runes.unit = "player"
 		MonkHarmonyBar:SetParent(self.runes)--XPerl_Player)
-
+		--MakeMoveable(self)
 
 		
 	end
@@ -1533,50 +1511,20 @@ end
 function XPerl_Player_InitMoonkin(self)
 	if ( select(2,UnitClass("player")) == "DRUID") then
 
-		--[[if (not EclipseBarFrame or EclipseBarFrame:GetParent() ~= PlayerFrame or not EclipseBarFrame:IsShown() or not pconf.showRunes ) then
+		if (not EclipseBarFrame or EclipseBarFrame:GetParent() ~= PlayerFrame or not EclipseBarFrame:IsShown() or not pconf.showRunes ) then
 			-- Only hijack runes if not already done so by another mod
 			return
-		end]]
+		end
 	
 	
 		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
 		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
 		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
 		EclipseBarFrame:SetPoint("TOPLEFT", self.runes, "CENTER", -60,18)
-		--XPerl_Player.unit = "player"
-		--self.runes:SetAlpha(0);
-		--EclipseBarFrame:SetParent(XPerl_Player)
 		self.runes.unit = "player"
 		--specialframe = EclipseBarFrame;
 		EclipseBarFrame:SetParent(self.runes)
 		
-		
-		MakeMoveable(self)
-
-		--[[self.runes = CreateFrame("Frame", "XPerl_Runes", self)
-
-		self.runes:SetMovable(true)
-		self.runes:RegisterForDrag("LeftButton")
-		self.runes:SetScript("OnDragStart",
-			function(self)
-				if (not pconf.dockRunes) then
-					self:StartMoving()
-				end
-			end)
-		self.runes:SetScript("OnDragStop",
-			function(self)
-				if (not pconf.dockRunes) then
-					self:StopMovingOrSizing()
-					XPerl_SavePosition(self)
-				end
-			end)
-
-		self.runes.unit = EclipseBarFrame:GetParent().unit
-		EclipseBarFrame:SetParent(self.runes)
-		EclipseBarFrame:ClearAllPoints()
-		EclipseBarFrame:SetPoint("TOPLEFT", 3, 0)
-		EclipseBarFrame:SetPoint("BOTTOMLEFT", 15, 5)]]--
-
 	end
 
 	--XPerl_Player_InitMoonkin = nil

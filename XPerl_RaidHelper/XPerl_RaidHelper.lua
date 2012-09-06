@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 644 $")
+XPerl_SetModuleRevision("$Revision: 709 $")
 
 XPerl_MainTanks = {}
 local MainTankCount, blizzMTanks, ctraTanks = 0, 0, 0
@@ -417,8 +417,12 @@ function XPerl_MTRosterChanged()
 		-- Scan roster, adding any new ones, and removing found ones from old tanks list
 		for i = 1,GetNumRaidMembers() do
 			local unitid = "raid"..i
-			if (GetPartyAssignment("maintank", unitid)) then
-				local name = UnitName(unitid)
+			if (UnitGroupRolesAssigned(unitid) == "TANK" or GetPartyAssignment("maintank", unitid)) then
+				local name = GetUnitName(unitid)
+				local name2, realm = UnitName(unitid)
+				if (name ~= name2) then
+					name = name2.."-"..realm
+				end
 				if (name ~= UNKNOWN) then
 					if (oldBlizzardNames[name]) then
 						-- We already had this tank, so leave it where it is
@@ -626,6 +630,14 @@ local function ScanForMTDups()
 	del(dups)
 end
 
+ -- updates when roles are assigned
+	--added aug 30, 2012
+function Events:PLAYER_ROLES_ASSIGNED()
+	--check for tanks for efficiency if possible
+	XPerl_MTRosterChanged()
+	XPerl_EnableDisable()
+end
+
 -- MoveArrow
 local function MoveArrow(unit)
 	XPerl_MyTarget:SetParent(unit)
@@ -694,11 +706,12 @@ local function Registration()
 			"PLAYER_ENTERING_WORLD",
 			"CHAT_MSG_ADDON",
 			"UNIT_DYNAMIC_FLAGS",
-			"UNIT_FACTION"}
+			"UNIT_FACTION",
+			"PLAYER_ROLES_ASSIGNED"}
 
 	for i,a in pairs(list) do
 		if not conf then return end
-		if (GetNumRaidMembers() > 0 and conf.RaidHelper == 1) then
+		if (conf.RaidHelper == 1) then
 			XPerl_Frame:RegisterEvent(a)
 		else
 			XPerl_Frame:UnregisterEvent(a)
@@ -757,8 +770,7 @@ function Events:RAID_ROSTER_UPDATE()
 		del(BlizzardMainTanks)
 		BlizzardMainTanks = new()
 	end
-
-	XPerl_RaidHelperCheck:Show()		-- XPerl_EnableDisable()
+	XPerlRaidHelperCheck:show()
 end
 
 -- UNIT_HEALTH
@@ -923,8 +935,10 @@ end
 function Events:PLAYER_REGEN_ENABLED()
 	if (pendingTankListChange) then
 		XPerl_MakeTankList()
+		XPerl_MTRosterChanged()
 	end
 	DoButtons()
+	XPerl_RaidHelperCheck:Show()		-- XPerl_EnableDisable()
 end
 Events.PLAYER_ENTERING_WORLD = Events.PLAYER_REGEN_ENABLED
 

@@ -6,8 +6,8 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 679 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 679 $")
+XPerl_SetModuleRevision("$Revision: 700 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 700 $")
  
 --Some local copies for speed
 local strsub = strsub
@@ -1487,14 +1487,22 @@ local function GetTalentValueByName(name)
 	return 0
 end
 
-local MagicCureTalents = {
+--[[local MagicCureTalents = {
 	["DRUID"] = GetSpellInfo(88423),			-- Nature's Cure
 	["PALADIN"] = GetSpellInfo(53551),			-- Sacred Cleansing
 	["SHAMAN"] = GetSpellInfo(77130),			-- Improved Cleanse Spirit
+}]]--
+
+local MagicCureTalents = {
+	["DRUID"] = 88423,			-- Nature's Cure
+	["PALADIN"] = 53551,			-- Sacred Cleansing
+	["SHAMAN"] = 77130,			-- Improved Cleanse Spirit
 }
+
 local function CanClassCureMagic(class)
 	if (MagicCureTalents[class]) then
-		return GetTalentValueByName(MagicCureTalents[class]) > 0
+		--return GetTalentValueByName(MagicCureTalents[class]) > 0
+		return IsSpellKnown(MagicCureTalents[class])	
 	end
 end
 
@@ -1548,7 +1556,7 @@ function XPerl_DebufHighlightInit()
 				show = Curses.Magic or Curses.Curse or Curses.Poison or Curses.Disease
 			end
 			local magic
-			if (GetPrimaryTalentTree() == 1 and CanClassCureMagic(playerClass)) then
+			if (CanClassCureMagic(playerClass)) then
 				magic = Curses.Magic
 			end
 			return Curses.Poison or Curses.Disease or magic or show
@@ -2263,8 +2271,11 @@ local function GetFreeFader(parent)
 
 		local tex = parent:GetStatusBarTexture()
 		bar:SetStatusBarTexture(tex:GetTexture())
-		bar:GetStatusBarTexture():SetHorizTile(false)
-		bar:GetStatusBarTexture():SetVertTile(false)
+		local sbt = bar:GetStatusBarTexture()
+		if sbt then
+			bar:GetStatusBarTexture():SetHorizTile(false)
+			bar:GetStatusBarTexture():SetVertTile(false)
+		end
 
 		local r, g, b = bar.tex:GetVertexColor()
 		bar:SetStatusBarColor(r, g, b)
@@ -2592,7 +2603,7 @@ local function AuraButtonOnShow(self)
 		cd:SetAllPoints()
 	end
 	cd:SetReverse(true)
-	cd:SetDrawEdge(true)
+	--cd:SetDrawEdge(true) Blizzard removed this call from 5.0.4, commented it out to avoid lua error
 	
 	if (not cd.countdown) then
 		cd.countdown = self.cooldown:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")

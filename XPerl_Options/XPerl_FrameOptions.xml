@@ -4646,7 +4646,7 @@
 						<Scripts>
 							<OnLoad>
 								local _, class = UnitClass("player")
-								if (class ~= "DEATHKNIGHT" and class ~= "DRUID" and class ~= "WARLOCK" and class ~= "PALADIN") then
+								if (class ~= "DEATHKNIGHT" and class ~= "DRUID" and class ~= "WARLOCK" and class ~= "PALADIN" and class ~= "PRIEST" and class ~= "MONK") then
                                     self:Hide()
 								end
 
@@ -4671,7 +4671,7 @@
 						<Scripts>
 							<OnLoad>  
 								local _, class = UnitClass("player")
-								if (class ~= "DEATHKNIGHT" and class ~= "DRUID" and class ~= "WARLOCK") then
+								if (class ~= "DEATHKNIGHT" and class ~= "DRUID" and class ~= "WARLOCK" and class ~= "PALADIN" and class ~= "PRIEST" and class ~= "MONK") then
 									self:Hide()
 								end
 
@@ -4692,7 +4692,7 @@
 						<Scripts>
 							<OnLoad>
 								local _, class = UnitClass("player")
-								if (class ~= "DEATHKNIGHT" and class ~= "DRUID" and class ~= "WARLOCK" and class ~= "PALADIN") then
+								if (class ~= "DEATHKNIGHT" and class ~= "DRUID" and class ~= "WARLOCK" and class ~= "PALADIN" and class ~= "PRIEST" and class ~= "MONK") then
                                     self:ClearAllPoints()
                                     self:SetPoint("TOPLEFT", XPerl_Options_Player_Options_ShowRunes, "TOPLEFT")
 								end

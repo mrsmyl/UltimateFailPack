@@ -13,12 +13,12 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 678 $")
+		end, "$Revision: 691 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
 local format = format
-local GetNumRaidMembers = GetNumRaidMembers
+
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitIsConnected = UnitIsConnected
@@ -33,7 +33,7 @@ local partyHeader
 local partyAnchor
 
 local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+
 local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
 
 
@@ -57,6 +57,9 @@ function XPerl_Party_Events_OnLoad(self)
 	partyHeader:UnregisterEvent("UNIT_NAME_UPDATE")			-- IMPORTANT! Fix for WoW 2.1 UNIT_NAME_UPDATE lockup issues
 	UIParent:UnregisterEvent("RAID_ROSTER_UPDATE")			-- IMPORTANT! Stops raid framerate lagging when members join/leave/zone
 
+	
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")--Try detecting when we switch to raid.
+	
 	for i = 1,4 do
 		XPerl_BlizzFrameDisable(getglobal("PartyMemberFrame"..i))
 	end
@@ -706,7 +709,7 @@ end
 
 -- XPerl_Party_SingleGroup
 function XPerl_Party_SingleGroup()
-	local num = GetNumRaidMembers()
+	local num = GetNumGroupMembers()
 	if (num > 5) then
 		return
 	end
@@ -725,9 +728,11 @@ local function CheckRaid()
 		XPerl_OutOfCombatQueue[CheckRaid] = false
 	else
 		partyAnchor:StopMovingOrSizing()
-
+		
+		--print("called");
 		local singleGroup = XPerl_Party_SingleGroup()
-		if (not pconf or (pconf.inRaid or (pconf.smallRaid and singleGroup) or GetNumRaidMembers() == 0)) then
+		
+		if (not pconf or (pconf.inRaid or (pconf.smallRaid and singleGroup)  or (GetNumGroupMembers() > 0 and not IsInRaid() ))) then -- or GetNumGroupMembers() > 0
 			if (not partyHeader:IsShown()) then
 				partyHeader:Show()
 			end
@@ -943,15 +948,10 @@ end
 -- 		end
 -- 	end
 -- end
-    local function list_iter (t)
-      local i = 0
-      local n = table.getn(t)
-      return function ()
-               i = i + 1
-               if i <= n then return t[i] end
-             end
-    end
 
+function XPerl_Party_Events:GROUP_ROSTER_UPDATE()
+	CheckRaid()
+end
 
 function XPerl_Party_Events:PARTY_LOOT_METHOD_CHANGED()
 	

@@ -55,7 +55,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 644 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 704 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -116,6 +116,14 @@ function XPerl_Raid_OnLoad(self)
 	self.time = 0
 	self.Array = {}
 
+
+	--Disable the creation of blizz CompactRaidFrameX, theres an issue with taint due to dropdown with more 7 items
+	--From http://www.wowinterface.com/forums/showpost.php?p=261589&postcount=5
+	if (rconf.enable) then
+		CompactRaidFrameManager:SetParent(self)
+		CompactUnitFrameProfiles:UnregisterAllEvents()
+	end
+	
 	XPerl_RegisterOptionChanger(function()
 		if (raidLoaded) then
 			XPerl_RaidTitles()

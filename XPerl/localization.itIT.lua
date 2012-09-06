@@ -1,13 +1,12 @@
 ﻿-- X-Perl UnitFrames
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
-
 if (GetLocale() == "itIT") then
 XPerl_ProductName		= "|cFFD00000X-Perl|r UnitFrames"
 XPerl_ShortProductName	= "|cFFD00000X-Perl|r"
 XPerl_Author			= "|cFFFF8080Zek|r"
 XPerl_Description		= XPerl_ProductName.." di "..XPerl_Author
-XPerl_VersionNumber 	= "3.5.3"
+
 XPerl_Version			= XPerl_Description.." - "..XPerl_VersionNumber
 XPerl_LongDescription	= "Sostituzione dell'UnitFrame del Personaggio, Famiglio, Gruppo, Bersaglio, Bersaglio del Bersaglio, Focus e Incursioni"
 XPerl_ModMenuIcon		= "Interface\\Icons\\INV_Misc_Gem_Pearl_02"

@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 685 $")
+			end, "$Revision: 705 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -1066,8 +1066,7 @@ XPerl_ShowMessage("EXTRA EVENT")
 	local func = XPerl_Target_Events[event]
 	local unitid = select(1,...);
 	if (strsub(event, 1, 5) == "UNIT_") then
-	
-	 	if (unitid == "target" or unitid == "focus") then
+		if (unitid == "target" or unitid == "focus" or event == "UNIT_COMBO_POINTS") then
 		--print(event)
 			func(self, ...)
 		end

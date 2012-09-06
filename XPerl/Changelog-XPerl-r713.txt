@@ -1,4 +1,170 @@
 ------------------------------------------------------------------------
+r713 | tharai | 2012-09-04 07:31:45 +0000 (Tue, 04 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+Bump version again....
+------------------------------------------------------------------------
+r712 | ywfn | 2012-09-04 07:12:21 +0000 (Tue, 04 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/localization.itIT.lua
+
+Remove debug print() that was left in
+
+------------------------------------------------------------------------
+r711 | tharai | 2012-09-04 06:48:16 +0000 (Tue, 04 Sep 2012) | 6 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/localization.itIT.lua
+   M /trunk/localization.itIT.lua
+   M /trunk/localization.lua
+
+Remove XPerl_VersionNumber from itIt translation. string should only be in the default localization.lua
+
+Fix issue with itIT options localization.
+
+Bump version number to 3.5.9
+Tagging as release.
+------------------------------------------------------------------------
+r710 | tharai | 2012-09-04 06:41:05 +0000 (Tue, 04 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Fix special bar options not working
+Undocking bars is still not implemented.
+------------------------------------------------------------------------
+r709 | asixandur | 2012-09-04 05:01:03 +0000 (Tue, 04 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
+
+Pushing u133rl337's RaidHelper fixes
+------------------------------------------------------------------------
+r708 | asixandur | 2012-09-04 04:56:27 +0000 (Tue, 04 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Highlight.lua
+
+Fixed errors in dungeons (Issue 1387)
+------------------------------------------------------------------------
+r707 | tharai | 2012-09-03 21:46:07 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   D /trunk/changelog-nymbia.txt
+   D /trunk/changelog.txt
+
+Remove changelog files.
+------------------------------------------------------------------------
+r706 | tharai | 2012-09-03 21:42:03 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+
+Fix pet issues, seems like some events get sent to player rather then the pet unit.
+------------------------------------------------------------------------
+r705 | tharai | 2012-09-03 21:22:40 +0000 (Mon, 03 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Loosen the check on UNIT_COMBO_POINTS in onevent, since it gets checked anyway in the function its self..
+This could probably be further improved as I don't think we get this event ever for other players no matter what...
+------------------------------------------------------------------------
+r704 | tharai | 2012-09-03 21:20:30 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Only disable bliz raid frames if ours is enabled.
+------------------------------------------------------------------------
+r703 | asixandur | 2012-09-03 16:38:19 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+More itIT strings
+------------------------------------------------------------------------
+r702 | asixandur | 2012-09-03 14:03:39 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+Almost finished XPerl_Options itIT translation
+------------------------------------------------------------------------
+r701 | asixandur | 2012-09-03 11:42:59 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Fixed Combo points not updating properly on Druid Cat
+------------------------------------------------------------------------
+r700 | ywfn | 2012-09-03 11:21:10 +0000 (Mon, 03 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl.lua
+
+Add simple sanity check to avoid occasional problem seen when Fading Bars is enabled
+
+------------------------------------------------------------------------
+r699 | asixandur | 2012-09-03 10:08:12 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Fixed SetDrawEdge lua error
+------------------------------------------------------------------------
+r698 | asixandur | 2012-09-03 04:51:50 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+More itIT Strings
+------------------------------------------------------------------------
+r697 | tharai | 2012-09-03 04:14:18 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+This is better...
+------------------------------------------------------------------------
+r696 | tharai | 2012-09-03 04:11:31 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Undo last commit, i dont like the way it works.
+------------------------------------------------------------------------
+r695 | tharai | 2012-09-03 03:58:14 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Use some code from http://www.wowinterface.com/forums/showpost.php?p=261589&postcount=5
+------------------------------------------------------------------------
+r694 | tharai | 2012-09-02 18:34:40 +0000 (Sun, 02 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Tweak highlite code
+------------------------------------------------------------------------
+r693 | asixandur | 2012-09-01 16:34:42 +0000 (Sat, 01 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+More itIT Strings. With the help of some friends, I will probably finish itIT translation in a few days
+------------------------------------------------------------------------
+r692 | asixandur | 2012-09-01 13:42:16 +0000 (Sat, 01 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+Lots of itIT strings
+------------------------------------------------------------------------
+r691 | tharai | 2012-08-31 22:12:54 +0000 (Fri, 31 Aug 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Party/XPerl_Party.lua
+
+Party frames fix for not showing up without either raid option enabled. 
+Fix party frames not being hidden once entering a raid.
+------------------------------------------------------------------------
+r690 | asixandur | 2012-08-31 16:22:09 +0000 (Fri, 31 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+More itIT work
+------------------------------------------------------------------------
+r689 | asixandur | 2012-08-31 13:40:34 +0000 (Fri, 31 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+More itIT work
+------------------------------------------------------------------------
 r688 | tharai | 2012-08-31 12:15:16 +0000 (Fri, 31 Aug 2012) | 2 lines
 Changed paths:
    M /trunk/XPerl.toc
@@ -333,34 +499,4 @@ Changed paths:
    M /trunk/XPerl_Player/XPerl_Player.lua
 
 Shit buffs for paladins.
-------------------------------------------------------------------------
-r644 | THARAI | 2012-08-02 17:41:15 +0000 (Thu, 02 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl.lua
-   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
-   M /trunk/XPerl_Party/XPerl_Party.lua
-   M /trunk/XPerl_PartyPet/XPerl_Party_Pet.lua
-   M /trunk/XPerl_Player/XPerl_Player.lua
-   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
-   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.lua
-   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
-   M /trunk/XPerl_RaidFrames/XPerl_Raid.xml
-   M /trunk/XPerl_RaidHelper/XPerl_AssistFrame.lua
-   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
-   M /trunk/XPerl_RaidPets/XPerl_RaidPets.lua
-   M /trunk/localization.lua
-
-Mop stuff
-------------------------------------------------------------------------
-r643 | THARAI | 2012-08-02 16:07:18 +0000 (Thu, 02 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-
-Blizzard paladin power bar.
-------------------------------------------------------------------------
-r642 | THARAI | 2012-07-28 17:04:54 +0000 (Sat, 28 Jul 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Improve target onevent performance.
 ------------------------------------------------------------------------
