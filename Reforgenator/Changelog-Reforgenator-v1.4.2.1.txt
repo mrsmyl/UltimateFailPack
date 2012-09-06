@@ -1,0 +1,14 @@
+tag v1.4.2.1
+eb492659d4d2958beb588313fcd7c8d09d4d98a3
+dnewell <newell.donald@gmail.com>
+2012-09-04 09:37:21 -0400
+
+Tagging as release v1.4.2.1
+
+
+--------------------
+
+dnewell:
+	- bumped rev to 1.4.2.1 for fix of Lua errors
+	- missed a few instances of GetTalentInfo
+	Commented them out

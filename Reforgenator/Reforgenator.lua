@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "1.3.19"
+local version = "v1.4.2.1"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -338,7 +338,12 @@ function Reforgenator:OnInitialize()
 
     tinsert(UISpecialFrames, "ReforgenatorPanel")
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:InitializeConstants()
     Reforgenator.constants = {}
     local c = Reforgenator.constants
@@ -349,7 +354,7 @@ function Reforgenator:InitializeConstants()
         "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot",
         "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot",
         "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot",
-        "RangedSlot"
+        --"RangedSlot"															      --Ranged slot causes an error so comment it out
     }
 
     c.ORDERED_ITEM_STATS = 
@@ -412,7 +417,7 @@ function Reforgenator:InitializeConstants()
         [1] = 14.7905,
         [2] = 30.7548,
         [3] = 120.109,
-		[4] = 400,						-- Tennative 
+		[4] = 340,						-- Tennative Setting as per discussion
     }
     local SPELL_HIT_RATING_CONVERSIONS = 
 	{
@@ -420,7 +425,7 @@ function Reforgenator:InitializeConstants()
         [1] = 12.6154,
         [2] = 26.232,
         [3] = 102.446,
-		[4] = 400,						-- Tennative
+		[4] = 255,						-- Tennative Setting as per discussion
     }
     local EXP_RATING_CONVERSIONS = 
 	{
@@ -428,7 +433,7 @@ function Reforgenator:InitializeConstants()
         [1] = 3.69761,
         [2] = 7.68869,
         [3] = 30.0272,
-		[4] = 400,						-- Tennative 
+		[4] = 340,						-- Tennative Setting as per discussion
     }
     local HASTE_RATING_CONVERSIONS = 
 	{
@@ -436,7 +441,7 @@ function Reforgenator:InitializeConstants()
         [1] = 15.7692,
         [2] = 32.79,
         [3] = 128.05701,
-		[4] = 500,						-- Tennative 
+		[4] = 425,						-- Tennative Setting as per discussion
     }
     local MASTERY_RATING_CONVERSIONS = 
 	{
@@ -444,7 +449,7 @@ function Reforgenator:InitializeConstants()
         [1] = 22.0769,
         [2] = 45.906,
         [3] = 179.28,
-		[4] = 700,						-- Tennative 
+		[4] = 600,						-- Tennative Setting as per discussion
     }
 
     local CRIT_RATING_CONVERSIONS = 
@@ -1323,7 +1328,7 @@ function Reforgenator:ModelEditorScrollbar_Update()
 end
 
 function Reforgenator:GetPlayerKey()
-    return GetUnitName("player") .. "-" .. GetRealmName() .. "/" .. GetActiveTalentGroup(false, false)
+    return GetUnitName("player") .. "-" .. GetRealmName() .. "/" .. GetActiveSpecGroup(false, false)
 end
 
 function Reforgenator:ModelSelection_OnInitialize()
@@ -1392,7 +1397,7 @@ function Reforgenator:SandboxSelection_OnInitialize()
     local info = UIDropDownMenu_CreateInfo()
     info.text = "Leave reforged items alone"
     info.func = function(self)
-        local talentGroup = GetActiveTalentGroup(false, false)
+        local talentGroup = GetActiveSpecGroup(false, false)
         Reforgenator.db.char.useSandbox[talentGroup] = nil
         UIDropDownMenu_SetSelectedName(ReforgenatorPanel_SandboxSelection, self.value)
         Reforgenator:ShowState()
@@ -1403,7 +1408,7 @@ function Reforgenator:SandboxSelection_OnInitialize()
 
     info.text = "Consider reforging anything"
     info.func = function(self)
-        local talentGroup = GetActiveTalentGroup(false, false)
+        local talentGroup = GetActiveSpecGroup(false, false)
         Reforgenator.db.char.useSandbox[talentGroup] = true
         UIDropDownMenu_SetSelectedName(ReforgenatorPanel_SandboxSelection, self.value)
         Reforgenator:ShowState()
@@ -1421,7 +1426,7 @@ function Reforgenator:SandboxSelection_OnShow()
     UIDropDownMenu_Initialize(ReforgenatorPanel_SandboxSelection, func)
     UIDropDownMenu_SetWidth(ReforgenatorPanel_SandboxSelection, 230)
 
-    local talentGroup = GetActiveTalentGroup(false, false)
+    local talentGroup = GetActiveSpecGroup(false, false)
     if db.char.useSandbox[talentGroup] then
         UIDropDownMenu_SetSelectedID(ReforgenatorPanel_SandboxSelection, 2)
     else
@@ -1443,7 +1448,7 @@ function Reforgenator:TargetLevelSelection_OnInitialize()
     for k,v in ipairs(c.REFORGING_TARGET_LEVELS) do
         info.text = v
         info.func = function(self)
-            local talentGroup = GetActiveTalentGroup(false, false)
+            local talentGroup = GetActiveSpecGroup(false, false)
             Reforgenator.db.char.targetLevelSelection[talentGroup] = k
             UIDropDownMenu_SetSelectedName(ReforgenatorPanel_TargetLevelSelection, self.value)
             Reforgenator:ShowState()
@@ -1462,7 +1467,7 @@ function Reforgenator:TargetLevelSelection_OnShow()
     UIDropDownMenu_Initialize(ReforgenatorPanel_TargetLevelSelection, func)
     UIDropDownMenu_SetWidth(ReforgenatorPanel_TargetLevelSelection, 230)
 
-    local talentGroup = GetActiveTalentGroup(false, false)
+    local talentGroup = GetActiveSpecGroup(false, false)
     local selected = Reforgenator.db.char.targetLevelSelection
     UIDropDownMenu_SetSelectedID(ReforgenatorPanel_TargetLevelSelection, selected[talentGroup] or 2)
 end
@@ -1637,28 +1642,38 @@ end
 function PlayerModel:isEnhShaman()
     return self.className == "SHAMAN" and self.primaryTab == 2
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:GetPlayerModel()
     local playerModel = PlayerModel:new()
 
     local function getPrimaryTab()
         local primary = 
 		{
-            tab = nil,
-            points = 0,
-            isUnlocked = true
+            tab = 1,
+           -- points = 0,
+            --role = ' '
+			
         }
-        for i=1,GetNumTalentTabs() do
-            local _, _, _, _, points, _, _, isUnlocked = GetTalentTabInfo(i)
-            if points > primary.points then
-                primary = 
-				{
-                    tab = i,
-                    points = points,
-                    isUnlocked = isUnlocked
-                }
-            end
-        end
+		local currentSpec = GetSpecialization()
+			--local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
+			print("Your current spec:", currentSpec)
+		
+      --  for i=1,GetNumSpecializations() do												--5.04 API change GetNumTalentTabs ? GetNumSpecializations
+      --      local _, _, _, _, points,  role = GetSpecializationInfo(i)		--5.04 API change GetTalentTabInfo ? GetSpecializationInfo
+      --      if points > primary.points then
+      --          primary = 
+	--			{
+    ----                tab = i,
+      --              points = points,
+      --              role = role
+      --          }
+      --      end
+      --  end
 
         return primary.tab
     end
@@ -1680,7 +1695,7 @@ function Reforgenator:GetPlayerModel()
     playerModel.primaryTab = getPrimaryTab()
     playerModel.race = select(2, UnitRace("player"))
     playerModel.mainHandWeaponType = getMainHandWeaponType()
-    playerModel.talentGroup = GetActiveTalentGroup(false, false)
+    playerModel.talentGroup = GetActiveSpecGroup(false, false)
 
     self:Explain("level=" .. UnitLevel("player"))
     self:Explain("className=" .. playerModel.className)
@@ -1729,31 +1744,31 @@ function Reforgenator:GetPlayerModel()
             playerModel.spiritHitConversionRate = 1
         end
     end
+-- ************************************************************8 This block needs to be rewritten as all talents have changed drastically
+    --if playerModel.className == "PRIEST" then
+    --    local points = select(5, GetTalentInfo(3, 7))
+    --    self:Explain("talent points in Twisted Faith=" .. points)
+    --    pointsOutOf2(points)
+   -- end
 
-    if playerModel.className == "PRIEST" then
-        local points = select(5, GetTalentInfo(3, 7))
-        self:Explain("talent points in Twisted Faith=" .. points)
-        pointsOutOf2(points)
-    end
+   -- if playerModel.className == "SHAMAN" then
+   --     local points = select(5, GetTalentInfo(1, 7))
+   --     self:Explain("talent points in Elemental Precision=" .. points)
+   --     pointsOutOf3(points)
+   -- end
 
-    if playerModel.className == "SHAMAN" then
-        local points = select(5, GetTalentInfo(1, 7))
-        self:Explain("talent points in Elemental Precision=" .. points)
-        pointsOutOf3(points)
-    end
+   -- if playerModel.className == "PALADIN" then
+   --     local points = select(5, GetTalentInfo(1, 11))
+   --     self:Explain("talent points in Enlightened Judgements=" .. points)
+   --     pointsOutOf2(points)
+   -- end
 
-    if playerModel.className == "PALADIN" then
-        local points = select(5, GetTalentInfo(1, 11))
-        self:Explain("talent points in Enlightened Judgements=" .. points)
-        pointsOutOf2(points)
-    end
-
-    if playerModel.className == "DRUID" then
-        local points = select(5, GetTalentInfo(1, 6))
-        self:Explain("talent points in Balance of Power=" .. points)
-        pointsOutOf2(points)
-    end
-
+    --if playerModel.className == "DRUID" then
+    --    local points = select(5, GetTalentInfo(1, 6))
+    --    self:Explain("talent points in Balance of Power=" .. points)
+    --    pointsOutOf2(points)
+    --end
+--****************************************************************************8  End block 
     self:Explain("spiritHitConversionRate=" .. to_string(playerModel.spiritHitConversionRate))
     if playerModel.spiritHitConversionRate then
         playerModel.statEffectMap["ITEM_MOD_SPIRIT_SHORT"] = {
@@ -1763,7 +1778,12 @@ function Reforgenator:GetPlayerModel()
 
     return playerModel
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:CalculateHitMods(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.meleeHit
@@ -1780,21 +1800,21 @@ function Reforgenator:CalculateHitMods(playerModel)
     if playerModel:isFuryWarrior() then
         self:Explain("3% to hit for being Fury warrior due to Precision")
         reduction = reduction + (3 * K)
-    end
+   end
 
-    -- Rogues get varying amounts based on Precision talent
-    if playerModel.className == "ROGUE" then
-        local pointsInPrecision = select(5, GetTalentInfo(2, 3))
-        self:Explain((2 * pointsInPrecision) .. "% to hit for being Rogue with Precision talent")
-        reduction = reduction + (K * 2 * pointsInPrecision)
-    end
+    -- Rogues get varying amounts based on Precision talent        ***** uses GetTalentInfo which changed in 5.04
+   -- if playerModel.className == "ROGUE" then
+   ----     local pointsInPrecision = select(5, GetTalentInfo(2, 3))
+   --     self:Explain((2 * pointsInPrecision) .. "% to hit for being Rogue with Precision talent")
+   --     reduction = reduction + (K * 2 * pointsInPrecision)
+   -- end
 
-    -- Frost DKs get varying amounts if they're DW and have Nerves of Cold Steel
-    if playerModel.className == "DEATHKNIGHT" and playerModel.mainHandWeaponType:sub(1, 10) ~= "Two-handed" then
-        local pointsInNoCS = select(5, GetTalentInfo(2, 3))
-        self:Explain((pointsInNoCS) .. "% to hit for being DW DK with Nerves of Cold Steel talent")
-        reduction = reduction + (K * pointsInNoCS)
-    end
+    -- Frost DKs get varying amounts if they're DW and have Nerves of Cold Steel   ***** uses GetTalentInfo which changed in 5.04
+   -- if playerModel.className == "DEATHKNIGHT" and playerModel.mainHandWeaponType:sub(1, 10) ~= "Two-handed" then
+   --     local pointsInNoCS = select(5, GetTalentInfo(2, 3))
+   --     self:Explain((pointsInNoCS) .. "% to hit for being DW DK with Nerves of Cold Steel talent")
+   --     reduction = reduction + (K * pointsInNoCS)
+   -- end
 
     self:Explain("hit rating modification = " .. reduction)
     return reduction
@@ -1851,7 +1871,12 @@ function Reforgenator:CalculateRangedHitCap(playerModel)
 
     return hitCap
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:CalculateSpellHitCap(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.spellHit
@@ -1868,11 +1893,11 @@ function Reforgenator:CalculateSpellHitCap(playerModel)
     end
 
     -- Rogues get varying amounts based on Precision talent
-    if playerModel.className == "ROGUE" then
-        local pointsInPrecision = select(5, GetTalentInfo(2, 3))
-        self:Explain((2 * pointsInPrecision) .. "% to hit for being Rogue with Precision talent")
-        hitCap = hitCap - (K * 2 * pointsInPrecision)
-    end
+   -- if playerModel.className == "ROGUE" then
+   --     local pointsInPrecision = select(5, GetTalentInfo(2, 3))
+   --     self:Explain((2 * pointsInPrecision) .. "% to hit for being Rogue with Precision talent")
+   --     hitCap = hitCap - (K * 2 * pointsInPrecision)
+   -- end
 
     -- Death Knights get 9% spell hit from Runic Focus
     if playerModel.className == "DEATHKNIGHT" then
@@ -1885,7 +1910,12 @@ function Reforgenator:CalculateSpellHitCap(playerModel)
 
     return hitCap
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:ExpertiseMods(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.expertise
@@ -1949,11 +1979,11 @@ function Reforgenator:ExpertiseMods(playerModel)
         end
     end
 
-    if playerModel.className == "SHAMAN" then
-        local pointsInUnleashedRage = select(5, GetTalentInfo(2, 16))
-        self:Explain("+" .. (4 * pointsInUnleashedRage) .. "expertise for being Shaman with Unleashed Rage talent")
-        reduction = reduction + (4 * pointsInUnleashedRage * K)
-    end
+  --  if playerModel.className == "SHAMAN" then
+  --      local pointsInUnleashedRage = select(5, GetTalentInfo(2, 16))
+  --      self:Explain("+" .. (4 * pointsInUnleashedRage) .. "expertise for being Shaman with Unleashed Rage talent")
+  --      reduction = reduction + (4 * pointsInUnleashedRage * K)
+  --  end
 
     self:Explain("expertise rating modification = " .. reduction)
     return reduction
@@ -1986,7 +2016,12 @@ function Reforgenator:CalculateExpertiseHardCap(playerModel)
     self:Explain("target expertise rating = " .. expertiseCap)
     return expertiseCap
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:HasteTo1SecGCD(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.haste
@@ -1996,17 +2031,17 @@ function Reforgenator:HasteTo1SecGCD(playerModel)
 
     local reduction = 0
 
-    if playerModel.className == "PRIEST" then
-        local pointsInDarkness = select(5, GetTalentInfo(3, 1))
-        self:Explain((pointsInDarkness) .. "% spell haste for being Priest with Darkenss talent")
-        reduction = reduction + (pointsInDarkness * K)
-    end
+   --- if playerModel.className == "PRIEST" then
+   --     local pointsInDarkness = select(5, GetTalentInfo(3, 1))
+   --     self:Explain((pointsInDarkness) .. "% spell haste for being Priest with Darkenss talent")
+   --     reduction = reduction + (pointsInDarkness * K)
+    --end
 
-    if playerModel.className == "DRUID" then
-        local moonkinForm = select(5, GetTalentInfo(1, 8))
-        self:Explain((5 * moonkinForm) .. "% spell haste for being Druid with moonkin form")
-        reduction = reduction + (moonkinForm * 5 * K)
-    end
+    --if playerModel.className == "DRUID" then
+    --    local moonkinForm = select(5, GetTalentInfo(1, 8))
+    --    self:Explain((5 * moonkinForm) .. "% spell haste for being Druid with moonkin form")
+    --    reduction = reduction + (moonkinForm * 5 * K)
+   -- end
 
     if playerModel.race == "Goblin" then
         self:Explain("1% haste for being a Goblin")
@@ -2021,7 +2056,12 @@ end
 function Reforgenator:CalculateMaximumValue(playerModel)
     return 9999
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:CalculateFrostSoftCritCap(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.crit
@@ -2031,18 +2071,23 @@ function Reforgenator:CalculateFrostSoftCritCap(playerModel)
 
     local reduction = 0
 
-    if playerModel.className == "MAGE" then
-        local pointsInPiercingIce = select(5, GetTalentInfo(3, 2))
-        self:Explain((pointsInPiercingIce) .. "% to crit for being Mage with Piercing Ice talent")
-        reduction = reduction + (K * pointsInPiercingIce)
-    end
+   -- if playerModel.className == "MAGE" then
+    --    local pointsInPiercingIce = select(5, GetTalentInfo(3, 2))
+    --    self:Explain((pointsInPiercingIce) .. "% to crit for being Mage with Piercing Ice talent")
+   --     reduction = reduction + (K * pointsInPiercingIce)
+  --  end
 
     critCap = math.ceil(critCap - reduction)
 
     self:Explain("calculated target crit rating = " .. critCap)
     return critCap
 end
-
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
+--****************************************************************************************
 function Reforgenator:CalculateFireSoftHasteCap(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.haste
@@ -2051,11 +2096,11 @@ function Reforgenator:CalculateFireSoftHasteCap(playerModel)
 
     local reduction = 0
 
-    if playerModel.className == "MAGE" then
-        local pointsInNP = select(5, GetTalentInfo(1, 3))
-        self:Explain((pointsInNP) .. "% to haste for being Mage with Netherwind Presence talent")
-        reduction = reduction + (K * pointsInNP)
-    end
+   -- if playerModel.className == "MAGE" then
+   --     local pointsInNP = select(5, GetTalentInfo(1, 3))
+   --     self:Explain((pointsInNP) .. "% to haste for being Mage with Netherwind Presence talent")
+  --      reduction = reduction + (K * pointsInNP)
+   -- end
 
     hasteCap = math.ceil(hasteCap - reduction)
 
@@ -2279,7 +2324,6 @@ end
  
 -- Druid  111111111111111111111111111111111111111111111111111111111111111111111
 
--- there are 2 separate models for Bear form one for increased EXP the other for increased Dodge (threat vs survivability)
 -- TODO
 function Reforgenator:BearSurvivalModel()	-- going to call this one Survival
     local model = ReforgeModel:new()
