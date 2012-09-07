@@ -284,7 +284,7 @@ function Guild:GUILD_ROSTER_UPDATE()
         cleanChatList(self.guildWindow);
         local count = 0;
         for i=1, _G.GetNumGuildMembers() do 
-	    local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = _G.GetGuildRosterInfo(i);
+	    local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = _G.GetGuildRosterInfo(i);
 	    if(online) then
 		_G.GuildControlSetRank(rankIndex);
                 local guildchat_listen, guildchat_speak, officerchat_listen, officerchat_speak, promote, demote,
@@ -379,7 +379,7 @@ function Officer:GUILD_ROSTER_UPDATE()
         cleanChatList(self.officerWindow);
         local count = 0;
         for i=1, _G.GetNumGuildMembers() do 
-	    local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = _G.GetGuildRosterInfo(i);
+	    local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = _G.GetGuildRosterInfo(i);
             if(online) then
                 _G.GuildControlSetRank(rankIndex);
                 local guildchat_listen, guildchat_speak, officerchat_listen, officerchat_speak, promote, demote,
@@ -475,7 +475,7 @@ function Party:PARTY_MEMBERS_CHANGED()
         table.insert(self.partyWindow.chatList, myName);
         local count = 0;
         for i=1, 4 do
-            if(_G.GetPartyMember(i)) then
+            if UnitExists("party"..i) then
                 count = count + 1;
                 local name = _G.UnitName("party"..i);
                 table.insert(self.partyWindow.chatList, name);

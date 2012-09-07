@@ -1,6 +1,6 @@
 --[[
 Name: LibSharedMedia-3.0
-Revision: $Revision: 69 $
+Revision: $Revision: 73 $
 Author: Elkano (elkano@gmx.de)
 Inspired By: SurfaceLib by Haste/Otravi (troeks@gmail.com)
 Website: http://www.wowace.com/projects/libsharedmedia-3-0/
@@ -9,7 +9,7 @@ Dependencies: LibStub, CallbackHandler-1.0
 License: LGPL v2.1
 ]]
 
-local MAJOR, MINOR = "LibSharedMedia-3.0", 4030402 -- increase manualy on changes
+local MAJOR, MINOR = "LibSharedMedia-3.0", 5000401 -- increase manually on changes
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not lib then return end
@@ -121,10 +121,10 @@ elseif locale == "ruRU" then
 	LOCALE_MASK = lib.LOCALE_BIT_ruRU
 --
 	SML_MT_font["Arial Narrow"]			= [[Fonts\ARIALN.TTF]]
-	SML_MT_font["Friz Quadrata TT"]		= [[Fonts\FRIZQT__.TTF]]
-	SML_MT_font["Morpheus"]				= [[Fonts\MORPHEUS.TTF]]
+	SML_MT_font["Friz Quadrata TT"]		= [[Fonts\FRIZQT___CYR.TTF]]
+	SML_MT_font["Morpheus"]				= [[Fonts\MORPHEUS_CYR.TTF]]
 	SML_MT_font["Nimrod MT"]			= [[Fonts\NIM_____.ttf]]
-	SML_MT_font["Skurri"]				= [[Fonts\SKURRI.TTF]]
+	SML_MT_font["Skurri"]				= [[Fonts\SKURRI_CYR.TTF]]
 --
 	lib.DefaultMedia.font = "Friz Quadrata TT"
 --
@@ -145,6 +145,7 @@ end
 if not lib.MediaTable.statusbar then lib.MediaTable.statusbar = {} end
 lib.MediaTable.statusbar["Blizzard"]						= [[Interface\TargetingFrame\UI-StatusBar]]
 lib.MediaTable.statusbar["Blizzard Character Skills Bar"]	= [[Interface\PaperDollInfoFrame\UI-Character-Skills-Bar]]
+lib.MediaTable.statusbar["Blizzard Raid Bar"]				= [[Interface\RaidFrame\Raid-Bar-Hp-Fill]]
 lib.DefaultMedia.statusbar = "Blizzard"
 
 -- SOUND
@@ -178,7 +179,7 @@ function lib:Register(mediatype, key, data, langmask)
 	if not mediaTable[mediatype] then mediaTable[mediatype] = {} end
 	local mtable = mediaTable[mediatype]
 	if mtable[key] then return false end
-	
+
 	mtable[key] = data
 	rebuildMediaList(mediatype)
 	self.callbacks:Fire("LibSharedMedia_Registered", mediatype, key)
