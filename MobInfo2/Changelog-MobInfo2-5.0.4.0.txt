@@ -1,13 +1,15 @@
 ------------------------------------------------------------------------
-r65 | speedwaystar | 2012-07-06 06:57:16 +0000 (Fri, 06 Jul 2012) | 1 line
+r70 | speedwaystar | 2012-09-09 04:00:04 +0000 (Sun, 09 Sep 2012) | 1 line
 Changed paths:
-   A /tags/4.34 (from /trunk:64)
+   A /tags/5.0.4.0 (from /trunk:66)
 
-Add tag 4.34
+Add tag 5.0.4.0
 ------------------------------------------------------------------------
-r64 | speedwaystar | 2012-01-28 08:49:52 +0000 (Sat, 28 Jan 2012) | 1 line
+r66 | speedwaystar | 2012-08-30 11:55:08 +0000 (Thu, 30 Aug 2012) | 2 lines
 Changed paths:
+   M /trunk/MobInfo2.lua
    M /trunk/MobInfo2.toc
 
-bump TOC to 4.0.3
+* initial Pandaria alpha
+* bumped TOC to 50001
 ------------------------------------------------------------------------

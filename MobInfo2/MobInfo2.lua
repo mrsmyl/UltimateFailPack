@@ -3,7 +3,7 @@
 --
 -- Main module of MobInfo-2 AddOn
 
-miVersionNo = '4.34'
+miVersionNo = '5.0.4.0'
 --
 -- MobInfo-2 is a World of Warcraft AddOn that provides you with useful
 -- additional information about Mobs (ie. opponents/monsters). It adds
@@ -17,7 +17,7 @@ miVersionNo = '4.34'
 -- I have "inhereted" MobInfo from Dizzarian and MobHealth-2 from Wyv
 -- and now continue to update and improve the united result.
 --
--- $header: MobInfo2.lua 4.34 2011-09-11T21:48:09Z speedwaystar ext $
+-- $header: MobInfo2.lua 5.0.4.0 2012-08-30T11:55:08Z speedwaystar ext $
 
 -- library pointers
 local libPeriodicTable = LibStub("LibPeriodicTable-3.1")
@@ -1663,80 +1663,80 @@ local function MI2_RecordLootSlotData( mobIndex, mobData, slotID )
 	-- ** as of 4.0.6 API GetLootSlotInfo() now returns nil values for slot 1 (only)
 	-- ** instead of details of coin looted as it did previousl.
 	-- ** unclear if this is a bug or by design
-	-- ** TODO: since we're no longer able to obtain coin details from loot slots,
-	-- ** find out how this is supposed to be done post 4.0.6 (if at all)
+	local slotType 		-- 0: LOOT_SLOT_NONE - No contents
+						-- 1: LOOT_SLOT_ITEM - A regular item
+						-- 2: LOOT_SLOT_MONEY - Gold/silver/copper coin
+						-- 3: LOOT_SLOT_CURRENCY - Other currency amount, such as  [Valor Points]
+
+	slotType = GetLootSlotType( slotID)
 	local texture, itemName, quantity, quality = GetLootSlotInfo( slotID )
 	local itemID = MI2_GetLootId(slotID) -- returns 0 if not an item
 
---[[
-	print(string.format("---Loot Slot %s---", slotID))
-	print(string.format("LootSlotIsItem %s, LootSlotIsCoin %s, texture %s, temName %s, quantity %s, quality %s",
-		LootSlotIsItem(slotID) and "true" or "false",
-		LootSlotIsCoin(slotID) and "true" or "false",
+--[[ 	print(string.format("---Loot Slot %s---", slotID))
+	local slotText = { [0]="NONE", [1]="ITEM", [2]="MONEY", [3]="CURRENCY" }
+	print(string.format("GetLootSlotType %s, LootSlotHasItem %s, texture %s, temName %s, quantity %s, quality %s",
+		slotText[slotType], LootSlotHasItem(slotID) and "true" or "false",
 		texture or "nil", itemName or "nil", quantity or "nil", quality or "nil"
 	))
---]]
-
-	-- abort loot processing upon finding clam meat (ie. a clam was opened)
-	-- TODO: doesn't handle blood shrimp or anything else without "clam meat" in the string
-	-- TODO: replace with an ID list check from LibPeriodicTable
-	if miClamContents[itemID] then
-		isFromItem = true
-		
+ ]]
 	-- identify and count money loot, make sure it does not get counted as an item
-	-- TODO: this doesn't work post 4.0.6
-		
-	elseif LootSlotIsCoin(slotID) then
+	if slotType == LOOT_SLOT_MONEY then
 		local money = MI2_LootName2Copper(itemName)
 		mobData.copper = (mobData.copper or 0) + money
 		quality = -1
-
-	-- since 4.0.6, GetLootSlotInfo can return nil values so we need a sanity check
-	elseif LootSlotIsItem(slotID) and (itemID > 0) and itemName then
-
-		-- we have an item
-		quality = quality + 1
+	-- do we have an item?
+	elseif slotType == LOOT_SLOT_ITEM then
+		-- abort loot processing upon finding clam meat (ie. a clam was opened)
+		-- TODO: doesn't handle blood shrimp or anything else without "clam meat" in the string
+		-- TODO: replace with an ID list check from LibPeriodicTable
+		if miClamContents[itemID] then
+			isFromItem = true
+		else
+			quality = quality + 1
+			
+			-- record item data within Mob database and in global item table
+			-- update cross reference table accordingly
+			if MobInfoConfig.SaveItems == 1 and quality >= MobInfoConfig.ItemsQuality then
+				if not mobData.itemList then mobData.itemList = {} end
+				mobData.itemList[itemID] = (mobData.itemList[itemID] or 0) + quantity
+				MI2_ItemNameTable[itemID] = itemName.."/"..quality
+				MI2_AddItemToXRefTable( mobIndex, itemName, quantity )
+			
 		
-		-- record item data within Mob database and in global item table
-		-- update cross reference table accordingly
-		if MobInfoConfig.SaveItems == 1 and quality >= MobInfoConfig.ItemsQuality then
-			if not mobData.itemList then mobData.itemList = {} end
-			mobData.itemList[itemID] = (mobData.itemList[itemID] or 0) + quantity
-			MI2_ItemNameTable[itemID] = itemName.."/"..quality
-			MI2_AddItemToXRefTable( mobIndex, itemName, quantity )
-		
-	
-			-- check for gathered loot i.e. mining, skinning, herbalising a mob
-			if slotID == 1 and MI2_ItemIsGatherable(itemID) then
-				isGatheredLoot = true
+				-- check for gathered loot i.e. mining, skinning, herbalising a mob
+				-- TODO: fix non gathered trash items like "shed fur" returning true here
+				if slotID == 1 and MI2_ItemIsGatherable(itemID) then
+					isGatheredLoot = true
 
-			else
-				-- update % for each quality type
-				local itemValue = MI2_FindItemValue( itemID )
-				mobData.itemValue = (mobData.itemValue or 0) + itemValue
-				-- try to skip quest items in quality overview
-				if itemValue < 1 and quality == 2 then quality = -1 end
-				-- cloth drop counter
-				if MI2_ItemIsTradeMat(itemID, "Cloth") then
-					mobData.clothCount = (mobData.clothCount or 0) + 1
-				end
-				
-				-- record loot item quality (if enabled)
-				if quality == 1 then 
-					mobData.r1 = (mobData.r1 or 0) + 1
-				elseif quality == 2 then
-					mobData.r2 = (mobData.r2 or 0) + 1
-				elseif quality == 3 then
-					mobData.r3 = (mobData.r3 or 0) + 1
-				elseif quality == 4 then
-					mobData.r4 = (mobData.r4 or 0) + 1
-				elseif quality == 5 then
-					mobData.r5 = (mobData.r5 or 0) + 1
+				else
+					-- update % for each quality type
+					local itemValue = MI2_FindItemValue( itemID )
+					mobData.itemValue = (mobData.itemValue or 0) + itemValue
+					-- try to skip quest items in quality overview
+					if itemValue < 1 and quality == 2 then quality = -1 end
+					-- cloth drop counter
+					if MI2_ItemIsTradeMat(itemID, "Cloth") then
+						mobData.clothCount = (mobData.clothCount or 0) + 1
+					end
+					
+					-- record loot item quality (if enabled)
+					if quality == 1 then 
+						mobData.r1 = (mobData.r1 or 0) + 1
+					elseif quality == 2 then
+						mobData.r2 = (mobData.r2 or 0) + 1
+					elseif quality == 3 then
+						mobData.r3 = (mobData.r3 or 0) + 1
+					elseif quality == 4 then
+						mobData.r4 = (mobData.r4 or 0) + 1
+					elseif quality == 5 then
+						mobData.r5 = (mobData.r5 or 0) + 1
+					end
 				end
 			end
 		end
 	end
 
+	-- nb we return false (do not handle) LOOT_SLOT_NONE, LOOT_SLOT_CURRENCY
 	return isGatheredLoot, isFromItem
 end -- MI2_RecordLootSlotData()
 
@@ -2302,7 +2302,7 @@ function MI2_BuildTooltipMob( mobName, mobLevel, unit, isMob )
 	end
 
 	-- calculate kills to next level
-	if mobData.xp then
+	if (mobData.xp or 0) > 0 then
 		-- calculate number of mobs to next level based on mob experience
 		local xpCurrent = UnitXP("player") + mobData.xp
 		local xpToLevel = UnitXPMax("player") - xpCurrent
@@ -2311,10 +2311,10 @@ function MI2_BuildTooltipMob( mobName, mobLevel, unit, isMob )
 
 	-- avarage value computation
 	local loots = mobData.loots or 1
-	if mobData.copper then
+	if mobData.copper and (loots > 0) then
 		mobData.avgCV = ceil(mobData.copper/loots)
 	end
-	if mobData.itemValue then
+	if mobData.itemValue and (loots > 0) then
 		mobData.avgIV = ceil(mobData.itemValue/loots)
 	end
 	if mobData.avgCV or mobData.avgIV then

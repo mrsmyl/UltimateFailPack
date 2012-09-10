@@ -1,7 +1,7 @@
-﻿## Interface: 40300
+﻿## Interface: 50001
 ## Title: MobInfo2
 ## Title-zhTW: MobInfo 怪物資料庫
-## Version: 4.34
+## Version: 5.0.4.0
 ## Authors: Speedwaystar, Brandmauer, Speeddymon, Skeeve, Dizzarian
 ## Notes: Adds information about the hovered mob to the tooltip and shows health/mana information in the target frame
 ## Notes-deDE: Erweitert den Tooltip eines Gegners um Informationen zu Gesundheit, geplünderte Gegenstände usw. und ergänzt das Zielfenster um Gesundheit/Mana.
@@ -9,11 +9,11 @@
 ## SavedVariables: MobInfoConfig, MobInfoDB, MobHealthDB, MobHealthPlayerDB, MI2_ItemNameTable, MI2_CharTable, MI2_ZoneTable
 ## Dependencies: 
 ## OptionalDeps: LibStub, LibPeriodicTable-3.1, LibPeriodicTable-3.1-Tradeskill
-## X-Curse-Packaged-Version: 4.34
+## X-Curse-Packaged-Version: 5.0.4.0
 ## X-Curse-Project-Name: MobInfo2
 ## X-Curse-Project-ID: mobinfo2
 ## X-Curse-Repository-ID: wow/mobinfo2/mainline
-## X-Curse-Packaged-Version: 4.34
+## X-Curse-Packaged-Version: 5.0.4.0
 ## X-Curse-Project-Name: MobInfo2
 ## X-Curse-Project-ID: mobinfo2
 ## X-Curse-Repository-ID: wow/mobinfo2/mainline
