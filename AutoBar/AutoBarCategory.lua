@@ -36,8 +36,6 @@ AutoBarCategoryList = {}
 
 local L = AutoBar.locale
 local PT = LibStub("LibPeriodicTable-3.1")
-local BZ = LibStub("LibBabble-Zone-3.0"):GetLookupTable()
---local BZ = AceLibrary:GetInstance("Babble-Zone-2.2")
 local AceOO = AceLibrary("AceOO-2.0")
 local _
 
@@ -665,7 +663,7 @@ function AutoBarCategory:Initialize()
 
 	AutoBarCategoryList["Misc.Battle Standard.Alterac Valley"] = AutoBarItems:new(
 			"Misc.Battle Standard.Alterac Valley", "INV_BannerPVP_02", "Misc.Battle Standard.Alterac Valley")
-	AutoBarCategoryList["Misc.Battle Standard.Alterac Valley"]:SetLocation(BZ["Alterac Valley"])
+	AutoBarCategoryList["Misc.Battle Standard.Alterac Valley"]:SetLocation(GetMapNameByID(401)) -- Alterac Valley
 
 	AutoBarCategoryList["Misc.Reagent.Ammo.Arrow"] = AutoBarItems:new(
 			"Misc.Reagent.Ammo.Arrow", "INV_Ammo_Arrow_02", "Misc.Reagent.Ammo.Arrow")
@@ -712,17 +710,17 @@ function AutoBarCategory:Initialize()
 	AutoBarCategoryList["Consumable.Bandage.Battleground.Alterac Valley"] = AutoBarItems:new(
 			"Consumable.Bandage.Battleground.Alterac Valley", "INV_Misc_Bandage_12", "Consumable.Bandage.Battleground.Alterac Valley")
 	AutoBarCategoryList["Consumable.Bandage.Battleground.Alterac Valley"]:SetTargeted(true)
-	AutoBarCategoryList["Consumable.Bandage.Battleground.Alterac Valley"]:SetLocation(BZ["Alterac Valley"])
+	AutoBarCategoryList["Consumable.Bandage.Battleground.Alterac Valley"]:SetLocation(GetMapNameByID(401)) -- Alterac Valley
 
 	AutoBarCategoryList["Consumable.Bandage.Battleground.Arathi Basin"] = AutoBarItems:new(
 			"Consumable.Bandage.Battleground.Arathi Basin", "INV_Misc_Bandage_12", "Consumable.Bandage.Battleground.Arathi Basin")
 	AutoBarCategoryList["Consumable.Bandage.Battleground.Arathi Basin"]:SetTargeted(true)
-	AutoBarCategoryList["Consumable.Bandage.Battleground.Arathi Basin"]:SetLocation(BZ["Arathi Basin"])
+	AutoBarCategoryList["Consumable.Bandage.Battleground.Arathi Basin"]:SetLocation(GetMapNameByID(461)) -- Arathi Basin
 
 	AutoBarCategoryList["Consumable.Bandage.Battleground.Warsong Gulch"] = AutoBarItems:new(
 			"Consumable.Bandage.Battleground.Warsong Gulch", "INV_Misc_Bandage_12", "Consumable.Bandage.Battleground.Warsong Gulch")
 	AutoBarCategoryList["Consumable.Bandage.Battleground.Warsong Gulch"]:SetTargeted(true)
-	AutoBarCategoryList["Consumable.Bandage.Battleground.Warsong Gulch"]:SetLocation(BZ["Warsong Gulch"])
+	AutoBarCategoryList["Consumable.Bandage.Battleground.Warsong Gulch"]:SetLocation(GetMapNameByID(443)) -- Warsong Gulch
 
 	AutoBarCategoryList["Consumable.Food.Edible.Basic.Non-Conjured"] = AutoBarItems:new(
 			"Consumable.Food.Edible.Basic.Non-Conjured", "INV_Misc_Food_23", "Consumable.Food.Edible.Basic.Non-Conjured")
@@ -731,12 +729,12 @@ function AutoBarCategory:Initialize()
 	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Arathi Basin.Basic"] = AutoBarItems:new(
 			"Consumable.Food.Edible.Battleground.Arathi Basin.Basic", "INV_Misc_Food_33", "Consumable.Food.Edible.Battleground.Arathi Basin.Basic")
 	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Arathi Basin.Basic"]:SetNonCombat(true)
-	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Arathi Basin.Basic"]:SetLocation(BZ["Arathi Basin"])
+	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Arathi Basin.Basic"]:SetLocation(GetMapNameByID(461)) -- Arathi Basin
 
 	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Warsong Gulch.Basic"] = AutoBarItems:new(
 			"Consumable.Food.Edible.Battleground.Warsong Gulch.Basic", "INV_Misc_Food_33", "Consumable.Food.Edible.Battleground.Warsong Gulch.Basic")
 	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Warsong Gulch.Basic"]:SetNonCombat(true)
-	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Warsong Gulch.Basic"]:SetLocation(BZ["Warsong Gulch"])
+	AutoBarCategoryList["Consumable.Food.Edible.Battleground.Warsong Gulch.Basic"]:SetLocation(GetMapNameByID(443)) -- Warsong Gulch
 
 	AutoBarCategoryList["Consumable.Food.Combo Health"] = AutoBarItems:new(
 			"Consumable.Food.Combo Health", "INV_Misc_Food_33", "Consumable.Food.Combo Health")
@@ -925,7 +923,7 @@ function AutoBarCategory:Initialize()
 
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Health.Blades Edge"] = AutoBarItems:new(
 			"Consumable.Cooldown.Potion.Health.Blades Edge", "INV_Potion_167", "Consumable.Cooldown.Potion.Health.Blades Edge")
-	AutoBarCategoryList["Consumable.Cooldown.Potion.Health.Blades Edge"]:SetLocation(BZ["Blade's Edge Mountains"])
+	AutoBarCategoryList["Consumable.Cooldown.Potion.Health.Blades Edge"]:SetLocation(GetMapNameByID(475)) -- Blade's Edge Mountains
 
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Health.Coilfang"] = AutoBarItems:new(
 			"Consumable.Cooldown.Potion.Health.Coilfang", "INV_Potion_167", "Consumable.Cooldown.Potion.Health.Coilfang")
@@ -948,7 +946,7 @@ function AutoBarCategory:Initialize()
 
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Mana.Blades Edge"] = AutoBarItems:new(
 			"Consumable.Cooldown.Potion.Mana.Blades Edge", "INV_Potion_168", "Consumable.Cooldown.Potion.Mana.Blades Edge")
-	AutoBarCategoryList["Consumable.Cooldown.Potion.Mana.Blades Edge"]:SetLocation(BZ["Blade's Edge Mountains"])
+	AutoBarCategoryList["Consumable.Cooldown.Potion.Mana.Blades Edge"]:SetLocation(GetMapNameByID(475)) -- Blade's Edge Mountains
 
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Mana.Coilfang"] = AutoBarItems:new(
 			"Consumable.Cooldown.Potion.Mana.Coilfang", "INV_Potion_168", "Consumable.Cooldown.Potion.Mana.Coilfang")
@@ -975,10 +973,10 @@ function AutoBarCategory:Initialize()
 			"Misc.Mount.Normal", "Ability_Mount_JungleTiger", "Misc.Mount.Normal")
 	AutoBarCategoryList["Misc.Mount.Normal"]:SetNonCombat(true)
 
-	AutoBarCategoryList["Misc.Mount.Ahn'Qiraj"] = AutoBarItems:new(
-			"Misc.Mount.Ahn'Qiraj", "INV_Misc_QirajiCrystal_05", "Misc.Mount.Ahn'Qiraj")
-	AutoBarCategoryList["Misc.Mount.Ahn'Qiraj"]:SetNonCombat(true)
-	AutoBarCategoryList["Misc.Mount.Ahn'Qiraj"]:SetLocation(BZ["Ahn'Qiraj"])
+--	AutoBarCategoryList["Misc.Mount.Ahn'Qiraj"] = AutoBarItems:new(
+--			"Misc.Mount.Ahn'Qiraj", "INV_Misc_QirajiCrystal_05", "Misc.Mount.Ahn'Qiraj")
+--	AutoBarCategoryList["Misc.Mount.Ahn'Qiraj"]:SetNonCombat(true)
+--	AutoBarCategoryList["Misc.Mount.Ahn'Qiraj"]:SetLocation(BZ["Ahn'Qiraj"])
 
 	AutoBarCategoryList["Misc.Mount.Flying"] = AutoBarItems:new(
 			"Misc.Mount.Flying", "Ability_Mount_Wyvern_01", "Misc.Mount.Flying")
@@ -988,11 +986,11 @@ function AutoBarCategory:Initialize()
 			"Misc.Openable", "INV_Misc_Bag_17", "Misc.Openable")
 
 --[[
-	AutoBarCategoryList["Misc.Spell.Mount.Ahn'Qiraj"] = AutoBarSpells:new(
-			"Misc.Spell.Mount.Ahn'Qiraj", "Ability_Mount_Wyvern_01", nil, nil, "Misc.Spell.Mount.Ahn'Qiraj")
-	AutoBarCategoryList["Misc.Mount.Flying"]:SetNonCombat(true)
+--	AutoBarCategoryList["Misc.Spell.Mount.Ahn'Qiraj"] = AutoBarSpells:new(
+--			"Misc.Spell.Mount.Ahn'Qiraj", "Ability_Mount_Wyvern_01", nil, nil, "Misc.Spell.Mount.Ahn'Qiraj")
+--	AutoBarCategoryList["Misc.Mount.Flying"]:SetNonCombat(true)
 
-	self:AddCategory("Misc.Spell.Mount.Ahn'Qiraj")
+--	self:AddCategory("Misc.Spell.Mount.Ahn'Qiraj")
 	self:AddCategory("Misc.Spell.Mount.Flying.Fast")
 	self:AddCategory("Misc.Spell.Mount.Flying.Slow")
 	self:AddCategory("Misc.Spell.Mount.Ground.Fast")
@@ -1522,13 +1520,12 @@ function AutoBarCategory:Initialize2()
 			"SHAMAN", spellSearingTotem, --*
 			})
 
-	spellManaTideTotem, _, spellManaTideTotemIcon = GetSpellInfo(16190)
-	local spellTotemofTranquilMind = GetSpellInfo(87718)
-	local spellHealingStreamTotem = GetSpellInfo(5394)
+	--spellManaTideTotem, _, spellManaTideTotemIcon = GetSpellInfo(16190)
+	--local spellTotemofTranquilMind = GetSpellInfo(87718)
+	local spellHealingStreamTotem, _,  spellHealingStreamTotemIcon = GetSpellInfo(5394)
 	local spellHealingTideTotem = GetSpellInfo(108280)
 	AutoBarCategoryList["Spell.Totem.Water"] = AutoBarSpells:new(
-			"Spell.Totem.Water", spellManaTideTotemIcon, {
-			"SHAMAN", spellTotemofTranquilMind,
+			"Spell.Totem.Water", spellHealingStreamTotemIcon, {
 			"SHAMAN", spellHealingStreamTotem, --*
 			"SHAMAN", spellHealingTideTotem, --*
 			})

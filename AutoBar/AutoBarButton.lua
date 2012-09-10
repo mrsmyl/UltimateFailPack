@@ -1954,7 +1954,7 @@ function AutoBarButtonMount.prototype:init(parentBar, buttonDB)
 	self:AddCategory("Misc.Mount.Flying")
 --[[
 	--- ToDo: filtering based on these
-	self:AddCategory("Misc.Spell.Mount.Ahn'Qiraj")
+--	self:AddCategory("Misc.Spell.Mount.Ahn'Qiraj")
 	self:AddCategory("Misc.Spell.Mount.Flying.Fast")
 	self:AddCategory("Misc.Spell.Mount.Flying.Slow")
 	self:AddCategory("Misc.Spell.Mount.Ground.Fast")

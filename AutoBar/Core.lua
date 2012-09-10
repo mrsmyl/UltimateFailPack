@@ -47,12 +47,8 @@ local AceCfgDlg = LibStub("AceConfigDialog-3.0")
 local L
 local _
 
--- If the Debug library is available then use it
-if AceLibrary:HasInstance("AceDebug-2.0") then
-	AutoBar = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceDB-2.0", "AceHook-2.1", "AceDebug-2.0");
-else
-	AutoBar = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceDB-2.0", "AceHook-2.1");
-end
+AutoBar = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceDB-2.0", "AceHook-2.1");
+
 local AutoBar = AutoBar
 AutoBar.revision = REVISION
 AutoBar.date = DATE
@@ -666,11 +662,6 @@ function AutoBar.events:SPELLS_CHANGED(arg1)
 	end
 end
 
-local BZ = LibStub("LibBabble-Zone-3.0"):GetLookupTable()
-local zoneDalaran = BZ["Dalaran"]
-local zoneKrasusLanding = BZ["Krasus' Landing"]
-local zoneWintergrasp = BZ["Wintergrasp"]
-
 function AutoBar:UpdateZone(event)
 --[[
 	print(tostring(event) .. " GetZoneText()" .. GetZoneText())
@@ -692,12 +683,6 @@ function AutoBar:UpdateZone(event)
 	end
 
 	local flyable = IsFlyableArea()
-	if (zone == zoneWintergrasp or (zone == zoneDalaran and GetSubZoneText() ~= zoneKrasusLanding)) then
---print("zoneWintergrasp or zoneDalaran. no fly for u!", newZone, flyable)
-		flyable = nil
-	else
---print("whatever", newZone, flyable)
-	end
 	if (AutoBar.flyable ~= flyable) then
 		AutoBar.flyable = flyable
 		if (AutoBar.buttonList["AutoBarButtonMount"]) then
@@ -723,7 +708,6 @@ function AutoBar.events:ZONE_CHANGED(arg1)
 --		AutoBar.delay["UpdateActive"]:Start()
 	end
 end
--- GetSubZoneText();
 
 function AutoBar.events:ZONE_CHANGED_INDOORS(arg1)
 	AutoBar:LogEvent("ZONE_CHANGED_INDOORS", arg1)
@@ -1362,7 +1346,7 @@ function AutoBar:OnClick(event, frame, button)
 	if (bar and bar.sharedLayoutDB) then
 		if (button == "RightButton") then
 	--print("AutoBar.Class.Bar.OnClick ShowBarOptions frame " .. tostring(frame) .. " button " .. tostring(button))
-			bar:ShowBarOptions()
+			--bar:ShowBarOptions()
 		elseif (button == "LeftButton") then
 	--print("AutoBar.Class.Bar.OnClick ToggleVisibilty frame " .. tostring(frame) .. " button " .. tostring(button))
 			bar:ToggleVisibilty()

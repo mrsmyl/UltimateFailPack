@@ -16,7 +16,6 @@ end
 local _
 
 local AceOO = AceLibrary("AceOO-2.0")
-local BZ = LibStub("LibBabble-Zone-3.0"):GetLookupTable()
 
 AutoBarSearch = {}
 AutoBarSearch.spells = {}
@@ -26,29 +25,29 @@ AutoBarSearch.dirtyBags = {}
 local searchSpace, items, playerLevel
 
 AutoBarSearch.zoneGroup = {}
-AutoBarSearch.zoneGroup[BZ["Serpentshrine Cavern"]] = "Coilfang"
-AutoBarSearch.zoneGroup[BZ["The Slave Pens"]] = "Coilfang"
-AutoBarSearch.zoneGroup[BZ["The Steamvault"]] = "Coilfang"
-AutoBarSearch.zoneGroup[BZ["The Underbog"]] = "Coilfang"
-AutoBarSearch.zoneGroup[BZ["The Arcatraz"]] = "Tempest Keep"
-AutoBarSearch.zoneGroup[BZ["The Botanica"]] = "Tempest Keep"
-AutoBarSearch.zoneGroup[BZ["The Eye"]] = "Tempest Keep"
-AutoBarSearch.zoneGroup[BZ["The Mechanar"]] = "Tempest Keep"
+AutoBarSearch.zoneGroup[GetMapNameByID(780)] = "Coilfang"
+AutoBarSearch.zoneGroup[GetMapNameByID(728)] = "Coilfang"
+AutoBarSearch.zoneGroup[GetMapNameByID(727)] = "Coilfang"
+AutoBarSearch.zoneGroup[GetMapNameByID(726)] = "Coilfang"
+AutoBarSearch.zoneGroup[GetMapNameByID(731)] = "Tempest Keep"
+AutoBarSearch.zoneGroup[GetMapNameByID(729)] = "Tempest Keep"
+AutoBarSearch.zoneGroup[GetMapNameByID(782)] = "Tempest Keep"
+AutoBarSearch.zoneGroup[GetMapNameByID(730)] = "Tempest Keep"
 
 AutoBarSearch.subZoneGroup = {}
-AutoBarSearch.subZoneGroup[BZ["Serpentshrine Cavern"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Forge Camp: Terror"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["The Vortex Pinnacle"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Rivendark's Perch"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Ogri'la"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Obsidia's Perch"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Skyguard Outpost"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Shartuul's Transporter"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Forge Camp: Wrath"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Bash'ir Landing"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Crystal Spine"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Insidion's Perch"]] = "BE Plateaus"
-AutoBarSearch.subZoneGroup[BZ["Furywing's Perch"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[GetMapNameByID(780)] = "BE Plateaus"  --Really? this looks like a copy/paste error
+--AutoBarSearch.subZoneGroup[BZ["Forge Camp: Terror"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["The Vortex Pinnacle"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Rivendark's Perch"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Ogri'la"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Obsidia's Perch"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Skyguard Outpost"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Shartuul's Transporter"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Forge Camp: Wrath"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Bash'ir Landing"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Crystal Spine"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Insidion's Perch"]] = "BE Plateaus"
+--AutoBarSearch.subZoneGroup[BZ["Furywing's Perch"]] = "BE Plateaus"
 
 -- Recycle lists will avoid garbage collection and memory thrashing but potentially grow over time
 -- A simple 2 list aproach that recycles objects specific to that type of list so the bulk of operations should be only initing recycled objects.
