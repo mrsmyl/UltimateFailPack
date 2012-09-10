@@ -1,8 +1,8 @@
 --[[
 
-$Revision: 83 $
+$Revision: 91 $
 
-(C) Copyright 2007,2011 Bethink (bethink at naef dot com)
+(C) Copyright 2007,2012 Bethink (bethink at naef dot com)
 See LICENSE.txt for license terms.
 
 ]]
@@ -606,7 +606,7 @@ end
 
 -- Handles party/raid money loots
 function Analyst:CHAT_MSG_MONEY (event, message)
-	if (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 1) and
+	if GetNumGroupMembers() > 0 and
 		self:MatchFormat(message, LOOT_MONEY_SPLIT) then
 		self:SetEvent(
 			ANALYST_ACTIVITY_LOOTING,
@@ -620,7 +620,7 @@ end
 -- Handles loots
 function Analyst:CHAT_MSG_LOOT (event, message)
 	-- Handle grouped loots and pushes.
-	if (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 1) and
+	if GetNumGroupMembers() > 0 and
 			(self:MatchFormat(message, LOOT_ITEM_SELF)
 			or self:MatchFormat(message, LOOT_ITEM_SELF_MULTIPLE)
 			or self:MatchFormat(message, LOOT_ITEM_PUSHED_SELF)
