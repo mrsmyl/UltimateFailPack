@@ -58,7 +58,7 @@
 		<NormalFont style="GameFontHighlight"/>
 	</Button>
 
-	<!-- Standard Pawn options checkbox template -->
+	<!-- Standard Pawn options checkbox templates -->
 	<CheckButton name="PawnUICheckboxTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<Size><AbsDimension x="25" y="25" /></Size>
 		<HitRectInsets><AbsInset left="0" right="-225" top="0" bottom="0"/></HitRectInsets>
@@ -328,7 +328,6 @@
 		</Frames>
 		<Scripts>
 			<OnLoad function="PawnUI_LootUpgradeAdvisor_OnLoad" />
-			<OnShow function="PawnUI_LootUpgradeAdvisor_OnShow" />
 			<OnClick function="PawnUI_LootUpgradeAdvisor_OnClick" />
 		</Scripts>
 	</Button>
@@ -337,6 +336,17 @@
 	<Button name="PawnUI_LootUpgradeAdvisor2" id="2" inherits="PawnLootUpgradeAdvisor" parent="GroupLootFrame2" />
 	<Button name="PawnUI_LootUpgradeAdvisor3" id="3" inherits="PawnLootUpgradeAdvisor" parent="GroupLootFrame3" />
 	<Button name="PawnUI_LootUpgradeAdvisor4" id="4" inherits="PawnLootUpgradeAdvisor" parent="GroupLootFrame4" />
+
+	<Texture name="PawnUI_LootAdvisorTexture" file="Interface\AddOns\Pawn\Textures\UpgradeArrowBig" virtual="true" hidden="true">
+		<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="16" y="-22" /></Offset></Anchor></Anchors>
+		<Size><AbsDimension x="16" y="16" /></Size>
+	</Texture>
+
+	<Texture name="PawnUI_LootWonAdvisorTexture" file="Interface\AddOns\Pawn\Textures\UpgradeArrowBig" virtual="true" hidden="true">
+		<Anchors><Anchor point="BOTTOMLEFT"><Offset><AbsDimension x="2" y="2" /></Offset></Anchor></Anchors>
+		<Size><AbsDimension x="40" y="40" /></Size>
+	</Texture>
+
 	
 	<!-- Pawn quest advisor -->
 	<Texture name="PawnUI_QuestAdvisorTexture" file="Interface\AddOns\Pawn\Textures\UpgradeArrowBig" virtual="true" hidden="true">
@@ -1545,6 +1555,7 @@
 				self:RegisterEvent("PLAYER_LOGOUT")
 				self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 				self:RegisterEvent("ITEM_LOCKED")
+				self:RegisterEvent("VARIABLES_LOADED")
 				PawnUITabList = { PawnUIScalesTabPage, PawnUIValuesTabPage, PawnUICompareTabPage, PawnUIGemsTabPage, PawnUIOptionsTabPage, PawnUIAboutTabPage, PawnUIHelpTabPage }
 				PanelTemplates_SetNumTabs(PawnUIFrame, #PawnUITabList)
 			</OnLoad>

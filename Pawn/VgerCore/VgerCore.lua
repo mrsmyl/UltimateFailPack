@@ -134,7 +134,7 @@ function VgerCore.Fail(Message)
 end
 
 -- Hooks an insecure function.  Similar to the base WoW API's hooksecurefunc.  The hook function will be run
--- after the original function to be hooked, unless Pre is passed, in which case the hook will be run first.
+-- after the original function to be hooked, unless Pre is true, in which case the hook will be run first.
 -- Valid usage:
 -- VgerCore.HookInsecureFunction(Object, FunctionName, Hook, Pre)
 -- VgerCore.HookInsecureFunction(FunctionName, Hook, Pre)
@@ -151,8 +151,8 @@ function VgerCore.HookInsecureFunction(arg1, arg2, arg3, arg4)
 	elseif TypeOfObject == "string" then -- FunctionName, Hook, Pre
 		OldFunction = getglobal(arg1)
 		if OldFunction then
-			_G = getfenv()
-			_G[arg1] = VgerCore.CreateHookFunction(OldFunction, arg2, arg3)
+			local Environment = getfenv()
+			Environment[arg1] = VgerCore.CreateHookFunction(OldFunction, arg2, arg3)
 		else
 			VgerCore.Fail("VgerCore.HookInsecureFunction: could not find function '" .. arg1 .. "'.")
 		end

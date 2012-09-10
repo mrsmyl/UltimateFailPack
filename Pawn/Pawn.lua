@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.6.2: additional fixes for the live version of patch 5.0
+-- Version 1.6.4: minor fixes
 ------------------------------------------------------------
 
 
-PawnVersion = 1.602
+PawnVersion = 1.603
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.06
@@ -74,7 +74,6 @@ PawnBigUpgradeThreshold = 100 -- 100 = 10000% upgrade: don't display upgrade num
 -- Data used by PawnGetSlotsForItemType.
 local PawnItemEquipLocToSlot1 = 
 {
-	INVTYPE_AMMO = 0,
 	INVTYPE_HEAD = 1,
 	INVTYPE_NECK = 2,
 	INVTYPE_SHOULDER = 3,
@@ -143,6 +142,12 @@ function PawnOnEvent(Event, arg1, arg2, ...)
 		end
 	elseif Event == "PLAYER_LOGOUT" then
 		PawnOnLogout()
+	elseif Event == "VARIABLES_LOADED" then
+		-- LinkWrangler compatibility
+		if LinkWrangler then
+			LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refresh")
+			LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refreshcomp")
+		end
 	end 
 end
 
@@ -159,14 +164,6 @@ function PawnInitialize()
 	SLASH_PAWN1 = "/pawn"
 	SlashCmdList["PAWN"] = PawnCommand
 	
-	-- WoW 5.0 compatibility: remove commas from all of the parsing regexes.
-	if LARGE_NUMBER_SEPERATOR then
-		local Regex, _
-		for _, Regex in pairs(PawnRegexes) do
-			Regex[1] = gsub(Regex[1], ",", "")
-		end
-	end
-
 	-- Set any unset options to their default values.  If the user is a new Pawn user, all options
 	-- will be set to default values.  If upgrading, only missing options will be set to default values.
 	PawnInitializeOptions()
@@ -261,21 +258,28 @@ function PawnInitialize()
 			end
 		end)
 	
-	-- The loot roll window
-	-- No longer works in WoW 5.0... needs to be rebuilt for the new loot roll system.  :(
-	--if GroupLootFrame1IconFrame then
-	--	local LootRollClickHandler =
-	--		function(object, button)
-	--			if button == "RightButton" then
-	--				local ItemLink = GetLootRollItemLink(object:GetParent().rollID)
-	--				PawnUI_SetCompareItemAndShow(2, ItemLink)
-	--			end
-	--		end
-	--	GroupLootFrame1IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	--	GroupLootFrame2IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	--	GroupLootFrame3IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	--	GroupLootFrame4IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
-	--end
+	-- The group loot roll window
+	local LootRollClickHandler =
+		function(object, button)
+			if button == "RightButton" then
+				local ItemLink = GetLootRollItemLink(object:GetParent().rollID)
+				PawnUI_SetCompareItemAndShow(2, ItemLink)
+			end
+		end
+	GroupLootFrame1.IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	GroupLootFrame2.IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	GroupLootFrame3.IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	GroupLootFrame4.IconFrame:SetScript("OnMouseUp", LootRollClickHandler)
+	VgerCore.HookInsecureScript(GroupLootFrame1, "OnShow", PawnUI_GroupLootFrame_OnShow)
+	VgerCore.HookInsecureScript(GroupLootFrame2, "OnShow", PawnUI_GroupLootFrame_OnShow)
+	VgerCore.HookInsecureScript(GroupLootFrame3, "OnShow", PawnUI_GroupLootFrame_OnShow)
+	VgerCore.HookInsecureScript(GroupLootFrame4, "OnShow", PawnUI_GroupLootFrame_OnShow)
+	
+	-- The loot history window
+	hooksecurefunc("LootHistoryFrame_UpdateItemFrame", PawnUI_LootHistoryFrame_UpdateItemFrame)
+	
+	-- The loot won window
+	hooksecurefunc("LootWonAlertFrame_SetUp", PawnUI_LootWonAlertFrame_SetUp)
 	
 	-- The "currently equipped" tooltips (two, in case of rings, trinkets, and dual wielding)
 	hooksecurefunc(ShoppingTooltip1, "SetHyperlinkCompareItem", function(self, ItemLink, ...) PawnUpdateTooltip("ShoppingTooltip1", "SetHyperlinkCompareItem", ItemLink, ...) PawnAttachIconToTooltip(ShoppingTooltip1, true) end)
@@ -323,12 +327,6 @@ function PawnInitialize()
 		VgerCore.HookInsecureFunction(AtlasLootTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("AtlasLootTooltip", "SetHyperlink", ...) end)
 	end
 	
-	-- LinkWrangler compatibility
-	if LinkWrangler then
-		LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refresh")
-		LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refreshcomp")
-	end
-
 end
 
 function PawnOnLogout()
@@ -702,10 +700,6 @@ function PawnClearCacheValuesOnly()
 	end
 end
 
--- Performance notes useful to the cache and general item processing:
--- * It's faster to store the size of a table in a separate variable than to use #tablename.
--- * It's faster to use tinsert than tinsert.
-
 -- Clears all calculated values and causes them to be recalculated the next time tooltips are displayed.  The stats
 -- will not be re-read next time, however.
 function PawnResetTooltips()
@@ -721,6 +715,8 @@ function PawnResetTooltips()
 	PawnResetTooltip("ComparisonTooltip1") -- EquipCompare compatibility
 	PawnResetTooltip("ComparisonTooltip2") -- EquipCompare compatibility
 	PawnResetTooltip("AtlasLootTooltip") -- AtlasLoot compatibility
+	-- Update advisors.
+	if LootHistoryFrame then LootHistoryFrame_FullUpdate(LootHistoryFrame) end
 end
 
 -- Attempts to reset a single tooltip, causing Pawn values to be recalculated.  Returns true if successful.
@@ -1544,11 +1540,6 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 				CurrentDebugMessages = false
 				IgnoreErrors = true
 			end
-			-- WoW 5.0 compatibility: remove commas from all tooltip lines.
-			-- REVIEW: This isn't the right solution for non-English versions.
-			if LARGE_NUMBER_SEPERATOR then
-				CurrentParseText = gsub(CurrentParseText, ",", "")
-			end
 			
 			local ThisLineIsSocketBonus = false
 			if Side == 1 and strsub(CurrentParseText, 1, strlen(PawnSocketBonusPrefix)) == PawnSocketBonusPrefix then
@@ -1810,7 +1801,13 @@ function PawnLookForSingleStat(RegexTable, Stats, ThisString, DebugMessages)
 				else
 					MatchIndex = 1
 				end
-				local ExtractedValue = gsub(Matches[MatchIndex], ",", ".") -- replacing commas with dots for the German client
+				local ExtractedValue = gsub(Matches[MatchIndex], LARGE_NUMBER_SEPERATOR, "") -- remove commas in numbers
+				if DECIMAL_SEPERATOR ~= "." then
+					-- If this is the German client or any other version that uses something other than "." for
+					-- the decimal separator, we need to substitute here, because tonumber() parses things
+					-- in English format only.
+					ExtractedValue = gsub(ExtractedValue, ",", ".")
+				end
 				ExtractedValue = tonumber(ExtractedValue) -- broken onto multiple lines because gsub() returns multiple values and tonumber accepts multiple arguments
 				if Number < 0 then ExtractedValue = -ExtractedValue end
 				if Source == PawnSingleStatMultiplier then ExtractedValue = ExtractedValue * Number end
@@ -2642,8 +2639,12 @@ end
 --		{ ["Scale1"] = true, ["Scale2"] = true }
 function PawnIsItemAnUpgrade(Item, DoNotRescan)
 	-- Before we begin, check for unsupported item types and bail out early if appropriate.
+	if Item and type(Item) ~= "table" then
+		VgerCore.Fail("Item must be a table of item stats, not '" .. type(Item) .. "'.")
+		return
+	end
 	local InvType = Item.InvType
-	if not InvType or InvType == "" or InvType == "INVTYPE_TRINKET" or InvType == "INVTYPE_BAG" or InvType == "INVTYPE_QUIVER" or InvType == "INVTYPE_TABARD" or InvType == "INVTYPE_BODY" then return nil end
+	if not InvType or InvType == "" or InvType == "INVTYPE_TRINKET" or InvType == "INVTYPE_BAG" or InvType == "INVTYPE_QUIVER" or InvType == "INVTYPE_TABARD" or InvType == "INVTYPE_BODY" or InvType == "INVTYPE_THROWN" or InvType == "INVTYPE_AMMO" or InvType == "INVTYPE_RELIC" then return nil end
 	-- Is this item an heirloom that will continue to either scale or provide an XP boost?
 	local IsScalingHeirloom = (UnitLevel("player") <= PawnGetMaxLevelItemIsUsefulHeirloom(Item))
 	

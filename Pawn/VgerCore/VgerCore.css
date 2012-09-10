@@ -80,4 +80,11 @@ cursor:	default;
 .warning  {
 color:	red;	
 }
+
+a  {
+color:	#6800ff;
+}
+
+a:hover  {
+color:	#8ec3e6;
 }

@@ -100,7 +100,7 @@ PawnAddPluginScale(
 	PawnWowheadScale_HunterBeastMastery,
 	"abd473",
 	{
-		["RangedDps"] = 159, ["Agility"] = 100, ["HitRating"] = 81, ["CritRating"] = 73, ["HasteRating"] = 43, ["Ap"] = 38, ["MasteryRating"] = 23, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsShield"] = -1000000, ["IsMace"] = -1000000, ["Is2HMace"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 7200
+		["RangedDps"] = 159, ["Agility"] = 100, ["HitRating"] = 81, ["ExpertiseRating"] = 81, ["CritRating"] = 73, ["HasteRating"] = 43, ["Ap"] = 38, ["MasteryRating"] = 23, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsShield"] = -1000000, ["IsMace"] = -1000000, ["Is2HMace"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 7200
 	},
 	1
 )
@@ -111,7 +111,7 @@ PawnAddPluginScale(
 	PawnWowheadScale_HunterMarksman,
 	"abd473",
 	{
-		["Speed"] = 100, ["RangedDps"] = 81, ["Agility"] = 40, ["HitRating"] = 29, ["CritRating"] = 19, ["HasteRating"] = 16, ["Ap"] = 13, ["MasteryRating"] = 13, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsShield"] = -1000000, ["IsMace"] = -1000000, ["Is2HMace"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 7200
+		["Speed"] = 100, ["RangedDps"] = 81, ["Agility"] = 40, ["HitRating"] = 29, ["ExpertiseRating"] = 29, ["CritRating"] = 19, ["HasteRating"] = 16, ["Ap"] = 13, ["MasteryRating"] = 13, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsShield"] = -1000000, ["IsMace"] = -1000000, ["Is2HMace"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 7200
 	},
 	1
 )
@@ -122,7 +122,7 @@ PawnAddPluginScale(
 	PawnWowheadScale_HunterSurvival,
 	"abd473",
 	{
-		["Speed"] = 100, ["RangedDps"] = 70, ["Agility"] = 44, ["HitRating"] = 35, ["HasteRating"] = 29, ["Ap"] = 14, ["CritRating"] = 13, ["MasteryRating"] = 12, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsShield"] = -1000000, ["IsMace"] = -1000000, ["Is2HMace"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 7200
+		["Speed"] = 100, ["RangedDps"] = 70, ["Agility"] = 44, ["HitRating"] = 35, ["ExpertiseRating"] = 35, ["HasteRating"] = 29, ["Ap"] = 14, ["CritRating"] = 13, ["MasteryRating"] = 12, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsShield"] = -1000000, ["IsMace"] = -1000000, ["Is2HMace"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 7200
 	},
 	1
 )

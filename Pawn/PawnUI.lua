@@ -76,7 +76,7 @@ function PawnUI_InventoryPawnButton_Move()
 		end
 		if PawnUI_SocketingPawnButton then
 			PawnUI_SocketingPawnButton:ClearAllPoints()
-			PawnUI_SocketingPawnButton:SetPoint("TOPRIGHT", "ItemSocketingFrame", "TOPRIGHT", -18, -46)
+			PawnUI_SocketingPawnButton:SetPoint("TOPRIGHT", "ItemSocketingFrame", "TOPRIGHT", -14, -32)
 			PawnUI_SocketingPawnButton:Show()
 		end
 	elseif PawnCommon.ButtonPosition == PawnButtonPositionLeft then
@@ -1945,6 +1945,7 @@ end
 
 function PawnUIFrame_ShowLootUpgradeAdvisorCheck_OnClick()
 	PawnCommon.ShowLootUpgradeAdvisor = PawnUIFrame_ShowLootUpgradeAdvisorCheck:GetChecked() ~= nil
+	if LootHistoryFrame then LootHistoryFrame_FullUpdate(LootHistoryFrame) end
 end
 
 function PawnUIFrame_ShowQuestUpgradeAdvisorCheck_OnClick()
@@ -2019,7 +2020,7 @@ function PawnUI_OnSocketUpdate()
 	-- Add the annotation lines to the tooltip.
 	CreateFrame("GameTooltip", "PawnSocketingTooltip", ItemSocketingFrame, "PawnUI_HintTooltip_PointsUp")
 	PawnSocketingTooltip:SetOwner(ItemSocketingFrame, "ANCHOR_NONE")
-	PawnSocketingTooltip:SetPoint("TOPLEFT", ItemSocketingFrame, "BOTTOMLEFT", 12, 20)
+	PawnSocketingTooltip:SetPoint("TOPLEFT", ItemSocketingFrame, "BOTTOMLEFT", 6, -6)
 	PawnSocketingTooltip:SetText(PawnUI_ItemSocketingDescription_Title, 1, 1, 1)
 	
 	for _, Entry in pairs(Item.Values) do
@@ -2204,20 +2205,23 @@ function PawnUI_LootUpgradeAdvisor_OnLoad(self)
 	self.arrow.glow:SetTexCoord(0.40625000, 0.82812500, 0.66015625, 0.82812500, 0.40625000, 0.77343750, 0.66015625, 0.77343750)
 end
 
-function PawnUI_LootUpgradeAdvisor_OnShow(self)
+function PawnUI_GroupLootFrame_OnShow(self)
+	--VgerCore.Message("*** beginning of PawnUI_GroupLootFrame_OnShow")
 	if not PawnCommon.ShowLootUpgradeAdvisor then self:Hide() return end
 	local Index = self:GetID()
-	self.ItemLink = nil
+	local LootAdvisor = _G["PawnUI_LootUpgradeAdvisor" .. Index]
+	LootAdvisor.ItemLink = nil
 	
 	-- What item are they rolling for?
-	local RollID = _G["GroupLootFrame" .. Index].rollID
+	local RollID = self.rollID
 	local ItemLink = GetLootRollItemLink(RollID)
-	if not ItemLink then self:Hide() return end
-	self.ItemLink = ItemLink
+	LootAdvisor.ItemLink = ItemLink
+	if not ItemLink then LootAdvisor:Hide() return end -- VgerCore.Message("*** not showing tooltip because no item link")
+	--VgerCore.Message("*** " .. ItemLink)
 	
 	-- Is it an upgrade?
 	local Item = PawnGetItemData(ItemLink)
-	if not Item then self:Hide() return end
+	if not Item then LootAdvisor:Hide() return end -- VgerCore.Message("*** not showing tooltip because no item stats")
 	local UpgradeInfo = PawnIsItemAnUpgrade(Item)
 	if UpgradeInfo then
 		-- It's an upgrade!  Decide how to display it.
@@ -2251,23 +2255,74 @@ function PawnUI_LootUpgradeAdvisor_OnShow(self)
 				end
 				UpgradeText = UpgradeText .. ThisText
 			end
-			self.text:SetText(UpgradeText)
+			LootAdvisor.text:SetText(UpgradeText)
 		else
 			-- If the item upgrades more than three scales, show a generic tooltip.
-			self.text:SetText(format(PawnLocal.LootUpgradeAdvisorHeaderMany, NumUpgrades))
+			LootAdvisor.text:SetText(format(PawnLocal.LootUpgradeAdvisorHeaderMany, NumUpgrades))
 		end
+		
+		-- Resize the window to fit the content, and then show it.
+		LootAdvisor:SetHeight(LootAdvisor.text:GetHeight() + 32)
+		LootAdvisor:Show()
 	else
 		-- Not an upgrade.
-		self:Hide()
+		--VgerCore.Message("*** not showing tooltip because not an upgrade")
+		LootAdvisor:Hide()
 		return
 	end
 	
-	-- Resize the window to fix the content.
-	self:SetHeight(self.text:GetHeight() + 32)
 end
 
 function PawnUI_LootUpgradeAdvisor_OnClick(self)
 	if self.ItemLink then PawnUI_SetCompareItemAndShow(2, self.ItemLink) end
+end
+
+function PawnUI_LootHistoryFrame_UpdateItemFrame(self, ItemFrame, ...)
+	-- Figure out what item we're rolling for.  It's possible that we won't have an item link or item data yet; if that's true
+	-- then the loot roll window should get an update when the item information is available and this should thus be
+	-- called again later.
+	local RollID, ItemLink = C_LootHistory.GetItem(ItemFrame.itemIdx)
+	if ItemLink == nil then return end
+	local Item = PawnGetItemData(ItemLink)
+	if not Item then return end
+	
+	-- Is this item an upgrade?
+	local IsUpgrade = PawnCommon.ShowLootUpgradeAdvisor and (PawnIsItemAnUpgrade(Item) ~= nil)
+	if IsUpgrade then
+		-- If the arrow hasn't already been created, create it.
+		if not ItemFrame.PawnLootAdvisorArrow then
+			ItemFrame.PawnLootAdvisorArrow = ItemFrame:CreateTexture(nil, "OVERLAY", "PawnUI_LootAdvisorTexture")
+			ItemFrame.PawnLootAdvisorArrow:SetTexCoord(0, .5, 0, .5)
+		end
+		ItemFrame.PawnLootAdvisorArrow:Show()
+	else
+		-- Hide the upgrade arrow if it's already there from a previous loot item.
+		if ItemFrame.PawnLootAdvisorArrow then
+			ItemFrame.PawnLootAdvisorArrow:Hide()
+		end
+	end
+end
+
+function PawnUI_LootWonAlertFrame_SetUp(self, ItemLink, ...)
+	-- Is this item an upgrade?
+	if ItemLink == nil then return end
+	local Item = PawnGetItemData(ItemLink)
+	if not Item then return end
+	local IsUpgrade = PawnCommon.ShowLootUpgradeAdvisor and (PawnIsItemAnUpgrade(Item) ~= nil)
+	
+	if IsUpgrade then
+		-- If the arrow hasn't already been created, create it.
+		if not self.PawnLootAdvisorArrow then
+			self.PawnLootAdvisorArrow = self:CreateTexture(nil, "OVERLAY", "PawnUI_LootWonAdvisorTexture")
+			self.PawnLootAdvisorArrow:SetTexCoord(0, .5, 0, .5)
+		end
+		self.PawnLootAdvisorArrow:Show()
+	else
+		-- Hide the upgrade arrow if it's already there from a previous loot item.
+		if self.PawnLootAdvisorArrow then
+			self.PawnLootAdvisorArrow:Hide()
+		end
+	end
 end
 
 ------------------------------------------------------------

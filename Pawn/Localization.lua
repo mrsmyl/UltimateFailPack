@@ -688,25 +688,24 @@ PawnRegexes =
 	{"^Requires level %d+ to (%d+)", "MaxScalingLevel"}, -- Scaling heirloom items
 	{"^Equip: Experience gained", "XpBoost", 1, PawnMultipleStatsFixed}, -- Experience-granting heirloom items
 	{PawnGameConstant(INVTYPE_RANGED), "IsRanged", 1, PawnMultipleStatsFixed}, -- Ranged
-	{"^Projectile$", "IsRanged", 1, PawnMultipleStatsFixed}, -- Projectile
 	{PawnGameConstant(INVTYPE_WEAPON), "IsOneHand", 1, PawnMultipleStatsFixed}, -- One-Hand
 	{PawnGameConstant(INVTYPE_2HWEAPON), "IsTwoHand", 1, PawnMultipleStatsFixed}, -- Two-Hand
 	{PawnGameConstant(INVTYPE_WEAPONMAINHAND), "IsMainHand", 1, PawnMultipleStatsFixed}, -- Main Hand
 	{PawnGameConstant(INVTYPE_WEAPONOFFHAND), "IsOffHand", 1, PawnMultipleStatsFixed}, -- Off Hand
 	{PawnGameConstant(INVTYPE_HOLDABLE), "IsFrill", 1, PawnMultipleStatsFixed}, -- Held In Off-Hand
 	{"^([%d%.,]+) %- ([%d%.,]+) Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Standard weapon (heirlooms can have decimal points in their damage values)
-	{"^%+?(%d-) %- (%d-) Fire Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
-	{"^%+?(%d-) %- (%d-) Shadow Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
-	{"^%+?(%d-) %- (%d-) Nature Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand, Thunderfury
-	{"^%+?(%d-) %- (%d-) Arcane Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
-	{"^%+?(%d-) %- (%d-) Frost Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
-	{"^%+?(%d-) %- (%d-) Holy Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand, Ashbringer
-	{"^%+?(%d-) Weapon Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapon enchantments
-	{"^Equip: %+?(%d-) Weapon Damage%.$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Braided Eternium Chain
-	{"^%+?(%d-) Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapons with no damage range: Crossbow of the Albatross
-	{"^Scope %(%+(%d-) Damage%)$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Ranged weapon scopes
-	{"^%+?(%d+) [Aa]ll [Ss]tats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract},
-	{"^%+?(%d+) to All Stats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract}, -- Enchanted Pearl, Enchanted Tear
+	{"^%+?([%d%.,]+) %- ([%d%.,]+) Fire Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
+	{"^%+?([%d%.,]+) %- ([%d%.,]+) Shadow Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
+	{"^%+?([%d%.,]+) %- ([%d%.,]+) Nature Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand, Thunderfury
+	{"^%+?([%d%.,]+) %- ([%d%.,]+) Arcane Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
+	{"^%+?([%d%.,]+) %- ([%d%.,]+) Frost Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand
+	{"^%+?([%d%.,]+) %- ([%d%.,]+) Holy Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Wand, Ashbringer
+	{"^%+?([%d%.,]+) Weapon Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapon enchantments
+	{"^Equip: %+?([%d%.,]+) Weapon Damage%.$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Braided Eternium Chain
+	{"^%+?([%d%.,]+) Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapons with no damage range: Crossbow of the Albatross
+	{"^Scope %(%+([%d%.,]+) Damage%)$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Ranged weapon scopes
+	{"^%+?([%d%.,]+) [Aa]ll [Ss]tats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract},
+	{"^%+?([%d%.,]+) to All Stats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract}, -- Enchanted Pearl, Enchanted Tear
 	{"^%+?(%-?%d+) Strength$", "Strength"},
 	{"^Potency$", "Strength", 20, PawnMultipleStatsFixed}, -- weapon enchantment (untested)
 	{"^%+?(%-?%d+) Agility$", "Agility"},
@@ -714,59 +713,59 @@ PawnRegexes =
 	{"^%+?(%-?%d+) Intellect$", "Intellect"}, -- negative Intellect: Kreeg's Mug
 	{"^%+?(%-?%d+) Spirit$", "Spirit"},
 	{"^Titanium Weapon Chain$", "HitRating", 28, PawnMultipleStatsFixed}, -- Weapon enchantment; has additional effects
-	{"^%+?(%d+) Dodge$", "DodgeRating"}, -- Uppercase: Subtle Alicite, Arctic Ring of Eluding, Cata head enchantment for tanks
-	{"^Equip: Increases your dodge by (%d+)%.$", "DodgeRating"}, -- Frostwolf Insignia Rank 6
-	{"^Equip: Increases your parry by (%d+)%.$", "ParryRating"}, -- Draconic Avenger
-	{"^%+?(%d+) Parry$", "ParryRating"},
+	{"^%+?([%d%.,]+) Dodge$", "DodgeRating"}, -- Uppercase: Subtle Alicite, Arctic Ring of Eluding, Cata head enchantment for tanks
+	{"^Equip: Increases your dodge by ([%d%.,]+)%.$", "DodgeRating"}, -- Frostwolf Insignia Rank 6
+	{"^Equip: Increases your parry by ([%d%.,]+)%.$", "ParryRating"}, -- Draconic Avenger
+	{"^%+?([%d%.,]+) Parry$", "ParryRating"},
 	{"^%(([%d%.,]+) damage per second%)$"}, -- Ignore this; DPS is calculated manually
 	{"^Adds ([%d%.,]+) damage per second$", "Dps"},
 	{"^Fiery Weapon$", "Dps", 4, PawnMultipleStatsFixed}, -- weapon enchantment, 
-	{"^Equip: Increases your expertise by (%d+)%.$", "ExpertiseRating"}, -- Earthwarden
-	{"^%+?(%d+) Expertise$", "ExpertiseRating"}, -- Guardian's Shadow Crystal
-	{"^Equip: Increases your critical strike by (%d+)%.$", "CritRating"},
-	{"^%+?(%d+) Critical [Ss]trike%.?$", "CritRating"},
-	{"^Scope %(%+(%d+) Critical Strike%)$", "CritRating"},
-	{"^%+?(%d+) Ranged Critical Strike$", "CritRating"}, -- Heartseeker Scope (untested); Pawn doesn't distinguish between ranged and hybrid crit
-	{"^Equip: Increases your hit by (%d+)%.$", "HitRating"}, -- Don Julio's Band
-	{"^%+?(%d+) Hit$", "HitRating"}, -- 3% hit scope
+	{"^Equip: Increases your expertise by ([%d%.,]+)%.$", "ExpertiseRating"}, -- Earthwarden
+	{"^%+?([%d%.,]+) Expertise$", "ExpertiseRating"}, -- Guardian's Shadow Crystal
+	{"^Equip: Increases your critical strike by ([%d%.,]+)%.$", "CritRating"},
+	{"^%+?([%d%.,]+) Critical [Ss]trike%.?$", "CritRating"},
+	{"^Scope %(%+([%d%.,]+) Critical Strike%)$", "CritRating"},
+	{"^%+?([%d%.,]+) Ranged Critical Strike$", "CritRating"}, -- Heartseeker Scope (untested); Pawn doesn't distinguish between ranged and hybrid crit
+	{"^Equip: Increases your hit by ([%d%.,]+)%.$", "HitRating"}, -- Don Julio's Band
+	{"^%+?([%d%.,]+) Hit$", "HitRating"}, -- 3% hit scope
 	{"^Surefooted$", "HitRating", 10, PawnMultipleStatsFixed}, -- Enchantment (untested); has additional effects
 	{"^Accuracy$", "HitRating", 25, PawnMultipleStatsFixed, "CritRating", 25, PawnMultipleStatsFixed}, -- weapon enchantment
-	{"^Equip: Increases your pvp resilience by (%d+)%.$", "ResilienceRating"},
-	{"^%+?(%d+) PvP Resilience$", "ResilienceRating"}, -- Mystic Dawnstone
-	{"^Equip: Increases your pvp power by (%d+)%.$", "SpellPenetration"}, -- Bloodthirsty Gladiator's Ringmail Gauntlets
-	{"^%+?(%d+) PvP Power$", "SpellPenetration"}, -- Stormy Chalcedony
-	{"^Counterweight %(%+(%d+) Haste%)", "HasteRating"},
-	{"^Equip: Increases your haste by (%d+)%.$", "HasteRating"}, -- Swiftsteel Shoulders
-	{"^%+?(%d+) Haste$", "HasteRating"}, -- Leggings of the Betrayed
-	{"^Equip: Increases your mastery by (%d+)%.$", "MasteryRating"}, -- Elementium Poleaxe
-	{"^%+?(%d+) Mastery$", "MasteryRating"}, -- Zen Dream Emerald
-	{"^Equip: Increases attack power by (%d+)%.$", "Ap"},
-	{"^%+?(%d+) Attack Power$", "Ap"},
-	{"^%+?(%d+) [mM]ana [pP]er 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- Lesser Sledgemace of the Elder (counting 1 MP5 = 2 Spirit)
-	{"^%+?(%d+) [mM]ana [eE]very 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- ? (counting 1 MP5 = 2 Spirit)
-	{"^%+?(%d+) [mM]ana [pP]er 5 [sS]econds$", "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
-	{"^%+?(%d+) [mM]ana [eE]very 5 [sS]econds$", "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
-	{"^%Mana Regen (%d+) per 5 sec%.$", "Spirit", 2, PawnSingleStatMultiplier}, -- Classic-era bracers enchantment (counting 1 MP5 = 2 Spirit)
-	{"^Equip: Restores (%d+) health every 5 sec%.$", "Stamina"}, -- (counting HP5 = Stamina)
-	{"^Equip: Restores (%d+) health per 5 sec%.$", "Stamina", 2, PawnSingleStatMultiplier}, -- Demon's Blood (counting HP5 = Stamina)
-	{"^%+?(%d+) [hH]ealth [eE]very 5 [sS]ec%.?$", "Stamina"}, -- Aquamarine Signet of Regeneration
-	{"^%+?(%d+) [hH]ealth [pP]er 5 [sS]ec%.?$", "Stamina"}, -- Anglesite Choker of Regeneration
-	{"^%+(%d+) Health and Mana every 5 sec$", "Spirit", 2, PawnSingleStatMultiplier}, -- Greater Vitality boots enchantment; ignores the HP5
-	{"^%+(%d+) Mana$", "Intellect", 1/20, PawnSingleStatMultiplier}, -- +150 mana enchantment (counting 1 Mana = 1/20 Intellect)
-	{"^%+(%d+) HP$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +100 health head/leg enchantment (counting 1 HP = 1/12.5 Stamina)
-	{"^%+(%d+) Health$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +150 health enchantment (counting 1 HP = 1/12.5 Stamin)
-	{"^(%d+) Armor$", "Armor"}, -- normal armor
-	{"^%+(%d+) Armor$", "Armor"}, -- cloak armor enchantments
-	{"^Reinforced %(%+(%d+) Armor%)$", "Armor"}, -- armor kits
-	{"^Equip: %+(%d+) Armor%.$", "Armor"}, -- paladin Royal Seal of Eldre'Thalas
-	{"^Equip: Increases spell power by (%d+)%.$", "SpellPower"}, -- Overlaid Chain Spaulders
-	{"^%+?(%d+) Spell Power$", "SpellPower"}, -- Reckless Monarch Topaz; enchantments
-	{"^Equip: Increases spell penetration by (%d+)%.$", "SpellPenetration"}, -- Frostfire Robe, Wrathful Gladiator's Grimoire
-	{"^%+(%d+) Arcane Spell Damage$", "SpellPower"}, -- ...of Arcane Wrath
-	{"^%+(%d+) Fire Spell Damage$", "SpellPower"}, -- ...of Fiery Wrath
-	{"^%+(%d+) Frost Spell Damage$", "SpellPower"}, -- ...of Frozen Wrath
-	{"^%+(%d+) Nature Spell Damage$", "SpellPower"}, -- ...of Nature's Wrath
-	{"^%+(%d+) Shadow Spell Damage$", "SpellPower"}, -- ...of Shadow Wrath
+	{"^Equip: Increases your pvp resilience by ([%d%.,]+)%.$", "ResilienceRating"},
+	{"^%+?([%d%.,]+) PvP Resilience$", "ResilienceRating"}, -- Mystic Dawnstone
+	{"^Equip: Increases your pvp power by ([%d%.,]+)%.$", "SpellPenetration"}, -- Bloodthirsty Gladiator's Ringmail Gauntlets
+	{"^%+?([%d%.,]+) PvP Power$", "SpellPenetration"}, -- Stormy Chalcedony
+	{"^Counterweight %(%+([%d%.,]+) Haste%)", "HasteRating"},
+	{"^Equip: Increases your haste by ([%d%.,]+)%.$", "HasteRating"}, -- Swiftsteel Shoulders
+	{"^%+?([%d%.,]+) Haste$", "HasteRating"}, -- Leggings of the Betrayed
+	{"^Equip: Increases your mastery by ([%d%.,]+)%.$", "MasteryRating"}, -- Elementium Poleaxe
+	{"^%+?([%d%.,]+) Mastery$", "MasteryRating"}, -- Zen Dream Emerald
+	{"^Equip: Increases attack power by ([%d%.,]+)%.$", "Ap"},
+	{"^%+?([%d%.,]+) Attack Power$", "Ap"},
+	{"^%+?([%d%.,]+) [mM]ana [pP]er 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- Lesser Sledgemace of the Elder (counting 1 MP5 = 2 Spirit)
+	{"^%+?([%d%.,]+) [mM]ana [eE]very 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- ? (counting 1 MP5 = 2 Spirit)
+	{"^%+?([%d%.,]+) [mM]ana [pP]er 5 [sS]econds$", "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
+	{"^%+?([%d%.,]+) [mM]ana [eE]very 5 [sS]econds$", "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
+	{"^%Mana Regen ([%d%.,]+) per 5 sec%.$", "Spirit", 2, PawnSingleStatMultiplier}, -- Classic-era bracers enchantment (counting 1 MP5 = 2 Spirit)
+	{"^Equip: Restores ([%d%.,]+) health every 5 sec%.$", "Stamina"}, -- (counting HP5 = Stamina)
+	{"^Equip: Restores ([%d%.,]+) health per 5 sec%.$", "Stamina", 2, PawnSingleStatMultiplier}, -- Demon's Blood (counting HP5 = Stamina)
+	{"^%+?([%d%.,]+) [hH]ealth [eE]very 5 [sS]ec%.?$", "Stamina"}, -- Aquamarine Signet of Regeneration
+	{"^%+?([%d%.,]+) [hH]ealth [pP]er 5 [sS]ec%.?$", "Stamina"}, -- Anglesite Choker of Regeneration
+	{"^%+([%d%.,]+) Health and Mana every 5 sec$", "Spirit", 2, PawnSingleStatMultiplier}, -- Greater Vitality boots enchantment; ignores the HP5
+	{"^%+([%d%.,]+) Mana$", "Intellect", 1/20, PawnSingleStatMultiplier}, -- +150 mana enchantment (counting 1 Mana = 1/20 Intellect)
+	{"^%+([%d%.,]+) HP$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +100 health head/leg enchantment (counting 1 HP = 1/12.5 Stamina)
+	{"^%+([%d%.,]+) Health$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +150 health enchantment (counting 1 HP = 1/12.5 Stamin)
+	{"^([%d%.,]+) Armor$", "Armor"}, -- normal armor
+	{"^%+([%d%.,]+) Armor$", "Armor"}, -- cloak armor enchantments
+	{"^Reinforced %(%+([%d%.,]+) Armor%)$", "Armor"}, -- armor kits
+	{"^Equip: %+([%d%.,]+) Armor%.$", "Armor"}, -- paladin Royal Seal of Eldre'Thalas
+	{"^Equip: Increases spell power by ([%d%.,]+)%.$", "SpellPower"}, -- Overlaid Chain Spaulders
+	{"^%+?([%d%.,]+) Spell Power$", "SpellPower"}, -- Reckless Monarch Topaz; enchantments
+	{"^Equip: Increases spell penetration by ([%d%.,]+)%.$", "SpellPenetration"}, -- Frostfire Robe, Wrathful Gladiator's Grimoire
+	{"^%+([%d%.,]+) Arcane Spell Damage$", "SpellPower"}, -- ...of Arcane Wrath
+	{"^%+([%d%.,]+) Fire Spell Damage$", "SpellPower"}, -- ...of Fiery Wrath
+	{"^%+([%d%.,]+) Frost Spell Damage$", "SpellPower"}, -- ...of Frozen Wrath
+	{"^%+([%d%.,]+) Nature Spell Damage$", "SpellPower"}, -- ...of Nature's Wrath
+	{"^%+([%d%.,]+) Shadow Spell Damage$", "SpellPower"}, -- ...of Shadow Wrath
 	{PawnGameConstant(EMPTY_SOCKET_RED), "RedSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_YELLOW), "YellowSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_BLUE), "BlueSocket", 1, PawnMultipleStatsFixed},
@@ -783,25 +782,9 @@ PawnRegexes =
 	{'^"'}, -- Flavor text
 	{"^Requires"}, -- But "Requires level XX to YY" we DO care about.
 	{"^Season "}, -- Honor and Conquest gear
-	{"^Alterac Valley$"}, -- Stormpike Soldier's Blood
-	{"^Blackrock Depths$"}, -- Dark Brewmaiden's Brew
 	{"^Blade's Edge Mountains$"}, -- Felsworn Gas Mask
-	{"^Black Temple$"}, -- Naj'entus Spine
-	{"^Dire Maul$"}, -- Gordok Courtyard Key
-	{"^Grizzly Hills$"}, -- Element 115
-	{"^Hyjal Summit$"}, -- Tears of the Goddess
-	{"^Icecrown$"}, -- (Argent Tournament dailies)
-	{"^Karazhan$"}, -- Torment of the Worgen
-	{"^Molten Front$"}, -- Eternal Sunfruit
-	{"^Old Hillsbrad Foothills$"}, -- Pack of Incendiary Bombs
-	{"^Serpentshrine Cavern$"}, -- Tainted Core
 	{"^Shadowmoon Valley$"}, -- Enchanted Illidari Tabard
-	{"^Stratholme$"}, -- Andonisus, Reaper of Souls
 	{"^Tempest Keep$"}, -- Cosmic Infuser
-	{"^The Escape From Durnholde$"}, -- Pack of Incendiary Bombs
-	{"^The Black Morass$"}, -- Chrono-beacon
-	{"^Wintergrasp$"}, -- Inflatable Land Mines
-	{"^Zul'Aman$"}, -- Amani Hex Stick
 }
 
 -- These regexes work exactly the same as PawnRegexes, but they're used to parse the right side of tooltips.
@@ -810,10 +793,8 @@ PawnRegexes =
 PawnRightHandRegexes =
 {
 	{"^Speed ([%d%.,]+)$", "Speed"},
-	{"^Arrow$", "IsBow", 1, PawnMultipleStatsFixed},
 	{"^Axe$", "IsAxe", 1, PawnMultipleStatsFixed},
 	{"^Bow$", "IsBow", 1, PawnMultipleStatsFixed},
-	{"^Bullet$", "IsGun", 1, PawnMultipleStatsFixed},
 	{"^Crossbow$", "IsCrossbow", 1, PawnMultipleStatsFixed},
 	{"^Dagger$", "IsDagger", 1, PawnMultipleStatsFixed},
 	{"^Fist Weapon$", "IsFist", 1, PawnMultipleStatsFixed},
