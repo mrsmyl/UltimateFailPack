@@ -1214,8 +1214,8 @@
 
 
 	<Frame name="Atr_FullScanFrame" inherits="AuctionatorDialog" toplevel="true" parent="UIParent" frameStrata="DIALOG" enableMouse="true" hidden="true">
-		<Size><AbsDimension x="460" y="420" /></Size>		
-		<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="220" y="-130"/></Offset></Anchor></Anchors>
+		<Size><AbsDimension x="600" y="420" /></Size>		
+		<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="150" y="-130"/></Offset></Anchor></Anchors>
 
 		<Layers>
 			<Layer level="ARTWORK">
@@ -1274,7 +1274,7 @@
 			</Button>
 
 			<SimpleHTML name="Atr_FullScanHTML">
-				<Size><AbsDimension x="405" y="300" /></Size>		
+				<Size><AbsDimension x="545" y="300" /></Size>		
 				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="27" y="-175"/></Offset></Anchor></Anchors>
 				<FontString inherits="GameFontLightGraySmall"/>
 				<FontStringHeader1 inherits="GameFontNormal"/>

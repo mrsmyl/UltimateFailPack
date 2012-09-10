@@ -1920,19 +1920,25 @@ function Atr_OnAuctionUpdate (...)
 
 	local numBatchAuctions, totalAuctions = Atr_GetNumAuctionItems("list");
 
-	--zz (aoa_count, "Atr_OnAuctionUpdate", numBatchAuctions, totalAuctions, ...);
-	aoa_count = aoa_count + 1
-	
---	if (gAtr_FullScanState == ATR_FS_STARTED or gAtr_FullScanState == ATR_FS_ANALYZING) then
---		Atr_FullScanAnalyze()
---		return
---	end
+	--local name, texture, count;
+	--if (numBatchAuctions > 0) then
+	--	name, texture, count = GetAuctionItemInfo("list", 1);
+	--end
 
-	if (gAtr_FullScanState == ATR_FS_STARTED or gAtr_FullScanState == ATR_FS_ANALYZING) then
-		gAtr_FullScanState = ATR_FS_ANALYZING
-		--gAtr_FullScanState = ATR_FS_CLEANING_UP
+	--zz (aoa_count, "Atr_OnAuctionUpdate", numBatchAuctions, totalAuctions, name, count, ...);
+	aoa_count = aoa_count + 1
+
+	if (gAtr_FullScanState == ATR_FS_STARTED) then
+		gAtr_FullScanState = ATR_FS_ANALYZING		-- handle in idle loop to slow down
 		return
 	end
+
+	if (gAtr_FullScanState == ATR_FS_SLOW_QUERY_SENT) then
+		Atr_FullScanAnalyze()						-- handle here since it's just one page
+		return
+	end
+
+
 
 	if (not Atr_IsTabSelected()) then
 		Atr_ClearScanCache()		-- if not our tab, we have no idea what happened so must flush all caches
@@ -1950,7 +1956,7 @@ function Atr_OnAuctionUpdate (...)
 		if (not isDup) then
 
 			local done = gCurrentPane.activeSearch:AnalyzeResultsPage();
-
+			
 			if (done) then
 				gCurrentPane.activeSearch:Finish();
 				Atr_OnSearchComplete ();
@@ -2734,12 +2740,14 @@ function Atr_Idle(self, elapsed)
 		Atr_ShowRecTooltip();
 	end
 
-	
-	if (gAtr_FullScanState ~= ATR_FS_NULL) then
-		Atr_FullScanFrameIdle();
-		return
+	if (Atr_FullScanFrameIdle == nil) then
+		Atr_Error_Display ("Looks like you installed Auctionator\n without quitting out of WoW.\n\nPlease quit and restart\nWoW to complete the install.")
+	else
+		local handled = Atr_FullScanFrameIdle()
+		if (handled) then
+			return
+		end
 	end
-
 	
 	if (verCheckMsgState == 0) then
 		verCheckMsgState = time();
