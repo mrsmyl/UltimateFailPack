@@ -217,3 +217,80 @@ function GUI:CreateTitleLabel(parent, size)
 	TSMAPI.Design:SetTitleTextColor(label)
 	return label
 end
+
+function GUI:CreateStatusBar(parent, baseName)
+	local function UpdateStatus(self, majorStatus, minorStatus)
+		if majorStatus then
+			self.majorStatusBar:SetValue(majorStatus)
+			if majorStatus == 100 then
+				self.majorStatusBar.ag:Stop()
+			elseif not self.majorStatusBar.ag:IsPlaying() then
+				self.majorStatusBar.ag:Play()
+			end
+		end
+		if minorStatus then
+			self.minorStatusBar:SetValue(minorStatus)
+			if minorStatus == 100 then
+				self.minorStatusBar.ag:Stop()
+			elseif not self.minorStatusBar.ag:IsPlaying() then
+				self.minorStatusBar.ag:Play()
+			end
+		end
+	end
+	
+	local function SetStatusText(self, text)
+		self.text:SetText(text)
+	end
+
+	local level = parent:GetFrameLevel()
+	local frame = CreateFrame("Frame", nil, parent)
+	frame:SetHeight(25)
+	frame:SetPoint("TOPLEFT", 2, -3)
+	frame:SetPoint("TOPRIGHT", -2, -3)
+	frame:SetFrameLevel(level+1)
+	frame.UpdateStatus = UpdateStatus
+	frame.SetStatusText = SetStatusText
+	
+	-- minor status bar (gray one)
+	local statusBar = CreateFrame("STATUSBAR", baseName.."-Minor", frame, "TextStatusBar")
+	statusBar:SetOrientation("HORIZONTAL")
+	statusBar:SetMinMaxValues(0, 100)
+	statusBar:SetAllPoints()
+	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+	statusBar:SetStatusBarColor(.42, .42, .42, .7)
+	statusBar:SetFrameLevel(level+2)
+	local ag = statusBar:CreateAnimationGroup()
+	local alpha = ag:CreateAnimation("Alpha")
+	alpha:SetDuration(1)
+	alpha:SetChange(-.5)
+	ag:SetLooping("Bounce")
+	statusBar.ag = ag
+	frame.minorStatusBar = statusBar
+	
+	-- major status bar (main blue one)
+	local statusBar = CreateFrame("STATUSBAR", baseName.."-Major", frame, "TextStatusBar")
+	statusBar:SetOrientation("HORIZONTAL")
+	statusBar:SetMinMaxValues(0, 100)
+	statusBar:SetAllPoints()
+	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+	statusBar:SetStatusBarColor(.19, .22, .33, .9)
+	statusBar:SetFrameLevel(level+3)
+	local ag = statusBar:CreateAnimationGroup()
+	local alpha = ag:CreateAnimation("Alpha")
+	alpha:SetDuration(1)
+	alpha:SetChange(-.5)
+	ag:SetLooping("Bounce")
+	statusBar.ag = ag
+	frame.majorStatusBar = statusBar
+	
+	local textFrame = CreateFrame("Frame", nil, frame)
+	textFrame:SetFrameLevel(level+4)
+	textFrame:SetAllPoints(frame)
+	-- Text for the StatusBar
+	local text = TSMAPI.GUI:CreateLabel(textFrame)
+	TSMAPI.Design:SetWidgetTextColor(text)
+	text:SetPoint("CENTER")
+	frame.text = text
+	
+	return frame
+end

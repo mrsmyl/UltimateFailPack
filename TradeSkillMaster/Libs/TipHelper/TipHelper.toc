@@ -10,7 +10,7 @@
 ## URL: http://auctioneeraddon.com/
 ## Author: Norganna's AddOns
 ##
-## X-Curse-Packaged-Version: v1.4.5
+## X-Curse-Packaged-Version: v1.5
 ## X-Curse-Project-Name: TradeSkillMaster
 ## X-Curse-Project-ID: tradeskill-master
 ## X-Curse-Repository-ID: wow/tradeskill-master/mainline

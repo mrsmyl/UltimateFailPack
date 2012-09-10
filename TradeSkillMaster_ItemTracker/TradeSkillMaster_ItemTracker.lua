@@ -41,6 +41,8 @@ local characterDefaults = { -- anything added to the characters table will have 
 	bank = {},
 	auctions = {},
 	guild = nil,
+	mail = {},
+	mailInfo = {},
 }
 local guildDefaults = {
 	items = {},
@@ -87,10 +89,15 @@ function TSM:OnInitialize()
 	
 	local itemIDs = {}
 	for _, data in pairs(TSM.characters) do
+		data.mail = data.mail or characterDefaults.mail
+		data.mailInfo = data.mailInfo or characterDefaults.mailInfo
 		for itemID in pairs(data.bags) do
 			itemIDs[itemID] = true
 		end
 		for itemID in pairs(data.bank) do
+			itemIDs[itemID] = true
+		end
+		for itemID in pairs(data.mail) do
 			itemIDs[itemID] = true
 		end
 		for itemID in pairs(data.auctions) do
@@ -120,14 +127,17 @@ function TSM:LoadTooltip(itemID)
 			local bags = data.bags[itemID] or 0
 			local bank = data.bank[itemID] or 0
 			local auctions = data.auctions[itemID] or 0
+			local mail = data.mail[itemID] or 0
+			local total = bags + bank + auctions + mail
 			
-			local totalText = "|cffffffff"..(bags+bank+auctions).."|r"
 			local bagText = "|cffffffff"..bags.."|r"
 			local bankText = "|cffffffff"..bank.."|r"
 			local auctionText = "|cffffffff"..auctions.."|r"
+			local mailText = "|cffffffff"..mail.."|r"
+			local totalText = "|cffffffff"..total.."|r"
 		
-			if (bags + bank + auctions) > 0 then
-				tinsert(text, format(L["%s: %s (%s in bags, %s in bank, %s on AH)"], name, totalText, bagText, bankText, auctionText))
+			if total > 0 then
+				tinsert(text, format(L["%s: %s (%s in bags, %s in bank, %s on AH, %s in mail)"], name, totalText, bagText, bankText, auctionText, mailText))
 			end
 		end
 		

@@ -132,6 +132,7 @@ function ProfessionConfig:SelectTree(treeFrame, optionsPage, selection)
 	elseif selectedParent == 3 then -- Options page
 		ProfessionConfig:LoadProfessionOptions(container)
 	end
+	container.children[1]:DoLayout()
 
 	offsets[currentPage.parent] = offsets[currentPage.parent] or {}
 	offsets[currentPage.parent][currentPage.child] = offsets[currentPage.parent][currentPage.child] or 0

@@ -13,7 +13,7 @@ local function LoadHelpPage(parent)
 		"Official Website:"..lib.Design:GetInlineColor("link").." http://tradeskillmaster.com|r"
 
 	local moduleText = {
-		lib.Design:GetInlineColor("link").."Accounting".."|r - "..L["Keeps track of all your sales and purchases from the auction house allowing you to easily track your income and expendatures and make sure you're turning a profit."].."\n",
+		lib.Design:GetInlineColor("link").."Accounting".."|r - "..L["Keeps track of all your sales and purchases from the auction house allowing you to easily track your income and expenditures and make sure you're turning a profit."].."\n",
 		lib.Design:GetInlineColor("link").."AuctionDB".."|r - "..L["Performs scans of the auction house and calculates the market value of items as well as the minimum buyout. This information can be shown in items' tooltips as well as used by other modules."].."\n",
 		lib.Design:GetInlineColor("link").."Auctioning".."|r - "..L["Posts and cancels your auctions to / from the auction house accorder to pre-set rules. Also, this module can show you markets which are ripe for being reset for a profit."].."\n",
 		lib.Design:GetInlineColor("link").."Crafting".."|r - "..L["Allows you to build a queue of crafts that will produce a profitable, see what materials you need to obtain, and actually craft the items."].."\n",
@@ -333,7 +333,7 @@ local function LoadOptionsPage(parent)
 		light = {L["Light (by Ravanys - The Consortium)"], "inlineColors{link{49,56,133,1}link2{153,255,255,1}category{36,106,36,1}category2{85,180,8,1}}textColors{iconRegion{enabled{105,105,105,1}}title{enabled{49,56,85,1}}label{enabled{45,44,40,1}disabled{150,148,140,1}}text{enabled{245,244,240,1}disabled{95,98,90,1}}link{enabled{49,56,133,1}}}fontSizes{normal{15}small{12}}edgeSize{1.5}frameColors{frameBG{backdrop{219,219,219,1}border{30,30,30,1}}content{backdrop{60,60,60,1}border{40,40,40,1}}frame{backdrop{228,228,228,1}border{199,199,199,1}}}"},
 		goblineer = {L["Goblineer (by Sterling - The Consortium)"], "inlineColors{link{153,255,255,1}link2{153,255,255,1}category{36,106,36,1}category2{85,180,8,1}}textColors{iconRegion{enabled{249,255,247,1}}title{enabled{132,219,9,1}}label{enabled{216,225,211,1}disabled{150,148,140,1}}text{enabled{255,254,250,1}disabled{147,151,139,1}}link{enabled{49,56,133,1}}}fontSizes{normal{15}small{12}}edgeSize{1.5}frameColors{frameBG{backdrop{24,24,24,0.93}border{30,30,30,1}}content{backdrop{42,42,42,1}border{0,0,0,0}}frame{backdrop{24,24,24,1}border{255,255,255,0.03}}}"},
 		jaded = {L["Jaded (by Ravanys - The Consortium)"], "frameColors{frameBG{backdrop{0,0,0,0.6}border{0,0,0,0.4}}content{backdrop{62,62,62,1}border{72,72,72,1}}frame{backdrop{32,32,32,1}border{2,2,2,0.48}}}textColors{text{enabled{99,219,136,1}disabled{95,98,90,1}}iconRegion{enabled{43,255,156,1}}title{enabled{75,255,150,1}}label{enabled{99,219,136,1}disabled{177,176,168,1}}}edgeSize{1}fontSizes{normal{15}small{12}}"},
-		tsmdeck = {L["TSMDeck (by Jim Younkin - Power Word: Gold)"], "inlineColors{link{89,139,255,1}link2{153,255,255,1}category{80,222,22,1}category2{85,180,8,1}}textColors{text{enabled{245,240,251,1}disabled{115,115,115,1}}iconRegion{enabled{216,216,224,1}}title{enabled{247,248,255,1}}label{enabled{238,249,237,1}disabled{110,110,110,1}}}fontSizes{normal{14}small{12}}edgeSize{1}frameColors{frameBG{backdrop{29,29,29,1}border{20,20,20,1}}content{backdrop{27,27,27,1}border{67,67,65,1}}frame{backdrop{39,39,40,1}border{20,20,20,1}}}"},
+		tsmdeck = {L["TSMDeck (by Jim Younkin - Power Word: Gold)"], "inlineColors{link2{153,255,255,1}category2{85,180,8,1}link{89,139,255,1}category{80,222,22,1}}textColors{iconRegion{enabled{117,117,122,1}}title{enabled{247,248,255,1}}label{enabled{238,249,237,1}disabled{110,110,110,1}}text{enabled{245,240,251,1}disabled{115,115,115,1}}link{enabled{49,56,133,1}}}fontSizes{normal{14}small{12}}edgeSize{1}frameColors{frameBG{backdrop{29,29,29,1}border{20,20,20,1}}content{backdrop{27,27,27,1}border{67,67,65,1}}frame{backdrop{39,39,40,1}border{20,20,20,1}}}"},
 		tsmclassic = {L["TSM Classic (by Jim Younkin - Power Word: Gold)"], "inlineColors{link{89,139,255,1}link2{153,255,255,1}category{80,222,22,1}category2{85,180,8,1}}textColors{text{enabled{245,240,251,1}disabled{115,115,115,1}}iconRegion{enabled{216,216,224,1}}title{enabled{247,248,255,1}}label{enabled{238,249,237,1}disabled{110,110,110,1}}}fontSizes{normal{14}small{12}}edgeSize{1}frameColors{frameBG{backdrop{8,8,8,1}border{4,2,147,1}}content{backdrop{18,18,18,1}border{102,108,105,1}}frame{backdrop{2,2,2,1}border{4,2,147,1}}}"},
 	}
 	
@@ -380,10 +380,42 @@ local function LoadOptionsPage(parent)
 						},
 						{
 							type = "CheckBox",
+							label = L["Detach TSM Tab by Default"],
+							quickCBInfo = {TSM.db.profile, "detachByDefault"},
+							relativeWidth = 0.5,
+						},
+						{
+							type = "CheckBox",
+							label = L["Open All Bags with Auction House"],
+							quickCBInfo = {TSM.db.profile, "openAllBags"},
+							relativeWidth = 0.5,
+							tooltip = L["If checked, your bags will be automatically opened when you open the auction house."],
+						},
+						{
+							type = "HeadingLine",
+						},
+						{
+							type = "CheckBox",
 							label = L["Show Bids in Auction Results Table (Requires Reload)"],
 							quickCBInfo = {TSM.db.profile, "showBids"},
 							relativeWidth = 0.5,
 							tooltip = L["If checked, all tables listing auctions will display the bid as well as the buyout of the auctions. This will not take effect immediately and may require a reload."],
+						},
+						{
+							type = "Slider",
+							label = L["Number of Auction Result Rows (Requires Reload)"],
+							value = TSM.db.profile.auctionResultRows,
+							relativeWidth = 0.5,
+							min = 8,
+							max = 25,
+							step = 1,
+							callback = function(_,_,value)
+									TSM.db.profile.auctionResultRows = value
+								end,
+							tooltip = L["Changes how many rows are shown in the auction results tables."],
+						},
+						{
+							type = "HeadingLine",
 						},
 						{
 							type = "CheckBox",
@@ -408,19 +440,6 @@ local function LoadOptionsPage(parent)
 									end
 								end,
 							tooltip = L["Changes the size of the auction frame. The size of the detached TSM auction frame will always be the same as the main auction frame."],
-						},
-						{
-							type = "CheckBox",
-							label = L["Detach TSM Tab by Default"],
-							quickCBInfo = {TSM.db.profile, "detachByDefault"},
-							relativeWidth = 0.5,
-						},
-						{
-							type = "CheckBox",
-							label = L["Open All Bags with Auction House"],
-							quickCBInfo = {TSM.db.profile, "openAllBags"},
-							relativeWidth = 0.5,
-							tooltip = L["If checked, your bags will be automatically opened when you open the auction house."],
 						},
 					},
 				},

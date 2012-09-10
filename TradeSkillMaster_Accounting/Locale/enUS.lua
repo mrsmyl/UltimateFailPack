@@ -76,6 +76,10 @@ L["Select what format Accounting should use to display times in applicable scree
 L["Market Value Source"] = true
 L["Select where you want Accounting to get market value info from to show in applicable screens."] = true
 L["Items/Resale Price Format"] = true
+L["Track sales/purchases via trade"] = true
+L["If checked, whenever you buy or sell any quantity of a single item via trade, Accounting will display a popup asking if you want it to record that transaction."] = true
+L["Don't prompt to record trades"] = true
+L["If checked, you won't get a popup confirmation about whether or not to track trades."] = true
 L["Price Per Item"] = true
 L["Total Value"] = true
 L["Select how you would like prices to be shown in the \"Items\" and \"Resale\" tabs; either average price per item or total value."] = true

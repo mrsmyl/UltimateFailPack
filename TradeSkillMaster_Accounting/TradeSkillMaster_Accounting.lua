@@ -30,6 +30,8 @@ local savedDBDefaults = {
 		priceFormat = "avg",
 		tooltip = {sale=false, purchase=false},
 		smartBuyPrice = false,
+		trackTrades = true,
+		autoTrackTrades = false,
 	},
 	profile = {
 	},
@@ -71,13 +73,7 @@ function TSM:OnInitialize()
 				OnAccept = function() TSM:ImportFromMySales() end,
 				OnCancel = function() TSM.db.global.infoID = 1 end,
 			}
-			StaticPopup_Show("TSMAccountingImport")
-			for i=1, 10 do
-				if _G["StaticPopup" .. i] and _G["StaticPopup" .. i].which == "TSMAccountingImport" then
-					_G["StaticPopup" .. i]:SetFrameStrata("TOOLTIP")
-					break
-				end
-			end
+			TSMAPI:ShowStaticPopupDialog("TSMAccountingImport")
 		end
 	end
 	

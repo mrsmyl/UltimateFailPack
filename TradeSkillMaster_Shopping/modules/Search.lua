@@ -195,6 +195,7 @@ end
 function Search:StartScan(filters, lists, ShouldStop)
 	if not Search:IsAutomaticMode() then Search.searchBar:Disable() end
 	Search.currentSearch = {filter=filters.currentFilter, num=(filters.num or #filters), lists=lists, filters=CopyTable(filters)}
+	Search.searchST.disabled = true
 	TSM:StartScan(filters, Search, ShouldStop)
 end
 
@@ -237,7 +238,7 @@ function Search:StartRegularSearch(searchTerm)
 	end
 	
 	specialSearchMode = nil
-	Search.searchST:SetPctColText(L["% Market Value"])
+	Search.searchST:SetColHeadText(8, L["% Market Value"])
 	Search:UpdateRecentSearches(filters.currentSearchTerm)
 	Search:StartScan(filters)
 end
@@ -272,7 +273,7 @@ function Search:StartShoppingListSearch(shoppingList)
 	filters.currentFilter = table.concat(filterStrings, "; ")
 	
 	specialSearchMode = nil
-	Search.searchST:SetPctColText(L["% Market Value"])
+	Search.searchST:SetColHeadText(8, L["% Market Value"])
 	Search:StartScan(filters, {shoppingList})
 end
 
@@ -308,7 +309,7 @@ function Search:StartDealfindingListSearch(dealfindingLists)
 	end
 	
 	specialSearchMode = "Dealfinding"
-	Search.searchST:SetPctColText(L["% Max Price"])
+	Search.searchST:SetColHeadText(8, L["% Max Price"])
 	Search:StartScan(filters, type(dealfindingLists) == "table" and dealfindingLists or {dealfindingLists})
 end
 
@@ -324,7 +325,7 @@ function Search:StartAutomaticSearch(itemLink, automaticFrame)
 	
 	Search:ShowAutomaticFrames(automaticFrame)
 	specialSearchMode = TSMAPI:GetItemString(itemLink)
-	Search.searchST:SetPctColText(L["% Expected Cost"])
+	Search.searchST:SetColHeadText(8, L["% Expected Cost"])
 	Search:StartScan(filters)
 end
 
@@ -367,7 +368,7 @@ function Search:StartVendorSearch(useScanData)
 	end
 	
 	specialSearchMode = "Vendor"
-	Search.searchST:SetPctColText(L["% Vendor Price"])
+	Search.searchST:SetColHeadText(8, L["% Vendor Price"])
 	Search:StartScan(filters, {L["Vendor Search"]}, useScanData and ShouldStop)
 end
 
@@ -414,7 +415,7 @@ function Search:StartDisenchantSearch(useScanData)
 	end
 	
 	specialSearchMode = "Disenchant"
-	Search.searchST:SetPctColText(L["% Disenchant Value"])
+	Search.searchST:SetColHeadText(8, L["% Disenchant Value"])
 	Search:StartScan(filters, {L["Disenchant Search"]}, useScanData and ShouldStop)
 end
 
@@ -459,7 +460,7 @@ function Search:StartDealfindingSearch(useScanData)
 	end
 	
 	specialSearchMode = "Dealfinding"
-	Search.searchST:SetPctColText(L["% Max Price"])
+	Search.searchST:SetColHeadText(8, L["% Max Price"])
 	Search:StartScan(filters, {L["Dealfinding Search"]}, ShouldStop)
 end
 
@@ -604,23 +605,20 @@ function Search:ProcessScan(scanData, isComplete)
 		else
 			Search.searchBar:Enable()
 		end
+		Search.searchST.disabled = nil
 		Search.isScanning = nil
 	end
 	
 	Search.auctions = scanData
 	Search:UpdateSearchSTData()
 
-	if isComplete and Search.searchST.rows[1] then
-		local rowFrame = Search.searchST.rows[1]
-		local colFrame = rowFrame.cols[1]
-		
+	if isComplete and #Search.searchST.displayRows > 0 then
 		-- click the first row (need to click the column)
-		colFrame:Click()
+		Search.searchST.rows[1].cols[1]:Click()
 		
-		if TSM.db.profile.autoExpandSingleResult and #Search.searchST.data == 1 then
+		if TSM.db.profile.autoExpandSingleResult and #Search.searchST.displayRows == 1 then
 			-- expand the item
-			local handler = colFrame:GetScript("OnDoubleClick")
-			handler(rowFrame, colFrame, Search.searchST.data, _, _, 1, _, Search.searchST)
+			Search.searchST:SetExpanded(Search.searchST.data[1].itemString, true)
 		end
 	else
 		-- more visually appealing if nothing is selected while we search
@@ -633,12 +631,12 @@ function Search:GetAuctionData(itemString)
 end
 
 function Search:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
-	local stSelection = Search.searchST:GetSelection()
 	local itemString, bid, buyout, count
-	if stSelection and Search.searchST.data[stSelection] then
-		itemString, bid, buyout, count = unpack(Search.searchST.data[stSelection].args)
-	elseif mode == "Post" and postInfo then
+	local selectedAuction = Search.searchST:GetSelectedAuction()
+	if mode == "Post" and postInfo then
 		itemString, bid, buyout, count = postInfo.itemString, postInfo.bid, postInfo.buyout, postInfo.count
+	elseif selectedAuction then
+		itemString, bid, buyout, count = selectedAuction.parent:GetItemString(), selectedAuction:GetDisplayedBid(), selectedAuction.buyout, selectedAuction.count
 	else
 		return
 	end
@@ -677,23 +675,14 @@ function Search:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
 		end
 	end
 	
-	-- get the next row to click on and then update the ST
-	local rowButton
-	for i=1, #Search.searchST.filtered do
-		if Search.searchST.filtered[i] == stSelection then
-			rowButton = Search.searchST.rows[i-Search.searchST.offset] and Search.searchST.rows[i-Search.searchST.offset].cols[1]
-			break
-		end
-	end
 	Search:UpdateSearchSTData()
-	
-	
 	if not TSM.AuctionControl:IsConfirmationVisible() then
-		if stSelection and Search.searchST.data[stSelection] and rowButton then
-			rowButton:Click()
-		else
-			Search.searchST:SetSelection()
-			TSM.AuctionControl:SetCurrentAuction()
+		-- select the auction that was previously selected
+		Search.searchST:SetSelectedAuction(selectedAuction)
+		if not Search.searchST:GetSelectedAuction() then
+			-- we bought all of this auction, so select the new first occurace of this item
+			Search.searchST:SetSelectedAuction(selectedAuction.parent:GetItemString())
 		end
+		TSM.AuctionControl:SetCurrentAuction(Search.searchST:GetSelectedAuction())
 	end
 end

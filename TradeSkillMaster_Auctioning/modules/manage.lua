@@ -165,8 +165,7 @@ function Manage:StartNoScanScan(GUIRef, scanList)
 end
 
 function Manage:ProcessNoScanItems(scanList)
-	local numItemsToProcess = 10
-	local startNum, endNum = totalScanned, min(totalScanned+numItemsToProcess, totalToScan)
+	local startNum, endNum = totalScanned+1, min(totalScanned+10, totalToScan)
 	
 	for i=startNum, endNum do
 		local doUpdate = (i == endNum or i == 1)

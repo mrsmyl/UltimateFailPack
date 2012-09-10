@@ -267,81 +267,58 @@ end
 
 function Destroying:CreateSearchST(parent)
 	local events = {
-		["OnClick"] = function(self, _, data, _, _, rowNum, column, st, button)
-			if rowNum then
-				if Destroying.isScanning then return true end
-				
-				-- they clicked on a data row
-				if button == "LeftButton" then
-					-- go to the page for this item
-					TSM.AuctionControl:SetCurrentAuction(data[rowNum].record)
-					TSMAPI:FindAuction(function() end, {itemString=data[rowNum].itemString, buyout=data[rowNum].record.buyout, count=data[rowNum].record.count})
-				else
-					TSMAPI:GetSTRowRightClickFunction()(self, data[rowNum].record.parent.itemLink)
-				end
-				st:SetSelection(rowNum)
-				return true
+		OnClick = function(_, data, self, button)
+			-- they clicked on a data row
+			if button == "LeftButton" then
+				-- go to the page for this item
+				TSM.AuctionControl:SetCurrentAuction(data.auctionRecord)
+				TSMAPI:FindAuction(function() end, {itemString=data.itemString, buyout=data.auctionRecord.buyout, count=data.auctionRecord.count})
 			else
-				Destroying:RegisterMessage("TSM_AUCTION_ST_ON_SORT", function()
-						Destroying:UnregisterMessage("TSM_AUCTION_ST_ON_SORT")
-						Destroying:UpdateSearchSTData()
-					end)
-				st:OnColumnClick(column)
+				TSMAPI:GetSTRowRightClickFunction()(self, data.auctionRecord.parent.itemLink)
 			end
 		end,
 	}
 	
 	local function GetPriceColName()
-		if TSMAPI:GetPricePerUnitValue() then
-			return L["Auction Item Price"]
-		else
-			return L["Auction Stack Price"]
-		end
+		return TSMAPI:GetPricePerUnitValue() and L["Auction Item Price"] or L["Auction Stack Price"]
 	end
 
 	local colInfo = {
-		{name=L["Item"], width=0.3},
+		{name=L["Item"], width=0.31},
 		{name=L["Auctions"], width=0.09, align="CENTER"},
 		{name=L["Stack Size"], width=0.06, align="CENTER"},
 		{name=L["Seller"], width=0.13, align="CENTER"},
-		{name=L["Price Per Target Item"], width=0.15, align="RIGHT"},
-		{name=GetPriceColName(), width=0.15, align="RIGHT"},
+		{name=L["Price Per Target Item"], width=0.15, align="RIGHT", isPrice=true},
+		{name=GetPriceColName(), width=0.15, align="RIGHT", isPrice=true},
 		{name=L["% Market Value"], width=0.1, align="CENTER"},
 	}
-
-	local st = TSMAPI:CreateAuctionsST(parent, colInfo, events)
-	st:Hide()
-	st.expanded = {}
-	st.UpdateSTData = Destroying.UpdateSearchSTData
-	st.ChangeCols = function(self, mode)
-		local cols = self.head.cols
+	
+	local rt = TSMAPI:CreateAuctionResultsTable(parent, colInfo, events)
+	rt:SetData({})
+	rt:Hide()
+	
+	rt.ChangeCols = function(_, mode)
 		if Destroying.isAutomaticMode then
-			cols[5]:GetFontString():SetText(L["Price Per Crafting Mat"])
-			cols[7]:GetFontString():SetText(L["% Expected Cost"])
+			rt:SetColHeadText(5, L["Price Per Crafting Mat"])
+			rt:SetColHeadText(7, L["% Expected Cost"])
 		else
-			cols[7]:GetFontString():SetText(L["% Market Value"])
+			rt:SetColHeadText(7, L["% Market Value"])
 			if mode == "disenchant" then
-				cols[5]:GetFontString():SetText(L["Price Per Enchanting Mat"])
+				rt:SetColHeadText(5, L["Price Per Enchanting Mat"])
 			elseif mode == "prospect" then
-				cols[5]:GetFontString():SetText(L["Price Per Gem"])
+				rt:SetColHeadText(5, L["Price Per Gem"])
 			elseif mode == "mill" then
-				cols[5]:GetFontString():SetText(L["Price Per Ink"])
+				rt:SetColHeadText(5, L["Price Per Ink"])
 			else
-				cols[5]:GetFontString():SetText(L["Price Per Target Item"])
+				rt:SetColHeadText(5, L["Price Per Target Item"])
 			end
 		end
 	end
-	st.head.cols[TSM.db.profile.destroyingDefaultSort]:Click()
+	rt:SetSort(TSM.db.profile.destroyingDefaultSort, true)
 	
-	local function OnPriceCBChanged()
-		if not st.frame:IsVisible() then return end
-		Destroying:UpdateSearchSTData()
-		st.head.cols[6]:GetFontString():SetText(GetPriceColName())
-	end
+	Destroying:RegisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED", function() rt:SetColHeadText(6, GetPriceColName()) end)
 	
-	st.frame:SetScript("OnShow", function() Destroying:RegisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED", OnPriceCBChanged) end)
-	
-	return st
+	return rt
 end
 
 
@@ -386,6 +363,7 @@ function Destroying:StartNewSearch(automaticData, parent)
 	end
 	
 	Destroying.searchST:ChangeCols(Destroying.mode)
+	Destroying.searchST.disabled = true
 	TSM:StartScan(scanQueue, Destroying)
 end
 
@@ -429,15 +407,18 @@ function Destroying:ProcessScan(scanData, isComplete)
 			else
 				obj:SetMarketValue(TSMAPI:GetData("market", obj:GetItemID()))
 			end
+			obj:FilterRecords(function(record)
+					return record.buyout == 0 or not record.buyout
+				end)
 			numAuctions = numAuctions + #obj.records
 			if TSM.db.profile.evenStacks then
 				local itemID = obj:GetItemID()
 				obj:FilterRecords(function(record)
 						return not TSM.DestroyingUtil:IsEvenStack(Destroying.mode, itemID, record.count)
 					end)
-				if #obj.records == 0 then
-					tinsert(toRemove, itemString)
-				end
+			end
+			if #obj.records == 0 then
+				tinsert(toRemove, itemString)
 			end
 		else
 			tinsert(toRemove, itemString)
@@ -458,6 +439,7 @@ function Destroying:ProcessScan(scanData, isComplete)
 		if Destroying.isAutomaticMode then
 			Destroying:SendMessage("TSM_AUTOMATIC_SCAN_COMPLETE")
 		end
+		Destroying.searchST.disabled = nil
 		Destroying.isScanning = nil
 	end
 	
@@ -465,32 +447,19 @@ function Destroying:ProcessScan(scanData, isComplete)
 	Destroying:UpdateSearchSTData()
 end
 
-local defaultSortOrderPerItem = {"DestroyingBuyout", "Percent", "ItemBuyout", "ItemDisplayedBid", "TimeLeft", "Count", "Seller", "NumAuctions", "Name"}
-local defaultSortOrderPerStack = {"DestroyingBuyout", "Percent", "Buyout", "DisplayedBid", "TimeLeft", "Count", "Seller", "NumAuctions", "Name"}
-local colSortInfoPerItem = {"Name", "NumAuctions", "Count", "Seller", "DestroyingBuyout", "ItemBuyout", "Percent"}
-local colSortInfoPerStack = {"Name", "NumAuctions", "Count", "Seller", "DestroyingBuyout", "Buyout", "Percent"}
 function Destroying:UpdateSearchSTData()
 	if not Destroying.searchST then return end
 
-	local sortParams
-	if TSMAPI:GetPricePerUnitValue() then
-		sortParams = defaultSortOrderPerItem
-		tinsert(sortParams, 1, colSortInfoPerItem[Destroying.searchST.sortInfo.col])
-	else
-		sortParams = defaultSortOrderPerStack
-		tinsert(sortParams, 1, colSortInfoPerStack[Destroying.searchST.sortInfo.col])
-	end
-
 	local results = {}
-	for itemString, auction in pairs(Destroying.auctions) do
-		-- combine auctions with the same buyout / count / seller
+	for _, auction in pairs(Destroying.auctions) do
 		if auction.destroyingNum then
-			auction:PopulateCompactRecords(sortParams, Destroying.searchST.sortInfo.order == "asc")
+			-- combine auctions with the same buyout / count / seller
+			auction:PopulateCompactRecords()
 			tinsert(results, auction)
 		end
 	end
 	
-	TSMAPI:SetSTData(Destroying.searchST, results)
+	Destroying.searchST:SetData(results)
 end
 
 function Destroying:GetAuctionData(itemString)
@@ -498,8 +467,8 @@ function Destroying:GetAuctionData(itemString)
 end
 
 function Destroying:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
-	local stSelection = Destroying.searchST:GetSelection()
-	local itemString, bid, buyout, count = unpack(Destroying.searchST.data[stSelection].args)
+	local selectedAuction = Destroying.searchST:GetSelectedAuction()
+	local itemString, bid, buyout, count = selectedAuction.parent:GetItemString(), selectedAuction:GetDisplayedBid(), selectedAuction.buyout, selectedAuction.count
 	
 	-- If we are in Automatic mode and this was the last one we needed to buy, don't bother updating anything.
 	if Destroying.isAutomaticMode then
@@ -530,15 +499,14 @@ function Destroying:TSM_SHOPPING_AH_EVENT(_, mode, postInfo)
 		end
 	end
 	
-	local rowIndex = TSM.AuctionControl:GetRowNum(Destroying.searchST, stSelection)
 	Destroying:UpdateSearchSTData()
-	
 	if not TSM.AuctionControl:IsConfirmationVisible() then
-		if rowIndex and stSelection and Destroying.searchST.data[stSelection] and Destroying.searchST.rows[rowIndex] then
-			Destroying.searchST.rows[rowIndex].cols[1]:Click()
-		else
-			Destroying.searchST:SetSelection()
-			TSM.AuctionControl:SetCurrentAuction()
+		-- select the auction that was previously selected
+		Destroying.searchST:SetSelectedAuction(selectedAuction)
+		if not Destroying.searchST:GetSelectedAuction() then
+			-- we bought all of this auction, so select the new first occurace of this item
+			Destroying.searchST:SetSelectedAuction(selectedAuction.parent:GetItemString())
 		end
+		TSM.AuctionControl:SetCurrentAuction(Destroying.searchST:GetSelectedAuction())
 	end
 end

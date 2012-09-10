@@ -131,32 +131,42 @@ function TSM:OnDisable()
 end
 
 function TSM:LoadTooltip(itemID, quantity)
-	local marketValue, _, lastScan, totalSeen, minBuyout = TSM:GetData(itemID)
+	local marketValue, currQuantity, lastScan, totalSeen, minBuyout = TSM:GetData(itemID)
 
 	local text = {}
 	local marketValueText, minBuyoutText
 	if marketValue then
 		if quantity and quantity > 1 then
-			tinsert(text, L["AuctionDB Market Value:"].." "..TSMAPI:FormatTextMoney(marketValue, "|cffffffff").." ("..TSMAPI:FormatTextMoney(marketValue*quantity, "|cffffffff")..")")
+			tinsert(text, "  "..L["Market Value:"].." "..TSMAPI:FormatTextMoney(marketValue, "|cffffffff").." ("..TSMAPI:FormatTextMoney(marketValue*quantity, "|cffffffff")..")")
 		else
-			tinsert(text, L["AuctionDB Market Value:"].." "..TSMAPI:FormatTextMoney(marketValue, "|cffffffff"))
+			tinsert(text, "  "..L["Market Value:"].." "..TSMAPI:FormatTextMoney(marketValue, "|cffffffff"))
 		end
 	end
 	if minBuyout then
 		if quantity and quantity > 1 then
-			tinsert(text, L["AuctionDB Min Buyout:"].." |cffffffff"..TSMAPI:FormatTextMoney(minBuyout, "|cffffffff").." ("..TSMAPI:FormatTextMoney(minBuyout*quantity, "|cffffffff")..")")
+			tinsert(text, "  "..L["Min Buyout:"].." |cffffffff"..TSMAPI:FormatTextMoney(minBuyout, "|cffffffff").." ("..TSMAPI:FormatTextMoney(minBuyout*quantity, "|cffffffff")..")")
 		else
-			tinsert(text, L["AuctionDB Min Buyout:"].." |cffffffff"..TSMAPI:FormatTextMoney(minBuyout, "|cffffffff"))
+			tinsert(text, "  "..L["Min Buyout:"].." |cffffffff"..TSMAPI:FormatTextMoney(minBuyout, "|cffffffff"))
 		end
 	end
 	if totalSeen then
-		tinsert(text, L["AuctionDB Seen Count:"].." |cffffffff"..totalSeen)
+		tinsert(text, "  "..L["Total Seen Count:"].." |cffffffff"..totalSeen)
 	end
 	if TSM.db.profile.deTooltip then
 		local deValue = TSM:GetDisenchantValue(itemID)
 		if deValue > 0 then
-			tinsert(text, "Disenchant Value:".." |cffffffff"..TSMAPI:FormatTextMoney(deValue, "|cffffffff"))
+			tinsert(text, "  "..L["Disenchant Value:"].." |cffffffff"..TSMAPI:FormatTextMoney(deValue, "|cffffffff"))
 		end
+	end
+	if lastScan then
+		local timeDiff = SecondsToTime(time()-lastScan)
+		tinsert(text, "  "..L["Last Scanned:"].." |cffffffff"..format(L["%s ago"], timeDiff))
+	end
+	if currQuantity and currQuantity > 0 then
+		tinsert(text, "  "..L["Seen Last Scan:"].." |cffffffff"..currQuantity)
+	end
+	if #text > 0 then
+		tinsert(text, 1, "AuctionDB Prices:")
 	end
 
 	return text

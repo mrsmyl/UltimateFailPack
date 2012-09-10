@@ -59,56 +59,7 @@ function GUI:UpdateStatus(text, major, minor)
 end
 
 function private:CreateStatusBar(parent)
-	local function UpdateStatus(self, majorStatus, minorStatus)
-		if majorStatus then
-			self.majorStatusBar:SetValue(majorStatus)
-		end
-		if minorStatus then
-			self.minorStatusBar:SetValue(minorStatus)
-		end
-	end
-	
-	local function SetStatusText(self, text)
-		self.text:SetText(text)
-	end
-
-	local level = parent:GetFrameLevel()
-	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetHeight(25)
-	frame:SetPoint("TOPLEFT", 2, -3)
-	frame:SetPoint("TOPRIGHT", -2, -3)
-	frame:SetFrameLevel(level+1)
-	frame.UpdateStatus = UpdateStatus
-	frame.SetStatusText = SetStatusText
-	
-	-- minor status bar (gray one)
-	local statusBar = CreateFrame("STATUSBAR", "TSMAuctionDBMinorStatusBar", frame, "TextStatusBar")
-	statusBar:SetOrientation("HORIZONTAL")
-	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetAllPoints()
-	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
-	statusBar:SetStatusBarColor(.19, .22, .33, .9)
-	statusBar:SetFrameLevel(level+2)
-	frame.minorStatusBar = statusBar
-	
-	-- major status bar (main blue one)
-	local statusBar = CreateFrame("STATUSBAR", "TSMAuctionDBMajorStatusBar", frame, "TextStatusBar")
-	statusBar:SetOrientation("HORIZONTAL")
-	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetAllPoints()
-	statusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill")
-	statusBar:SetStatusBarColor(0.71, 0.71, 0.89, 0.9)
-	statusBar:SetFrameLevel(level+3)
-	frame.majorStatusBar = statusBar
-	
-	local textFrame = CreateFrame("Frame", nil, frame)
-	textFrame:SetFrameLevel(level+4)
-	textFrame:SetAllPoints(frame)
-	-- Text for the StatusBar
-	local text = TSMAPI.GUI:CreateLabel(textFrame)
-	text:SetPoint("CENTER")
-	frame.text = text
-	
+	local frame = TSMAPI.GUI:CreateStatusBar(parent, "TSMAuctionDBStatusBar")
 	TSMAPI.GUI:CreateHorizontalLine(frame, -30, parent, true)
 	
 	return frame

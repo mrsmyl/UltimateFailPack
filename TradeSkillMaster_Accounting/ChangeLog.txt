@@ -1,3 +1,12 @@
+v1.2
+*Fixed a bug where the MySales popup wasn't going away after hitting cancel.
+*Updated for new TSM design.
+*Updated TOC for patch 5.0.4.
+*Added an option for Accounting to track trades (enabled by default).
+*Added an option to track trades automatically, without a confirmation (disabled by default).
+*Significantly improved the interface lag associated with clicking on the Accounting icon in the main TSM window.
+*Many other minor bug fixes and improvements.
+
 v1.1
 *Fixed some bugs with links not showing correctly.
 *Fixed option labels for tooltips and clear old data.

@@ -1047,7 +1047,7 @@ function Config:DrawGroupGeneral(container, groupName)
 						{
 							type = "Dropdown",
 							label = L["Set threshold as a"],
-							relativeWidth = 0.48,
+							relativeWidth = 0.5,
 							list = priceMethodList,
 							value = group.thresholdPriceMethod,
 							disabled = TSM.db.profile.threshold[groupName] == nil,
@@ -1119,7 +1119,7 @@ function Config:DrawGroupGeneral(container, groupName)
 						{
 							type = "Dropdown",
 							label = L["Set fallback as a"],
-							relativeWidth = 0.48,
+							relativeWidth = 0.5,
 							list = priceMethodList,
 							value = group.fallbackPriceMethod,
 							disabled = TSM.db.profile.fallback[groupName] == nil,
@@ -1294,7 +1294,7 @@ function Config:DrawGroupGeneral(container, groupName)
 						{
 							type = "Dropdown",
 							label = L["Set max reset cost as a"],
-							relativeWidth = 0.48,
+							relativeWidth = 0.5,
 							list = priceMethodList,
 							value = group.resetMaxCostPriceMethod,
 							disabled = TSM.db.profile.resetMaxCost[groupName] == nil,
@@ -1346,7 +1346,7 @@ function Config:DrawGroupGeneral(container, groupName)
 						{
 							type = "Dropdown",
 							label = L["Set min reset price as a"],
-							relativeWidth = 0.48,
+							relativeWidth = 0.5,
 							list = priceMethodList,
 							value = group.resetMinProfitPriceMethod,
 							disabled = TSM.db.profile.resetMinProfit[groupName] == nil,

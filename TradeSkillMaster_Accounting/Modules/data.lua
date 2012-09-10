@@ -196,17 +196,16 @@ function Data:PopulateDataCaches()
 	local temp = {}
 	Data.playerDataCache = {}
 
+	local TSMTEST = 0
 	for itemString in pairs(TSM.soldData) do
 		TSM.Util:UpdateLink("sold", itemString)
 		local _, records, link = TSM.Util:DecodeItemData("sold", itemString)
 		if records then
 			soldDataCache[itemString] = {records=records, link=link}
-			for itemString, data in pairs(soldDataCache) do
-				for _, record in ipairs(data.records) do
-					if not temp[record.player] then
-						temp[record.player] = true
-						tinsert(Data.playerDataCache, record.player)
-					end
+			for _, record in ipairs(records) do
+				if not temp[record.player] then
+					temp[record.player] = true
+					tinsert(Data.playerDataCache, record.player)
 				end
 			end
 		end
@@ -217,12 +216,10 @@ function Data:PopulateDataCaches()
 		local _, records, link = TSM.Util:DecodeItemData("buy", itemString)
 		if records then
 			buyDataCache[itemString] = {records=records, link=link}
-			for itemString, data in pairs(buyDataCache) do
-				for _, record in ipairs(data.records) do
-					if not temp[record.player] then
-						temp[record.player] = true
-						tinsert(Data.playerDataCache, record.player)
-					end
+			for _, record in ipairs(records) do
+				if not temp[record.player] then
+					temp[record.player] = true
+					tinsert(Data.playerDataCache, record.player)
 				end
 			end
 		end
@@ -765,4 +762,100 @@ function Data:GetItemData(itemString)
 	end
 	
 	return data
+end
+
+do
+	local tradeInfo
+	
+	local function onAcceptUpdate(_, player, target)
+		if (player == 1 or target == 1) and not (GetTradePlayerItemLink(7) or GetTradeTargetItemLink(7)) then
+			-- update tradeInfo
+			tradeInfo = {player={}, target={}}
+			tradeInfo.player.money = tonumber(GetPlayerTradeMoney())
+			tradeInfo.target.money = tonumber(GetTargetTradeMoney())
+			tradeInfo.target.name = UnitName("NPC")
+			
+			for i=1, 6 do
+				local link = GetTradeTargetItemLink(i)
+				local count = select(3, GetTradeTargetItemInfo(i))
+				if link then
+					tinsert(tradeInfo.target, {itemString=TSMAPI:GetItemString(link), count=count})
+				end
+				
+				local link = GetTradePlayerItemLink(i)
+				local count = select(3, GetTradePlayerItemInfo(i))
+				if link then
+					tinsert(tradeInfo.player, {itemString=TSMAPI:GetItemString(link), count=count})
+				end
+			end
+		else
+			tradeInfo = nil
+		end
+	end
+	
+	local function onChatMsg(_, msg)
+		if not TSM.db.factionrealm.trackTrades then return end
+		if msg == ERR_TRADE_COMPLETE and tradeInfo then
+			-- trade went through
+			local info
+			if tradeInfo.player.money > 0 and #tradeInfo.player == 0 and tradeInfo.target.money == 0 and #tradeInfo.target > 0 then
+				-- player bought items
+				local itemString, count
+				for i=1, #tradeInfo.target do
+					local data = tradeInfo.target[i]
+					if not itemString then
+						itemString = data.itemString
+						count = data.count
+					elseif itemString == data.itemString then
+						count = count + data.count
+					else
+						return
+					end
+				end
+				if not itemString or not count then return end
+				info = {type="buy", itemString=itemString, count=count, price=tradeInfo.player.money/count}
+				info.gotText = select(2, GetItemInfo(itemString)).."x"..count
+				info.gaveText = TSMAPI:FormatTextMoney(tradeInfo.player.money)
+			elseif tradeInfo.player.money == 0 and #tradeInfo.player > 0 and tradeInfo.target.money > 0 and #tradeInfo.target == 0 then
+				-- player sold items
+				local itemString, count
+				for i=1, #tradeInfo.player do
+					local data = tradeInfo.player[i]
+					if not itemString then
+						itemString = data.itemString
+						count = data.count
+					elseif itemString == data.itemString then
+						count = count + data.count
+					else
+						return
+					end
+				end
+				if not itemString or not count then return end
+				info = {type="sold", itemString=itemString, count=count, price=tradeInfo.target.money/count}
+				info.gaveText = select(2, GetItemInfo(itemString)).."x"..count
+				info.gotText = TSMAPI:FormatTextMoney(tradeInfo.target.money)
+			else
+				return
+			end
+			
+			if TSM.db.factionrealm.autoTrackTrades then
+				Data:AddRecord(info.type, info.itemString, info.price, info.count, tradeInfo.target.name, time())
+			else
+				StaticPopupDialogs["TSMAccountingOnTrade"] = {
+					text = format("TSM_Accounting detected that you just traded %s %s in return for %s. Would you like Accounting to store a record of this trade?", tradeInfo.target.name, info.gaveText, info.gotText),
+					button1 = YES,
+					button2 = NO,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					OnAccept = function() Data:AddRecord(info.type, info.itemString, info.price, info.count, tradeInfo.target.name, time()) end,
+					OnCancel = function() end,
+				}
+				TSMAPI:ShowStaticPopupDialog("TSMAccountingOnTrade")
+			end
+		end
+	end
+	
+	Data:RegisterEvent("TRADE_ACCEPT_UPDATE", onAcceptUpdate)
+	Data:RegisterEvent("UI_INFO_MESSAGE", onChatMsg)
 end

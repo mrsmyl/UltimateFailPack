@@ -15,7 +15,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("TradeSkillMaster_Auctioning") -- l
 
 local cancelQueue, currentItem, tempIndexList, itemsToCancel = {}, {}, {}, {}
 local totalToCancel, totalCanceled, count = 0, 0, 0
-local isScanning, GUI, cancelError, isCancelAll
+local isScanning, GUI, isCancelAll
+local itemsCancelled, itemsMissed = {}, {}
 
 function Cancel:GetScanListAndSetup(GUIRef, options)
 	-- setup stuff
@@ -23,10 +24,11 @@ function Cancel:GetScanListAndSetup(GUIRef, options)
 	options = options or {}
 	isScanning = true
 	isCancelAll = options.cancelAll or options.cancelDuration or options.cancelFilter
-	cancelError = nil
 	wipe(cancelQueue)
 	wipe(currentItem)
 	wipe(itemsToCancel)
+	wipe(itemsCancelled)
+	wipe(itemsMissed)
 	totalToCancel, totalCanceled, count = 0, 0, 0
 	
 	local tempList, scanList, groupTemp = {}, {}, {}
@@ -103,7 +105,7 @@ function Cancel:ProcessItem(itemString, noLog)
 	local toCancel, reasonToCancel, reasonNotToCancel
 	for i=GetNumAuctionItems("owner"), 1, -1 do
 		local link = GetAuctionItemLink("owner", i)
-		if itemString == TSMAPI:GetItemString(link) or itemString == TSMAPI:GetItemID(link) then
+		if select(14, GetAuctionItemInfo("owner", i)) == 0 and (itemString == TSMAPI:GetItemString(link) or itemString == TSMAPI:GetItemID(link)) then
 			local shouldCancel, reason = Cancel:ShouldCancel(i)
 			if shouldCancel then
 				toCancel = true
@@ -233,8 +235,8 @@ end
 -- "Item Not Found" error
 function Cancel:UI_ERROR_MESSAGE(event, msg)
 	if msg == ERR_ITEM_NOT_FOUND then
-		cancelError = true
 		count = count + 1
+		tinsert(itemsMissed, itemsCancelled[count])
 	end
 end
 
@@ -311,6 +313,7 @@ function Cancel:DoAction()
 	
 	-- disable the button and move onto the next item
 	GUI.buttons:Disable()
+	tinsert(itemsCancelled, CopyTable(cancelQueue[1]))
 	tremove(cancelQueue, 1)
 	Cancel:UpdateItem()
 end
@@ -325,7 +328,7 @@ end
 -- we are done canceling (maybe)
 function Cancel:Stop(interrupted)
 	wipe(tempIndexList)
-	if not cancelError or interrupted then
+	if #itemsMissed == 0 or interrupted then
 		-- didn't get "item not found" for any cancels or we were interrupted so we are done
 		TSMAPI:CancelFrame("cancelCountFrame")
 		TSMAPI:CancelFrame("cancelDelayFrame")
@@ -339,21 +342,10 @@ function Cancel:Stop(interrupted)
 		isScanning = false
 	else -- got an "item not found" so requeue ones that we missed
 		count = totalToCancel
-		cancelError = nil
-		local tempList = {}
-		for i=GetNumAuctionItems("owner"), 1, -1 do
-			local itemString = TSMAPI:GetItemString(GetAuctionItemLink("owner", i))
-			local itemID = TSMAPI:GetItemID(itemString)
-			if not isCancelAll and TSM.itemReverseLookup[itemID] then
-				itemString = itemID
-			end
-			if not tempList[itemString] then
-				if not isCancelAll or itemsToCancel[itemString] then
-					Cancel:ProcessItem(itemString, true)
-				end
-				tempList[itemString] = true
-			end
+		for _, item in ipairs(itemsMissed) do
+			Cancel:ProcessItem(item.itemString, true)
 		end
+		wipe(itemsMissed)
 		isScanning = false
 		Cancel:UpdateItem()
 	end

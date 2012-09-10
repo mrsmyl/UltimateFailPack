@@ -733,7 +733,7 @@ function Crafting:CreateQueuingRegion() -- updated
 	row.name:SetScript("OnClick", function(self) Crafting:ChangeSort(self, row, "name") end)
 	if TSM.db.global.queueSort == "name" then row.name:LockHighlight() end
 	
-	row.quantity = CreateTitleButton(L["AH/Bags/Bank/Alts"], 190, 300)
+	row.quantity = CreateTitleButton(L["AH/Bags/Bank/Mail/Alts"], 170, 310)
 	row.quantity:SetScript("OnClick", function(self) Crafting:ChangeSort(self, row, "quantity") end)
 	if TSM.db.global.queueSort == "quantity" then row.quantity:LockHighlight() end
 	
@@ -1309,20 +1309,21 @@ function Crafting:UpdateQueuing()
 			row.tooltipData = nil
 			
 			if not data.isParent then
-				local numInBags, numInBank, numOnAH = TSM.Data:GetPlayerNum(data.itemID)
+				local numInBags, numInBank, numOnAH, numInMail = TSM.Data:GetPlayerNum(data.itemID)
 				local numOnAlts = TSM.Data:GetAltNum(data.itemID)
 				
 				-- sets up the colors of the text
-				local c1 = GREEN
-				local c2 = GREEN
-				local c3 = GREEN
-				local c4 = GREEN
-				if numOnAH == "?" then c1 = WHITE
-				elseif numOnAH > 0 then c1 = RED end
-				if numInBags > 0 then c2 = RED end
-				if numOnAlts > 0 then c3 = RED end
-				if numInBank > 0 then c4 = RED end
-				row.quantity:SetText(format("%s%s|r/%s%s|r/%s%s|r/%s%s|r", c1, numOnAH, c2, numInBags, c4, numInBank, c3, numOnAlts))
+				local c1 = WHITE
+				local c2 = WHITE
+				local c3 = WHITE
+				local c4 = WHITE
+				local c5 = WHITE
+				if numOnAH > 0 then c1 = GREEN end
+				if numInBags > 0 then c2 = GREEN end
+				if numOnAlts > 0 then c3 = GREEN end
+				if numInBank > 0 then c4 = GREEN end
+				if numInMail > 0 then c5 = GREEN end
+				row.quantity:SetText(format("%s%s|r/%s%s|r/%s%s|r/%s%s|r/%s%s|r", c1, numOnAH, c2, numInBags, c4, numInBank, c5, numInMail, c3, numOnAlts))
 			else
 				row.quantity:SetText("")
 			end

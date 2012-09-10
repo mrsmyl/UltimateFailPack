@@ -344,7 +344,9 @@ local methods = {
 
 		button.toggle.button = button
 		button.toggle:SetScript("OnClick", Expand_OnClick)
-		button.toggle:SetNormalTexture(0, 0, 0, 0)
+		local tex = button.toggle:CreateTexture()
+		tex:SetTexture(0, 0, 0, 0)
+		button.toggle:SetNormalTexture(tex)
 		button.toggle:SetPushedTexture(0, 0, 0, 0)
 		HIGHLIGHT_COLOR[4] = 1
 		button.toggle:GetHighlightTexture():SetVertexColor(unpack(HIGHLIGHT_COLOR))

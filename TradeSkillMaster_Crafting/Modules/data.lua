@@ -22,8 +22,6 @@ function Data:Initialize()
 		TSM.db.profile.updatedForMoP = true
 		shouldClear = true
 	end
-	
-	
 
 	for _, data in ipairs(TSM.tradeSkills) do
 		if shouldClear then
@@ -201,8 +199,10 @@ function Data:GetAltNum(itemID)
 			if player ~= UnitName("player") and TSM.db.profile.altCharacters[player] then
 				local bags = TSMAPI:GetData("playerbags", player)
 				local bank = TSMAPI:GetData("playerbank", player)
+				local mail = TSMAPI:GetData("playermail", player)
 				count = count + (bags[itemID] or 0)
 				count = count + (bank[itemID] or 0)
+				count = count + (mail[itemID] or 0)
 			end
 		end
 		for _, guild in pairs(TSMAPI:GetData("guildlist") or {}) do
@@ -270,10 +270,11 @@ function Data:GetPlayerNum(itemID)
 		end
 		bags = (TSMAPI:GetData("playerbags", UnitName("player")) or {})[itemID] or 0
 		bank = (TSMAPI:GetData("playerbank", UnitName("player")) or {})[itemID] or 0
+		mail = (TSMAPI:GetData("playermail", UnitName("player")) or {})[itemID] or 0
 		local iType = select(6, GetItemInfo(itemID))
 		if iType and iType ~= "Container" and bags == 0 then bags = bags + GetItemCount(itemID) end
 		if iType and iType ~= "Container" and bank == 0 then bank = bank + (GetItemCount(itemID, true) - GetItemCount(itemID)) end
-		return bags, bank, auctions
+		return bags, bank, auctions, mail
 	elseif TSM.db.profile.altAddon == "DataStore" and select(4, GetAddOnInfo("DataStore_Containers")) == 1 and DataStore then
 		if TSM.db.profile.restockAH and select(4, GetAddOnInfo("DataStore_Auctions")) == 1 then
 			auctions = DataStore:GetAuctionHouseItemCount(DataStore:GetCharacter(), itemID) or 0
@@ -282,7 +283,7 @@ function Data:GetPlayerNum(itemID)
 			for characterName, character in pairs(DataStore:GetCharacters(nil, account)) do
 				if characterName == UnitName("player") then
 					local bags, bank = DataStore:GetContainerItemCount(character, itemID)
-					return bags or 0, bank or 0, auctions
+					return bags or 0, bank or 0, auctions, 0
 				end
 			end
 		end
@@ -290,16 +291,16 @@ function Data:GetPlayerNum(itemID)
 		-- if they don't have datastore or ItemTracker...they get the very inaccurate GetItemCount result for bags/bank
 		local bags = GetItemCount(itemID)
 		local bank = GetItemCount(itemID, true) - bags
-		return bags, bank, auctions
+		return bags, bank, auctions, 0
 	end
 end
 
 -- gets the total number of some item that they have
 function Data:GetTotalQuantity(itemID)
-	local bags, bank, auctions = Data:GetPlayerNum(itemID)
+	local bags, bank, auctions, mail = Data:GetPlayerNum(itemID)
 	local alts = Data:GetAltNum(itemID)
 	
-	return bags + bank + auctions + alts
+	return bags + bank + auctions + alts + mail
 end
 
 

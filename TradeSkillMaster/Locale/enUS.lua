@@ -30,7 +30,7 @@ L["Official TradeSkillMaster Forum:"] = true
 L["TradeSkillMaster IRC Channel:"] = true
 L["TradeSkillMaster Website:"] = true
 L["TradeSkillMaster currently has 10 modules (not including the core addon) each of which can be used completely independantly of the others and have unique features."] = true
-L["Keeps track of all your sales and purchases from the auction house allowing you to easily track your income and expendatures and make sure you're turning a profit."] = true
+L["Keeps track of all your sales and purchases from the auction house allowing you to easily track your income and expenditures and make sure you're turning a profit."] = true
 L["Performs scans of the auction house and calculates the market value of items as well as the minimum buyout. This information can be shown in items' tooltips as well as used by other modules."] = true
 L["Posts and cancels your auctions to / from the auction house accorder to pre-set rules. Also, this module can show you markets which are ripe for being reset for a profit."] = true
 L["Allows you to build a queue of crafts that will produce a profitable, see what materials you need to obtain, and actually craft the items."] = true
@@ -107,6 +107,8 @@ L["Border Thickness (Requires Reload)"] = true
 L["TSM Info / Help"] = true
 L["Status / Credits"] = true
 L["Options"] = true
+L["Number of Auction Result Rows (Requires Reload)"] = true
+L["Changes how many rows are shown in the auction results tables."] = true
 
 -- ErrorHandler.lua
 

@@ -385,62 +385,12 @@ function private:UpdateSelectionWidgets()
 end
 
 function private:CreateStatusBar(parent)
-	local function UpdateStatus(self, majorStatus, minorStatus)
-		if majorStatus then
-			self.majorStatusBar:SetValue(majorStatus)
-		end
-		if minorStatus then
-			self.minorStatusBar:SetValue(minorStatus)
-		end
-	end
-	
-	local function SetStatusText(self, text)
-		self.text:SetText(text)
-	end
-
-	local level = parent:GetFrameLevel()
-	local frame = CreateFrame("Frame", nil, parent)
-	frame:SetHeight(25)
-	frame:SetPoint("TOPLEFT", 2, -3)
-	frame:SetPoint("TOPRIGHT", -2, -3)
-	frame:SetFrameLevel(level+1)
-	frame.UpdateStatus = UpdateStatus
-	frame.SetStatusText = SetStatusText
-	
-	-- minor status bar (gray one)
-	local statusBar = CreateFrame("STATUSBAR", "TSMAuctioningMinorStatusBar", frame, "TextStatusBar")
-	statusBar:SetOrientation("HORIZONTAL")
-	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetAllPoints()
-	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
-	statusBar:SetStatusBarColor(.42, .42, .42, .7)
-	statusBar:SetFrameLevel(level+2)
-	frame.minorStatusBar = statusBar
-	
-	-- major status bar (main blue one)
-	local statusBar = CreateFrame("STATUSBAR", "TSMAuctioningMajorStatusBar", frame, "TextStatusBar")
-	statusBar:SetOrientation("HORIZONTAL")
-	statusBar:SetMinMaxValues(0, 100)
-	statusBar:SetAllPoints()
-	statusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
-	statusBar:SetStatusBarColor(.19, .22, .33, .9)
-	statusBar:SetFrameLevel(level+3)
-	frame.majorStatusBar = statusBar
-	
-	local textFrame = CreateFrame("Frame", nil, frame)
-	textFrame:SetFrameLevel(level+4)
-	textFrame:SetAllPoints(frame)
-	-- Text for the StatusBar
-	local text = TSMAPI.GUI:CreateLabel(textFrame)
-	TSMAPI.Design:SetWidgetTextColor(text)
-	text:SetPoint("CENTER")
-	frame.text = text
+	local frame = TSMAPI.GUI:CreateStatusBar(parent, "TSMAuctioningStatusBar")
 	
 	local frame2 = CreateFrame("Frame", nil, frame)
 	frame2:SetAllPoints(parent)
 	frame2:SetFrameStrata(parent:GetFrameStrata())
 	frame2:SetFrameLevel(parent:GetFrameLevel())
-	local bar = TSMAPI.GUI:CreateHorizontalLine(frame2, -30)
 	
 	return frame
 end
@@ -859,54 +809,39 @@ function private:CreateInfoText(parent)
 end
 
 function private:CreateAuctionsST(parent)
+	local frame = CreateFrame("Frame", nil, parent)
+	frame:SetPoint("TOPLEFT", 0, -30)
+	frame:SetPoint("BOTTOMRIGHT")
+
 	local events = {
-		["OnClick"] = function(self, _, data, _, _, rowNum, column, st, button)
-			if rowNum then
-				st:SetSelection(rowNum)
-				if button == "RightButton" then
-					TSMAPI:GetSTRowRightClickFunction()(self, data[rowNum].record.parent.itemLink)
-				end
-				return true
-			else
-				st:OnColumnClick(column)
+		OnClick = function(_, data, self, button)
+			if button == "RightButton" then
+				TSMAPI:GetSTRowRightClickFunction()(self, data.auctionRecord.parent.itemLink)
 			end
 		end,
 	}
 	
 	local function GetPriceColName()
-		if TSMAPI:GetPricePerUnitValue() then
-			return L["Price Per Item"]
-		else
-			return L["Price Per Stack"]
-		end
+		return TSMAPI:GetPricePerUnitValue() and L["Price Per Item"] or L["Price Per Stack"]
 	end
-
+	
 	local colInfo = {
-		{name="Item", width=0.3},
+		{name="Item", width=0.35},
 		{name=L["Auctions"], width=0.09, align="CENTER"},
 		{name=L["Stack Size"], width=0.06, align="CENTER"},
-		{name=L["Time Left"], width=0.15, align="CENTER"},
+		{name=L["Time Left"], width=0.12, align="CENTER"},
 		{name=L["Seller"], width=0.13, align="CENTER"},
-		{name=GetPriceColName(), width=0.15, align="RIGHT"},
+		{name=GetPriceColName(), width=0.15, align="RIGHT", isPrice=true},
 		{name=L["% Market Value"], width=0.1, align="CENTER"},
-		yAdjust = -30,
 	}
-
-	local st = TSMAPI:CreateAuctionsST(parent, colInfo, events)
-	st:Hide()
-	st.expanded = {}
-	st.UpdateSTData = private.UpdateAuctionsSTData
 	
-	local function TSM_PRICE_PER_CHECKBOX_CHANGED(_, value)
-		private.UpdateAuctionsSTData()
-		st.head.cols[6]:GetFontString():SetText(GetPriceColName())
-	end
+	local rt = TSMAPI:CreateAuctionResultsTable(frame, colInfo, events)
+	rt:SetData({})
+	rt:SetSort(7, true)
+	rt:Hide()
+	GUI:RegisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED", function() rt:SetColHeadText(6, GetPriceColName()) end)
 	
-	st.head.cols[7]:Click()
-	st.frame:SetScript("OnShow", function() GUI:RegisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED", TSM_PRICE_PER_CHECKBOX_CHANGED) end)
-	st.frame:SetScript("OnHide", function() GUI:UnregisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED") end)
-	
-	return st
+	return rt
 end
 
 function private:CreateLogST(parent)
@@ -1083,12 +1018,8 @@ function private:UpdateTables()
 	private:UpdateLogSTData()
 end
 
-local defaultSortOrderPerItem = {"Percent", "ItemBuyout", "ItemDisplayedBid", "TimeLeft", "Count", "Seller", "NumAuctions", "Name"}
-local defaultSortOrderPerStack = {"Percent", "Buyout", "DisplayedBid", "TimeLeft", "Count", "Seller", "NumAuctions", "Name"}
-local colSortInfoPerItem = {"Name", "NumAuctions", "Count", "TimeLeft", "Seller", "ItemBuyout", "Percent"}
-local colSortInfoPerStack = {"Name", "NumAuctions", "Count", "TimeLeft", "Seller", "Buyout", "Percent"}
 function private:UpdateAuctionsSTData()
-	if not private.auctionsST.frame:IsVisible() or not private.auctionsST.sortInfo then return end
+	if not private.auctionsST:IsVisible() or not private.auctionsST.sortInfo then return end
 
 	local results = {}
 	if private.auctionsST.isCurrentItem then
@@ -1100,7 +1031,7 @@ function private:UpdateAuctionsSTData()
 		end
 		if itemString and TSM.Scan.auctionData[itemString] then
 			tinsert(results, TSM.Scan.auctionData[itemString])
-			TSMAPI:CreateTimeDelay("aucExpandRow", 0.05, function() private.auctionsST:ExpandItem(itemString) end)
+			private.auctionsST:SetExpanded(itemString, true)
 		end
 	else
 		for _, auction in pairs(TSM.Scan.auctionData) do
@@ -1109,17 +1040,7 @@ function private:UpdateAuctionsSTData()
 		end
 	end
 	
-	local sortParams
-	if TSMAPI:GetPricePerUnitValue() then
-		sortParams = defaultSortOrderPerItem
-		tinsert(sortParams, 1, colSortInfoPerItem[private.auctionsST.sortInfo.col])
-	else
-		sortParams = defaultSortOrderPerStack
-		tinsert(sortParams, 1, colSortInfoPerStack[private.auctionsST.sortInfo.col])
-	end
-	local isAscending = private.auctionsST.sortInfo.order == "asc"
-	TSMAPI:SortAuctions(results, sortParams, true, isAscending)
-	TSMAPI:SetSTData(private.auctionsST, results)
+	private.auctionsST:SetData(results)
 end
 
 function private:GetLogSTRow(record)
@@ -1157,7 +1078,7 @@ function private:GetLogSTRow(record)
 	end
 	
 	local name, link = GetItemInfo(record.itemString)
-	local buyout, seller, isWhitelist, isBlacklist, isPlayer
+	local buyout, seller, isWhitelist, isBlacklist, isPlayer, _
 	if record.reason ~= "cancelAll" then
 		buyout, _, seller, isWhitelist, isBlacklist, isPlayer = TSM.Scan:GetLowestAuction(record.itemString)
 	end

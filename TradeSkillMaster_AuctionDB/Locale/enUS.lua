@@ -20,11 +20,15 @@ if not L then return end
 L["Resets AuctionDB's scan data"] = true
 L["AuctionDB - Market Value"] = true
 L["AuctionDB - Minimum Buyout"] = true
-L["AuctionDB Market Value:"] = true
-L["AuctionDB Min Buyout:"] = true
-L["AuctionDB Seen Count:"] = true
+L["Market Value:"] = true
+L["Min Buyout:"] = true
+L["Total Seen Count:"] = true
+L["Last Scanned:"] = true
+L["Disenchant Value:"] = true
+L["Seen Last Scan:"] = true
 L["Are you sure you want to clear your AuctionDB data?"] = true
 L["Reset Data"] = true
+
 
 -- config.lua
 

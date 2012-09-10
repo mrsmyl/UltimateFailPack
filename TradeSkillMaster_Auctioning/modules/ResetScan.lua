@@ -481,7 +481,7 @@ function Reset:GetSummarySTRow(data)
 	local function GetQuantityText(quantity, playerQuantity, isValid)
 		if isValid then
 			if playerQuantity > 0 then
-				return quantity..TSMAPI.Design:GetInlineColor("link2")..playerQuantity..")|r"
+				return quantity..TSMAPI.Design:GetInlineColor("link2").."("..playerQuantity..")|r"
 			else
 				return quantity
 			end

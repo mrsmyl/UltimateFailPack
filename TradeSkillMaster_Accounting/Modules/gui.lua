@@ -42,6 +42,7 @@ function GUI:Load(parent)
 			elseif value == 6 then
 				GUI:DrawOptions(self)
 			end
+			tg.children[1]:DoLayout()
 		end)
 	simpleGroup:AddChild(tabGroup)
 	TSM.Data:PopulateDataCaches()
@@ -88,6 +89,7 @@ function GUI:DrawSales(container)
 			if not rowNum then return end
 			self:Hide()
 			GUI:DrawItemLookup(container, data[rowNum].itemString, 1)
+			container.children[1]:DoLayout()
 		end,
 		["OnEnter"] = function(_, self, _, _, _, rowNum)
 			if not rowNum then return end
@@ -136,6 +138,7 @@ function GUI:DrawPurchases(container)
 			if not rowNum then return end
 			self:Hide()
 			GUI:DrawItemLookup(container, data[rowNum].itemString, 2)
+			container.children[1]:DoLayout()
 		end,
 		["OnEnter"] = function(_, self, _, _, _, rowNum)
 			if not rowNum then return end
@@ -180,6 +183,7 @@ function GUI:DrawItemSummary(container)
 			if not rowNum then return end
 			self:Hide()
 			GUI:DrawItemLookup(container, data[rowNum].itemString, 3)
+			container.children[1]:DoLayout()
 		end,
 		["OnEnter"] = function(_, self, _, _, _, rowNum)
 			if not rowNum then return end
@@ -224,6 +228,7 @@ function GUI:DrawResaleSummary(container)
 			if not rowNum then return end
 			self:Hide()
 			GUI:DrawItemLookup(container, data[rowNum].itemString, 4)
+			container.children[1]:DoLayout()
 		end,
 		["OnEnter"] = function(_, self, _, _, _, rowNum)
 			if not rowNum then return end
@@ -573,7 +578,7 @@ function GUI:DrawOptions(container)
 	local page = {
 		{
 			type = "ScrollFrame",
-			layout = "Flow",
+			layout = "List",
 			children = {
 				{
 					type = "InlineGroup",
@@ -606,6 +611,24 @@ function GUI:DrawOptions(container)
 							value = TSM.db.factionrealm.priceFormat,
 							callback = function(_,_,value) TSM.db.factionrealm.priceFormat = value end,
 							tooltip = L["Select how you would like prices to be shown in the \"Items\" and \"Resale\" tabs; either average price per item or total value."],
+						},
+						{
+							type = "Label",
+							relativeWidth = .49
+						},
+						{
+							type = "CheckBox",
+							label = L["Track sales/purchases via trade"],
+							quickCBInfo = {TSM.db.factionrealm, "trackTrades"},
+							callback = function() container:SelectTab(6) end,
+							tooltip = L["If checked, whenever you buy or sell any quantity of a single item via trade, Accounting will display a popup asking if you want it to record that transaction."],
+						},
+						{
+							type = "CheckBox",
+							label = L["Don't prompt to record trades"],
+							quickCBInfo = {TSM.db.factionrealm, "autoTrackTrades"},
+							disabled = not TSM.db.factionrealm.trackTrades,
+							tooltip = L["If checked, you won't get a popup confirmation about whether or not to track trades."],
 						},
 					},
 				},

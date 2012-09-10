@@ -1,3 +1,15 @@
+v1.5
+*Updated existing themes and added some new ones.
+*Changed default theme to "Goblineer" as voted on by forum members.
+*Updated TOC for patch 5.0.4
+*TSM will now block all chat messages related to creating and canceling auctions.
+*Added a slash command for resetting the position of the main TSM frame - '/tsm freset'.
+*Fixed the green +/- buttons in treegroups.
+*Made all the progress bars across the modules consistent.
+*Rewrote all the auction results table code to address multiple issues.
+*Added a slider to the TSM options tab for adjusting how many rows are shown in auction results tables.
+*Many other minor bug fixes and improvements.
+
 v1.4
 *Redesigned the look and feel of the main TSM window and the auction house tab.
 *Added a bunch of new options for customizing the new look.

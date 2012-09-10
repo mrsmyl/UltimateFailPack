@@ -20,7 +20,7 @@ if not L then return end
 L["trackerMessage"] = true
 L["If you previously used TSM_Gathering, note that inventory data was not transfered to TSM_ItemTracker and will not show up until you log onto each character and visit the bank / gbank / auction house."] = true
 L["ItemTracker: %s on player, %s on alts, %s in guild banks, %s on AH"] = true
-L["%s: %s (%s in bags, %s in bank, %s on AH)"] = true
+L["%s: %s (%s in bags, %s in bank, %s on AH, %s in mail)"] = true
 L["%s: %s in guild bank"] = true
 
 -- config.lua
@@ -30,6 +30,7 @@ L["Options"] = true
 L["Item Name"] = true
 L["Bags"] = true
 L["Bank"] = true
+L["Mailbox"] = true
 L["Guild Bank"] = true
 L["AH"] = true
 L["Total"] = true

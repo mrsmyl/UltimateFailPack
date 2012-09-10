@@ -84,7 +84,7 @@ end
 function TSMAPI:GetTradeSkillData(tradeskill)
 	if not tradeskill then return end
 	
-	if not TSM.data[tradeskill] then
+	if not TSM.Data[tradeskill] then
 		for _, skill in ipairs(TSM.tradeSkills) do
 			if strlower(skill.name) == strlower(tradeskill) then
 				tradeskill = skill.name
@@ -93,7 +93,7 @@ function TSMAPI:GetTradeSkillData(tradeskill)
 		end
 	end
 	
-	if not (TSM.data[tradeskill] and TSM.data[tradeskill].crafts) then return end
+	if not (TSM.Data[tradeskill] and TSM.Data[tradeskill].crafts) then return end
 	
 	local results = {}
 	for itemID, data in pairs(TSM.Data[tradeskill].crafts) do

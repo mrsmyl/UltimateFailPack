@@ -29,6 +29,7 @@ local savedDBDefaults = {
 		showBids = false,
 		detachByDefault = false,
 		openAllBags = true,
+		auctionResultRows = 12,
 		design = {
 			frameColors = {
 				frameBG = {backdrop={24, 24, 24, .93}, border={30, 30, 30, 1}},
@@ -122,6 +123,10 @@ function TSM:OnInitialize()
 				print(module.name, "|cff99ffff"..module.version.."|r")
 			end
 		end, "Prints out the version numbers of all installed modules.")
+	lib:RegisterSlashCommand("freset", function()
+			TSM.Frame.frame:ClearAllPoints()
+			TSM.Frame.frame:SetPoint("CENTER", UIParent, "CENTER")
+		end, "Resets the position of the main TSM frame to the center of the screen.")
 end
 
 function TSM:OnEnable()

@@ -39,6 +39,7 @@ function Config:Load(parent)
 		elseif value == 2 then
 			Config:LoadOptions(tg)
 		end
+		tg.children[1]:DoLayout()
 	end)
 	parent:AddChild(tg)
 	tg:SelectTab(1)

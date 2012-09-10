@@ -7,7 +7,6 @@ function Search:OnInitialize()
 	TSMAPI:RegisterAuctionFunction("TradeSkillMaster_Shopping", Search, "Search", "Replacement for the \"Browse\" tab of the auction house. Displays all auctions that match your specified filters and allows you to buy them.")
 end
 
-
 -- ------------------------------------------------ --
 --					GUI Creation functions					 --
 -- ------------------------------------------------ --
@@ -627,69 +626,40 @@ end
 
 function Search:CreateSearchST(parent)
 	local events = {
-		["OnClick"] = function(self, _, data, _, _, rowNum, column, st, button)
-			if rowNum then
-				if Search.isScanning then return true end
-				
-				-- they clicked on a data row
-				if button == "LeftButton" then
-					-- go to the page for this item
-					TSM.AuctionControl:SetCurrentAuction(data[rowNum].record)
-					TSMAPI:FindAuction(function() end, {itemString=data[rowNum].itemString, buyout=data[rowNum].record.buyout, count=data[rowNum].record.count})
-				else
-					TSMAPI:GetSTRowRightClickFunction()(self, data[rowNum].record.parent.itemLink)
-				end
-				st:SetSelection(rowNum)
-				return true
+		OnClick = function(_, data, self, button)
+			-- they clicked on a data row
+			if button == "LeftButton" then
+				-- go to the page for this item
+				TSM.AuctionControl:SetCurrentAuction(data.auctionRecord)
+				TSMAPI:FindAuction(function() end, {itemString=data.itemString, buyout=data.auctionRecord.buyout, count=data.auctionRecord.count})
 			else
-				Search:RegisterMessage("TSM_AUCTION_ST_ON_SORT", function()
-						Search:UnregisterMessage("TSM_AUCTION_ST_ON_SORT")
-						Search:UpdateSearchSTData()
-					end)
-				st:OnColumnClick(column)
+				TSMAPI:GetSTRowRightClickFunction()(self, data.auctionRecord.parent.itemLink)
 			end
 		end,
 	}
 	
 	local function GetPriceColName()
-		if TSMAPI:GetPricePerUnitValue() then
-			return L["Price Per Item"]
-		else
-			return L["Price Per Stack"]
-		end
+		return TSMAPI:GetPricePerUnitValue() and L["Price Per Item"] or L["Price Per Stack"]
 	end
 
 	local colInfo = {
-		{name="Item", width=0.285},
+		{name="Item", width=0.315},
 		{name=L["Item Level"], width=0.06, align="CENTER"},
 		{name=L["Auctions"], width=0.085, align="CENTER"},
 		{name=L["Stack Size"], width=0.055, align="CENTER"},
 		{name=L["Time Left"], width=0.115, align="CENTER"},
 		{name=L["Seller"], width=0.12, align="CENTER"},
-		{name=GetPriceColName(), width=0.15, align="RIGHT"},
+		{name=GetPriceColName(), width=0.15, align="RIGHT", isPrice=true},
 		{name=L["% Market Value"], width=0.1, align="CENTER"},
 	}
-
-	local st = TSMAPI:CreateAuctionsST(parent, colInfo, events)
-	st:Hide()
-	st.expanded = {}
-	st.UpdateSTData = Search.UpdateSearchSTData
-	st.hasItemLevel = true
 	
-	local function OnPriceCBChanged()
-		if not st.frame:IsVisible() then return end
-		Search:UpdateSearchSTData()
-		st.head.cols[7]:GetFontString():SetText(GetPriceColName())
-	end
+	local rt = TSMAPI:CreateAuctionResultsTable(parent, colInfo, events)
+	rt:SetData({})
+	rt:SetSort(TSM.db.profile.searchDefaultSort, true)
+	rt:Hide()
+	Search:RegisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED", function() rt:SetColHeadText(7, GetPriceColName()) end)
 	
-	st.SetPctColText = function(self, text)
-		st.head.cols[8]:GetFontString():SetText(text)
-	end
-	
-	st.head.cols[TSM.db.profile.searchDefaultSort]:Click()
-	st.frame:SetScript("OnShow", function() Search:RegisterMessage("TSM_PRICE_PER_CHECKBOX_CHANGED", OnPriceCBChanged) end)
-	
-	return st
+	return rt
 end
 
 
@@ -707,32 +677,19 @@ function Search:UpdateTopLabel(page, numPages, numLeft)
 end
 
 -- Updates the Search ST
-local defaultSortOrderPerItem = {"Percent", "ItemBuyout", "ItemDisplayedBid", "TimeLeft", "Count", "Seller", "NumAuctions", "Name"}
-local defaultSortOrderPerStack = {"Percent", "Buyout", "DisplayedBid", "TimeLeft", "Count", "Seller", "NumAuctions", "Name"}
-local colSortInfoPerItem = {"Name", "NumAuctions", "Count", "TimeLeft", "Seller", "ItemBuyout", "Percent"}
-local colSortInfoPerStack = {"Name", "NumAuctions", "Count", "TimeLeft", "Seller", "Buyout", "Percent"}
 function Search:UpdateSearchSTData()
 	if not Search.searchST then return end
-	
-	local sortParams
-	if TSMAPI:GetPricePerUnitValue() then
-		sortParams = defaultSortOrderPerItem
-		tinsert(sortParams, 1, colSortInfoPerItem[Search.searchST.sortInfo.col])
-	else
-		sortParams = defaultSortOrderPerStack
-		tinsert(sortParams, 1, colSortInfoPerStack[Search.searchST.sortInfo.col])
-	end
 
 	local results = {}
 	for _, auction in pairs(Search.auctions) do
 		if auction.searchFlag then
 			-- combine auctions with the same buyout / count / seller
-			auction:PopulateCompactRecords(sortParams, Search.searchST.sortInfo.order == "asc")
+			auction:PopulateCompactRecords()
 			tinsert(results, auction)
 		end
 	end
 	
-	TSMAPI:SetSTData(Search.searchST, results)
+	Search.searchST:SetData(results)
 end
 
 function Search:SetGoldText(fontString, fontString2)
