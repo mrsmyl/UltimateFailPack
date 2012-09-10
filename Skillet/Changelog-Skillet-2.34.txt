@@ -1,9 +1,26 @@
 ------------------------------------------------------------------------
-r281 | yossa | 2012-09-04 18:19:36 +0000 (Tue, 04 Sep 2012) | 1 line
+r284 | yossa | 2012-09-09 11:52:48 +0000 (Sun, 09 Sep 2012) | 1 line
 Changed paths:
-   A /tags/2.33 (from /trunk:280)
+   A /tags/2.34 (from /trunk:283)
 
-Tagging as 2.33
+Tagging as 2.34
+------------------------------------------------------------------------
+r283 | yossa | 2012-09-09 11:51:07 +0000 (Sun, 09 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+
+Skillet:
+-ver
+
+------------------------------------------------------------------------
+r282 | yossa | 2012-09-09 11:47:37 +0000 (Sun, 09 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/SkilletData.lua
+
+Skillet:
+- handle only currently casted spells - avoid interrupt by Launch Quest
+
 ------------------------------------------------------------------------
 r280 | yossa | 2012-09-04 16:40:32 +0000 (Tue, 04 Sep 2012) | 3 lines
 Changed paths:
