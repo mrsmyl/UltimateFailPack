@@ -13,6 +13,8 @@ local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 local ipairs = _G.ipairs
 local unpack = _G.unpack
 
+local _
+
 -- constants
 local SPARK_LEN_MIN  = 28
 local SPARK_LEN_MAX  = 128

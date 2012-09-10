@@ -21,6 +21,8 @@ local UnitLevel             = _G.UnitLevel
 local UnitXP                = _G.UnitXP
 local UnitXPMax             = _G.UnitXPMax
 
+local _
+
 -- setup libs
 local LibStub   = LibStub
 local LDB       = LibStub:GetLibrary("LibDataBroker-1.1")

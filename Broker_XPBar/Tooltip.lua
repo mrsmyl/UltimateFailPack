@@ -22,6 +22,8 @@ local UnitXPMax       = _G.UnitXPMax
 local GetFactionInfo  = _G.GetFactionInfo
 local GetXPExhaustion = _G.GetXPExhaustion
 
+local _
+
 -- icons
 local ICON_PLUS	 = [[|TInterface\BUTTONS\UI-PlusButton-Up:16:16|t]]
 local ICON_MINUS = [[|TInterface\BUTTONS\UI-MinusButton-Up:16:16|t]]

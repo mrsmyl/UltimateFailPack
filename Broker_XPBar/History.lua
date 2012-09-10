@@ -18,6 +18,8 @@ local GetXPExhaustion    = _G.GetXPExhaustion
 local UnitXP             = _G.UnitXP
 local UnitXPMax          = _G.UnitXPMax
 
+local _
+
 -- helper functions
 local function FormatTime(stamp)
 	local days    = floor(stamp/86400)

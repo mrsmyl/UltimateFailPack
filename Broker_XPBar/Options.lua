@@ -23,6 +23,8 @@ local GetNumFactions         = _G.GetNumFactions
 local GetFactionInfo         = _G.GetFactionInfo
 local SetWatchedFactionIndex = _G.SetWatchedFactionIndex
 
+local _
+
 local function clear_table(tab)
 	if tab and type(tab) == "table" then
 		for k in pairs(tab) do

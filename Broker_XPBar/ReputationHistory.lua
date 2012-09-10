@@ -15,6 +15,8 @@ local ceil    = math.ceil
 local GetFactionInfo = _G.GetFactionInfo
 local GetNumFactions = _G.GetNumFactions
 
+local _
+
 -- helper functions
 local function FormatTime(stamp)
 	local days    = floor(stamp/86400)
