@@ -25,11 +25,6 @@ if not L then return end
 	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "地獄深淵"
 	
 	
---	wow skill headers - must match exactly what is in game
-	L["WOW_SKILL_HEADER_PRIMARY"] = "專業技能"
-	L["WOW_SKILL_HEADER_SECONDARY"] = "第二專長"
-	
-	
 --	wow tooltip text - must match exactly what is in game
 	L["WOW_ITEM_TOOLTIP_FOOD"] = "進食時必須保持坐姿"
 	L["WOW_ITEM_TOOLTIP_DRINK"] = "喝水時必須保持坐姿"
@@ -41,10 +36,8 @@ if not L then return end
 	
 --	location names
 	L["LOCATION_ALL"] = "全部"
-	L["LOCATION_BAG"] = "背包"
 	L["LOCATION_BANK"] = "銀行"
 	L["LOCATION_WEARING"] = "裝備"
-	L["LOCATION_TOKEN"] = "徽章"
 	
 	
 --	subframe names
@@ -80,13 +73,9 @@ if not L then return end
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "原始材料"
 	L["CATEGORY_SYSTEM_EQUIPMENT"] = "裝備 (未綁定)"
 	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "裝備 (已綁定)"
-	L["CATEGORY_SYSTEM_TOKEN"] = "徽章"
-	L["CATEGORY_SYSTEM_TRASH"] = "垃圾"
 	
 	
 --	consumable category descriptions
-	L["CATEGORY_CONSUMABLE_DRINK"] = "飲料"
-	L["CATEGORY_CONSUMABLE_FOOD"] = "食物"
 	L["CATEGORY_CONSUMABLE_FOOD_PET"] = "食物 (寵物)"
 	L["CATEGORY_CONSUMABLE_POTION_HEAL"] = "治療 (藥水/石)"
 	L["CATEGORY_CONSUMABLE_POTION_MANA"] = "法力 (藥水/寶石)"
@@ -465,16 +454,11 @@ if not L then return end
 	
 --	rules frame
 	L["RULE"] = "規則"
-	L["RULE_ENABLED"] = "啟用"
 	L["RULE_HIDDEN"] = "隱藏"
-	L["RULE_ORDER"] = "順序"
-	L["RULE_DESCRIPTION"] = "描述"
 	L["RULE_FORMULA"] = "公式"
 	L["RULE_LIST_ENABLED"] = "使用"
 	L["RULE_LIST_DAMAGED"] = "損壞"
 	L["RULE_LIST_ID"] = "規則"
-	L["RULE_LIST_ORDER"] = "順序"
-	L["RULE_LIST_DESCRIPTION"] = "描述"
 	
 	L["RULE_DAMAGED"] = "規則「%s」已標示為損壞，維修前不會再被使用"
 	L["RULE_FAILED"] = "錯誤的驗證規則 %s"
@@ -531,7 +515,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_TOTAL"] = "總計"
 	L["TOOLTIP_COUNT_ME"] = " > "
 --	L["TOOLTIP_VAULT_TABS"] = ""
 	
@@ -595,7 +578,8 @@ if not L then return end
 	L["FRAMES"] = "框架"
 	L["CLICK_TO_SELECT"] = "單擊選擇"
 	L["CLICK_TO_DESELECT"] = "單擊取消選擇"
---	L["CLICK_TO_IGNORE"] = ""	
+--	L["CLICK_TO_IGNORE"] = ""
+	L["ORDER"] = "順序"
 	
 	
 -- libdatabroker
@@ -606,17 +590,13 @@ if not L then return end
 --	L["LDB_BAGS_STYLE_TEXT"] = ""
 	L["LDB_BAGS_INCLUDE_TYPE"] = "背包類型"
 --	L["LDB_BAGS_INCLUDE_TYPE_TEXT"] = ""
-	L["LDB_TRACKING"] = "追蹤"
 	L["LDB_TRACKING_CURRENCY"] = "兌換通貨 / 徽章"
---	L["LDB_TRACKING_ITEM"] = ""
 	L["LDB_PETS_SUMMON"] = "召喚寵物"
 	L["LDB_MOUNTS_NOT_HERE"] = "不管你的坐騎在這裡是否可用"
 --	L["LDB_MOUNTS_GROUND"] = ""
-	L["LDB_MOUNTS_FLYING"] = "飛行"
 	L["LDB_MOUNTS_FLYING_DISMOUNT"] = "在飛行中卸載"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_TEXT"] = "啟用 = 允許你在飛行中下坐騎。\n\n停用 = 你需要在地面上，才可以下坐騎"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "您目前正在飛行，請選擇一個降落地點"
-	L["LDB_MOUNTS_WATER"] = "水"
 	L["LDB_MOUNTS_SUMMON"] = "召喚坐騎"
 --	L["LDB_MOUNTS_NODATA"] = ""
 --	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""

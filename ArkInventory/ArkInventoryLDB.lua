@@ -110,7 +110,7 @@ end
 
 function ArkInventory.LDB.Tracking_Currency:OnTooltipShow( )
 	
-	self:AddLine( string.format( "%s: %s", ArkInventory.Localise["LDB_TRACKING"], ArkInventory.Localise["LDB_TRACKING_CURRENCY"] ) )
+	self:AddLine( string.format( "%s: %s", ArkInventory.Localise["TRACKING"], ArkInventory.Localise["LDB_TRACKING_CURRENCY"] ) )
 	
 	local numTokenTypes = GetCurrencyListSize( )
 	
@@ -181,7 +181,7 @@ end
 
 function ArkInventory.LDB.Tracking_Item:OnTooltipShow( )
 	
-	self:AddLine( string.format( "%s: %s", ArkInventory.Localise["LDB_TRACKING"], ArkInventory.Localise["LDB_TRACKING_ITEM"] ) )
+	self:AddLine( string.format( "%s: %s", ArkInventory.Localise["TRACKING"], ArkInventory.Localise["ITEMS"] ) )
 	
 	self:AddLine( " " )
 	

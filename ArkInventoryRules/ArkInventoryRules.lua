@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2012, all rights reserved.
--- $Revision: 934 $
--- $Date: 2012-08-29 17:41:56 +1000 (Wed, 29 Aug 2012) $
+-- $Revision: 964 $
+-- $Date: 2012-09-12 16:58:46 +1000 (Wed, 12 Sep 2012) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -20,10 +20,7 @@ function ArkInventoryRules.OnInitialize( )
 	
 	-- outfitter: 
 	if IsAddOnLoaded( "Outfitter" ) then
-		ArkInventory.Output( "enabling Outfitter support" )
-		Outfitter:RegisterOutfitEvent( "ADD_OUTFIT", ArkInventoryRules.ItemCacheClear )
-		Outfitter:RegisterOutfitEvent( "DELETE_OUTFIT", ArkInventoryRules.ItemCacheClear )
-		Outfitter:RegisterOutfitEvent( "EDIT_OUTFIT", ArkInventoryRules.ItemCacheClear )
+		ArkInventory.MySecureHook( Outfitter, "Initialize", ArkInventoryRules.OutfitterInitialize )
 	end
 	
 	-- scrap: http://wow.curse.com/downloads/wow-addons/details/scrap.aspx
@@ -32,8 +29,10 @@ function ArkInventoryRules.OnInitialize( )
 		ArkInventory.Output( "enabling Scrap support" )
 		
 		if IsAddOnLoaded( "Scrap_Merchant" ) then
-			ArkInventory.Output( "enabling Scrap Merchant support" )
-			ArkInventory.MySecureHook( Scrap, "ToggleJunk", ArkInventoryRules.ItemCacheClear )
+			if Scrap.ToggleJunk then
+				ArkInventory.Output( "enabling Scrap Merchant support" )
+				ArkInventory.MySecureHook( Scrap, "ToggleJunk", ArkInventoryRules.ItemCacheClear )
+			end
 		end
 		
 	end
@@ -72,6 +71,11 @@ function ArkInventoryRules.OnEnable( )
 		end
 	end
 	
+	if not IsAddOnLoaded( "Outfitter" ) then
+		-- need to wait for outgitter to load
+		ArkInventory.Global.Rules.Enabled = true
+	end
+	
 	ArkInventory.MediaSetFontFrame( ARKINV_Rules )
 	
 	ArkInventory.ItemCacheClear( )
@@ -81,7 +85,29 @@ function ArkInventoryRules.OnEnable( )
 	
 end
 
+function ArkInventoryRules.OutfitterInitialize( )
+	
+	if Outfitter:IsInitialized( ) then
+		
+		ArkInventory.Output( "enabling Outfitter support" )
+		
+		Outfitter:RegisterOutfitEvent( "ADD_OUTFIT", ArkInventoryRules.ItemCacheClear )
+		Outfitter:RegisterOutfitEvent( "DELETE_OUTFIT", ArkInventoryRules.ItemCacheClear )
+		Outfitter:RegisterOutfitEvent( "EDIT_OUTFIT", ArkInventoryRules.ItemCacheClear )
+		
+		ArkInventory.ItemCacheClear( )
+		
+		ArkInventory.MyUnhook( Outfitter, "Initialize" )
+		
+		ArkInventory.Global.Rules.Enabled = true
+		
+	end
+	
+end
+
 function ArkInventoryRules.OnDisable( )
+	
+	ArkInventory.Global.Rules.Enabled = false
 	
 	ArkInventory.ItemCacheClear( )
 	ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
@@ -1098,11 +1124,11 @@ function ArkInventoryRules.System.location( ... )
 			k = ArkInventory.Const.Location.Mail
 		elseif k == "wearing" or k == "gear" or k == string.lower( ArkInventory.Localise["LOCATION_WEARING"] ) then
 			k = ArkInventory.Const.Location.Wearing
-		elseif k == "pet" or k == string.lower( ArkInventory.Localise["LOCATION_PET"] ) then
+		elseif k == "pet" or k == string.lower( ArkInventory.Localise["PET"] ) then
 			k = ArkInventory.Const.Location.Pet
-		elseif k == "mount" or k == string.lower( ArkInventory.Localise["LOCATION_MOUNT"] ) then
+		elseif k == "mount" or k == string.lower( ArkInventory.Localise["MOUNT"] ) then
 			k = ArkInventory.Const.Location.Mount
-		elseif k == "token" or k == "currency" or k == string.lower( ArkInventory.Localise["LOCATION_TOKEN"] ) then
+		elseif k == "token" or k == "currency" or k == string.lower( ArkInventory.Localise["CURRENCY"] ) then
 			k = ArkInventory.Const.Location.Token
 		else
 			k = -1
@@ -1175,6 +1201,10 @@ function ArkInventoryRules.System.trash( )
 		return false
 	end
 	
+	if ArkInventoryRules.Object.q == 0 then
+		return true
+	end
+	
 	local id = select( 2, ArkInventory.ObjectStringDecode( ArkInventoryRules.Object.h ) )
 	
 	if IsAddOnLoaded( "Scrap" ) then
@@ -1194,11 +1224,6 @@ function ArkInventoryRules.System.trash( )
 		if ReagentRestocker:isToBeSold( id ) then
 			return true
 		end
-	end
-	
-	
-	if ArkInventoryRules.Object.q == 0 then
-		return true
 	end
 	
 	return false
@@ -1329,7 +1354,7 @@ function ArkInventoryRules.Frame_Rules_Table_Sort_Build( frame )
 	x:SetPoint( "LEFT", f .. "_C1", "RIGHT", 5, 0 )
 	x:SetPoint( "TOP", 0, 0 )
 	x:SetPoint( "BOTTOM", 0, 0 )
-	x:SetText( ArkInventory.Localise["RULE_LIST_ORDER"] )
+	x:SetText( ArkInventory.Localise["ORDER"] )
 	x:Show( )
 
 	-- description
@@ -1339,7 +1364,7 @@ function ArkInventoryRules.Frame_Rules_Table_Sort_Build( frame )
 	x:SetPoint( "TOP", 0, 0 )
 	x:SetPoint( "BOTTOM", 0, 0 )
 	x:SetPoint( "RIGHT", -35, 0 )
-	x:SetText( ArkInventory.Localise["RULE_LIST_DESCRIPTION"] )
+	x:SetText( ArkInventory.Localise["DESCRIPTION"] )
 	x:Show( )
 	
 end
@@ -1943,9 +1968,9 @@ function ArkInventoryRules.Frame_Rules_Button_Modify( frame, t )
 	end
 
 	_G[fmd .. "IdLabel"]:SetText( ArkInventory.Localise["RULE"] .. ":"  )
-	_G[fmd .. "EnabledLabel"]:SetText( ArkInventory.Localise["RULE_ENABLED"] .. ":"  )
-	_G[fmd .. "OrderLabel"]:SetText( ArkInventory.Localise["RULE_ORDER"] .. ":"  )
-	_G[fmd .. "DescriptionLabel"]:SetText( ArkInventory.Localise["RULE_DESCRIPTION"] .. ":"  )
+	_G[fmd .. "EnabledLabel"]:SetText( ArkInventory.Localise["ENABLED"] .. ":"  )
+	_G[fmd .. "OrderLabel"]:SetText( ArkInventory.Localise["ORDER"] .. ":"  )
+	_G[fmd .. "DescriptionLabel"]:SetText( ArkInventory.Localise["DESCRIPTION"] .. ":"  )
 	_G[fmd .. "FormulaLabel"]:SetText( ArkInventory.Localise["RULE_FORMULA"] .. ":" )
 	
 	_G[fmd .. "Enabled"]:Show( )

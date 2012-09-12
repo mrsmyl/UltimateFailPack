@@ -1193,25 +1193,25 @@ function ArkInventory.BagType( blizzard_id )
 			
 			--ArkInventory.Output( "bag[", blizzard_id, "], type[", t, "], sub[", s, "], h=", h )
 			
-			if t == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER"] then
+			if t == ArkInventory.Localise["WOW_AH_CONTAINER"] then
 				
-				if s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"] then
+				if s == ArkInventory.Localise["WOW_AH_CONTAINER_BAG"] then
 					return ArkInventory.Const.Slot.Type.Bag
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_ENCHANTING"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_ENCHANTING"] then
 					return ArkInventory.Const.Slot.Type.Enchanting
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_ENGINEERING"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_ENGINEERING"] then
 					return ArkInventory.Const.Slot.Type.Engineering
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_GEM"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_GEM"] then
 					return ArkInventory.Const.Slot.Type.Gem
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_HERB"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_HERB"] then
 					return ArkInventory.Const.Slot.Type.Herb
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_INSCRIPTION"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_INSCRIPTION"] then
 					return ArkInventory.Const.Slot.Type.Inscription
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_LEATHERWORKING"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_LEATHERWORKING"] then
 					return ArkInventory.Const.Slot.Type.Leatherworking
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_MINING"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_MINING"] then
 					return ArkInventory.Const.Slot.Type.Mining
-				elseif s == ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_TACKLE"] then
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_TACKLE"] then
 					return ArkInventory.Const.Slot.Type.Tackle
 				end
 				
@@ -1528,8 +1528,7 @@ function ArkInventory.ScanBag( blizzard_id )
 			i.q = ArkInventory.ObjectInfoQuality( h )
 			i.new = new
 			
-			i.cat = nil
-			i.catdef = nil
+			i.cat = ArkInventory.ItemCategoryGet( i )
 			
 			if h then
 				item_to_reset = h
@@ -1692,7 +1691,6 @@ function ArkInventory.ScanVault( )
 			i.new = new
 			
 			i.cat = nil
-			i.catdef = nil
 			
 			if h then
 				item_to_reset = h
@@ -1893,7 +1891,6 @@ function ArkInventory.ScanWearing( )
 			i.new = new
 		
 			i.cat = nil
-			i.catdef = nil
 			
 			if h then
 				item_to_reset = h
@@ -2014,7 +2011,6 @@ function ArkInventory.ScanMail( )
 						i.new = new
 						
 						i.cat = nil
-						i.catdef = nil
 						
 						if h then
 							item_to_reset = h
@@ -2135,7 +2131,6 @@ function ArkInventory.ScanCompanion( type_id )
 			i.texture = texture
 			
 			i.cat = nil
-			i.catdef = nil
 			
 			if h then
 				item_to_reset = h
@@ -2204,7 +2199,6 @@ function ArkInventory.ScanCompanion( type_id )
 				i.texture = select( 3, GetSpellInfo( spell_id ) )
 				
 				i.cat = nil
-				i.catdef = nil
 				
 				if h then
 					item_to_reset = h
@@ -2325,7 +2319,6 @@ function ArkInventory.ScanCurrency( )
 				i.new = new
 				
 				i.cat = nil
-				i.catdef = nil
 				
 				if h then
 					item_to_reset = h
@@ -2453,7 +2446,6 @@ function ArkInventory.ScanVoidStorage( )
 			i.new = new
 			
 			i.cat = nil
-			i.catdef = nil
 			
 			if h then
 				item_to_reset = h
@@ -3179,20 +3171,24 @@ function ArkInventory.ScanProfessions( )
 	--ArkInventory.Output( "ScanProfessions" )
 	
 	local p = { GetProfessions( ) }
-	--ArkInventory.Output( p )
+	--ArkInventory.Output( "skills = [", p, "]" )
 	
-	ArkInventory.Global.Me.info.skills = { }
-	local skills = ArkInventory.Global.Me.info.skills
+	--ArkInventory.Global.Me.info.skills = ArkInventory.Global.Me.info.skills or { }
 	
-	for _, k in pairs( ArkInventory.Const.Category.Code.Skill ) do
-		local l = GetSpellLink( k.text )
-		if l then
-			local skill = string.match( k.id, "SKILL_(.+)" )
-			table.insert( skills, skill )
-			--ArkInventory.Output( "skill=", skill, ", info=", l, "." )
+	for index = 1, ArkInventory.Const.Skills.Primary + ArkInventory.Const.Skills.Secondary do
+		
+		if p[index] then
+			--local name, texture, rank, maxRank, numSpells, spelloffset, skillLine, rankModifier = GetProfessionInfo( p[index] )
+			--ArkInventory.Output( "skill [", index, "] = [", skillLine, "] [", name, "]" )
+			local skillLine = select( 7, GetProfessionInfo( p[index] ) )
+			ArkInventory.Global.Me.info.skills[index] = skillLine
+		else
+			ArkInventory.Global.Me.info.skills[index] = nil
+			--ArkInventory.Output( "skill [", index, "] = [", skillLine, "] [", name, "]" )
 		end
+		
 	end
-	
+
 	ArkInventory.Table.Clean( ArkInventory.Global.Cache.Default )
 	ArkInventory.LocationSetValue( nil, "resort", true )
 	

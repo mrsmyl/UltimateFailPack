@@ -25,11 +25,6 @@ if not L then return end
 	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Бездонные глубины"
 	
 	
---	wow skill headers - must match exactly what is in game
-	L["WOW_SKILL_HEADER_PRIMARY"] = "Профессии"
-	L["WOW_SKILL_HEADER_SECONDARY"] = "Дополнительные профессии"
-	
-	
 --	wow tooltip text - must match exactly what is in game
 	L["WOW_ITEM_TOOLTIP_FOOD"] = "Действие эффекта прерывается, если персонаж встает с места"
 	L["WOW_ITEM_TOOLTIP_DRINK"] = "Действие эффекта прерывается, если персонаж встает с места"
@@ -41,10 +36,8 @@ if not L then return end
 	
 --	location names
 	L["LOCATION_ALL"] = "Все"
-	L["LOCATION_BAG"] = "Сумка"
 	L["LOCATION_BANK"] = "Банк"
 	L["LOCATION_WEARING"] = "Одето"
---	L["LOCATION_TOKEN"] = ""
 	
 	
 --	subframe names
@@ -80,13 +73,9 @@ if not L then return end
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "Материалы"
 	L["CATEGORY_SYSTEM_EQUIPMENT"] = "Оснащение (не персональное)"
 	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "Оснащение (персональное)"
---	L["CATEGORY_SYSTEM_TOKEN"] = ""
-	L["CATEGORY_SYSTEM_TRASH"] = "Мусор"
 	
 	
 --	consumable category descriptions
-	L["CATEGORY_CONSUMABLE_DRINK"] = "Напитки"
-	L["CATEGORY_CONSUMABLE_FOOD"] = "Еда"
 	L["CATEGORY_CONSUMABLE_FOOD_PET"] = "Еда (питомцев)"
 	L["CATEGORY_CONSUMABLE_POTION_HEAL"] = "Здоровье (зелье/камень)"
 	L["CATEGORY_CONSUMABLE_POTION_MANA"] = "Мана (зелье/камень)"
@@ -465,16 +454,11 @@ if not L then return end
 	
 --	rules frame
 	L["RULE"] = "Правило"
-	L["RULE_ENABLED"] = "Активно"
 	L["RULE_HIDDEN"] = "Скрыто"
-	L["RULE_ORDER"] = "Порядок"
-	L["RULE_DESCRIPTION"] = "Описание"
 	L["RULE_FORMULA"] = "Формула"
 	L["RULE_LIST_ENABLED"] = "Использовать"
 	L["RULE_LIST_DAMAGED"] = "Повреждено"
 	L["RULE_LIST_ID"] = "Правило"
-	L["RULE_LIST_ORDER"] = "Порядок"
-	L["RULE_LIST_DESCRIPTION"] = "Описание"
 	
 	L["RULE_DAMAGED"] = "Правило %s помечено как повреждённое и более не будет работать, пока Вы его не исправите."
 --	L["RULE_FAILED"] = ""
@@ -531,7 +515,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_TOTAL"] = "Всего"
 --	L["TOOLTIP_COUNT_ME"] = ""
 --	L["TOOLTIP_VAULT_TABS"] = ""
 	
@@ -596,6 +579,7 @@ if not L then return end
 --	L["CLICK_TO_SELECT"] = ""
 --	L["CLICK_TO_DESELECT"] = ""
 --	L["CLICK_TO_IGNORE"] = ""	
+	L["ORDER"] = "Порядок"
 	
 	
 -- libdatabroker
@@ -606,17 +590,13 @@ if not L then return end
 --	L["LDB_BAGS_STYLE_TEXT"] = ""
 --	L["LDB_BAGS_INCLUDE_TYPE"] = ""
 --	L["LDB_BAGS_INCLUDE_TYPE_TEXT"] = ""
---	L["LDB_TRACKING"] = ""
 --	L["LDB_TRACKING_CURRENCY"] = ""
---	L["LDB_TRACKING_ITEM"] = ""
 --	L["LDB_PETS_SUMMON"] = ""
 --	L["LDB_MOUNTS_NOT_HERE"] = ""
 --	L["LDB_MOUNTS_GROUND"] = ""
---	L["LDB_MOUNTS_FLYING"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_TEXT"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
---	L["LDB_MOUNTS_WATER"] = ""
 --	L["LDB_MOUNTS_SUMMON"] = ""
 --	L["LDB_MOUNTS_NODATA"] = ""
 --	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""

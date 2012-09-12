@@ -236,21 +236,6 @@
 			
 			<Frame name="$parentArkBorder" inherits="ARKINV_Border" />
 			
-			<Frame name="$parentArkHighlight">
-			
-				<Anchors>
-					<Anchor point="TOPLEFT" />
-					<Anchor point="BOTTOMRIGHT" />
-				</Anchors>
-				
-				<Layers>
-					<Layer level="OVERLAY">
-						<Texture name="$parentBag" hidden="true" />
-					</Layer>
-				</Layers>
-				
-			</Frame>
-			
 			<Frame name="$parentArkNew">
 			
 				<Anchors>
@@ -362,26 +347,17 @@
 		
 		<NormalTexture name="$parentNormalTexture" urgency="5" file="" />
 		
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentTainted" setAllPoints="true" hidden="false">
+					<Color r="0.7" g="0.1" b="1.0" a="0.4" />
+				</Texture>
+			</Layer>
+		</Layers>
+		
 		<Frames>
 			
 			<Frame name="$parentArkBorder" inherits="ARKINV_Border" />
-			
-			<Frame name="$parentArkHighlight">
-			
-				<Anchors>
-					<Anchor point="TOPLEFT" />
-					<Anchor point="BOTTOMRIGHT" />
-				</Anchors>
-				
-				<Layers>
-					<Layer level="OVERLAY">
-						<Texture name="$parentTainted" hidden="false">
-							<Color r="0.7" g="0.1" b="1.0" a="0.4" />
-						</Texture>
-					</Layer>
-				</Layers>
-				
-			</Frame>
 			
 		</Frames>
 		

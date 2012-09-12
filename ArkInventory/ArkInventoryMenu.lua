@@ -170,7 +170,7 @@ function ArkInventory.MenuBarOpen( frame )
 		end
 	
 		local category = {
-			["type"] = { "SYSTEM", "CONSUMABLE", "TRADE_GOODS", "SKILL", "CLASS", "EMPTY", "CUSTOM", "RULE", },
+			["type"] = { "SYSTEM", "CONSUMABLE", "TRADEGOODS", "SKILL", "CLASS", "EMPTY", "CUSTOM", "RULE", },
 		}
 		
 		ArkInventory.Lib.Dewdrop:Open( frame,
@@ -659,7 +659,7 @@ function ArkInventory.MenuItemOpen( frame )
 		local cat0, cat1, cat2 = ArkInventory.ItemCategoryGet( i )
 		local bar_id = abs( ArkInventory.CategoryLocationGet( loc_id, cat0 ) )
 		
-		local categories = { "SYSTEM", "CONSUMABLE", "TRADE_GOODS", "SKILL", "CLASS", "EMPTY", "CUSTOM", }
+		local categories = { "SYSTEM", "CONSUMABLE", "TRADEGOODS", "SKILL", "CLASS", "EMPTY", "CUSTOM", }
 		
 		cat0 = ArkInventory.Global.Category[cat0] or cat0
 		if type( cat0 ) ~= "table" then
@@ -2031,13 +2031,13 @@ function ArkInventory.MenuMounts( frame, level, value, offset )
 		)
 		
 		ArkInventory.Lib.Dewdrop:AddLine(
-			"text", ArkInventory.Localise["LDB_MOUNTS_FLYING"],
+			"text", ArkInventory.Localise["FLYING"],
 			"hasArrow", true,
 			"value", "flying"
 		)
 		
 		ArkInventory.Lib.Dewdrop:AddLine(
-			"text", ArkInventory.Localise["LDB_MOUNTS_WATER"],
+			"text", ArkInventory.Localise["AQUATIC"],
 			"hasArrow", true,
 			"value", "water"
 		)

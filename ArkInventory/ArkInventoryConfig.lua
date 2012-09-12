@@ -1307,7 +1307,7 @@ function ArkInventory.ConfigInternal( )
 					type = "group",
 					childGroups = "tab",
 					name = function( )
-						return ArkInventory.Localise["WOW_ITEM_TYPE_MISC_MOUNT"]
+						return ArkInventory.Localise["WOW_AH_MISC_MOUNT"]
 					end,
 					args = { },
 				},

@@ -370,7 +370,7 @@ function ArkInventory.TooltipObjectCountGet( search_id )
 		
 		if character_count > 1 then
 			table.sort( character_entries )
-			c = string.format( "%s\n%s: %s%s|r", table.concat( character_entries, "\n" ), ArkInventory.Localise["TOOLTIP_TOTAL"], colour, item_count_total )
+			c = string.format( "%s\n%s: %s%s|r", table.concat( character_entries, "\n" ), ArkInventory.Localise["TOTAL"], colour, item_count_total )
 		else
 			c = table.concat( character_entries, "\n" )
 		end

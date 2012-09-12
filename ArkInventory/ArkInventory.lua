@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 952 $
--- $Date: 2012-09-01 20:41:23 +1000 (Sat, 01 Sep 2012) $
+-- $Revision: 961 $
+-- $Date: 2012-09-12 13:17:43 +1000 (Wed, 12 Sep 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 30302,
-		UIVersion = "3.3.2",
+		Version = 30303,
+		UIVersion = "3.3.3",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -237,11 +237,11 @@ ArkInventory.Const = { -- constants
 			System = { -- do NOT change the indicies - if you have to then see the ConvertOldOptions( ) function to remap it
 				[401] = {
 					["id"] = "SYSTEM_DEFAULT",
-					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_DEFAULT"],
+					["text"] = ArkInventory.Localise["DEFAULT"],
 				},
 				[402] = {
 					["id"] = "SYSTEM_TRASH",
-					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_TRASH"],
+					["text"] = ArkInventory.Localise["WOW_AH_MISC_JUNK"],
 				},
 				[403] = {
 					["id"] = "SYSTEM_SOULBOUND",
@@ -249,7 +249,7 @@ ArkInventory.Const = { -- constants
 				},
 				[405] = {
 					["id"] = "SYSTEM_CONTAINER",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONTAINER"],
 				},
 --				[406] = {
 --					["id"] = "SYSTEM_KEY",
@@ -257,19 +257,19 @@ ArkInventory.Const = { -- constants
 --				},
 				[407] = {
 					["id"] = "SYSTEM_MISC",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC"],
+					["text"] = ArkInventory.Localise["WOW_AH_MISC"],
 				},
 				[408] = {
 					["id"] = "SYSTEM_REAGENT",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC_REAGENT"],
+					["text"] = ArkInventory.Localise["WOW_AH_MISC_REAGENT"],
 				},
 				[409] = {
 					["id"] = "SYSTEM_RECIPE",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_RECIPE"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE"],
 				},
 				[411] = {
 					["id"] = "SYSTEM_QUEST",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_QUEST"],
+					["text"] = ArkInventory.Localise["WOW_AH_QUEST"],
 				},
 				[414] = {
 					["id"] = "SYSTEM_EQUIPMENT",
@@ -277,7 +277,7 @@ ArkInventory.Const = { -- constants
 				},
 				[415] = {
 					["id"] = "SYSTEM_MOUNT",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC_MOUNT"],
+					["text"] = ArkInventory.Localise["WOW_AH_MISC_MOUNT"],
 				},
 				[416] = {
 					["id"] = "SYSTEM_EQUIPMENT_SOULBOUND",
@@ -285,15 +285,15 @@ ArkInventory.Const = { -- constants
 				},
 				[423] = {
 					["id"] = "SYSTEM_PET_COMPANION",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC_PET"],
+					["text"] = ArkInventory.Localise["WOW_AH_MISC_PET"],
 				},
 				[441] = {
 					["id"] = "SYSTEM_PET_BATTLE",
-					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_BATTLEPET"],
+					["text"] = ArkInventory.Localise["WOW_AH_BATTLEPET"],
 				},
 				[428] = {
 					["id"] = "SYSTEM_REPUTATION",
-					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_REPUTATION"],
+					["text"] = ArkInventory.Localise["REPUTATION"],
 				},
 				[429] = {
 					["id"] = "SYSTEM_UNKNOWN",
@@ -301,21 +301,21 @@ ArkInventory.Const = { -- constants
 				},
 				[434] = {
 					["id"] = "SYSTEM_GEM",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_GEM"],
+					["text"] = ArkInventory.Localise["WOW_AH_GEM"],
 				},
 				[438] = {
 					["id"] = "SYSTEM_TOKEN",
-					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_TOKEN"],
+					["text"] = ArkInventory.Localise["CURRENCY"],
 				},
 				[439] = {
 					["id"] = "SYSTEM_GLYPH",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_GLYPH"],
+					["text"] = ArkInventory.Localise["WOW_AH_GLYPH"],
 				},
 			},
 			Consumable = {
 				[404] = {
-					["id"] = "CONSUMABLE",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE"],
+					["id"] = "CONSUMABLE_OTHER",
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_OTHER"],
 				},
 				[417] = {
 					["id"] = "CONSUMABLE_FOOD",
@@ -335,23 +335,23 @@ ArkInventory.Const = { -- constants
 				},
 				[424] = {
 					["id"] = "CONSUMABLE_POTION",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_POTION"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_POTION"],
 				},
 				[430] = {
 					["id"] = "CONSUMABLE_ELIXIR",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_ELIXIR"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_ELIXIR"],
 				},
 				[431] = {
 					["id"] = "CONSUMABLE_FLASK",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_FLASK"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_FLASK"],
 				},
 				[432] = {
 					["id"] = "CONSUMABLE_BANDAGE",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_BANDAGE"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_BANDAGE"],
 				},
 				[433] = {
 					["id"] = "CONSUMABLE_SCROLL",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_SCROLL"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_SCROLL"],
 				},
 				[435] = {
 					["id"] = "CONSUMABLE_ELIXIR_BATTLE",
@@ -363,71 +363,79 @@ ArkInventory.Const = { -- constants
 				},
 				[437] = {
 					["id"] = "CONSUMABLE_FOOD_AND_DRINK",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_FOOD_AND_DRINK"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_FOOD+DRINK"],
 				},
 				[440] = {
 					["id"] = "CONSUMABLE_ITEM_ENHANCEMENT",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_ITEM_ENHANCEMENT"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONSUMABLE_ENHANCEMENT"],
 				},
 			},
 			Trade = {
 				[412] = {
-					["id"] = "TRADE_GOODS",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS"],
+					["id"] = "TRADEGOODS_OTHER",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_OTHER"],
 				},
 				[425] = {
-					["id"] = "TRADE_GOODS_DEVICES",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_DEVICES"],
+					["id"] = "TRADEGOODS_DEVICES",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_DEVICES"],
 				},
 				[426] = {
-					["id"] = "TRADE_GOODS_EXPLOSIVES",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_EXPLOSIVES"],
+					["id"] = "TRADEGOODS_EXPLOSIVES",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_EXPLOSIVES"],
 				},
 				[427] = {
-					["id"] = "TRADE_GOODS_PARTS",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_PARTS"],
+					["id"] = "TRADEGOODS_PARTS",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_PARTS"],
 				},
 				[501] = {
-					["id"] = "TRADE_GOODS_HERB",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_HERB"],
+					["id"] = "TRADEGOODS_HERB",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_HERB"],
 				},
 				[502] = {
-					["id"] = "TRADE_GOODS_CLOTH",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_CLOTH"],
+					["id"] = "TRADEGOODS_CLOTH",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_CLOTH"],
 				},
 				[503] = {
-					["id"] = "TRADE_GOODS_ELEMENTAL",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_ELEMENTAL"],
+					["id"] = "TRADEGOODS_ELEMENTAL",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_ELEMENTAL"],
 				},
 				[504] = {
-					["id"] = "TRADE_GOODS_LEATHER",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_LEATHER"],
+					["id"] = "TRADEGOODS_LEATHER",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_LEATHER"],
 				},
 				[505] = {
-					["id"] = "TRADE_GOODS_MEAT",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_MEAT"],
+					["id"] = "TRADEGOODS_COOKING",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_COOKING"],
 				},
 				[506] = {
-					["id"] = "TRADE_GOODS_METAL_AND_STONE",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_METAL_AND_STONE"],
+					["id"] = "TRADEGOODS_METALSTONE",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_METALSTONE"],
 				},
 				[507] = {
-					["id"] = "TRADE_GOODS_MATERIALS",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_MATERIALS"],
+					["id"] = "TRADEGOODS_MATERIALS",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_MATERIALS"],
 				},
 				[510] = {
-					["id"] = "TRADE_GOODS_ITEM_ENCHANTMENT",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS_ITEM_ENCHANTMENT"],
+					["id"] = "TRADEGOODS_ENCHANTMENT",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_ENCHANTMENT"],
+				},
+				[512] = {
+					["id"] = "TRADEGOODS_ENCHANTING",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_ENCHANTING"],
+				},
+				[513] = {
+					["id"] = "TRADEGOODS_JEWELCRAFTING",
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_JEWELCRAFTING"],
 				},
 			},
 			Skill = { -- do NOT change the indicies
 				[101] = {
 					["id"] = "SKILL_ALCHEMY",
-					["text"] = ArkInventory.Localise["WOW_SKILL_ALCHEMY"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ALCHEMY"],
 				},
 				[102] = {
 					["id"] = "SKILL_BLACKSMITHING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_BLACKSMITHING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_BLACKSMITHING"],
 				},
 				[103] = {
 					["id"] = "SKILL_COOKING",
@@ -435,15 +443,15 @@ ArkInventory.Const = { -- constants
 				},
 				[104] = {
 					["id"] = "SKILL_ENGINEERING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_ENGINEERING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ENGINEERING"],
 				},
 				[105] = {
 					["id"] = "SKILL_ENCHANTING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_ENCHANTING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
 				},
 				[106] = {
 					["id"] = "SKILL_FIRST_AID",
-					["text"] = ArkInventory.Localise["WOW_SKILL_FIRST_AID"],
+					["text"] = ArkInventory.Localise["WOW_SKILL_FIRSTAID"],
 				},
 				[107] = {
 					["id"] = "SKILL_FISHING",
@@ -455,11 +463,11 @@ ArkInventory.Const = { -- constants
 				},
 				[109] = {
 					["id"] = "SKILL_JEWELCRAFTING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_JEWELCRAFTING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_JEWELCRAFTING"],
 				},
 				[110] = {
 					["id"] = "SKILL_LEATHERWORKING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_LEATHERWORKING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_LEATHERWORKING"],
 				},
 				[111] = {
 					["id"] = "SKILL_MINING",
@@ -471,11 +479,11 @@ ArkInventory.Const = { -- constants
 				},
 				[113] = {
 					["id"] = "SKILL_TAILORING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_TAILORING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_TAILORING"],
 				},
 				[115] = {
 					["id"] = "SKILL_INSCRIPTION",
-					["text"] = ArkInventory.Localise["WOW_SKILL_INSCRIPTION"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_INSCRIPTION"],
 				},
 				[116] = {
 					["id"] = "SKILL_ARCHAEOLOGY",
@@ -539,7 +547,7 @@ ArkInventory.Const = { -- constants
 				},
 				[302] = {
 					["id"] = "EMPTY_BAG",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
+					["text"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
 				},
 --				[303] = {
 --					["id"] = "EMPTY_KEY",
@@ -551,15 +559,15 @@ ArkInventory.Const = { -- constants
 				},
 				[306] = {
 					["id"] = "EMPTY_ENCHANTING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_ENCHANTING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
 				},
 				[307] = {
 					["id"] = "EMPTY_ENGINEERING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_ENGINEERING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ENGINEERING"],
 				},
 				[308] = {
 					["id"] = "EMPTY_GEM",
-					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_GEM"],
+					["text"] = ArkInventory.Localise["WOW_AH_GEM"],
 				},
 				[309] = {
 					["id"] = "EMPTY_MINING",
@@ -567,11 +575,11 @@ ArkInventory.Const = { -- constants
 				},
 				[312] = {
 					["id"] = "EMPTY_LEATHERWORKING",
-					["text"] = ArkInventory.Localise["WOW_SKILL_LEATHERWORKING"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_LEATHERWORKING"],
 				},
 				[313] = {
 					["id"] = "EMPTY_INSCRIPTION",
-					["text"] = ArkInventory.Localise["WOW_SKILL_INSCRIPTION"],
+					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_INSCRIPTION"],
 				},
 				[314] = {
 					["id"] = "EMPTY_TACKLE",
@@ -790,7 +798,90 @@ ArkInventory.Const = { -- constants
 		itemage = true,
 	},
 
-	Skills = "ALCHEMY,BLACKSMITHING,ENCHANTING,ENGINEERING,JEWELCRAFTING,INSCRIPTION,LEATHERWORKING,TAILORING,HERBALISM,MINING,SKINNING,ARCHAEOLOGY,COOKING,FIRST_AID,FISHING", -- primary craft, primary collect, secondary
+	Skills = {
+		Primary = 2,
+		Secondary = 4,
+		Data = {
+			-- primary crafting
+			[171] = {
+				id = "SKILL_ALCHEMY",
+				pt = "TradeskillResultMats.Reverse.Alchemy,Tradeskill.Tool.Alchemy",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_ALCHEMY"],
+			},
+			[164] = {
+				id = "SKILL_BLACKSMITHING",
+				pt = "TradeskillResultMats.Reverse.Blacksmithing,Tradeskill.Tool.Blacksmithing",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_BLACKSMITHING"],
+			},
+			[333] = {
+				id = "SKILL_ENCHANTING",
+				pt = "TradeskillResultMats.Reverse.Enchanting,Tradeskill.Tool.Enchanting",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
+			},
+			[202] = {
+				id = "SKILL_ENGINEERING",
+				pt = "TradeskillResultMats.Reverse.Engineering,Tradeskill.Tool.Engineering",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_ENGINEERING"],
+			},
+			[773] = {
+				id = "SKILL_INSCRIPTION",
+				pt = "TradeskillResultMats.Reverse.Inscription,Tradeskill.Tool.Inscription",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_INSCRIPTION"],
+			},
+			[755] = {
+				id = "SKILL_JEWELCRAFTING",
+				pt = "TradeskillResultMats.Reverse.Jewelcrafting,Tradeskill.Tool.Jewelcrafting",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_JEWELCRAFTING"],
+			},
+			[165] = {
+				id = "SKILL_LEATHERWORKING",
+				pt = "TradeskillResultMats.Reverse.Leatherworking,Tradeskill.Tool.Leatherworking",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_LEATHERWORKING"],
+			},
+			[197] = {
+				id = "SKILL_TAILORING",
+				pt = "TradeskillResultMats.Reverse.Tailoring,Tradeskill.Tool.Tailoring",
+				text = ArkInventory.Localise["WOW_AH_RECIPE_TAILORING"],
+			},
+			-- primary collecting
+			[182] = {
+				id = "SKILL_HERBALISM",
+				pt = "Tradeskill.Mat.ByType.Herb",
+				text = ArkInventory.Localise["WOW_SKILL_HERBALISM"],
+			},
+			[186] = {
+				id = "SKILL_MINING",
+				pt = "Tradeskill.Tool.Mining,TradeskillResultMats.Forward.Smelting,TradeskillResultMats.Reverse.Smelting",
+				text = ArkInventory.Localise["WOW_SKILL_MINING"],
+			},
+			[393] = {
+				id = "SKILL_SKINNING",
+				pt = "Tradeskill.Tool.Skinning,Tradeskill.Mat.ByType.Leather",
+				text = ArkInventory.Localise["WOW_SKILL_SKINNING"],
+			},
+			-- secondary
+			[794] = {
+				id = "SKILL_ARCHAEOLOGY",
+				pt = "Tradeskill.Mat.ByType.Keystone",
+				text = ArkInventory.Localise["WOW_SKILL_ARCHAEOLOGY"],
+			},
+			[185] = {
+				id = "SKILL_COOKING",
+				pr = "TradeskillResultMats.Reverse.Cooking",
+				text = ArkInventory.Localise["WOW_SKILL_COOKING"],
+			},
+			[129] = {
+				id = "FIRST_AID",
+				pt = "TradeskillResultMats.Forward.First Aid",
+				text = ArkInventory.Localise["WOW_SKILL_FIRSTAID"],
+			},
+			[356] = {
+				id = "SKILL_FISHING",
+				pt = "Tradeskill.Tool.Fishing",
+				text = ArkInventory.Localise["WOW_SKILL_FISHING"],
+			},
+		},
+	},
 	
 	DatabaseDefaults = { },
 	
@@ -807,88 +898,88 @@ ArkInventory.Const.Slot.Data = {
 	},
 	[ArkInventory.Const.Slot.Type.Bag] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_BAG"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Herb] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_HERB"],
 		["long"] = ArkInventory.Localise["WOW_SKILL_HERBALISM"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_HERB"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_HERB"],
 		["colour"] = { r = 0.0, g = 1.0, b = 0.0 }, -- green
 	},
 	[ArkInventory.Const.Slot.Type.Enchanting] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_ENCHANTING"],
-		["long"] = ArkInventory.Localise["WOW_SKILL_ENCHANTING"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_ENCHANTING"],
+		["long"] = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_ENCHANTING"],
 		["colour"] = { r = 0.0, g = 0.0, b = 1.0 }, -- blue
 	},
 	[ArkInventory.Const.Slot.Type.Engineering] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_ENGINEERING"],
-		["long"] = ArkInventory.Localise["WOW_SKILL_ENGINEERING"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_ENGINEERING"],
+		["long"] = ArkInventory.Localise["WOW_AH_RECIPE_ENGINEERING"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_ENGINEERING"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Gem] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_GEM"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_GEM"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_GEM"],
+		["long"] = ArkInventory.Localise["WOW_AH_GEM"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_GEM"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Mining] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_MINING"],
 		["long"] = ArkInventory.Localise["WOW_SKILL_MINING"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_MINING"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_MINING"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Leatherworking] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_LEATHERWORKING"],
-		["long"] = ArkInventory.Localise["WOW_SKILL_LEATHERWORKING"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_LEATHERWORKING"],
+		["long"] = ArkInventory.Localise["WOW_AH_RECIPE_LEATHERWORKING"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_LEATHERWORKING"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Inscription] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_INSCRIPTION"],
-		["long"] = ArkInventory.Localise["WOW_SKILL_INSCRIPTION"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_INSCRIPTION"],
+		["long"] = ArkInventory.Localise["WOW_AH_RECIPE_INSCRIPTION"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_INSCRIPTION"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Wearing] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_GEAR"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		["emptycolour"] = GREEN_FONT_COLOR_CODE, -- status text colour when no slots left
 		["hide"] = true,
 	},
 	[ArkInventory.Const.Slot.Type.Mail] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_MAIL"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		["emptycolour"] = GREEN_FONT_COLOR_CODE, -- status text colour when no slots left
 		["hide"] = true,
 	},
 	[ArkInventory.Const.Slot.Type.Critter] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_CRITTER"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC_PET"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
+		["type"] = ArkInventory.Localise["WOW_AH_MISC_PET"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		["emptycolour"] = GREEN_FONT_COLOR_CODE, -- status text colour when no slots left
 		["hide"] = true,
 	},
 	[ArkInventory.Const.Slot.Type.Mount] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_MOUNT"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_MISC_MOUNT"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
+		["type"] = ArkInventory.Localise["WOW_AH_MISC_MOUNT"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		["emptycolour"] = GREEN_FONT_COLOR_CODE, -- status text colour when no slots left
 		["hide"] = true,
 	},
 	[ArkInventory.Const.Slot.Type.Token] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_TOKEN"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["CATEGORY_SYSTEM_TOKEN"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
+		["type"] = ArkInventory.Localise["CURRENCY"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		--["texture"] = [[]],
 		["emptycolour"] = GREEN_FONT_COLOR_CODE, -- status text colour when no slots left
@@ -920,8 +1011,8 @@ ArkInventory.Const.Slot.Data = {
 	},
 	[ArkInventory.Const.Slot.Type.Tackle] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_TACKLE"],
-		["long"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_TACKLE"],
-		["type"] = ArkInventory.Localise["WOW_ITEM_TYPE_CONTAINER_TACKLE"],
+		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_TACKLE"],
+		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_TACKLE"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 	},
 	[ArkInventory.Const.Slot.Type.Void] = {
@@ -1083,7 +1174,7 @@ ArkInventory.Global = { -- globals
 		
 		[ArkInventory.Const.Location.Pet] = {
 			Internal = "pet",
-			Name = ArkInventory.Localise["LOCATION_PET"],
+			Name = ArkInventory.Localise["PET"],
 			Texture = [[Interface\Icons\INV_Jewelcrafting_GoldenOwl]],
 			bagCount = 1,
 			Bags = { },
@@ -1106,7 +1197,7 @@ ArkInventory.Global = { -- globals
 		
 		[ArkInventory.Const.Location.Mount] = {
 			Internal = "mount",
-			Name = ArkInventory.Localise["LOCATION_MOUNT"],
+			Name = ArkInventory.Localise["MOUNT"],
 			Texture = [[Interface\Icons\Ability_Mount_WarHippogryph]],
 			bagCount = 1,
 			Bags = { },
@@ -1129,7 +1220,7 @@ ArkInventory.Global = { -- globals
 		
 		[ArkInventory.Const.Location.Token] = {
 			Internal = "token",
-			Name = ArkInventory.Localise["LOCATION_TOKEN"],
+			Name = ArkInventory.Localise["CURRENCY"],
 			Texture = [[Interface\TokenFrame\UI-TokenFrame-Icon]], -- Icons\Spell_Holy_ChampionsBond
 			bagCount = 1,
 			Bags = { },
@@ -1258,6 +1349,9 @@ ArkInventory.Global = { -- globals
 		BarMoveDestination = nil,
 	},
 	
+	Rules = {
+		Enabled = false,
+	},
 }
 
 ArkInventory.Config = {
@@ -1283,8 +1377,8 @@ BINDING_NAME_ARKINV_TOGGLE_VAULT = GUILD_BANK
 BINDING_NAME_ARKINV_TOGGLE_MAIL = MAIL_LABEL
 BINDING_NAME_ARKINV_TOGGLE_WEARING = ArkInventory.Localise["LOCATION_WEARING"]
 BINDING_NAME_ARKINV_TOGGLE_PET = ArkInventory.Localise["PET"]
-BINDING_NAME_ARKINV_TOGGLE_MOUNT = ArkInventory.Localise["LOCATION_MOUNT"]
-BINDING_NAME_ARKINV_TOGGLE_TOKEN = ArkInventory.Localise["LOCATION_TOKEN"]
+BINDING_NAME_ARKINV_TOGGLE_MOUNT = ArkInventory.Localise["MOUNT"]
+BINDING_NAME_ARKINV_TOGGLE_TOKEN = ArkInventory.Localise["CURRENCY"]
 BINDING_NAME_ARKINV_TOGGLE_VOID = VOID_STORAGE
 BINDING_NAME_ARKINV_TOGGLE_EDIT = ArkInventory.Localise["MENU_ACTION_EDITMODE"]
 BINDING_NAME_ARKINV_TOGGLE_RULES = ArkInventory.Localise["CONFIG_RULES"]
@@ -2286,6 +2380,7 @@ function ArkInventory.PT_ItemInSets( item, setnames )
 	for setname in string.gmatch( setnames, "[^,]+" ) do
 		
 		local r = ArkInventory.Lib.PeriodicTable:ItemInSet( item, strtrim( setname ) )
+		
 		if r then
 			return true
 		end
@@ -2378,7 +2473,6 @@ function ArkInventory.ItemSortKeyClear( loc_id )
 	for _, bar in pairs( Layout.bar ) do
 		for _, item in pairs( bar.item ) do
 			item.sortkey = nil
-			item.cat = nil
 		end
 	end
 	
@@ -2827,11 +2921,10 @@ function ArkInventory.CategoryGenerate( )
 	local categories = {
 		["SYSTEM"] = ArkInventory.Const.Category.Code.System, -- CATEGORY_SYSTEM
 		["CONSUMABLE"] = ArkInventory.Const.Category.Code.Consumable, -- CATEGORY_CONSUMABLE
-		["TRADE_GOODS"] = ArkInventory.Const.Category.Code.Trade,  -- CATEGORY_TRADE_GOODS
+		["TRADEGOODS"] = ArkInventory.Const.Category.Code.Trade,  -- CATEGORY_TRADEGOODS
 		["SKILL"] = ArkInventory.Const.Category.Code.Skill, -- CATEGORY_SKILL
 		["CLASS"] = ArkInventory.Const.Category.Code.Class, -- CATEGORY_CLASS
 		["EMPTY"] = ArkInventory.Const.Category.Code.Empty, -- CATEGORY_EMPTY
-		["OTHER"] = ArkInventory.Const.Category.Code.Other, -- CATEGORY_OTHER
 		["RULE"] = ArkInventory.db.global.option.category[ArkInventory.Const.Category.Type.Rule].data, -- CATEGORY_RULE
 		["CUSTOM"] = ArkInventory.db.global.option.category[ArkInventory.Const.Category.Type.Custom].data, -- CATEGORY_CUSTOM
 	}
@@ -3127,7 +3220,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	-- quest items (via type)
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_QUEST"] then
+	if itemType == ArkInventory.Localise["WOW_AH_QUEST"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
 	end
 	
@@ -3146,7 +3239,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 
 	-- glyphs
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_GLYPH"] then
+	if itemType == ArkInventory.Localise["WOW_AH_GLYPH"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_GLYPH" )
 	end
 	
@@ -3167,14 +3260,14 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	-- gems
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_GEM"] then
+	if itemType == ArkInventory.Localise["WOW_AH_GEM"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_GEM" )
 	end
 	
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE"] then
+	if itemType == ArkInventory.Localise["WOW_AH_CONSUMABLE"] then
 	
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_FOOD_AND_DRINK"] then
-		
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_FOOD+DRINK"] then
+			
 			if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_ITEM_TOOLTIP_FOOD"] ) then
 				return ArkInventory.CategoryGetSystemID( "CONSUMABLE_FOOD" )
 			end
@@ -3195,7 +3288,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 			
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_POTION"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_POTION"] then
 			
 			if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_ITEM_TOOLTIP_POTION_HEAL"] ) or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_POTION_HEAL"] ) then
 				return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POTION_HEAL" )
@@ -3209,7 +3302,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 			
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_ELIXIR"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_ELIXIR"] then
 		
 			if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_ITEM_TOOLTIP_ELIXIR_BATTLE"] ) then
 				return ArkInventory.CategoryGetSystemID( "CONSUMABLE_ELIXIR_BATTLE" )
@@ -3223,47 +3316,71 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 			
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_FLASK"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_FLASK"] then
 			return ArkInventory.CategoryGetSystemID( "CONSUMABLE_FLASK" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_BANDAGE"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_BANDAGE"] then
 			return ArkInventory.CategoryGetSystemID( "CONSUMABLE_BANDAGE" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_SCROLL"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_SCROLL"] then
 			return ArkInventory.CategoryGetSystemID( "CONSUMABLE_SCROLL" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE_ITEM_ENHANCEMENT"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_CONSUMABLE_ENHANCEMENT"] then
 			return ArkInventory.CategoryGetSystemID( "CONSUMABLE_ITEM_ENHANCEMENT" )
 		end
 		
 	end
 
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS"] then
+	if itemType == ArkInventory.Localise["WOW_AH_RECIPE"] then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_RECIPE" )
+	end
 
-		if itemSubType == ArkInventory.Localise["WOW_SKILL_ENCHANTING"] then
+	-- cycle through the users primary professions and allocate items to them
+	if cp.info.skills then
+		for x = 1, ArkInventory.Const.Skills.Primary do
+			if cp.info.skills and cp.info.skills[x] then
+				local sd = ArkInventory.Const.Skills.Data[cp.info.skills[x]]
+				if ArkInventory.PT_ItemInSets( i.h, sd.pt ) then
+					return ArkInventory.CategoryGetSystemID( sd.id )
+				end
+			end
+		end
+	end
+	
+	
+	-- do the rest of the professions
+--[[
+	for w in string.gmatch( ArkInventory.Const.Skills, "[^,]+" ) do
+		local key = string.format( "PT_SKILL_%s", w )
+		if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] or key ) then
+			--ArkInventory.Output( "other skill ", w, ", ", i.h, " assigned to ", ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) ) )
+			return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
+		end
+	end
+]]--
+
+	if itemType == ArkInventory.Localise["WOW_AH_TRADEGOODS"] then
+
+		if itemSubType == ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"] then
 			return ArkInventory.CategoryGetSystemID( "SKILL_ENCHANTING" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_SKILL_JEWELCRAFTING"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_RECIPE_JEWELCRAFTING"] then
 			return ArkInventory.CategoryGetSystemID( "SKILL_JEWELCRAFTING" )
 		end
 		
-		local t = "DEVICES,EXPLOSIVES,PARTS,HERB,ITEM_ENCHANTMENT,CLOTH,ELEMENTAL,LEATHER,MEAT,METAL_AND_STONE,MATERIALS"
+		local t = "ELEMENTAL,CLOTH,LEATHER,METALSTONE,COOKING,HERB,ENCHANTING,JEWELCRAFTING,PARTS,DEVICES,EXPLOSIVES,MATERIALS,OTHER,ENCHANTMENT"
 		
 		for w in string.gmatch( t, "[^,]+" ) do
-			local key = string.format( "WOW_ITEM_TYPE_TRADE_GOODS_%s", w )
+			local key = string.format( "WOW_AH_TRADEGOODS_%s", w )
 			if itemSubType == ( ArkInventory.Localise[key] or key ) then
-				return ArkInventory.CategoryGetSystemID( string.format( "TRADE_GOODS_%s", w ) )
+				return ArkInventory.CategoryGetSystemID( string.format( "TRADEGOODS_%s", w ) )
 			end
 		end
 		
-	end
-
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_RECIPE"] then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_RECIPE" )
 	end
 
 	-- quest items (via tooltip)
@@ -3273,26 +3390,27 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 	-- skill requirement (via tooltip)
 	local _, _, req = ArkInventory.TooltipFind( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_TOOLTIP_SKILL"], false, true, true )
-	if req then
-		for w in string.gmatch( ArkInventory.Const.Skills, "[^,]+" ) do
-			local key = string.format( "WOW_SKILL_%s", w )
-			if strfind( req, ArkInventory.Localise[key] or key ) then
-				return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
-			end
-		end
-	end
+-- 00000
+--	if req then
+--		for w in string.gmatch( ArkInventory.Const.Skills, "[^,]+" ) do
+--			local key = string.format( "WOW_SKILL_%s", w )
+--			if strfind( req, ArkInventory.Localise[key] or key ) then
+--				return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
+--			end
+--		end
+--	end
 	
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC"] then
+	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
 	
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC_REAGENT"] then
+		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_REAGENT"] then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_REAGENT" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC_PET"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_PET"] ) then
+		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_PET"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_PET"] ) then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC_MOUNT"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_MOUNT"] ) then
+		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_MOUNT"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_MOUNT"] ) then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT" )
 		end
 		
@@ -3313,25 +3431,6 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		end
 	end
 	
-	
-	-- skill requirement - cycle through the users skills and allocate items to those profressions first
-	if cp.info.skills then
-		for k, w in ipairs( cp.info.skills ) do
-			local key = string.format( "PT_SKILL_%s", w )
-			if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] or key ) then
-				return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
-			end
-		end
-	end
-	
-	-- skill requirement - do the rest
-	for w in string.gmatch( ArkInventory.Const.Skills, "[^,]+" ) do
-		local key = string.format( "PT_SKILL_%s", w )
-		if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] or key ) then
-			return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
-		end
-	end
-	
 	-- reputation hand-ins
 	if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_REPUTATION"] ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_REPUTATION" )
@@ -3342,12 +3441,12 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
 	end
 
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_TRADE_GOODS"] then
-		return ArkInventory.CategoryGetSystemID( "TRADE_GOODS" )
+	if itemType == ArkInventory.Localise["WOW_AH_TRADEGOODS"] then
+		return ArkInventory.CategoryGetSystemID( "TRADEGOODS_OTHER" )
 	end
 
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_CONSUMABLE"] then
-		return ArkInventory.CategoryGetSystemID( "CONSUMABLE" )
+	if itemType == ArkInventory.Localise["WOW_AH_CONSUMABLE"] then
+		return ArkInventory.CategoryGetSystemID( "CONSUMABLE_OTHER" )
 	end
 
 	-- soulbound items
@@ -3355,7 +3454,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_SOULBOUND" )
 	end
 
-	if itemType == ArkInventory.Localise["WOW_ITEM_TYPE_MISC"] then
+	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_MISC" )
 	end
 
@@ -3475,8 +3574,6 @@ end
 
 function ArkInventory.ItemCategoryGetRule( i, bt, bag_id, slot_id )
 	
-	if not ArkInventoryRules or not ArkInventoryRules:IsEnabled( ) then return end
-	
 	-- local debuginfo = { ["m"]=gcinfo( ), ["t"]=GetTime( ) }
 	
 	-- ArkInventory.Output( "ItemCategoryGetRule( ) start" )
@@ -3516,7 +3613,7 @@ end
 
 function ArkInventory.ItemCategoryGetPrimary( i )
 	
-	i["cat"] = nil
+	i.cat = nil
 	
 	local id
 	
@@ -3527,28 +3624,32 @@ function ArkInventory.ItemCategoryGetPrimary( i )
 		
 		-- manually assigned item to a category?
 		if ArkInventory.db.profile.option.category[id] then
-			i["cat"] = ArkInventory.db.profile.option.category[id]
+			i.cat = ArkInventory.db.profile.option.category[id]
 			return
 		end
 		
 	end
 	
-	-- items rule cache id
-	id = ArkInventory.ObjectIDCacheRule( i.loc_id, i.bag_id, i.sb, i.h )
-	
-	-- if the value has already been cached then use it
-	if ArkInventory.Global.Cache.Rule[id] then
-		i["cat"] = ArkInventory.Global.Cache.Rule[id]
-		return
-	end
-	
-	-- check for any rule that applies to the item
-	local rs = ArkInventory.ItemCategoryGetRule( i )
-	if rs then
-		-- cache the result
-		ArkInventory.Global.Cache.Rule[id] = rs
-		i["cat"] = ArkInventory.Global.Cache.Rule[id]
-		return
+	if ArkInventory.Global.Rules.Enabled then
+		
+		-- items rule cache id
+		id = ArkInventory.ObjectIDCacheRule( i.loc_id, i.bag_id, i.sb, i.h )
+		
+		-- if the value has already been cached then use it
+		if ArkInventory.Global.Cache.Rule[id] then
+			i.cat = ArkInventory.Global.Cache.Rule[id]
+			return
+		end
+		
+		-- check for any rule that applies to the item
+		local rs = ArkInventory.ItemCategoryGetRule( i )
+		if rs then
+			-- cache the result
+			ArkInventory.Global.Cache.Rule[id] = rs
+			i.cat = ArkInventory.Global.Cache.Rule[id]
+			return
+		end
+		
 	end
 	
 end
@@ -4601,8 +4702,9 @@ function ArkInventory.Frame_Main_Search( frame )
 	local filter = _G[string.format( "%s%s", search, "Filter" )]:GetText( )
 	
 	ArkInventory.Global.Location[loc_id].filter = strtrim( filter )
+	
 	ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
-
+	
 end
 
 function ArkInventory.Frame_Main_Hide( w )
@@ -5018,12 +5120,9 @@ function ArkInventory.Frame_Container_CalculateContainer( frame, Layout )
 		
 		for k, bar_id in ipairs( row.bar ) do
 			
+			-- initial setup for each bar
 			bar[bar_id].width = 1
-			if bar[bar_id].width < 1 then
-				bar[bar_id].width = 1
-			end
-			
-			bar[bar_id].height = ceil( bar[bar_id].count / bar[bar_id].width )
+			bar[bar_id].height = bar[bar_id].count
 			
 			if bar[bar_id].height > rmh then
 				rmh = bar[bar_id].height
@@ -5034,7 +5133,6 @@ function ArkInventory.Frame_Container_CalculateContainer( frame, Layout )
 		end
 		
 		
-		
 		if rmh > 1 then
 			
 			repeat
@@ -5042,11 +5140,11 @@ function ArkInventory.Frame_Container_CalculateContainer( frame, Layout )
 				rmh = 1
 				local rmb = 0
 				
-				-- find bar with highest height
+				-- find the bar with largest height
 				for _, bar_id in ipairs( row.bar ) do
 					if bar[bar_id].height > rmh then
-						rmh = bar[bar_id].height
 						rmb = bar_id
+						rmh = bar[bar_id].height
 					end
 				end
 
@@ -5056,7 +5154,7 @@ function ArkInventory.Frame_Container_CalculateContainer( frame, Layout )
 					bar[rmb].width = bar[rmb].width + 1
 					
 					-- and recalcualte it's new height
-					bar[rmb].height = ceil( bar[rmb].count / ( bar[rmb].width or 1 ) )
+					bar[rmb].height = ceil( bar[rmb].count / ( bar[rmb].width ) )
 					
 					-- and see if that all fits
 					rcw = 0
@@ -5255,13 +5353,11 @@ function ArkInventory.Frame_Container_Draw( frame )
 
 				local obj_width = bar.width * ArkInventory.Global.BAG_SLOT_SIZE + ( bar.width - 1 ) * pad_slot + pad_bar_int * 2
 				obj:SetWidth( obj_width )
-				row.width = row.width + obj_width
 				
-				row.width = row.width + pad_bar_ext
-
-				row["height"] = bar.height * ArkInventory.Global.BAG_SLOT_SIZE + ( bar.height - 1 ) * pad_slot + pad_bar_int * 2 + pad_label
+				row.width = row.width + obj_width + pad_bar_ext
+				row.height = bar.height * ArkInventory.Global.BAG_SLOT_SIZE + ( bar.height - 1 ) * pad_slot + pad_bar_int * 2 + pad_label
+				
 				obj:SetHeight( row.height )
-				
 				obj:ClearAllPoints( )
 				
 				--ArkInventory.Output( "row=", rownum, ", bar=", bar_index, ", obj=", obj:GetName( ), ", frame=", bar.frame )
@@ -5318,12 +5414,15 @@ function ArkInventory.Frame_Container_Draw( frame )
 				end
 				
 				obj:Show( )
-
+				
+				ArkInventory.Frame_Bar_Label( obj )
+				
 			end
 			
 			if ArkInventory.Global.Location[loc_id].drawState <= ArkInventory.Const.Window.Draw.Refresh then
-				ArkInventory.Frame_Bar_Label( obj )
+				
 				ArkInventory.Frame_Bar_DrawItems( obj )
+				
 			end
 			
 		end
@@ -5331,7 +5430,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 	end
 
 	if ArkInventory.Global.Location[loc_id].drawState <= ArkInventory.Const.Window.Draw.Recalculate then
-
+		
 		-- set container height and width
 		
 		local c = ArkInventory.Global.Location[loc_id].Layout.container
@@ -5518,6 +5617,8 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 	local bar_id = frame.ARK_Data.bar_id
 	local cp = ArkInventory.LocationPlayerInfoGet( loc_id )
 	
+	--ArkInventory.Output( "drawing bar ", bar_id, " @ ", time( ) )
+	
 	local bar = ArkInventory.Global.Location[loc_id].Layout.bar[bar_id]
 	assert( bar, string.format( "layout data for bar %d does not exist", bar_id ) )
 	
@@ -5525,32 +5626,40 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 		return
 	end
 	
-	-- sort the items in the bar
-	for j = 1, bar.count do
-		local bag_id = bar.item[j].bag
-		local slot_id = bar.item[j].slot
+	if ArkInventory.Global.Location[loc_id].drawState <= ArkInventory.Const.Window.Draw.Recalculate then
 		
-		local i = cp.location[loc_id].bag[bag_id].slot[slot_id]
+		--ArkInventory.Output( "resorting bar ", bar_id, " @ ", time( ) )
 		
-		if bar.item[j].sortkey == nil then
-			bar.item[j].sortkey = ArkInventory.ItemSortKeyGenerate( i, bar_id ) or "!"
+		-- sort the items in the bar
+		for j = 1, bar.count do
+			
+			local bag_id = bar.item[j].bag
+			local slot_id = bar.item[j].slot
+			
+			local i = cp.location[loc_id].bag[bag_id].slot[slot_id]
+			
+			if bar.item[j].sortkey == nil then
+				bar.item[j].sortkey = ArkInventory.ItemSortKeyGenerate( i, bar_id ) or "!"
+				--ArkInventory.Output( "build sort key for bar ", bar_id, ", item ", j )
+			end
+			
 		end
 		
-	end
-	
-	local sid_def = ArkInventory.LocationOptionGet( loc_id, "sort", "default" ) or 9999
-	local sid = ArkInventory.LocationOptionGet( loc_id, "bar", "data", bar_id, "sortorder" ) or sid_def
-	
-	if not ArkInventory.db.global.option.sort.data[sid].used then
-		--ArkInventory.OutputWarning( "bar ", bar_id, " in location ", loc_id, " is using an invalid sort method.  resetting it to default" )
-		ArkInventory.LocationOptionSet( loc_id, "bar", "data", bar_id, "sortorder", nil )
-		sid = sid_def
-	end
-	
-	if ArkInventory.db.global.option.sort.data[sid].ascending then
-		sort( bar.item, function( a, b ) return a.sortkey > b.sortkey end )
-	else
-		sort( bar.item, function( a, b ) return a.sortkey < b.sortkey end )
+		local sid_def = ArkInventory.LocationOptionGet( loc_id, "sort", "default" ) or 9999
+		local sid = ArkInventory.LocationOptionGet( loc_id, "bar", "data", bar_id, "sortorder" ) or sid_def
+		
+		if not ArkInventory.db.global.option.sort.data[sid].used then
+			--ArkInventory.OutputWarning( "bar ", bar_id, " in location ", loc_id, " is using an invalid sort method.  resetting it to default" )
+			ArkInventory.LocationOptionSet( loc_id, "bar", "data", bar_id, "sortorder", nil )
+			sid = sid_def
+		end
+		
+		if ArkInventory.db.global.option.sort.data[sid].ascending then
+			sort( bar.item, function( a, b ) return a.sortkey > b.sortkey end )
+		else
+			sort( bar.item, function( a, b ) return a.sortkey < b.sortkey end )
+		end
+		
 	end
 	
 	
@@ -6505,7 +6614,7 @@ function ArkInventory.Frame_Item_Update_Lock( frame )
 	end
 	
 	local loc_id = frame.ARK_Data.loc_id
-	if ArkInventory.Global.Location[loc_id].isOffline then
+	if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline then
 		return
 	end
 	
@@ -6525,21 +6634,18 @@ function ArkInventory.Frame_Item_Update_Lock( frame )
 		end
 		
 		
-		local use = true
+		local r, g, b
 		
 		if ArkInventory.LocationOptionGet( loc_id, "slot", "unusable", "tint" ) then
 			ArkInventory.TooltipSetHyperlink( ArkInventory.Global.Tooltip.Vendor, i.h )
-			use = ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Vendor )
+			if not ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Vendor ) then
+				r = 1.0
+				g = 0.1
+				b = 0.1
+			end
 		end
 		
-		--ArkInventory.Output( "slot[", i.slot_id, "] locked[", locked or 0, "], use[", use or false, "]" )
-		
-		if use then
-			ArkInventory.SetItemButtonDesaturate( frame, locked )
-		else
-			ArkInventory.SetItemButtonDesaturate( frame, locked, 1.0, 0.1, 0.1 )
-		end
-		
+		ArkInventory.SetItemButtonDesaturate( frame, locked, r, g, b )
 		
 		frame.locked = locked
 		frame.readable = readable
@@ -7738,7 +7844,7 @@ function ArkInventory.BagHighlight( frame, show )
 		local colour = ArkInventory.LocationOptionGet( loc_id, "changer", "highlight", "colour" )
 		
 		for slot_id in pairs( b.slot ) do
-			local obj = _G[string.format( "%s%s%s%s", name, "Item", slot_id, "ArkHighlightBag" )]
+			local obj = _G[string.format( "%s%s%s%s", name, "Item", slot_id, "SearchOverlay" )]
 			if obj then
 				if enabled then
 					if show then

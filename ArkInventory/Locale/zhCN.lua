@@ -25,11 +25,6 @@ if not L then return end
 	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "无底海渊"
 	
 	
---	wow skill headers - must match exactly what is in game
-	L["WOW_SKILL_HEADER_PRIMARY"] = "专业技能"
-	L["WOW_SKILL_HEADER_SECONDARY"] = "第二专业"
-	
-	
 --	wow tooltip text - must match exactly what is in game
 	L["WOW_ITEM_TOOLTIP_FOOD"] = "进食时必须保持坐姿"
 	L["WOW_ITEM_TOOLTIP_DRINK"] = "喝水时必须保持坐姿"
@@ -41,10 +36,8 @@ if not L then return end
 	
 --	location names
 	L["LOCATION_ALL"] = "全部"
-	L["LOCATION_BAG"] = "背包"
 	L["LOCATION_BANK"] = "银行"
 	L["LOCATION_WEARING"] = "装备"
-	L["LOCATION_TOKEN"] = "牌子"
 	
 	
 --	subframe names
@@ -80,13 +73,9 @@ if not L then return end
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "原始材料"
 	L["CATEGORY_SYSTEM_EQUIPMENT"] = "装备 (未绑定)"
 	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "装备"
-	L["CATEGORY_SYSTEM_TRASH"] = "垃圾"
-	L["CATEGORY_SYSTEM_TOKEN"] = "牌子"
 	
 	
 --	consumable category descriptions
-	L["CATEGORY_CONSUMABLE_DRINK"] = "饮料"
-	L["CATEGORY_CONSUMABLE_FOOD"] = "食物"
 	L["CATEGORY_CONSUMABLE_FOOD_PET"] = "食物 (宠物)"
 	L["CATEGORY_CONSUMABLE_POTION_HEAL"] = "治疗 (药水/石)"
 	L["CATEGORY_CONSUMABLE_POTION_MANA"] = "法力 (药水/宝石)"
@@ -465,16 +454,11 @@ if not L then return end
 	
 --	rules frame
 	L["RULE"] = "规则"
-	L["RULE_ENABLED"] = "启用"
 	L["RULE_HIDDEN"] = "隐藏"
-	L["RULE_ORDER"] = "顺序"
-	L["RULE_DESCRIPTION"] = "描述"
 	L["RULE_FORMULA"] = "公式"
 	L["RULE_LIST_ENABLED"] = "使用"
 	L["RULE_LIST_DAMAGED"] = "损坏"
 	L["RULE_LIST_ID"] = "规则"
-	L["RULE_LIST_ORDER"] = "排序"
-	L["RULE_LIST_DESCRIPTION"] = "描述"
 	
 	L["RULE_DAMAGED"] = "当期规则设置 %s 为损坏的，除非修理不能使用"
 --	L["RULE_FAILED"] = ""
@@ -531,7 +515,6 @@ if not L then return end
 	
 	
 --	item count tooltip
-	L["TOOLTIP_TOTAL"] = "总数"
 	L["TOOLTIP_COUNT_ME"] = ">"
 --	L["TOOLTIP_VAULT_TABS"] = ""
 	
@@ -596,6 +579,7 @@ if not L then return end
 --	L["CLICK_TO_SELECT"] = ""
 --	L["CLICK_TO_DESELECT"] = ""
 --	L["CLICK_TO_IGNORE"] = ""	
+	L["ORDER"] = "顺序"
 	
 	
 --	libdatabroker
@@ -606,17 +590,13 @@ if not L then return end
 --	L["LDB_BAGS_STYLE_TEXT"] = ""
 	L["LDB_BAGS_INCLUDE_TYPE"] = "包括背包类型"
 --	L["LDB_BAGS_INCLUDE_TYPE_TEXT"] = ""
---	L["LDB_TRACKING"] = ""
 --	L["LDB_TRACKING_CURRENCY"] = ""
---	L["LDB_TRACKING_ITEM"] = ""
 --	L["LDB_PETS_SUMMON"] = ""
 --	L["LDB_MOUNTS_NOT_HERE"] = ""
 --	L["LDB_MOUNTS_GROUND"] = ""
---	L["LDB_MOUNTS_FLYING"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_TEXT"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
---	L["LDB_MOUNTS_WATER"] = ""
 --	L["LDB_MOUNTS_SUMMON"] = ""
 --	L["LDB_MOUNTS_NODATA"] = ""
 --	L["LDB_MOUNTS_TOOLTIP_MODE"] = ""
