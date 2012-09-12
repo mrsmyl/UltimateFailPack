@@ -1347,8 +1347,8 @@ function PawnUI_CompareItems()
 	local ReforgePotential2 = PawnFindOptimalReforging(Item2, PawnUICurrentScale, true)
 	if ReforgePotential2 and ReforgePotential2 <= 0 then ReforgePotential2 = nil end
 	if ReforgePotential1 or ReforgePotential2 then
-		if ReforgePotential1 then ReforgePotential1 = "+" .. PawnFormatShortDecimal(ReforgePotential1) end
-		if ReforgePotential2 then ReforgePotential2 = "+" .. PawnFormatShortDecimal(ReforgePotential2) end
+		if ReforgePotential1 then ReforgePotential1 = "+" .. VgerCore.FormatShortDecimal(ReforgePotential1) end
+		if ReforgePotential2 then ReforgePotential2 = "+" .. VgerCore.FormatShortDecimal(ReforgePotential2) end
 		if LastFoundHeader then
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
@@ -1389,7 +1389,7 @@ function PawnUI_CompareItems()
 			PawnUICompareItemScoreDifference1:SetText("(+" .. format(ValueFormat, Value1 - Value2) .. ")")
 			local Increase = (Value1 - Value2) / Value2
 			if Increase < PawnBigUpgradeThreshold then
-				PawnUICompareItemScorePercentDifference1:SetText(format("(+%.0f%%)", Increase * 100))
+				PawnUICompareItemScorePercentDifference1:SetText(format("(+%s%%)", VgerCore.FormatInteger(Increase * 100)))
 			end
 			PawnUICompareItemScoreHighlight1:Show()
 			PawnUICompareItemScoreArrow1:Show()
@@ -1402,7 +1402,7 @@ function PawnUI_CompareItems()
 			PawnUICompareItemScoreDifference2:SetText("(+" .. format(ValueFormat, Value2 - Value1) .. ")")
 			local Increase = (Value2 - Value1) / Value1
 			if Increase < PawnBigUpgradeThreshold then
-				PawnUICompareItemScorePercentDifference2:SetText(format("(+%.0f%%)", Increase * 100))
+				PawnUICompareItemScorePercentDifference2:SetText(format("(+%s%%)", VgerCore.FormatInteger(Increase * 100)))
 			end
 			PawnUICompareItemScoreHighlight2:Show()
 			PawnUICompareItemScoreArrow2:Show()
@@ -1441,15 +1441,15 @@ end
 -- Adds a stat line to the comparison stat area, passing in the numbers to use.  It is acceptable to use nil for either or both
 -- of the numbers.  Differences are calculated automatically.
 function PawnUI_AddComparisonStatLineNumbers(StatNameAndValue, Quantity1, Quantity2)
-	local QuantityString1 = PawnFormatShortDecimal(Quantity1)
-	local QuantityString2 = PawnFormatShortDecimal(Quantity2)
+	local QuantityString1 = VgerCore.FormatShortDecimal(Quantity1)
+	local QuantityString2 = VgerCore.FormatShortDecimal(Quantity2)
 	local Difference1, Difference2
 	if not Quantity1 then Quantity1 = 0 end
 	if not Quantity2 then Quantity2 = 0 end
 	if Quantity1 > Quantity2 then
-		Difference1 = "(+" .. PawnFormatShortDecimal(Quantity1 - Quantity2) .. ")"
+		Difference1 = "(+" .. VgerCore.FormatShortDecimal(Quantity1 - Quantity2) .. ")"
 	elseif Quantity2 > Quantity1 then
-		Difference2 = "(+" .. PawnFormatShortDecimal(Quantity2 - Quantity1) .. ")"
+		Difference2 = "(+" .. VgerCore.FormatShortDecimal(Quantity2 - Quantity1) .. ")"
 	end
 	
 	PawnUI_AddComparisonStatLineStrings(StatNameAndValue, QuantityString1, QuantityString2, Difference1, Difference2)
@@ -2207,9 +2207,9 @@ end
 
 function PawnUI_GroupLootFrame_OnShow(self)
 	--VgerCore.Message("*** beginning of PawnUI_GroupLootFrame_OnShow")
-	if not PawnCommon.ShowLootUpgradeAdvisor then self:Hide() return end
 	local Index = self:GetID()
 	local LootAdvisor = _G["PawnUI_LootUpgradeAdvisor" .. Index]
+	if not PawnCommon.ShowLootUpgradeAdvisor then LootAdvisor:Hide() return end
 	LootAdvisor.ItemLink = nil
 	
 	-- What item are they rolling for?

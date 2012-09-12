@@ -2,8 +2,8 @@
 -- www.vgermods.com
 -- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
--- Version 1.0.7: IsInBattleground updated for patch 4.3
-local VgerCoreThisVersion = 1.07
+-- Version 1.0.8: FormatShortDecimal and FormatInteger
+local VgerCoreThisVersion = 1.08
 -- 
 -- VgerCore contains functionality that is shared by Vger's mods.
 -- It can be used as a standalone add-on, or embedded within other mods.
@@ -273,4 +273,27 @@ function VgerCore.StringFindReverse(str, find)
 	return nil
 end
 
+-- Returns a string representation of a number to a maximum of one decimal place.  If the number passed is nil, nil is returned.
+function VgerCore.FormatShortDecimal(Number)
+	if Number == nil then
+		return nil
+	elseif Number >= 1000 then
+		return BreakUpLargeNumbers(floor(Number + .5))
+	elseif abs(Number - floor(Number)) < .0001 then
+		return tostring(Number)
+	else
+		return format("%.1f", Number)
+	end
+end
+
+-- Returns a string representation of a number with no decimal places.  If the number passed is nil, nil is returned.
+function VgerCore.FormatInteger(Number)
+	if Number == nil then
+		return nil
+	else
+		return BreakUpLargeNumbers(floor(Number + .5))
+	end
+end
+
+------------------------------------------------------------
 end -- if InitializeOrUpgrade

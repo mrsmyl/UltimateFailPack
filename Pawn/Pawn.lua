@@ -4,14 +4,14 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.6.4: minor fixes
+-- Version 1.6.6: new VgerCore version
 ------------------------------------------------------------
 
 
-PawnVersion = 1.603
+PawnVersion = 1.606
 
 -- Pawn requires this version of VgerCore:
-local PawnVgerCoreVersionRequired = 1.06
+local PawnVgerCoreVersionRequired = 1.08
 
 -- Floating point math
 local PawnEpsilon = 0.0000000001
@@ -816,6 +816,8 @@ end
 
 -- Recreates the tooltip annotation format strings.
 function PawnRecreateAnnotationFormats()
+	-- REVIEW: When the number of digits is set to 0, we should use commas (LARGE_NUMBER_SEPERATOR) instead
+	-- of a format string.  (These would have to be functions instead of just a format string.)
 	PawnNoValueAnnotationFormat = "%s%s:"
 	PawnUnenchantedAnnotationFormat = PawnNoValueAnnotationFormat .. "  %." .. PawnCommon.Digits .. "f"
 	PawnEnchantedAnnotationFormat = PawnUnenchantedAnnotationFormat .. "  %s(%." .. PawnCommon.Digits .. "f " .. PawnLocal.BaseValueWord .. ")"
@@ -1801,12 +1803,12 @@ function PawnLookForSingleStat(RegexTable, Stats, ThisString, DebugMessages)
 				else
 					MatchIndex = 1
 				end
-				local ExtractedValue = gsub(Matches[MatchIndex], LARGE_NUMBER_SEPERATOR, "") -- remove commas in numbers
+				local ExtractedValue = gsub(Matches[MatchIndex], "%" .. LARGE_NUMBER_SEPERATOR, "") -- remove commas in numbers (need to use % in case it's a dot!)
 				if DECIMAL_SEPERATOR ~= "." then
 					-- If this is the German client or any other version that uses something other than "." for
 					-- the decimal separator, we need to substitute here, because tonumber() parses things
 					-- in English format only.
-					ExtractedValue = gsub(ExtractedValue, ",", ".")
+					ExtractedValue = gsub(ExtractedValue, DECIMAL_SEPERATOR, ".")
 				end
 				ExtractedValue = tonumber(ExtractedValue) -- broken onto multiple lines because gsub() returns multiple values and tonumber accepts multiple arguments
 				if Number < 0 then ExtractedValue = -ExtractedValue end
@@ -2479,17 +2481,6 @@ function PawnItemValueCompare(a, b)
 	return strlower(a[7]) < strlower(b[7])
 end
 
--- Returns a string representation of a number to a maximum of one decimal place.  If the number passed is nil, nil is returned.
-function PawnFormatShortDecimal(Number)
-	if Number == nil then
-		return nil
-	elseif math.abs(Number - floor(Number)) < .0001 then
-		return tostring(Number)
-	else
-		return format("%.1f", Number)
-	end
-end
-
 -- Takes an ItemEquipLoc and returns one or two slot IDs where that item type can be equipped.
 -- Bags are not supported.
 function PawnGetSlotsForItemType(ItemEquipLoc)
@@ -2726,7 +2717,7 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 							NewTableEntry = nil
 							if SecondBestItemTable == nil then SecondBestItemTable = { [ScaleName] = true } else SecondBestItemTable[ScaleName] = true end
 							break
-						elseif ThisValue > BestValue * 1.005 and (IsScalingHeirloom or PawnPlayerIsAtMaxLevel() or UnitLevel("player") > BestMaxHeirloomLevel) then
+						elseif ThisValue > BestValue * 1.005 and (IsScalingHeirloom or UnitLevel("player") >= MAX_PLAYER_LEVEL or UnitLevel("player") > BestMaxHeirloomLevel) then
 							-- Hooray, it's an upgrade!  Add it to the table.
 							-- (Only count upgrades that are at least 0.5% better.)
 							-- If the best item is an heirloom, either the new one must be or the player must be at max level.
@@ -3394,12 +3385,6 @@ function PawnPlayerUsesCogwheels()
 		(Profession1 and (GetProfessionInfo(Profession1) == PawnLocal.EngineeringName)) or
 		(Profession2 and (GetProfessionInfo(Profession2) == PawnLocal.EngineeringName))
 		)
-end
-
--- Returns true if the player is at the level cap based on which expansions they own and have installed.
-function PawnPlayerIsAtMaxLevel()
-	local LevelCap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
-	return UnitLevel("player") >= MAX_PLAYER_LEVEL
 end
 
 -- Returns the maximum level an item is a useful heirloom item, or 0 if it never is.  As long as the player's level
