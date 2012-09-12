@@ -3,7 +3,9 @@ local tmpttl=0
 local HealBotcAddonIncHeals={}
 local HealBotcAddonSummary={}
 local HealBotcommAddonSummary={}
-local HealBotAddonSummaryNoComms={}
+local HealBotAddonSummaryNoCommsCPU={}
+local HealBotAddonSummaryNoCommsMem={}
+local HealBotAddonSummaryNoCommsSort={}
 local sortorder={}
 local AddonName=nil
 local AddonEnabled=nil
@@ -88,27 +90,45 @@ function HealBot_Comms_Info()
     end
 
     linenum=1
-    for x,_ in pairs(HealBotAddonSummaryNoComms) do
-        HealBotAddonSummaryNoComms[x]=nil;
+    for x,_ in pairs(HealBotAddonSummaryNoCommsCPU) do
+        HealBotAddonSummaryNoCommsCPU[x]=nil;
+        HealBotAddonSummaryNoCommsSort[x]=nil;
+        HealBotAddonSummaryNoCommsMem[x]=nil;
     end
     for x,_ in pairs(sortorder) do
         sortorder[x]=nil;
     end
     for i=1, GetNumAddOns() do
         AddonName,_,_,AddonEnabled = GetAddOnInfo(i);
-        if AddonEnabled and not HealBotAddonSummaryNoComms[AddonName] and GetAddOnCPUUsage(i)>100 then
-            HealBotAddonSummaryNoComms[AddonName]=HealBot_Comm_round(GetAddOnCPUUsage(AddonName)/1000, 1)
-            table.insert(sortorder,AddonName)
+        if AddonEnabled and not HealBotAddonSummaryNoCommsSort[AddonName] then
+            if HealBot_Options_CPUProfiler:GetChecked() then
+                z=HealBot_Comm_round(GetAddOnCPUUsage(AddonName)/1000, 2)
+                if z>0.01 then
+                    HealBotAddonSummaryNoCommsCPU[AddonName]=z
+                    HealBotAddonSummaryNoCommsMem[AddonName]=HealBot_Comm_round(GetAddOnMemoryUsage(AddonName)/1024, 2)
+                    HealBotAddonSummaryNoCommsSort[AddonName]=HealBotAddonSummaryNoCommsCPU[AddonName]
+                    table.insert(sortorder,AddonName)
+                end
+            else
+                z=HealBot_Comm_round(GetAddOnMemoryUsage(AddonName)/1024, 2)
+                if z>0.01 then
+                    HealBotAddonSummaryNoCommsCPU[AddonName]="--"
+                    HealBotAddonSummaryNoCommsMem[AddonName]=z
+                    HealBotAddonSummaryNoCommsSort[AddonName]=HealBotAddonSummaryNoCommsMem[AddonName]
+                    table.insert(sortorder,AddonName)
+                end
+            end
+            
         end
     end
     table.sort(sortorder,function (a,b)
-        if HealBotAddonSummaryNoComms[a]>HealBotAddonSummaryNoComms[b] then return true end
-        if HealBotAddonSummaryNoComms[a]<HealBotAddonSummaryNoComms[b] then return false end
+        if HealBotAddonSummaryNoCommsSort[a]>HealBotAddonSummaryNoCommsSort[b] then return true end
+        if HealBotAddonSummaryNoCommsSort[a]<HealBotAddonSummaryNoCommsSort[b] then return false end
         return a<b
     end)
     table.foreach(sortorder, function (index,z)
-        if linenum<39 and HealBotAddonSummaryNoComms[z]>0.4 then 
-            HealBot_Comms_Print_AddonCPUSum(z,HealBotAddonSummaryNoComms[z],floor(GetAddOnMemoryUsage(z)),linenum)
+        if linenum<39 then
+            HealBot_Comms_Print_AddonCPUSum(z,HealBotAddonSummaryNoCommsCPU[z],HealBotAddonSummaryNoCommsMem[z],linenum)
             linenum=linenum+1
         end
     end)
@@ -150,7 +170,7 @@ function HealBot_Comms_Print_AddonCPUSum(Addon,CPU,MEM,linenum)
     g=_G["HBMod"..linenum.."Name1"]
     g:SetText(Addon);
     g=_G["HBMod"..linenum.."CPU"]
-    g:SetText(string.format("%0.1f", CPU));
+    g:SetText(CPU);
     g=_G["HBMod"..linenum.."Mem"]
     g:SetText(MEM);
 end

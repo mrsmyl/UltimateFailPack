@@ -59,7 +59,6 @@ HEALBOT_DEBUFF_DREAMLESS_SLEEP  = "Letargo sin sue\195\177os";
 HEALBOT_DEBUFF_GREATER_DREAMLESS = "Letargo sin sue\195\177or superior";
 HEALBOT_DEBUFF_MAJOR_DREAMLESS  = "Letargo sin sue\195\177os sublime";
 HEALBOT_DEBUFF_FROST_SHOCK      = "Choque de Escarcha"
-HEALBOT_DEBUFF_WEAKENED_SOUL    = GetSpellInfo(6788)
 
 HEALBOT_RANK_1              = "(Rango 1)";
 HEALBOT_RANK_2              = "(Rango 2)";

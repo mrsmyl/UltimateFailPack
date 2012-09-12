@@ -126,7 +126,7 @@
             <FontString name="HBAddonColHeader2" inherits="ChatFontNormal" text="HEALBOT_INFO_CPUSECS">
                 <Anchors><Anchor point="LEFT" relativeTo="HBAddonColHeader1" relativePoint="RIGHT"><Offset><AbsDimension x="60" y="0"/></Offset></Anchor></Anchors>
             </FontString>
-            <FontString name="HBAddonColHeader3" inherits="ChatFontNormal" text="HEALBOT_INFO_MEMORYKB">
+            <FontString name="HBAddonColHeader3" inherits="ChatFontNormal" text="HEALBOT_INFO_MEMORYMB">
                 <Anchors><Anchor point="LEFT" relativeTo="HBAddonColHeader2" relativePoint="RIGHT"><Offset><AbsDimension x="14" y="0"/></Offset></Anchor></Anchors>
             </FontString>
             <FontString name="HBAddonColHeader4" inherits="ChatFontNormal" text="HEALBOT_WORD_ADDON">

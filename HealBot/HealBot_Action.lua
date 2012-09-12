@@ -3497,7 +3497,10 @@ function HealBot_Action_ClearLocalArr(hbGUID)
     if HealBot_AggroIndicator[hbGUID] then HealBot_AggroIndicator[hbGUID]=nil end
 end
 
-local HealBot_Mounts = {
+local HealBot_Mounts = {}
+
+function HealBot_Action_initMountData()
+HealBot_Mounts = {
       [458]="G", 
       [470]="G",
       [472]="G",
@@ -3833,6 +3836,8 @@ local HealBot_Mounts = {
     [98727]="G",
     [129552]="G",
 };
+end
+
 -- Codes
 --
 -- A  - Ahn'Qiraj
@@ -3860,6 +3865,7 @@ function HealBot_Action_InitFuncUse()
     or (HealBot_Globals.HealBot_MouseWheelTxt["CtrlDown"] and (HealBot_Globals.HealBot_MouseWheelTxt["CtrlDown"]==HEALBOT_RANDOMMOUNT or HealBot_Globals.HealBot_MouseWheelTxt["CtrlDown"]==HEALBOT_RANDOMGOUNDMOUNT))
     or (HealBot_Globals.HealBot_MouseWheelTxt["AltUp"] and (HealBot_Globals.HealBot_MouseWheelTxt["AltUp"]==HEALBOT_RANDOMMOUNT or HealBot_Globals.HealBot_MouseWheelTxt["AltUp"]==HEALBOT_RANDOMGOUNDMOUNT))
     or (HealBot_Globals.HealBot_MouseWheelTxt["AltDown"] and (HealBot_Globals.HealBot_MouseWheelTxt["AltDown"]==HEALBOT_RANDOMMOUNT or HealBot_Globals.HealBot_MouseWheelTxt["AltDown"]==HEALBOT_RANDOMGOUNDMOUNT)) then
+        HealBot_Action_initMountData()
         HealBot_mountData["FuncUsed"]="YES"
         HealBot_setOptions_Timer(410)
     else

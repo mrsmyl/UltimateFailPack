@@ -74,103 +74,117 @@ local HealBot_Options_BuffTxt_List = {
 	HEALBOT_SORTBY_NAME,
 }
 
-local HealBot_Buff_Spells_Total_List = {
-    ["DRUI"] = {
-        HEALBOT_MARK_OF_THE_WILD,
-        HEALBOT_THORNS,
-        HEALBOT_BARKSKIN,
-        HEALBOT_NATURES_GRASP,
-        HEALBOT_IRONBARK,
-    },
-    ["HUNT"] = {
-        HEALBOT_A_FOX,
-        HEALBOT_A_HAWK,
-        HEALBOT_A_CHEETAH,
-        HEALBOT_A_PACK,
-        HEALBOT_A_WILD,
-    },
-    ["MAGE"] = {
-        HEALBOT_ARCANE_BRILLIANCE,
-		HEALBOT_DALARAN_BRILLIANCE,
-        HEALBOT_FROST_ARMOR,
-        HEALBOT_MAGE_WARD,
-        HEALBOT_MAGE_ARMOR,
-        HEALBOT_MOLTEN_ARMOR,
-        HEALBOT_FOCUS_MAGIC,
-    },
-    ["MONK"] = {
-        HEALBOT_LEGACY_EMPEROR,
-      --  HEALBOT_LEGACY_WHITETIGER,
-    },
-    ["PALA"] = {
-        HEALBOT_BLESSING_OF_MIGHT,
-        HEALBOT_BLESSING_OF_KINGS,
-        HEALBOT_HAND_OF_FREEDOM,
-        HEALBOT_HAND_OF_PROTECTION,
-        HEALBOT_HAND_OF_SACRIFICE,
-        HEALBOT_HAND_OF_SALVATION,
-        HEALBOT_RIGHTEOUS_FURY,
-        HEALBOT_DEVOTION_AURA,
-        HEALBOT_BEACON_OF_LIGHT,
-        HEALBOT_SEAL_OF_RIGHTEOUSNESS,
-        HEALBOT_SEAL_OF_JUSTICE,
-        HEALBOT_SEAL_OF_INSIGHT,
-        HEALBOT_SEAL_OF_TRUTH,
-        HEALBOT_DIVINE_PLEA,
-        HEALBOT_DIVINE_FAVOR,
-    },
-    ["PRIE"] = {
-        HEALBOT_POWER_WORD_FORTITUDE,
-        HEALBOT_INNER_FIRE,
-        HEALBOT_INNER_WILL,
-        HEALBOT_FEAR_WARD,
-        HEALBOT_PAIN_SUPPRESSION,
-        HEALBOT_POWER_INFUSION,
-        HEALBOT_LEVITATE,
-        HEALBOT_SHADOW_PROTECTION,
-        HEALBOT_SHADOWFORM,
-        HEALBOT_VAMPIRIC_EMBRACE,
-		HEALBOT_CHAKRA_SANCTUARY,
-        HEALBOT_CHAKRA_SERENITY,
-        HEALBOT_CHAKRA_CHASTISE,
-    },
-    ["ROGU"] = {
-    },
-    ["SHAM"] = {
-        HEALBOT_LIGHTNING_SHIELD,
-        HEALBOT_ROCKBITER_WEAPON,
-        HEALBOT_FLAMETONGUE_WEAPON,
-        HEALBOT_EARTHLIVING_WEAPON,
-        HEALBOT_WINDFURY_WEAPON,
-        HEALBOT_FROSTBRAND_WEAPON,
-        HEALBOT_EARTH_SHIELD,
-        HEALBOT_WATER_SHIELD,
-        HEALBOT_WATER_BREATHING,
-        HEALBOT_WATER_WALKING, 
-    },
-    ["WARL"] = {
-        HEALBOT_DEMON_ARMOR,
-        HEALBOT_FEL_ARMOR,
-        HEALBOT_UNENDING_BREATH,
-        HEALBOT_DARK_INTENT,
-        HEALBOT_SOUL_LINK,
-    },
-    ["WARR"] = {
-        HEALBOT_BATTLE_SHOUT,
-        HEALBOT_COMMANDING_SHOUT,
-        HEALBOT_VIGILANCE,
-    },
-    ["DEAT"] = {
-        HEALBOT_HORN_OF_WINTER,
-        HEALBOT_BONE_SHIELD,
-    },
-}
-
 local HealBot_Buff_Spells_Class_List={}
 local HealBot_Buff_Spells_List ={}
+function HealBot_Options_InitBuffSpellsClassList(tClass)
+    if tClass=="DRUI" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_MARK_OF_THE_WILD,
+            HEALBOT_THORNS,
+            HEALBOT_BARKSKIN,
+            HEALBOT_NATURES_GRASP,
+            HEALBOT_IRONBARK,
+        }
+    elseif tClass=="HUNT" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_A_FOX,
+            HEALBOT_A_HAWK,
+            HEALBOT_A_CHEETAH,
+            HEALBOT_A_PACK,
+            HEALBOT_A_WILD,
+        }
+    elseif tClass=="MAGE" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_ARCANE_BRILLIANCE,
+            HEALBOT_DALARAN_BRILLIANCE,
+            HEALBOT_FROST_ARMOR,
+            HEALBOT_MAGE_WARD,
+            HEALBOT_MAGE_ARMOR,
+            HEALBOT_MOLTEN_ARMOR,
+            HEALBOT_FOCUS_MAGIC,
+        }
+    elseif tClass=="MONK" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_LEGACY_EMPEROR,
+          --  HEALBOT_LEGACY_WHITETIGER,
+        }
+    elseif tClass=="PALA" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_BLESSING_OF_MIGHT,
+            HEALBOT_BLESSING_OF_KINGS,
+            HEALBOT_HAND_OF_FREEDOM,
+            HEALBOT_HAND_OF_PROTECTION,
+            HEALBOT_HAND_OF_SACRIFICE,
+            HEALBOT_HAND_OF_SALVATION,
+            HEALBOT_RIGHTEOUS_FURY,
+            HEALBOT_DEVOTION_AURA,
+            HEALBOT_BEACON_OF_LIGHT,
+            HEALBOT_SEAL_OF_RIGHTEOUSNESS,
+            HEALBOT_SEAL_OF_JUSTICE,
+            HEALBOT_SEAL_OF_INSIGHT,
+            HEALBOT_SEAL_OF_TRUTH,
+            HEALBOT_DIVINE_PLEA,
+            HEALBOT_DIVINE_FAVOR,
+        }
+    elseif tClass=="PRIE" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_POWER_WORD_FORTITUDE,
+            HEALBOT_INNER_FIRE,
+            HEALBOT_INNER_WILL,
+            HEALBOT_FEAR_WARD,
+            HEALBOT_PAIN_SUPPRESSION,
+            HEALBOT_POWER_INFUSION,
+            HEALBOT_LEVITATE,
+            HEALBOT_SHADOW_PROTECTION,
+            HEALBOT_SHADOWFORM,
+            HEALBOT_VAMPIRIC_EMBRACE,
+            HEALBOT_CHAKRA_SANCTUARY,
+            HEALBOT_CHAKRA_SERENITY,
+            HEALBOT_CHAKRA_CHASTISE,
+        }
+    elseif tClass=="ROGU" then
+        HealBot_Buff_Spells_Class_List = {
+        }
+    elseif tClass=="SHAM" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_LIGHTNING_SHIELD,
+            HEALBOT_ROCKBITER_WEAPON,
+            HEALBOT_FLAMETONGUE_WEAPON,
+            HEALBOT_EARTHLIVING_WEAPON,
+            HEALBOT_WINDFURY_WEAPON,
+            HEALBOT_FROSTBRAND_WEAPON,
+            HEALBOT_EARTH_SHIELD,
+            HEALBOT_WATER_SHIELD,
+            HEALBOT_WATER_BREATHING,
+            HEALBOT_WATER_WALKING, 
+        }
+    elseif tClass=="WARL" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_DEMON_ARMOR,
+            HEALBOT_FEL_ARMOR,
+            HEALBOT_UNENDING_BREATH,
+            HEALBOT_DARK_INTENT,
+            HEALBOT_SOUL_LINK,
+        }
+    elseif tClass=="WARR" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_BATTLE_SHOUT,
+            HEALBOT_COMMANDING_SHOUT,
+            HEALBOT_VIGILANCE,
+        }
+    elseif tClass=="DEAT" then
+        HealBot_Buff_Spells_Class_List = {
+            HEALBOT_HORN_OF_WINTER,
+            HEALBOT_BONE_SHIELD,
+        }
+    end
+end
+
+
+
 
 function HealBot_Options_InitBuffClassList()
-    HealBot_Buff_Spells_Class_List = HealBot_Buff_Spells_Total_List[strsub(HealBot_PlayerClassEN,1,4)]
+    HealBot_Options_InitBuffSpellsClassList(strsub(HealBot_PlayerClassEN,1,4))
     table.sort (HealBot_Buff_Spells_Class_List)
 end
 

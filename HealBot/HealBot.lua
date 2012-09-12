@@ -4492,7 +4492,7 @@ function HealBot_PartyUpdate_CheckSkin()
         end
     elseif z=="pvp" then
         y=GetRealZoneText()
-        if GetNumGroupMembers()>24 or y==HEALBOT_ZONE_AV or y==HEALBOT_ZONE_IC then
+        if GetNumGroupMembers()>27 or y==HEALBOT_ZONE_AV or y==HEALBOT_ZONE_IC then
             if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=10 then
                 for x in pairs (Healbot_Config_Skins.Skins) do
                     if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==10 then
@@ -4523,17 +4523,17 @@ function HealBot_PartyUpdate_CheckSkin()
                 end
             end
         end
-    elseif x==4 or (x==2 and GetNumGroupMembers()>17) then 
-        if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=5 then
+    elseif x==2 or x==3 then 
+        if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=3 then
             for x in pairs (Healbot_Config_Skins.Skins) do
-                if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==5 then
+                if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==3 then
                     Delay_RecalcParty=0
                     HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
                     do break end
                 end
             end
         end
-    elseif x==3 then
+    elseif x==4 or x==6 then 
         if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=4 then
             for x in pairs (Healbot_Config_Skins.Skins) do
                 if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==4 then
@@ -4543,7 +4543,17 @@ function HealBot_PartyUpdate_CheckSkin()
                 end
             end
         end
-    elseif GetNumGroupMembers()>29 then
+    elseif x==5 or x==7 then
+        if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=5 then
+            for x in pairs (Healbot_Config_Skins.Skins) do
+                if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==5 then
+                    Delay_RecalcParty=0
+                    HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
+                    do break end
+                end
+            end
+        end
+    elseif x==10 then
         if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=6 then
             for x in pairs (Healbot_Config_Skins.Skins) do
                 if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==6 then
@@ -4553,23 +4563,35 @@ function HealBot_PartyUpdate_CheckSkin()
                 end
             end
         end
-    elseif GetNumGroupMembers()>17 then
-        if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=5 then
-            for x in pairs (Healbot_Config_Skins.Skins) do
-                if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==5 then
-                    Delay_RecalcParty=0
-                    HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
-                    do break end
+    elseif IsInRaid() then
+        if GetNumGroupMembers()>27 then
+            if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=6 then
+                for x in pairs (Healbot_Config_Skins.Skins) do
+                    if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==6 then
+                        Delay_RecalcParty=0
+                        HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
+                        do break end
+                    end
                 end
             end
-        end
-    elseif GetNumGroupMembers()>5 then
-        if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=4 then
-            for x in pairs (Healbot_Config_Skins.Skins) do
-                if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==4 then
-                    Delay_RecalcParty=0
-                    HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
-                    do break end
+        elseif GetNumGroupMembers()>12 then
+            if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=5 then
+                for x in pairs (Healbot_Config_Skins.Skins) do
+                    if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==5 then
+                        Delay_RecalcParty=0
+                        HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
+                        do break end
+                    end
+                end
+            end
+        else
+            if HealBot_Config.SkinDefault[Healbot_Config_Skins.Current_Skin]~=4 then
+                for x in pairs (Healbot_Config_Skins.Skins) do
+                    if HealBot_Config.SkinDefault[Healbot_Config_Skins.Skins[x]]==4 then
+                        Delay_RecalcParty=0
+                        HealBot_Options_Set_Current_Skin(Healbot_Config_Skins.Skins[x])
+                        do break end
+                    end
                 end
             end
         end
@@ -5434,33 +5456,22 @@ function HealBot_PlaySound(id)
 end
 
 function HealBot_InitSpells()
-
+    local iSpell = nil
+    z = 0; 
     for x,_ in pairs(HealBot_SmartCast_Spells) do
         HealBot_SmartCast_Spells[x]=nil;
     end
   
     HealBot_Init_Spells_Defaults(HealBot_PlayerClassEN);
   
-    for x in pairs(HealBot_Spells) do
-        HealBot_InitClearSpellNils(x)
+    for iSpell in pairs(HealBot_Spells) do
+        if HealBot_GetSpellId(iSpell) then
+            HealBot_InitClearSpellNils(iSpell)
+            HealBot_InitGetSpellData(iSpell);
+            z = z + 1;
+        end
     end
 
-    id = 1
-    z = 0;  
-    local lsName,lsRank,iSpell = nil,nil,nil
-    while true do
-        iSpell, lsRank = HealBot_GetSpellName(id);
-        if not iSpell and id>120000 then
-            break
-        end
-        if iSpell and HealBot_Spells[iSpell] then
-			if tonumber(HealBot_Spells[iSpell].Level or 1)<=UnitLevel("player") then
-				HealBot_InitGetSpellData(iSpell, id, HealBot_PlayerClassEN, iSpell);
-				z = z + 1;
-			end
-        end
-        id = id + 1;
-    end
     if strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PRIEST] then
         sName,sRank= HealBot_GetSpellName(HealBot_GetSpellId(HEALBOT_GREATER_HEAL))
         if sName then
@@ -5518,7 +5529,7 @@ function HealBot_InitSpells()
         end
     end
     HealBot_Action_SetrSpell()
-   -- HealBot_AddDebug("Initiated HealBot with ".. z .." Spells");
+    HealBot_AddDebug("Initiated HealBot with ".. z .." Spells");
     HealBot_Options_CheckCombos();
     HealBot_Init_SmartCast();
 end
@@ -5848,6 +5859,7 @@ function HealBot_Update_Skins()
     if HealBot_Config.LastVersionSkinUpdate~=HEALBOT_VERSION then
 		HealBot_Globals.UpdateMsg=true
         HealBot_Config.hbMountsReported={}
+        HealBot_Globals.spellIDs={}
         for x in pairs (Healbot_Config_Skins.Skins) do
             if not Healbot_Config_Skins.DoubleText[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.Skin_Version = 1 end
             if not Healbot_Config_Skins.AggroBarSize[Healbot_Config_Skins.Skins[x]] then Healbot_Config_Skins.AggroBarSize[Healbot_Config_Skins.Skins[x]] = 3 end

@@ -25,7 +25,7 @@ function HealBot_Init_retSmartCast_Res()
     return SmartCast_Res
 end
 
-function HealBot_InitGetSpellData(spell, id, class, spellname)
+function HealBot_InitGetSpellData(spell)
 
     if ( not spell ) then return end
   
