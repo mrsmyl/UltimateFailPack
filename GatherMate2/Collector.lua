@@ -13,7 +13,7 @@ Convert for 2.4 spell IDs
 local miningSpell = (GetSpellInfo(2575))
 local herbSpell = (GetSpellInfo(2366))
 local herbSkill = (string.gsub((GetSpellInfo(9134)),"%A",""))
-local fishSpell = (GetSpellInfo(33095))
+local fishSpell = (GetSpellInfo(7620)) or (GetSpellInfo(131476))
 local gasSpell = (GetSpellInfo(30427))
 --local gasSpell = (GetSpellInfo(48929))  --other gasspell
 local openSpell = (GetSpellInfo(3365))
@@ -230,7 +230,9 @@ function Collector:addItem(skill,what)
 	-- check for microdungeon
 	local mapName, textureWidth, textureHeight, isMicroDungeon, microDungeonName = GetMapInfo()
 	if isMicroDungeon then
-	  SetMapByID(GetCurrentMapAreaID())
+		-- we wont do any collection events inside of a micro dungeon
+		--SetMapByID(GetCurrentMapAreaID())
+		return
 	end
 	-- end check
 	local x, y = GetPlayerMapPosition("player")

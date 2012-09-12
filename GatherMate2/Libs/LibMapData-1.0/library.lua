@@ -2,7 +2,7 @@
 	Library contains a dataset for Map file names and floors giving the raw map data
 	it also has a few functions to help determine distance and directions.
 --]]
-local MAJOR, MINOR = "LibMapData-1.0", tonumber("107") or 999
+local MAJOR, MINOR = "LibMapData-1.0", tonumber("110") or 999
 assert(LibStub, MAJOR.." requires LibStub")
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
@@ -80,7 +80,7 @@ do
 	setmetatable(mapData, { __index = function(t, k) 
 			if k then 
 				if missingCache.data[k] == nil then
-					DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing data for "..k) 
+					--DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing data for "..k) 
 					missingCache.data[k] = true
 				end
 			end 
@@ -90,7 +90,7 @@ do
 	setmetatable(idToMap, { __index = function(t, k) 
 			if k then 
 				if missingCache.aid[k] == nil then
-					DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing data for area id "..k) 
+					--DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing data for area id "..k) 
 					missingCache.aid[k] = true
 				end
 			end 
@@ -100,7 +100,7 @@ do
 	setmetatable(mapToLocal, { __index = function(t,k) 
 			if k then 
 				if missingCache.locale[k] == nil then
-					DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing localized data for "..k) 
+					--DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing localized data for "..k) 
 					missingCache.locale[k] = true
 				end
 			end

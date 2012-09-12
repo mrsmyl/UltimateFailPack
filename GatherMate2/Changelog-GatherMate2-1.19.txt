@@ -1,0 +1,22 @@
+tag 1.19
+d050e5b7a90684b6d254a09d0af058613660a39e
+Sal Scotto <sal.scotto@gmail.com>
+2012-09-11 15:39:19 -0400
+
+Fixes for fishing spell being changed again
+
+
+--------------------
+
+Sal Scotto:
+	- change fishing spell again
+Hendrik Leppkes:
+	- Further micro dungeon enhancements
+washu214:
+	- dont try to record nodes inside of microdungeons atelast until there is some kinda of clamoring for it
+	- fixed a typo in phasing check for digsites
+Hendrik Leppkes:
+	- Improve handling of micro dungeons.
+	- Don't change the map  while its shown
+washu214:
+	- changed spellid for fishing as the old id I was using has been removed from mop. new id is on both mop and live

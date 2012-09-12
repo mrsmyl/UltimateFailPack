@@ -330,7 +330,7 @@ local digSites = {}
 
 function Display:DigsitesChanged()
 	local activeMap = GetCurrentMapAreaID()
-	if GatherMate.phasing[activeMap] then actieMap = GatherMate.phasing[activeMap] end
+	if GatherMate.phasing[activeMap] then activeMap = GatherMate.phasing[activeMap] end
 	table.wipe(digSites)
 	for continent, zone in pairs({GetMapContinents()}) do
 		SetMapZoom(continent)
@@ -634,9 +634,14 @@ function Display:UpdateIconPositions()
 	-- microdungeon check
 	local mapName, textureWidth, textureHeight, isMicroDungeon, microDungeonName = GetMapInfo()
 	if isMicroDungeon then
-	  SetMapByID(GetCurrentMapAreaID())
-	end
-	--end check
+		if not WorldMapFrame:IsShown() then
+			-- return to the main map of this zone
+			ZoomOut()
+		else
+			-- can't do anything while in a micro dungeon and the main map is visible
+			return
+		end
+	end --end check
 	-- get current player position
 	local x, y = GetPlayerMapPosition("player")
 	local level = GetCurrentMapDungeonLevel()
@@ -710,7 +715,15 @@ function Display:UpdateMiniMap(force)
 	-- microduneon check
 	local mapName, textureWidth, textureHeight, isMicroDungeon, microDungeonName = GetMapInfo()
 	if isMicroDungeon then
-	  SetMapByID(GetCurrentMapAreaID())
+		if not WorldMapFrame:IsShown() then
+			-- return to the main map of this zone
+			ZoomOut()
+		else
+			-- can't do anything while in a micro dungeon and the main map is visible
+			clearpins(minimapPins)
+			zone = nil
+			return
+		end
 	end	--end check
 	-- get current player position
 	local x, y = GetPlayerMapPosition("player")
@@ -809,7 +822,8 @@ function Display:UpdateWorldMap(force)
 	local zoneid = GetCurrentMapAreaID()
 	if GatherMate.phasing[zoneid] then zoneid = GatherMate.phasing[zoneid] end
 	local mapLevel = GetCurrentMapDungeonLevel()
-	if not zoneid or zoneid == -1 then clearpins(worldmapPins) return end -- player is not viewing a zone map of a continent
+	local mapName, textureWidth, textureHeight, isMicroDungeon, microDungeonName = GetMapInfo()
+	if not zoneid or zoneid == -1 or isMicroDungeon then clearpins(worldmapPins) return end -- player is not viewing a zone map of a continent
 	if not rememberForce and (lastDrawnWorldMap == zoneid and mapLevel == lastLevel) then return end -- already drawn last time, and not forced
 	if lastDrawnWorldMap ~= zoneid or mapLevel ~= lastLevel then
 		clearpins(worldmapPins) -- viewing different zone or level, so clear all the pins, else don't clear and just do pin deltas
