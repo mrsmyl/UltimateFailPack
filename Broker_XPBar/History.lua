@@ -12,11 +12,13 @@ local sqrt    = math.sqrt
 local floor   = math.floor
 local ceil    = math.ceil
 
-local GetNumPartyMembers = _G.GetNumPartyMembers
-local GetNumRaidMembers  = _G.GetNumRaidMembers
-local GetXPExhaustion    = _G.GetXPExhaustion
-local UnitXP             = _G.UnitXP
-local UnitXPMax          = _G.UnitXPMax
+local GetNumGroupMembers    = _G.GetNumGroupMembers
+local GetNumSubgroupMembers = _G.GetNumSubgroupMembers
+local GetXPExhaustion       = _G.GetXPExhaustion
+local UnitXP                = _G.UnitXP
+local UnitXPMax             = _G.UnitXPMax
+
+local LE_PARTY_CATEGORY_HOME = _G.LE_PARTY_CATEGORY_HOME
 
 local _
 
@@ -180,9 +182,9 @@ function History:GetKillsToLevel()
 	
 	local bonus = 0
 	
-	if GetNumRaidMembers() > 0 then
+	if GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) > 0 then
 		bonus = self.raidPenaltyPerKill
-	elseif GetNumPartyMembers() > 0 then
+	elseif GetNumSubgroupMembers(LE_PARTY_CATEGORY_HOME) then
 		bonus = self.grpXpPerKill
 	end
 	

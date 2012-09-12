@@ -251,8 +251,12 @@ NS.HexColors = {
 	Blueish  = "04adcb",
 }
 
-function NS:Colorize(color, text) 
-	if not text then
+function NS:Colorize(color, text)
+    if not text then
+	    return ""
+	end
+
+	if type(text) ~= "string" then
 		text = tostring(text)
 	end
 	
