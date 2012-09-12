@@ -1,14 +1,13 @@
 ------------------------------------------------------------------------
+r10 | nevcairiel | 2012-09-11 18:37:47 +0000 (Tue, 11 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/LibWindow-1.1.toc
+
+Update toc for 5.0
+------------------------------------------------------------------------
 r9 | mikk | 2012-05-26 12:43:35 +0000 (Sat, 26 May 2012) | 1 line
 Changed paths:
    M /trunk/LibWindow-1.1.toc
 
 toc bump
-------------------------------------------------------------------------
-r8 | mikk | 2012-05-26 12:41:59 +0000 (Sat, 26 May 2012) | 2 lines
-Changed paths:
-   M /trunk/LibWindow-1.1/LibWindow-1.1.lua
-
-No longer causes :SetScale() loops when embedded into a frame. OOPS!
-
 ------------------------------------------------------------------------
