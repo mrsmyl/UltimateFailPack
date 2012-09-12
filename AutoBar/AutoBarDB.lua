@@ -1196,6 +1196,22 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].DEATHKNIGHT = true
 			}
 		end
 	end
+	
+	local deprecated = {"AutoBarButtonWarlockStones", "AutoBarButtonSting",  }
+	
+	for _, dep in ipairs(deprecated) do
+		if (AutoBar.db.account.buttonList[dep]) then
+			AutoBar.db.account.buttonList[dep] = nil
+		end
+		if (AutoBar.db.class.buttonList[dep]) then
+			AutoBar.db.class.buttonList[dep] = nil
+		end
+		if (AutoBar.db.char.buttonList[dep]) then
+			AutoBar.db.char.buttonList[dep] = nil
+		end
+		
+	end
+
 end
 
 local changedCategoryKey = {

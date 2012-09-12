@@ -204,6 +204,7 @@ function AutoBar.Class.Bar.prototype:UpdateObjects()
 	for buttonKeyIndex, buttonKey in ipairs(buttonKeyList) do
 		buttonDB = AutoBar.buttonDBList[buttonKey]
 		if (not buttonDB) then
+			buttonKeyList[buttonKeyIndex] = nil
 		elseif (buttonDB.enabled) then
 			-- Recover from disabled cache
 assert(buttonDB.buttonKey == buttonKey, "AutoBar.Class.Bar.prototype:UpdateObjects mismatched keys")
