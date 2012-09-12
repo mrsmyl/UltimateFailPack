@@ -6,6 +6,13 @@
 
 --This is now its own separate file in an attempt to make the addon more modular
 
+-- There isn't really a "spirit" combat rating, but it will simplify
+-- some things if we pretend there is one
+local CR_SPIRIT = 99
+
+-- and likewise there isn't an EP combat rating
+local CR_EP = 100
+
 
 -- Death Knight 0000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --updated 9-7 for 5.04
@@ -31,7 +38,7 @@ function Reforgenator:TwoHandFrostDKModel()
         },
         {
             rating = CR_EXPERTISE,
-            cap = "ExpertiseSoftCap"
+            cap = "ExpertiseHardCap"
         },
         {
             rating = CR_HASTE_MELEE,
@@ -57,10 +64,10 @@ function Reforgenator:DWFrostDKModel()
     model.statWeights = 
 	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.14,
-        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.58,
+        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.10,
 		["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.51,
 		["ITEM_MOD_HASTE_RATING_SHORT"] = 1.33,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.09,
+        ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.50,
     }
 
     model.notes = 'http://www.noxxic.com/wow/pve/death-knight/frost/dps-gear-reforging'
@@ -231,7 +238,7 @@ end
 -- Druid  111111111111111111111111111111111111111111111111111111111111111111111
 
 -- TODO
-function Reforgenator:BearSurvivalModel()	-- going to call this one Survival
+function Reforgenator:GuardianModel()
     local model = ReforgeModel:new()
     model.readOnly = true
     model.statWeights = 
@@ -261,37 +268,7 @@ function Reforgenator:BearSurvivalModel()	-- going to call this one Survival
     return model
 end
 
-function Reforgenator:BearThreatModel()	-- going to call this one Threat
-    local model = ReforgeModel:new()
-    model.readOnly = true
-    model.statWeights = 
-	{
-        ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.98,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.42,
-        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.25,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.22,
-        ["ITEM_MOD_HIT_RATING_SHORT"] = 0.13,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.02,
-    }
-
-    model.notes = 'http://elitistjerks.com/f73/t127444-feral_bear_cataclysm_4_3_dragon_soul/'
-
-    model.reforgeOrder = 
-	{
-        {
-            rating = CR_EXPERTISE,
-            cap = "MaximumPossible"
-        },
-        {
-            rating = CR_MASTERY,
-            cap = "MaximumPossible"
-        },
-    }
-
-    return model
-end
-
-function Reforgenator:BoomkinModel()
+function Reforgenator:BalanceModel()
     local model = ReforgeModel:new()
     model.readOnly = true
     model.statWeights = 
@@ -327,7 +304,7 @@ function Reforgenator:BoomkinModel()
     return model
 end
 
-function Reforgenator:CatModel()
+function Reforgenator:FeralModel()
     local model = ReforgeModel:new()
     model.readOnly = true
     model.statWeights = 
@@ -1077,16 +1054,23 @@ function Reforgenator:ArcaneMageModel()
     model.statWeights = 
 	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.21,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.4,
+        ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.4,
+		["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.4,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.34,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.28,
+        
     }
 
+	model.notes = 'http://www.noxxic.com/wow/pve/mage/arcane/dps-gear-reforging'
+		
     model.reforgeOrder = 
 	{
         {
             rating = CR_HIT_SPELL,
             cap = "SpellHitCap"
+        },
+		{
+            rating = CR_HASTE_SPELL,
+            cap = "MaximumPossible"
         },
         {
             rating = CR_MASTERY,
@@ -1096,10 +1080,7 @@ function Reforgenator:ArcaneMageModel()
             rating = CR_CRIT_SPELL,
             cap = "MaximumPossible"
         },
-        {
-            rating = CR_HASTE_SPELL,
-            cap = "MaximumPossible"
-        },
+        
     }
 
     return model
@@ -1112,12 +1093,12 @@ function Reforgenator:FrostMageModel()
     model.statWeights = 
 	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.08,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.97,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.61,
+        ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.05,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 1.97,
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.43,
     }
 
-    model.notes = 'http://www.mmo-champion.com/threads/820907-Mage-The-Ultimate-Guide-to-Frost'
+    model.notes = 'http://www.noxxic.com/wow/pve/mage/frost/dps-gear-reforging'
 
     model.reforgeOrder = 
 	{
@@ -1126,12 +1107,12 @@ function Reforgenator:FrostMageModel()
             cap = "SpellHitCap"
         },
         {
-            rating = CR_CRIT_SPELL,
-            cap = "23.34% Crit"
-        },
-        {
             rating = CR_HASTE_SPELL,
             cap = "MaximumPossible"
+        },
+		{
+            rating = CR_CRIT_SPELL,
+            cap = "23.34% Crit"
         },
         {
             rating = CR_MASTERY,
@@ -1154,7 +1135,7 @@ function Reforgenator:FireMageModel()
         ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.42,
     }
 
-    model.notes = 'http://elitistjerks.com/f75/t110326-cataclysm_fire_mage_compendium/#Gearing_a_Fire_Mage'
+    model.notes = 'http://www.noxxic.com/wow/pve/mage/fire/dps-gear-reforging'
 
     model.reforgeOrder = 
 	{
@@ -1163,12 +1144,12 @@ function Reforgenator:FireMageModel()
             cap = "SpellHitCap"
         },
         {
-            rating = CR_HASTE_SPELL,
-            cap = "15% Haste"
-        },
-        {
             rating = CR_CRIT_SPELL,
             cap = "MaximumPossible"
+        },
+		{
+            rating = CR_HASTE_SPELL,
+            cap = "15% Haste"
         },
         {
             rating = CR_MASTERY,
@@ -1192,11 +1173,12 @@ function Reforgenator:ShadowPriestModel()
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2,
 		["ITEM_MOD_HASTE_RATING_SHORT"] = 1.95,
         ["ITEM_MOD_SPIRIT_SHORT"] = 1.95,        
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.70,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.60,
+        ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.70,
+		["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.60,
+        
     }
 
-    model.notes = 'http://www.noxxic.com/pve/priest/shadow/stat-priority-and-reforging-strats'
+    model.notes = 'http://www.noxxic.com/wow/pve/priest/shadow/dps-gear-reforging'
 
     model.reforgeOrder = 
 	{
@@ -1209,13 +1191,14 @@ function Reforgenator:ShadowPriestModel()
             cap = "MaximumPossible"
         },
         {
-            rating = CR_MASTERY,
-            cap = "MaximumPossible"
-        },
-        {
             rating = CR_CRIT_SPELL,
             cap = "MaximumPossible"
         },
+		{
+            rating = CR_MASTERY,
+            cap = "MaximumPossible"
+        },
+        
     }
 
     return model
@@ -1233,7 +1216,7 @@ function Reforgenator:DiscPriestModel()
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.40,
     }
 
-    model.notes = 'http://www.noxxic.com/pve/priest/discipline/stat-priority-and-reforging-strats'
+    model.notes = 'http://www.noxxic.com/wow/pve/priest/discipline/heal-gear-reforging'
 
     model.reforgeOrder = 
 	{
@@ -1264,7 +1247,7 @@ function Reforgenator:HolyPriestModel()
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.50,
     }
 
-    model.notes = 'http://elitistjerks.com/f77/t110245-cataclysm_holy_priest_compendium/'
+    model.notes = 'http://www.noxxic.com/wow/pve/priest/holy/heal-gear-reforging'
 
     model.reforgeOrder = 
 	{

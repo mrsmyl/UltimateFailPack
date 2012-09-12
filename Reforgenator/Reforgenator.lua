@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "1.4.6.1"
+local version = "1.4.7"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -1929,10 +1929,10 @@ function Reforgenator:ExpertiseMods(playerModel)
     --   Enh shamans get +4 for each point in Unleashed Rage
     local reduction = 0;
 
-   -- if playerModel:isBloodDK() then
-   --     self:Explain("+6 expertise for being blood DK")
-   --     reduction = reduction + (6 * K)
-   -- end
+    if playerModel:isBloodDK() then
+        self:Explain("+6 expertise for being blood DK")
+        reduction = reduction + (6 * K)
+    end
 
     if playerModel.className == "PALADIN" then
         local hasGlyph = nil
@@ -2146,11 +2146,10 @@ function Reforgenator:LoadDefaultModels()
     --self:LoadModel(self:MasterfrostDKModel(), 'DK, Masterfrost', 'Masterfrost', 'DEATHKNIGHT')  --gone for now
     self:LoadModel(self:UnholyDKModel(), 'DK, unholy', 'DEATHKNIGHT/3', 'DEATHKNIGHT')
 
-    self:LoadModel(self:BoomkinModel(), 'Druid, Boomkin', 'DRUID/1', 'DRUID')
-	self:LoadModel(self:CatModel(), 'Druid, Feral cat', nil, 'DRUID')
-    self:LoadModel(self:BearSurvivalModel(), 'Druid, Bear Survival', 'DRUID/2', 'DRUID')
-	self:LoadModel(self:BearThreatModel(), 'Druid, Bear Threat', nil, 'DRUID')    --seems to be working now I will have to keep an eye on it.
-    self:LoadModel(self:RestoDruidModel(), 'Druid, Restoration', 'DRUID/3', 'DRUID')
+    self:LoadModel(self:BalanceModel(), 'Druid, Balance', 'DRUID/1', 'DRUID')
+	self:LoadModel(self:FeralModel(), 'Druid, Feral', 'DRUID/2', 'DRUID')
+    self:LoadModel(self:GuardianModel(), 'Druid, Guardian', 'DRUID/3', 'DRUID')
+    self:LoadModel(self:RestoDruidModel(), 'Druid, Restoration', 'DRUID/4', 'DRUID')
 	
     self:LoadModel(self:BeastMasterHunterModel(), 'Hunter, BM', 'HUNTER/1', 'HUNTER')
     self:LoadModel(self:MarksmanshipHunterModel(), 'Hunter, MM', 'HUNTER/2', 'HUNTER')
