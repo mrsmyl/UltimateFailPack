@@ -42,7 +42,7 @@ function GUI:Load(parent)
 			elseif value == 6 then
 				GUI:DrawOptions(self)
 			end
-			tg.children[1]:DoLayout()
+			tabGroup.children[1]:DoLayout()
 		end)
 	simpleGroup:AddChild(tabGroup)
 	TSM.Data:PopulateDataCaches()

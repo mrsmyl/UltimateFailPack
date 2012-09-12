@@ -2,10 +2,10 @@
 ## Title: |cff00ff00TradeSkillMaster_AuctionDB|r
 ## Notes: Stores auction house data and calculates market prices.
 ## Author: Sapu94
-## Version: v1.3.5
+## Version: v1.3.6
 ## SavedVariables: TradeSkillMaster_AuctionDBDB
 ## Dependency: TradeSkillMaster
-## X-Curse-Packaged-Version: v1.3.5
+## X-Curse-Packaged-Version: v1.3.6
 ## X-Curse-Project-Name: TradeSkillMaster_AuctionDB
 ## X-Curse-Project-ID: tradeskillmaster_auctiondb
 ## X-Curse-Repository-ID: wow/tradeskillmaster_auctiondb/mainline
@@ -23,7 +23,6 @@ Locale\ptBR.lua
 
 TradeSkillMaster_AuctionDB.lua
 AppData.lua
-AuctionData.lua
 Modules\data.lua
 Modules\Scanning.lua
 Modules\GUI.lua

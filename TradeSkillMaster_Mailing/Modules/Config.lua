@@ -373,7 +373,7 @@ function Config:DrawGroup(container, groupNum)
 			elseif not a.icon and b.icon then
 				return true
 			else
-				return a.name < b.name
+				return (a.name or "") < (b.name or "")
 			end
 		end)
 		

@@ -78,10 +78,6 @@ function TSM:OnInitialize()
 end
 
 function TSM:OnEnable()
-	if TSM.CheckNewAuctionData then
-		TSM:CheckNewAuctionData()
-	end
-	
 	if TSM.AppData then
 		local realm = GetRealmName()
 		local faction = UnitFactionGroup("player")
@@ -121,6 +117,7 @@ function TSM:OnEnable()
 		end
 		
 		if numNewScans > 0 then
+			TSM.db.factionrealm.lastCompleteScan = TSM.db.factionrealm.appDataUpdate
 			TSM:Printf("Imported %s scans worth of new auction data!", numNewScans)
 		end
 	end
