@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DHUD4")
 
 local MODNAME = "DHUD4_Player"
 local DHUD4_Player = DHUD4:NewModule(MODNAME, "AceEvent-3.0")
-local VERSION = tonumber(("$Rev: 113 $"):match("%d+"))
+local VERSION = tonumber(("$Rev: 115 $"):match("%d+"))
 
 local unpack = unpack
 local pairs = pairs
@@ -806,7 +806,7 @@ function DHUD4_Player:Refresh()
             restIcon:Show()
         end
 
-         if ( IsPartyLeader() ) then
+         if ( UnitIsGroupLeader("player") ) then
             leaderIcon:Show()
         end
 
@@ -907,7 +907,7 @@ function DHUD4_Player:UNIT_EXITED_VEHICLE(event, who)
 end
 
 function DHUD4_Player:UpdatePlayerLeader()
-    if ( IsPartyLeader() ) then
+    if ( UnitIsGroupLeader("player") ) then
         leaderIcon:Show()
     else
         leaderIcon:Hide()

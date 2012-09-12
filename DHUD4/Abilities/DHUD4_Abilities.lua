@@ -1,5 +1,5 @@
 --[[
-DHUD4_Abilities.lua $Rev: 113 $
+DHUD4_Abilities.lua $Rev: 115 $
 Copyright (c) 2006 by Markus Inger, 2006 by Caeryn Dryad, 2007-2010 by Horacio Hoyos
 
 This file is part of DHUD4.
@@ -352,7 +352,7 @@ function Abilities:CreateFrame(id)
     frameCooldown = CreateFrame("Cooldown", frameName.."Cooldown",frame)
     frameCooldown:SetAllPoints(frame)
     frameCooldown:SetFrameStrata("LOW")
-    frameCooldown:SetDrawEdge(true)
+    --frameCooldown:SetDrawEdge(true)
     frameCooldown:Hide()
     return frame
 end
