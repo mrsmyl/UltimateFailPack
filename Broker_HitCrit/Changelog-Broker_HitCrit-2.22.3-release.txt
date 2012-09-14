@@ -1,0 +1,110 @@
+tag 2.22.3-release
+581ac51f9a539b7347f446aacf6b0c916ca20e45
+James D. Callahan III <jcallahan@curse.com>
+2012-09-14 04:36:52 -0500
+
+
+
+--------------------
+
+James D. Callahan III:
+	- Spec fixes.
+	- Replaced localizations for spell school names with entries from Globalstrings.lua - renamed spellSchools to SPELL_SCHOOLS and moved it to Constants.lua
+	- Version handling tweak
+	- Removed partial ChangeLog at bottom of file - VCS logs do a much better job.
+	- Massive cleanup of leaked globals (some intentional for scoping, but needless all the same).
+	- Formatting and whitespace cleanups.
+	- More namespace cleanups.
+	- Cleanup of AddOn namespace and fixed version display for development and alpha versions.
+	- Replaced add-on:GetSpecName() with the name return value from GetSpecializationInfo()
+	- GetActiveTalentGroup --> GetActiveSpecGroup
+	- Added localizations for devel-enUS, esES, esMX, itIT, ptBR, ruRU, and zhCN.
+	- Bumped ToC interface version to 50001
+	- Removed silent flag from enUS locale.
+zhinjio:
+	- HitCrit :  - one more CLEU change  - login warning
+	- HitCrit :  - bump TOC  - updated CLEU
+	- HitCrit :  - revert bad change in expandHandler
+	- HitCrit :  - toc bump
+	- HitCrit :  - CLEU changes  - libdbicon added  - options ordering fixes
+	- HitCrit :  - fixes for yesterday's hasty submit  - cleanup of suppression/tracking/toggles
+	- HitCrit :  - updated to include all new spell schools
+	- HitCrit :  - fixed label error (Ticket 58) Thanks next96
+	- HitCrit :  - added separate hit/crit tracking per spec
+	- HitCrit :  - Fixed The Return of Ticket 53
+	- HitCrit :  - TOC bump for 4.0.1
+	- HitCrit :  - Notes commit
+	- HitCrit :  - ignore Eadric's Hammer of the Righteous
+	- HitCrit :  - chat reporting fix
+	- HitCrit :  - fixed chatframe reporting  - fixed FoL (Paladin)
+	- HitCrit :  - correctly ignoring Argent Tourney  - healing crits no longer being ignored  - chatframe reporting fixed
+	- HitCrit :  - added expand/contract buttons per damage type and school
+	- HitCrit :  - made LDB display text more readable
+	- HitCrit :  - followed up on a few more tickets  - added broken tooltip error reporting  - added in a few more argent tournament suppressions
+	- HitCrit :  - very small tooltip fix  - add scrolling for tooltip if it would break the screen edge
+	- HitCrit :  - added in school/value suppression from the tooltip (Ticket ID 42)  - couple other small misc fixes
+	- HitCrit :  - properly added zhTW (partial)
+	- HitCrit :  - updated translator credits. Thank you!
+	- HitCrit :  - fixed tooltip issue  - added ldb text coloring toggle
+	- HitCrit :  - test version to fix tooltip failure  - do not use
+	- HitCrit :  - changed tooltip autohide to .1  - removed option to disable autohidedelay  - sane increments for slider
+	- HitCrit :  - added slider for tooltip delay  - conversion to new qtip completed
+	- HitCrit :  - removing lqtc  - updating toc  - reorganizing options
+	- HitCrit :  - fix libqtip packaging issue
+	- HitCrit :  - fix superbuff toggle
+	- HitCrit :  - provide toggle for superbuff detection  - properly detect vehicle enter/exit  - added "Refresh Mount" to spell exclusion list
+	- HitCrit :  - attempt at adding vehicle checks
+	- HitCrit :  - documentation update  - fix to empty rank thing
+	- HitCrit :  - added in chatframe reporting  - added in qtip click functionality  - removed data browser for data resetting
+	- - fix qtip pkgmeta entry and embed
+	- - change superbuff toggle default
+	- - bumped toc for 3.1  - fixed optdeps for running disembedded  - added in ability to turn off superbuff notifications in chat
+	- - fix localization capitalization shit
+	- - added same-key-is-true
+	- - fix localization stupidity
+	- - added Docs - switch to wowace localization
+next96:
+	- Broker_HitCrit : - Update locale koKR
+zhinjio:
+	- - added in per school tracking/exclusion - updated pkgmeta to use "latest" tags - couple smaller fixes - moved acquire/release in tooltip to onshow
+	- - added Shadowflame (Warlock) to exclusion list
+	- - updated qtip embed - removed stupid doc thing
+	- - I'll get you yet, you dirty apes!
+	- - luadoc tests
+	- - docmeta commit
+	- - added 3 more superbuffs
+next96:
+	- Broker_HitCrit : - Update locale koKR
+zhinjio:
+	- - translator credit added for koKR (thanks next96!)
+	- - added Parrot support - added MSBT support
+next96:
+	- Broker_HitCrit : - Add locale koKR
+zhinjio:
+	- - TOC auto-versioning - tooltip header/footer colspans - superbuff detection/disable
+	- - Added frFR (thanks Markam!)
+	- - addonloader support - persistent tooltips - changed to data source
+	- - fixed cbh typo and order - added ace3gui
+	- - attempt to fix some embedding issues #1
+	- - fixed lifebloom - text is blank when not enabled - hit/crit in text if enabled
+	- - added crit percentage
+	- - moved to new debug method
+	- - added in screenshot capability (off by default)
+	- - misc fixes - added in data browser - added in ability to remove data poinst
+dessa:
+	- update embeds.xml to match new libary name
+zhinjio:
+	- - changed libtooltip to libqtip
+	- - changed fontsize to tooltip scaling in options == win
+	- - deDE fixes (Thanks SunTsu!) - lowlevel mob checking added - fix for reload requirement nonsense - database upgrade logic fixed
+	- - added deDE locale. Thanks SunTsu!! - coloring fixes
+	- - enemy name display now working - debug back to false
+	- - config working - all column display optional now - sort by school working
+	- - added blizz options support - added new db field (lowlevel) and updatedb check
+	- - updated db version - storing 3 values now (will eventually allow deletion - reporting on avg values as well now
+	- - no config or audible alert yet, but data gathering works
+	- - another attempt at fixing LTT
+	- - fixed LibTooltip external reference
+	- Broker-HitCrit :  - initial commit
+root:
+	- "broker-hitcrit/mainline: Initial Import"

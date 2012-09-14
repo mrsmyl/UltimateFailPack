@@ -1,48 +1,86 @@
 --[[
 ************************************************************************
-Project				: Broker_HitCrit
-Author				: zhinjio
-Project Revision	: 2.22.2-release
-Project Date		: 20110705025101
+Project			: Broker_HitCrit
+Author			: James D. Callahan III
+Project Revision	: 2.22.3-release
+Project Date		: 20120914093113
 
-File				: Broker_HitCrit.lua
-Commit Author		: zhinjio
-Commit Revision		: 124
-Commit Date			: 20110705025101
+File			: Broker_HitCrit.lua
+Commit Author		: James D. Callahan III
+Commit Revision		: @file-revision@
+Commit Date		: 20120914093113
 ************************************************************************
 Description	:
-	Main addon file. 
+	Main addon file.
 
 TODO		:
 	Add in disable for vulnerable and low level mobs
-
-************************************************************************
-(see bottom of file for changelog)
-************************************************************************
 --]]
 
-local MODNAME = "HitCrit"
-local FULLNAME = "Broker_HitCrit"
-
-local HitCrit = LibStub( "AceAddon-3.0" ):NewAddon( MODNAME, "AceEvent-3.0" )
-local L = LibStub:GetLibrary( "AceLocale-3.0" ):GetLocale( MODNAME )
-local AceConfig 		= LibStub("AceConfig-3.0")
-local AceConfigReg 		= LibStub("AceConfigRegistry-3.0")
-local AceConfigDialog 	= LibStub("AceConfigDialog-3.0")
-
-local addonversion = GetAddOnMetadata( FULLNAME, "Version" )
-addonversion = string.gsub( addonversion, "@project.version@", " - Development" )
-local addonauthor = "zhinjio"
-local builddate = "20110705025101"
-
+-------------------------------------------------------------------------------
+-- Localized Lua globals.
+-------------------------------------------------------------------------------
 local _G = getfenv(0)
-_G["HitCrit"] = HitCrit
-local addon = HitCrit
 
+-- Functions
+local pairs = _G.pairs
+local select = _G.select
+
+-- Libraries
+local math = _G.math
+local table = _G.table
+
+-------------------------------------------------------------------------------
+-- AddOn namespace.
+-------------------------------------------------------------------------------
+local FOLDER_NAME, private = ...
+
+local LibStub = _G.LibStub
+local ADDON_NAME = "HitCrit"
+
+local HitCrit = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceEvent-3.0")
+local addon = HitCrit
+_G.HitCrit = HitCrit
+
+local L = LibStub:GetLibrary("AceLocale-3.0"):GetLocale(ADDON_NAME)
+local AceConfig = LibStub("AceConfig-3.0")
+local AceConfigReg = LibStub("AceConfigRegistry-3.0")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local QT = LibStub:GetLibrary("LibQTip-1.0")
+local LDBIcon = LibStub("LibDBIcon-1.0")
+
+do
+	local debug_version = false
+	local alpha_version = false
+
+	--[===[@debug@
+	debug_version = true
+	--@end-debug@]===]
+
+	--[===[@alpha@
+	alpha_version = true
+	--@end-alpha@]===]
+
+	local addon_version = _G.GetAddOnMetadata(FOLDER_NAME, "Version")
+	addon.version = debug_version and "Devel" or (alpha_version and addon_version .. "-Alpha") or addon_version
+
+end --do-block
+local addon_author = "James D. Callahan III"
+local build_date = "20120914093113"
+
+------------------------------------------------------------------------------
+-- Constants.
+------------------------------------------------------------------------------
+local PLUS_ICON = "|TInterface\\Buttons\\UI-PlusButton-Up:18:18:1:0|t"
+local MINUS_ICON = "|TInterface\\Buttons\\UI-MinusButton-Up:18:18:1:0|t"
+
+local SPELL_SCHOOLS = private.SPELL_SCHOOLS
+
+------------------------------------------------------------------------------
+-- Variables.
+------------------------------------------------------------------------------
 local modularOptions = {}
 local tooltip
-local QT		= LibStub:GetLibrary( "LibQTip-1.0" )
-local LDBIcon	= LibStub("LibDBIcon-1.0")
 
 HitCrit.me = ""
 HitCrit.selCategory = 0
@@ -66,43 +104,6 @@ HitCrit.selType = "hit"
 HitCrit.resetType = 0
 
 local db
-local spellSchools = {
-	-- Primary Schools
-	[1]		= L["physical"],		-- 0x01		1		physical
-	[2]		= L["holy"],			-- 0x02		2		holy
-	[4]		= L["fire"],			-- 0x04		4		fire
-	[8]		= L["nature"],			-- 0x08		8		nature
-	[16]	= L["frost"],			-- 0x10		16		frost
-	[32]	= L["shadow"],			-- 0x20		32		shadow
-	[64]	= L["arcane"],			-- 0x40		64		arcane
-	-- Double Schools
-	[3]		= L["holystrike"],		-- 0x3		3		Holystrike		Holy + Physical
-	[5]		= L["flamestrike"],		-- 0x5		5		Flamestrike		Fire + Physical
-	[6]		= L["holyfire"],		-- 0x6		6		Holyfire		Fire + Holy
-	[9]		= L["stormstrike"],		-- 0x9		9		Stormstrike		Nature + Physical
-	[10]	= L["holystorm"],		-- 0xA		10		Holystorm		Nature + Holy
-	[12]	= L["firestorm"],		-- 0xC		12		Firestorm		Nature + Fire
-	[17]	= L["froststrike"],		-- 0x11		17		Froststrike		Frost + Physical
-	[18]	= L["holyfrost"],		-- 0x12		18		Holyfrost		Frost + Holy
-	[20]	= L["frostfire"],		-- 0x14		20		Frostfire		Frost + Fire
-	[24]	= L["froststorm"],		-- 0x18		24		Froststorm		Frost + Nature
-	[33]	= L["shadowstrike"],	-- 0x21		33		Shadowstrike	Shadow + Physical
-	[34]	= L["shadowlight"],		-- 0x22		34		Shadowlight 	(Twilight)	Shadow + Holy
-	[36]	= L["shadowflame"],		-- 0x24		36		Shadowflame		Shadow + Fire
-	[40]	= L["shadowstorm"],		-- 0x28		40		Shadowstorm 	(Plague)	Shadow + Nature
-	[48]	= L["shadowfrost"],		-- 0x30		48		Shadowfrost		Shadow + Frost
-	[65]	= L["spellstrike"],		-- 0x41		65		Spellstrike		Arcane + Physical
-	[66]	= L["divine"],			-- 0x42		66		Divine			Arcane + Holy
-	[68]	= L["spellfire"],		-- 0x44		68		Spellfire		Arcane + Fire
-	[72]	= L["spellstorm"],		-- 0x48		72		Spellstorm		Arcane + Nature
-	[80]	= L["spellfrost"],		-- 0x50		80		Spellfrost		Arcane + Frost
-	[96]	= L["spellshadow"],		-- 0x60		96		Spellshadow		Arcane + Shadow
-	-- Triple and multi schools
-	[28]	= L["elemental"],		-- 0x1C		28		Elemental		Frost + Nature + Fire
-	[124]	= L["chromatic"],		-- 0x7C		124		Chromatic		Arcane + Shadow + Frost + Nature + Fire
-	[126]	= L["magic"],			-- 0x7E		126		Magic			Arcane + Shadow + Frost + Nature + Fire + Holy
-	[127]	= L["chaos"],			-- 0x7F		127		Chaos			Arcane + Shadow + Frost + Nature + Fire + Holy + Physical	
-}
 
 local argentSpells = {
 	-- Argent Tournament spell (listed as Uncategorized Spells)
@@ -161,32 +162,49 @@ local superBuffIDs = {
 }
 local superBuffNames = {}
 
-function HitCrit_Print( msg )
-	local _, fh = DEFAULT_CHAT_FRAME:GetFont()
-	fh = math.ceil( fh )
-	local icon = "\124TInterface\\Addons\\Broker_HitCrit\\icon:" .. fh .. "\124t"
-	if ( msg ~= nil ) then
-	   if( DEFAULT_CHAT_FRAME ) then
-	      DEFAULT_CHAT_FRAME:AddMessage( icon .. " HitCrit: " .. msg, 0.6, 1.0, 1.0 )
-	   end
+local function HitCrit_Print( msg )
+	if not msg then
+		return
 	end
+	local font_height = math.ceil(select(2, _G.DEFAULT_CHAT_FRAME:GetFont()))
+	local icon = "\124TInterface\\Addons\\Broker_HitCrit\\icon:" .. font_height .. "\124t"
+	_G.DEFAULT_CHAT_FRAME:AddMessage(icon .. " HitCrit: " .. msg, 0.6, 1.0, 1.0)
 end
 
-function HitCrit_Debug( msg )
-	if ( msg ~= nil ) then
-		if ( db.options.display.debug ) then
-			HitCrit_Print( "DEBUG: " .. msg )
-		end
+local function HitCrit_Debug( msg )
+	if not msg or not db.options.display.debug then
+		return
 	end
+	HitCrit_Print("DEBUG: " .. msg)
 end
 
-function HitCrit_Red( text )	return "|cffff0000" .. text .. "|r" end
-function HitCrit_Yellow( text )	return "|cffffff00" .. text .. "|r" end
-function HitCrit_Green( text )	return "|cff00ff00" .. text .. "|r" end
-function HitCrit_White( text )	return "|cffffffff" .. text .. "|r" end
-function HitCrit_hit( text)		return "|cff00ffff" .. text .. "|r" end
-function HitCrit_crit( text)	return "|cffff8080" .. text .. "|r" end
-function HitCrit_sch( text)		return "|cffdfa050" .. text .. "|r" end
+local function HitCrit_Red(text)
+	return "|cffff0000" .. text .. "|r"
+end
+
+local function HitCrit_Yellow(text)
+	return "|cffffff00" .. text .. "|r"
+end
+
+local function HitCrit_Green(text)
+	return "|cff00ff00" .. text .. "|r"
+end
+
+local function HitCrit_White(text)
+	return "|cffffffff" .. text .. "|r"
+end
+
+local function HitCrit_hit(text)
+	return "|cff00ffff" .. text .. "|r"
+end
+
+local function HitCrit_crit(text)
+	return "|cffff8080" .. text .. "|r"
+end
+
+local function HitCrit_sch(text)
+	return "|cffdfa050" .. text .. "|r"
+end
 
 function HitCrit:AlertNew( crit, heal, target, spellName, amount )
 	local hType, hStr = L["Hit"], L["Hit"]
@@ -236,7 +254,7 @@ function HitCrit:AlertNew( crit, heal, target, spellName, amount )
 	end
 end
 
-function HitCrit_initHC( entry )
+local function HitCrit_initHC( entry )
 	entry.hit = {}; entry.crit = {}
 	entry.total = 0
 	entry.num = 0
@@ -250,7 +268,7 @@ function HitCrit_initHC( entry )
 	end
 end
 
-function HitCrit_initSpellEntry()
+local function HitCrit_initSpellEntry()
 	local entry = {}
 	entry.effect = ""
 	entry.school = 0
@@ -259,7 +277,7 @@ function HitCrit_initSpellEntry()
 	return entry
 end
 
-function HitCrit_CheckInsertAlert( heal, id, hit, crit, dName, effect, sch )
+local function HitCrit_CheckInsertAlert( heal, id, hit, crit, dName, effect, sch )
 	local side = ""
 	if ( effect ~= "" ) then
 		if ( heal == 1 ) then side = "heal" else side = "damage" end
@@ -310,10 +328,10 @@ function HitCrit_CheckInsertAlert( heal, id, hit, crit, dName, effect, sch )
 			end
 		else
 			-- This could be a previously tracked spell, just with a new rank
-			local sName, sRank = GetSpellInfo( id )
+			local sName, sRank = _G.GetSpellInfo( id )
 			local prevSpellID = 0
 			if ( id ~= 0 ) then
-				-- sName should match "effect" I believe 
+				-- sName should match "effect" I believe
 				for k, v in pairs( db.values[HitCrit.activeTalents][side] ) do
 					if ( v.effect == sName ) then
 						if ( resetExclusionList[k] == true ) then
@@ -437,8 +455,8 @@ function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
 --			critical
 --
 	local effect, id, hit, crit, sch, heal = "", 0, 0, 0, 0, 0
-	
-	local targetLevel = UnitLevel( "target" )
+
+	local targetLevel = _G.UnitLevel( "target" )
 	if ( sGUID == HitCrit.GUID ) then
 		-- First, check for damage
 		if ( amTracking( "damage" ) ) then
@@ -460,7 +478,7 @@ function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
 				id = spellID; effect = spellName; sch = spellSchool
 				if ( critical == 1 ) then hit = 0; crit = amount else hit = amount; crit = 0 end
 			elseif ( eType == "SPELL_PERIODIC_DAMAGE" ) then
-				local spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, crit, glance, crush = select( 1, ... )
+				local spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glance, crush = select( 1, ... )
 				id = spellID; effect = spellName; sch = spellSchool
 				if ( critical == 1 ) then hit = 0; crit = amount else hit = amount; crit = 0 end
 			end
@@ -525,13 +543,13 @@ function HitCrit:COMBAT_LOG_EVENT_UNFILTERED(
 			ignoreHit = true
 		end
 	end
-	
+
 	-- Check to see if this is a spell we just flat out ignore
 	if ( ignoreSpells[ id ] ) then
 		HitCrit_Debug( "Ignored because its a spell we ignore. Duh." )
 		ignoreHit = true
 	end
-	
+
 	if ( ignoreHit == false ) then
 		HitCrit_CheckInsertAlert( heal, id, hit, crit, dName, effect, sch )
 	end
@@ -548,7 +566,60 @@ StaticPopupDialogs["HC_CONFIRM_RESET_DATA"] = {
 	button1 = L["Yes"],
 	button2 = L["No"],
 	OnAccept = function( self )
-		HitCrit_ResetData()
+	-- If we're here, the user already confirmed. Nuke away...
+		if ( HitCrit.resetType == 1 ) then
+			-- Reset all data for this toon
+			-- Don't actually have a way to reach this anymore...
+		elseif ( HitCrit.resetType == 2 ) then
+			-- Reset all data either in "damage" or "heal"
+			if ( HitCrit.selCategory == 1 ) then
+				db.values[HitCrit.activeTalents].damage = nil
+				db.values[HitCrit.activeTalents].damage = {}
+			else
+				db.values[HitCrit.activeTalents].heal = nil
+				db.values[HitCrit.activeTalents].heal = {}
+			end
+		elseif ( HitCrit.resetType == 3 ) then
+			-- Reset all "damage" or "heal" data for a specific school
+			local dbc = {}
+			if ( HitCrit.selCategory == 1 ) then
+				dbc = db.values[HitCrit.activeTalents].damage
+			else
+				dbc = db.values[HitCrit.activeTalents].heal
+			end
+			for k, v in pairs( dbc ) do
+				if ( v.school == HitCrit.selSchool ) then
+					dbc[k] = nil
+				end
+			end
+		elseif ( HitCrit.resetType == 4 ) then
+			-- Reset specific spell entries (or whole entry)
+			local dbc = {}
+			if ( HitCrit.selCategory == 1 ) then
+				dbc = db.values[HitCrit.activeTalents].damage
+			else
+				dbc = db.values[HitCrit.activeTalents].heal
+			end
+			if ( HitCrit.selType == "all" ) then
+				dbc[ HitCrit.selEntry ] = nil
+			else
+				local entry = dbc[ HitCrit.selEntry ]
+				local hTable = HitCrit.selType
+				entry[ hTable ][1].value = entry[ hTable ][2].value
+				entry[ hTable ][1].name = entry[ hTable ][2].name
+				entry[ hTable ][2].value = entry[ hTable ][3].value
+				entry[ hTable ][2].name = entry[ hTable ][3].name
+				entry[ hTable ][3].value = 0
+				entry[ hTable ][3].name = ""
+			end
+		end
+
+		HitCrit.selCategory = 0
+		HitCrit.selSchool = 0
+		HitCrit.selType = 0
+		HitCrit.selSpecific = 0
+
+		HitCrit:ChangeLabel()
 		self:Hide()
 	end,
 	EditBoxOnEscapePressed = function( self )
@@ -570,14 +641,13 @@ local function HitCrit_GenerateReportString( category, spell )
 		if ( ( dbv.rank ) and ( dbv.rank ~= "" ) ) then
 			outString = outString .. "(" .. dbv["rank"] .. ")"
 		end
-		outString = outString .. "(" .. spellSchools[dbv["school"]] .. ") " .. L["for"] .. " "
+		outString = outString .. "(" .. SPELL_SCHOOLS[dbv["school"]] .. ") " .. L["for"] .. " "
 		outString = outString .. dbv["hit"][1]["value"] .. " "
 
 		if ( ( dbv.num ~= 0 ) and ( dbv.numcrit ~= 0 ) ) then
 			outString = outString .. L["with"] .. " " .. L["Crit"] .. " "
 			outString = outString .. dbv["crit"][1]["value"]
-			critpctg = string.format( "(%.1f%%)", ( dbv.numcrit / dbv.num * 100 ) )
-			outString = outString .. critpctg
+			outString = outString .. string.format("(%.1f%%)", (dbv.numcrit / dbv.num * 100))
 		end
 		return outString
 	else
@@ -596,9 +666,9 @@ local function HitCrit_ExpandHandler( cell, arg, button )
 		dbe.expheal = not dbe.expheal
 	else
 		local resetType, resetCat = strsplit( "~", arg )
-		rCat = tonumber( resetCat )
+		resetCat = tonumber( resetCat )
 		HitCrit_Debug( "got rT and rC of " .. resetType .. "/" .. resetCat )
-		dbe[resetType][rCat] = not dbe[resetType][rCat]
+		dbe[resetType][resetCat] = not dbe[resetType][resetCat]
 	end
 	addon:drawTooltip( HitCrit.currTT )
 	tooltip:Show()
@@ -609,7 +679,7 @@ local function HitCrit_MouseHandler( cell, arg, button )
 	-- Normal right click == open config
 	-- Normal left click == report into chat frame
 	-- Alt left click == reset value
-	HitCrit_Debug( "Received .. " .. arg ) 
+	HitCrit_Debug( "Received .. " .. arg )
 	if( button == "RightButton" ) then
 		HitCrit:ShowConfig()
 	elseif ( button == "LeftButton" ) then
@@ -628,19 +698,43 @@ local function HitCrit_MouseHandler( cell, arg, button )
 			end
 			if ( resetType == "2" ) then
 				HitCrit_Debug( "Resetting whole category --> " .. resetCat )
-				HCBF_ResetCategoryButton()
+				HideTooltip()
+				HitCrit.resetType = 2
+				local c = ""
+				if ( HitCrit.selCategory == 1 ) then c = L["Damage"] else c = L["Heal"] end
+				StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
+				string.format( L["Reset Category: %s. Are you sure?"], c )
+				StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
 			elseif ( resetType == "3" ) then
 				HitCrit.selSchool = tonumber( resetSpecific )
 				HitCrit_Debug( "Resetting school (" .. resetCat .. ") --> " .. resetSpecific )
-				HCBF_ResetSchoolButton()
+				HideTooltip()
+				HitCrit.resetType = 3
+				local c = ""
+				if ( HitCrit.selCategory == 1 ) then c = L["Damage"] else c = L["Heal"] end
+				local s = SPELL_SCHOOLS[ HitCrit.selSchool ]
+				StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
+				string.format( L["Reset Category: %s, School: %s. Are you sure?"], c, s )
+				StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
 			elseif ( resetType == "4" ) then
 				HitCrit.selEntry = tonumber( resetSpecific )
 				HitCrit.selEntryName = GetSpellInfo( resetSpecific )
 				HitCrit_Debug( "Resetting spell (" .. resetCat .. ") --> " .. resetSpecific )
 				if ( hitorcrit == "a" ) then
-					HCBF_ResetEntryButton()
+					HideTooltip()
+					HitCrit.resetType = 4
+					local e = HitCrit.selEntryName
+					StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
+					string.format( L["Reset all entries for spell: %s. Are you sure?"], e )
+					StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
 				else
-					HCBF_ResetTopEntryButton()
+					HideTooltip()
+					HitCrit.resetType = 4
+					local e = HitCrit.selEntryName
+					local t = HitCrit.selType
+					StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
+					string.format( L["Reset first %s entry for spell: %s. Are you sure?"], t, e )
+					StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
 				end
 			else
 				HitCrit_Debug( "ResetType is " .. resetType )
@@ -659,127 +753,163 @@ local function HitCrit_MouseHandler( cell, arg, button )
 			end
 		end
 	end
-		
+
 end
+
+local OPTIONAL_TOOLTIP_COLUMNS = {
+	"avg",
+	"hit",
+	"crit",
+	"enemyName",
+}
 
 function addon:drawTooltip( talent )
 	-- plus and minus icons
-	local plusIcon = "|TInterface\\Buttons\\UI-PlusButton-Up:18:18:1:0|t"
-	local minusIcon = "|TInterface\\Buttons\\UI-MinusButton-Up:18:18:1:0|t"
+	local db_suppress = db.options.suppress
+	local db_display = db.options.display
+	local db_expand = db.options.expand
+	local headerTitle = ""
+	local num_columns = 2
+	local t = {
+		"LEFT",
+		"LEFT"
+	}
 
+	for index = 1, #OPTIONAL_TOOLTIP_COLUMNS do
+		if db_display[OPTIONAL_TOOLTIP_COLUMNS[index]] then
+			num_columns = num_columns + 1
+			t[#t + 1] = "RIGHT"
+		end
+	end
 	tooltip:Hide()
 	tooltip:Clear()
+	tooltip:SetColumnLayout(num_columns, unpack(t))
 
-	local dbs = db.options.suppress
-	local dbod = db.options.display
-	local dbe = db.options.expand
-	
-	local headerTitle = ""
-
-	local t = {}
-	local numCols = 2
-	t[1] = "LEFT"
-	t[2] = "LEFT"
-	if ( dbod.avg ) then numCols = numCols + 1; table.insert( t, "RIGHT" ) end
-	if ( dbod.hit ) then numCols = numCols + 1; table.insert( t, "RIGHT" ) end
-	if ( dbod.crit ) then numCols = numCols + 1; table.insert( t, "RIGHT" ) end
-	if ( dbod.enemyName ) then numCols = numCols + 1; table.insert( t, "RIGHT" ) end
-	tooltip:SetColumnLayout( numCols, unpack( t ) )
-
-	if ( talent == HitCrit.activeTalents ) then
+	if  talent == HitCrit.activeTalents then
 		headerTitle = HitCrit_White( L["Broker_HitCrit"] .. " - " .. HitCrit.specName )
 	else
 		headerTitle = HitCrit_White( L["Broker_HitCrit"] .. " - " .. L["Inactive Spec"] )
 	end
-	local lineNum = tooltip:AddHeader( "b" )
-	tooltip:SetCell( lineNum, 1, headerTitle, "CENTER", numCols )
 	local colIndex = 0
+	local line_num = tooltip:AddHeader("b")
+	tooltip:SetCell(line_num, 1, headerTitle, "CENTER", num_columns)
+
 	local t = {}
-	if ( dbod.type ) then
+
+	if db_display.type then
 		-- sort by damage school
-		local schools = {}; schools.damage = {}; schools.healing = {}
-		for k, v in pairs( spellSchools ) do schools.damage[k] = {}; schools.healing[k] = {} end
-		for k, v in pairs( db.values[talent]["damage"] ) do
-			if ( not schools.damage[v.school] ) then
+		local schools = {
+			damage = {},
+			healing = {},
+		}
+
+		for k, v in pairs(SPELL_SCHOOLS) do
+			schools.damage[k] = {}
+			schools.healing[k] = {}
+		end
+
+		for k, v in pairs(db.values[talent].damage) do
+			if not schools.damage[v.school] then
 				schools.damage[v.school] = {}
 			end
 			schools.damage[v.school][k] = true
 		end
-		for k, v in pairs( db.values[talent]["heal"] ) do
-			if ( not schools.healing[v.school] ) then
+
+		for k, v in pairs(db.values[talent].heal) do
+			if not schools.healing[v.school] then
 				schools.healing[v.school] = {}
 			end
 			schools.healing[v.school][k] = true
 		end
+
 		-- damage block
-		if ( not dbs.alldamage ) then
-			lineNum = tooltip:AddLine( " " )
-			tooltip:SetCell( lineNum, 2, HitCrit_Red( "  " .. L["Damage"] ), "LEFT", ( numCols - 1 ) )
-			tooltip:SetCellScript( lineNum, 2, "OnMouseDown", HitCrit_MouseHandler, "2~damage~0~h" )
-			if ( dbe.expdmg == false ) then
-				tooltip:SetCell( lineNum, 1, plusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg" )
+		if not db_suppress.alldamage then
+			line_num = tooltip:AddLine(" ")
+			tooltip:SetCell(line_num, 2, HitCrit_Red("  " .. L["Damage"]), "LEFT", (num_columns - 1))
+			tooltip:SetCellScript(line_num, 2, "OnMouseDown", HitCrit_MouseHandler, "2~damage~0~h")
+
+			if not db_expand.expdmg then
+				tooltip:SetCell(line_num, 1, PLUS_ICON, "LEFT", 1)
+				tooltip:SetCellScript(line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg")
 			else
-				tooltip:SetCell( lineNum, 1, minusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg" )
-				wipe(t)
-				table.insert( t, " " )
-				table.insert( t, HitCrit_White( "    " .. L["Effect"] ) )
-				if ( dbod.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
-				if ( dbod.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
-				if ( dbod.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
-				if ( dbod.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
-				tooltip:AddLine( unpack( t ) )
-				for k, v in pairs( spellSchools ) do
-					if ( ( next( schools.damage[k] ) ~= nil ) and ( not dbs.damage[k] ) ) then
-						lineNum = tooltip:AddLine( " " )
-						tooltip:SetCell( lineNum, 2, HitCrit_sch( "    " .. v ), "LEFT", ( numCols - 1 ) )
-						tooltip:SetCellScript( lineNum, 2, "OnMouseDown",
-							HitCrit_MouseHandler, "3~damage~" .. k .. "~h" )
-						if ( dbe.damage[k] == false ) then
-							tooltip:SetCell( lineNum, 1, "  " .. plusIcon, "LEFT", 1 )
-							tooltip:SetCellScript( lineNum, 1, "OnMouseDown",
-								HitCrit_ExpandHandler, "damage~" .. k )
+				tooltip:SetCell(line_num, 1, MINUS_ICON, "LEFT", 1)
+				tooltip:SetCellScript(line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg")
+
+				table.wipe(t)
+				table.insert(t, " ")
+				table.insert(t, HitCrit_White("    " .. L["Effect"]))
+
+				if db_display.avg then
+					table.insert(t, HitCrit_White(L["Avg"]))
+				end
+
+				if db_display.hit then
+					table.insert(t, HitCrit_White(L["Hit"]))
+				end
+
+				if db_display.crit then
+					table.insert(t, HitCrit_White(L["Crit"] .. "(%)"))
+				end
+
+				if db_display.enemyName then
+					table.insert(t, HitCrit_White(L["Against"]))
+				end
+				tooltip:AddLine(unpack(t))
+
+				for k, v in pairs(SPELL_SCHOOLS) do
+					if next(schools.damage[k]) and not db_suppress.damage[k] then
+						line_num = tooltip:AddLine(" ")
+						tooltip:SetCell(line_num, 2, HitCrit_sch("    " .. v), "LEFT", (num_columns - 1))
+						tooltip:SetCellScript(line_num, 2, "OnMouseDown", HitCrit_MouseHandler, "3~damage~" .. k .. "~h")
+
+						if not db_expand.damage[k] then
+							tooltip:SetCell(line_num, 1, "  " .. PLUS_ICON, "LEFT", 1)
+							tooltip:SetCellScript(line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "damage~" .. k)
 						else
-							tooltip:SetCell( lineNum, 1, "  " .. minusIcon, "LEFT", 1 )
-							tooltip:SetCellScript( lineNum, 1, "OnMouseDown",
-								HitCrit_ExpandHandler, "damage~" .. k )
-							for m, u in pairs( schools.damage[k] ) do
+							tooltip:SetCell(line_num, 1, "  " .. MINUS_ICON, "LEFT", 1)
+							tooltip:SetCellScript(line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "damage~" .. k)
+
+							for m, u in pairs(schools.damage[k]) do
 								local i = db.values[talent]["damage"][m]
-								local e, h, c, a = i.effect, i.hit[1].value, i.crit[1].value, floor( i.total / i.num )
-								local cp = ""
-								if ( ( i.num ~= 0 ) and ( i.numcrit ~= 0 ) ) 
-									then cp = string.format( "(%.1f%%)", ( i.numcrit / i.num * 100 ) )
+								local crit_value = i.crit[1].value
+								local col_index = 2
+								line_num = tooltip:AddLine("b")
+								tooltip:SetCell(line_num, 1, " ", "LEFT", 1)
+								tooltip:SetCell(line_num, col_index, HitCrit_Yellow("      " .. i.effect), "LEFT", 1)
+								tooltip:SetCellScript(line_num, col_index, "OnMouseDown", HitCrit_MouseHandler, "4~damage~" .. m .. "~a")
+
+								if db_display.avg then
+									local average = (i.num == 0) and " " or floor(i.total / i.num)
+
+									col_index = col_index + 1
+									tooltip:SetCell(line_num, col_index, HitCrit_Yellow(average), "RIGHT", 1)
 								end
-								if ( i.num == 0 ) then a = " " end
-								lineNum = tooltip:AddLine( "b" )
-								tooltip:SetCell( lineNum, 1, " ", "LEFT", 1 )
-								local colIndex = 2
-								tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( "      " .. e ), "LEFT", 1 )
-								tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
-									HitCrit_MouseHandler, "4~damage~" .. m .. "~a" )
-								if ( dbod.avg ) then
-									colIndex = colIndex + 1
-									tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
+
+								if db_display.hit then
+									col_index = col_index + 1
+									tooltip:SetCell(line_num, col_index, HitCrit_hit(i.hit[1].value), "RIGHT", 1)
+									tooltip:SetCellScript(line_num, col_index, "OnMouseDown", HitCrit_MouseHandler, "4~damage~" .. m .. "~h")
 								end
-								if ( dbod.hit ) then
-									colIndex = colIndex + 1
-									tooltip:SetCell( lineNum, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
-									tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
-										HitCrit_MouseHandler, "4~damage~" .. m .. "~h" )
-								end
-								if ( dbod.crit ) then
-									colIndex = colIndex + 1
-									tooltip:SetCell( lineNum, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
-									tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
-										HitCrit_MouseHandler, "4~damage~" .. m .. "~c" )
-								end
-								if ( dbod.enemyName ) then 
-									colIndex = colIndex + 1
-									if ( c ~= 0 ) then
-										tooltip:SetCell( lineNum, colIndex, HitCrit_crit( i.crit[1].name ), "RIGHT", 1 )
+
+								if db_display.crit then
+									local crit_percent
+
+									if i.num ~= 0 and i.numcrit ~= 0 then
+										crit_percent = string.format("(%.1f%%)", (i.numcrit / i.num * 100))
 									else
-										tooltip:SetCell( lineNum, colIndex, HitCrit_hit( i.hit[1].name ), "RIGHT", 1 )
+										crit_percent = ""
+									end
+									col_index = col_index + 1
+									tooltip:SetCell(line_num, col_index, HitCrit_crit(crit_value .. crit_percent), "RIGHT", 1)
+									tooltip:SetCellScript(line_num, col_index, "OnMouseDown", HitCrit_MouseHandler, "4~damage~" .. m .. "~c")
+								end
+
+								if db_display.enemyName then
+									col_index = col_index + 1
+									if crit_value ~= 0 then
+										tooltip:SetCell(line_num, col_index, HitCrit_crit(i.crit[1].name), "RIGHT", 1)
+									else
+										tooltip:SetCell(line_num, col_index, HitCrit_hit(i.hit[1].name), "RIGHT", 1)
 									end
 								end
 							end
@@ -788,76 +918,80 @@ function addon:drawTooltip( talent )
 				end
 			end
 		end
+
+		---------------------------------------------
+		-- TODO: Look at all code under this comment.
+		---------------------------------------------
 		-- healing block
-		if ( not dbs.allhealing ) then
-			lineNum = tooltip:AddLine( " " )
-			tooltip:SetCell( lineNum, 1, "+", "LEFT", 1 )
-			tooltip:SetCell( lineNum, 2, HitCrit_Green( "  " .. L["Healing"] ), "LEFT", ( numCols - 1 ) )
-			tooltip:SetCellScript( lineNum, 2, "OnMouseDown", HitCrit_MouseHandler, "2~heal~0~h" )
-			if ( dbe.expheal == false ) then
-				tooltip:SetCell( lineNum, 1, plusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
+		if ( not db_suppress.allhealing ) then
+			line_num = tooltip:AddLine( " " )
+			tooltip:SetCell( line_num, 1, "+", "LEFT", 1 )
+			tooltip:SetCell( line_num, 2, HitCrit_Green( "  " .. L["Healing"] ), "LEFT", ( num_columns - 1 ) )
+			tooltip:SetCellScript( line_num, 2, "OnMouseDown", HitCrit_MouseHandler, "2~heal~0~h" )
+			if ( db_expand.expheal == false ) then
+				tooltip:SetCell( line_num, 1, PLUS_ICON, "LEFT", 1 )
+				tooltip:SetCellScript( line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
 			else
-				tooltip:SetCell( lineNum, 1, minusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
+				tooltip:SetCell( line_num, 1, MINUS_ICON, "LEFT", 1 )
+				tooltip:SetCellScript( line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
 				wipe(t)
 				table.insert( t, " " )
 				table.insert( t, HitCrit_White( "    " .. L["Effect"] ) )
-				if ( dbod.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
-				if ( dbod.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
-				if ( dbod.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
-				if ( dbod.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
+				if ( db_display.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
+				if ( db_display.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
+				if ( db_display.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
+				if ( db_display.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
 				tooltip:AddLine( unpack( t ) )
-				for k, v in pairs( spellSchools ) do
-					if ( ( next( schools.healing[k] ) ~= nil ) and ( not dbs.healing[k] ) ) then
-						lineNum = tooltip:AddLine( " " )
-						tooltip:SetCell( lineNum, 2, HitCrit_sch( "    " .. v ), "LEFT", ( numCols - 1 ) )
-						tooltip:SetCellScript( lineNum, 2, "OnMouseDown",
+				for k, v in pairs(SPELL_SCHOOLS) do
+					if ( ( next( schools.healing[k] ) ~= nil ) and ( not db_suppress.healing[k] ) ) then
+						line_num = tooltip:AddLine( " " )
+						tooltip:SetCell( line_num, 2, HitCrit_sch( "    " .. v ), "LEFT", ( num_columns - 1 ) )
+						tooltip:SetCellScript( line_num, 2, "OnMouseDown",
 							HitCrit_MouseHandler, "3~heal~" .. k .. "~h" )
-						if ( dbe.healing[k] == false ) then
-							tooltip:SetCell( lineNum, 1, "  " .. plusIcon, "LEFT", 1 )
-							tooltip:SetCellScript( lineNum, 1, "OnMouseDown",
+						if ( db_expand.healing[k] == false ) then
+							tooltip:SetCell( line_num, 1, "  " .. PLUS_ICON, "LEFT", 1 )
+							tooltip:SetCellScript( line_num, 1, "OnMouseDown",
 								HitCrit_ExpandHandler, "healing~" .. k )
 						else
-							tooltip:SetCell( lineNum, 1, "  " .. minusIcon, "LEFT", 1 )
-							tooltip:SetCellScript( lineNum, 1, "OnMouseDown",
+							tooltip:SetCell( line_num, 1, "  " .. MINUS_ICON, "LEFT", 1 )
+							tooltip:SetCellScript( line_num, 1, "OnMouseDown",
 								HitCrit_ExpandHandler, "healing~" .. k )
 							for m, n in pairs( schools.healing[k] ) do
 								local i = db.values[talent]["heal"][m]
 								local e, h, c, a = i.effect, i.hit[1].value, i.crit[1].value, floor( i.total / i.num )
 								local cp = ""
-								if ( ( i.num ~= 0 ) and ( i.numcrit ~= 0 ) ) 
+								if ( ( i.num ~= 0 ) and ( i.numcrit ~= 0 ) )
 									then cp = string.format( "(%.1f%%)", ( i.numcrit / i.num * 100 ) )
 								end
 								if ( i.num == 0 ) then a = " " end
-								lineNum = tooltip:AddLine( " " )
-								tooltip:SetCell( lineNum, 1, " ", "LEFT", 1 )
+								line_num = tooltip:AddLine( " " )
+								tooltip:SetCell( line_num, 1, " ", "LEFT", 1 )
 								colIndex = 2
-								tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( "      " .. e ), "LEFT", 1 )
-								tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+								tooltip:SetCell( line_num, colIndex, HitCrit_Yellow( "      " .. e ), "LEFT", 1 )
+								tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 									HitCrit_MouseHandler, "4~heal~" .. m .. "~a" )
-								if ( dbod.avg ) then
+								if ( db_display.avg ) then
 									colIndex = colIndex + 1
-									tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
+									tooltip:SetCell( line_num, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
 								end
-								if ( dbod.hit ) then
+								if ( db_display.hit ) then
 									colIndex = colIndex + 1
-									tooltip:SetCell( lineNum, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
-									tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+									tooltip:SetCell( line_num, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
+									tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 										HitCrit_MouseHandler, "4~heal~" .. m .. "~h" )
 								end
-								if ( dbod.crit ) then
+								if ( db_display.crit ) then
 									colIndex = colIndex + 1
-									tooltip:SetCell( lineNum, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
-									tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+									tooltip:SetCell( line_num, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
+									tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 										HitCrit_MouseHandler, "4~heal~" .. m .. "~c" )
 								end
-								if ( dbod.enemyName ) then 
+								if ( db_display.enemyName ) then
 									colIndex = colIndex + 1
 									if ( c ~= 0 ) then
-										tooltip:SetCell( lineNum, colIndex, HitCrit_crit( i.crit[1].name ), "RIGHT", 1 )
+										tooltip:SetCell( line_num, colIndex, HitCrit_crit( i.crit[1].name ), "RIGHT", 1 )
 									else
-										tooltip:SetCell( lineNum, colIndex, HitCrit_hit( i.hit[1].name ), "RIGHT", 1 )
+										tooltip:SetCell( line_num, colIndex, HitCrit_hit( i.hit[1].name ), "RIGHT", 1 )
 									end
 								end
 							end
@@ -867,119 +1001,119 @@ function addon:drawTooltip( talent )
 			end
 		end
 	else
-		if ( not dbs.alldamage ) then
+		if ( not db_suppress.alldamage ) then
 			-- damage header lines
-			lineNum = tooltip:AddLine( " " )
-			tooltip:SetCell( lineNum, 2, HitCrit_Red( "  " .. L["Damage"] ), "LEFT", ( numCols - 1 ) )
-			tooltip:SetCellScript( lineNum, 2, "OnMouseDown", HitCrit_MouseHandler, "2~damage~0~h" )
-			if ( dbe.expdmg == false ) then
-				tooltip:SetCell( lineNum, 1, plusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg" )
+			line_num = tooltip:AddLine( " " )
+			tooltip:SetCell( line_num, 2, HitCrit_Red( "  " .. L["Damage"] ), "LEFT", ( num_columns - 1 ) )
+			tooltip:SetCellScript( line_num, 2, "OnMouseDown", HitCrit_MouseHandler, "2~damage~0~h" )
+			if ( db_expand.expdmg == false ) then
+				tooltip:SetCell( line_num, 1, PLUS_ICON, "LEFT", 1 )
+				tooltip:SetCellScript( line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg" )
 			else
-				tooltip:SetCell( lineNum, 1, minusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg" )
+				tooltip:SetCell( line_num, 1, MINUS_ICON, "LEFT", 1 )
+				tooltip:SetCellScript( line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "dmg" )
 				table.insert( t, " " )
 				table.insert( t, HitCrit_White( "    " .. L["Effect"] ) )
-				if ( dbod.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
-				if ( dbod.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
-				if ( dbod.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
-				if ( dbod.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
+				if ( db_display.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
+				if ( db_display.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
+				if ( db_display.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
+				if ( db_display.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
 				tooltip:AddLine( unpack( t ) )
 				for k, v in pairs( db.values[talent]["damage"] ) do
 					local e, h, c, a = v.effect, v.hit[1].value, v.crit[1].value, floor( v.total / v.num )
 					local cp = ""
-					if ( ( v.num ~= 0 ) and ( v.numcrit ~= 0 ) ) 
+					if ( ( v.num ~= 0 ) and ( v.numcrit ~= 0 ) )
 						then cp = string.format( "(%.1f%%)", ( v.numcrit / v.num * 100 ) )
 					end
 					if ( v.num == 0 ) then a = " " end
-					lineNum = tooltip:AddLine( " " )
-					tooltip:SetCell( lineNum, 1, " ", "LEFT", 1 )
+					line_num = tooltip:AddLine( " " )
+					tooltip:SetCell( line_num, 1, " ", "LEFT", 1 )
 					colIndex = 2
-					tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( "    " .. e ), "LEFT", 1 )
-					tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+					tooltip:SetCell( line_num, colIndex, HitCrit_Yellow( "    " .. e ), "LEFT", 1 )
+					tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 						HitCrit_MouseHandler, "4~damage~" .. k .. "~a" )
-					if ( dbod.avg ) then
+					if ( db_display.avg ) then
 						colIndex = colIndex + 1
-						tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
+						tooltip:SetCell( line_num, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
 					end
-					if ( dbod.hit ) then
+					if ( db_display.hit ) then
 						colIndex = colIndex + 1
-						tooltip:SetCell( lineNum, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
-						tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+						tooltip:SetCell( line_num, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
+						tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 							HitCrit_MouseHandler, "4~damage~" .. k .. "~h" )
 					end
-					if ( dbod.crit ) then
+					if ( db_display.crit ) then
 						colIndex = colIndex + 1
-						tooltip:SetCell( lineNum, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
-						tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+						tooltip:SetCell( line_num, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
+						tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 							HitCrit_MouseHandler, "4~damage~" .. k .. "~c" )
 					end
-					if ( dbod.enemyName ) then 
+					if ( db_display.enemyName ) then
 						colIndex = colIndex + 1
 						if ( c ~= 0 ) then
-							tooltip:SetCell( lineNum, colIndex, HitCrit_crit( v.crit[1].name ), "RIGHT", 1 )
+							tooltip:SetCell( line_num, colIndex, HitCrit_crit( v.crit[1].name ), "RIGHT", 1 )
 						else
-							tooltip:SetCell( lineNum, colIndex, HitCrit_hit( v.hit[1].name ), "RIGHT", 1 )
+							tooltip:SetCell( line_num, colIndex, HitCrit_hit( v.hit[1].name ), "RIGHT", 1 )
 						end
 					end
 				end
 			end
 		end
-		if ( not dbs.allhealing ) then
+		if ( not db_suppress.allhealing ) then
 			-- healing header lines
-			lineNum = tooltip:AddLine( " " )
-			tooltip:SetCell( lineNum, 2, HitCrit_Green( "  " .. L["Healing"] ), "LEFT", ( numCols - 1 ) )
-			tooltip:SetCellScript( lineNum, 2, "OnMouseDown", HitCrit_MouseHandler, "2~heal~0~h" )
-			if ( dbe.expheal == false ) then
-				tooltip:SetCell( lineNum, 1, plusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
+			line_num = tooltip:AddLine( " " )
+			tooltip:SetCell( line_num, 2, HitCrit_Green( "  " .. L["Healing"] ), "LEFT", ( num_columns - 1 ) )
+			tooltip:SetCellScript( line_num, 2, "OnMouseDown", HitCrit_MouseHandler, "2~heal~0~h" )
+			if ( db_expand.expheal == false ) then
+				tooltip:SetCell( line_num, 1, PLUS_ICON, "LEFT", 1 )
+				tooltip:SetCellScript( line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
 			else
-				tooltip:SetCell( lineNum, 1, minusIcon, "LEFT", 1 )
-				tooltip:SetCellScript( lineNum, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
+				tooltip:SetCell( line_num, 1, MINUS_ICON, "LEFT", 1 )
+				tooltip:SetCellScript( line_num, 1, "OnMouseDown", HitCrit_ExpandHandler, "heal" )
 				wipe(t)
 				table.insert( t, " " )
 				table.insert( t, HitCrit_White( "    " .. L["Effect"] ) )
-				if ( dbod.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
-				if ( dbod.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
-				if ( dbod.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
-				if ( dbod.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
+				if ( db_display.avg ) then table.insert( t, HitCrit_White( L["Avg"] ) ) end
+				if ( db_display.hit ) then table.insert( t, HitCrit_White( L["Hit"] ) ) end
+				if ( db_display.crit ) then table.insert( t, HitCrit_White( L["Crit"] .. "(%)" ) ) end
+				if ( db_display.enemyName ) then table.insert( t, HitCrit_White( L["Against"] ) ) end
 				tooltip:AddLine( unpack( t ) )
 				-- loop through healing
 				for k, v in pairs( db.values[talent]["heal"] ) do
 					local e, h, c, a = v.effect, v.hit[1].value, v.crit[1].value, floor( v.total / v.num )
 					local cp = ""
-					if ( ( v.num ~= 0 ) and ( v.numcrit ~= 0 ) ) 
+					if ( ( v.num ~= 0 ) and ( v.numcrit ~= 0 ) )
 						then cp = string.format( "(%.1f%%)", ( v.numcrit / v.num * 100 ) )
 					end
 					if ( v.num == 0 ) then a = " " end
-					lineNum = tooltip:AddLine( " " )
-					tooltip:SetCell( lineNum, 1, " ", "LEFT", 1 )
+					line_num = tooltip:AddLine( " " )
+					tooltip:SetCell( line_num, 1, " ", "LEFT", 1 )
 					colIndex = 2
-					tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( "    " .. e ), "LEFT", 1 )
-					tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+					tooltip:SetCell( line_num, colIndex, HitCrit_Yellow( "    " .. e ), "LEFT", 1 )
+					tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 						HitCrit_MouseHandler, "4~heal~" .. k .. "~a" )
-					if ( dbod.avg ) then
+					if ( db_display.avg ) then
 						colIndex = colIndex + 1
-						tooltip:SetCell( lineNum, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
+						tooltip:SetCell( line_num, colIndex, HitCrit_Yellow( a ), "RIGHT", 1 )
 					end
-					if ( dbod.hit ) then
+					if ( db_display.hit ) then
 						colIndex = colIndex + 1
-						tooltip:SetCell( lineNum, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
-						tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+						tooltip:SetCell( line_num, colIndex, HitCrit_hit( h ), "RIGHT", 1 )
+						tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 							HitCrit_MouseHandler, "4~heal~" .. k .. "~h" )
 					end
-					if ( dbod.crit ) then
+					if ( db_display.crit ) then
 						colIndex = colIndex + 1
-						tooltip:SetCell( lineNum, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
-						tooltip:SetCellScript( lineNum, colIndex, "OnMouseDown", 
+						tooltip:SetCell( line_num, colIndex, HitCrit_crit( c .. cp ), "RIGHT", 1 )
+						tooltip:SetCellScript( line_num, colIndex, "OnMouseDown",
 							HitCrit_MouseHandler, "4~heal~" .. k .. "~c" )
 					end
-					if ( dbod.enemyName ) then 
+					if ( db_display.enemyName ) then
 						colIndex = colIndex + 1
 						if ( c ~= 0 ) then
-							tooltip:SetCell( lineNum, colIndex, HitCrit_crit( v.crit[1].name ), "RIGHT", 1 )
+							tooltip:SetCell( line_num, colIndex, HitCrit_crit( v.crit[1].name ), "RIGHT", 1 )
 						else
-							tooltip:SetCell( lineNum, colIndex, HitCrit_hit( v.hit[1].name ), "RIGHT", 1 )
+							tooltip:SetCell( line_num, colIndex, HitCrit_hit( v.hit[1].name ), "RIGHT", 1 )
 						end
 					end
 				end
@@ -988,50 +1122,50 @@ function addon:drawTooltip( talent )
 	end
 	-- Add menu items
 	tooltip:AddLine(" ")
-	lineNum = tooltip:AddLine( "c" )
-	tooltip:SetCell( lineNum, 1, HitCrit_Yellow( L["Left-click to Report values in chat"] ), "LEFT", numCols )
-	lineNum = tooltip:AddLine( "d" )
-	tooltip:SetCell( lineNum, 1, HitCrit_Yellow( L["Alt-Left-click to delete values"] ), "LEFT", numCols )
-	lineNum = tooltip:AddLine( "e" )
-	tooltip:SetCell( lineNum, 1, HitCrit_Yellow( L["Right-click for Configuration"] ), "LEFT", numCols )
-	lineNum = tooltip:AddLine( "f" )
+	line_num = tooltip:AddLine( "c" )
+	tooltip:SetCell( line_num, 1, HitCrit_Yellow( L["Left-click to Report values in chat"] ), "LEFT", num_columns)
+	line_num = tooltip:AddLine( "d" )
+	tooltip:SetCell( line_num, 1, HitCrit_Yellow( L["Alt-Left-click to delete values"] ), "LEFT", num_columns)
+	line_num = tooltip:AddLine( "e" )
+	tooltip:SetCell( line_num, 1, HitCrit_Yellow( L["Right-click for Configuration"] ), "LEFT", num_columns)
+	line_num = tooltip:AddLine( "f" )
 	if ( HitCrit.currTT == HitCrit.activeTalents ) then
-		tooltip:SetCell( lineNum, 1, HitCrit_Yellow( L["Alt-Right-click to see Inactive Spec"] ), "LEFT", numCols )
+		tooltip:SetCell( line_num, 1, HitCrit_Yellow( L["Alt-Right-click to see Inactive Spec"] ), "LEFT", num_columns)
 	else
-		tooltip:SetCell( lineNum, 1, HitCrit_Yellow( L["Alt-Right-click to see Active Spec"] ), "LEFT", numCols )
+		tooltip:SetCell( line_num, 1, HitCrit_Yellow( L["Alt-Right-click to see Active Spec"] ), "LEFT", num_columns)
 	end
 end
 
 local LDB = LibStub( "LibDataBroker-1.1" )
-local launcher = LDB:NewDataObject( MODNAME, {
+local launcher = LDB:NewDataObject( ADDON_NAME, {
 	type = "data source",
 	text = " ",
-	label = FULLNAME,
+	label = FOLDER_NAME,
 	icon = "Interface\\Addons\\Broker_HitCrit\\icon",
 	OnClick = function(clickedframe, button)
-				if ( button == "RightButton" ) then
-					if ( IsAltKeyDown() ) then
-						-- switch to other spec
-						if ( HitCrit.currTT == 1 ) then
-							HitCrit.currTT = 2
-						else
-							HitCrit.currTT = 1
-						end
-						tooltip:Release()
-						tooltip = QT:Acquire( "HitCritTT", 5, "LEFT", "RIGHT", "RIGHT", "RIGHT", "RIGHT" )
-						tooltip:SetScale( db.options.display.tipscale )
-						addon:drawTooltip( HitCrit.currTT )
-						tooltip:SetAutoHideDelay( db.options.display.autoHideDelay, clickedframe )
-						tooltip:EnableMouse()
-						tooltip:SmartAnchorTo( clickedframe )
-						tooltip:UpdateScrolling()
-						tooltip:Show()
-					else
-						HitCrit:ShowConfig()
-					end
+		if (button == "RightButton") then
+			if (IsAltKeyDown()) then
+				-- switch to other spec
+				if (HitCrit.currTT == 1) then
+					HitCrit.currTT = 2
 				else
-					-- does nothing unless you're in the tooltip. handled elsewhere
+					HitCrit.currTT = 1
 				end
+				tooltip:Release()
+				tooltip = QT:Acquire("HitCritTT", 5, "LEFT", "RIGHT", "RIGHT", "RIGHT", "RIGHT")
+				tooltip:SetScale(db.options.display.tipscale)
+				addon:drawTooltip(HitCrit.currTT)
+				tooltip:SetAutoHideDelay(db.options.display.autoHideDelay, clickedframe)
+				tooltip:EnableMouse()
+				tooltip:SmartAnchorTo(clickedframe)
+				tooltip:UpdateScrolling()
+				tooltip:Show()
+			else
+				HitCrit:ShowConfig()
+			end
+		else
+			-- does nothing unless you're in the tooltip. handled elsewhere
+		end
 	end,
 	OnEnter = function ( self )
 		tooltip = QT:Acquire( "HitCritTT", 5, "LEFT", "RIGHT", "RIGHT", "RIGHT", "RIGHT" )
@@ -1050,10 +1184,9 @@ local launcher = LDB:NewDataObject( MODNAME, {
 	end,
 } )
 
-function HitCrit_upgradeDB()
-
+local function HitCrit_upgradeDB()
 	-- this function is only ever used inside this scope
-	local function tblCopy( src ) 
+	local function tblCopy( src )
 		local tgt = {}
 		for k, v in pairs( src ) do
 			if ( type( v ) == "table" ) then
@@ -1064,7 +1197,7 @@ function HitCrit_upgradeDB()
 		end
 		return tgt
 	end
-	
+
 	local olddb = HitCrit.db.factionrealm[HitCrit.me]
 	-- This checks the current DB version the person has, and upgrades as necessary
 	if not ( olddb.options.display.dbVersion ) then
@@ -1076,7 +1209,7 @@ function HitCrit_upgradeDB()
 				v.dmg.."/"..v.school.."/"..v.effect )
 			if ( v.dmg == 1 ) then side = "damage" else side = "heal" end
 			local entry = HitCrit_initSpellEntry()
-			_, sRank = GetSpellInfo( k )
+			local _, sRank = _G.GetSpellInfo(k)
 			entry.school = v.school
 			entry.effect = v.effect
 			entry.rank = sRank
@@ -1152,12 +1285,12 @@ function HitCrit_upgradeDB()
 	if ( olddb.options.display.dbVersion == "1.9" ) then
 		olddb.options.tracking.healing = nil
 		olddb.options.tracking.healing = {}
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.tracking.healing[k] = true
 		end
 		olddb.options.tracking.damage = nil
 		olddb.options.tracking.damage = {}
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.tracking.damage[k] = true
 		end
 		olddb.options.display.dbVersion = "2.0"
@@ -1199,7 +1332,7 @@ function HitCrit_upgradeDB()
 		olddb.options.suppress.alldamage = false
 		olddb.options.suppress.healing = {}
 		olddb.options.suppress.damage = {}
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.suppress.healing[k] = false
 			olddb.options.suppress.damage[k] = false
 		end
@@ -1212,7 +1345,7 @@ function HitCrit_upgradeDB()
 		olddb.options.expand.expdmg = true
 		olddb.options.expand.healing = {}
 		olddb.options.expand.damage = {}
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.expand.healing[k] = true
 			olddb.options.expand.damage[k] = true
 		end
@@ -1225,7 +1358,7 @@ function HitCrit_upgradeDB()
 		HitCrit_Print( string.format( L["Database upgraded to %s"], "2.9" ) )
 	end
 	if ( olddb.options.display.dbVersion == "2.9" ) then
-		local activeTalentGroup = GetActiveTalentGroup( false, false )
+		local activeTalentGroup = _G.GetActiveSpecGroup()
 		local destTree = {}
 		local otherTree = {}
 		olddb.values[1] = {}
@@ -1252,15 +1385,15 @@ function HitCrit_upgradeDB()
 		HitCrit_Print( string.format( L["Database upgraded to %s"], "3.0" ) )
 	end
 	if ( olddb.options.display.dbVersion == "3.0" ) then
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.suppress.healing[k] = false
 			olddb.options.suppress.damage[k] = false
 		end
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.expand.healing[k] = true
 			olddb.options.expand.damage[k] = true
 		end
-		for k, v in pairs( spellSchools ) do
+		for k, v in pairs(SPELL_SCHOOLS) do
 			olddb.options.tracking.healing[k] = true
 			olddb.options.tracking.damage[k] = true
 		end
@@ -1302,7 +1435,7 @@ function HitCrit:ChangeLabel()
 			end
 			if ( dbd.colorLabel == true ) then
 				healtext = HitCrit_Green( tophit .. " (" .. topcrit .. ")" )
-			else 
+			else
 				healtext = tophit .. " (" .. topcrit .. ")"
 			end
 			blort = blort + 1
@@ -1332,10 +1465,11 @@ function HitCrit:ChangeLabel()
 	end
 end
 
-local alertOptions = nil
-local displayOptions = nil
-local trackingOptions = nil
-local options = nil
+local alertOptions
+local displayOptions
+local suppressOptions
+local trackingOptions
+local options
 
 -- options stuff
 local function giveTracking()
@@ -1443,7 +1577,7 @@ local function giveTracking()
 						else
 							newsetvalue = false
 						end
-						for k, v in pairs( spellSchools ) do
+						for k, v in pairs(SPELL_SCHOOLS) do
 							db.options.tracking.damage[k] = newsetvalue
 						end
 					end,
@@ -1472,7 +1606,7 @@ local function giveTracking()
 						else
 							newsetvalue = false
 						end
-						for k, v in pairs( spellSchools ) do
+						for k, v in pairs(SPELL_SCHOOLS) do
 							db.options.tracking.healing[k] = newsetvalue
 						end
 					end,
@@ -1481,7 +1615,7 @@ local function giveTracking()
 		}
 	end
 	-- loops to add in the spell school stuff
-	for k, v in pairs( spellSchools ) do
+	for k, v in pairs(SPELL_SCHOOLS) do
 		local dmgname = "dmgsch" .. k
 		local healname = "healdch" .. k
 		-- damage
@@ -1494,7 +1628,7 @@ local function giveTracking()
 			set		= function()
 				db.options.tracking.damage[k] = not db.options.tracking.damage[k]
 				local result = true
-				for k, v in pairs( spellSchools ) do
+				for k, v in pairs(SPELL_SCHOOLS) do
 					if ( db.options.tracking.damage[k] == false ) then
 						result = false
 						break
@@ -1512,7 +1646,7 @@ local function giveTracking()
 			set		= function()
 				db.options.tracking.healing[k] = not db.options.tracking.healing[k]
 				local result = true
-				for k, v in pairs( spellSchools ) do
+				for k, v in pairs(SPELL_SCHOOLS) do
 					if ( db.options.tracking.healing[k] == false ) then
 						result = false
 						break
@@ -1593,7 +1727,7 @@ local function giveDisplay()
 					step	= .05,
 					bigStep = .05,
 					get		= function() return db.options.display.tipscale end,
-					set		= function( info, v ) 
+					set		= function( info, v )
 								db.options.display.tipscale = v
 								tooltip:SetScale( v )
 							  end,
@@ -1617,7 +1751,7 @@ local function giveDisplay()
 					set		= function()
 								db.options.display.label = not db.options.display.label
 								HitCrit:ChangeLabel()
-							  end,									
+							  end,
 				},
 				labelHeal = {
 					order	= 103,
@@ -1676,7 +1810,7 @@ local function giveDisplay()
 						  end,
 					set	= function(info, value)
 							db.options.display.minimap_icon.hide = not value
-							  LDBIcon[value and "Show" or "Hide"](LDBIcon, MODNAME)
+							  LDBIcon[value and "Show" or "Hide"](LDBIcon, ADDON_NAME)
 						  end,
 				},
 				header4 = {
@@ -1707,7 +1841,7 @@ local function giveDisplay()
 					step	= .1,
 					bigStep = .1,
 					get		= function() return db.options.display.autoHideDelay end,
-					set		= function( info, v ) 
+					set		= function( info, v )
 								db.options.display.autoHideDelay = v
 							  end,
 				},
@@ -1750,7 +1884,7 @@ local function giveSuppress()
 						else
 							newsetvalue = false
 						end
-						for k, v in pairs( spellSchools ) do
+						for k, v in pairs(SPELL_SCHOOLS) do
 							dbs.damage[k] = newsetvalue
 						end
 					end,
@@ -1780,7 +1914,7 @@ local function giveSuppress()
 						else
 							newsetvalue = false
 						end
-						for k, v in pairs( spellSchools ) do
+						for k, v in pairs(SPELL_SCHOOLS) do
 							dbs.healing[k] = newsetvalue
 						end
 					end,
@@ -1817,7 +1951,7 @@ local function giveSuppress()
 		}
 	end
 	-- loops to add in the spell school stuff
-	for k, v in pairs( spellSchools ) do
+	for k, v in pairs(SPELL_SCHOOLS) do
 		local dmgname = "dmgsch" .. k
 		local healname = "healsch" .. k
 		suppressOptions.args[dmgname] = {
@@ -1830,7 +1964,7 @@ local function giveSuppress()
 				local dbs = db.options.suppress
 				dbs.damage[k] = not dbs.damage[k]
 				local result = true
-				for k, v in pairs( spellSchools ) do
+				for k, v in pairs(SPELL_SCHOOLS) do
 					if ( dbs.damage[k] == false ) then
 						result = false
 						break
@@ -1849,7 +1983,7 @@ local function giveSuppress()
 				local dbs = db.options.suppress
 				dbs.healing[k] = not dbs.healing[k]
 				local result = true
-				for k, v in pairs( spellSchools ) do
+				for k, v in pairs(SPELL_SCHOOLS) do
 					if ( dbs.healing[k] == false ) then
 						result = false
 						break
@@ -2020,7 +2154,7 @@ local function fullOptions()
 	if (not options) then
 		options = {
 			type = "group",
-			name = MODNAME,
+			name = ADDON_NAME,
 			args = {
 				general = {
 					order	= 1,
@@ -2041,17 +2175,17 @@ local function fullOptions()
 						author = {
 							order	= 13,
 							type	= "description",
-							name	= L["Author : "] .. addonauthor .. "\n",
+							name	= L["Author : "] .. addon_author .. "\n",
 						},
 						version = {
 							order	= 14,
 							type	= "description",
-							name	= L["Version : "] .. addonversion .. "\n",
+							name	= L["Version : "] .. addon.version .. "\n",
 						},
 						builddate = {
 							order	= 15,
 							type	= "description",
-							name	= L["Build Date : "] .. builddate .. "\n",
+							name	= L["Build Date : "] .. build_date .. "\n",
 						},
 						dbversion = {
 							order	= 15,
@@ -2070,7 +2204,7 @@ local function fullOptions()
 			},
 		}
 	end
-	
+
 	for k,v in pairs(modularOptions) do
 		options.args[k] = (type(v) == "function") and v() or v
 	end
@@ -2079,8 +2213,8 @@ local function fullOptions()
 end
 
 function addon:SetupOptions()
-	AceConfigReg:RegisterOptionsTable(MODNAME, fullOptions)
-	self.optionsFrame = AceConfigDialog:AddToBlizOptions(MODNAME, nil, nil, "general")
+	AceConfigReg:RegisterOptionsTable(ADDON_NAME, fullOptions)
+	self.optionsFrame = AceConfigDialog:AddToBlizOptions(ADDON_NAME, nil, nil, "general")
 
 	-- Fill up our modular options...
 	self:RegisterModuleOptions("Tracking", giveTracking(), L["Tracking Options"])
@@ -2092,7 +2226,7 @@ end
 function addon:setToggles()
 	local tdb = db.options.tracking.damage
 	local result = true
-	for k, v in pairs( spellSchools ) do
+	for k, v in pairs(SPELL_SCHOOLS) do
 		if ( tdb[k] == false ) then
 			result = false
 			break
@@ -2101,7 +2235,7 @@ function addon:setToggles()
 	HitCrit.dmgToggleAll = result
 	tdb = db.options.tracking.healing
 	result = true
-	for k, v in pairs( spellSchools ) do
+	for k, v in pairs(SPELL_SCHOOLS) do
 		if ( tdb[k] == false ) then
 			result = false
 			break
@@ -2112,8 +2246,7 @@ end
 
 function addon:populateSuperBuffs()
 	for k, v in pairs( superBuffIDs ) do
-		sName = GetSpellInfo( k )
-		superBuffNames[sName] = true
+		superBuffNames[_G.GetSpellInfo(k)] = true
 	end
 end
 
@@ -2121,11 +2254,11 @@ function addon:checkSuperBuffs()
 	HitCrit_Debug( "checking superbuffs" )
 	-- UnitControllingVehicle ?? UnitHasVehicleUI?? UnitInVehicle
 	-- do superbuff checks
-	local prevState = addon.superBuffed 
+	local prevState = addon.superBuffed
 	addon.superBuffed = false
 	local i = 1
 	while ( true ) do
-		local name, _, texture = UnitBuff( "player", i )
+		local name, _, texture = _G.UnitBuff( "player", i )
 		-- if texture is nil, we're past the end of the buffs
 		if not texture then break end
 		if ( superBuffNames[ name ] == true ) then
@@ -2171,25 +2304,6 @@ function addon:checkSuperBuffs()
 	end
 end
 
-function addon:GetSpecName()
-	local activeTab = 0
-	local maxPointsSpent = 0
-	local specName = ""
-	for i = 1, 3 do
-		local _, tabName, _, _, points = GetTalentTabInfo( i, false, false, HitCrit.activeTalents )
-		if ( points > maxPointsSpent ) then
-			activeTab = i
-			maxPointsSpent = points
-			specName = tabName
-		end
-	end
-	if ( activeTab == 0 ) then
-		return ""
-	else
-		return specName
-	end
-end
-
 function HitCrit:UNIT_AURA( ... )
 	HitCrit_Debug( "Player unit aura event fired" )
 	HitCrit:checkSuperBuffs()
@@ -2207,116 +2321,19 @@ end
 
 function HitCrit:ACTIVE_TALENT_GROUP_CHANGED( ... )
 	HitCrit_Debug( "Player talents switched" )
-	HitCrit.activeTalents = GetActiveTalentGroup( false, false )
-	HitCrit.specName = addon.GetSpecName()
+	HitCrit.activeTalents = GetActiveSpecGroup()
+	HitCrit.specName = select(2, GetSpecializationInfo(GetSpecialization()))
 	HitCrit.currTT = HitCrit.activeTalents
 end
 
 function addon:RegisterModuleOptions(name, optionsTable, displayName)
 	modularOptions[name] = optionsTable
-	self.optionsFrame[name] = AceConfigDialog:AddToBlizOptions(MODNAME, displayName, MODNAME, name)
+	self.optionsFrame[name] = AceConfigDialog:AddToBlizOptions(ADDON_NAME, displayName, ADDON_NAME, name)
 end
 
 function HitCrit:ShowConfig()
 	-- Open the profiles tab before, so the menu expands
 	InterfaceOptionsFrame_OpenToCategory( self.optionsFrame["Display"] )
-end
-
-function HitCrit_ResetData()
-	-- If we're here, the user already confirmed. Nuke away...
-	if ( HitCrit.resetType == 1 ) then
-		-- Reset all data for this toon
-		-- Don't actually have a way to reach this anymore...
-	elseif ( HitCrit.resetType == 2 ) then
-		-- Reset all data either in "damage" or "heal"
-		if ( HitCrit.selCategory == 1 ) then
-			db.values[HitCrit.activeTalents].damage = nil
-			db.values[HitCrit.activeTalents].damage = {}
-		else
-			db.values[HitCrit.activeTalents].heal = nil
-			db.values[HitCrit.activeTalents].heal = {}
-		end
-	elseif ( HitCrit.resetType == 3 ) then
-		-- Reset all "damage" or "heal" data for a specific school
-		local dbc = {}
-		if ( HitCrit.selCategory == 1 ) then
-			dbc = db.values[HitCrit.activeTalents].damage
-		else
-			dbc = db.values[HitCrit.activeTalents].heal
-		end
-		for k, v in pairs( dbc ) do
-			if ( v.school == HitCrit.selSchool ) then
-				dbc[k] = nil
-			end
-		end
-	elseif ( HitCrit.resetType == 4 ) then
-		-- Reset specific spell entries (or whole entry)
-		local dbc = {}
-		if ( HitCrit.selCategory == 1 ) then
-			dbc = db.values[HitCrit.activeTalents].damage
-		else
-			dbc = db.values[HitCrit.activeTalents].heal
-		end
-		if ( HitCrit.selType == "all" ) then
-			dbc[ HitCrit.selEntry ] = nil
-		else
-			local entry = dbc[ HitCrit.selEntry ]
-			local hTable = HitCrit.selType
-			entry[ hTable ][1].value = entry[ hTable ][2].value
-			entry[ hTable ][1].name = entry[ hTable ][2].name
-			entry[ hTable ][2].value = entry[ hTable ][3].value
-			entry[ hTable ][2].name = entry[ hTable ][3].name
-			entry[ hTable ][3].value = 0
-			entry[ hTable ][3].name = ""
-		end
-	end
-
-	HitCrit.selCategory = 0
-	HitCrit.selSchool = 0
-	HitCrit.selType = 0
-	HitCrit.selSpecific = 0
-
-	HitCrit:ChangeLabel()
-end
-
-function HCBF_ResetCategoryButton()
-	HideTooltip()
-	HitCrit.resetType = 2
-	local c = ""
-	if ( HitCrit.selCategory == 1 ) then c = L["Damage"] else c = L["Heal"] end
-	StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
-		string.format( L["Reset Category: %s. Are you sure?"], c )
-	StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
-end
-
-function HCBF_ResetSchoolButton()
-	HideTooltip()
-	HitCrit.resetType = 3
-	local c = ""
-	if ( HitCrit.selCategory == 1 ) then c = L["Damage"] else c = L["Heal"] end
-	local s = spellSchools[ HitCrit.selSchool ]
-	StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
-		string.format( L["Reset Category: %s, School: %s. Are you sure?"], c, s )
-	StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
-end
-
-function HCBF_ResetEntryButton()
-	HideTooltip()
-	HitCrit.resetType = 4
-	local e = HitCrit.selEntryName
-	StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
-		string.format( L["Reset all entries for spell: %s. Are you sure?"], e )
-	StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
-end
-
-function HCBF_ResetTopEntryButton()
-	HideTooltip()
-	HitCrit.resetType = 4
-	local e = HitCrit.selEntryName
-	local t = HitCrit.selType
-	StaticPopupDialogs["HC_CONFIRM_RESET_DATA"].text =
-		string.format( L["Reset first %s entry for spell: %s. Are you sure?"], t, e )
-	StaticPopup_Show( "HC_CONFIRM_RESET_DATA" )
 end
 
 function HitCrit:OnInitialize()
@@ -2328,8 +2345,8 @@ function HitCrit:OnEnable()
 	HitCrit.me = UnitName( "player" )
 	HitCrit.GUID = UnitGUID( "player" )
 	HitCrit.level = UnitLevel( "player" )
-	HitCrit.activeTalents = GetActiveTalentGroup( false, false )
-	HitCrit.specName = addon.GetSpecName()
+	HitCrit.activeTalents = GetActiveSpecGroup()
+	HitCrit.specName = select(2, GetSpecializationInfo(GetSpecialization()))
 	HitCrit.currTT = HitCrit.activeTalents
 
 	self.db = LibStub( "AceDB-3.0" ):New( "HitCrit_DB", nil, "Default" )
@@ -2353,31 +2370,31 @@ function HitCrit:OnEnable()
 						[16]	= true,		-- frost
 						[32]	= true,		-- shadow
 						[64]	= true,		-- arcane
-						[3]		= true,		-- Holystrike	
-						[5]		= true,		-- Flamestrike	
-						[6]		= true,		-- Holyfire		
-						[9]		= true,		-- Stormstrike	
-						[10]	= true,		-- Holystorm	
-						[12]	= true,		-- Firestorm	
-						[17]	= true,		-- Froststrike	
-						[18]	= true,		-- Holyfrost	
-						[20]	= true,		-- Frostfire	
-						[24]	= true,		-- Froststorm	
-						[33]	= true,		-- Shadowstrike	
-						[34]	= true,		-- Shadowlight 	
-						[36]	= true,		-- Shadowflame	
-						[40]	= true,		-- Shadowstorm 	
-						[48]	= true,		-- Shadowfrost	
-						[65]	= true,		-- Spellstrike	
-						[66]	= true,		-- Divine		
-						[68]	= true,		-- Spellfire	
-						[72]	= true,		-- Spellstorm	
-						[80]	= true,		-- Spellfrost	
-						[96]	= true,		-- Spellshadow	
+						[3]		= true,		-- Holystrike
+						[5]		= true,		-- Flamestrike
+						[6]		= true,		-- Holyfire
+						[9]		= true,		-- Stormstrike
+						[10]	= true,		-- Holystorm
+						[12]	= true,		-- Firestorm
+						[17]	= true,		-- Froststrike
+						[18]	= true,		-- Holyfrost
+						[20]	= true,		-- Frostfire
+						[24]	= true,		-- Froststorm
+						[33]	= true,		-- Shadowstrike
+						[34]	= true,		-- Shadowlight
+						[36]	= true,		-- Shadowflame
+						[40]	= true,		-- Shadowstorm
+						[48]	= true,		-- Shadowfrost
+						[65]	= true,		-- Spellstrike
+						[66]	= true,		-- Divine
+						[68]	= true,		-- Spellfire
+						[72]	= true,		-- Spellstorm
+						[80]	= true,		-- Spellfrost
+						[96]	= true,		-- Spellshadow
 						[28]	= true,		-- Elemental
 						[124]	= true,		-- Chromatic
-						[126]	= true,		-- Magic	
-						[127]	= true,		-- Chaos		
+						[126]	= true,		-- Magic
+						[127]	= true,		-- Chaos
 					},
 					damage = {
 						[1]		= true,		-- physical
@@ -2387,31 +2404,31 @@ function HitCrit:OnEnable()
 						[16]	= true,		-- frost
 						[32]	= true,		-- shadow
 						[64]	= true,		-- arcane
-						[3]		= true,		-- Holystrike	
-						[5]		= true,		-- Flamestrike	
-						[6]		= true,		-- Holyfire		
-						[9]		= true,		-- Stormstrike	
-						[10]	= true,		-- Holystorm	
-						[12]	= true,		-- Firestorm	
-						[17]	= true,		-- Froststrike	
-						[18]	= true,		-- Holyfrost	
-						[20]	= true,		-- Frostfire	
-						[24]	= true,		-- Froststorm	
-						[33]	= true,		-- Shadowstrike	
-						[34]	= true,		-- Shadowlight 	
-						[36]	= true,		-- Shadowflame	
-						[40]	= true,		-- Shadowstorm 	
-						[48]	= true,		-- Shadowfrost	
-						[65]	= true,		-- Spellstrike	
-						[66]	= true,		-- Divine		
-						[68]	= true,		-- Spellfire	
-						[72]	= true,		-- Spellstorm	
-						[80]	= true,		-- Spellfrost	
-						[96]	= true,		-- Spellshadow	
+						[3]		= true,		-- Holystrike
+						[5]		= true,		-- Flamestrike
+						[6]		= true,		-- Holyfire
+						[9]		= true,		-- Stormstrike
+						[10]	= true,		-- Holystorm
+						[12]	= true,		-- Firestorm
+						[17]	= true,		-- Froststrike
+						[18]	= true,		-- Holyfrost
+						[20]	= true,		-- Frostfire
+						[24]	= true,		-- Froststorm
+						[33]	= true,		-- Shadowstrike
+						[34]	= true,		-- Shadowlight
+						[36]	= true,		-- Shadowflame
+						[40]	= true,		-- Shadowstorm
+						[48]	= true,		-- Shadowfrost
+						[65]	= true,		-- Spellstrike
+						[66]	= true,		-- Divine
+						[68]	= true,		-- Spellfire
+						[72]	= true,		-- Spellstorm
+						[80]	= true,		-- Spellfrost
+						[96]	= true,		-- Spellshadow
 						[28]	= true,		-- Elemental
 						[124]	= true,		-- Chromatic
-						[126]	= true,		-- Magic	
-						[127]	= true,		-- Chaos		
+						[126]	= true,		-- Magic
+						[127]	= true,		-- Chaos
 					},
 				},
 				display = {
@@ -2444,31 +2461,31 @@ function HitCrit:OnEnable()
 						[16]	= false,	-- frost
 						[32]	= false,	-- shadow
 						[64]	= false,	-- arcane
-						[3]		= false,	-- Holystrike	
-						[5]		= false,	-- Flamestrike	
-						[6]		= false,	-- Holyfire		
-						[9]		= false,	-- Stormstrike	
-						[10]	= false,	-- Holystorm	
-						[12]	= false,	-- Firestorm	
-						[17]	= false,	-- Froststrike	
-						[18]	= false,	-- Holyfrost	
-						[20]	= false,	-- Frostfire	
-						[24]	= false,	-- Froststorm	
-						[33]	= false,	-- Shadowstrike	
-						[34]	= false,	-- Shadowlight 	
-						[36]	= false,	-- Shadowflame	
-						[40]	= false,	-- Shadowstorm 	
-						[48]	= false,	-- Shadowfrost	
-						[65]	= false,	-- Spellstrike	
-						[66]	= false,	-- Divine		
-						[68]	= false,	-- Spellfire	
-						[72]	= false,	-- Spellstorm	
-						[80]	= false,	-- Spellfrost	
-						[96]	= false,	-- Spellshadow	
+						[3]		= false,	-- Holystrike
+						[5]		= false,	-- Flamestrike
+						[6]		= false,	-- Holyfire
+						[9]		= false,	-- Stormstrike
+						[10]	= false,	-- Holystorm
+						[12]	= false,	-- Firestorm
+						[17]	= false,	-- Froststrike
+						[18]	= false,	-- Holyfrost
+						[20]	= false,	-- Frostfire
+						[24]	= false,	-- Froststorm
+						[33]	= false,	-- Shadowstrike
+						[34]	= false,	-- Shadowlight
+						[36]	= false,	-- Shadowflame
+						[40]	= false,	-- Shadowstorm
+						[48]	= false,	-- Shadowfrost
+						[65]	= false,	-- Spellstrike
+						[66]	= false,	-- Divine
+						[68]	= false,	-- Spellfire
+						[72]	= false,	-- Spellstorm
+						[80]	= false,	-- Spellfrost
+						[96]	= false,	-- Spellshadow
 						[28]	= false,	-- Elemental
 						[124]	= false,	-- Chromatic
-						[126]	= false,	-- Magic	
-						[127]	= false,	-- Chaos		
+						[126]	= false,	-- Magic
+						[127]	= false,	-- Chaos
 					},
 					damage = {
 						[1]		= false,	-- physical
@@ -2478,31 +2495,31 @@ function HitCrit:OnEnable()
 						[16]	= false,	-- frost
 						[32]	= false,	-- shadow
 						[64]	= false,	-- arcane
-						[3]		= false,	-- Holystrike	
-						[5]		= false,	-- Flamestrike	
-						[6]		= false,	-- Holyfire		
-						[9]		= false,	-- Stormstrike	
-						[10]	= false,	-- Holystorm	
-						[12]	= false,	-- Firestorm	
-						[17]	= false,	-- Froststrike	
-						[18]	= false,	-- Holyfrost	
-						[20]	= false,	-- Frostfire	
-						[24]	= false,	-- Froststorm	
-						[33]	= false,	-- Shadowstrike	
-						[34]	= false,	-- Shadowlight 	
-						[36]	= false,	-- Shadowflame	
-						[40]	= false,	-- Shadowstorm 	
-						[48]	= false,	-- Shadowfrost	
-						[65]	= false,	-- Spellstrike	
-						[66]	= false,	-- Divine		
-						[68]	= false,	-- Spellfire	
-						[72]	= false,	-- Spellstorm	
-						[80]	= false,	-- Spellfrost	
-						[96]	= false,	-- Spellshadow	
+						[3]		= false,	-- Holystrike
+						[5]		= false,	-- Flamestrike
+						[6]		= false,	-- Holyfire
+						[9]		= false,	-- Stormstrike
+						[10]	= false,	-- Holystorm
+						[12]	= false,	-- Firestorm
+						[17]	= false,	-- Froststrike
+						[18]	= false,	-- Holyfrost
+						[20]	= false,	-- Frostfire
+						[24]	= false,	-- Froststorm
+						[33]	= false,	-- Shadowstrike
+						[34]	= false,	-- Shadowlight
+						[36]	= false,	-- Shadowflame
+						[40]	= false,	-- Shadowstorm
+						[48]	= false,	-- Shadowfrost
+						[65]	= false,	-- Spellstrike
+						[66]	= false,	-- Divine
+						[68]	= false,	-- Spellfire
+						[72]	= false,	-- Spellstorm
+						[80]	= false,	-- Spellfrost
+						[96]	= false,	-- Spellshadow
 						[28]	= false,	-- Elemental
 						[124]	= false,	-- Chromatic
-						[126]	= false,	-- Magic	
-						[127]	= false,	-- Chaos		
+						[126]	= false,	-- Magic
+						[127]	= false,	-- Chaos
 					},
 				},
 				expand = {
@@ -2516,31 +2533,31 @@ function HitCrit:OnEnable()
 						[16]	= true,		-- frost
 						[32]	= true,		-- shadow
 						[64]	= true,		-- arcane
-						[3]		= true,		-- Holystrike	
-						[5]		= true,		-- Flamestrike	
-						[6]		= true,		-- Holyfire		
-						[9]		= true,		-- Stormstrike	
-						[10]	= true,		-- Holystorm	
-						[12]	= true,		-- Firestorm	
-						[17]	= true,		-- Froststrike	
-						[18]	= true,		-- Holyfrost	
-						[20]	= true,		-- Frostfire	
-						[24]	= true,		-- Froststorm	
-						[33]	= true,		-- Shadowstrike	
-						[34]	= true,		-- Shadowlight 	
-						[36]	= true,		-- Shadowflame	
-						[40]	= true,		-- Shadowstorm 	
-						[48]	= true,		-- Shadowfrost	
-						[65]	= true,		-- Spellstrike	
-						[66]	= true,		-- Divine		
-						[68]	= true,		-- Spellfire	
-						[72]	= true,		-- Spellstorm	
-						[80]	= true,		-- Spellfrost	
-						[96]	= true,		-- Spellshadow	
+						[3]		= true,		-- Holystrike
+						[5]		= true,		-- Flamestrike
+						[6]		= true,		-- Holyfire
+						[9]		= true,		-- Stormstrike
+						[10]	= true,		-- Holystorm
+						[12]	= true,		-- Firestorm
+						[17]	= true,		-- Froststrike
+						[18]	= true,		-- Holyfrost
+						[20]	= true,		-- Frostfire
+						[24]	= true,		-- Froststorm
+						[33]	= true,		-- Shadowstrike
+						[34]	= true,		-- Shadowlight
+						[36]	= true,		-- Shadowflame
+						[40]	= true,		-- Shadowstorm
+						[48]	= true,		-- Shadowfrost
+						[65]	= true,		-- Spellstrike
+						[66]	= true,		-- Divine
+						[68]	= true,		-- Spellfire
+						[72]	= true,		-- Spellstorm
+						[80]	= true,		-- Spellfrost
+						[96]	= true,		-- Spellshadow
 						[28]	= true,		-- Elemental
 						[124]	= true,		-- Chromatic
-						[126]	= true,		-- Magic	
-						[127]	= true,		-- Chaos		
+						[126]	= true,		-- Magic
+						[127]	= true,		-- Chaos
 					},
 					damage = {
 						[1]		= true,		-- physical
@@ -2550,31 +2567,31 @@ function HitCrit:OnEnable()
 						[16]	= true,		-- frost
 						[32]	= true,		-- shadow
 						[64]	= true,		-- arcane
-						[3]		= true,		-- Holystrike	
-						[5]		= true,		-- Flamestrike	
-						[6]		= true,		-- Holyfire		
-						[9]		= true,		-- Stormstrike	
-						[10]	= true,		-- Holystorm	
-						[12]	= true,		-- Firestorm	
-						[17]	= true,		-- Froststrike	
-						[18]	= true,		-- Holyfrost	
-						[20]	= true,		-- Frostfire	
-						[24]	= true,		-- Froststorm	
-						[33]	= true,		-- Shadowstrike	
-						[34]	= true,		-- Shadowlight 	
-						[36]	= true,		-- Shadowflame	
-						[40]	= true,		-- Shadowstorm 	
-						[48]	= true,		-- Shadowfrost	
-						[65]	= true,		-- Spellstrike	
-						[66]	= true,		-- Divine		
-						[68]	= true,		-- Spellfire	
-						[72]	= true,		-- Spellstorm	
-						[80]	= true,		-- Spellfrost	
-						[96]	= true,		-- Spellshadow	
+						[3]		= true,		-- Holystrike
+						[5]		= true,		-- Flamestrike
+						[6]		= true,		-- Holyfire
+						[9]		= true,		-- Stormstrike
+						[10]	= true,		-- Holystorm
+						[12]	= true,		-- Firestorm
+						[17]	= true,		-- Froststrike
+						[18]	= true,		-- Holyfrost
+						[20]	= true,		-- Frostfire
+						[24]	= true,		-- Froststorm
+						[33]	= true,		-- Shadowstrike
+						[34]	= true,		-- Shadowlight
+						[36]	= true,		-- Shadowflame
+						[40]	= true,		-- Shadowstorm
+						[48]	= true,		-- Shadowfrost
+						[65]	= true,		-- Spellstrike
+						[66]	= true,		-- Divine
+						[68]	= true,		-- Spellfire
+						[72]	= true,		-- Spellstorm
+						[80]	= true,		-- Spellfrost
+						[96]	= true,		-- Spellshadow
 						[28]	= true,		-- Elemental
 						[124]	= true,		-- Chromatic
-						[126]	= true,		-- Magic	
-						[127]	= true,		-- Chaos		
+						[126]	= true,		-- Magic
+						[127]	= true,		-- Chaos
 					},
 				},
 				alerts = {
@@ -2627,55 +2644,7 @@ function HitCrit:OnEnable()
 	end
 	-- libdbicon stuff
 	if LDBIcon then
-		LDBIcon:Register( MODNAME, launcher, db.options.display.minimap_icon )
+		LDBIcon:Register( ADDON_NAME, launcher, db.options.display.minimap_icon )
 	end
 
 end
-
---[[
-************************************************************************
-CHANGELOG:
-
-Date : 7/4/11
-	Updated for 4.2 CLEU changes
-	toc bump
-Date : 5/7/11
-	Revert bad change (not sure when it happened) in expandHandler
-Date : 04/27/11
-	Updated for 4.1 CLEU, et al
-	Added LibDBIcon
-Date : 03/20/11
-	Added in all current known spell schools
-Date : 01/14/11
-	Adding in per spec tracking
-Date : 08/25/10
-	One more chatframe reporting fix (dmg spells)
-	Found Eadric's "Hammer of the Righteous" to exclude
-Date : 08/20/10
-	Fixed chatframe reporting
-	Fixed FoL reporting (paladin)
-Date : 08/19/10
-	Adding proper Argent Tourney suppression
-Date : 8/23/09
-	Adding category/school collapse/expand buttons to tooltip
-Date : 8/6/09
-	Updated new Libqtip (which contains scripting)
-	Removed libqtipclick
-	updated toc to 3.2 (30200)
-	adding option for tooltip delay (and slider to adjust)
-Date : 5/31/09
-	Removed data reset thinger in favor of using libqtipclick
-	Added Libqtipclick support
-	added reporting into chatframe support
-Date : 4/15/09
-	added ability to turn off the superbuff notifications in chat
-Date : 12/02/08
-	added ability display top hit/crit values in text of display
-Date : 11/17/08
-	added data browser and the ability to remove data points
-Date : 11/15/08
-	changed font size to tooltip scaling in options == win
-Date : 10/29/08
-	Initial version
-************************************************************************
-]]--
