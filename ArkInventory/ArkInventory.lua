@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 961 $
--- $Date: 2012-09-12 13:17:43 +1000 (Wed, 12 Sep 2012) $
+-- $Revision: 969 $
+-- $Date: 2012-09-14 12:10:24 +1000 (Fri, 14 Sep 2012) $
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -32,8 +32,8 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 30303,
-		UIVersion = "3.3.3",
+		Version = 30306,
+		UIVersion = "3.3.6",
 		--Beta = "BETA 11-11-01-50",
 	},
 	
@@ -447,7 +447,7 @@ ArkInventory.Const = { -- constants
 				},
 				[105] = {
 					["id"] = "SKILL_ENCHANTING",
-					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_ENCHANTING"],
 				},
 				[106] = {
 					["id"] = "SKILL_FIRST_AID",
@@ -463,7 +463,7 @@ ArkInventory.Const = { -- constants
 				},
 				[109] = {
 					["id"] = "SKILL_JEWELCRAFTING",
-					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_JEWELCRAFTING"],
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_JEWELCRAFTING"],
 				},
 				[110] = {
 					["id"] = "SKILL_LEATHERWORKING",
@@ -559,7 +559,7 @@ ArkInventory.Const = { -- constants
 				},
 				[306] = {
 					["id"] = "EMPTY_ENCHANTING",
-					["text"] = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
+					["text"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_ENCHANTING"],
 				},
 				[307] = {
 					["id"] = "EMPTY_ENGINEERING",
@@ -816,7 +816,7 @@ ArkInventory.Const = { -- constants
 			[333] = {
 				id = "SKILL_ENCHANTING",
 				pt = "TradeskillResultMats.Reverse.Enchanting,Tradeskill.Tool.Enchanting",
-				text = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
+				text = ArkInventory.Localise["WOW_AH_TRADEGOODS_ENCHANTING"],
 			},
 			[202] = {
 				id = "SKILL_ENGINEERING",
@@ -831,7 +831,7 @@ ArkInventory.Const = { -- constants
 			[755] = {
 				id = "SKILL_JEWELCRAFTING",
 				pt = "TradeskillResultMats.Reverse.Jewelcrafting,Tradeskill.Tool.Jewelcrafting",
-				text = ArkInventory.Localise["WOW_AH_RECIPE_JEWELCRAFTING"],
+				text = ArkInventory.Localise["WOW_AH_TRADEGOODS_JEWELCRAFTING"],
 			},
 			[165] = {
 				id = "SKILL_LEATHERWORKING",
@@ -910,7 +910,7 @@ ArkInventory.Const.Slot.Data = {
 	},
 	[ArkInventory.Const.Slot.Type.Enchanting] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_ENCHANTING"],
-		["long"] = ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"],
+		["long"] = ArkInventory.Localise["WOW_AH_TRADEGOODS_ENCHANTING"],
 		["type"] = ArkInventory.Localise["WOW_AH_CONTAINER_ENCHANTING"],
 		["colour"] = { r = 0.0, g = 0.0, b = 1.0 }, -- blue
 	},
@@ -2141,8 +2141,14 @@ function ArkInventory.OnEnable( )
 	
 	ArkInventory:RegisterEvent( "MERCHANT_SHOW", "LISTEN_MERCHANT_ENTER" )
 	ArkInventory:RegisterEvent( "MERCHANT_CLOSED", "LISTEN_MERCHANT_LEAVE" )
+	ArkInventory:RegisterEvent( "TRANSMOGRIFY_OPEN", "LISTEN_MERCHANT_ENTER" )
+	ArkInventory:RegisterEvent( "TRANSMOGRIFY_CLOSE", "LISTEN_MERCHANT_LEAVE" )
+	ArkInventory:RegisterEvent( "FORGE_MASTER_OPENED", "LISTEN_MERCHANT_ENTER" )
+	ArkInventory:RegisterEvent( "FORGE_MASTER_CLOSED", "LISTEN_MERCHANT_LEAVE" )
+	ArkInventory:RegisterBucketMessage( "LISTEN_MERCHANT_LEAVE_BUCKET", 0.3 )
+
 	
-	--ArkInventory:RegisterEvent( "COMPANION_UPDATE" ) -- triggered from way too many irrelevant things, dont ever use it.  companions are scanned at onenable so its covered
+	--ArkInventory:RegisterEvent( "COMPANION_UPDATE" ) -- triggered from way too many irrelevant things, dont ever use it.  companions are scanned at OnEnable so its covered
 	ArkInventory:RegisterEvent( "COMPANION_LEARNED", "LISTEN_COMPANION_UPDATE" )
 	ArkInventory:RegisterEvent( "COMPANION_UNLEARNED", "LISTEN_COMPANION_UPDATE" )
 	
@@ -3205,8 +3211,6 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return
 	end
 	
-	local cp = ArkInventory.Global.Me
-	
 	--ArkInventory.Output( "bag[", i.bag_id, "], slot[", i.slot_id, "] = ", itemType )
 	
 	-- no item info
@@ -3219,7 +3223,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_TRASH" )
 	end
 	
-	-- quest items (via type)
+	-- quest items
 	if itemType == ArkInventory.Localise["WOW_AH_QUEST"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
 	end
@@ -3229,18 +3233,41 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_CONTAINER" )
 	end
 
-	-- equipment (armour, weapons, trinkets, tabards, etc, etc)
-	if itemEquipLoc ~= "" then
+	-- equipment
+	if itemType == ArkInventory.Localise["WOW_AH_WEAPON"] or itemType == ArkInventory.Localise["WOW_AH_ARMOR"] or itemEquipLoc ~= "" then
 		if i.sb then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_SOULBOUND" )
 		else
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT" )
 		end
 	end
-
+	
+	-- gems
+	if itemType == ArkInventory.Localise["WOW_AH_GEM"] then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_GEM" )
+	end
+	
 	-- glyphs
 	if itemType == ArkInventory.Localise["WOW_AH_GLYPH"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_GLYPH" )
+	end
+	
+	-- recipe
+	if itemType == ArkInventory.Localise["WOW_AH_RECIPE"] then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_RECIPE" )
+	end
+	
+	-- misc pets and mounts
+	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
+	
+		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_PET"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_PET"] ) then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
+		end
+		
+		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_MOUNT"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_MOUNT"] ) then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT" )
+		end
+		
 	end
 	
 	
@@ -3248,20 +3275,30 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	local blizzard_id = ArkInventory.BagID_Blizzard( i.loc_id, i.bag_id )
 	ArkInventory.TooltipSetItem( ArkInventory.Global.Tooltip.Scan, blizzard_id, i.slot_id )
 	
-	-- class requirement via tooltip
+	local cp = ArkInventory.Global.Me
+	
+	-- class requirement (via tooltip)
 	local _, _, req = ArkInventory.TooltipFind( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_TOOLTIP_CLASS"], false, true, true )
-	if req then
-		for _, w in pairs( CLASS_SORT_ORDER ) do
-			local key = string.format( "WOW_CLASS_%s", string.upper( w ) )
-			if string.find( req, ArkInventory.Localise[key] or key ) then
-				return ArkInventory.CategoryGetSystemID( string.format( "CLASS_%s", w ) )
-			end
-		end
+	if req and string.find( req, cp.info.class_local ) then
+		return ArkInventory.CategoryGetSystemID( string.format( "CLASS_%s", cp.info.class ) )
 	end
 	
-	-- gems
-	if itemType == ArkInventory.Localise["WOW_AH_GEM"] then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_GEM" )
+	-- class requirement (via PT)
+	local key = string.format( "PT_CLASS_%s", cp.info.class )
+	if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] ) then
+		return ArkInventory.CategoryGetSystemID( string.format( "CLASS_%s", cp.info.class ) )
+	end
+	
+	if itemType == ArkInventory.Localise["WOW_AH_TRADEGOODS"] then
+
+		local t = "ELEMENTAL,CLOTH,LEATHER,METALSTONE,COOKING,HERB,ENCHANTING,JEWELCRAFTING,PARTS,DEVICES,EXPLOSIVES,MATERIALS,ENCHANTMENT"
+		
+		for w in string.gmatch( t, "[^,]+" ) do
+			if itemSubType == ArkInventory.Localise[string.format( "WOW_AH_TRADEGOODS_%s", w )] then
+				return ArkInventory.CategoryGetSystemID( string.format( "TRADEGOODS_%s", w ) )
+			end
+		end
+		
 	end
 	
 	if itemType == ArkInventory.Localise["WOW_AH_CONSUMABLE"] then
@@ -3334,71 +3371,27 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		
 	end
 
-	if itemType == ArkInventory.Localise["WOW_AH_RECIPE"] then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_RECIPE" )
-	end
-
-	-- cycle through the users primary professions and allocate items to them
+	-- primary professions
 	if cp.info.skills then
+		
+		local _, _, req = ArkInventory.TooltipFind( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_TOOLTIP_SKILL"], false, true, true )
+		
 		for x = 1, ArkInventory.Const.Skills.Primary do
-			if cp.info.skills and cp.info.skills[x] then
-				local sd = ArkInventory.Const.Skills.Data[cp.info.skills[x]]
-				if ArkInventory.PT_ItemInSets( i.h, sd.pt ) then
-					return ArkInventory.CategoryGetSystemID( sd.id )
+			if cp.info.skills[x] then
+				
+				local skill = ArkInventory.Const.Skills.Data[cp.info.skills[x]]
+				
+				if ArkInventory.PT_ItemInSets( i.h, skill.pt ) then
+					return ArkInventory.CategoryGetSystemID( skill.id )
 				end
+				
+				if req and string.find( req, skill.text ) then
+					return ArkInventory.CategoryGetSystemID( skill.id )
+				end
+				
 			end
 		end
 	end
-	
-	
-	-- do the rest of the professions
---[[
-	for w in string.gmatch( ArkInventory.Const.Skills, "[^,]+" ) do
-		local key = string.format( "PT_SKILL_%s", w )
-		if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] or key ) then
-			--ArkInventory.Output( "other skill ", w, ", ", i.h, " assigned to ", ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) ) )
-			return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
-		end
-	end
-]]--
-
-	if itemType == ArkInventory.Localise["WOW_AH_TRADEGOODS"] then
-
-		if itemSubType == ArkInventory.Localise["WOW_AH_RECIPE_ENCHANTING"] then
-			return ArkInventory.CategoryGetSystemID( "SKILL_ENCHANTING" )
-		end
-		
-		if itemSubType == ArkInventory.Localise["WOW_AH_RECIPE_JEWELCRAFTING"] then
-			return ArkInventory.CategoryGetSystemID( "SKILL_JEWELCRAFTING" )
-		end
-		
-		local t = "ELEMENTAL,CLOTH,LEATHER,METALSTONE,COOKING,HERB,ENCHANTING,JEWELCRAFTING,PARTS,DEVICES,EXPLOSIVES,MATERIALS,OTHER,ENCHANTMENT"
-		
-		for w in string.gmatch( t, "[^,]+" ) do
-			local key = string.format( "WOW_AH_TRADEGOODS_%s", w )
-			if itemSubType == ( ArkInventory.Localise[key] or key ) then
-				return ArkInventory.CategoryGetSystemID( string.format( "TRADEGOODS_%s", w ) )
-			end
-		end
-		
-	end
-
-	-- quest items (via tooltip)
-	if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, ITEM_BIND_QUEST, false, true, true ) then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
-	end
-
-	-- skill requirement (via tooltip)
-	local _, _, req = ArkInventory.TooltipFind( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_TOOLTIP_SKILL"], false, true, true )
--- 00000
---	if req then
---		for w in string.gmatch( ArkInventory.Const.Skills, "[^,]+" ) do
---			local key = string.format( "WOW_SKILL_%s", w )
---			if strfind( req, ArkInventory.Localise[key] or key ) then
---				return ArkInventory.CategoryGetSystemID( string.format( "SKILL_%s", w ) )
---			end
---		end
---	end
 	
 	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
 	
@@ -3406,41 +3399,27 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_REAGENT" )
 		end
 		
-		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_PET"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_PET"] ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
-		end
-		
-		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_MOUNT"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_MOUNT"] ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT" )
-		end
-		
-	end
-
-
-	-- class via periodictable (check this characters class first)
-	local key = string.format( "PT_CLASS_%s", cp.info.class )
-	if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] or key ) then
-		return ArkInventory.CategoryGetSystemID( string.format( "CLASS_%s", cp.info.class ) )
-	end
-
-	-- class via periodictable (check all classes)
-	for _, w in pairs( CLASS_SORT_ORDER ) do
-		local key = string.format( "PT_CLASS_%s", w )
-		if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise[key] or key ) then
-			return ArkInventory.CategoryGetSystemID( string.format( "CLASS_%s", w ) )
-		end
 	end
 	
-	-- reputation hand-ins
-	if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_REPUTATION"] ) then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_REPUTATION" )
+	-- quest items (via tooltip)
+	if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, ITEM_BIND_QUEST, false, true, true ) then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
 	end
-
+	
 	-- quest items (via PT)
 	if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_QUEST"] ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
 	end
-
+	
+	-- reputation (via PT)
+	if ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_REPUTATION"] ) then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_REPUTATION" )
+	end
+	
+	
+	
+	-- left overs
+	
 	if itemType == ArkInventory.Localise["WOW_AH_TRADEGOODS"] then
 		return ArkInventory.CategoryGetSystemID( "TRADEGOODS_OTHER" )
 	end
@@ -3449,15 +3428,14 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "CONSUMABLE_OTHER" )
 	end
 
-	-- soulbound items
-	if i.sb then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_SOULBOUND" )
-	end
-
 	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_MISC" )
 	end
 
+	if i.sb then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_SOULBOUND" )
+	end
+	
 	return ArkInventory.CategoryGetSystemID( "SYSTEM_DEFAULT" )
 	
 end
@@ -6622,9 +6600,7 @@ function ArkInventory.Frame_Item_Update_Lock( frame )
 	
 	if i and i.h then
 		
-		local locked = false
-		local readable = false
-		local quality = nil
+		local locked, readable, quality
 		
 		if loc_id == ArkInventory.Const.Location.Vault then
 			locked = select( 3, GetGuildBankItemInfo( i.bag_id, i.slot_id ) )

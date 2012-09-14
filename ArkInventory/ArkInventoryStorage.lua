@@ -917,27 +917,51 @@ end
 
 function ArkInventory:LISTEN_MERCHANT_ENTER( event, ... )
 	
-	--ArkInventory.Output( "LISTEN_MERCHANT_ENTER" )
+	--ArkInventory.Output( "LISTEN_MERCHANT_ENTER( ", event, " )" )
 	
 	ArkInventory.Global.Mode.Merchant = true
 	
 	local BACKPACK_WAS_OPEN = ArkInventory.Frame_Main_Get( ArkInventory.Const.Location.Bag ):IsVisible( )
 	
-	MerchantFrame_OnEvent( MerchantFrame, event, ... )
-	
-	if ArkInventory.LocationIsControlled( ArkInventory.Const.Location.Bag ) then
-		-- blizzard auto-opens the backpack when you talk to a merchant
-		if not ArkInventory.db.global.option.auto.open.merchant and not BACKPACK_WAS_OPEN then
-			-- so we need to close it if we didnt already have it open
-			ArkInventory.Frame_Main_Hide( ArkInventory.Const.Location.Bag )
+	if event == "MERCHANT_SHOW" then
+		
+		-- merchant / vendor
+		
+		MerchantFrame_OnEvent( MerchantFrame, event, ... )
+		
+		if ArkInventory.LocationIsControlled( ArkInventory.Const.Location.Bag ) then
+			
+			-- blizzard auto-opens the backpack when you talk to a merchant
+			if not ArkInventory.db.global.option.auto.open.merchant and not BACKPACK_WAS_OPEN then
+				-- so we need to close it if we didnt already have it open
+				ArkInventory.Frame_Main_Hide( ArkInventory.Const.Location.Bag )
+			end
 		end
+	
+	else
+		
+		-- reforger / transmogrify
+		
+		if ArkInventory.LocationIsControlled( ArkInventory.Const.Location.Bag ) then
+			if ArkInventory.db.global.option.auto.open.merchant and not BACKPACK_WAS_OPEN then
+				ArkInventory.Frame_Main_Show( ArkInventory.Const.Location.Bag )
+			end
+		end
+		
 	end
+	
 	
 end
 
-function ArkInventory:LISTEN_MERCHANT_LEAVE( )
+function ArkInventory:LISTEN_MERCHANT_LEAVE( event )
+	
+	ArkInventory:SendMessage( "LISTEN_MERCHANT_LEAVE_BUCKET" )
+	
+end
 
-	--ArkInventory.Output( "LISTEN_MERCHANT_LEAVE" )
+function ArkInventory:LISTEN_MERCHANT_LEAVE_BUCKET( )
+	
+	--ArkInventory.Output( "LISTEN_MERCHANT_LEAVE_BUCKET" )
 	
 	ArkInventory.Global.Mode.Merchant = false
 	
@@ -1486,16 +1510,15 @@ function ArkInventory.ScanBag( blizzard_id )
 		local i = bag.slot[slot_id]
 		local item_to_reset = i.h
 		
-		local h = GetContainerItemLink( blizzard_id, slot_id )
+		local texture, count, locked, _, readable, lootable, h, isfiltered = GetContainerItemInfo( blizzard_id, slot_id )
 		local sb = false
-		local texture, count, locked, quality, readable
 		
 		if h then
 			
-			texture, count, locked, quality, readable = GetContainerItemInfo( blizzard_id, slot_id )
-			--ArkInventory.Output( "h=", h, ", count[", count, "], q[", quality, "], read[", readable, "]" )
+			--ArkInventory.Output( "h=", h, ", count[", count, "], read[", readable, "]" )
 			
 			ArkInventory.TooltipSetItem( ArkInventory.Global.Tooltip.Scan, blizzard_id, slot_id )
+			
 			for _, v in pairs( ArkInventory.Const.Soulbound ) do
 				if ( v and ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, string.format( "^%s$", v ) ) ) then
 					sb = true
@@ -1529,6 +1552,8 @@ function ArkInventory.ScanBag( blizzard_id )
 			i.new = new
 			
 			i.cat = ArkInventory.ItemCategoryGet( i )
+			
+			--ArkInventory.Output( "h=", h, ", count[", i.count, "], q[", i.q, "]" )
 			
 			if h then
 				item_to_reset = h
@@ -1987,7 +2012,7 @@ function ArkInventory.ScanMail( )
 					local item_to_reset = i.h
 					
 					local h = GetInboxItemLink( msg_id, attachment_id )
-					local sb = false -- always false, items sent by blizzard are bind on pickup, not soulbound
+					local sb = false -- always false, might be boa but sort that out if its looted
 					
 					if h then
 						bag.count = bag.count + 1
@@ -2626,7 +2651,7 @@ function ArkInventory.ScanAuction( massive )
 			i.h = h
 			i.count = count
 			i.sb = sb
-			i.q = quality
+			i.q = ArkInventory.ObjectInfoQuality( h )
 			i.new = new
 			
 			if duration == 1 then
@@ -2795,7 +2820,7 @@ function ArkInventory.ScanSpellbook( )
 				i.h = h
 				i.count = count
 				i.sb = sb
-				i.q = quality
+				i.q = ArkInventory.ObjectInfoQuality( h )
 				i.new = new
 				
 				if h then
@@ -3014,7 +3039,7 @@ function ArkInventory.ScanTradeskill( )
 					i.h = h
 					i.count = count
 					i.sb = sb
-					i.q = quality
+					i.q = ArkInventory.ObjectInfoQuality( h )
 					i.new = new
 					
 					if h then
@@ -3173,7 +3198,7 @@ function ArkInventory.ScanProfessions( )
 	local p = { GetProfessions( ) }
 	--ArkInventory.Output( "skills = [", p, "]" )
 	
-	--ArkInventory.Global.Me.info.skills = ArkInventory.Global.Me.info.skills or { }
+	ArkInventory.Global.Me.info.skills = ArkInventory.Global.Me.info.skills or { }
 	
 	for index = 1, ArkInventory.Const.Skills.Primary + ArkInventory.Const.Skills.Secondary do
 		

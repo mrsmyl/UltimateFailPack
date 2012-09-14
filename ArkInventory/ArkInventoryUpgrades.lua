@@ -707,6 +707,16 @@ function ArkInventory.ConvertOldOptions( )
 	end
 	
 	
+	upgrade_version = 30305
+	if ArkInventory.db.global.option.version < upgrade_version then
+		
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Bag )
+		
+		ArkInventory.db.global.option.version = upgrade_version
+		
+	end
+	
+	
 	
 
 	

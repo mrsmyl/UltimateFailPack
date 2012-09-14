@@ -1,16 +1,45 @@
 ------------------------------------------------------------------------
-r350 | arkayenro | 2012-09-12 09:16:18 +0000 (Wed, 12 Sep 2012) | 8 lines
+r356 | arkayenro | 2012-09-14 02:17:26 +0000 (Fri, 14 Sep 2012) | 3 lines
 Changed paths:
-   A /tags/3.03.03 (from /trunk:349)
+   A /tags/3.03.06 (from /trunk:355)
 
-*3.03.03 (12-SEP-2012)*
- * fixed - issue with profession scanning code
- * fixed - issue where internal sort keys were always recalculated every bag opening
- * fixed - issue when outfitter initialised after ai
- * changed - some translations reverted to blizzard internal values
- * changed - edit mode now ignores the tint unusable option
- * changed - bag highlight now uses the searchoverlay layer, custom layer removed
+*3.03.06 (14-SEP-2012)*
+ * changed - default category; all trade goods reverted to trade goods category
 
+------------------------------------------------------------------------
+r355 | arkayenro | 2012-09-14 02:11:13 +0000 (Fri, 14 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.06 (14-SEP-2012)*
+ * changed - default category; all trade goods reverted to trade goods category
+
+------------------------------------------------------------------------
+r353 | arkayenro | 2012-09-13 23:41:19 +0000 (Thu, 13 Sep 2012) | 5 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryUpgrades.lua
+   M /trunk/Locale/game.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.05 (14-SEP-2012)*
+ * added - forge master and transmogrify npcs are now treated as merchants in regards to your auto open/close options
+ * fixed - issue with item quality not updating in bags
+ * fixed - issue where jewelcrafting didnt appear under the skill menu
+ * note - all bag data has been erased, please login to each character to update its data
+------------------------------------------------------------------------
+r351 | arkayenro | 2012-09-12 23:34:21 +0000 (Wed, 12 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/Locale/game.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.04 (13-SEP-2012)*
+ * fixed - error with profession scanning code
+ * changed - default category assignment code
 ------------------------------------------------------------------------
 r349 | arkayenro | 2012-09-12 09:13:07 +0000 (Wed, 12 Sep 2012) | 7 lines
 Changed paths:

@@ -14,6 +14,19 @@
  * faq - http://code.google.com/p/arkinventory/wiki/FAQ
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
+*3.03.06 (14-SEP-2012)*
+ * changed - default category; all trade goods reverted to trade goods category
+
+*3.03.05 (14-SEP-2012)*
+ * added - forge master and transmogrify npcs are now treated as merchants in regards to your auto open/close options
+ * fixed - issue with item quality not updating in bags
+ * fixed - issue where jewelcrafting didnt appear under the skill menu
+ * note - all bag data has been erased, please login to each character to update its data
+
+*3.03.04 (13-SEP-2012)*
+ * fixed - error with profession scanning code
+ * changed - default category assignment code
+
 *3.03.03 (12-SEP-2012)*
  * fixed - issue with profession scanning code
  * fixed - issue where internal sort keys were always recalculated every bag opening
