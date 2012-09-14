@@ -40,13 +40,15 @@ local gScanDetails = {}
 local lowprices = {};
 local qualities = {};
 
-local bicount = 0
+local badItemCount = 0
+
+local gGetAllTotalAuctions
+local gGetAllNumBatchAuctions
+local gGetAllSuccess
 
 -----------------------------------------
 
 function Atr_FullScanStart()
-
-	gNum42555Warnings = 0;
 
 	local canStart = gCanQueryAll
 
@@ -60,19 +62,21 @@ function Atr_FullScanStart()
 		Atr_FullScanStartButton:Disable();
 		Atr_FullScanDone:Disable();
 	
-		gFullScanPosition	= nil;
+		gFullScanPosition	= nil
 		
-		gFullScanStart = time();
+		gFullScanStart = time()
 		
-		gFSNumNullItemNames = 0;
-		gFSNumNullItemLinks = 0;
-		gFSNumNullOwners = 0;
+		gFSNumNullItemNames = 0
+		gFSNumNullItemLinks = 0
+		gFSNumNullOwners = 0
 
-		SortAuctionClearSort ("list");
+		SortAuctionClearSort ("list")
 
-		gNumAdded   = 0;
-		gNumUpdated = 0;
-		gNumScanned = 0;
+		gNumAdded   = 0
+		gNumUpdated = 0
+		gNumScanned = 0
+		
+		gGetAllSuccess = true
 		
 		if (gDoSlowScan) then
 			gAtr_FullScanState = ATR_FS_SLOW_QUERY_NEEDED;
@@ -93,6 +97,7 @@ end
 function Atr_FullScanFrameIdle()
 
 	---- ui stuff ----
+	
 	
 	if (gAtr_FullScanState == ATR_FS_NULL) then
 
@@ -160,7 +165,13 @@ function Atr_FullScanAnalyze()
 
 	gAtr_FullScanState = ATR_FS_ANALYZING;
 
-	local numBatchAuctions, totalAuctions = Atr_GetNumAuctionItems("list");
+	local numBatchAuctions, totalAuctions, returnedTotalAuction = Atr_GetNumAuctionItems("list");
+
+	if (totalAuctions ~= returnedTotalAuction) then
+		gGetAllTotalAuctions	= returnedTotalAuction
+		gGetAllNumBatchAuctions	= numBatchAuctions
+		gGetAllSuccess			= false
+	end
 
 	local x;
 	
@@ -229,9 +240,9 @@ function Atr_FullScanAnalyze()
 			end
 			
 			if (name == nil or name == "") then
-				bicount = bicount + 1
+				badItemCount = badItemCount + 1
 				dataIsGood = false
-				zz ("bad item scanned.  name: ", name, " count: ", count, "bicount: ", bicount);
+				zz ("bad item scanned.  name: ", name, " count: ", count, "badItemCount: ", badItemCount);
 			else
 				qualities[name] = quality;
 				
@@ -458,7 +469,7 @@ end
 function Atr_FullScanMoreDetails ()
 
 	zc.msg (" ");
-	zc.msg_anm (ZT("Auctions scanned")..": |cffffffff", gScanDetails.numBatchAuctions, " |r("..gScanDetails.totalItems, "items) ", string.format ("time: |cffffffff%d:%02d|r", minutes, seconds));
+	zc.msg_anm (ZT("Auctions scanned")..": |cffffffff", gScanDetails.numBatchAuctions, " |r("..gScanDetails.totalItems, "items) ", "time: ", Atr_FullScan_GetDurString());
 	zc.msg_anm ("|cffa335ee   "..ZT("Epic items")..": |r",		gScanDetails.numEachQual[5]..GetIgnoredString(5));
 	zc.msg_anm ("|cff0070dd   "..ZT("Rare items")..": |r",		gScanDetails.numEachQual[4]..GetIgnoredString(4));
 	zc.msg_anm ("|cff1eff00   "..ZT("Uncommon items")..": |r",	gScanDetails.numEachQual[3]..GetIgnoredString(3));
@@ -479,6 +490,12 @@ function Atr_FullScanMoreDetails ()
 		
 	if (gFSNumNullItemLinks > 0) then
 		zc.msg_anm (string.format ("|cffff3333%d auctions returned null itemLinks (out of %d)|r", gFSNumNullItemLinks, gScanDetails.numBatchAuctions));
+	end
+
+	if (not gGetAllSuccess) then
+		zc.msg (" ");
+		zc.msg_anm ("|cffff3333Warning:|r Blizzard server failed to return all items: ", gGetAllTotalAuctions, gGetAllNumBatchAuctions);
+		zc.msg_anm ("You might want to try slow scanning.");
 	end
 		
 	zc.msg (" ");

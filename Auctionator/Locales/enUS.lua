@@ -2,20 +2,17 @@ function AtrBuildLTable_enUS ()
 
 AtrL = {};
 
-AtrL["SCAN_EXPLANATION"] =  "|cFFff6666PATCH 5.0.x ALERT!<br/>"
-							.."A few seconds after beginning a full scan WoW may appear to hang.  Give it a minute or so to finish. "
-							.."If it hasn't finished after two minutes WoW has probably crashed.  Some folks are getting disconnected, others are just hanging. "
-							.."As far as I can tell at the moment this is a problem on Blizzard's end and we'll just have to wait for them to fix it.|r"
-							.."<br/><br/>"
-
-							.."|cFF6666ff"
-							.."If normal scanning doesn't work, hold down the Control key and try slow scanning instead.|r"
-							.."<br/><br/>"
-
+AtrL["SCAN_EXPLANATION"] =  "<br/>"
 							.."Scanning the auction house builds a database of prices that Auctionator uses for two purposes: to display in item tooltips "
 							.."when you're away from the Auction House and to recommend a price when you're posting an item for which there are no other "
 							.."auctions at that moment."
 							.."<br/><br/>"
+
+							..""
+							.."If normal scanning causes problems, you can try |cFFff5555slow scanning|r instead.  Just hold down the Control key before clicking "
+							.."the Start Scanning button."
+							.."<br/><br/>"
+
 
 
 

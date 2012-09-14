@@ -26,8 +26,6 @@ gScanHistDayZero = time({year=2010, month=11, day=15, hour=0});		-- never ever c
 
 local gNumNilItemLinks
 
-gNum42555Warnings = 0;
-
 -----------------------------------------
 
 AtrScan = {};
@@ -69,8 +67,6 @@ function AtrSearch:Init (searchText, IDstring, itemLink, rescanThreshold)
 	if (searchText == nil) then
 		searchText = ""
 	end
-
-	gNum42555Warnings = 0;
 
 	self.origSearchText = searchText
 	
@@ -1562,15 +1558,13 @@ function Atr_GetNumAuctionItems (which)
 
 	local numBatchAuctions, totalAuctions = GetNumAuctionItems(which);
 	
-	if (totalAuctions > 42554) then
-		if (gNum42555Warnings < 2) then
-			gNum42555Warnings = gNum42555Warnings + 1;
-			zc.msg_anm ("|cffff0000Warning: greater than 42554 auctions: ", totalAuctions, numBatchAuctions);
-		end
-		totalAuctions = 42554;
+	local returnTotalAuctions = totalAuctions
+	
+	if (totalAuctions > 500000 or totalAuctions < 0) then
+		totalAuctions = numBatchAuctions;
 	end
 	
-	return numBatchAuctions, totalAuctions
+	return numBatchAuctions, totalAuctions, returnTotalAuctions
 
 end
 
