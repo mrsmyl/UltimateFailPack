@@ -342,6 +342,7 @@ NL["Mithril Deposit"] = "Deposito di Mithril" -- Needs review
 NL["Obsidium Deposit"] = "Deposito d'Obsidio" -- Needs review
 -- NL["Oil Spill"] = "Oil Spill"
 -- NL["Oily Blackmouth School"] = "Oily Blackmouth School"
+-- NL["Onyx Egg"] = "Onyx Egg"
 -- NL["Ooze Covered Gold Vein"] = "Ooze Covered Gold Vein"
 -- NL["Ooze Covered Mithril Deposit"] = "Ooze Covered Mithril Deposit"
 -- NL["Ooze Covered Rich Thorium Vein"] = "Ooze Covered Rich Thorium Vein"

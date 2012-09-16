@@ -1,0 +1,14 @@
+tag 1.20
+2826bdffb9904f6ea1581aa53e3ac59bd922d3f9
+Sal Scotto <sal.scotto@gmail.com>
+2012-09-15 09:45:51 -0400
+
+taggins as 1.20
+
+
+--------------------
+
+Sal Scotto:
+	- Recheck minimap zoom settings for indoors/outdoors on map update, on load we arent getting minimap zoom udpate and the cvar is always 0 at load, but valid after player entering world
+Hendrik Leppkes:
+	- Track Onyx Eggs as Treasure

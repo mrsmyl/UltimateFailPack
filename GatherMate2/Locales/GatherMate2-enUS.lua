@@ -345,6 +345,7 @@ NL["Obsidian Chunk"] = true
 NL["Obsidium Deposit"] = true
 NL["Oil Spill"] = true
 NL["Oily Blackmouth School"] = true
+NL["Onyx Egg"] = true
 NL["Ooze Covered Gold Vein"] = true
 NL["Ooze Covered Mithril Deposit"] = true
 NL["Ooze Covered Rich Thorium Vein"] = true
