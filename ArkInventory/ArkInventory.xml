@@ -2036,4 +2036,29 @@
 	
 	<GameTooltip name="ARKINV_ScanTooltip" inherits="ArkScanTooltipTemplate" />
 	
+	<Frame name="ARKINV_CombatYieldTimer" hidden="true">
+		<Scripts>
+			<Onload>
+				self:RegisterEvent( "PLAYER_REGEN_DISABLED" )
+				self:RegisterEvent( "PLAYER_REGEN_ENABLED" )
+			</Onload>
+			<OnUpdate>
+				self.timer = ( self.timer or 0 ) + elapsed
+				if self.timer > 0.02 then
+					ArkInventory.Frame_Main_DrawThreadResume( )
+					self.timer = nil
+				end
+			</OnUpdate>
+			<OnEvent>
+				if ( event == "PLAYER_REGEN_DISABLED" ) then
+					self:Show( )
+				elseif ( event == "PLAYER_REGEN_ENABLED" ) then
+					self:Hide( )
+					table.wipe( ArkInventory.Global.Thread.Window )
+					table.wipe( ArkInventory.Global.Thread.WindowState )
+				end
+			</OnEvent>
+		</Scripts>
+	</Frame>
+
 </Ui>

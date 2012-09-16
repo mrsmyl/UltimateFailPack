@@ -1377,7 +1377,7 @@ function ArkInventory.ScanBag( blizzard_id )
 	local texture = nil
 	local status = ArkInventory.Const.Bag.Status.Unknown
 	local h = nil
-	local quality = 1
+	local quality = 0
 	
 	if loc_id == ArkInventory.Const.Location.Bag then
 		
@@ -1501,59 +1501,66 @@ function ArkInventory.ScanBag( blizzard_id )
 		changed_bag = true
 	end
 	
+	
+	
+	
+	
+	
 	for slot_id = 1, bag.count do
 		
 		if not bag.slot[slot_id] then
-			bag.slot[slot_id] = { }
+			bag.slot[slot_id] = {
+				loc_id = loc_id,
+				bag_id = bag_id,
+				slot_id = slot_id,
+			}
 		end
 		
 		local i = bag.slot[slot_id]
 		local item_to_reset = i.h
 		
-		local texture, count, locked, _, readable, lootable, h, isfiltered = GetContainerItemInfo( blizzard_id, slot_id )
+		local texture, count, readable, quality, _, _, h, _ = GetContainerItemInfo( blizzard_id, slot_id )
 		local sb = false
 		
 		if h then
-			
-			--ArkInventory.Output( "h=", h, ", count[", count, "], read[", readable, "]" )
 			
 			ArkInventory.TooltipSetItem( ArkInventory.Global.Tooltip.Scan, blizzard_id, slot_id )
 			
 			for _, v in pairs( ArkInventory.Const.Soulbound ) do
 				if ( v and ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, string.format( "^%s$", v ) ) ) then
+					--ArkInventory.Output( loc_id, ".", bag_id, ".", slot_id, " = ", h, " - ", v )
 					sb = true
 					break
 				end
 			end
 			
+			i.q = ArkInventory.ObjectInfoQuality( h )
+			
 		else
+			
+			sb = false
+			
+			i.q = 0
 			
 			count = 1
 			bag.empty = bag.empty + 1
 			
 		end
 		
-		
 		local changed_item, new, reset_count = ArkInventory.ScanChanged( i, h, sb, count )
-
-		if changed_item or i.loc_id == nil then
+		
+		i.h = h
+		i.sb = sb
+		i.r = readable or nil
+		i.count = count
+		
+		if changed_item then
+			
+			i.new = new
 			
 			i.age = ArkInventory.ItemAgeUpdate( )
 			
-			i.loc_id = loc_id
-			i.bag_id = bag_id
-			i.slot_id = slot_id
-			
-			i.h = h
-			i.count = count
-			i.sb = sb
-			i.readable = readable or nil
-			i.q = ArkInventory.ObjectInfoQuality( h )
-			i.new = new
-			
-			i.cat = ArkInventory.ItemCategoryGet( i )
-			
-			--ArkInventory.Output( "h=", h, ", count[", i.count, "], q[", i.q, "]" )
+			i.cat = nil --ArkInventory.ItemCategoryGet( i )
 			
 			if h then
 				item_to_reset = h
@@ -2568,8 +2575,9 @@ function ArkInventory.ScanChanged( old, h, sb, count )
 end
 
 function ArkInventory.ObjectInfoName( h )
-	local x = select( 3, ArkInventory.ObjectInfo( h ) ) or string.match( "%[(.+)%]", i.h ) or "!"
-	return x
+	
+	return select( 3, ArkInventory.ObjectInfo( h ) ) or "!"
+
 end
 
 function ArkInventory.ScanAuction( massive )
@@ -3103,7 +3111,7 @@ function ArkInventory.ObjectInfo( h )
 	
 	if class == "item" then
 		
-		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo( h )
+		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo( v1 )
 		
 		if itemTexture == nil then
 			itemTexture = GetItemIcon( h )
@@ -3113,7 +3121,9 @@ function ArkInventory.ObjectInfo( h )
 			itemName = string.match( h, "|h%[(.+)%]|h" )
 		end
 		
-		return class, itemLink, itemName, itemTexture, itemRarity or 1, itemLevel or 0, itemMinLevel or 0, itemType or "", itemSubType or "", itemStackCount or 1, itemEquipLoc or "", itemSellPrice or 0
+		--ArkInventory.Output( v1, " / ", h, " = ", itemRarity )
+		
+		return class, itemLink, itemName, itemTexture, itemRarity or 0, itemLevel or 0, itemMinLevel or 0, itemType or "", itemSubType or "", itemStackCount or 1, itemEquipLoc or "", itemSellPrice or 0
 		
 	elseif class == "spell" then
 		
@@ -3139,6 +3149,10 @@ function ArkInventory.ObjectInfo( h )
 		
 	end
 	
+end
+
+function ArkInventory.ObjectStringHyperlinkBase( h )
+	return string.match( ( h or "" ), "|H(.-)|h" ) or string.match( ( h or "" ), "^([a-z]-:.+)" )
 end
 
 function ArkInventory.ObjectStringDecode( h )

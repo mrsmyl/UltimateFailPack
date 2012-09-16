@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2012, all rights reserved.
--- $Revision: 964 $
--- $Date: 2012-09-12 16:58:46 +1000 (Wed, 12 Sep 2012) $
+-- $Revision: 976 $
+-- $Date: 2012-09-16 19:43:22 +1000 (Sun, 16 Sep 2012) $
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -72,7 +72,6 @@ function ArkInventoryRules.OnEnable( )
 	end
 	
 	if not IsAddOnLoaded( "Outfitter" ) then
-		-- need to wait for outgitter to load
 		ArkInventory.Global.Rules.Enabled = true
 	end
 	
@@ -80,6 +79,7 @@ function ArkInventoryRules.OnEnable( )
 	
 	ArkInventory.ItemCacheClear( )
 	ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+	
 	
 	ArkInventory.Output( string.format( "%s %s", ArkInventory.Localise["CONFIG_RULES"], ArkInventory.Localise["ENABLED"] ) )
 	
@@ -95,11 +95,12 @@ function ArkInventoryRules.OutfitterInitialize( )
 		Outfitter:RegisterOutfitEvent( "DELETE_OUTFIT", ArkInventoryRules.ItemCacheClear )
 		Outfitter:RegisterOutfitEvent( "EDIT_OUTFIT", ArkInventoryRules.ItemCacheClear )
 		
-		ArkInventory.ItemCacheClear( )
-		
 		ArkInventory.MyUnhook( Outfitter, "Initialize" )
 		
 		ArkInventory.Global.Rules.Enabled = true
+		
+		ArkInventory.ItemCacheClear( )
+		ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
 		
 	end
 	
