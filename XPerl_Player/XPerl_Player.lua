@@ -6,9 +6,9 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 710 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 723 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
-local percD = "%d"..PERCENT_SYMBOL
+local percD = "%.0f"..PERCENT_SYMBOL
 
 
 
@@ -508,7 +508,7 @@ local function XPerl_Player_DruidBarUpdate(self)
 	druidBar:SetMinMaxValues(0, maxMana or 1)
 	druidBar:SetValue(currMana or 0)
 	druidBar.text:SetFormattedText("%d/%d", ceil(currMana or 0), maxMana or 1)
-	druidBar.percent:SetFormattedText(percD, currMana * 100 / maxMana)
+	druidBar.percent:SetFormattedText(percD, (currMana or 0) * 100 / (maxMana or 1))
 
 	local druidBarExtra
 	if (UnitPowerType(self.partyid) > 0) then
@@ -1549,7 +1549,7 @@ function XPerl_Player_InitDK(self)
 		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)
 		self.runes:SetPoint("BOTTOMRIGHT", self.statsFrame, "BOTTOMRIGHT", 0, -30)
 
-		MakeMoveable(self)
+		MakeMoveable(self.runes)
 
 		local bgDef = {bgFile = "Interface\\Addons\\XPerl\\Images\\XPerl_FrameBack",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",

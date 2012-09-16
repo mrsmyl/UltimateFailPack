@@ -38,18 +38,18 @@ XPERL_TYPE_ELITE	= "Elite"
 XPERL_TYPE_RARE 	= "Raro"
 
 -- Zones
-XPERL_LOC_ZONE_SERPENTSHRINE_CAVERN	= "Serpentshrine Cavern"
-XPERL_LOC_ZONE_BLACK_TEMPLE			= "Black Temple"
-XPERL_LOC_ZONE_HYJAL_SUMMIT			= "Hyjal Summit"
-XPERL_LOC_ZONE_KARAZHAN				= "Karazhan"
-XPERL_LOC_ZONE_SUNWELL_PLATEAU		= "Sunwell Plateau"
-XPERL_LOC_ZONE_NAXXRAMAS			= "Naxxramas"
-XPERL_LOC_ZONE_OBSIDIAN_SANCTUM		= "The Obsidian Sanctum"
-XPERL_LOC_ZONE_EYE_OF_ETERNITY		= "The Eye of Eternity"
-XPERL_LOC_ZONE_ULDUAR				= "Ulduar"
-XPERL_LOC_ZONE_TRIAL_OF_THE_CRUSADER= "Trial of the Crusader"
-XPERL_LOC_ZONE_ICECROWN_CITADEL		= "Icecrown Citadel"
-XPERL_LOC_ZONE_RUBY_SANCTUM			= "The Ruby Sanctum"
+XPERL_LOC_ZONE_SERPENTSHRINE_CAVERN = "Serpentshrine Cavern"
+XPERL_LOC_ZONE_BLACK_TEMPLE = "Tempio Nero"
+XPERL_LOC_ZONE_HYJAL_SUMMIT = "Hyjal Summit"
+XPERL_LOC_ZONE_KARAZHAN = "Karazhan"
+XPERL_LOC_ZONE_SUNWELL_PLATEAU = "Sunwell Plateau"
+XPERL_LOC_ZONE_NAXXRAMAS = "Naxxramas"
+XPERL_LOC_ZONE_OBSIDIAN_SANCTUM = "The Obsidian Sanctum"
+XPERL_LOC_ZONE_EYE_OF_ETERNITY = "The Eye of Eternity"
+XPERL_LOC_ZONE_ULDUAR = "Ulduar"
+XPERL_LOC_ZONE_TRIAL_OF_THE_CRUSADER = "Trial of the Crusader"
+XPERL_LOC_ZONE_ICECROWN_CITADEL = "Corona di Ghiaccio"
+XPERL_LOC_ZONE_RUBY_SANCTUM = "The Ruby Sanctum"
 --Any zones 4.x and higher can all be localized from EJ, in 5.0, even these above zones are in EJ which means the rest can go bye bye too
 
 -- Status
@@ -66,12 +66,12 @@ XPERL_RAID_GROUPSHORT	= "G%d"
 
 XPERL_LOC_NONEWATCHED	= "none watched"
 
-XPERL_LOC_STATUSTIP = "Status Highlights: " 	-- Tooltip explanation of status highlight on unit
+XPERL_LOC_STATUSTIP = "Evidenziaziazione stato: " 	-- Tooltip explanation of status highlight on unit
 XPERL_LOC_STATUSTIPLIST = {
-	HOT = "Heal over Time",
-	AGGRO = "Aggro",
+	HOT = "Cure nel Tempo (HOT)",
+	AGGRO = "Aggressione",
 	MISSING = "Missing your class' buff",
-	HEAL = "Being healed",
+	HEAL = "Sta per essere curato",
 	SHIELD = "Shielded"
 }
 
@@ -94,17 +94,17 @@ BINDING_NAME_TEAMSPEAKMONITOR = "Teamspeak Monitor"
 BINDING_NAME_TOGGLERANGEFINDER = "Abilita/Disattiva Range Finder"
 
 XPERL_KEY_NOTICE_RAID_BUFFANY = "Visualizza tutti i benefici/penalità"
-XPERL_KEY_NOTICE_RAID_BUFFCURECAST = "Visualizza solo benefici lanciabili/curabili o Only castable/curable buffs or debuffs shown"
-XPERL_KEY_NOTICE_RAID_BUFFS = "Raid Buffs shown"
-XPERL_KEY_NOTICE_RAID_DEBUFFS = "Raid Debuffs shown"
-XPERL_KEY_NOTICE_RAID_NOBUFFS = "No raid buffs shown"
+XPERL_KEY_NOTICE_RAID_BUFFCURECAST = "Visualizza solo benefici lanciabili/curabili o penalità"
+XPERL_KEY_NOTICE_RAID_BUFFS = "Benefici dell'incursione mostrati"
+XPERL_KEY_NOTICE_RAID_DEBUFFS = "Penalità dell'incursione mostrati"
+XPERL_KEY_NOTICE_RAID_NOBUFFS = "Nessun beneficio dell'incursione mostrato"
 
 XPERL_DRAGHINT1		= "|c00FFFFFFFai Click|r per riscalare la finestra"
 XPERL_DRAGHINT2		= "|c00FFFFFFFai Maiusc+Click|r per ridimensionare la finestra"
 
 -- Usage
-XPerlUsageNameList	= {XPerl = "Core", XPerl_Player = "Player", XPerl_PlayerPet = "Pet", XPerl_Target = "Target", XPerl_TargetTarget = "Target's Target", XPerl_Party = "Party", XPerl_PartyPet = "Party Pets", XPerl_RaidFrames = "Raid Frames", XPerl_RaidHelper = "Raid Helper", XPerl_RaidAdmin = "Raid Admin", XPerl_TeamSpeak = "TS Monitor", XPerl_RaidMonitor = "Raid Monitor", XPerl_RaidPets = "Raid Pets", XPerl_ArcaneBar = "Arcane Bar", XPerl_PlayerBuffs = "Player Buffs", XPerl_GrimReaper = "Grim Reaper"}
-XPERL_USAGE_MEMMAX	= "UI Mem Max: %d"
+XPerlUsageNameList = {XPerl = "Core", XPerl_Player = "Giocatore", XPerl_PlayerPet = "Famiglio", XPerl_Target = "Bersaglio", XPerl_TargetTarget = "Bersaglio del bersaglio", XPerl_Party = "Gruppo", XPerl_PartyPet = "Famigli del gruppo", XPerl_RaidFrames = "Finestre del raid", XPerl_RaidHelper = "Aiutante dell'incursione", XPerl_RaidAdmin = "Amministrazione incursione", XPerl_TeamSpeak = "TS Monitor", XPerl_RaidMonitor = "Monitor dell'incursione", XPerl_RaidPets = "Famigli dell'incursione", XPerl_ArcaneBar = "Barra arcana", XPerl_PlayerBuffs = "Benefici del giocatore", XPerl_GrimReaper = "Grim Reaper"}
+XPERL_USAGE_MEMMAX	= "IU Mem Max: %d"
 XPERL_USAGE_MODULES = "Moduli: "
 XPERL_USAGE_NEWVERSION	= "*Una nuova versione"
 XPERL_USAGE_AVAILABLE	= "%s |c00FFFFFF%s|r è disponibile per il download"

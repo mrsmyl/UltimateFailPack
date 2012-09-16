@@ -3,7 +3,7 @@
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 644 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 725 $")
 
 local myClass
 local playerAggro, petAggro
@@ -29,7 +29,7 @@ function XPerl_Assists_OnLoad(self)
 	self:RegisterEvent("VARIABLES_LOADED")
 	self:RegisterEvent("UNIT_TARGET")
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_DEAD")
@@ -325,7 +325,7 @@ function XPerl_Assists_OnEvent(self, event, unit)
 		end
 		XPerlAssistPin:SetButtonTex()
 
-	elseif (event == "RAID_ROSTER_UPDATE" or event == "PARTY_MEMBERS_CHANGED") then
+	elseif (event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE") then
 		MakeFriendlyUnitList()
 		doUpdate = true
 

@@ -4,7 +4,7 @@
 
 local playerClass, playerName, playerGUID
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 708 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 722 $")
 
 local GetNumPartyMembers = GetNumPartyMembers
 local GetNumRaidMembers = GetNumRaidMembers
@@ -28,7 +28,7 @@ local pomSpells = XPERL_HIGHLIGHT_SPELLS.pomSpells
 local shieldSpells = XPERL_HIGHLIGHT_SPELLS.shieldSpells
 
 local function GetTalentPosition(findName)
-	for i = 1,GetNumTalentTabs() do
+	for i = 1,GetNumSpecializations() do
 		for j = 1,GetNumTalents(i) do
 			local name = GetTalentInfo(i, j)
 			if (name == findName) then

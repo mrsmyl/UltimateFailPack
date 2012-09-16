@@ -6,8 +6,8 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 700 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 700 $")
+XPerl_SetModuleRevision("$Revision: 714 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 714 $")
  
 --Some local copies for speed
 local strsub = strsub
@@ -2270,9 +2270,8 @@ local function GetFreeFader(parent)
 		bar.tex = parent.tex
 
 		local tex = parent:GetStatusBarTexture()
-		bar:SetStatusBarTexture(tex:GetTexture())
-		local sbt = bar:GetStatusBarTexture()
-		if sbt then
+		if tex:GetTexture() then
+			bar:SetStatusBarTexture(tex:GetTexture())
 			bar:GetStatusBarTexture():SetHorizTile(false)
 			bar:GetStatusBarTexture():SetVertTile(false)
 		end

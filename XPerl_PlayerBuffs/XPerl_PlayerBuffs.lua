@@ -3,7 +3,7 @@
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = new.player end, "$Revision: 634 $")
+XPerl_RequestConfig(function(new) conf = new pconf = new.player end, "$Revision: 716 $")
 
 local playerClass
 
