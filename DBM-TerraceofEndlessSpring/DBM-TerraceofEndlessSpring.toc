@@ -13,15 +13,17 @@
 ## X-DBM-Mod-Name: Terrace of Endless Spring
 ## X-DBM-Mod-Name-koKR: 영원한 봄의 정원
 ## X-DBM-Mod-Name-deDE: Terrasse des Endlosen Frühlings
+## X-DBM-Mod-Name-zhTW: 豐泉台
 ## X-DBM-Mod-Sort: 3
 ## X-DBM-Mod-LoadZoneID: 886
-## X-Curse-Packaged-Version: 4.11.1
+## X-Curse-Packaged-Version: 4.11.2
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
 localization.en.lua
 localization.kr.lua
 localization.de.lua
+localization.tw.lua
 MapSizes.lua
 ProtectorsofEndless.lua
 Tsulong.lua

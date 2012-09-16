@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7778 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7835 $"):sub(12, -3))
 mod:SetCreatureID(60491)
 mod:SetModelID(41448)
 mod:SetZone(809)--Kun-Lai Summit (zoneid not yet known)
@@ -67,14 +67,12 @@ do
 		return DBM:GetRaidSubgroup(DBM:GetUnitFullName(v1)) < DBM:GetRaidSubgroup(DBM:GetUnitFullName(v2))
 	end
 	function mod:SetMCIcons()
-		if DBM:GetRaidRank() > 0 then
-			table.sort(mcTargetIcons, sortByGroup)
-			for i, v in ipairs(mcTargetIcons) do
-				self:SetIcon(v, mcIcon)
-				mcIcon = mcIcon - 1
-			end
-			self:Schedule(10, clearMCTargets)--delay 10 sec. (mc sperad takes 2~3 sec, and dead players do not get the SPELL_AURA_REMOVED event)
+		table.sort(mcTargetIcons, sortByGroup)
+		for i, v in ipairs(mcTargetIcons) do
+			self:SetIcon(v, mcIcon)
+			mcIcon = mcIcon - 1
 		end
+		self:Schedule(10, clearMCTargets)--delay 10 sec. (mc sperad takes 2~3 sec, and dead players do not get the SPELL_AURA_REMOVED event)
 	end
 end
 

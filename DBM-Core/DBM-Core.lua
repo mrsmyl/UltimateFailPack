@@ -38,13 +38,15 @@
 --    * Share Alike. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
 --
 
+
+
 -------------------------------
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 7811 $"):sub(12, -3)),
-	DisplayVersion = "4.11.1", -- the string that is shown as version
-	ReleaseRevision = 7811 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 7846 $"):sub(12, -3)),
+	DisplayVersion = "4.11.2", -- the string that is shown as version
+	ReleaseRevision = 7846 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -142,6 +144,7 @@ DBM.DefaultOptions = {
 	SettingsMessageShown = false,
 	AlwaysShowSpeedKillTimer = true,
 	DisableCinematics = false,
+	DisableCinematicsOutside = false,
 --	HelpMessageShown = false,
 	AprilFools = true,
 	MoviesSeen = {},
@@ -379,8 +382,8 @@ do
 		function registerUnitEvent(event)
 			unitEventFrame1:RegisterUnitEvent(event, "boss1", "boss2")
 			unitEventFrame2:RegisterUnitEvent(event, "boss3", "boss4")
-			unitEventFrame3:RegisterUnitEvent(event, "target", "focus")
-			unitEventFrame4:RegisterUnitEvent(event, "mouseover")
+			unitEventFrame3:RegisterUnitEvent(event, "boss5", "target")
+			unitEventFrame4:RegisterUnitEvent(event, "focus", "mouseover")
 		end
 
 		function unregisterUnitEvent(event)
@@ -397,7 +400,7 @@ do
 			local event = select(i, ...)
 			registeredEvents[event] = registeredEvents[event] or {}
 			tinsert(registeredEvents[event], self)
-			-- unit events that default to boss1-4, target, and focus only
+			-- unit events that default to boss1-5, target, and focus only
 			-- for now: only UNIT_HEALTH(_FREQUENT), more events (and a lookup table for these events) might be added later
 			if event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" then
 				registerUnitEvent(event)
@@ -1517,7 +1520,7 @@ do
 			-- do not use HookScript here, the movie must not even be started to prevent a strange WoW crash bug on OS X with some movies
 			local oldMovieEventHandler = MovieFrame:GetScript("OnEvent")
 			MovieFrame:SetScript("OnEvent", function(self, event, movieId, ...)
-				if event == "PLAY_MOVIE" and DBM.Options.DisableCinematics then
+				if event == "PLAY_MOVIE" and (DBM.Options.DisableCinematics and IsInInstance() or (DBM.Options.DisableCinematicsOutside and not IsInInstance())) then
 					-- you still have to call OnMovieFinished, even if you never actually told the movie frame to start the movie, otherwise you will end up in a weird state (input stops working)
 					MovieFrame_OnMovieFinished(MovieFrame)
 					return
@@ -1591,7 +1594,7 @@ function DBM:UPDATE_MOUSEOVER_UNIT()
 					break
 				end
 			end
-		elseif (cId == 55003 or cId == 54499 or cId == 15467 or cId == 15466) and not IsAddOnLoaded("DBM-WorldEvents") then--The Abominable Greench & his helpers (Winter Veil world boss), Omen & his minions (Lunar Festival world boss)
+		elseif (cId == 55003 or cId == 54499 or cId == 15467 or cId == 15466 or cId == 49687) and not IsAddOnLoaded("DBM-WorldEvents") then--The Abominable Greench & his helpers (Winter Veil world boss), Omen & his minions (Lunar Festival world boss), Plants vs Zombie npc
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-WorldEvents" then
 					DBM:LoadMod(v)
@@ -1607,28 +1610,28 @@ function DBM:PLAYER_TARGET_CHANGED()
 	local guid = UnitGUID("target")
 	if guid and (bit.band(guid:sub(1, 5), 0x00F) == 3 or bit.band(guid:sub(1, 5), 0x00F) == 5) then
 		local cId = tonumber(guid:sub(7, 10), 16)
-		if (cId == 17711 or cId == 18728) and not IsAddOnLoaded("DBM-Outlands") then--Burning Crusade World Bosses: Doomwalker and Kazzak
+		if (cId == 17711 or cId == 18728) and not IsAddOnLoaded("DBM-Outlands") then
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-Outlands" then
 					DBM:LoadMod(v)
 					break
 				end
 			end
-		elseif (cId == 50063 or cId == 50056 or cId == 50089 or cId == 50009 or cId == 50061) and not IsAddOnLoaded("DBM-Party-Cataclysm") then--Cataclysm World Bosses: Akamhat, Garr, Julak, Mobus, Xariona
+		elseif (cId == 50063 or cId == 50056 or cId == 50089 or cId == 50009 or cId == 50061) and not IsAddOnLoaded("DBM-Party-Cataclysm") then
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-Party-Cataclysm" then
 					DBM:LoadMod(v)
 					break
 				end
 			end
-		elseif (cId == 62346 or cId == 60491) and not IsAddOnLoaded("DBM-Pandaria") then--Mists of Pandaria World Bosses: Anger, Salyis
+		elseif (cId == 62346 or cId == 60491) and not IsAddOnLoaded("DBM-Pandaria") then
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-Pandaria" then
 					DBM:LoadMod(v)
 					break
 				end
 			end
-		elseif (cId == 55003 or cId == 54499 or cId == 15467 or cId == 15466) and not IsAddOnLoaded("DBM-WorldEvents") then--The Abominable Greench & his helpers (Winter Veil world boss), Omen & his minions (Lunar Festival world boss)
+		elseif (cId == 55003 or cId == 54499 or cId == 15467 or cId == 15466 or cId == 49687) and not IsAddOnLoaded("DBM-WorldEvents") then
 			for i, v in ipairs(DBM.AddOns) do
 				if v.modId == "DBM-WorldEvents" then
 					DBM:LoadMod(v)
@@ -1640,7 +1643,7 @@ function DBM:PLAYER_TARGET_CHANGED()
 end
 
 function DBM:CINEMATIC_START()
-	if DBM.Options.DisableCinematics and IsInInstance() then--This will also kill non movie cinematics, like the bridge in firelands
+	if DBM.Options.DisableCinematics and IsInInstance() or (DBM.Options.DisableCinematicsOutside and not IsInInstance()) then--This will also kill non movie cinematics, like the bridge in firelands
 		CinematicFrame_CancelCinematic()
 	end
 end
@@ -2463,7 +2466,7 @@ function DBM:StartCombat(mod, delay, synced)
 		elseif mod:IsDifficulty("normal10") then
 			mod.stats.normalPulls = mod.stats.normalPulls + 1
 			local _, _, _, _, maxPlayers = GetInstanceInfo()
-			--Because classic raids that don't have variable sizes all return 1.
+			--Because we still combine 40 mans with 10 man raids, we use maxPlayers arg for player count.
 			difficultyText = PLAYER_DIFFICULTY1.." ("..maxPlayers..") - "
 		elseif mod:IsDifficulty("heroic10") then
 			mod.stats.heroicPulls = mod.stats.heroicPulls + 1
@@ -2567,28 +2570,33 @@ function DBM:EndCombat(mod, wipe)
 		end
 		if not difficultyText then -- prevent error when timer recovery function worked and etc (StartCombat not called)
 			local _, instanceType, difficulty, _, maxPlayers = GetInstanceInfo()
-			if difficulty > 2 then--Just neatly combines both heroic raids into 1
-				difficultyText = PLAYER_DIFFICULTY2.." ("..maxPlayers..") - "
-				savedDifficulty = "heroic"..maxPlayers
-			elseif difficulty < 3 and instanceType == "raid" and not IsPartyLFG() then--Combine non heroic raids into 1
+			if difficulty == 1 then
 				difficultyText = PLAYER_DIFFICULTY1.." ("..maxPlayers..") - "
-				savedDifficulty = "normal"..maxPlayers
-			elseif IsPartyLFG() and IsInLFGDungeon() and instanceType == "raid" then
+				savedDifficulty = "normal5"
+			elseif difficulty == 2 then
+				difficultyText = PLAYER_DIFFICULTY2.." ("..maxPlayers..") - "
+				savedDifficulty = "heroic5"
+			elseif difficulty == 3 then
+				difficultyText = PLAYER_DIFFICULTY1.." ("..maxPlayers..") - "
+				savedDifficulty = "normal10"
+			elseif difficulty == 4 then
+				difficultyText = PLAYER_DIFFICULTY1.." ("..maxPlayers..") - "
+				savedDifficulty = "normal25"
+			elseif difficulty == 5 then
+				difficultyText = PLAYER_DIFFICULTY2.." ("..maxPlayers..") - "
+				savedDifficulty = "heroic10"
+			elseif difficulty == 6 then
+				difficultyText = PLAYER_DIFFICULTY2.." ("..maxPlayers..") - "
+				savedDifficulty = "heroic25"
+			elseif difficulty == 7 then
 				difficultyText = PLAYER_DIFFICULTY3.." - "
 				savedDifficulty = "lfr25"
-			elseif difficulty == 1 and instanceType == "party" then
-				if IsInInstance() then
-					difficultyText = PLAYER_DIFFICULTY1.." - "
-				else
-					difficultyText = ""
-				end
-				savedDifficulty = "normal5"
-			elseif difficulty == 2 and instanceType == "party" then
-				difficultyText = PLAYER_DIFFICULTY2.." - "
-				savedDifficulty = "heroic5"
-			elseif difficulty == 8 and instanceType == "party" then
+			elseif difficulty == 8 then
 				difficultyText = CHALLENGE_MODE.." - "
 				savedDifficulty = "challenge5"
+			elseif difficulty == 9 then--40 mans now have their own difficulty, instead of being reported as 10 man normal like they used to in 3.x-4.x
+				difficultyText = PLAYER_DIFFICULTY1.." ("..maxPlayers..") - "
+				savedDifficulty = "normal10"--Lets just save these where we been saving them, to avoid probelms, instead of creating a normal40 for little reason.
 			else
 				difficultyText = ""
 				savedDifficulty = "normal5"
@@ -2773,6 +2781,8 @@ function DBM:GetCurrentInstanceDifficulty()
 		return "lfr25"
 	elseif difficulty == 8 then
 		return "challenge5"
+	elseif difficulty == 9 then--40 man raids have their own difficulty now, no longer returned as normal 10man raids
+		return "normal10"--Just use normal10 anyways, since that's where we been saving 40 man stuff for so long anyways, no reason to change it now, not like any 40 mans can be toggled between 10 and 40 where we NEED to tell the difference.
 	else
 		return "unknown"
 	end
@@ -3439,6 +3449,9 @@ function bossModPrototype:GetBossTarget(cid)
 	elseif self:GetUnitCreatureId("boss4") == cid then
 		name, realm = UnitName("boss4target")
 		uid = "boss4target"
+	elseif self:GetUnitCreatureId("boss5") == cid then
+		name, realm = UnitName("boss5target")
+		uid = "boss5target"
 	elseif IsInRaid() then
 		for i = 1, GetNumGroupMembers() do
 			if self:GetUnitCreatureId("raid"..i.."target") == cid then
@@ -3447,7 +3460,7 @@ function bossModPrototype:GetBossTarget(cid)
 				break
 			end
 		end
-	elseif GetNumSubgroupMembers() > 0 then
+	elseif IsInGroup() then
 		for i = 1, GetNumSubgroupMembers() do
 			if self:GetUnitCreatureId("party"..i.."target") == cid then
 				name, realm = UnitName("party"..i.."targettarget")
@@ -3479,7 +3492,7 @@ function bossModPrototype:GetThreatTarget(cid)
 				end
 			end
 		end
-	elseif GetNumSubgroupMembers() > 0 then
+	elseif IsInGroup() then
 		for i = 1, GetNumSubgroupMembers() do
 			if self:GetUnitCreatureId("party"..i.."target") == cid then
 				for x = 1, GetNumSubgroupMembers() do
@@ -3924,10 +3937,10 @@ do
 		local sound2 = self:NewSound(2, false, true)
 		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
-		if not spellId then
-			DBM:AddMsg("Error: No spellID given for countdown timer")
-			spellId = 39505
+		if not spellId and not optionName then
+			error("NewCountdown: you must provide either spellId or optionName", 2)
 		end
+		spellId = spellId or 39505
 		local obj = setmetatable(
 			{
 				sound1 = sound1,
@@ -4021,10 +4034,10 @@ do
 		local sound2 = self:NewSound(2, false, true)
 		local sound1 = self:NewSound(1, false, true)
 		timer = timer or 10
-		if not spellId then
-			DBM:AddMsg("Error: No spellID given for counted duration timer")
-			spellId = 39505
+		if not spellId and not optionName then
+			error("NewCountout: you must provide either spellId or optionName", 2)
 		end
+		spellId = spellId or 39505
 		local obj = setmetatable(
 			{
 				sound1 = sound1,
@@ -4926,7 +4939,7 @@ function bossModPrototype:SetMainBossID(...)
 end
 
 function bossModPrototype:GetBossHPString(cId)
-	for i = 1, 4 do
+	for i = 1, 5 do
 		local guid = UnitGUID("boss"..i)
 		if guid and tonumber(guid:sub(7, 10), 16) == cId then
 			return math.floor(UnitHealth("boss"..i) / UnitHealthMax("boss"..i) * 100) .. "%"
