@@ -1,0 +1,20 @@
+tag 4.5.4
+f5fb247a3d325e699e4d9b0c76a2dc794fccdf83
+Hendrik Leppkes <h.leppkes@gmail.com>
+2012-09-16 12:54:16 +0200
+
+Tag as 4.5.4
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Properly handle fadeout with the SpellFlyout
+	- Use the esES locale for esMX, it appears the mexicans don't care to create their own.
+	- Enable the "Hide with Override Bar" by default for most bars.
+	- Remove all references to the long-gone keyring.
+	- Add an option to the petbar to allow showing the button grid.
+	- Completely hide empty pet buttons.
+	- Some more fixes for hooks and events on disable/enable cycles
+	- Remove unused blizzardVehicle checks
+	- Properly re-hook after a disable/enable cycle of the VehicleBar
