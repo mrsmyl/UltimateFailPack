@@ -55,6 +55,7 @@ local HealBot_Unit_Bar2={}
 local HealBot_Unit_Bar3={}
 local HealBot_Unit_Bar4={}
 local HealBot_pcClass=false
+local HealBot_pcMax=3
 local rangeSpell=nil
 local sID=nil
 local sName=nil
@@ -355,8 +356,29 @@ function HealBot_Action_RetHealBot_UnitStatus(unit)
 end
 
 function HealBot_Action_setpcClass()
-	if Healbot_Config_Skins.PowerCounter[Healbot_Config_Skins.Current_Skin]==1 and strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
-		HealBot_pcClass=true
+	if Healbot_Config_Skins.PowerCounter[Healbot_Config_Skins.Current_Skin]==1 and  
+           (strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] or strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_MONK]) then
+        local prevHealBot_pcMax=HealBot_pcMax;
+		if strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
+            HealBot_pcClass=9
+            if UnitLevel("player")<85 then
+                HealBot_pcMax=3
+            else
+                HealBot_pcMax=5
+            end
+        else
+            HealBot_pcClass=12
+            local _, talent = GetTalentRowSelectionInfo(3)
+            if talent==8 then
+                HealBot_pcMax=5
+            else
+                HealBot_pcMax=4
+            end
+        end     
+        if prevHealBot_pcMax~=HealBot_pcMax then
+            HealBot_Action_clearResetBarSkinDone()
+            if Delay_RecalcParty<1 then Delay_RecalcParty=1; end
+        end
 	else
 		HealBot_pcClass=false
         barName = HealBot_Unit_Bar3["player"]
@@ -443,6 +465,9 @@ function HealBot_Action_SetrSpell()
 		if HealBot_GetSpellId(HEALBOT_PURIFY_SPIRIT) then 
 			HealBot_dSpell=HEALBOT_PURIFY_SPIRIT
 			x=HEALBOT_PURIFY_SPIRIT
+        elseif HealBot_GetSpellId(HEALBOT_CLEANSE_SPIRIT) then 
+			HealBot_dSpell=HEALBOT_CLEANSE_SPIRIT
+			x=HEALBOT_CLEANSE_SPIRIT
 		end
 		if HealBot_GetSpellId(HEALBOT_EARTH_SHIELD) then 
 			HealBot_bSpell=HEALBOT_EARTH_SHIELD
@@ -736,7 +761,7 @@ function HealBot_Action_SetBar3Value(button)
     if not button then return end
     barName = HealBot_Unit_Bar3[button.unit]
     if HealBot_pcClass and button.unit=="player" then
-		x = UnitPower("player", 9)
+		x = UnitPower("player", HealBot_pcClass)
         if x==1 then
             iconName = _G[barName:GetName().."Icon"..1];
             iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_red.tga]]);
@@ -750,12 +775,21 @@ function HealBot_Action_SetBar3Value(button)
             iconName = _G[barName:GetName().."Icon"..5];
             iconName:SetAlpha(0)
         elseif x==2 then
-            iconName = _G[barName:GetName().."Icon"..1];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_orange.tga]]);
-            iconName:SetAlpha(1)
-            iconName = _G[barName:GetName().."Icon"..2];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_orange.tga]]);
-            iconName:SetAlpha(1)
+            if HealBot_pcMax<4 then
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
+                iconName:SetAlpha(1)
+            else
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_orange.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_orange.tga]]);
+                iconName:SetAlpha(1)
+            end
             iconName = _G[barName:GetName().."Icon"..3];
             iconName:SetAlpha(0)
             iconName = _G[barName:GetName().."Icon"..4];
@@ -763,32 +797,72 @@ function HealBot_Action_SetBar3Value(button)
             iconName = _G[barName:GetName().."Icon"..5];
             iconName:SetAlpha(0)
         elseif x==3 then
-            iconName = _G[barName:GetName().."Icon"..1];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
-            iconName:SetAlpha(1)
-            iconName = _G[barName:GetName().."Icon"..2];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
-            iconName:SetAlpha(1)
-            iconName = _G[barName:GetName().."Icon"..3];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
-            iconName:SetAlpha(1)
+            if HealBot_pcMax<4 then
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..3];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+
+            elseif HealBot_pcMax<5 then
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..3];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+
+            else
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..3];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_yellow.tga]]);
+                iconName:SetAlpha(1)
+            end
             iconName = _G[barName:GetName().."Icon"..4];
             iconName:SetAlpha(0)
             iconName = _G[barName:GetName().."Icon"..5];
             iconName:SetAlpha(0)
         elseif x==4 then
-            iconName = _G[barName:GetName().."Icon"..1];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
-            iconName:SetAlpha(1)
-            iconName = _G[barName:GetName().."Icon"..2];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
-            iconName:SetAlpha(1)
-            iconName = _G[barName:GetName().."Icon"..3];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
-            iconName:SetAlpha(1)
-            iconName = _G[barName:GetName().."Icon"..4];
-            iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
-            iconName:SetAlpha(1)
+            if HealBot_pcMax<5 then
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..3];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..4];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_green.tga]]);
+                iconName:SetAlpha(1)
+
+            else
+                iconName = _G[barName:GetName().."Icon"..1];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..2];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..3];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+                iconName = _G[barName:GetName().."Icon"..4];
+                iconName:SetTexture([[Interface\AddOns\HealBot\Images\indicator_lime.tga]]);
+                iconName:SetAlpha(1)
+            end
             iconName = _G[barName:GetName().."Icon"..5];
             iconName:SetAlpha(0)
         elseif x==5 then
@@ -1646,6 +1720,34 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         for x=1,5 do
             pIcon = _G[bar3:GetName().."Icon"..x];
             pIcon:SetAlpha(0);
+        end
+        if HealBot_pcMax==3 then
+            pIcon = _G[bar3:GetName().."Icon1"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","-9","0");
+            pIcon = _G[bar3:GetName().."Icon2"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","0","0");
+            pIcon = _G[bar3:GetName().."Icon3"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","9","0");
+        elseif HealBot_pcMax==4 then
+            pIcon = _G[bar3:GetName().."Icon1"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","-12","0");
+            pIcon = _G[bar3:GetName().."Icon2"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","-4","0");
+            pIcon = _G[bar3:GetName().."Icon3"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","4","0");
+            pIcon = _G[bar3:GetName().."Icon4"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","12","0");
+        else
+            pIcon = _G[bar3:GetName().."Icon1"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","-14","0");
+            pIcon = _G[bar3:GetName().."Icon2"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","-7","0");
+            pIcon = _G[bar3:GetName().."Icon3"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","0","0");
+            pIcon = _G[bar3:GetName().."Icon4"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","7","0");
+            pIcon = _G[bar3:GetName().."Icon5"];
+            pIcon:SetPoint("BOTTOM",bar3,"BOTTOM","14","0");
         end
         icon1:SetHeight(iScale);
         icon1:SetWidth(iScale);

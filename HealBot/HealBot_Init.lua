@@ -380,6 +380,9 @@ function HealBot_Init_Spells_Defaults(class)
         [HEALBOT_PURIFY_SPIRIT] = {
             id = 77130, CastTime = 0, Mana = 155, Level = 18 }, 
             
+        [HEALBOT_CLEANSE_SPIRIT] = {
+            id = 51886, CastTime = 0, Mana = 155, Level = 18 }, 
+            
         [HEALBOT_EARTHLIVING_WEAPON] = {
             id = 51730, CastTime = 0, Mana = 155, Level = 30 }, 
             
@@ -416,9 +419,6 @@ function HealBot_Init_Spells_Defaults(class)
 
         [HEALBOT_LEGACY_EMPEROR] = {
             id = 115921, CastTime = 0, Mana = 155, Level = 22 }, 
-
-        [HEALBOT_LEGACY_WHITETIGER] = {
-            id = 116781, CastTime = 0, Mana = 155, Level = 81 }, 
             
         [HEALBOT_SOOTHING_MIST] = {
             id = 115175, CastTime = 0, Mana = 101, Level = 10 }, 
@@ -428,9 +428,6 @@ function HealBot_Init_Spells_Defaults(class)
             
         [HEALBOT_LIFE_COCOON] = {
             id = 116849, CastTime = 0, Mana = 101, Level = 50 }, 
-            
-        [HEALBOT_ENVELOPING_MIST] = {
-            id = 124682, CastTime = 0, Mana = 101, Level = 34 }, 
             
         [HEALBOT_REVIVAL] = {
             id = 115310, CastTime = 0, Mana = 101, Level = 78 }, 
