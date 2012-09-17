@@ -1,0 +1,13 @@
+tag 3.0.6
+25d2bfa66acf0b2b794473a6ca9850631f37290d
+dridzt <dridzt@mail.com>
+2012-09-06 02:16:18 +0300
+
+Tag as 3.0.6
+
+
+--------------------
+
+dridzt:
+	- And another try at fixing localization :P
+	- Fix localization error (hopefully)

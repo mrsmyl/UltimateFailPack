@@ -1,0 +1,53 @@
+local L = LibStub("AceLocale-3.0"):NewLocale("Multishot", "ruRU")
+if not L then return end
+
+L["achievements"] = "Достижения"
+L["bosskillshots"] = "Смерть босса"
+L["bosskillsparty"] = "Подземелья"
+L["bosskillsraid"] = "Рейды"
+L["BOTTOMLEFT"] = "Bottom Left" -- Requires localization
+L["BOTTOMRIGHT"] = "Bottom Right" -- Requires localization
+L["capture"] = "Настройки снимка"
+L["charpane"] = "Показывать окно персонажа"
+L["clear the text and press Enter to restore defaults."] = "clear the text and press Enter to restore defaults." -- Requires localization
+L["close"] = "Закрыть открытые окна"
+L["Custom screenshot"] = "Custom screenshot" -- Requires localization
+L["debug"] = "Режим отладки"
+L["delay"] = "Задержка снимка"
+L["delaykill"] = "Киллшоты"
+L["delayother"] = "Уровни и достижения"
+L["delayTimeline"] = "Timeline delay (minutes)" -- Requires localization
+L["firstkills"] = "Первое убийство (для каждого персонажа отдельно)"
+L["format"] = "Формат скриншота"
+L["guildachievements"] = "Достижения гильдии"
+L["guildlevelups"] = "Уровень гильдии"
+L["intro"] = "Multishot будет снимать следующие события"
+L["jpeg"] = "Низкое качество (JPEG)"
+L["levelups"] = "Уровень"
+L["played"] = "Добавить /played"
+L["png"] = "Высокое качество (PNG)"
+L["quality"] = "Уровень качества (только jpeg)"
+L["rarekills"] = "Редкие"
+L["repchange"] = "Изменения репутации"
+L["reset"] = "Сбросить историю первых убийств"
+L["set the format for watermark text"] = "set the format for watermark text" -- Requires localization
+L["tga"] = "Без сжатия (TGA)"
+L["timeline"] = "Timeline" -- Requires localization
+L["timeLineEnable"] = "Enable Timeline mode (auto screenshot)" -- Requires localization
+L["TOP"] = "Top" -- Requires localization
+L["TOPLEFT"] = "Top Left" -- Requires localization
+L["TOPRIGHT"] = "Top Right" -- Requires localization
+L["trade"] = "Окно обмена"
+L["uihide"] = "Спрятать интерфейс"
+L["various"] = "Разное"
+L["watermark"] = "watermark" -- Requires localization
+L["watermarkanchor"] = "Set the screen location of the watermark text" -- Requires localization
+L["watermarkformat"] = "Configure the watermark text" -- Requires localization
+L["watermarkformattext"] = [=[
+$n = name
+$c = class
+$l = level
+$z = zone
+$r = realm
+$d = date
+$b = line change]=] -- Requires localization

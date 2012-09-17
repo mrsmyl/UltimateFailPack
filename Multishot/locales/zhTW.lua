@@ -1,0 +1,53 @@
+local L = LibStub("AceLocale-3.0"):NewLocale("Multishot", "zhTW")
+if not L then return end
+
+L["achievements"] = "獲得成就"
+L["bosskillshots"] = "擊殺截圖"
+L["bosskillsparty"] = "5人副本"
+L["bosskillsraid"] = "10/25/40人團隊副本"
+L["BOTTOMLEFT"] = "Bottom Left" -- Requires localization
+L["BOTTOMRIGHT"] = "Bottom Right" -- Requires localization
+L["capture"] = "截圖設定"
+L["charpane"] = "顯示角色視窗"
+L["clear the text and press Enter to restore defaults."] = "clear the text and press Enter to restore defaults." -- Requires localization
+L["close"] = "關閉打開的視窗"
+L["Custom screenshot"] = "Custom screenshot" -- Requires localization
+L["debug"] = "除錯模式"
+L["delay"] = "截圖延時"
+L["delaykill"] = "擊殺"
+L["delayother"] = "升級和獲得成就"
+L["delayTimeline"] = "Timeline delay (minutes)" -- Requires localization
+L["firstkills"] = "首次擊殺模式（僅當前角色）"
+L["format"] = "截圖格式"
+L["guildachievements"] = "公會成就"
+L["guildlevelups"] = "公會升級"
+L["intro"] = "Multishot 將會對以下事件自動截圖"
+L["jpeg"] = "低品質（JPEG格式）"
+L["levelups"] = "升級"
+L["played"] = "新增 /played"
+L["png"] = "高品質（PNG格式）"
+L["quality"] = "品質（僅限JPEG格式）"
+L["rarekills"] = "稀有怪"
+L["repchange"] = "聲望等級變化"
+L["reset"] = "重置首次擊殺歷史"
+L["set the format for watermark text"] = "set the format for watermark text" -- Requires localization
+L["tga"] = "未壓縮（TGA格式）"
+L["timeline"] = "Timeline" -- Requires localization
+L["timeLineEnable"] = "Enable Timeline mode (auto screenshot)" -- Requires localization
+L["TOP"] = "Top" -- Requires localization
+L["TOPLEFT"] = "Top Left" -- Requires localization
+L["TOPRIGHT"] = "Top Right" -- Requires localization
+L["trade"] = "交易視窗"
+L["uihide"] = "隱藏介面"
+L["various"] = "各種各樣"
+L["watermark"] = "watermark" -- Requires localization
+L["watermarkanchor"] = "Set the screen location of the watermark text" -- Requires localization
+L["watermarkformat"] = "Configure the watermark text" -- Requires localization
+L["watermarkformattext"] = [=[
+$n = name
+$c = class
+$l = level
+$z = zone
+$r = realm
+$d = date
+$b = line change]=] -- Requires localization
