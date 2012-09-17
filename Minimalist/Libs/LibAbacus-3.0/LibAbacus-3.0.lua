@@ -1,6 +1,6 @@
 --[[
 Name: LibAbacus-3.0
-Revision: $Rev: 46 $
+Revision: $Rev: 50 $
 Author(s): ckknight (ckknight@gmail.com)
 Website: http://ckknight.wowinterface.com/
 Documentation: http://www.wowace.com/wiki/LibAbacus-3.0
@@ -10,7 +10,7 @@ License: LGPL v2.1
 ]]
 
 local MAJOR_VERSION = "LibAbacus-3.0"
-local MINOR_VERSION = tonumber(("$Revision: 46 $"):match("(%d+)")) + 90000
+local MINOR_VERSION = tonumber(("$Revision: 50 $"):match("(%d+)")) + 90000
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub") end
 local Abacus, oldLib = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -115,7 +115,7 @@ elseif ( GetLocale() == "ruRU" ) then
 	L_UNDETERMINED = "Неопределено"
 end
 
-local inf = 1/0
+local inf = math.huge
 
 function Abacus:FormatMoneyExtended(value, colorize, textColor)
 	local gold = abs(value / 10000)
