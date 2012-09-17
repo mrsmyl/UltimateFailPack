@@ -14,6 +14,10 @@
  * faq - http://code.google.com/p/arkinventory/wiki/FAQ
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
+*3.03.10 (17-SEP-2012)*
+ * fixed - outfitter support code should now work properly
+ * changed - outfit rule will now check against each supported addon and then lastly check the equipment manager
+ 
 *3.03.09 (16-SEP-2012)*
  * fixed - issue with empty bag slot custom colour reverting to grey when displayed offline
  * fixed - issue with soulbound status, item quality and default category assignment during scan

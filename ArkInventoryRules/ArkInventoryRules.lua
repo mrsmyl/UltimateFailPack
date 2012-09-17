@@ -20,7 +20,13 @@ function ArkInventoryRules.OnInitialize( )
 	
 	-- outfitter: 
 	if IsAddOnLoaded( "Outfitter" ) then
-		ArkInventory.MySecureHook( Outfitter, "Initialize", ArkInventoryRules.OutfitterInitialize )
+		if Outfitter:IsInitialized( ) then
+			--ArkInventory.Output( "outfitter was ready" )
+			ArkInventoryRules.OutfitterInitialize( true )
+		else
+			--ArkInventory.Output( "outfitter was not ready, hook and wait" )
+			ArkInventory.MySecureHook( Outfitter, "Initialize", ArkInventoryRules.OutfitterInitialize )
+		end
 	end
 	
 	-- scrap: http://wow.curse.com/downloads/wow-addons/details/scrap.aspx
@@ -85,7 +91,16 @@ function ArkInventoryRules.OnEnable( )
 	
 end
 
-function ArkInventoryRules.OutfitterInitialize( )
+function ArkInventoryRules.OutfitterInitialize( ... )
+	
+	local wasReady = ...
+	
+	if wasReady == true then
+		--ArkInventory.Output( "outfitter was ready" )
+	else
+		--ArkInventory.Output( "outfitter initilised, checking status" )
+		wasReady = false
+	end
 	
 	if Outfitter:IsInitialized( ) then
 		
@@ -94,13 +109,16 @@ function ArkInventoryRules.OutfitterInitialize( )
 		Outfitter:RegisterOutfitEvent( "ADD_OUTFIT", ArkInventoryRules.ItemCacheClear )
 		Outfitter:RegisterOutfitEvent( "DELETE_OUTFIT", ArkInventoryRules.ItemCacheClear )
 		Outfitter:RegisterOutfitEvent( "EDIT_OUTFIT", ArkInventoryRules.ItemCacheClear )
+		--Outfitter:RegisterOutfitEvent( "WEAR_OUTFIT", ArkInventoryRules.ItemCacheClear )
+		--Outfitter:RegisterOutfitEvent( "UNWEAR_OUTFIT", ArkInventoryRules.ItemCacheClear )
 		
-		ArkInventory.MyUnhook( Outfitter, "Initialize" )
+		if not wasReady then
+			ArkInventory.MyUnhook( Outfitter, "Initialize" )
+			ArkInventory.ItemCacheClear( )
+			ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+		end
 		
 		ArkInventory.Global.Rules.Enabled = true
-		
-		ArkInventory.ItemCacheClear( )
-		ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
 		
 	end
 	
@@ -660,13 +678,12 @@ function ArkInventoryRules.System.outfit( ... )
 		
 	end	
 	
-	if IsAddOnLoaded( "Outfitter" ) then --and Outfitter.Initialized then
-		return ArkInventoryRules.System.outfit_outfitter( ... )
-	elseif IsAddOnLoaded( "ItemRack" ) then
-		return ArkInventoryRules.System.outfit_itemrack( ... )
-	--elseif IsAddOnLoaded( "ClosetGnome" ) then
-		-- closetgnome uses the blizzard equipment manager for the back end
-		--return ArkInventoryRules.System.outfit_closetgnome( t, ArkInventoryRules.Object.h )
+	if IsAddOnLoaded( "Outfitter" ) and Outfitter:IsInitialized( ) and ArkInventoryRules.System.outfit_outfitter( ... ) then
+		return true
+	end
+	
+	if IsAddOnLoaded( "ItemRack" ) and ArkInventoryRules.System.outfit_itemrack( ... ) then
+		return true
 	end
 	
 	return ArkInventoryRules.System.outfit_blizzard( ... )
@@ -719,66 +736,6 @@ function ArkInventoryRules.System.outfit_outfitter( ... )
 	
 	return false
 
-end
-
-function ArkInventoryRules.System.outfit_closetgnome( ... )
-	
-	-- latest closet gone is using the blizzard quipment manager for the back end
-	if not ArkInventoryRules.Object.h or not IsAddOnLoaded( "ClosetGnome" ) then
-		return false
-	end
-
-	local Outfits = { }	
-	
-	if ClosetGnome.GetOutfitsUsingItem then
-	
-		Outfits = { ClosetGnome:GetOutfitsUsingItem( ArkInventoryRules.Object.h ) }
-
-	else
-
-		for n in pairs( ClosetGnome.db.char.set ) do
-			for s, v in pairs( ClosetGnome.db.char.set[n] ) do
-				if v == h then
-					tinsert( Outfits, strtrim( n ) )
-					break
-				end
-			end
-		end
-		
-	end
-
-	
-	if not Outfits or next( Outfits ) == nil then return false end
-	
-	
-	local ac = select( '#', ... )
-	
-	if ac == 0 then
-		return true
-	end
-	
-	for ax = 1, ac do
-		
-		local arg = select( ax, ... )
-		
-		if not arg then
-			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_NIL"], fn, ax ), 0 )
-		end
-		
-		if type( arg ) ~= "string" then
-			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
-		end
-		
-		for _, o in pairs( Outfits ) do
-			if o and string.lower( strtrim( o ) ) == string.lower( strtrim( arg ) ) then
-				return true
-			end
-		end
-	
-	end
-	
-	return false
-	
 end
 
 function ArkInventoryRules.System.outfit_itemrack( ... )

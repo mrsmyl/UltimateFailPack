@@ -1,13 +1,30 @@
 ------------------------------------------------------------------------
-r360 | arkayenro | 2012-09-16 09:51:38 +0000 (Sun, 16 Sep 2012) | 5 lines
+r363 | arkayenro | 2012-09-16 14:15:06 +0000 (Sun, 16 Sep 2012) | 4 lines
 Changed paths:
-   A /tags/3.03.09 (from /trunk:359)
+   A /tags/3.03.10 (from /trunk:362)
 
-*3.03.09 (16-SEP-2012)*
- * fixed - issue with empty bag slot custom colour reverting to grey when displayed offline
- * fixed - issue with soulbound status, item quality and default category assignment during scan
- * note - all saved data has been erased, please login to each character to update its data
+*3.03.10 (17-SEP-2012)*
+ * fixed - outfitter support code should now work properly
+ * changed - outfit rule will now check against each supported addon and then lastly check the equipment manager
 
+------------------------------------------------------------------------
+r362 | arkayenro | 2012-09-16 14:10:33 +0000 (Sun, 16 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.10 (17-SEP-2012)*
+ * fixed - outfitter support code should now work properly
+ * changed - outfit rule will now check against each supported addon and then lastly check the equipment manager
+------------------------------------------------------------------------
+r361 | arkayenro | 2012-09-16 13:45:47 +0000 (Sun, 16 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryRestack.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+3.3.10 test version
 ------------------------------------------------------------------------
 r359 | arkayenro | 2012-09-16 09:46:24 +0000 (Sun, 16 Sep 2012) | 5 lines
 Changed paths:

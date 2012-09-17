@@ -177,8 +177,6 @@ local function CompactBags( loc_id )
 			
 				local h = GetContainerItemLink( bag_id, slot_id )
 				
-				--ArkInventory.Output( loc_id, " / ", bag_id, " / ", slot_id, " = ", h ) -- , " / ", ArkInventory.Global.Me.location[loc_id].bag[bag_id].slot[slot_id].h
-				
 				if h then
 					
 					local item_id = ArkInventory.ObjectStringDecodeItem( h )
