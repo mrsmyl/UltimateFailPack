@@ -1,0 +1,12 @@
+## Interface: 50001
+## Title: AutoVendor
+## Notes: Automatically sells useless stuff and repairs your gear
+## SavedVariables: AutoVendorDB
+## Author: Olafski
+## Version: 0.17
+## X-Curse-Packaged-Version: v0.17.0
+## X-Curse-Project-Name: AutoVendor
+## X-Curse-Project-ID: autovendor
+## X-Curse-Repository-ID: wow/autovendor/mainline
+embeds.xml
+AutoVendor.lua
