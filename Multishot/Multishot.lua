@@ -190,7 +190,7 @@ function Multishot:CustomScreenshot(strDebug)
     UIParent:SetAlpha(0)
   end
   if MultishotConfig.watermark then self:RefreshWatermark(true) end
-  if MultishotConfig.played and (strDebug == "PLAYER_LEVEL_UP" or strebug == "ACHIEVEMENT_EARNED" or strDebug == "CHAT_MSG_SYSTEM") and strDebug ~= "TIME_PLAYED_MSG" then RequestTimePlayed() self:RegisterEvent("TIME_PLAYED_MSG") return end
+  if MultishotConfig.played and (strDebug == "PLAYER_LEVEL_UP" or strDebug == "ACHIEVEMENT_EARNED" or strDebug == "CHAT_MSG_SYSTEM") and strDebug ~= "TIME_PLAYED_MSG" then RequestTimePlayed() self:RegisterEvent("TIME_PLAYED_MSG") return end
   if MultishotConfig.timeLineEnable then timeLineStart,timeLineElapsed = GetTime(),0 end
   TakeScreenshot()
 end

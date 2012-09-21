@@ -33,7 +33,7 @@ L["reset"] = "첫 처치기록 초기화"
 L["set the format for watermark text"] = "워터마크 기록 방법"
 L["tga"] = "압축하지 않음 (TGA)"
 L["timeline"] = "Timeline"
-L["timeLineEnable"] = "타임라인 모드 설정 (자동 캡쳐)" -- Needs review
+L["timeLineEnable"] = "타임라인 모드 설정 (자동 캡쳐)"
 L["TOP"] = "상단"
 L["TOPLEFT"] = "왼쪽 상단"
 L["TOPRIGHT"] = "오른쪽 상단"
@@ -43,10 +43,11 @@ L["various"] = "기타항목"
 L["watermark"] = "워터마크"
 L["watermarkanchor"] = "워터마크 텍스트 화면 위치 설정"
 L["watermarkformat"] = "워터마크 텍스트 구성"
-L["watermarkformattext"] = [=[$n = 이름
+L["watermarkformattext"] = [=[
+$n = 이름
 $c = 클래스
 $l = 레벨
 $z = 지역
 $r = 서버
 $d = 날짜
-$b = 라인 변경]=] -- Needs review
+$b = 라인 변경]=]
