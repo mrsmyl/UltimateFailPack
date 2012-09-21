@@ -1,10 +1,10 @@
 ## Interface: 50001
 ## Title: Pawn
-## Version: 1.6.6
+## Version: 1.6.7
 ## Notes: Pawn calculates scores for items that let you easily see which one is better for you.
 ## OptionalDependencies: AtlasLoot, EQCompare, EquipCompare, MultiTips, Outfitter
 ## SavedVariables: PawnCommon
-## SavedVariablesPerCharacter: PawnOptions, PawnWowheadScaleProviderOptions
+## SavedVariablesPerCharacter: PawnOptions, PawnWowheadScaleProviderOptions, PawnPlaceholderScaleProviderOptions
 
 VgerCore\VgerCore.lua
 
@@ -14,3 +14,4 @@ Pawn.lua
 PawnUI.lua
 PawnUI.xml
 Wowhead.lua
+MonkPlaceholders.lua

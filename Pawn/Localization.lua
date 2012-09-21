@@ -527,6 +527,11 @@ PawnWowheadScale_DruidFeralDps = "Druid: feral"
 PawnWowheadScale_DruidFeralTank = "Druid: guardian"
 PawnWowheadScale_DruidRestoration = "Druid: restoration"
 
+PawnPlaceholderScale_Provider = "• Placeholder scales" -- The dot makes these scales sort to the bottom of the list.
+PawnPlaceholderScale_MonkBrewmaster = "Monk: brewmaster"
+PawnPlaceholderScale_MonkMistweaver = "Monk: mistweaver"
+PawnPlaceholderScale_MonkWindwalker = "Monk: windwalker"
+
 ------------------------------------------------------------
 -- Tooltip parsing expressions
 ------------------------------------------------------------
@@ -706,12 +711,12 @@ PawnRegexes =
 	{"^Scope %(%+([%d%.,]+) Damage%)$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Ranged weapon scopes
 	{"^%+?([%d%.,]+) [Aa]ll [Ss]tats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract},
 	{"^%+?([%d%.,]+) to All Stats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract}, -- Enchanted Pearl, Enchanted Tear
-	{"^%+?(%-?%d+) Strength$", "Strength"},
+	{"^%+?([-%d%.,]+) Strength$", "Strength"},
 	{"^Potency$", "Strength", 20, PawnMultipleStatsFixed}, -- weapon enchantment (untested)
-	{"^%+?(%-?%d+) Agility$", "Agility"},
-	{"^%+?(%-?%d+) Stamina$", "Stamina"},
-	{"^%+?(%-?%d+) Intellect$", "Intellect"}, -- negative Intellect: Kreeg's Mug
-	{"^%+?(%-?%d+) Spirit$", "Spirit"},
+	{"^%+?([-%d%.,]+) Agility$", "Agility"},
+	{"^%+?([-%d%.,]+) Stamina$", "Stamina"},
+	{"^%+?([-%d%.,]+) Intellect$", "Intellect"}, -- negative Intellect: Kreeg's Mug
+	{"^%+?([-%d%.,]+) Spirit$", "Spirit"},
 	{"^Titanium Weapon Chain$", "HitRating", 28, PawnMultipleStatsFixed}, -- Weapon enchantment; has additional effects
 	{"^%+?([%d%.,]+) Dodge$", "DodgeRating"}, -- Uppercase: Subtle Alicite, Arctic Ring of Eluding, Cata head enchantment for tanks
 	{"^Equip: Increases your dodge by ([%d%.,]+)%.$", "DodgeRating"}, -- Frostwolf Insignia Rank 6

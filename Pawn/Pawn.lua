@@ -3686,11 +3686,19 @@ function PawnGetAllScalesExComparer(a, b)
 	if AVisible and not BVisible then return true end
 	if BVisible and not AVisible then return false end
 	-- They're both the same visibility.  Sort custom (non-provider) scales first.
-	local AProvider = a.IsProvider
-	local BProvider = b.IsProvider
-	if AProvider and not BProvider then return false end
-	if BProvider and not AProvider then return true end
-	-- If both scales are of the same class, then just sort by display name, case-insensitive.
+	local AIsProvider = a.IsProvider
+	local BIsProvider = b.IsProvider
+	if AIsProvider and not BIsProvider then return false end
+	if BIsProvider and not AIsProvider then return true end
+	-- Then, sort by provider.
+	if AIsProvider or BIsProvider then
+		local AProvider = PawnGetProviderNameFromScale(a.Name)
+		local BProvider = PawnGetProviderNameFromScale(b.Name)
+		if AProvider and BProvider and AProvider ~= BProvider then
+			return strlower(PawnGetProviderLocalizedName(AProvider)) < strlower(PawnGetProviderLocalizedName(BProvider))
+		end
+	end
+	-- If both scales are from the same provider, then just sort by display name, case-insensitive.
 	return strlower(a.LocalizedName) < strlower(b.LocalizedName)
 end
 
@@ -4184,6 +4192,31 @@ end
 -- Given a scale provider name and a scale name, returns the full name of a scale from a provider.
 function PawnGetProviderScaleName(ProviderInternalName, ScaleInternalName)
 	return "\"" .. ProviderInternalName .. "\":" .. ScaleInternalName
+end
+
+-- Given a scale internal name, return the provider internal name.
+function PawnGetProviderNameFromScale(ScaleInternalName)
+	-- If this isn't a provider scale, then just return the scale name.
+	if not ScaleInternalName or strsub(ScaleInternalName, 1, 1) ~= "\"" then return ScaleInternalName end
+
+	-- Otherwise, get the provider name.
+	local Pos = strfind(ScaleInternalName, "\"", 2, true)
+	if not Pos then
+		VgerCore.Fail("Didn't understand the provider name in the scale " .. tostring(ScaleInternalName) .. ".")
+		return ScaleInternalName
+	end
+	return strsub(ScaleInternalName, 2, Pos - 1)
+end
+
+-- Given a provider internal name, return the localized name.
+function PawnGetProviderLocalizedName(ProviderInternalName)
+	local Provider = PawnScaleProviders[ProviderInternalName]
+	if not Provider then
+		VgerCore.Fail("Pawn scale provider \"" .. tostring(ProviderInternalName) .. " is not registered yet so we can't get its display name.")
+		return ProviderInternalName
+	end
+
+	return Provider.Name
 end
 
 -- Adds a plugin scale to Pawn.  Plugin scales are read-only once added, and are not saved; they must be added on every login.
