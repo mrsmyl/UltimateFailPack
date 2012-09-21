@@ -1,4 +1,24 @@
 ------------------------------------------------------------------------
+r381 | gathirer | 2012-09-20 16:29:49 +0000 (Thu, 20 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/locales/itIT.lua
+
+- Fix for the itIT pattern matching
+------------------------------------------------------------------------
+r380 | gathirer | 2012-09-20 06:26:08 +0000 (Thu, 20 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/RatingBuster.lua
+   M /trunk/locales/deDE.lua
+   M /trunk/locales/enUS.lua
+   M /trunk/locales/esES.lua
+   M /trunk/locales/frFR.lua
+   A /trunk/locales/itIT.lua
+   M /trunk/locales/locales.xml
+   A /trunk/locales/ptBR.lua
+
+- Revamped localization files
+- Added localization for itIT & ptBR
+------------------------------------------------------------------------
 r379 | gathirer | 2012-09-17 06:02:28 +0000 (Mon, 17 Sep 2012) | 1 line
 Changed paths:
    M /trunk/RatingBuster.lua

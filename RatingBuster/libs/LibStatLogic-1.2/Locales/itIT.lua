@@ -7,7 +7,7 @@ local patNumber = "%d+[%"..LOCALE_STHOUSAND.."%d]*"; --regular expression to fin
 local patDecimal = "%d+[%"..LOCALE_STHOUSAND.."%d]*%"..LOCALE_SDECIMAL.."?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
 
 
-PatternLocale.esES = { -- {{{
+PatternLocale.itIT = { -- {{{
 	LOCALE_STHOUSAND = LOCALE_STHOUSAND, --Character used to separate groups of digits
 	LOCALE_SDECIMAL = LOCALE_SDECIMAL, --Character(s) used for the decimal separator
 	
@@ -17,10 +17,10 @@ PatternLocale.esES = { -- {{{
 	-----------------
 	-- Armor Types --
 	-----------------
-	Plate = "Placas",
-	Mail = "Mallas",
-	Leather = "Cuero",
-	Cloth = "Tela",
+	Plate = "Piastre",
+	Mail = "Maglia",
+	Leather = "Cuoio",
+	Cloth = "Stoffa",
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -97,7 +97,7 @@ PatternLocale.esES = { -- {{{
 	-- +19 耐力 = "^%+(patNumber) (.-)%.?$"
 	-- Some have a "." at the end of string like:
 	-- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec. "
-	["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+	["SinglePlusStatCheck"] = "^([%+%-]?%d+%p?%d*) (.-)%.?$",
 
 	-----------------------------
 	-- Single Equip Stat Check --
@@ -163,10 +163,10 @@ PatternLocale.esES = { -- {{{
 		["salud un máximo de (%d+) y el dano un máximo de (%d+)"] = {{"HEAL",}, {"SPELL_DMG",},},
 	},
 	["DeepScanPatterns"] = {
-		"^(.-) ?(%d+) ?(.-)$", -- "xxx by up to 22 xxx" (scan first)
+		--"^(.-) ?(%d+) ?(.-)$", -- "xxx by up to 22 xxx" (scan first)
 		-- "^(.-)5 [Ss]ek%. (%d+) (.-)$",  -- "xxx 5 Sek. 8 xxx" (scan 2nd)
-		"^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
-		"^(.-) ?([%d%p]+)( ?.-)$", -- 22.22 xxx xxx (scan last)
+		--"^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
+		--"^(.-) ?(%d%p]+)( ?.-)$", -- 22.22 xxx xxx (scan last)
 		"^(.-) ?([%+%-]?%d+[%p%d+]*)(%s? ?.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
 
 	},

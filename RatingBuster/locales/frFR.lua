@@ -571,12 +571,13 @@ L["ItemID: "] = "ID de l'objet :"
 --
 -- Tip2: The strings are passed into string.find, so you should escape the magic characters ^$()%.[]*+-? with a %
 L["numberPatterns"] = {
-	{pattern = " de (%d+)", addInfo = "AfterNumber", space = " ", },
+	{pattern = "de (%d+) (le .+)", addInfo = "AfterNumber", space = " ", },
+	{pattern = "de (%d+) (la .+)", addInfo = "AfterNumber", space = " ", },
 	{pattern = "([%+%-]%d+)[^%%]", addInfo = "AfterStat", space = " ", },
-	--{pattern = "grant.-(%d+)", addInfo = "AfterNumber",}, -- for "grant you xx stat" type pattern, ex: Quel'Serrar ID:18348, Assassination Armor set
-	--{pattern = "add.-(%d+)", addInfo = "AfterNumber",}, -- for "add xx stat" type pattern, ex: Adamantite Sharpening Stone ID:23529
-	-- Added [^%%] so that it doesn't match strings like "Increases healing by up to 10% of your total Intellect." [Whitemend Pants] ID:24261
-	-- Added [^|] so that it doesn't match enchant strings (JewelTips)
+	{pattern = "grant.-(%d+)", addInfo = "AfterNumber",}, -- for "grant you xx stat" type pattern, ex: Quel'Serrar ID:18348, Assassination Armor set
+	{pattern = "add.-(%d+)", addInfo = "AfterNumber",}, -- for "add xx stat" type pattern, ex: Adamantite Sharpening Stone ID:23529
+	 --Added [^%%] so that it doesn't match strings like "Increases healing by up to 10% of your total Intellect." [Whitemend Pants] ID:24261
+	--Added [^|] so that it doesn't match enchant strings (JewelTips)
 	{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = " ", }, -- [ç™¼å…‰çš„æš—å½±å“å¥ˆçŸ³] +6æ³•è¡“å‚·å®³åŠ5è€åŠ›
 }
 L["separators"] = {

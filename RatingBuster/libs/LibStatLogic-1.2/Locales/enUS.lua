@@ -1,12 +1,13 @@
-﻿--Include LibStatLogic's enUS.lua file before any other locales, and before LibStatLogic.lua itself.
+﻿
+--Include LibStatLogic's enUS.lua file before any other locales, and before LibStatLogic.lua itself.
 PatternLocale = {};
 DisplayLocale = {};
 
 --These constants need to be built outside the table before they can be referenced
-local LOCALE_STHOUSAND = ",";  --Character used to separate groups of digits
-local LOCALE_SDECIMAL = "."; --Character(s) used for the decimal separator
-local patNumber = "%d+["..LOCALE_STHOUSAND.."%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
-local patDecimal = "%d+["..LOCALE_STHOUSAND.."%d]*"..LOCALE_SDECIMAL.."?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
+local LOCALE_STHOUSAND = "%p";  --Character used to separate groups of digits
+local LOCALE_SDECIMAL = "%p"; --Character(s) used for the decimal separator
+local patNumber = "%d+[%p%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
+local patDecimal = "%d+[%p%d]*%p?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
 
 
 PatternLocale.enUS = { -- {{{
@@ -47,19 +48,20 @@ PatternLocale.enUS = { -- {{{
 		[ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
 		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
 
-		["Disen"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
+		[ITEM_DISENCHANT_ANY_SKILL] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
 		-- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
 		["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
 		["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r"; -- %s is the creator of the item
 		["Coold"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d day";
-		["Uniqu"] = true, -- ITEM_UNIQUE = "Unique"; -- Item is unique 
+		[ITEM_UNIQUE] = true, -- ITEM_UNIQUE = "Unique"; -- Item is unique 
+		[ITEM_UNIQUE_EQUIPPABLE] = true,
 		--["Uniqu"] = true, --ITEM_UNIQUE_MULTIPLE = "Unique (%d)"; -- Item is unique
-		["Requi"] = true, -- Requires Level xx -- ITEM_MIN_LEVEL = "Requires Level %d"; -- Required level to use the item
-		["\nRequ"] = true, -- Requires Level xx -- ITEM_MIN_SKILL = "Requires %s (%d)"; -- Required skill rank to use the item
+		[REQUIRES_LABEL] = true, -- Requires Level xx -- ITEM_MIN_LEVEL = "Requires Level %d"; -- Required level to use the item
+		[ITEM_CLASSES_ALLOWED] = true, -- Requires Level xx -- ITEM_MIN_SKILL = "Requires %s (%d)"; -- Required skill rank to use the item
 		["Class"] = true, -- Classes: xx -- ITEM_CLASSES_ALLOWED = "Classes: %s"; -- Lists the classes allowed to use this item
-		["Races"] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
-		["Use: "] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
-		["Chanc"] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
+		[ITEM_RACES_ALLOWED] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
+		[ITEM_SPELL_TRIGGER_ONUSE] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
+		[ITEM_SPELL_TRIGGER_ONPROC] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
 		-- Set Bonuses
 		-- ITEM_SET_BONUS = "Set: %s";
 		-- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
@@ -102,7 +104,7 @@ PatternLocale.enUS = { -- {{{
 		[INVTYPE_TABARD] = true,
 		[INVTYPE_BAG] = true,
 		--4.0.6
-		["Item "] = true, -- ITEM_LEVEL = "Item Level %d"
+		[ITEM_LEVEL] = true, -- ITEM_LEVEL = "Item Level %d"
 		[REFORGED] = true,
 		[ITEM_HEROIC] = true,
 		[ITEM_HEROIC_EPIC] = true,
@@ -240,7 +242,7 @@ PatternLocale.enUS = { -- {{{
 	-- stat1, value, stat2 = strfind
 	-- stat = stat1..stat2
 	-- "^Equip: (.-) by u?p? ?t?o? ?(%d+) ?(.-)%.?$"
-	["SingleEquipStatCheck"] = "^Equip: (.-) by u?p? ?t?o? ?("..patNumber..") ?(.-)%.?$",
+	["SingleEquipStatCheck"] = "^"..ITEM_SPELL_TRIGGER_ONEQUIP.." (.-) by u?p? ?t?o? ?("..patNumber..") ?(.-)%.?$",
 
 	-------------
 	-- PreScan --
@@ -287,7 +289,7 @@ PatternLocale.enUS = { -- {{{
 	-- DeepScan --
 	--------------
 	-- Strip leading "Equip: ", "Socket Bonus: "
-	["Equip: "] = "Equip: ", -- ITEM_SPELL_TRIGGER_ONEQUIP = "Equip:";
+	[ITEM_SPELL_TRIGGER_ONEQUIP] = ITEM_SPELL_TRIGGER_ONEQUIP, -- ITEM_SPELL_TRIGGER_ONEQUIP = "Equip:";
 	["Socket Bonus: "] = "Socket Bonus: ", -- ITEM_SOCKET_BONUS = "Socket Bonus: %s"; -- Tooltip tag for socketed item matched socket bonuses
 	-- Strip trailing "."
 	["."] = ".",
@@ -314,31 +316,31 @@ PatternLocale.enUS = { -- {{{
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
+
 	["StatIDLookup"] = {
-		["% Threat"] = {"MOD_THREAT"}, -- StatLogic:GetSum("item:23344:2613")
-		["% Intellect"] = {"MOD_INT"}, -- [Ember Skyflare Diamond] ID: 41333
-		["% Shield Block Value"] = {"MOD_BLOCK_VALUE"}, -- [Eternal Earthsiege Diamond] ID: 41396
-		["% Mount Speed"] = {"MOUNT_SPEED"}, -- Mithril Spurs, Minor Mount Speed Increase
+	},
+	["StatIDLooupLong"]= {
+		[THREAT_TOOLTIP] = {"MOD_THREAT"}, --  "% Threat" -- StatLogic:GetSum("item:23344:2613")
+		["% Shield Block Value"] = {"MOD_BLOCK_VALUE"}, --  "% Shield Block Value"[Eternal Earthsiege Diamond] ID: 41396
 		["Scope (Damage)"] = {"RANGED_DMG"}, -- Khorium Scope EnchantID: 2723
 		["Scope (Critical Strike Rating)"] = {"RANGED_CRIT_RATING"}, -- Stabilized Eternium Scope EnchantID: 2724
 		["Your attacks ignoreof your opponent's armor"] = {"IGNORE_ARMOR"}, -- StatLogic:GetSum("item:33733")
 		["Increases your effective stealth level"] = {"STEALTH_LEVEL"}, -- [Nightscape Boots] ID: 8197
-		["Weapon Damage"] = {"MELEE_DMG"}, -- Enchant
-		["Increases mount speed%"] = {"MOUNT_SPEED"}, -- [Highlander's Plate Greaves] ID: 20048
+		[DAMAGE_TOOLTIP] = {"MELEE_DMG"}, --  "Weapon Damage" Enchant
+		[SPELL_STATALL] = {"STR", "AGI", "STA", "INT", "SPI",}, --All Stats
+		[SPELL_STAT1_NAME] = {"STR",},
+		[SPELL_STAT2_NAME] = {"AGI",},
+		[SPELL_STAT3_NAME] = {"STA",},
+		[SPELL_STAT4_NAME] = {"INT",},
+		[SPELL_STAT5_NAME] = {"SPI",},
 
-		["All Stats"] = {"STR", "AGI", "STA", "INT", "SPI",},
-		["to All Stats"] = {"STR", "AGI", "STA", "INT", "SPI",}, -- [Enchanted Tear] ID: 42702
-		["Strength"] = {"STR",},
-		["Agility"] = {"AGI",},
-		["Stamina"] = {"STA",},
-		["Intellect"] = {"INT",},
-		["Spirit"] = {"SPI",},
+		[RESISTANCE6_NAME] = {"ARCANE_RES",}, -- "Arcane Resistance"
+		[RESISTANCE2_NAME] = {"FIRE_RES",}, --"Fire Resistance"
+		[RESISTANCE3_NAME] = {"NATURE_RES",}, --"Nature Resistance"
+		[RESISTANCE4_NAME] = {"FROST_RES",}, --"Frost Resistance"
+		[RESISTANCE5_NAME] = {"SHADOW_RES",}, --"Shadow Resistance"
+		[RESISTANCE1_NAME] = {"HOLY_RES",}, --"Holy Resistance"
 
-		["Arcane Resistance"] = {"ARCANE_RES",},
-		["Fire Resistance"] = {"FIRE_RES",},
-		["Nature Resistance"] = {"NATURE_RES",},
-		["Frost Resistance"] = {"FROST_RES",},
-		["Shadow Resistance"] = {"SHADOW_RES",},
 		["Arcane Resist"] = {"ARCANE_RES",}, -- Arcane Armor Kit +8 Arcane Resist
 		["Fire Resist"] = {"FIRE_RES",}, -- Flame Armor Kit +8 Fire Resist
 		["Nature Resist"] = {"NATURE_RES",}, -- Frost Armor Kit +8 Frost Resist
@@ -346,27 +348,28 @@ PatternLocale.enUS = { -- {{{
 		["Shadow Resist"] = {"SHADOW_RES",}, -- Shadow Armor Kit +8 Shadow Resist
 		["Shadow resistance"] = {"SHADOW_RES",}, -- Demons Blood ID: 10779
 		["All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
-		["Resist All"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
-		["to All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
+		--["Resist All"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
+		--["to All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
+		[ITEM_RESIST_ALL] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
 
-		["Fishing"] = {"FISHING",}, -- Fishing enchant ID:846
-		["Fishing Skill"] = {"FISHING",}, -- Fishing lure
-		["Increased Fishing"] = {"FISHING",}, -- Equip: Increased Fishing +20.
+
+		[PROFESSIONS_FISHING] = {"FISHING",}, -- Fishing enchant ID:846
 		["Mining"] = {"MINING",}, -- Mining enchant ID:844
 		["Herbalism"] = {"HERBALISM",}, -- Herbalism enchant ID:845
 		["Skinning"] = {"SKINNING",}, -- Skinning enchant ID:865
 		["Skinning skill increased"] = {"SKINNING",}, --20120915 ID: 12709  Finkle's Skinner
 
-		["Armor"] = {"ARMOR_BONUS",},
-		["Defense"] = {"DEFENSE",},
-		["Increased Defense"] = {"DEFENSE",},
+		[ARMOR] = {"ARMOR_BONUS",},
+		[DEFENSE] = {"DEFENSE",},
+		[ITEM_MOD_DEFENSE_SKILL_RATING] = {"DEFENSE",}, --"Increased Defense"
 
-		["Health"] = {"HEALTH",},
-		["HP"] = {"HEALTH",},
-		["Mana"] = {"MANA",},
+		[HEALTH] = {"HEALTH",},
+		[HP] = {"HEALTH",},
+		[MANA] = {"MANA",},
+		[MP] = {"MANA",},
 
-		["Attack Power"] = {"AP",},
-		["Increases attack power"] = {"AP",},
+		[ATTACK_POWER_TOOLTIP] = {"AP",},
+		[ITEM_MOD_ATTACK_POWER] = {"AP",}, --"Increases attack power by %s."
 		["Attack Power when fighting Undead"] = {"AP_UNDEAD",},
 		["Attack Power versus Undead"] = {"AP_UNDEAD",}, -- Scourgebane EnchantID: 3247
 		-- [Wristwraps of Undead Slaying] ID:23093
@@ -374,52 +377,28 @@ PatternLocale.enUS = { -- {{{
 		["Increases attack powerwhen fighting Undead.  It also allows the acquisition of Scourgestones on behalf of the Argent Dawn"] = {"AP_UNDEAD",}, -- [Seal of the Dawn] ID:13209
 		["Increases attack powerwhen fighting Demons"] = {"AP_DEMON",},
 		["Increases attack powerwhen fighting Undead and Demons"] = {"AP_UNDEAD", "AP_DEMON",}, -- [Mark of the Champion] ID:23206
-		["Attack Power in Cat, Bear, and Dire Bear forms only"] = {"FERAL_AP",},
-		["Increases attack powerin Cat, Bear, Dire Bear, and Moonkin forms only"] = {"FERAL_AP",},
-		["Ranged Attack Power"] = {"RANGED_AP",},
-		["Increases ranged attack power"] = {"RANGED_AP",}, -- [High Warlord's Crossbow] ID: 18837
 
-		["Health Regen"] = {"COMBAT_HEALTH_REGEN",},
-		["Health per"] = {"COMBAT_HEALTH_REGEN",},
-		["health per"] = {"COMBAT_HEALTH_REGEN",}, -- Frostwolf Insignia Rank 6 ID:17909
-		["Health every"] = {"COMBAT_HEALTH_REGEN",},
-		["health every"] = {"COMBAT_HEALTH_REGEN",}, -- [Resurgence Rod] ID:17743
-		["your normal health regeneration"] = {"COMBAT_HEALTH_REGEN",}, -- Demons Blood ID: 10779
-		["Restoreshealth per 5 sec"] = {"COMBAT_HEALTH_REGEN",}, -- [Onyxia Blood Talisman] ID: 18406
-		["Restoreshealth every 5 sec"] = {"COMBAT_HEALTH_REGEN",}, -- [Resurgence Rod] ID:17743
-		["Mana Regen"] = {"COMBAT_MANA_REGEN",}, -- Prophetic Aura +4 Mana Regen/+10 Stamina/+24 Healing Spells http://wow.allakhazam.com/db/spell.html?wspell=24167
-		["Mana per"] = {"COMBAT_MANA_REGEN",},
-		["mana per"] = {"COMBAT_MANA_REGEN",}, -- Resurgence Rod ID:17743 Most common
-		["Mana every"] = {"COMBAT_MANA_REGEN",},
-		["mana every"] = {"COMBAT_MANA_REGEN",},
-		["Mana every 5 seconds"] = {"COMBAT_MANA_REGEN",}, -- [Royal Nightseye] ID: 24057
-		["Mana every 5 Sec"] = {"COMBAT_MANA_REGEN",}, --
-		["mana every 5 sec"] = {"COMBAT_MANA_REGEN",}, -- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec." http://wow.allakhazam.com/db/spell.html?wspell=33991
-		["Mana per 5 Seconds"] = {"COMBAT_MANA_REGEN",}, -- [Royal Shadow Draenite] ID: 23109
-		["Mana Per 5 sec"] = {"COMBAT_MANA_REGEN",}, -- [Royal Shadow Draenite] ID: 23109
-		["Mana per 5 sec"] = {"COMBAT_MANA_REGEN",}, -- [Cyclone Shoulderpads] ID: 29031
-		["mana per 5 sec"] = {"COMBAT_MANA_REGEN",}, -- [Royal Tanzanite] ID: 30603
-		["Restoresmana per 5 sec"] = {"COMBAT_MANA_REGEN",}, -- [Resurgence Rod] ID:17743
-		["Mana restored per 5 seconds"] = {"COMBAT_MANA_REGEN",}, -- Magister's Armor Kit +3 Mana restored per 5 seconds http://wow.allakhazam.com/db/spell.html?wspell=32399
-		["Mana Regenper 5 sec"] = {"COMBAT_MANA_REGEN",}, -- Enchant Bracer - Mana Regeneration "Mana Regen 4 per 5 sec." http://wow.allakhazam.com/db/spell.html?wspell=23801
-		["Mana per 5 Sec"] = {"COMBAT_MANA_REGEN",}, -- Enchant Bracer - Restore Mana Prime "6 Mana per 5 Sec." http://wow.allakhazam.com/db/spell.html?wspell=27913
-		["Health and Mana every 5 sec"] = {"COMBAT_HEALTH_REGEN", "COMBAT_MANA_REGEN",}, -- Greater Vitality EnchantID: 3244
+		[ITEM_MOD_FERAL_ATTACK_POWER] = {"FERAL_AP",}, -- "Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."
+		[ITEM_MOD_RANGED_ATTACK_POWER_SHORT] = {"RANGED_AP",},
+		[ITEM_MOD_RANGED_ATTACK_POWER] = {"RANGED_AP",}, -- [High Warlord's Crossbow] ID: 18837
+		[ITEM_MOD_HEALTH_REGENERATION_SHORT] = {"COMBAT_HEALTH_REGEN",}, --"Health Regeneration";
+		[ITEM_MOD_HEALTH_REGEN] = {"COMBAT_HEALTH_REGEN",}, -- "Restores %s health per 5 sec."; [Onyxia Blood Talisman] ID: 18406
+		[ITEM_MOD_MANA_REGENERATION_SHORT] = {"COMBAT_MANA_REGEN",}, -- "Mana Regen"  
+		[ITEM_MOD_MANA_REGENERATION] = {"COMBAT_MANA_REGEN",}, -- "Restores %s mana per 5 sec.";
 
-		["Spell Penetration"] = {"SPELLPEN",}, -- Enchant Cloak - Spell Penetration "+20 Spell Penetration" http://wow.allakhazam.com/db/spell.html?wspell=34003
-		["Increases your spell penetration"] = {"SPELLPEN",},
-		["Increases spell penetration"] = {"SPELLPEN",},
+		[ITEM_MOD_SPELL_PENETRATION_SHORT] = {"SPELLPEN",}, -- Enchant Cloak - Spell Penetration "+20 Spell Penetration" http://wow.allakhazam.com/db/spell.html?wspell=34003
+		[ITEM_MOD_SPELL_PENETRATION] = {"SPELLPEN",}, --"Increases spell penetration by %s.";
 
 		["Healing and Spell Damage"] = {"SPELL_DMG", "HEAL",}, -- Arcanum of Focus +8 Healing and Spell Damage http://wow.allakhazam.com/db/spell.html?wspell=22844
 		["Damage and Healing Spells"] = {"SPELL_DMG", "HEAL",},
 		["Spell Damage and Healing"] = {"SPELL_DMG", "HEAL",},
-		["Spell Damage"] = {"SPELL_DMG", "HEAL",},
+		["STAT_SPELLDAMAGE"] = {"SPELL_DMG", "HEAL",},
 		["Increases damage and healing done by magical spells and effects"] = {"SPELL_DMG", "HEAL"},
 		["Increases damage and healing done by magical spells and effects of all party members within 30 yards"] = {"SPELL_DMG", "HEAL"}, -- Atiesh
 		["Spell Damage and Healing"] = {"SPELL_DMG", "HEAL",}, --StatLogic:GetSum("item:22630")
 		["Damage"] = {"SPELL_DMG",},
-		["Increases your spell damage"] = {"SPELL_DMG",}, -- Atiesh ID:22630, 22631, 22632, 22589
-		["Spell Power"] = {"SPELL_DMG", "HEAL",},
-		["Increases spell power"] = {"SPELL_DMG", "HEAL",}, -- WotLK
+		[ITEM_MOD_SPELL_POWER] = {"SPELL_DMG",}, -- "Increases spell power by %s.";
+		[ITEM_MOD_SPELL_POWER_SHORT] = {"SPELL_DMG", "HEAL",}, --
 		["Holy Damage"] = {"HOLY_SPELL_DMG",},
 		["Arcane Damage"] = {"ARCANE_SPELL_DMG",},
 		["Fire Damage"] = {"FIRE_SPELL_DMG",},
@@ -465,120 +444,82 @@ PatternLocale.enUS = { -- {{{
 		["Healing Spells"] = {"HEAL",}, -- [Royal Nightseye] ID: 24057
 		["Increases healing done"] = {"HEAL",}, -- 2.3.0
 		["damage donefor all magical spells"] = {"SPELL_DMG",}, -- 2.3.0
-		["Increases healing done by spells and effects"] = {"HEAL",},
+		[ITEM_MOD_SPELL_HEALING_DONE] = {"HEAL",}, --"Increases healing done by spells and effects"
 		["Increases healing done by magical spells and effects of all party members within 30 yards"] = {"HEAL",}, -- Atiesh
-		["your healing"] = {"HEAL",}, -- Atiesh
+		[BONUS_HEALING_TOOLTIP] = {"HEAL",}, -- "Increases your healing by up to %d";
 
-		["damage per second"] = {"DPS",},
-		["Addsdamage per second"] = {"DPS",}, -- [Thorium Shells] ID: 15977
+		[DAMAGE_PER_SECOND] = {"DPS",},
 
-		["Defense Rating"] = {"DEFENSE_RATING",},
-		["Increases defense rating"] = {"DEFENSE_RATING",},
-		["Dodge Rating"] = {"DODGE_RATING",},
-		["Dodge"] = {"DODGE_RATING",}, --5.0.3 "+25 Dodge"
-		["Increases your dodge rating"] = {"DODGE_RATING",}, --4.0.3 "Equip: Increases your dodge rating by 211" (Gauntlets of Temporal Interference)
-		["Increases your dodge"] = {"DODGE_RATING",}, --5.0.1 "Equip: Increases your dodge by 211" (Gauntlets of Temporal Interference)
-		["Parry Rating"] = {"PARRY_RATING",},
-		["Parry"] = {"PARRY_RATING",}, --5.0.3 "+25 Parry"
-		["Increases your parry rating"] = {"PARRY_RATING",}, --4.0.3 "Equip: Increases your parry rating by 149" (Bracers of the Fiery Path)
-		["Increases your parry"] = {"PARRY_RATING",}, --5.0.1 "Equip: Increases your parry by 149" (Bracers of the Fiery Path)
-		["Shield Block Rating"] = {"BLOCK_RATING",}, -- Enchant Shield - Lesser Block +10 Shield Block Rating http://wow.allakhazam.com/db/spell.html?wspell=13689
-		["Block Rating"] = {"BLOCK_RATING",},
-		["Increases your block rating"] = {"BLOCK_RATING",},
-		["Increases your shield block rating"] = {"BLOCK_RATING",},
+		[ITEM_MOD_DEFENSE_SKILL_RATING_SHORT] = {"DEFENSE_RATING",},
+		[ITEM_MOD_DEFENSE_SKILL_RATING] = {"DEFENSE_RATING",}, --"Increases defense by %s.";
+		[ITEM_MOD_DODGE_RATING_SHORT] = {"DODGE_RATING",},
+		[DODGE] = {"DODGE_RATING",}, --5.0.3 "+25 Dodge"
+		[ITEM_MOD_DODGE_RATING] = {"DODGE_RATING",}, --5.0.1 "Equip: Increases your dodge by  %s (Gauntlets of Temporal Interference)
+		[ITEM_MOD_PARRY_RATING_SHORT] = {"PARRY_RATING",}, --5.0.3 "+25 Parry"
+		[ITEM_MOD_PARRY_RATING] = {"PARRY_RATING",}, --5.0.1 "Equip: Increases your parry by %s" (Bracers of the Fiery Path)
+		[ITEM_MOD_BLOCK_RATING_SHORT] = {"BLOCK_RATING",},
+		[ITEM_MOD_BLOCK_RATING] = {"BLOCK_RATING",}, --"Increases your shield block by %s.";
 
-		["Hit Rating"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, --removed in 5.0.4
-		["Hit"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, --added in 5.0.4
-		["Improves hit rating"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- ITEM_MOD_HIT_RATING
-		["Increases your hit rating"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"},
-		["Increases your hit"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, --5.0.1 "Equip: Increases your hit by 213" (Stonestep Boots)
-		["Improves melee hit rating"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_MELEE_RATING
-		["Spell Hit"] = {"SPELL_HIT_RATING",}, -- Presence of Sight +18 Healing and Spell Damage/+8 Spell Hit http://wow.allakhazam.com/db/spell.html?wspell=24164
-		["Spell Hit Rating"] = {"SPELL_HIT_RATING",},
-		["Improves spell hit rating"] = {"SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_SPELL_RATING
-		["Increases your spell hit rating"] = {"SPELL_HIT_RATING",},
-		["Ranged Hit Rating"] = {"RANGED_HIT_RATING",}, -- Biznicks 247x128 Accurascope EnchantID: 2523
-		["Improves ranged hit rating"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
-		["Increases your ranged hit rating"] = {"RANGED_HIT_RATING",},
+		[ITEM_MOD_HIT_RATING_SHORT] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, --"Hit"
+		[ITEM_MOD_HIT_RATING] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- "Increases your hit by %s.";
+		[ITEM_MOD_HIT_MELEE_RATING] = {"MELEE_HIT_RATING",}, -- "Improves melee hit by %s.";
+		[ITEM_MOD_HIT_MELEE_RATING_SHORT] = {"MELEE_HIT_RATING",}, --"Hit (Melee)"
 
-		["Crit Rating"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Critical Rating"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Critical Strike Rating"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Critical Strike"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, -- 5.0.4
-		["Increases your critical hit rating"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Increases your critical strike rating"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Increases your critical strike"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, -- 5.0.4
-		["Improves critical strike rating"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Improves melee critical strike rating"] = {"MELEE_CRIT_RATING",}, -- [Cloak of Darkness] ID:33122
-		["Spell Critical Strike Rating"] = {"SPELL_CRIT_RATING",},
-		["Spell Critical strike rating"] = {"SPELL_CRIT_RATING",},
-		["Spell Critical Rating"] = {"SPELL_CRIT_RATING",},
-		["Spell Crit Rating"] = {"SPELL_CRIT_RATING",},
-		["Increases your spell critical strike rating"] = {"SPELL_CRIT_RATING",},
-		["Increases the spell critical strike rating of all party members within 30 yards"] = {"SPELL_CRIT_RATING",},
-		["Improves spell critical strike rating"] = {"SPELL_CRIT_RATING",},
-		["Increases your ranged critical strike rating"] = {"RANGED_CRIT_RATING",}, -- Fletcher's Gloves ID:7348
-		["Ranged Critical Strike"] = {"RANGED_CRIT_RATING",}, -- Heartseeker Scope EnchantID: 3608
+		[ITEM_MOD_HIT_SPELL_RATING_SHORT] = {"SPELL_HIT_RATING",}, -- "Hit (Spell)"
+		[ITEM_MOD_HIT_SPELL_RATING] = {"SPELL_HIT_RATING",}, -- "Improves spell hit by %s."
 
-		["Improves hit avoidance rating"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RATING
-		["Improves melee hit avoidance rating"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_MELEE_RATING
-		["Improves ranged hit avoidance rating"] = {"RANGED_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RANGED_RATING
-		["Improves spell hit avoidance rating"] = {"SPELL_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_SPELL_RATING
-		["Resilience"] = {"RESILIENCE_RATING",},
-		["PvP Resilience"] = {"RESILIENCE_RATING",}, --5.0.4  "+40 PvP Resilience", "Socket Bonus: +10 PvP Resilience"
-		["Resilience Rating"] = {"RESILIENCE_RATING",}, -- Enchant Chest - Major Resilience "+15 Resilience Rating" http://wow.allakhazam.com/db/spell.html?wspell=33992
-		["Improves your resilience rating"] = {"RESILIENCE_RATING",},
-		["Increases your resilience rating"] = {"RESILIENCE_RATING",},
-		["Increases your pvp resilience"] = {"RESILIENCE_RATING",},	--5.0.3  e.g. "Equip: Increases your pvp resilience by 359."
-		["Increases your pvp power"] = {"PVP_POWER", }, --5.0.4  e.g. "Equip: Increases your pvp power by 90."
-		["PvP Power"] = {"PVP_POWER",}, --5.0.4 "+50 PvP Power"
-		["Improves critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
-		["Improves melee critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
-		["Improves ranged critical avoidance rating"] = {"RANGED_CRIT_AVOID_RATING",},
-		["Improves spell critical avoidance rating"] = {"SPELL_CRIT_AVOID_RATING",},
+		[ITEM_MOD_HIT_RANGED_RATING_SHORT] = {"RANGED_HIT_RATING",}, -- "Hit (Ranged)";
+		[ITEM_MOD_HIT_RANGED_RATING] = {"RANGED_HIT_RATING",}, -- "Improves ranged hit by %s.";
 
-		["Haste Rating"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Haste"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, -- 5.0.4
-		["Improves haste rating"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Increases your haste rating"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, --4.2.0 "Equip: Increases your haste rating by 113" (Alysra's Razor)
-		["Increases your haste"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, --5.0.1 "Equip: Increases your haste by 113" (Alysra's Razor)
-		["Improves melee haste rating"] = {"MELEE_HASTE_RATING"},
-		["Increases your melee haste rating"] = {"MELEE_HASTE_RATING"},
-		["Spell Haste Rating"] = {"SPELL_HASTE_RATING"},
-		["Improves spell haste rating"] = {"SPELL_HASTE_RATING"},
-		["Increases your spell haste rating"] = {"SPELL_HASTE_RATING"},
-		["Ranged Haste Rating"] = {"RANGED_HASTE_RATING"}, -- Micro Stabilizer EnchantID: 3607
-		["Improves ranged haste rating"] = {"RANGED_HASTE_RATING"},
-		["Increases your ranged haste rating"] = {"RANGED_HASTE_RATING"},
+		[ITEM_MOD_CRIT_RATING] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, --"Increases your critical strike by %s.";
+		[ITEM_MOD_CRIT_RATING_SHORT] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, --"Critical Strike"
+		
+		[ITEM_MOD_CRIT_MELEE_RATING] = {"MELEE_CRIT_RATING"}, --"Improves melee critical strike by %s.";
+		[ITEM_MOD_CRIT_MELEE_RATING_SHORT] = {"MELEE_CRIT_RATING"}, -- "Critical Strike (Melee)";
+		[ITEM_MOD_CRIT_RANGED_RATING] = {"RANGED_CRIT_RATING", }, --"Improves ranged critical strike by %s.";
+		[ITEM_MOD_CRIT_RANGED_RATING_SHORT] = {"RANGED_CRIT_RATING", }, --"Critical Strike (Ranged)";
+		[ITEM_MOD_CRIT_SPELL_RATING] = {"SPELL_CRIT_RATING"}, --"Improves spell critical strike by %s.";
+		[ITEM_MOD_CRIT_SPELL_RATING_SHORT] ={"SPELL_CRIT_RATING"}, -- "Critical Strike (Spell)";
 
-		["Increases dagger skill rating"] = {"DAGGER_WEAPON_RATING"},
-		["Increases sword skill rating"] = {"SWORD_WEAPON_RATING"}, -- [Warblade of the Hakkari] ID:19865
-		["Increases Two-Handed Swords skill rating"] = {"2H_SWORD_WEAPON_RATING"},
-		["Increases axe skill rating"] = {"AXE_WEAPON_RATING"},
-		["Two-Handed Axe Skill Rating"] = {"2H_AXE_WEAPON_RATING"}, -- [Ethereum Nexus-Reaver] ID:30722
-		["Increases two-handed axes skill rating"] = {"2H_AXE_WEAPON_RATING"},
-		["Increases mace skill rating"] = {"MACE_WEAPON_RATING"},
-		["Increases two-handed maces skill rating"] = {"2H_MACE_WEAPON_RATING"},
-		["Increases gun skill rating"] = {"GUN_WEAPON_RATING"},
-		["Increases Crossbow skill rating"] = {"CROSSBOW_WEAPON_RATING"},
-		["Increases Bow skill rating"] = {"BOW_WEAPON_RATING"},
-		["Increases feral combat skill rating"] = {"FERAL_WEAPON_RATING"},
-		["Increases fist weapons skill rating"] = {"FIST_WEAPON_RATING"}, -- Demonblood Eviscerator
-		["Increases unarmed skill rating"] = {"FIST_WEAPON_RATING"}, -- Demonblood Eviscerator ID:27533
-		["Increases staff skill rating"] = {"STAFF_WEAPON_RATING"}, -- Leggings of the Fang ID:10410
+		[ITEM_MOD_HIT_TAKEN_MELEE_RATING] = {"MELEE_HIT_AVOID_RATING"}, -- "Improves melee hit avoidance by %s.";
+		[ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT] = {"MELEE_HIT_AVOID_RATING"}, -- "Hit Avoidance (Melee)";
+		
+		[ITEM_MOD_HIT_TAKEN_RANGED_RATING] = {"RANGED_HIT_AVOID_RATING"}, -- "Improves ranged hit avoidance by %s."
+		[ITEM_MOD_HIT_TAKEN_RANGED_RATING_SHORT] = {"SPELL_HIT_AVOID_RATING"}, --"Hit Avoidance (Ranged)";
+		[RESILIENCE_ABBR] = {"RESILIENCE_RATING",},
+		[ITEM_MOD_RESILIENCE_RATING_SHORT] = {"RESILIENCE_RATING",}, --5.0.4  "+40 PvP Resilience", "Socket Bonus: +10 PvP Resilience"
+		[ITEM_MOD_RESILIENCE_RATING] = {"RESILIENCE_RATING",},	--5.0.3  "Increases your pvp resilience by %s."
+		[ITEM_MOD_PVP_POWER] = {"PVP_POWER", }, --5.0.4  e.g. "Equip: Increases your pvp power by %s."
+		[ITEM_MOD_PVP_POWER_SHORT] = {"PVP_POWER",}, --5.0.4 "+50 PvP Power"
+		[ITEM_MOD_CRIT_TAKEN_MELEE_RATING_SHORT] = {"MELEE_CRIT_AVOID_RATING",},--"Critical Strike Avoidance (Melee)"
+		[ITEM_MOD_CRIT_TAKEN_MELEE_RATING] = {"MELEE_CRIT_AVOID_RATING",}, --"Improves melee critical avoidance by %s.";
+		[ITEM_MOD_CRIT_TAKEN_RANGED_RATING] = {"RANGED_CRIT_AVOID_RATING",},--"Improves ranged critical avoidance by %s.";
+		[ITEM_MOD_CRIT_TAKEN_RANGED_RATING_SHORT] = {"RANGED_CRIT_AVOID_RATING",},--"Critical Strike Avoidance (Ranged)";
+		[ITEM_MOD_CRIT_TAKEN_RATING] = {"MELEE_CRIT_AVOID_RATING", "SPELL_CRIT_AVOID_RATING","RANGED_CRIT_AVOID_RATING",},-- "Improves critical avoidance by %s.";
+		[ITEM_MOD_CRIT_TAKEN_RATING_SHORT] = {"MELEE_CRIT_AVOID_RATING", "SPELL_CRIT_AVOID_RATING","RANGED_CRIT_AVOID_RATING",},-- "Critical Strike Avoidance";
+		[ITEM_MOD_CRIT_TAKEN_SPELL_RATING] = {"SPELL_CRIT_AVOID_RATING",},-- "Improves spell critical avoidance by %s.";
+		[ITEM_MOD_CRIT_TAKEN_SPELL_RATING_SHORT] = {"SPELL_CRIT_AVOID_RATING",},--"Critical Strike Avoidance (Spell)";
 
-		--["expertise rating"] = {"EXPERTISE_RATING"}, -- gems  Removed in 5.0.4
-		["Expertise"] = {"EXPERTISE_RATING"}, -- 5.0.4  Changed everything from "Xxxx Rating" to just "Xxx" Gem: "+40 Expertise"
-		["Increases your expertise rating"] = {"EXPERTISE_RATING"}, --4.2.0 "Equip: Increases your expertise rating by 98" (Alysra's Razor)
-		["Increases your expertise"] = {"EXPERTISE_RATING"}, --5.0.1 "Equip: Increases your expertise by 98" (Alysra's Razor)
-		["armor penetration rating"] = {"ARMOR_PENETRATION_RATING"}, -- gems
-		["Increases armor penetration rating"] = {"ARMOR_PENETRATION_RATING"},
-		["Increases your armor penetration rating"] = {"ARMOR_PENETRATION_RATING"}, -- ID:43178
+		[ITEM_MOD_HASTE_MELEE_RATING] = {"MELEE_HASTE_RATING", },-- "Improves melee haste by %s.";
+		[ITEM_MOD_HASTE_MELEE_RATING_SHORT] = {"MELEE_HASTE_RATING", },-- "Haste (Melee)";
+		[ITEM_MOD_HASTE_RANGED_RATING] = {"RANGED_HASTE_RATING",},-- "Improves ranged haste by %s.";
+		[ITEM_MOD_HASTE_RANGED_RATING_SHORT] = {"RANGED_HASTE_RATING",},--"Haste (Ranged)";
+		[ITEM_MOD_HASTE_RATING] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING","RANGED_HASTE_RATING",},--"Increases your haste by %s.";
+		[ITEM_MOD_HASTE_RATING_SHORT] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING","RANGED_HASTE_RATING",},-- "Haste";
+		[ITEM_MOD_HASTE_SPELL_RATING] = {"SPELL_HASTE_RATING"},-- "Improves spell haste by %s.";
+		[ITEM_MOD_HASTE_SPELL_RATING_SHORT] = { "SPELL_HASTE_RATING"},-- "Haste (Spell)";
 
-		--["mastery rating"] = {"MASTERY_RATING"}, -- removed in 5.0.4
-		["Mastery"] = {"MASTERY_RATING"}, -- added in 5.0.4
-		["Increases your mastery rating"] = {"MASTERY_RATING"}, --4.2.0 "Equip: Increases your mastery rating by 157"
-		["Increases your mastery"] = {"MASTERY_RATING"}, --5.0.3 "Equip: Increases your mastery by 157"
+		[ITEM_MOD_EXPERTISE_RATING] = {"EXPERTISE_RATING"}, --  "Increases your expertise by %s.";
+		[ITEM_MOD_EXPERTISE_RATING_SHORT] = {"EXPERTISE_RATING"}, -- "Expertise";
+
+		[ITEM_MOD_ARMOR_PENETRATION_RATING] = {"ARMOR_PENETRATION_RATING"}, --"Increases your armor penetration by %s.";
+		[ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT] = {"ARMOR_PENETRATION_RATING"}, --"Armor Penetration";
+
+		[ITEM_MOD_MASTERY_RATING] = {"MASTERY_RATING"}, -- "Increases your mastery by %s.";
+		[ITEM_MOD_MASTERY_RATING_SHORT] = {"MASTERY_RATING"}, -- "Mastery";
+		[ITEM_MOD_MASTERY_RATING_SPELL] = {"MASTERY_RATING"}, -- "(%s)";
+		[ITEM_MOD_MASTERY_RATING_TWO_SPELLS] = {"MASTERY_RATING"};
+		
 		["Fishing skill increased"] = {"FISHING"}, --Weather-Beaten Fishing Hat "Equip: Fishing skill increased by 5."
 
 		["Mining; does not need to be equipped"] = {"MINING"}, --Mining Pick  "+10 Mining; does not need to be equipped." added in 5.0.4
@@ -586,13 +527,25 @@ PatternLocale.enUS = { -- {{{
 		-- Exclude
 		["sec"] = false,
 		["to"] = false,
-		["Slot Bag"] = false,
-		["Slot Quiver"] = false,
-		["Slot Ammo Pouch"] = false,
 		["Increases ranged attack speed"] = false, -- AV quiver
 		["Experience gained is increased%"] = false, -- Heirlooms
 	},
 } -- }}}
+
+
+for k, v in pairs(PatternLocale.enUS.StatIDLooupLong) do
+
+local temp = gsub(k,"%s?[%+%-]?%%.?","")
+	temp = gsub(temp,"%.?","")
+--local temp = gsub(k,"%s[%+%-]?%%.?%s?%.?","")
+--local temp = gsub(k,"^([%+%-]%%s) (.-)%.?","")
+--local temp = gsub(k,"%+","")
+	--temp = gsub(temp,"%s%%s%.","")
+	
+	--print(temp)
+	--print(v)
+	PatternLocale.enUS.StatIDLookup[temp] = v
+end
 
 DisplayLocale.enUS = { -- {{{
 	----------------

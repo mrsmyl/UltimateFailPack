@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 144 $
+Revision: $Revision: 145 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2012-09-17 02:10:12 +0000 (Mon, 17 Sep 2012) $
+Last Update: $Date: 2012-09-20 06:22:39 +0000 (Thu, 20 Sep 2012) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 144 $";
+local MINOR = "$Revision: 145 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -118,7 +118,7 @@ SLASH_STATLOGIC_DEBUG1 = "/sldebug"
 
 --Show warnings by default for enUS for few weeks after each launch - until we've caught everything.
 --Once the warnings have settled down, they can be disabled
-local ItemNotRecognizedWarningDefault = (GetLocale() == "enUS") and true;
+local ItemNotRecognizedWarningDefault = (GetLocale() == "enUS") and false;
 --Note: We won't show warnings, by default, for any other locales, because their translations are 
 --      so broken and far behind that the game will never be usable for anyone besides enUS.
 
@@ -317,6 +317,27 @@ if not L then
 	assert(L, "No PatternLocale information loaded!");
 end
 
+local tempL = L
+L = PatternLocale.enUS;
+-- Setup any values from current DisplayLocale into enUSDisplayLocale, since that's the gold version
+local function SetupPatternLocale(locale, enUS)
+	for k in pairs(enUS) do
+		--If the k-th item is a table, the recursively call SetupDisplayLocale
+		if type(enUS[k]) == "table" and type(locale[k]) == "table" then
+			SetupPatternLocale(locale[k], enUS[k])
+		elseif locale[k] then
+			enUS[k] = locale[k]
+		end
+	end
+end
+
+--copy DisplayLocale[locale] items into enUS
+if PatternLocale[locale] then
+	SetupPatternLocale(PatternLocale[locale], PatternLocale.enUS)
+end
+
+
+L["StatIDLookup"]  = PatternLocale.enUS.StatIDLookup
 -- Setup any values from current DisplayLocale into enUSDisplayLocale, since that's the gold version
 local function SetupDisplayLocale(locale, enUS)
 	for k in pairs(enUS) do
@@ -324,6 +345,7 @@ local function SetupDisplayLocale(locale, enUS)
 		if type(enUS[k]) == "table" and type(locale[k]) == "table" then
 			SetupDisplayLocale(locale[k], enUS[k])
 		elseif locale[k] then
+
 			enUS[k] = locale[k]
 		end
 	end
@@ -334,6 +356,7 @@ if DisplayLocale[locale] then
 	SetupDisplayLocale(DisplayLocale[locale], DisplayLocale.enUS)
 end
 local D = DisplayLocale.enUS;
+
 
 --Dispose of the unused locale variables
 PatternLocale = nil; 
@@ -426,14 +449,14 @@ function CNumberEx(value, base, localization)
 			
 			--strip out potential thousand's separators
 			assert(localization.LOCALE_STHOUSAND);
-			local s = string.replace(value, localization.LOCALE_STHOUSAND, "");
+			local s = string.replace(value, "%p", "");
 			
 			--print("New string: \""..s.."\"");
 			
 			--convert any decimal markers into a "." (period)
 			assert(localization.LOCALE_SDECIMAL);
 			if (localization.LOCALE_SDECIMAL ~= ".") then
-				s = string.replace(s, localization.LOCALE_SDECIMAL, ".");
+				s = string.replace(s, "%p", ".");
 			end;
 			
 			--print("decimal's fixed: \""..s.."\"");
@@ -2400,44 +2423,24 @@ elseif playerClass == "PALADIN" then
 			["known"] = 95859,
 		},
 	},
-    -- Paladin: Enlightened Judgements - Rank 2/2 - 1,11
-    -- 4.0.1: Grants hit rating equal to 50/ 0% of any Spirit gained from items or effects
-	-- 5.0.4: TODO: There are no more talents; removing tab/num.
-    ["ADD_SPELL_HIT_RATING_MOD_SPI"] = {
-      {-- Enlightened Judgements
-        ["spellid"] = 53557,
-        --["tab"] = 1,
-        --["num"] = 11,
-        ["rank"] = {
-          0.5, 1,
-        },
+
+	["ADD_DODGE"] = {
+	{-- Sanctuary
+        ["rank"] = { -0.02,},
+        ["known"] = 105805,
+      },
+	 },
+
+    ["ADD_CRIT_TAKEN"] = {
+      {-- Guarded by the light
+        ["MELEE"] = true,
+        --["tab"] = 3,
+        --["num"] = 10,
+        ["rank"] = { -0.06,},
+        ["known"] = 53592,
       },
     },
-    -- Tanks: Forceful Deflection - Passive
-	-- Apply Aura: Mod Combat Rating by % of Stat (8) Value: 27
-    -- 4.0.1: Increases your Parry Rating by 25% of your total Strength. (No spell, talent, ability or buff. Tanks just get it)
-    -- 4.2.0: Increases your Parry Rating by 27% of your total Strength.
-	-- 5.0.4: Forceful deflection spell is invisible, but strength still contributes to Parry 
-	--        But Strength contributes to Parry%, not Parry Rating. 
-	--        Bonus strength also suffers diminishing returns.
-	--[[
-    ["ADD_PARRY_RATING_MOD_STR"] = {
-		{
-			--todo: only apply this if they're in "protection" spec
-			["rank"] = { 1.08847381108549, }
-		},
-		{
-			["spellid"] = 49410,
-			["rank"] = { 0.25, },
-			["old"] = 14333, -- 4.2.0
-		},
-		{
-			["spellid"] = 49410,
-			["rank"] = { 0.27, },
-			["old"] = 14333, -- 4.2.0
-		},
-    },
-	--]]
+
 	-- 5.0.4: Strength adds to Parry %, with bonus strength suffering diminishing returns
 	["ADD_PARRY_MOD_STR"] = {
 		{
@@ -2445,43 +2448,21 @@ elseif playerClass == "PALADIN" then
 			["rank"] = {1}, 
 		},
 	},
-    -- Paladin: Sheath of Light - Passive: 53503
-    -- 4.0.1: Increases your spell power by an amount equal to 30% of your attack power
+    -- Paladin: sword of Light - Passive Increases your spell power by an amount equal to 50% of your attack power
     ["ADD_SPELL_DMG_MOD_AP"] = {
-		{-- Sheath of Light
-			["rank"] = { 0.3, },
-			["known"] = 53503,
+		{-- Sword of Light
+			["rank"] = { 0.5, },
+			["known"] =53503,
 		},
 	},
-	-- Paladin: Sheath of Light - Passive: 53503
-	-- 4.0.1: Increases your spell power by an amount equal to 30% of your attack power
+	-- Paladin: guarded by the Light - assive Increases your spell power by an amount equal to 50% of your attack power
 	["ADD_HEAL_MOD_AP"] = {
-		{-- Sheath of Light
-			["rank"] = { 0.3, },
-			["known"] = 53503,
-		},
-	},
-	-- Paladin: Touched by the Light - Passive: 53592
-	-- 4.0.1: Increases your total Stamina by 15%, increases your spell hit by 6%, and increases your spell power by an amount equal to 60% of your Strength.
-	["ADD_SPELL_DMG_MOD_STR"] = {
-		{-- Touched by the Light
-			["rank"] = { 0.6, },
+		{-- guarded by the Light 
+			["rank"] = { 0.5, },
 			["known"] = 53592,
 		},
 	},
-	-- Paladin: Touched by the Light - Passive: 53592
-	-- 4.0.1: Increases your total Stamina by 15%, increases your spell hit by 6%, and increases your spell power by an amount equal to 60% of your Strength.
-	["ADD_HEAL_MOD_STR"] = {
-		{-- Touched by the Light
-			["rank"] = { 0.6, },
-			["known"] = 53592,
-		},
-	},
-	-- Paladin: Sanctuary - Rank 3/3 - 2,8
-	-- 4.0.1: Reduces the chance you'll be critically hit by melee attacks by 2/4/6% and reduces all damage taken by 3/7/10%.
-	-- Paladin: Ardent Defender - Buff: 31850
-	-- 4.0.1: Damage taken reduced by 20%.
-	-- 5.0.4: There are no more talents; removing tab/num.
+	-- Paladin: Sanctuary - 
 	-- 5.0.4: Sanctuary is a passive protection spell ID: 105805
 	["MOD_DMG_TAKEN"] = {
 		{	-- Sanctuary Decreases damage taken by 15%, increases armor value from items by 10%, and increases your chance to dodge by 2%.
@@ -2510,13 +2491,16 @@ elseif playerClass == "PALADIN" then
 		},
 	},
 	-- Paladin: Sanctuary, Protection Passive
-	-- 4.0.1: Increases your armor value from items by 3/6/10%.
-	-- 5.0.4: TODO: There are no more talents; removing tab/num.
-	-- 5.0.4: Removed Toughness, replaced with Sanctuary passive
 	["MOD_ARMOR"] = {
 		{	--Sanctuary: Decreases damage taken by 15%, increases armor value from items by 10%, and increases your chance to dodge by 2%.
 			["known"] = 105805,	
 			["rank"] = { 0.10 },
+		},
+	},
+	["MOD_BLOCK_VALUE"] =  {		
+		{	-- Guarded by the Light - Increases your total Stamina by 15%
+			["rank"] = { 0.10, },
+			["known"] = 53592,
 		},
 	},
 	--20120915: i think armor specializations still exist, although i cannot find any spell or passive for it
@@ -2525,12 +2509,13 @@ elseif playerClass == "PALADIN" then
 	-- Paladin: Touched by the Light - Passive: 53592
 	-- 4.0.1: Increases your total Stamina by 15%, increases your spell hit by 6%, and increases your spell power by an amount equal to 60% of your Strength.
 	-- 5.0.5: Touched by the Light changed to Guarded by the Light,but is still SpellID 53592
+	
 	["MOD_STA"] = {
 		{	-- Plate Specialization - It might still exist, but there's no spell, or buff, or passive for it. 
 			-- And i'm seeing an extra 14% boost to stamina (on top of the 14% provided by Guarded by the Light)
 			-- So i'll guess that this 14% is coming from the, now invisible, now 14% (up from 5%), protection plate specialization
-			["rank"] = { 0.14, },
-			--["known"] = 86525,
+			["rank"] = { 0.05, },
+			--["known"] = 86102,
 			["armorspec"] = 2,
 		},
 		{	-- Guarded by the Light - Increases your total Stamina by 15%
@@ -2540,18 +2525,18 @@ elseif playerClass == "PALADIN" then
 	},
 	-- Paladin: Plate Specialization - Passive: 86525
 	-- 4.0.1: Increases your primary attribute by 5% while wearing Plate in all armor slots. Holy specialization grants Intellect, Protection specialization grants Stamina, and Retribution specialization grants Strength.
-	["MOD_STR"] = {
-		{-- Plate Specialization
-			["rank"] = { 0.05, },
-			["known"] = 86525,
-			["armorspec"] = 3, },
-		},
-	-- Paladin: Plate Specialization - Passive: 86525
-	-- 4.0.1: Increases your primary attribute by 5% while wearing Plate in all armor slots. Holy specialization grants Intellect, Protection specialization grants Stamina, and Retribution specialization grants Strength.
 	["MOD_INT"] = {
 		{-- Plate Specialization
 			["rank"] = { 0.05, },
-			["known"] = 86525,
+			--["known"] = 86525,
+			["armorspec"] = 3,
+		},
+	},
+
+	["MOD_Spirit"] = {
+		{-- Plate Specialization
+			["rank"] = { 0.05, },
+			--["known"] = 86525,
 			["armorspec"] = 1,
 		},
 	},
@@ -6886,11 +6871,16 @@ function StatLogic:GetSum(item, table)
 			-- +19 耐力 = "^%+(%d+) (.-)$"
 			if not found then
 				local _, _, value, statText = strfind(strutf8lower(text), L.SinglePlusStatCheck)
+				--print(strutf8lower(text))
+				--print (L.SinglePlusStatCheck)
+				--print(statText)
 				if value then
 					if tonumber(statText) then
 						value, statText = statText, value
 					end
+					--print(statText)
 					local idTable = L.StatIDLookup[statText]
+					--print(L.StatIDLookup[SPELL_STATALL])
 					if idTable == false then
 						found = true
 						debugPrint("|cffadadad".."   SinglePlus Exclude: "..text)
@@ -7020,6 +7010,7 @@ function StatLogic:GetSum(item, table)
 				if strutf8sub(text, -1) == L["."] then
 					text = strutf8sub(text, 1, -2)
 				end
+
 				-- Replace separators with @
 				for _, sep in ipairs(L.DeepScanSeparators) do
 					if strfind(text, sep) then
@@ -7219,6 +7210,7 @@ function StatLogic:GetSum(item, table)
 									if value then
 										local statText = statText1..statText2
 										local idTable = L.StatIDLookup[statText]
+										--print(statText.."/"..pattern)
 										if idTable == false then
 											foundDeepScan2 = true
 											found = true
@@ -7276,7 +7268,7 @@ function StatLogic:GetSum(item, table)
 			end
 		else
 			--line was fast excluded
-			--debugPrint("   Excluded: "..text); --it's helpful when debugging to see if an item's property was ignored - even if it is spammy
+			debugPrint("   Excluded: "..text); --it's helpful when debugging to see if an item's property was ignored - even if it is spammy
 		end
 	end --for each line in the tooltip
 
@@ -7406,16 +7398,14 @@ local getSlotID = {
 }
 
 function HasTitanGrip(talentGroup)
-	--20120831: Mists of Panderia (5.0.4) removed all (useful) talents from the game. Titan Grip
-	-- no longer exists as a talent (i don't know if it exists at all anymore).
-	return false;
-	
---[[
+	--Updated to 5.0.5 
 	if playerClass == "WARRIOR" then
-		local _, _, _, _, r = GetTalentInfo(2, 20, nil, nil, talentGroup);
-		return r > 0;
-	end;
---]]
+		if  (GetSpecialization() == 2) and IsSpellKnown(IsSpellKnown) then  --Fury spec and knows Titan Grip
+			return true
+		else
+			return false
+		end
+	end
 end
 
 function StatLogic:GetDiffID(item, ignoreEnchant, ignoreGem, red, yellow, blue, meta, ignorePris)
@@ -8137,3 +8127,11 @@ else
 	--no WoWUnit
 	--print("LibStatLogic: Could not register unit tests");
 end; --if (WoWUnit)
+
+
+function BOB2()
+print("___");
+for k, v in pairs(L["StatIDLookup"]) do
+	print(k);
+end
+end

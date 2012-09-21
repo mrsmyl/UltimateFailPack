@@ -1,13 +1,11 @@
-﻿-- esES localization by Kaie Estirpe de las Sombras from Minahonda
-
---These constants need to be built outside the table before they can be referenced
-local LOCALE_STHOUSAND = ".";  --Character used to separate groups of digits
-local LOCALE_SDECIMAL = ","; --Character(s) used for the decimal separator
-local patNumber = "%d+[%"..LOCALE_STHOUSAND.."%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
-local patDecimal = "%d+[%"..LOCALE_STHOUSAND.."%d]*%"..LOCALE_SDECIMAL.."?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
+﻿--These constants need to be built outside the table before they can be referenced
+local LOCALE_STHOUSAND = "%p";  --Character used to separate groups of digits
+local LOCALE_SDECIMAL = "%p"; --Character(s) used for the decimal separator
+local patNumber = "%d+[%p%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
+local patDecimal = "%d+[%p%d]*%p?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
 
 
-PatternLocale.esES = { -- {{{
+PatternLocale.ptBR = { -- {{{
 	LOCALE_STHOUSAND = LOCALE_STHOUSAND, --Character used to separate groups of digits
 	LOCALE_SDECIMAL = LOCALE_SDECIMAL, --Character(s) used for the decimal separator
 	
@@ -18,9 +16,9 @@ PatternLocale.esES = { -- {{{
 	-- Armor Types --
 	-----------------
 	Plate = "Placas",
-	Mail = "Mallas",
-	Leather = "Cuero",
-	Cloth = "Tela",
+	Mail = "Malha",
+	Leather = "Couro",
+	Cloth = "Tecido",
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -31,7 +29,115 @@ PatternLocale.esES = { -- {{{
 	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
 	-- ExcludeLen Mirando a las primeras letras de una linea podemos excluir un monton de lineas
 	["ExcludeLen"] = 5, -- using string.utf8len
+	["Exclude"] = {
+		[""] = true,
+		[" \n"] = true,
+		[ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
+		[ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item will be bound when picked up
+		[ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
+		[ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
+		[ITEM_BIND_TO_ACCOUNT] = true, -- ITEM_BIND_QUEST = "Binds to account";
+		[ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
+		--[EMPTY_SOCKET_BLUE] = true, -- EMPTY_SOCKET_BLUE = "Blue Socket";
+		--[EMPTY_SOCKET_META] = true, -- EMPTY_SOCKET_META = "Meta Socket";
+		--[EMPTY_SOCKET_RED] = true, -- EMPTY_SOCKET_RED = "Red Socket";
+		--[EMPTY_SOCKET_YELLOW] = true, -- EMPTY_SOCKET_YELLOW = "Yellow Socket";
+		[ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
+		[ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
+		[ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
+		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
 
+
+		[ITEM_DISENCHANT_ANY_SKILL] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
+		-- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
+		["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
+		["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r"; -- %s is the creator of the item
+		["Coold"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d day";
+		[ITEM_UNIQUE] = true, -- ITEM_UNIQUE = "Unique"; -- Item is unique 
+		--["Uniqu"] = true, --ITEM_UNIQUE_MULTIPLE = "Unique (%d)"; -- Item is unique
+		[REQUIRES_LABEL] = true, -- Requires Level xx -- ITEM_MIN_LEVEL = "Requires Level %d"; -- Required level to use the item
+		[ITEM_CLASSES_ALLOWED] = true, -- Requires Level xx -- ITEM_MIN_SKILL = "Requires %s (%d)"; -- Required skill rank to use the item
+		["Class"] = true, -- Classes: xx -- ITEM_CLASSES_ALLOWED = "Classes: %s"; -- Lists the classes allowed to use this item
+		[ITEM_RACES_ALLOWED] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
+		[ITEM_SPELL_TRIGGER_ONUSE] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
+		[ITEM_SPELL_TRIGGER_ONPROC] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
+		
+		--["Desen"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
+		--["Durac"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
+		["Tiemp"] = true, -- temps de recharge…
+		["<Hecho"] = true, -- artisan
+		["Único"] = true, -- Unique (20)
+		["Nivel"] = true, -- Niveau
+		["\nNive"] = true, -- Niveau
+		["Clase"] = true, -- Classes: xx
+		["Razas"] = true, -- Races: xx (vendor mounts)
+		["Usar: "] = true, -- Utiliser:
+		["Posib"] = true, -- Chance de toucher:
+		["Reque"] = true, -- Requiert
+		["\nRequ"] = true,-- Requiert
+		["Neces"] = true,--nécessite plus de gemmes...
+		-- Set Bonuses
+		-- ITEM_SET_BONUS = "Set: %s";
+		-- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		-- ITEM_SET_NAME = "%s (%d/%d)"; -- Set name (2/5)
+		["Bonif"] = true,--ensemble
+		["(2) B"] = true,
+		["(3) B"] = true,
+		["(4) B"] = true,
+		["(5) B"] = true,
+		["(6) B"] = true,
+		["(7) B"] = true,
+		["(8) B"] = true,
+		-- Equip type
+		["Proye"] = true, -- Ice Threaded Arrow ID:19316
+		[INVTYPE_AMMO] = true,
+		[INVTYPE_HEAD] = true,
+		[INVTYPE_NECK] = true,
+		[INVTYPE_SHOULDER] = true,
+		[INVTYPE_BODY] = true,
+		[INVTYPE_CHEST] = true,
+		[INVTYPE_ROBE] = true,
+		[INVTYPE_WAIST] = true,
+		[INVTYPE_LEGS] = true,
+		[INVTYPE_FEET] = true,
+		[INVTYPE_WRIST] = true,
+		[INVTYPE_HAND] = true,
+		[INVTYPE_FINGER] = true,
+		[INVTYPE_TRINKET] = true,
+		[INVTYPE_CLOAK] = true,
+		[INVTYPE_WEAPON] = true,
+		[INVTYPE_SHIELD] = true,
+		[INVTYPE_2HWEAPON] = true,
+		[INVTYPE_WEAPONMAINHAND] = true,
+		[INVTYPE_WEAPONOFFHAND] = true,
+		[INVTYPE_HOLDABLE] = true,
+		[INVTYPE_RANGED] = true,
+		[INVTYPE_THROWN] = true,
+		[INVTYPE_RANGEDRIGHT] = true,
+		[INVTYPE_RELIC] = true,
+		[INVTYPE_TABARD] = true,
+		[INVTYPE_BAG] = true,
+		--4.0.6
+		[REFORGED] = true,
+		[ITEM_HEROIC] = true,
+		[ITEM_HEROIC_EPIC] = true,
+		[ITEM_HEROIC_QUALITY0_DESC] = true,
+		[ITEM_HEROIC_QUALITY1_DESC] = true,
+		[ITEM_HEROIC_QUALITY2_DESC] = true,
+		[ITEM_HEROIC_QUALITY3_DESC] = true,
+		[ITEM_HEROIC_QUALITY4_DESC] = true,
+		[ITEM_HEROIC_QUALITY5_DESC] = true,
+		[ITEM_HEROIC_QUALITY6_DESC] = true,
+		[ITEM_HEROIC_QUALITY7_DESC] = true,
+		[ITEM_QUALITY0_DESC] = true,
+		[ITEM_QUALITY1_DESC] = true,
+		[ITEM_QUALITY2_DESC] = true,
+		[ITEM_QUALITY3_DESC] = true,
+		[ITEM_QUALITY4_DESC] = true,
+		[ITEM_QUALITY5_DESC] = true,
+		[ITEM_QUALITY6_DESC] = true,
+		[ITEM_QUALITY7_DESC] = true,
+	},
 
 	-----------------------
 	-- Whole Text Lookup --
@@ -42,6 +148,11 @@ PatternLocale.esES = { -- {{{
 		[EMPTY_SOCKET_YELLOW] = {["EMPTY_SOCKET_YELLOW"] = 1}, -- EMPTY_SOCKET_YELLOW = "Yellow Socket";
 		[EMPTY_SOCKET_BLUE] = {["EMPTY_SOCKET_BLUE"] = 1}, -- EMPTY_SOCKET_BLUE = "Blue Socket";
 		[EMPTY_SOCKET_META] = {["EMPTY_SOCKET_META"] = 1}, -- EMPTY_SOCKET_META = "Meta Socket";
+			["de "..SPELL_STAT1_NAME] = SPELL_STAT1_NAME, -- Strength
+	["de "..SPELL_STAT2_NAME] =SPELL_STAT2_NAME, -- Agility
+	["de "..SPELL_STAT3_NAME] = SPELL_STAT3_NAME, -- Stamina
+	["de "..SPELL_STAT4_NAME] = SPELL_STAT4_NAME, -- Intellect
+	["de "..SPELL_STAT5_NAME] = SPELL_STAT5_NAME, -- Spirit
 
 		--ToDo
 		["Aceite de zahorí menor"] = {["SPELL_DMG"] = 8, ["HEAL"] = 8}, --
@@ -97,7 +208,7 @@ PatternLocale.esES = { -- {{{
 	-- +19 耐力 = "^%+(patNumber) (.-)%.?$"
 	-- Some have a "." at the end of string like:
 	-- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec. "
-	["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+	["SinglePlusStatCheck"] = "^([%+%-]%d+[%p%d]*[%sde]-)(.+)%.?$",
 
 	-----------------------------
 	-- Single Equip Stat Check --
@@ -105,7 +216,7 @@ PatternLocale.esES = { -- {{{
 	-- stat1, value, stat2 = strfind
 	-- stat = stat1..stat2
 	-- "^Equip: (.-) by u?p? ?t?o? ?(%d+) ?(.-)%.?$"
-  ["SingleEquipStatCheck"] = "^Equipar: (.-) h?a?s?t?a? ?(%d+)(.-)?%.$",
+  ["SingleEquipStatCheck"] = "^Equípado: (.-) h?a?s?t?a? ?(%d+)(.-)?%.$",
 
 	-------------
 	-- PreScan --
@@ -114,9 +225,9 @@ PatternLocale.esES = { -- {{{
 	-- Special cases that need to be dealt with before deep scan
 	["PreScanPatterns"] = {
 		["^(%d+) armadura$"] = "ARMOR",
-		["^Equipar: Restaura (%d+) p. de salud cada 5 s"]= "COMBAT_HEALTH_REGEN",
-		["^Equipar: Restaura (%d+) p. de maná cada 5 s"]= "COMBAT_MANA_REGEN",
-		["^Equipar: Aumenta (%d+) p. el poder de ataque"]= "AP",
+		["^Equípado: Restaura (%d+) p. de salud cada 5 s"]= "COMBAT_HEALTH_REGEN",
+		["^Equípado: Restaura (%d+) p. de maná cada 5 s"]= "COMBAT_MANA_REGEN",
+		["^Equípado: Aumenta (%d+) p. el poder de ataque"]= "AP",
 		-- ["^Equipar: Mejora tu índice de golpe crítico (%d+) p"]= "MELEE_CRIT_RATING",
 		["Refuerza %(%+(%d+) Armadura%)"]= "ARMOR_BONUS",
 		-- ["Lunette %(%+(%d+) points? de dégâts?%)"]="RANGED_AP",
@@ -145,17 +256,19 @@ PatternLocale.esES = { -- {{{
 	-- DeepScan --
 	--------------
 	-- Strip leading "Equip: ", "Socket Bonus: "
-	["Socket Bonus: "] = "Bonus ranura: ",
+	["Equip: "] = "Equípado: ", --\194\160= espacio requerido
+	["Socket Bonus: "] = "Bõnus de engaste: ",
 	-- Strip trailing "."
 	["."] = ".",
+	[","] = "",
 	["DeepScanSeparators"] = {
 		"/", -- "+10 Defense Rating/+10 Stamina/+15 Block Value": ZG Enchant
-		" y " , -- "+26 Healing Spells & 2% Reduced Threat": Bracing Earthstorm Diamond ID:25897
+		" e " , -- "+26 Healing Spells & 2% Reduced Threat": Bracing Earthstorm Diamond ID:25897
 		", " , -- "+6 Spell Damage, +5 Spell Crit Rating": Potent Ornate Topaz ID: 28123
 		"[^p]%." , -- cuando es p y punto no separa
 	},
 	["DeepScanWordSeparators"] = {
-		" y ", -- "Critical Rating +6 and Dodge Rating +5": Assassin's Fire Opal ID:30565
+		" e ", -- "Critical Rating +6 and Dodge Rating +5": Assassin's Fire Opal ID:30565
 	},
 	["DualStatPatterns"] = { -- all lower case
 		["la salud %+(%d+) y el daño %+ (%d+)$"] = {{"HEAL",}, {"SPELL_DMG",},},
@@ -163,17 +276,20 @@ PatternLocale.esES = { -- {{{
 		["salud un máximo de (%d+) y el dano un máximo de (%d+)"] = {{"HEAL",}, {"SPELL_DMG",},},
 	},
 	["DeepScanPatterns"] = {
-		"^(.-) ?(%d+) ?(.-)$", -- "xxx by up to 22 xxx" (scan first)
+		--"(.-)?(%d+%s[se]-)(.-)", -- "xxx by up to 22 xxx" (scan first)
 		-- "^(.-)5 [Ss]ek%. (%d+) (.-)$",  -- "xxx 5 Sek. 8 xxx" (scan 2nd)
-		"^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
-		"^(.-) ?([%d%p]+)( ?.-)$", -- 22.22 xxx xxx (scan last)
+		"^(.-) ?([%+%-]?%d+[%p%d+]*) ?de ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
 		"^(.-) ?([%+%-]?%d+[%p%d+]*)(%s? ?.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
+		--"^(.-) ?(%d+[%p%d+]*)( ?.-)$", -- 22.22 xxx xxx (scan last)
+		--"^(.-) ?(%d+[%p%d+]*) ?de ?(.-)$", -- 22.22 xxx xxx (scan last)
 
+		"^(.-)([%+%-]"..patNumber..") (.-)%.?$",
 	},
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
-
+	["StatIDLookup"] = {
+	},
 } -- }}}
 
 DisplayLocale.esES = { -- {{{

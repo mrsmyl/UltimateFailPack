@@ -1,12 +1,11 @@
 --[[
-Name: RatingBuster esES locale
+Name: RatingBuster ptBR locale
 Revision: $Revision: 339 $
 Translated by:
-- carahuevo@Curse
-- kaiemg
+
 ]]
 
-local L = LibStub("AceLocale-3.0"):NewLocale("RatingBuster", "esMX")
+local L = LibStub("AceLocale-3.0"):NewLocale("RatingBuster", "ptBR")
 if not L then return end
 -- This file is coded in UTF-8
 -- If you don't have a editor that can save in UTF-8, I recommend Ultraedit
@@ -15,15 +14,14 @@ if not L then return end
 -- Before: L["Show Item ID"] = true,
 
 L["numberPatterns"] = {
-	{pattern = " (%d+)", addInfo = "AfterNumber", space = " ", },
-	{pattern = "([%+%-]%d+)", addInfo = "AfterStat", space = " ", },
-	{pattern = "Otorga.-(%d+)", addInfo = "AfterNumber", space = " ", }, -- for "grant you xx stat" type pattern, ex: Quel'Serrar, Assassination Armor set
-	{pattern = "Aumenta.-(%d+) p.", addInfo = "AfterNumber", space = " ", }, -- for "add xx stat" type pattern, ex: Adamantite Sharpening Stone
-	{pattern = "Mejora.-(%d+) p.", addInfo = "AfterNumber", space = " ", }, -- for "add xx stat" type pattern, ex: Adamantite Sharpening Stone
-	{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = " ", }, -- [????????] +6?????5??
+	{pattern = "em (%d+)(.+)", addInfo = "AfterNumber", space = " ", },
+	{pattern = "(%d+) ?[de]- (.+)", addInfo = "AfterStat", space = " ", },
+
+	--{pattern = "([%+%-]%d+)(.+)", addInfo = "AfterNumber", space = " ", },
+	--{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = " ", }, -- [????????] +6?????5??
 }
 L["separators"] = {
-	"/", " y ", "%. ", " durante ", "&"
+	"/", " e ", "%. ", " durante ", "&"
 }
 --[[ Rating ID
 CR_WEAPON_SKILL = 1;

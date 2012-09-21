@@ -278,6 +278,14 @@ PatternLocale.deDE = { -- {{{
 	-- Stat Lookup Table --
 	-----------------------
 	["StatIDLookup"] = {
+	},
+	["TAB"] ={
+	[ITEM_MOD_ATTACK_POWER] = {"AP",},
+	["Eure Angriffe ignorierenRüstung eures Gegners"] = {"IGNORE_ARMOR"},
+	--["Erhöht die Angriffskraft um "] = {"AP",},
+	},
+
+	["BPB"]={
 		["Eure Angriffe ignorierenRüstung eures Gegners"] = {"IGNORE_ARMOR"}, -- StatLogic:GetSum("item:33733")
 		["% Bedrohung"] = {"MOD_THREAT"}, -- StatLogic:GetSum("item:23344:2613")
 		["Erhöht Eure effektive Verstohlenheitsstufe"] = {"STEALTH_LEVEL"}, -- [Nightscape Boots] ID: 8197
@@ -322,7 +330,10 @@ PatternLocale.deDE = { -- {{{
 
 		["Angriffskraft"] = {"AP",},
 		["Erhöht Angriffskraft"] = {"AP",},
-		["Erhöht die Angriffskraft"] = {"AP",},
+		
+		--[gITEM_MOD_ATTACK_POWER] = {"AP",},
+
+		["Erhöht die Angriffskraft un"] = {"AP",},
 		["Erhöht die Angriffskraft im Kampf gegen Untote"] = {"AP_UNDEAD",}, -- [Wristwraps of Undead Slaying] ID:23093
 		-- [Wristwraps of Undead Slaying] ID:23093
 		["Erhöht die Angriffskraft gegen Untote"] = {"AP_UNDEAD",}, -- [Seal of the Dawn] ID:13209

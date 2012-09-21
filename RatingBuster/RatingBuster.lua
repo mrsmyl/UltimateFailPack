@@ -1,10 +1,10 @@
 ﻿--[[ 
 Name: RatingBuster
 Description: Converts combat ratings in tooltips into normal percentages.
-Revision: $Revision: 379 $
+Revision: $Revision: 380 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
-LastUpdate: $Date: 2012-09-17 06:02:28 +0000 (Mon, 17 Sep 2012) $
+LastUpdate: $Date: 2012-09-20 06:26:08 +0000 (Thu, 20 Sep 2012) $
 ]]
  
 ---------------
@@ -25,8 +25,8 @@ local BI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
 --------------------
 -- AceAddon Initialization
 RatingBuster = LibStub("AceAddon-3.0"):NewAddon("RatingBuster", "AceConsole-3.0", "AceEvent-3.0")
-RatingBuster.version = "5.0.4 (r"..gsub("$Revision: 379 $", "$Revision: (%d+) %$", "%1")..")"
-RatingBuster.date = gsub("$Date: 2012-09-17 06:02:28 +0000 (Mon, 17 Sep 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
+RatingBuster.version = "5.0.4 (r"..gsub("$Revision: 380 $", "$Revision: (%d+) %$", "%1")..")"
+RatingBuster.date = gsub("$Date: 2012-09-20 06:26:08 +0000 (Thu, 20 Sep 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
 
 
 -----------
@@ -2701,16 +2701,22 @@ function RatingBuster:SplitDoJoin(text, separatorTable, tooltip)
 end
 
 
+
 function RatingBuster:ProcessText(text, tooltip)
 	--self:Print(text)
 	-- Check if test has a matching pattern
 	for _, num in ipairs(L["numberPatterns"]) do
 		-- Convert text to lower so we don't have to worry about same ratings with different cases
 		local lowerText = string.lower(text)
-		local stripedText = string.gsub(text,",","") --Removes commas from the values
 
+		local stripedText = string.gsub(lowerText,"[%,%.%%]?","") --Removes thousands seperator (.or ,) from the values
+--print(stripedText)
 		-- Capture the stat value
 		local s, e, value, partialtext = strfind(stripedText, num.pattern)
+		
+		if value  and partialtext then
+--print(value.."/"..partialtext)
+		end
 		if value then
 			-- Check and switch captures if needed
 			if partialtext and tonumber(partialtext) then
@@ -2718,6 +2724,7 @@ function RatingBuster:ProcessText(text, tooltip)
 			end
 			-- Capture the stat name
 			for _, stat in ipairs(L["statList"]) do
+--print("//"..partialtext.."="..stat.pattern.."/")
 				if (not partialtext and strfind(lowerText, stat.pattern)) or (partialtext and strfind(partialtext, stat.pattern)) then
 					value = tonumber(value)
 					local infoString = ""
@@ -2743,7 +2750,7 @@ function RatingBuster:ProcessText(text, tooltip)
 							else
 								infoString = format("%+.2f%%", effect)
 							end
-						elseif strID == "MASTERY" then
+						elseif strID == "MASTERY" or "EXPERTISE" then
 	
 								infoString = format("%+.2f%%", effect)
 	
@@ -3100,7 +3107,7 @@ function RatingBuster:ProcessText(text, tooltip)
 						infoString = strjoin(", ", unpack(infoTable))
 					end
 					if infoString ~= "" then
-						-- Add parenthesis
+						-- Add parenthesis;
 						infoString = "("..infoString..")"
 						-- Add Color
 						if profileDB.enableTextColor then
@@ -3109,7 +3116,7 @@ function RatingBuster:ProcessText(text, tooltip)
 						-- Build replacement string
 						if num.addInfo == "AfterNumber" then -- Add after number
 							infoString = gsub(infoString, "%%", "%%%%%%%%") -- sub "%" with "%%%%"
-							infoString = gsub(strsub(text, s), "%d+[,%d]*", "%0"..num.space..infoString, 1) -- sub "33" with "33 (3.33%)"
+							infoString = gsub(strsub(text, s), "%d+[%p%d]*", "%0"..num.space..infoString, 1) -- sub "33" with "33 (3.33%)"
 						elseif num.addInfo == "AfterPattern" then -- Add after pattern
 							infoString = gsub(infoString, "%%", "%%%%") -- sub "%" with "%%%%"
               infoString = strsub(text, s, e)..num.space..infoString
@@ -4273,6 +4280,7 @@ function RatingBuster:StatSummary(tooltip, name, link, ...)
 	local output = {}
 	for _, t in ipairs(summary) do
 		local n, s, d1, d2, ispercent = t.name, t.sum, t.diff1, t.diff2, t.ispercent
+
 		local right, left
 		local skip
 		if not showZeroValueStat then
