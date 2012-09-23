@@ -127,6 +127,7 @@ function AutoBar:OnInitialize()
 	BINDING_NAME_AutoBarButtonDebuff_X = L["AutoBarButtonDebuff"]
 
 	BINDING_HEADER_AutoBarClassBarDeathKnight = L["AutoBarClassBarDeathKnight"]
+	BINDING_HEADER_AutoBarClassBarMonk = L["AutoBarClassBarMonk"]
 
 	BINDING_HEADER_AutoBarClassBarDruid = L["AutoBarClassBarDruid"]
 	BINDING_NAME_AutoBarButtonBear_X = L["AutoBarButtonBear"]
@@ -1472,3 +1473,36 @@ end
 --/script LibStub("LibKeyBound-1.0"):SetColorKeyBoundMode(0.75, 1, 0, 0.5)
 --/script DEFAULT_CHAT_FRAME:AddMessage("" .. tostring())
 --/print GetMouseFocus():GetName()
+
+function AutoBar:Print(p_stuff)
+	print(p_stuff)
+end
+
+function AutoBar:Dump(o)
+	if type(o) == 'table' then
+		local s = '{ '
+		for k,v in pairs(o) do
+			if type(k) ~= 'number' then
+				k = '"'..k..'"'
+			end
+			s = s .. '['..k..'] = ' .. AutoBar:Dump(v) .. ','
+		end
+		return s .. '} '
+	else
+		return tostring(o)
+	end
+end
+
+local StupidLogEnabled = false
+
+function AutoBar:StupidLogEnable(p_toggle)
+	StupidLogEnabled = p_toggle
+end
+
+function AutoBar:StupidLog(p_text)
+
+	if (StupidLogEnabled) then
+		AutoBar.db.account.stupidlog = AutoBar.db.account.stupidlog .. p_text
+	end
+
+end

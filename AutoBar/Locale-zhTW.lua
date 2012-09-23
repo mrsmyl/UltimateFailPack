@@ -189,6 +189,7 @@ if (GetLocale() == "zhTW") then
 		["AutoBarClassBarBasic"] = "基本",
 		["AutoBarClassBarExtras"] = "額外",
 		["AutoBarClassBarDeathKnight"] = "死亡騎士",
+		["AutoBarClassBarMonk"] = "Monk",
 		["AutoBarClassBarDruid"] = "德魯伊",
 		["AutoBarClassBarHunter"] = "獵人",
 		["AutoBarClassBarMage"] = "法師",
@@ -205,7 +206,9 @@ if (GetLocale() == "zhTW") then
 		["AutoBarCooldownHeader"] = "藥水及石頭冷卻時間",
 		["AutoBarClassBarHeader"] = "職業物品列",
 
-		["AutoBarButtonAura"] = "光環/守護",
+		["AutoBarButtonAspect"] = "光環/守護",
+		["AutoBarButtonPoisonLethal"] = "Poison: Lethal",
+		["AutoBarButtonPoisonNonlethal"] = "Poison: Nonlethal",
 		["AutoBarButtonBandages"] = "繃帶",
 		["AutoBarButtonBattleStandards"] = "戰鬥姿勢",
 		["AutoBarButtonBuff"] = "增益",
@@ -503,7 +506,9 @@ if (GetLocale() == "zhTW") then
 		["Misc.Lockboxes"] = "帶鎖箱";
 		["AutoBar.Trinket"] = "飾品";
 
-		["Spell.Aura"] = "光環/守護";
+		["Spell.Aspect"] = "光環/守護";
+		["Spell.Poison.Lethal"] = "Poison: Lethal";
+		["Spell.Poison.Nonlethal"] = "Poison Nonlethal";
 		["Spell.Buff.Weapon"] = "法術增益: 武器";
 		["Spell.Class.Buff"] = "職業增益法術";
 		["Spell.Class.Pet"] = "戰鬥寵物";

@@ -640,6 +640,17 @@ local function setCustomButtonName(info, value)
 	end
 end
 
+local function getMonk(info)
+	local barKey = info.arg.barKey
+	return AutoBar.barLayoutDBList[barKey].MONK
+end
+
+local function setMonk(info, value)
+	local barKey = info.arg.barKey
+	AutoBar.barLayoutDBList[barKey].MONK = value
+	AutoBar:BarsChanged()
+end
+
 local function getDeathKnight(info)
 	local barKey = info.arg.barKey
 	return AutoBar.barLayoutDBList[barKey].DEATHKNIGHT
@@ -900,6 +911,7 @@ local function BarNew()
 		DRUID = true,
 		HUNTER = true,
 		MAGE = true,
+		MONK = true,
 		PALADIN = true,
 		PRIEST = true,
 		ROGUE = true,
@@ -1944,6 +1956,17 @@ function AutoBar:CreateCustomBarOptions(barKey, barOptions, passValue)
 			usage = L["<Any String>"],
 			get = getCustomBarName,
 			set = setCustomBarName,
+			arg = passValue,
+			disabled = getCombatLockdown,
+		}
+	end
+		if (not barOptions.args.monk) then
+		barOptions.args.monk = {
+			type = "toggle",
+			order = 109,
+			name = L["AutoBarClassBarMonk"],
+			get = getMonk,
+			set = setMonk,
 			arg = passValue,
 			disabled = getCombatLockdown,
 		}

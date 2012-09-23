@@ -188,6 +188,7 @@ if (GetLocale() == "ptBR") then
 		["AutoBarClassBarBasic"] = "Basic",
 		["AutoBarClassBarExtras"] = "Extras",
 		["AutoBarClassBarDeathKnight"] = "Death Knight",
+		["AutoBarClassBarMonk"] = "Monk",
 		["AutoBarClassBarDruid"] = "Druid",
 		["AutoBarClassBarHunter"] = "Hunter",
 		["AutoBarClassBarMage"] = "Mage",
@@ -204,7 +205,9 @@ if (GetLocale() == "ptBR") then
 		["AutoBarCooldownHeader"] = "Potion & Stone Cooldown",
 		["AutoBarClassBarHeader"] = "Class bar",
 
-		["AutoBarButtonAura"] = "Aura / Aspect",
+		["AutoBarButtonAspect"] = "Aspect",
+		["AutoBarButtonPoisonLethal"] = "Poison: Lethal",
+		["AutoBarButtonPoisonNonlethal"] = "Poison: Nonlethal",
 		["AutoBarButtonBandages"] = "Bandages",
 		["AutoBarButtonBattleStandards"] = "Battle Standards",
 		["AutoBarButtonBuff"] = "Buff",
@@ -507,7 +510,9 @@ if (GetLocale() == "ptBR") then
 		
 		["Spell.Guild"] = "Guild Spells";
 
-		["Spell.Aura"] = "Aura / Aspect";
+		["Spell.Aspect"] = "Aspect";
+		["Spell.Poison.Lethal"] = "Poison: Lethal";
+		["Spell.Poison.Nonlethal"] = "Poison Nonlethal";
 		["Spell.Buff.Weapon"] = "Buff Spells: Weapon";
 		["Spell.Class.Buff"] = "Class Buff";
 		["Spell.Class.Pet"] = "Class Pet";

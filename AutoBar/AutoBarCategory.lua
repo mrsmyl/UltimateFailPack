@@ -58,9 +58,10 @@ AutoBar.categoryValidateList = {}
 	--Hunter
 	spellNameList["Aspect of the Fox"] = GetSpellInfo(82661)
 	spellNameList["Aspect of the Cheetah"] = GetSpellInfo(5118)
-	spellNameList["Aspect of the Hawk"] = GetSpellInfo(13165)
+	spellNameList["Aspect of the Hawk"], _, spellIconList["Aspect of the Hawk"] = GetSpellInfo(13165)
 	spellNameList["Aspect of the Pack"] = GetSpellInfo(13159)
-	spellNameList["Aspect of the Wild"] = GetSpellInfo(20043)
+	spellNameList["Aspect of the Iron Hawk"] = GetSpellInfo(109260)
+	spellNameList["Aspect of the Beast"] = GetSpellInfo(61648)
 	spellNameList["Kill Command"] = GetSpellInfo(34026)
 	spellNameList["Bestial Wrath"] = GetSpellInfo(19574)
 	spellNameList["Mend Pet"] = GetSpellInfo(136)
@@ -83,19 +84,19 @@ AutoBar.categoryValidateList = {}
 	spellNameList["Conjure Refreshment Table"] = GetSpellInfo(43987)
 	spellNameList["Conjure Mana Gem"] = GetSpellInfo(759)
 
+	--Monk
+	spellNameList["Legacy of the Emperor"] = GetSpellInfo(115921)
+	spellNameList["Legacy of the White Tiger"] = GetSpellInfo(116781)
+
 	--Paladin
-	spellNameList["Blessing of Kings"] = GetSpellInfo(20217)
-	spellNameList["Blessing of Might"] = GetSpellInfo(19740)
-	spellNameList["Concentration Aura"] = GetSpellInfo(19746)
-	spellNameList["Crusader Aura"], _, spellIconList["Crusader Aura"] = GetSpellInfo(32223)
-	spellNameList["Devotion Aura"] = GetSpellInfo(465)
-	spellNameList["Divine Protection"] = GetSpellInfo(498)
-	spellNameList["Hand of Freedom"] = GetSpellInfo(1044)
-	spellNameList["Hand of Protection"] = GetSpellInfo(1022)
-	spellNameList["Hand of Sacrifice"] = GetSpellInfo(6940)
-	spellNameList["Hand of Salvation"] = GetSpellInfo(1038)
-	spellNameList["Resistance Aura"] = GetSpellInfo(19726)
-	spellNameList["Retribution Aura"] = GetSpellInfo(7294)
+	spellNameList["Blessing of Kings"] = GetSpellInfo(20217) --*
+	spellNameList["Blessing of Might"] = GetSpellInfo(19740) --*
+	spellNameList["Divine Protection"] = GetSpellInfo(498) --*
+	spellNameList["Divine Shield"] = GetSpellInfo(642) --*
+	spellNameList["Hand of Freedom"] = GetSpellInfo(1044) --*
+	spellNameList["Hand of Protection"] = GetSpellInfo(1022) --*
+	spellNameList["Hand of Sacrifice"] = GetSpellInfo(6940) --*
+	spellNameList["Hand of Salvation"] = GetSpellInfo(1038) --*
 	spellNameList["Seal of Insight"], _, spellIconList["Seal of Insight"] = GetSpellInfo(20165)
 	spellNameList["Seal of Justice"] = GetSpellInfo(20164)
 	spellNameList["Seal of Righteousness"] = GetSpellInfo(20154)
@@ -108,10 +109,15 @@ AutoBar.categoryValidateList = {}
 	spellNameList["Power Word: Fortitude"] = GetSpellInfo(13864)
 	spellNameList["Power Word: Shield"] = GetSpellInfo(17)
 	spellNameList["Prayer of Fortitude"] = GetSpellInfo(39231)
-	spellNameList["Vampiric Embrace"] = GetSpellInfo(15286)
 	
 	--Rogue
 	spellNameList["Evasion"] = GetSpellInfo(4086)
+	spellNameList["Deadly Poison"], _, spellIconList["Deadly Poison"] = GetSpellInfo(2823)
+	spellNameList["Wound Poison"] = GetSpellInfo(8679)
+	spellNameList["Crippling Poison"] = GetSpellInfo(3408)
+	spellNameList["Mind-numbing Poison"], _, spellIconList["Mind-numbing Poison"] = GetSpellInfo(5761)
+	spellNameList["Leeching Poison"] = GetSpellInfo(108211)
+	spellNameList["Paralytic Poison"] = GetSpellInfo(108215)
 
 	--Shaman
 	spellNameList["Earth Shield"] = GetSpellInfo(379)
@@ -138,8 +144,8 @@ AutoBar.categoryValidateList = {}
 	spellNameList["Grimoire of Sacrifice"] = GetSpellInfo(108503) 
 	
 	--Warrior
-	spellNameList["Last Stand"] = GetSpellInfo(12975)
-	spellNameList["Shield Wall"] = GetSpellInfo(871)
+	spellNameList["Shield Block"] = GetSpellInfo(2565) --*
+	spellNameList["Shield Wall"] = GetSpellInfo(871) --*
 	spellNameList["Demoralizing Shout"] = GetSpellInfo(1160)
 	spellNameList["Challenging Shout"] = GetSpellInfo(1161)
 	spellNameList["Battle Shout"] = GetSpellInfo(6673)
@@ -438,11 +444,16 @@ AutoBarSpells = AceOO.Class(AutoBarCategory)
 function AutoBarSpells.prototype:init(description, texture, castList, rightClickList, ptItems)
 	AutoBarSpells.super.prototype.init(self, description, texture) -- Mandatory init.
 	local spellName, index
---AutoBar:Print("AutoBarSpells.prototype:init " .. description .. " castList " .. tostring(castList))
+
+--	AutoBar:StupidLogEnable(description == "Spell.Class.Buff")	
+--	AutoBar:StupidLog("\nAutoBarSpells.prototype:init " .. description .. " castList " .. tostring(castList) .. "\n")
+--	AutoBar:StupidLog(AutoBar:Dump(castList))
 
 	-- Filter out non CLASS spells from castList and rightClickList
 	if (castList) then
 		self.castList = AutoBarCategory:FilterClass(castList)
+--		AutoBar:StupidLog("\n\nFiltered List:\n")
+--		AutoBar:StupidLog(AutoBar:Dump(self.castList))
 	end
 	if (rightClickList) then
 		self.castList, self.rightClickList = AutoBarCategory:FilterClass(rightClickList, 3)
@@ -460,6 +471,9 @@ function AutoBarSpells.prototype:init(description, texture, castList, rightClick
 		self.itemsRightClick = {}
 	end
 	self:Refresh()
+	
+--		AutoBar:StupidLogEnable(false)	
+
 end
 
 -- Reset the item list based on changed settings.
@@ -1231,72 +1245,77 @@ function AutoBarCategory:Initialize()
 			})
 
 
-	AutoBarCategoryList["Spell.Aura"] = AutoBarSpells:new(
-			"Spell.Aura", spellIconList["Crusader Aura"], {
-			"HUNTER", spellNameList["Aspect of the Fox"],
-			"HUNTER", spellNameList["Aspect of the Cheetah"],
-			"HUNTER", spellNameList["Aspect of the Hawk"],
-			"HUNTER", spellNameList["Aspect of the Pack"],
-			"HUNTER", spellNameList["Aspect of the Wild"],
-			"PALADIN", spellNameList["Concentration Aura"],
-			"PALADIN", spellNameList["Crusader Aura"],
-			"PALADIN", spellNameList["Devotion Aura"],
-			"PALADIN", spellNameList["Resistance Aura"],
-			"PALADIN", spellNameList["Retribution Aura"],
+	AutoBarCategoryList["Spell.Aspect"] = AutoBarSpells:new(
+			"Spell.Aspect", spellIconList["Aspect of the Hawk"], {
+			"HUNTER", spellNameList["Aspect of the Fox"], --*
+			"HUNTER", spellNameList["Aspect of the Cheetah"], --*
+			"HUNTER", spellNameList["Aspect of the Hawk"], --*
+			"HUNTER", spellNameList["Aspect of the Pack"], --*
+			"HUNTER", spellNameList["Aspect of the Iron Hawk"], --*
+			"HUNTER", spellNameList["Aspect of the Beast"], --*
+			})
+			
+	AutoBarCategoryList["Spell.Poison.Lethal"] = AutoBarSpells:new(
+			"Spell.Poison.Lethal", spellIconList["Deadly Poison"], {
+			"ROGUE", spellNameList["Deadly Poison"], --*
+			"ROGUE", spellNameList["Wound Poison"], --*
+			})
+
+	AutoBarCategoryList["Spell.Poison.Nonlethal"] = AutoBarSpells:new(
+			"Spell.Poison.Nonlethal", spellIconList["Mind-numbing Poison"], {
+			"ROGUE", spellNameList["Mind-numbing Poison"], --*
+			"ROGUE", spellNameList["Crippling Poison"], --*
+			"ROGUE", spellNameList["Leeching Poison"], --*
+			"ROGUE", spellNameList["Paralytic Poison"], --*
 			})
 
 
+
 	AutoBarCategoryList["Spell.Class.Buff"] = AutoBarSpells:new(
-			"Spell.Class.Buff", spellIconList["Mark of the Wild"], nil, {
-			"DEATHKNIGHT", spellNameList["Bone Shield"], spellNameList["Bone Shield"],
-			"DEATHKNIGHT", spellNameList["Horn of Winter"], spellNameList["Horn of Winter"],
-			"DRUID", spellNameList["Mark of the Wild"], spellNameList["Mark of the Wild"],
-			"DRUID", spellNameList["Nature's Grasp"], spellNameList["Nature's Grasp"],
-			"DRUID", spellNameList["Ironbark"], spellNameList["Ironbark"],
-			"DRUID", spellNameList["Heart of the Wild"], spellNameList["Heart of the Wild"],
-			"MAGE", spellNameList["Arcane Brilliance"], spellNameList["Arcane Brilliance"],
-			"MAGE", spellNameList["Dalaran Brilliance"], spellNameList["Dalaran Brilliance"],
-			"MAGE", spellNameList["Ice Ward"], spellNameList["Ice Ward"],
-			"MAGE", spellNameList["Frost Armor"], spellNameList["Frost Armor"],
-			"MAGE", spellNameList["Mage Armor"], spellNameList["Mage Armor"],
-			"MAGE", spellNameList["Molten Armor"], spellNameList["Molten Armor"],
-			"MAGE", spellNameList["Slow Fall"], spellNameList["Slow Fall"],
-			"PALADIN", spellNameList["Blessing of Kings"], spellNameList["Blessing of Kings"],
-			"PALADIN", spellNameList["Blessing of Might"], spellNameList["Blessing of Might"],
-			"PALADIN", spellNameList["Hand of Freedom"], spellNameList["Hand of Freedom"],
-			"PALADIN", spellNameList["Hand of Protection"], spellNameList["Hand of Protection"],
-			"PALADIN", spellNameList["Hand of Sacrifice"], spellNameList["Hand of Sacrifice"],
-			"PALADIN", spellNameList["Hand of Salvation"], spellNameList["Hand of Salvation"],
-			"PRIEST", spellNameList["Fear Ward"], spellNameList["Fear Ward"],
-			"PRIEST", spellNameList["Inner Fire"], spellNameList["Inner Fire"],
-			"PRIEST", spellNameList["Inner Will"], spellNameList["Inner Will"],
-			"PRIEST", spellNameList["Power Word: Fortitude"], spellNameList["Prayer of Fortitude"],
-			"PRIEST", spellNameList["Vampiric Embrace"], spellNameList["Vampiric Embrace"],
-			"SHAMAN", spellNameList["Water Walking"], spellNameList["Water Walking"],
-			"WARLOCK", spellNameList["Dark Intent"], spellNameList["Dark Intent"],
-			"WARLOCK", spellNameList["Unending Breath"], spellNameList["Unending Breath"],
-			"WARLOCK", spellNameList["Soulstone"], spellNameList["Soulstone"],
-			"WARRIOR", spellNameList["Battle Shout"], spellNameList["Commanding Shout"],
-			"WARRIOR", spellNameList["Commanding Shout"], spellNameList["Battle Shout"],
-			"WARRIOR", spellNameList["Demoralizing Shout"], spellNameList["Challenging Shout"],
+			"Spell.Class.Buff", spellIconList["Mark of the Wild"], {
+			"DEATHKNIGHT", spellNameList["Bone Shield"],
+			"DEATHKNIGHT", spellNameList["Horn of Winter"],
+			"DRUID", spellNameList["Mark of the Wild"],
+			"DRUID", spellNameList["Nature's Grasp"],
+			"DRUID", spellNameList["Ironbark"],
+			"DRUID", spellNameList["Heart of the Wild"],
+			"MAGE", spellNameList["Arcane Brilliance"],
+			"MAGE", spellNameList["Dalaran Brilliance"],
+			"MAGE", spellNameList["Ice Ward"],
+			"MAGE", spellNameList["Frost Armor"],
+			"MAGE", spellNameList["Mage Armor"],
+			"MAGE", spellNameList["Molten Armor"],
+			"MAGE", spellNameList["Slow Fall"],
+			"MONK", spellNameList["Legacy of the Emperor"],
+			"MONK", spellNameList["Legacy of the White Tiger"],
+			"PALADIN", spellNameList["Blessing of Kings"],
+			"PALADIN", spellNameList["Blessing of Might"],
+			"PALADIN", spellNameList["Hand of Freedom"],
+			"PALADIN", spellNameList["Hand of Protection"],
+			"PALADIN", spellNameList["Hand of Sacrifice"],
+			"PALADIN", spellNameList["Hand of Salvation"],
+			"PRIEST", spellNameList["Fear Ward"],
+			"PRIEST", spellNameList["Inner Fire"],
+			"PRIEST", spellNameList["Inner Will"],
+			"PRIEST", spellNameList["Power Word: Fortitude"],
+			"SHAMAN", spellNameList["Water Walking"],
+			"WARLOCK", spellNameList["Dark Intent"],
+			"WARLOCK", spellNameList["Unending Breath"],
+			"WARLOCK", spellNameList["Soulstone"],
+			"WARRIOR", spellNameList["Battle Shout"],
+			"WARRIOR", spellNameList["Commanding Shout"],
+			"WARRIOR", spellNameList["Demoralizing Shout"],
 
 			})
 	if (AutoBar.CLASS == "PALADIN") then
 		local spellDivineIntervention = GetSpellInfo(19752)
 	end
-	if (AutoBar.CLASS == "PRIEST") then
-		local spellLevitate = GetSpellInfo(1706)
-	end
 
 	local spellEagleEye = GetSpellInfo(6197)
-	local spellScareBeast = GetSpellInfo(1513)
 	local spellTameBeast = GetSpellInfo(1515)
-	local spellBeastTraining = GetSpellInfo(5300)
 	local spellBeastLore = GetSpellInfo(1462)
-	local spellEyesOfTheBeast = GetSpellInfo(19557)
 	local spellDismissPet = GetSpellInfo(2641)
 	local spellRevivePet = GetSpellInfo(982)
-	local spellCallPet = GetSpellInfo(67777)
 	local spellCallPet1 = GetSpellInfo(883)
 	local spellCallPet2 = GetSpellInfo(83242)
 	local spellCallPet3 = GetSpellInfo(83243)
@@ -1326,17 +1345,24 @@ function AutoBarCategory:Initialize()
 	local spellSummonVoidwalker = GetSpellInfo(697)
 	local spellSummonInfernal = GetSpellInfo(1122)
 	local spellSummonDoomguard = GetSpellInfo(18540)
+	
+	--DeathKnight
+	local spellRuneWeapon = GetSpellInfo(49028)
+	local spellRaiseDead = GetSpellInfo(46584)
+	local spellSummonGargoyle = GetSpellInfo(49206)
 
 
 	AutoBarCategoryList["Spell.Class.Pet"] = AutoBarSpells:new(
 			"Spell.Class.Pet", spellForceOfNatureIcon, {
+			"DEATHKNIGHT", spellRuneWeapon,
+			"DEATHKNIGHT", spellRaiseDead,
+			"DEATHKNIGHT", spellSummonGargoyle,			
 			"DRUID", spellForceOfNature,
 			"HUNTER", spellCallPet1, 
 			"HUNTER", spellCallPet2, 
 			"HUNTER", spellCallPet3, 
 			"HUNTER", spellCallPet4, 
 			"HUNTER", spellCallPet5, 
-			"HUNTER", spellCallPet6, 
 			"MAGE", spellSummonWaterElemental,
 			"PRIEST", spellShadowfiend,
 			"SHAMAN", spellEarthElementalTotem,
@@ -1436,9 +1462,8 @@ function AutoBarCategory:Initialize()
 			"MAGE", spellNameList["Ice Barrier"], spellNameList["Ice Barrier"],
 			"MAGE", spellNameList["Incanter's Ward"], spellNameList["Incanter's Ward"],
 			"MAGE", spellNameList["Temporal Shield"], spellNameList["Temporal Shield"],
-			"PALADIN", spellNameList["Divine Protection"], spellNameList["Divine Protection"],
-			"PALADIN", spellNameList["Hand of Protection"], spellNameList["Hand of Protection"],
-			"PALADIN", spellNameList["Guardian of Ancient Kings"], spellNameList["Guardian of Ancient Kings"],
+			"PALADIN", spellNameList["Divine Protection"], spellNameList["Hand of Sacrifice"],
+			"PALADIN", spellNameList["Divine Shield"], spellNameList["Hand of Protection"],
 			"PRIEST", spellNameList["Power Word: Shield"], spellNameList["Power Word: Shield"],
 			"ROGUE", spellNameList["Evasion"], spellNameList["Evasion"],
 			"SHAMAN", spellNameList["Earth Shield"], spellNameList["Earth Shield"],
@@ -1449,9 +1474,8 @@ function AutoBarCategory:Initialize()
 			"WARLOCK", spellNameList["Sacrificial Pact"], spellNameList["Sacrificial Pact"],
 			"WARLOCK", spellNameList["Dark Bargain"], spellNameList["Dark Bargain"],
 			"WARLOCK", spellNameList["Unending Resolve"], spellNameList["Unending Resolve"],
-			"WARRIOR", spellNameList["Last Stand"], spellNameList["Last Stand"],
+			"WARRIOR", spellNameList["Shield Block"], spellNameList["Shield Block"],
 			"WARRIOR", spellNameList["Shield Wall"], spellNameList["Shield Wall"],
-			"WARRIOR", spellNameList["Enraged Regeneration"], spellNameList["Enraged Regeneration"],
 			})
 end
 
@@ -1520,14 +1544,14 @@ function AutoBarCategory:Initialize2()
 			"SHAMAN", spellSearingTotem, --*
 			})
 
-	--spellManaTideTotem, _, spellManaTideTotemIcon = GetSpellInfo(16190)
-	--local spellTotemofTranquilMind = GetSpellInfo(87718)
+	local spellManaTideTotem = GetSpellInfo(16190)
 	local spellHealingStreamTotem, _,  spellHealingStreamTotemIcon = GetSpellInfo(5394)
 	local spellHealingTideTotem = GetSpellInfo(108280)
 	AutoBarCategoryList["Spell.Totem.Water"] = AutoBarSpells:new(
 			"Spell.Totem.Water", spellHealingStreamTotemIcon, {
 			"SHAMAN", spellHealingStreamTotem, --*
 			"SHAMAN", spellHealingTideTotem, --*
+			"SHAMAN", spellManaTideTotem, --*
 			})
 
 	spellNameList["Windfury Weapon"], _, spellIconList["Windfury Weapon"] = GetSpellInfo(8232)
@@ -1535,12 +1559,6 @@ function AutoBarCategory:Initialize2()
 	spellNameList["Flametongue Weapon"] = GetSpellInfo(8024)
 	spellNameList["Frostbrand Weapon"] = GetSpellInfo(8033)
 	spellNameList["Rockbiter Weapon"] = GetSpellInfo(8017)
-	spellNameList["Deadly Poison"] = GetSpellInfo(2823)
-	spellNameList["Wound Poison"] = GetSpellInfo(8679)
-	spellNameList["Crippling Poison"] = GetSpellInfo(3408)
-	spellNameList["Mind-numbing Poison"] = GetSpellInfo(5761)
-	spellNameList["Leeching Poison"] = GetSpellInfo(108211)
-	spellNameList["Paralytic Poison"] = GetSpellInfo(108215)
 	
 	AutoBarCategoryList["Spell.Buff.Weapon"] = AutoBarSpells:new(
 			"Spell.Buff.Weapon", spellIconList["Windfury Weapon"], {
@@ -1620,18 +1638,20 @@ function AutoBarCategory:Initialize2()
 			"WARLOCK", spellNameList["Curse of the Elements"],
 			})
 
-	spellNameList["Serpent Sting"] = GetSpellInfo(1978)
+	spellNameList["Hunter's Mark"] = GetSpellInfo(1130)
+	spellNameList["Widow Venom"] = GetSpellInfo(82654)
 	spellNameList["Wyvern Sting"] = GetSpellInfo(19386)
 	spellNameList["Silence"] = GetSpellInfo(15487)
 	spellNameList["Blind"] = GetSpellInfo(2094)
 	spellNameList["Sap"] = GetSpellInfo(6770)
 	AutoBarCategoryList["Spell.Debuff.Single"] = AutoBarSpells:new(
 			"Spell.Debuff.Single", spellIconList["Slow"], {
-			"HUNTER", spellNameList["Serpent Sting"],
-			"HUNTER", spellNameList["Wyvern Sting"],
+			"HUNTER", spellNameList["Hunter's Mark"], --*
+			"HUNTER", spellNameList["Widow Venom"], --*
+			"HUNTER", spellNameList["Wyvern Sting"], --*
 			})
 
-	spellNameList["Fishing"], _, spellIconList["Fishing"] = GetSpellInfo(33095)
+	spellNameList["Fishing"], _, spellIconList["Fishing"] = GetSpellInfo(131474)
 	AutoBarCategoryList["Spell.Fishing"] = AutoBarSpells:new(
 			"Spell.Fishing", spellIconList["Fishing"], {
 			"*", spellNameList["Fishing"],
@@ -1639,28 +1659,26 @@ function AutoBarCategory:Initialize2()
 
 	AutoBarCategoryList["Spell.Seal"] = AutoBarSpells:new(
 			"Spell.Seal", spellIconList["Seal of Insight"], {
-			"PALADIN", spellNameList["Seal of Insight"],
-			"PALADIN", spellNameList["Seal of Justice"],
-			"PALADIN", spellNameList["Seal of Righteousness"],
-			"PALADIN", spellNameList["Seal of Truth"],
+			"PALADIN", spellNameList["Seal of Insight"], --*
+			"PALADIN", spellNameList["Seal of Justice"], --*
+			"PALADIN", spellNameList["Seal of Righteousness"], --*
+			"PALADIN", spellNameList["Seal of Truth"], --*
 			})
 
 
 	spellNameList["Explosive Trap"] = GetSpellInfo(13813)
 	spellNameList["Freezing Trap"] = GetSpellInfo(1499)
 	spellNameList["Ice Trap"] = GetSpellInfo(13809)
-	spellNameList["Immolation Trap"] = GetSpellInfo(13795)
 	spellNameList["Snake Trap"], _, spellIconList["Snake Trap"] = GetSpellInfo(34600)
 	spellNameList["Trap Launcher"] = GetSpellInfo(77769)
 
 	AutoBarCategoryList["Spell.Trap"] = AutoBarSpells:new(
 		"Spell.Trap", spellIconList["Snake Trap"], {
-		"HUNTER", spellNameList["Explosive Trap"],
-		"HUNTER", spellNameList["Freezing Trap"],
-		"HUNTER", spellNameList["Ice Trap"],
-		"HUNTER", spellNameList["Immolation Trap"],
-		"HUNTER", spellNameList["Snake Trap"],
-		"HUNTER", spellNameList["Trap Launcher"],
+		"HUNTER", spellNameList["Explosive Trap"], --*
+		"HUNTER", spellNameList["Freezing Trap"], --*
+		"HUNTER", spellNameList["Ice Trap"], --*
+		"HUNTER", spellNameList["Snake Trap"], --*
+		"HUNTER", spellNameList["Trap Launcher"], --*
 	})
 
 	spellNameList["Flight Form"] = GetSpellInfo(33943)

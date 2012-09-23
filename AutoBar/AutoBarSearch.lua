@@ -1232,13 +1232,13 @@ end
 
 -- Testing & Debug function only
 function AutoBarSearch:DumpSlot(buttonKey)
-	AutoBar:Print("\n\n   AutoBarSearch:DumpSlot " .. tostring(buttonKey))
-	AutoBar:Print("items ")
-	DevTools_Dump(AutoBarSearch.items:GetList(buttonKey))
-	AutoBar:Print("current ")
-	DevTools_Dump(AutoBarSearch.current:GetList(buttonKey))
-	AutoBar:Print("sorted ")
-	DevTools_Dump(AutoBarSearch.sorted:GetList(buttonKey))
+	print("\n\n   AutoBarSearch:DumpSlot " .. tostring(buttonKey))
+	print("items ")
+	dump(AutoBarSearch.items:GetList(buttonKey))
+	print("current ")
+	dump(AutoBarSearch.current:GetList(buttonKey))
+	print("sorted ")
+	dump(AutoBarSearch.sorted:GetList(buttonKey))
 end
 
 
@@ -1246,13 +1246,13 @@ end
 function AutoBarSearch:Test()
 	if (false and DevTools_Dump) then
 		AutoBarSearch.trace = true
-		AutoBar:Print("\nAutoBarSearch:Test start")
+		print("\nAutoBarSearch:Test start")
 		AutoBarSearch:Empty()
 		playerLevel = UnitLevel("player")
 
 		UpdateAddOnMemoryUsage()
 		local usedKB = GetAddOnMemoryUsage("AutoBar")
-		AutoBar:Print("usedKB = " .. usedKB)
+		print("usedKB = " .. usedKB)
 
 		AutoBarSearch.items:Add({4536}, 1, nil, 1)
 		assert(AutoBarSearch.items:Contains(4536), "AutoBarSearch.items:Add failed")

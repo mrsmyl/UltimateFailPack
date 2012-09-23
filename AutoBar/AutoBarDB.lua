@@ -70,6 +70,7 @@ local classBar = {
 	DRUID = "AutoBarClassBarDruid",
 	HUNTER = "AutoBarClassBarHunter",
 	MAGE = "AutoBarClassBarMage",
+	MONK = "AutoBarClassBarMonk",
 	PALADIN = "AutoBarClassBarPaladin",
 	PRIEST = "AutoBarClassBarPriest",
 	ROGUE = "AutoBarClassBarRogue",
@@ -141,6 +142,9 @@ function AutoBar:InitializeDefaults()
 
 	AutoBar.Class.Button:OptionsInitialize()
 	AutoBar.Class.Button:OptionsUpgrade()
+	
+	AutoBar.db.account.stupidlog = ""
+
 
 	-- Simply ascend by 1 so each session produces non-conflicting keys.
 	if (not AutoBar.db.account.keySeed) then
@@ -173,6 +177,7 @@ function AutoBar:InitializeDefaults()
 			DRUID = true,
 			HUNTER = true,
 			MAGE = true,
+			MONK = true,
 			PALADIN = true,
 			PRIEST = true,
 			ROGUE = true,
@@ -208,6 +213,7 @@ function AutoBar:InitializeDefaults()
 			DRUID = true,
 			HUNTER = true,
 			MAGE = true,
+			MONK = true,
 			PALADIN = true,
 			PRIEST = true,
 			ROGUE = true,
@@ -218,11 +224,46 @@ function AutoBar:InitializeDefaults()
 		}
 	end
 
+	if (AutoBar.CLASS == "MONK") then
+
+-- ToDo: This temporarily forces existing configs to recognize MONK.  Remove after MoP
+AutoBar.db.account.barList["AutoBarClassBarBasic"].MONK = true
+AutoBar.db.account.barList["AutoBarClassBarExtras"].MONK = true
+
+		if (not AutoBar.db.class.barList["AutoBarClassBarMonk"]) then
+			AutoBar.db.class.barList["AutoBarClassBarMonk"] = {
+				enabled = true,
+				share = "2",
+				rows = 1,
+				columns = CLASS_COLUMN_DEFAULT,
+				alignButtons = "3",
+				alpha = 1,
+				buttonWidth = 36,
+				buttonHeight = 36,
+				collapseButtons = true,
+				docking = nil,
+				dockShiftX = 0,
+				dockShiftY = 0,
+				fadeOut = false,
+				frameStrata = "LOW",
+				hide = false,
+				padding = 0,
+				popupDirection = "1",
+				scale = 1,
+				showOnModifier = nil,
+				posX = 300,
+				posY = 280,
+				MONK = true,
+				buttonKeys = {},
+			}
+		end
+	end
+	
 	if (AutoBar.CLASS == "DEATHKNIGHT") then
 
 -- ToDo: This temporarily forces existing configs to recognize DEATHKNIGHT.  Remove after wotlk
-AutoBar.db.account.barList["AutoBarClassBarBasic"].DEATHKNIGHT = true
-AutoBar.db.account.barList["AutoBarClassBarExtras"].DEATHKNIGHT = true
+--AutoBar.db.account.barList["AutoBarClassBarBasic"].DEATHKNIGHT = true
+--AutoBar.db.account.barList["AutoBarClassBarExtras"].DEATHKNIGHT = true
 
 		if (not AutoBar.db.class.barList["AutoBarClassBarDeathKnight"]) then
 			AutoBar.db.class.barList["AutoBarClassBarDeathKnight"] = {
@@ -1100,11 +1141,11 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].DEATHKNIGHT = true
 		end
 	end
 
-	if (AutoBar.CLASS == "HUNTER" or AutoBar.CLASS == "PALADIN") then
-		if (not AutoBar.db.class.buttonList["AutoBarButtonAura"]) then
-			AutoBar.db.class.buttonList["AutoBarButtonAura"] = {
-				buttonKey = "AutoBarButtonAura",
-				buttonClass = "AutoBarButtonAura",
+	if (AutoBar.CLASS == "HUNTER") then
+		if (not AutoBar.db.class.buttonList["AutoBarButtonAspect"]) then
+			AutoBar.db.class.buttonList["AutoBarButtonAspect"] = {
+				buttonKey = "AutoBarButtonAspect",
+				buttonClass = "AutoBarButtonAspect",
 				barKey = AutoBar.classBar,
 				defaultButtonIndex = "*",
 				enabled = true,
@@ -1123,6 +1164,28 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].DEATHKNIGHT = true
 				enabled = true,
 				arrangeOnUse = true,
 				targeted = "Lockpicking",
+			}
+		end
+		
+		if (not AutoBar.db.class.buttonList["AutoBarButtonPoisonLethal"]) then
+			AutoBar.db.class.buttonList["AutoBarButtonPoisonLethal"] = {
+				buttonKey = "AutoBarButtonPoisonLethal",
+				buttonClass = "AutoBarButtonPoisonLethal",
+				barKey = "AutoBarClassBarRogue",
+				defaultButtonIndex = "*",
+				enabled = true,
+				arrangeOnUse = true,
+			}
+		end
+		
+		if (not AutoBar.db.class.buttonList["AutoBarButtonPoisonNonlethal"]) then
+			AutoBar.db.class.buttonList["AutoBarButtonPoisonNonlethal"] = {
+				buttonKey = "AutoBarButtonPoisonNonlethal",
+				buttonClass = "AutoBarButtonPoisonNonlethal",
+				barKey = "AutoBarClassBarRogue",
+				defaultButtonIndex = "*",
+				enabled = true,
+				arrangeOnUse = true,
 			}
 		end
 	end
@@ -1197,7 +1260,7 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].DEATHKNIGHT = true
 		end
 	end
 	
-	local deprecated = {"AutoBarButtonWarlockStones", "AutoBarButtonSting",  }
+	local deprecated = {"AutoBarButtonWarlockStones", "AutoBarButtonSting", "AutoBarButtonAura"  }
 	
 	for _, dep in ipairs(deprecated) do
 		if (AutoBar.db.account.buttonList[dep]) then

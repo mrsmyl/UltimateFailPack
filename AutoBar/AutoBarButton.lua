@@ -27,13 +27,14 @@ AutoBarButton = AceOO.Class(AutoBar.Class.Button)
 AutoBarButton.dirtyButton = {}
 
 
-spellNameList["Divine Shield"], _, spellIconList["Divine Shield"] = GetSpellInfo(642)
+spellNameList["Lay on Hands"], _, spellIconList["Lay on Hands"] = GetSpellInfo(633)
 spellNameList["Feign Death"], _, spellIconList["Feign Death"] = GetSpellInfo(5384)
 spellNameList["Disengage"], _, spellIconList["Disengage"] = GetSpellInfo(781)
 spellNameList["Healing Wave"], _, spellIconList["Healing Wave"] = GetSpellInfo(331)
 spellNameList["Ice Block"], _, spellIconList["Ice Block"] = GetSpellInfo(27619)
 spellNameList["Last Stand"], _, spellIconList["Last Stand"] = GetSpellInfo(12975)
-spellNameList["Power Word: Shield"], _, spellIconList["Power Word: Shield"] = GetSpellInfo(17)
+spellNameList["Desperate Prayer"], _, spellIconList["Desperate Prayer"] = GetSpellInfo(19236)
+
 spellNameList["Vanish"], _, spellIconList["Vanish"] = GetSpellInfo(1856)
 spellNameList["Nature's Swiftness"], _, spellIconList["Nature's Swiftness"] = GetSpellInfo(132158)
 spellNameList["Frenzied Regeneration"], _, spellIconList["Frenzied Regeneration"] = GetSpellInfo(22842)
@@ -49,9 +50,13 @@ spellNameList["Cat Form"], _, spellIconList["Cat Form"] = GetSpellInfo(768)
 spellNameList["Ghost Wolf"], _, spellIconList["Ghost Wolf"] = GetSpellInfo(2645)
 spellNameList["Mangle (Cat)"], _, spellIconList["Mangle (Cat)"] = GetSpellInfo(33876)
 spellNameList["Shadowstep"], _, spellIconList["Shadowstep"] = GetSpellInfo(36554)
-spellNameList["Charge"] = GetSpellInfo(100)
+spellNameList["Charge"], _, spellIconList["Charge"] = GetSpellInfo(100)
 spellNameList["Intercept"], _, spellIconList["Intercept"] = GetSpellInfo(20252)
-spellNameList["Intervene"] = GetSpellInfo(3411)
+spellNameList["Heroic Leap"], _, spellIconList["Heroic Leap"]  = GetSpellInfo(6544)
+spellNameList["Intervene"], _, spellIconList["Intervene"]  = GetSpellInfo(3411)
+spellNameList["Enraged Regeneration"] = GetSpellInfo(55694)
+
+
 
 
 function AutoBarButton.prototype:init(parentBar, buttonDB)
@@ -1044,15 +1049,32 @@ function AutoBarButtonSpell.prototype:SetupButton()
 end
 
 
-local AutoBarButtonAura = AceOO.Class(AutoBarButton)
-AutoBar.Class["AutoBarButtonAura"] = AutoBarButtonAura
+local AutoBarButtonAspect = AceOO.Class(AutoBarButton)
+AutoBar.Class["AutoBarButtonAspect"] = AutoBarButtonAspect
 
-function AutoBarButtonAura.prototype:init(parentBar, buttonDB)
-	AutoBarButtonAura.super.prototype.init(self, parentBar, buttonDB)
+function AutoBarButtonAspect.prototype:init(parentBar, buttonDB)
+	AutoBarButtonAspect.super.prototype.init(self, parentBar, buttonDB)
 
-	self:AddCategory("Spell.Aura")
+	self:AddCategory("Spell.Aspect")
 end
 
+local AutoBarButtonPoisonLethal = AceOO.Class(AutoBarButton)
+AutoBar.Class["AutoBarButtonPoisonLethal"] = AutoBarButtonPoisonLethal
+
+function AutoBarButtonPoisonLethal.prototype:init(parentBar, buttonDB)
+	AutoBarButtonPoisonLethal.super.prototype.init(self, parentBar, buttonDB)
+
+	self:AddCategory("Spell.Poison.Lethal")
+end
+
+local AutoBarButtonPoisonNonlethal = AceOO.Class(AutoBarButton)
+AutoBar.Class["AutoBarButtonPoisonNonlethal"] = AutoBarButtonPoisonNonlethal
+
+function AutoBarButtonPoisonNonlethal.prototype:init(parentBar, buttonDB)
+	AutoBarButtonPoisonNonlethal.super.prototype.init(self, parentBar, buttonDB)
+
+	self:AddCategory("Spell.Poison.Nonlethal")
+end
 
 local AutoBarButtonBandages = AceOO.Class(AutoBarButton)
 AutoBar.Class["AutoBarButtonBandages"] = AutoBarButtonBandages
@@ -1486,7 +1508,7 @@ function AutoBarButtonCharge.prototype:Refresh(parentBar, buttonDB)
 			index = index + 6
 		end
 
-		macroTexture = spellIconList["Intercept"]
+		macroTexture = spellIconList["Charge"]
 	end
 	if (self.macroActive) then
 		local macroText = table.concat(concatList)
@@ -1666,7 +1688,7 @@ function AutoBarButtonER.prototype:Refresh(parentBar, buttonDB)
 			concatList[index] = "/cast "
 			concatList[index + 1] = spellNameList["Feign Death"]
 
-			macroTexture = spellIconList["Disengage"]
+			macroTexture = spellIconList["Feign Death"]
 			self.macroActive = true
 		elseif (GetSpellInfo(spellNameList["Disengage"])) then
 			concatList[index] = "/cast "
@@ -1684,19 +1706,19 @@ function AutoBarButtonER.prototype:Refresh(parentBar, buttonDB)
 			self.macroActive = true
 		end
 	elseif (AutoBar.CLASS == "PALADIN") then
-		if (GetSpellInfo(spellNameList["Divine Shield"])) then
+		if (GetSpellInfo(spellNameList["Lay on Hands"])) then
 			concatList[index] = "/cast "
-			concatList[index + 1] = spellNameList["Divine Shield"]
+			concatList[index + 1] = spellNameList["Lay on Hands"]
 
-			macroTexture = spellIconList["Divine Shield"]
+			macroTexture = spellIconList["Lay on Hands"]
 			self.macroActive = true
 		end
 	elseif (AutoBar.CLASS == "PRIEST") then
-		if (GetSpellInfo(spellNameList["Power Word: Shield"])) then
+		if (GetSpellInfo(spellNameList["Desperate Prayer"])) then
 			concatList[index] = "/cast "
-			concatList[index + 1] = spellNameList["Power Word: Shield"]
+			concatList[index + 1] = spellNameList["Desperate Prayer"]
 
-			macroTexture = spellIconList["Power Word: Shield"]
+			macroTexture = spellIconList["Desperate Prayer"]
 			self.macroActive = true
 		end
 	elseif (AutoBar.CLASS == "ROGUE") then
@@ -1724,7 +1746,14 @@ function AutoBarButtonER.prototype:Refresh(parentBar, buttonDB)
 
 			macroTexture = spellIconList["Last Stand"]
 			self.macroActive = true
+		elseif (GetSpellInfo(spellNameList["Enraged Regeneration"])) then
+			concatList[index] = "/cast "
+			concatList[index + 1] = spellNameList["Enraged Regeneration"]
+
+			macroTexture = spellIconList["Enraged Regeneration"]
+			self.macroActive = true
 		end
+
 	end
 	if (self.macroActive) then
 		local macroText = table.concat(concatList)
