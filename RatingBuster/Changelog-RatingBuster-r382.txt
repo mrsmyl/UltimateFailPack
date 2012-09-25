@@ -1,4 +1,10 @@
 ------------------------------------------------------------------------
+r382 | gathirer | 2012-09-23 17:17:24 +0000 (Sun, 23 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/RatingBuster.toc
+
+- New push to get the Lib-StatLocic updates
+------------------------------------------------------------------------
 r381 | gathirer | 2012-09-20 16:29:49 +0000 (Thu, 20 Sep 2012) | 1 line
 Changed paths:
    M /trunk/locales/itIT.lua

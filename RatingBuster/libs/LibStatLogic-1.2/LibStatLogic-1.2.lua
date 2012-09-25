@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 145 $
+Revision: $Revision: 154 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2012-09-20 06:22:39 +0000 (Thu, 20 Sep 2012) $
+Last Update: $Date: 2012-09-22 20:53:11 +0000 (Sat, 22 Sep 2012) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 145 $";
+local MINOR = "$Revision: 154 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -121,6 +121,12 @@ SLASH_STATLOGIC_DEBUG1 = "/sldebug"
 local ItemNotRecognizedWarningDefault = (GetLocale() == "enUS") and false;
 --Note: We won't show warnings, by default, for any other locales, because their translations are 
 --      so broken and far behind that the game will never be usable for anyone besides enUS.
+if (BNConnected()) then
+	local _, battleTag = BNGetInfo();
+	if battleTag == "Pauladin#1741" then --us developers need to see warnings - otherwise we'd have no idea things are broken
+		ItemNotRecognizedWarningDefault = true;
+	end;
+end
 
 local _itemNotRecognizedWarning = ItemNotRecognizedWarningDefault;
 function ToggleWarnings()
@@ -134,14 +140,9 @@ end;
 SlashCmdList["STATLOGIC_WARNING"] = ToggleWarnings
 SLASH_STATLOGIC_WARNING1 = "/slwarning"
 
-function PrintCommandHelp()
-	print(ORANGE_FONT_COLOR_CODE.."LibStatLogic"..FONT_COLOR_CODE_CLOSE..": Arguments to /tp:");
-	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."debug"..FONT_COLOR_CODE_CLOSE.." - toggle debugging message");
-	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."warning"..FONT_COLOR_CODE_CLOSE.." - toggle display of warning messages of unknown item text");
-	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."locale"..FONT_COLOR_CODE_CLOSE.." - display core localization info used by LibStatLogic");
-end;
 
-function DumpLocaleInfo()
+
+local function DumpLocaleInfo()
 	local blueColorCode = "|cff88ccff";
 
 	print(string.format(ORANGE_FONT_COLOR_CODE.."LibStatLogic"..FONT_COLOR_CODE_CLOSE.." version %s.%s", StatLogic.Major, StatLogic.Minor));
@@ -153,14 +154,56 @@ function DumpLocaleInfo()
 	print(string.format("   "..blueColorCode.."L.patDecimal"..FONT_COLOR_CODE_CLOSE.."=\"%s\" "..LIGHTYELLOW_FONT_COLOR_CODE.."regex to find a localized decimal number e.g. \%d+[,\%d]*.?\%d", L.patDecimal));
 end;
 
+local function AnalyzeItem(itemString)
+	StatLogic:SetTip("item:"..itemString)
+end;
+
+local function DumpUnrecognizedItems()
+	print("The following item attributes have not been recognized by LibStatLogic");
+	print("Each time an item is unrecognized the game takes a performance penalty");
+	
+	for k, v in pairs(StatLogic.ItemsNotRecognized) do
+		print(v.."   "..k);
+	end
+
+end;
+
+local function ParseText(text)
+	local t = {};
+	StatLogic:ParseLine(t, text);
+	
+--	DevTools_Dump(t);
+	for k, v in pairs(t) do
+		print(string.format("[\"%s\"] = %s", k, v));
+	end;
+end;
+
+local function PrintCommandHelp()
+	print(ORANGE_FONT_COLOR_CODE.."LibStatLogic"..FONT_COLOR_CODE_CLOSE..": Arguments to /tp:");
+	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."debug"..FONT_COLOR_CODE_CLOSE.." - toggle debugging message");
+	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."warning"..FONT_COLOR_CODE_CLOSE.." - toggle display of warning messages of unknown item text");
+	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."locale"..FONT_COLOR_CODE_CLOSE.." - display core localization info used by LibStatLogic");
+	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."analyze [itemID]"..FONT_COLOR_CODE_CLOSE.." - analyze the tooltip of the specified ItemID");
+	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."unrecognized"..FONT_COLOR_CODE_CLOSE.." - dump the list of all unrecognized items");
+	print("   "..LIGHTYELLOW_FONT_COLOR_CODE.."parse [text]"..FONT_COLOR_CODE_CLOSE.." - parse a line of text for stats");
+end;
+
 SlashCmdList["STATLOGIC_SLASHCMD"] = function(msg)
-	if (msg == "debug") then
+	local command, rest = msg:match("^(%S*)%s*(.-)$")
+
+	if (command == "debug") then
 		ToggleDebug();
-	elseif (msg == "warning") or (msg == "warnings") then
+	elseif (command == "warning") or (command == "warnings") then
 		ToggleWarnings();
-	elseif (msg == "?") or (msg == "help") or (msg == "") then
+	elseif (command == "analyze") or (command == "settip") then
+		AnalyzeItem(rest);
+	elseif (command == "unrecognized") or (command == "unrecog") then
+		DumpUnrecognizedItems();
+	elseif (command == "parse") or (command == "text") or (command == "parseline") then
+		ParseText(rest);
+	elseif (command == "?") or (command == "help") or (command == "") then
 		PrintCommandHelp();
-	elseif (msg == "locale") or (msg == "dumplocaleinfo") then
+	elseif (command == "locale") or (command == "dumplocaleinfo") then
 		DumpLocaleInfo();
 	else
 		print("/sl "..msg.."   huh?");
@@ -317,9 +360,17 @@ if not L then
 	assert(L, "No PatternLocale information loaded!");
 end
 
+--[[
+	You DON'T want to start with the enUS Pattern Locale table, and copy locale specific values into it.
+	It is NOT correct to "fallback" to an enUS pattern entry when one does not exist in the current (non enUS) locale.
+	That is because every entry in the enUS locale table is not valid for other locales. 
+	This means you will attempt to match english patterns against German text.
+	At best these patterns will never match.
+	At worst these patterns will match the wrong things.
+--]]
 local tempL = L
 L = PatternLocale.enUS;
--- Setup any values from current DisplayLocale into enUSDisplayLocale, since that's the gold version
+-- Setup any values from current PatternLocale into enUS Pattern Locale, since that's the gold version
 local function SetupPatternLocale(locale, enUS)
 	for k in pairs(enUS) do
 		--If the k-th item is a table, the recursively call SetupDisplayLocale
@@ -345,7 +396,6 @@ local function SetupDisplayLocale(locale, enUS)
 		if type(enUS[k]) == "table" and type(locale[k]) == "table" then
 			SetupDisplayLocale(locale[k], enUS[k])
 		elseif locale[k] then
-
 			enUS[k] = locale[k]
 		end
 	end
@@ -449,14 +499,14 @@ function CNumberEx(value, base, localization)
 			
 			--strip out potential thousand's separators
 			assert(localization.LOCALE_STHOUSAND);
-			local s = string.replace(value, "%p", "");
+			local s = string.replace(value, localization.LOCALE_STHOUSAND, ""); --You can't use %p; it fails with numbers like 1,234.5 (Unit Testing)
 			
 			--print("New string: \""..s.."\"");
 			
 			--convert any decimal markers into a "." (period)
 			assert(localization.LOCALE_SDECIMAL);
 			if (localization.LOCALE_SDECIMAL ~= ".") then
-				s = string.replace(s, "%p", ".");
+				s = string.replace(s, localization.LOCALE_SDECIMAL, "."); --You can't use %p, it fails with numbers like 1,234.5 (Unit Testing)
 			end;
 			
 			--print("decimal's fixed: \""..s.."\"");
@@ -2498,7 +2548,7 @@ elseif playerClass == "PALADIN" then
 		},
 	},
 	["MOD_BLOCK_VALUE"] =  {		
-		{	-- Guarded by the Light - Increases your total Stamina by 15%
+		{	-- Guarded by the Light - Increases your total Stamina by 15% and your block chance by 10%. Reduces the chance you will be critically hit by melee attacks by 6%.
 			["rank"] = { 0.10, },
 			["known"] = 53592,
 		},
@@ -2509,19 +2559,41 @@ elseif playerClass == "PALADIN" then
 	-- Paladin: Touched by the Light - Passive: 53592
 	-- 4.0.1: Increases your total Stamina by 15%, increases your spell hit by 6%, and increases your spell power by an amount equal to 60% of your Strength.
 	-- 5.0.5: Touched by the Light changed to Guarded by the Light,but is still SpellID 53592
-	
+
 	["MOD_STA"] = {
 		{	-- Plate Specialization - It might still exist, but there's no spell, or buff, or passive for it. 
 			-- And i'm seeing an extra 14% boost to stamina (on top of the 14% provided by Guarded by the Light)
 			-- So i'll guess that this 14% is coming from the, now invisible, now 14% (up from 5%), protection plate specialization
-			["rank"] = { 0.05, },
+			["rank"] = { 0.05, }, --0.14  Guarded by the Light might add the missing stamina
 			--["known"] = 86102,
 			["armorspec"] = 2,
 		},
 		{	-- Guarded by the Light - Increases your total Stamina by 15%
+			-- 9/20/2012 - i know it says 15%, but (with Plate Specialization disabled by wearing a cloth piece), i'm seeing 25% boost on Stamina
+			-- It might be a bug, and Guarded by the light is actually 25% while the spell lists 15%.
+			-- Or perhaps there's another hidden 0.08695652173913 rank buff.
+			-- Which is more likely, single 0.25 buff, or a 0.15 and a 1.08695652173913 buff?
+			-- But to avoid having someone change "Guarded by the Light" back to 15% on me,
+			-- i'll just ADD the hidden protection buff
 			["rank"] = { 0.15, },
 			["known"] = 53592,
 		},
+		{	--Unknown protection paladin buff (Or bug in Guarded by the Light) that causes Guarded by the Light to act as 25%
+			--0.15 * 1.08695652173913000 = 0.25
+			--9/20/2012: This actually is being experienced. In order to calculate stamina changes correctly
+			--You need to involve something more than 5% Plate Specialization and 15% Guarded by the light.
+			--If you equip cloth (to nullify Plate Specialization),
+			-- and you equip an item with +541 Stamina, you'll end up gaining 676 Stamina
+			-- 9381 + 541 = 10057 (an increase of 676)
+			-- 676/541 = 1.25
+			-- There really is this hidden effect that needs to be modelled in order for stamina
+			-- to come out right.
+			-- Don't remove this buff until either
+			-- a) the effect goes away
+			-- b) Blizzard announces that Guarded by the Light actually is 25%
+			["rank"] = { 0.08695652173913, },
+			["known"] = 53592,
+		}
 	},
 	-- Paladin: Plate Specialization - Passive: 86525
 	-- 4.0.1: Increases your primary attribute by 5% while wearing Plate in all armor slots. Holy specialization grants Intellect, Protection specialization grants Stamina, and Retribution specialization grants Strength.
@@ -3900,97 +3972,84 @@ k is is a value that changes with class.
 -- The following K, C_p, C_d are calculated by Whitetooth (hotdogee [at] gmail [dot] com)
 --A per-class diminishing returns 
 --Updated To Mists from values on http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/p40/
+--Values on EJ, quoting Theck of Sacred Duty are out of date.
+--http://sacredduty.net/2012/09/14/avoidance-diminishing-returns-in-mop-followup/
+--"A few days ago, Pauladin, who has taken over the LibStatLogic and TankPoints addons..."
+--Pauladin, that's me.
+--Current 201209220
 local K = {
-	0.885, -- 1: WARRIOR  Updated
-	0.885, -- 2: PALADIN   Updated
+	0.956, -- 1: WARRIOR  20120913 - we're (Theck@SacredDuty and i) are confident this is exactly 0.956 for warriors
+	0.886, -- 2: PALADIN  20120913 - we're (Theck@SecredDuty and i) are pretty sure this is exactly 0.886 for Paladins
 	0.988, -- 3: HUNTER
 	0.988, -- 4: ROGUE
 	0.983, -- 5: PRIEST
-	0.885, -- 6: DEATHKNIGHT Updated
+	0.885, -- 6: DEATHKNIGHT Updated  --It's likely that DeathKnight value matches either the exact Paladin value (0.886) or the exact warrior value (0.956), and is likely *not* 0.885
 	0.988, -- 7: SHAMAN
 	0.983, -- 8: MAGE
 	0.983, -- 9: WARLOCK
 	1.422, --10: MONK  Updated
 	1.222, --11: DRUID Updated
 }
---[[ Cata Values
-local K = {
-	0.956, -- 1: WARRIOR  20120913 - we're pretty sure this is exactly 0.956
-	0.886, -- 2: PALADIN  20120913 - we're pretty sure this is exactly 0.886
-	0.988, -- 3: HUNTER
-	0.988, -- 4: ROGUE
-	0.983, -- 5: PRIEST
-	0.956, -- 6: DEATHKNIGHT
-	0.988, -- 7: SHAMAN
-	0.983, -- 8: MAGE
-	0.983, -- 9: WARLOCK
-	0.975, --10: MONK  20120809: added monk entry. TODO: come up with a real number for "K". i just typed in 0.975 since it looks averageish. i don't even know what "K" is supposed to represent
-	0.972, --11: DRUID
-}
-]]--
 
---C_p - Parry cap constant. In the limit of diminishing returns; Parry% will not be able to exceed C_p
---Updated To Mists from values on http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/p40/
+--[[
+	C_p - Parry cap constant. In the limit of diminishing returns; Parry% will not be able to exceed C_p
+	
+	With Mists only five classes can parry:
+		--SpellID: 3127   Parry (Warrior)
+		--SpellID: 82245  Parry (Rogue)
+		--SpellID: 82246  Parry (Death Knight)
+		--SpellID: 82247  Parry (Paladin)
+		--SpellID: 116812 Parry (Monk)
+
+	9/19/2012: Updated To Mists from values on http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/p40/
+	
+	9/20/2012: Values on EJ, quoting Theck of Sacred Duty are out of date.
+		http://sacredduty.net/2012/09/14/avoidance-diminishing-returns-in-mop-followup/
+		"A few days ago, Pauladin, who has taken over the LibStatLogic and TankPoints addons..."
+		--Signed: Pauladin
+
+--Current: 9/20/2012
+--]]
 local C_p = {
-	1/0.0042462845010616,	-- 1: WARRIOR Updated & Tested Works
-	1/0.0042462845010616,	-- 2: PALADIN	Updated & Tested Works
-	1/0.006870,			-- 3: HUNTER
-	1/0.006870,			-- 4: ROGUE
-	1/0.0152366,			-- 5: PRIEST
-	1/0.0042462845010616,	-- 6: DEATHKNIGHT Updated & Tested Works
-	1/0.006870,			-- 7: SHAMAN
-	1/0.0152366,			-- 8: MAGE
-	1/0.0152366,			-- 9: WARLOCK
-	1/0.01989010989011,		--10: MONK Updated
-	1/0.0152366,			--11: DRUID
+	237.1859113309,			-- 1: WARRIOR     SpellID 3127.  9/21/2012: 237.1859113309 is the parry cap for Warriors and Paladins
+	237.1859113309,			-- 2: PALADIN	  SpellID 82247. 9/21/2012: 237.1859113309 is the parry cap for Warriors and Paladins
+	0,						-- 3: HUNTER        Hunters cannot parry
+	1/0.006870,				-- 4: ROGUE       SpellID 82245. value not yet known for 5.0.4
+	0,						-- 5: PRIEST        Priests cannot parry
+	1/0.0042462845010616,	-- 6: DEATHKNIGHT SpellID 82246 Updated & Tested with 5.0.4
+	0,						-- 7: SHAMAN        Shamans cannot parry
+	0,						-- 8: MAGE          Mages cannot parry
+	0,						-- 9: WARLOCK       Warlocks cannot parry
+	1/0.01989010989011,		--10: MONK        SpellID 116812. Updated for 5.0.4
+	1/0.0152366,			--11: DRUID         Druids cannot parry
 }
 
---[[ Cata Values
-local C_p = {
-	237.1859113309,		-- 1: WARRIOR   20120914: is the parry cap for warriors and paladins
-	237.1859113309,		-- 2: PALADIN	20120914: 237.1859113309
-	1/0.006870,			-- 3: HUNTER
-	1/0.006870,			-- 4: ROGUE
-	1/0.0152366,		-- 5: PRIEST
-	1/0.0152366,		-- 6: DEATHKNIGHT
-	1/0.006870,			-- 7: SHAMAN
-	1/0.0152366,		-- 8: MAGE
-	1/0.0152366,		-- 9: WARLOCK
-	1/0.0153,			--10: MONK  20120809: added Monk entry. TODO: come up with a real number for "C_p". i just typed in 0.0153 since it looks averageish.
-	1/0.0152366,		--11: DRUID
-}
-]] --
 
---C_d - Dodge cap constant
---Updated To Mists from values on http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/p40/
+--[[
+	C_d - Dodge cap constant
+
+	9/19/2012  Updated To Mists from values on http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/p40/
+
+	Values on EJ, quoting Theck of Sacred Duty are out of date.
+	http://sacredduty.net/2012/09/14/avoidance-diminishing-returns-in-mop-followup/
+		"A few days ago, Pauladin, who has taken over the LibStatLogic and TankPoints addons..."
+	-signed, Pauladin
+
+	Current 201209220
+	--]]
 local C_d = {
-	1/0.01523660,		-- 1: WARRIOR Updated & Tested Works
-	1/0.01523660,		-- 2: PALADIN  Updated & Tested Works 
-	1/0.006870,			-- 3: HUNTER
-	1/0.006870,			-- 4: ROGUE
-	1/0.006650,			-- 5: PRIEST
-	1/0.01523660,		-- 6: DEATHKNIGHT Updated & Tested Works
-	1/0.006870,			-- 7: SHAMAN
-	1/0.006650,			-- 8: MAGE
-	1/0.006650,			-- 9: WARLOCK
+	90.64250,			    -- 1: WARRIOR  20120914: 90.64250 according to latest estimates
+	66.56745,			    -- 2: PALADIN  20120914: 66.56745  
+	1/0.006870,			    -- 3: HUNTER
+	1/0.006870,			    -- 4: ROGUE
+	1/0.006650,			    -- 5: PRIEST
+	1/0.01523660,		    -- 6: DEATHKNIGHT Updated & Tested Works
+	1/0.006870,			    -- 7: SHAMAN
+	1/0.006650,			    -- 8: MAGE
+	1/0.006650,			    -- 9: WARLOCK
 	1/0.010989010989011,	--10: MONK  Updated
 	1/0.0066533599467731,	--11: DRUID Updated & Tested Works
 }
---[[ Cata Values
-local C_d = {
-	90.64250,			-- 1: WARRIOR  20120914: 9064250 according to latest estimates
-	66.56745,			-- 2: PALADIN  20120914: 66.56745  
-	1/0.006870,			-- 3: HUNTER
-	1/0.006870,			-- 4: ROGUE
-	1/0.006650,			-- 5: PRIEST
-	1/0.0152366,		-- 6: DEATHKNIGHT
-	1/0.006870,			-- 7: SHAMAN
-	1/0.006650,			-- 8: MAGE
-	1/0.006650,			-- 9: WARLOCK
-	1/0.008,			--10: MONK  20120809: added Monk entry. TODO: come up with a real number for "C_d". i just typed in 0.008 since it looks averageish. i don't even know what "C_d" is supposed to represent.
-	1/0.008555,			--11: DRUID
-}
-]]--
 
 --C_b - Block Chance % cap constant
 local C_b = {
@@ -4411,16 +4470,17 @@ function StatLogic:GetParryChance(parryRating, strength, class)
 
 	local baseParry = 3; --e.g. 3%, Humans have base parry of 3%
 	
-	--SpellID: 3127  Parry (Warrior)
-	--SpellID: 82245 Parry (Rogue)
-	--SpellID: 82246 Parry (Death Knight)
-	--SpellID: 82247 Parry (Paladin)
+	--SpellID: 3127   Parry (Warrior)
+	--SpellID: 82245  Parry (Rogue)
+	--SpellID: 82246  Parry (Death Knight)
+	--SpellID: 82247  Parry (Paladin)
+	--SpellID: 116812 Parry (Monk)
 	
 	local base, stat, posBuff, negBuff = UnitStat("player", 1); --1=Strength
 	local baseStr = stat-posBuff+negBuff; --e.g. 5125, 5125, 4953, 0
 	
+	local k = K[class];    --(varies by class) diminishing returns constant, e.g. exactly 0.886 for Paladin
 	local Cp = C_p[class]; --(varies by class) parry cap constant (e.g. 237.164919575071)
-	local k = K[class]; --(varies by class) diminishing returns constant, e.g. exactly 0.886 for Paladin
 	
 	local QsL85 = 243.605345852; --conversion factor of Strength to Parry%. E.g. 243.6 Strength --> +1% Parry (before DR)
 	local QsL90 = 951.158596; --conversion factor of Strength to Parry for Paladins and warriors (exact, given by Blizzard)
@@ -5132,8 +5192,8 @@ RatingBase = {
 	[CR_DODGE] = 13.8, --Confirmed 20120905 with level 60 paladin. 13.8  (36 -> 1.74%)
 	[CR_PARRY] = 13.8, --Confirmed 20120905 with level 60 paladin. 13.8  (36 -> 1.74%), 90->6.52%
 	[CR_BLOCK] = 6.9,
-	[CR_HIT_MELEE] = 9.37931,  
-	[CR_HIT_RANGED] = 9.37931,
+	[CR_HIT_MELEE] = 8, --If H[85] is to be valid for melee, then L60 base rating needs to be 8.000000017.   Old value: 9.37931,  
+	[CR_HIT_RANGED] = 8, --If H[85] is to be valid for hit ranged, then L60 base rating needs to be 8. Old value: 9.37931,
 	[CR_HIT_SPELL] = 8,
 	[CR_CRIT_MELEE] = 14, --confirmed Level 60 DK.   100->7.14%,138->9.86%  20120709  5.0.4  10016  
 	[CR_CRIT_RANGED] = 14,
@@ -5179,7 +5239,7 @@ local H = {
   [82] = 5.6539749145508,
   [83] = 7.4275451660156,
   [84] = 9.7527236938477,
-  [85] = 12.8057159423828, --Verified 20120905 5.0.4 16016   value1=2234/12.460951805115000/14, value2=1977/7.458172798156700/13.8/1.5, value3=2357/8.891711235046400/13.8/1.5
+  [85] = 12.8057174456713, --12.8057169037337  --1744 gives better residuals in mastery than 16903
   [86] = 16.8186864597624, --TODO: figure out adjustment factor for level 86
   [87] = 22.0870256249850, --TODO: figure out adjustment factor for level 87
   [88] = 29.0056362086221, --TODO: figure out adjustment factor for level 88
@@ -5199,38 +5259,85 @@ local H = {
 -- 80-90 H data for resilience - Combat ratings adjustment factors for resiliance; we start with level 60 combat rating values, then divide by these constants
 --TODO: Add combat rating resilience adjustment factors for level 86-90
 local H_Resilience = {
-	[80] = 3.278999106,
+	[80] = 3.278999106, --80-85 data values are linear - is actual data?
 	[81] = 4.092896174,
 	[82] = 5.108814708,
 	[83] = 6.376899732,
 	[84] = 7.959742271,
 	[85] = 9.935470247,
-	[86] = 12.40160395, --TODO: figure out adjustment factor for level 86
-	[87] = 15.47986911, --TODO: figure out adjustment factor for level 87
-	[88] = 19.32220610, --TODO: figure out adjustment factor for level 88
-	[89] = 24.11826910, --TODO: figure out adjustment factor for level 89
-	[90] = 30.10478726, --TODO: figure out adjustment factor for level 90
-    [91] = 1, --TODO: figure out adjustment factor
-	[92] = 1, --TODO: figure out adjustment factor
-	[93] = 1, --TODO: figure out adjustment factor
-	[94] = 1, --TODO: figure out adjustment factor
-	[95] = 1, --TODO: figure out adjustment factor
-	[96] = 1, --TODO: figure out adjustment factor
-	[97] = 1, --TODO: figure out adjustment factor
-	[98] = 1, --TODO: figure out adjustment factor
-	[99] = 1, --TODO: figure out adjustment factor
-	[100] = 1, --TODO: figure out adjustment factor
+	[86] = 10.74056827, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[87] = 12.05916767, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[88] = 13.37776707, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[89] = 14.69636647, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[90] = 16.01496587, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+    [91] = 17.33356527, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[92] = 18.65216467, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[93] = 19.97076407, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[94] = 21.28936347, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[95] = 22.60796288, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[96] = 23.92656228, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[97] = 25.24516168, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[98] = 26.56376108, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[99] = 27.88236048, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
+	[100] = 29.20095988, --Linear extension if 80-05 TODO: figure out adjustment factor for level 86
 }
 
+--[[This is a set of direct observation values, which are normally obtained in LibStatLogic
+	by taking Level 60 Combat Rating conversion factors (RatingBase),
+	and using a formula to convert up and down:
+	
+	Level 70-79:
+	    combatEffect = rating/RatingBase/((82/52)*(131/63)^((level-70)/10));
+	Level 60-69
+	    combatEffect = rating/RatingBase/(82/(262-3*level));
+	Level 10-59:
+	    combatEffect = rating/RatingBase/((level-8)/52);
+	Level 1-9
+	    combatEffect = rating/RatingBase/(2/52);
+	
+	For people over Level 80, we use two sets of hard-coded scaling factors (H and H_Resilience)
+	rather than trying to come up with a fancier formula
+	But with Mists of Pandaria (5.0.4), the single "H" multiplier is not the same for Dodge and Parry.
+	That means we have to change
+			- H
+			- H_Resilience
+	to
+			- H
+			- H_Avoidance
+			- H_Resilience
+
+	Level 80-100:
+		combatEffect = rating/RatingBase/H;
+	Level 70-79:
+	    combatEffect = rating/RatingBase/((82/52)*(131/63)^((level-70)/10));
+	Level 60-69
+	    combatEffect = rating/RatingBase/(82/(262-3*level));
+	Level 10-59:
+	    combatEffect = rating/RatingBase/((level-8)/52);
+	Level 1-9
+	    combatEffect = rating/RatingBase/(2/52);
+		
+Except i don't know all the intermediate Parry Rating -> Parry chance conversions set.
+	So this table is born; to contain all the experimentally determined constants.
+	Later we can either come up with a curve fitting formula, or a true underlying formula
+--]]
 local combatRatingBonus = {
-	[85] =
-		{
-			[CR_MASTERY] =   179.280045786420, --179.2 Rating / Mastery %   (i.e. 0.00557786559911594 Mastery% per Rating)
-			[CR_EXPERTISE] = 102.445737393460, --102.4 Rating / Expertise % (i.e. 0.00976126508962818 Expertise% per Rating)
-			--Dodge and Parry from a single regression of 232 data points. Intercept===0 (0 rating gives 0 bonus)
-			[CR_PARRY] =     265.078336595056, --265.1 Rating / Parry %     (i.e. 0.00377246979174761 Parry% per Rating)
-			[CR_DODGE] =     334.85, --265.1 Rating / Dodge %     (i.e. 0.00377246972365043 Dodge% per Rating)
-		},
+	[60] = {
+		[CR_MASTERY] = RatingBase[CR_MASTERY], --14.000
+		[CR_EXPERTISE] = RatingBase[CR_EXPERTISE],
+		[CR_DODGE] = RatingBase[CR_DODGE], --13.80
+		[CR_PARRY] = RatingBase[CR_PARRY], --13.80
+		--[CR_BLOCK] we don't include CR_BLOCK because Block Rating was removed from the game in 5.0.4 (nobody has block rating anymore)
+	},
+	[85] = {
+		[CR_MASTERY] =   179.2800442393960, --Rating / Mastery %   updated 9/22/2012
+		[CR_EXPERTISE] = 102.445737393460, --102.4 Rating / Expertise % (i.e. 0.00976126508962818 Expertise% per Rating)
+		[CR_HIT_MELEE] = 102.4457395653704, --H[85]*8 = 12.8057174456713*8
+		[CR_HIT_RANGED] = 102.4457395653704, --H[85]*8 = 12.8057174456713*8
+		--9/20/2012: Dodge and Parry from a single regression of 760 data points. Intercept===0 (0 rating gives 0 bonus)
+		[CR_PARRY] =     265.0783373415960, --Rating / Parry %  Varies by level.  Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
+		[CR_DODGE] =     265.0783373415960, --Rating / Dodge %  Varies by level. Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
+	},
 }
 
 --[[
@@ -5343,15 +5450,6 @@ function StatLogic:GetEffectFromRating(rating, id, level, class)
   
 	local combatEffect;
   
-	--20120804 - i don't know the combat ratings above 85 yet; so i'll use the values *AT* 85 instead of crashing
-	--TODO: Update H[] and H_Resilience for 86-90
-	--20120820 - i made up numbers that nobody would ever be able to distinguish from reality
-	--			So we'll use them until Torhal finds something else to complain about
-	--if (level > 85) then
-		--print("TODO: LibStatLogic:GetEffectFromRating() being called with level "..level..". Assuming level 85 instead");
-		--level = 85;
-	--end
-  
 	--debugPrint(string.format("rating=%d, id=%d", rating, id));
 	--debugPrint(string.format("RatingBase=%d", RatingBase[id]));
 	--debugPrint(string.format("H[level %d]=%d", H[level]));
@@ -5368,7 +5466,7 @@ function StatLogic:GetEffectFromRating(rating, id, level, class)
 	assert(combatUnitRatingBase ~= nil, string.format('RatingBase[id=%d] is nil', id));
 	assert(combatUnitRatingBase ~= 0, string.format('RatingBase[id=%d] is 0', id));	
 	
-	if (level >= 80 and level <= 85) then
+	if (level >= 80) then
 		local hvalue;
 	    if id == COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN then --16 = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN
 			hvalue = H_Resilience[level];
@@ -5383,7 +5481,11 @@ function StatLogic:GetEffectFromRating(rating, id, level, class)
 		if (id == CR_DODGE) or (id == CR_PARRY) then
 			--Dodge and parry use a higher scaling factor.
 			--Level 85.  12.80571 --> 19.20857  (for dodge and parry only), a factor of 1.5 larger
-			hvalue = hvalue*1.5; 
+			--The H scaling factor is 1.5 times higher for Dodge&Parry; 
+			--While the rating value is only ~1.48 times larger. 
+			--The different comes from the fact that Mastery is 14 at level 60, 
+			--while dodge and parry are 13.8 at level 60
+			hvalue = hvalue*1.49999993092243; --1.5 gives a slight bias. The value of H must need adjustment, (or ratingBase) 1.5000000; 
 		end;
 
 		combatEffect = rating/combatUnitRatingBase/hvalue;
@@ -6802,10 +6904,53 @@ function StatLogic:GetSum(item, table)
 	tip:SetHyperlink(link)
 	debugPrint("Item being analysed: "..link)
 	for i = 2, tip:NumLines() do
-		local text = tip[i]:GetText()
-		
+		local text = tip[i]:GetText();
+		local r, g, b = tip[i]:GetTextColor()
+
 		--debugPrint(string.format("    Line %d: %s", i, text));
-		
+		StatLogic:ParseLine(table, text, r,g,b);
+	end --for each line in the tooltip
+
+	-- Tooltip scanning done, do post processing
+	--[[ 3.0.8
+		Bonus Armor: The mechanics for items with bonus armor on them has
+		changed (any cloth, leather, mail, or plate items with extra armor,
+		or any other items with any armor). Bonus armor beyond the base
+		armor of an item will no longer be multiplied by any talents or by
+		the bonuses of Bear Form, Dire Bear Form, or Frost Presence.
+	--]]
+	if bonusArmorItemEquipLoc[itemType] and table["ARMOR"] then
+		-- Convert "ARMOR" to "ARMOR_BONUS"
+		table["ARMOR_BONUS"] = (table["ARMOR_BONUS"] or 0) + table["ARMOR"]
+		table["ARMOR"] = nil
+	end
+	cache[link] = copy(table)
+	return table
+end
+
+--[[
+	found, excluded = ParseLine(table, text, r,g,b)
+	
+Parses a line of tooltip text, stores the Stats it finds in table.
+
+Paramters
+	table - a table where stats will be added to
+	text - a line of text from an item's tooltip (e.g. "+285 Strength")
+	r,g,b - the color of the tooltip line (useful for deciding if a line should be ignored)
+
+Returns
+	found (Boolean) - returns true if the text was matched by a pattern, false if it was unrecognized
+	excluded (Boolean) - returns true if the text was excluded by a pattern, false if it was kept or unrecognized
+	
+This function is the core of LibStatLogic. It tries to pick apart a tooltip lime, and figure out what it means.
+In order to do this it uses its library of localized "Patterns", each pattern describing a possible meaning of the line.
+--]]
+function StatLogic:ParseLine(table, text, r,g,b)
+	assert(table, "StatLogic:ParseLine - table cannot be nil");
+	assert(text, "StatLogic:ParseLine - text cannot be nil");
+	
+	--local excluded = true; --we'll assume everything was excluded, in case there are multiple stats on one line.
+
 		-- Trim spaces
 		text = strtrim(text)
 		-- Strip color codes
@@ -6815,9 +6960,12 @@ function StatLogic:GetSum(item, table)
 		if strfind(strsub(text, 1, 10), "|c%x%x%x%x%x%x%x%x") then
 			text = strsub(text, 11)
 		end
+		
+		--If a color was not specified, then force a color that will not be ignored
+		if (r == nil) then r = 1; end;
+		if (g == nil) then g = 1; end;
+		if (b == nil) then b = 1; end;
 
-		local r, g, b = tip[i]:GetTextColor()
-	
 		-----------------------
 		-- Whole Text Lookup --
 		-----------------------
@@ -6840,7 +6988,7 @@ function StatLogic:GetSum(item, table)
 		-- Fast Exclude --
 		-- Exclude obvious strings that do not need to be checked, also exclude lines that are not white and green and normal (normal for Frozen Wrath bonus)
 		-- Note: LUA has no "continue" statement; so we have to indent everything one extra needless level
-		if not (found or L.Exclude[text] or L.Exclude[strutf8sub(text, 1, L.ExcludeLen)] or strsub(text, 1, 1) == '"' or g < 0.8 or (b < 0.99 and b > 0.1)) then
+		if not (found or L.Exclude[text] or StatLogic.ItemsNotRecognized[text] or L.Exclude[strutf8sub(text, 1, L.ExcludeLen)] or strsub(text, 1, 1) == '"' or g < 0.8 or (b < 0.99 and b > 0.1)) then
 			--debugPrint(text.." = ")
 			-- Strip enchant time
 			-- ITEM_ENCHANT_TIME_LEFT_DAYS = "%s (%d day)";
@@ -6915,7 +7063,8 @@ function StatLogic:GetSum(item, table)
 					if idTable == false then
 						--We're excluding it because the value is *false*
 						found = true
-						debugPrint("|cffadadad".."   SingleEquip Exclude: "..text)
+						debugPrint("|cffadadad".."   SingleEquip Exclude: "..text);
+						return true, true; --found, excluded
 					elseif idTable then
 						found = true
 						local debugText = "|cffff5959".."   SingleEquip: ".."|cffffc259"..text
@@ -6965,15 +7114,14 @@ function StatLogic:GetSum(item, table)
 								table[id] = (table[id] or 0) + CNumber(value)
 								debugText = debugText..", ".."|cffffff59"..tostring(id).."="..tostring(value)
 							end
-							debugPrint(debugText)
+							debugPrint(debugText);
+							return true, false; --found, not excluded
 						else
-							debugPrint("|cffadadad".."   PreScan Exclude: "..text.."  ("..pattern..")")
+							debugPrint("|cffadadad".."   PreScan Exclude: "..text.."  ("..pattern..")");
+							return true, true; --found, excluded
 						end
-						break
+						break; --not called, but just in case
 					end
-				end
-				if found then
-
 				end
 			end
 		
@@ -7246,11 +7394,11 @@ function StatLogic:GetSum(item, table)
 			end
 	
 			if not found then
-				local notFoundCount = (StatLogic.ItemsNotRecognized[text] or 0) +1;
-				StatLogic.ItemsNotRecognized[text] = notFoundCount;
+				--We now use ItemsNotRecognized as a "learned" list of items to exclude.
+				--local notFoundCount = (StatLogic.ItemsNotRecognized[text] or 0) +1;
+				StatLogic.ItemsNotRecognized[text] = false; --notFoundCount;
 	
-				if ((notFoundCount >= 2) and (_itemNotRecognizedWarning)) or DEBUG then
-					StatLogic.ItemsNotRecognized[text] = 0; --reset counter to zero
+				if (_itemNotRecognizedWarning) or DEBUG then
 					local s = ORANGE_FONT_COLOR_CODE.."LibStatLogic"..FONT_COLOR_CODE_CLOSE..": No Match for \""..RED_FONT_COLOR_CODE..text..FONT_COLOR_CODE_CLOSE.."\"";
 					
 					--If warnings were enabled by default (i.e. they have no idea how to turn them off), tell them how to turn them off
@@ -7265,28 +7413,15 @@ function StatLogic:GetSum(item, table)
 				-- if DEBUG and RatingBuster then
 				--		RatingBuster.db.profile.test = text
 				--	end
+				return false, false; --not found, not excluded
 			end
+			
+			return true, false; --found, not excluded
 		else
 			--line was fast excluded
-			debugPrint("   Excluded: "..text); --it's helpful when debugging to see if an item's property was ignored - even if it is spammy
+			--debugPrint("   Excluded: "..text); --it's helpful when debugging to see if an item's property was ignored - even if it is spammy
+			return true, true; --found, excluded
 		end
-	end --for each line in the tooltip
-
-	-- Tooltip scanning done, do post processing
-	--[[ 3.0.8
-		Bonus Armor: The mechanics for items with bonus armor on them has
-		changed (any cloth, leather, mail, or plate items with extra armor,
-		or any other items with any armor). Bonus armor beyond the base
-		armor of an item will no longer be multiplied by any talents or by
-		the bonuses of Bear Form, Dire Bear Form, or Frost Presence.
-	--]]
-	if bonusArmorItemEquipLoc[itemType] and table["ARMOR"] then
-		-- Convert "ARMOR" to "ARMOR_BONUS"
-		table["ARMOR_BONUS"] = (table["ARMOR_BONUS"] or 0) + table["ARMOR"]
-		table["ARMOR"] = nil
-	end
-	cache[link] = copy(table)
-	return table
 end
 
 function StatLogic:GetFinalArmor(item, text)
@@ -7400,7 +7535,7 @@ local getSlotID = {
 function HasTitanGrip(talentGroup)
 	--Updated to 5.0.5 
 	if playerClass == "WARRIOR" then
-		if  (GetSpecialization() == 2) and IsSpellKnown(IsSpellKnown) then  --Fury spec and knows Titan Grip
+		if  (GetSpecialization() == 2) and IsSpellKnown(46917) then  --Fury spec and knows Titan Grip
 			return true
 		else
 			return false
@@ -8118,6 +8253,126 @@ local LibStatLogicTests = {
 	
 	testGetBlockChance = function()
 		local blockChance, blockChanceBeforeDR, freeBlock = StatLogic:GetBlockChance(1000);
+	end;
+	
+	testGetRatingPerBonusMatchesCurrentPlayer = function()
+		local bonus, expectedBonus;
+		
+		local nCombatRatingID;
+		local combatRating;
+		for nCombatRatingID = 1, CR_MAX do
+			combatRating = GetCombatRating(nCombatRatingID);
+			expectedBonus = GetCombatRatingBonus(nCombatRatingID);
+			
+			if (combatRating > 0) and (expectedBonus > 0) then
+				--some ratings no longer exist, or i don't have, so i can't test them all
+				bonus = StatLogic:GetEffectFromRating(combatRating, nCombatRatingID);
+
+				bonus = combatRating/bonus; --rating per bonus%
+				expectedBonus = combatRating/expectedBonus; --rating per bonus% (expected)
+
+				print(string.format("Rating %s. Expected: %.5f. Calculated: %.5f", 
+						StatLogic:GetRatingIdOrStatId(nCombatRatingID), expectedBonus, bonus));
+			
+				if (math.abs(bonus-expectedBonus) > 0.00001) then
+					checkEquals(expectedBonus, bonus, string.format("Calculated rating per bonus didn't match actual %s (to within 5 decimal places)", 
+							StatLogic:GetRatingIdOrStatId(nCombatRatingID)));
+				end;
+			end;
+		end;
+	end;
+	
+	hiddentestGetEffectFromRatingMatchesCurrentPlayer = function()
+		local bonus, expectedBonus;
+		
+		local nCombatRatingID;
+		for nCombatRatingID = 1, CR_MAX do
+			bonus = StatLogic:GetEffectFromRating(GetCombatRating(nCombatRatingID), nCombatRatingID);
+			expectedBonus = GetCombatRatingBonus(nCombatRatingID);
+			
+			print(string.format("Combat rating %s. Expected: %.7f%%. Calculated: %.7f%%", 
+					StatLogic:GetRatingIdOrStatId(nCombatRatingID), expectedBonus, bonus));
+			
+			if (math.abs(bonus-expectedBonus) > 0.00001) then
+				checkEquals(expectedBonus, bonus, string.format("Calculated combat bonus didn't match actual combat bonus for %s (to within 5 decimal places)", 
+						StatLogic:GetRatingIdOrStatId(nCombatRatingID)));
+			end;
+		end;
+	end;
+	
+	testParseLineEnUS = function()
+		local locale = GetLocale();
+		if (locale ~= "enUS") then
+			print("Locale is "..locale..". Can only test enUS");
+			return;
+		end;
+
+		local table;
+		local found, excluded;
+
+		local function dumper(t)
+			for key, value in pairs(t) do
+				print(string.format("table[%s] = %s", key, value));
+			end;
+		end;
+		
+		--***************
+		--*** Ignored tester
+		--***************
+		local function testExcluded(text)
+			table = {};
+			found, excluded = StatLogic:ParseLine(table, text);
+			
+			if (found == false) then dumper(table); end;
+			checkEquals(true, found, "Exclude text \""..text.."\"  wasn't found");
+			if (excluded == false) then dumper(table); end;
+			checkEquals(true, excluded, "Exclude text \""..text.."\"  was found but not excluded");
+		end;
+		
+		---*** Found tester
+		local function testStats(text, stat1, value1, stat2, value2, stat3, value3, stat4, value4)
+			table = {};
+			found, excluded = StatLogic:ParseLine(table, text);
+			
+			if (found == false) then dumper(table); end;
+			checkEquals(true, found, "Text \""..text.."\"  wasn't found");
+			if (excluded) then dumper(table); end;
+			checkEquals(false, excluded, "Text \""..text.."\"  was found but excluded");
+
+			if (stat1) then
+				if (table[stat1] == nil) then dumper(table); end;
+				checkEquals(value1, table[stat1], "Stat "..stat1);
+			end
+			if (stat2) then
+				if (table[stat2] == nil) then dumper(table); end;
+				checkEquals(value2, table[stat2], "Stat "..stat2);
+			end
+			if (stat3) then
+				if (table[stat3] == nil) then dumper(table); end;
+				checkEquals(value3, table[stat3], "Stat "..stat3);
+			end
+			if (stat4) then
+				if (table[stat4] == nil) then dumper(table); end;
+				checkEquals(value4, table[stat4], "Stat "..stat4);
+			end
+		end;		
+
+		testExcluded("Unique-Equipped: Hardhearth Ring (1)");
+		testExcluded("Unique-Equipped");
+		testExcluded("Requires Level 85");
+		testExcluded("Item Level 410");
+		testExcluded("Equip: Your melee attacks have a chance to grant 1,149 dodge for 20 sec.");
+		testExcluded("Equip: Experience gained is increased by 10%.");
+		testExcluded("Equip: You champion the causes of your guild. All guild reputation gains are increased by 50%.");
+		testExcluded("Equip: Experience gained from killing monsters and completing quests increased by 5%.");
+
+		testStats("+384 Strength", "STR", 384);
+		testStats("+1,234 Stamina", "STA", 1234);
+		testStats("+81 Stamina and +1% Shield Block Value", "STA", 81, "MOD_BLOCK_VALUE", 1);
+		testStats("491.96 - 913.64 Damage", "MAX_DAMAGE", 913.64);
+		testStats("(251.00 damage per second)", "DPS", 251.00);
+		testStats("Equip: Increases spell power by 2,783.", "SPELL_DMG", 2783, "HEAL", 2783);
+		
 	end;
 };	
 

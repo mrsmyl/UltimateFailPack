@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Inventory-3.0
-Revision: $Rev: 156 $
+Revision: $Rev: 158 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-inventory-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Inventory-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 156 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 158 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -1352,7 +1352,7 @@ elseif GAME_LOCALE == "ruRU" then
 	Bullet = "Пули",
 	Chest = "Грудь",
 	Cloth = "Ткань",
-	Cogwheel = "Cogwheel", -- Needs review
+	Cogwheel = "Зубчатое колесо",
 	Companion = "Спутник",
 	Companions = "Спутники",
 	Consumable = "Расходуемые",
@@ -1402,12 +1402,12 @@ elseif GAME_LOCALE == "ruRU" then
 	["Herb Bag"] = "Сумка травника",
 	Holiday = "Праздник",
 	Hunter = "Охотник",
-	Hydraulic = "Hydraulic", -- Needs review
+	Hydraulic = "Оскверненный ша",
 	Idol = "Идол",
 	Idols = "Идолы",
 	Inscription = "Начертание",
 	["Inscription Bag"] = "Сумка начертателя",
-	["Item Enchantment"] = "Item Enchantment", -- Needs review
+	["Item Enchantment"] = "Улучшение",
 	["Item Enhancement"] = "Улучшение",
 	Jewelcrafting = "Ювелирное дело",
 	Junk = "Мусор",
@@ -1475,7 +1475,7 @@ elseif GAME_LOCALE == "ruRU" then
 	Sword = "Меч",
 	Tabard = "Гербовая накидка",
 	Tabards = "Накидки",
-	["Tackle Box"] = "Tackle Box", -- Needs review
+	["Tackle Box"] = "Ящик для рыболовной снасти",
 	Tailoring = "Портняжное дело",
 	Thrown = "Метательное",
 	Totem = "Тотем",

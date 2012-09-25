@@ -4,10 +4,11 @@ PatternLocale = {};
 DisplayLocale = {};
 
 --These constants need to be built outside the table before they can be referenced
-local LOCALE_STHOUSAND = "%p";  --Character used to separate groups of digits
-local LOCALE_SDECIMAL = "%p"; --Character(s) used for the decimal separator
-local patNumber = "%d+[%p%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
-local patDecimal = "%d+[%p%d]*%p?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
+--9/20/2012 You can't use %p. It fails for numbers like 1,234.5 (Unit Tests caught the regression)
+local LOCALE_STHOUSAND = ",";  --Character used to separate groups of digits
+local LOCALE_SDECIMAL = "."; --Character(s) used for the decimal separator
+local patNumber = "%d+["..LOCALE_STHOUSAND.."%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
+local patDecimal = "%d+["..LOCALE_STHOUSAND.."%d]*"..LOCALE_SDECIMAL.."?%d*"; --regex to find a localized decimal number e.g. "1,234.56" = %d+[,%d]*.?%d*
 
 
 PatternLocale.enUS = { -- {{{
@@ -53,15 +54,19 @@ PatternLocale.enUS = { -- {{{
 		["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
 		["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r"; -- %s is the creator of the item
 		["Coold"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d day";
+
 		[ITEM_UNIQUE] = true, -- ITEM_UNIQUE = "Unique"; -- Item is unique 
-		[ITEM_UNIQUE_EQUIPPABLE] = true,
-		--["Uniqu"] = true, --ITEM_UNIQUE_MULTIPLE = "Unique (%d)"; -- Item is unique
-		[REQUIRES_LABEL] = true, -- Requires Level xx -- ITEM_MIN_LEVEL = "Requires Level %d"; -- Required level to use the item
-		[ITEM_CLASSES_ALLOWED] = true, -- Requires Level xx -- ITEM_MIN_SKILL = "Requires %s (%d)"; -- Required skill rank to use the item
+		[ITEM_UNIQUE_EQUIPPABLE] = true, --ITEM_UNIQUE_EQUIPPABLE = "Unique-Equipped";
+		["Uniqu"] = true, --ITEM_UNIQUE_MULTIPLE = "Unique (%d)"; -- Item is unique
+		--["Uniqu"] = true, --"Unique-Equipped: Resolve of Undying (1)"  --ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)";
+
+		--The reason we can't use the ITEM_MIN_LEVEL string (i.e. "Requires Level %d") is that it won't work.
+		--It won't work because the exclude strings need to be either the *exact* string, or exactly ExcludeLen characters long.
+		["Requi"] = true,  --"Requires Level 85" -- ITEM_MIN_LEVEL = "Requires Level %d" Required level to use the item
 		["Class"] = true, -- Classes: xx -- ITEM_CLASSES_ALLOWED = "Classes: %s"; -- Lists the classes allowed to use this item
-		[ITEM_RACES_ALLOWED] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
-		[ITEM_SPELL_TRIGGER_ONUSE] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
-		[ITEM_SPELL_TRIGGER_ONPROC] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
+		["Races"] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
+		["Use: "] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
+		["Chanc"] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
 		-- Set Bonuses
 		-- ITEM_SET_BONUS = "Set: %s";
 		-- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
@@ -104,7 +109,8 @@ PatternLocale.enUS = { -- {{{
 		[INVTYPE_TABARD] = true,
 		[INVTYPE_BAG] = true,
 		--4.0.6
-		[ITEM_LEVEL] = true, -- ITEM_LEVEL = "Item Level %d"
+		--We can't use strings with patterns in them. It has to be either the entire string, or exactly ExcludeLen characters long
+		["Item "] = true, --"Item Level 378"  --ITEM_LEVEL="Item Level %d"
 		[REFORGED] = true,
 		[ITEM_HEROIC] = true,
 		[ITEM_HEROIC_EPIC] = true,
@@ -303,6 +309,7 @@ PatternLocale.enUS = { -- {{{
 	["DeepScanWordSeparators"] = {
 		" and ", -- "Critical Rating +6 and Dodge Rating +5": Assassin's Fire Opal ID:30565
 	},
+	--9/20/2012: TODO: convert these %d+ to use patDecimal
 	["DualStatPatterns"] = { -- all lower case
 		["^%+(%d+) healing and %+(%d+) spell damage$"] = {{"HEAL",}, {"SPELL_DMG",},},
 		["^%+(%d+) healing %+(%d+) spell damage$"] = {{"HEAL",}, {"SPELL_DMG",},},
@@ -317,9 +324,8 @@ PatternLocale.enUS = { -- {{{
 	-- Stat Lookup Table --
 	-----------------------
 
-	["StatIDLookup"] = {
-	},
-	["StatIDLooupLong"]= {
+	["StatIDLookup"] = { },
+	["StatIDLookupLong"]= {
 		[THREAT_TOOLTIP] = {"MOD_THREAT"}, --  "% Threat" -- StatLogic:GetSum("item:23344:2613")
 		["% Shield Block Value"] = {"MOD_BLOCK_VALUE"}, --  "% Shield Block Value"[Eternal Earthsiege Diamond] ID: 41396
 		["Scope (Damage)"] = {"RANGED_DMG"}, -- Khorium Scope EnchantID: 2723
@@ -397,8 +403,8 @@ PatternLocale.enUS = { -- {{{
 		["Increases damage and healing done by magical spells and effects of all party members within 30 yards"] = {"SPELL_DMG", "HEAL"}, -- Atiesh
 		["Spell Damage and Healing"] = {"SPELL_DMG", "HEAL",}, --StatLogic:GetSum("item:22630")
 		["Damage"] = {"SPELL_DMG",},
-		[ITEM_MOD_SPELL_POWER] = {"SPELL_DMG",}, -- "Increases spell power by %s.";
-		[ITEM_MOD_SPELL_POWER_SHORT] = {"SPELL_DMG", "HEAL",}, --
+		["ITEM_MOD_SPELL_POWER_SHORT"] = {"SPELL_DMG", "HEAL",}, --ITEM_MOD_SPELL_POWER_SHORT = "Spell Power";
+		["Increases spell power"] = {"SPELL_DMG", "HEAL",}, -- ITEM_MOD_SPELL_POWER = "Increases spell power by %s.";
 		["Holy Damage"] = {"HOLY_SPELL_DMG",},
 		["Arcane Damage"] = {"ARCANE_SPELL_DMG",},
 		["Fire Damage"] = {"FIRE_SPELL_DMG",},
@@ -528,23 +534,28 @@ PatternLocale.enUS = { -- {{{
 		["sec"] = false,
 		["to"] = false,
 		["Increases ranged attack speed"] = false, -- AV quiver
-		["Experience gained is increased%"] = false, -- Heirlooms
+		["Experience gained is increased%"] = false, -- Heirlooms  e.g. /sl analyze 42984  Preened Ironfeather Shoulders
+		["Experience gained from killing monsters and completing quests increased%"] = false, -- Heirlooms  e.g. /sl analyze 62040  Ancient Bloodmoon Cloak
 	},
 } -- }}}
 
 
-for k, v in pairs(PatternLocale.enUS.StatIDLooupLong) do
-
-local temp = gsub(k,"%s?[%+%-]?%%.?","")
-	temp = gsub(temp,"%.?","")
---local temp = gsub(k,"%s[%+%-]?%%.?%s?%.?","")
---local temp = gsub(k,"^([%+%-]%%s) (.-)%.?","")
---local temp = gsub(k,"%+","")
-	--temp = gsub(temp,"%s%%s%.","")
+for k, v in pairs(PatternLocale.enUS.StatIDLookupLong) do
+	local temp = gsub(k,"%s?[%+%-]?%%.?","");
+	temp = gsub(temp,"%.?","");
+--	local temp = gsub(k,"%s[%+%-]?%%.?%s?%.?","")
+--	local temp = gsub(k,"^([%+%-]%%s) (.-)%.?","")
+--	local temp = gsub(k,"%+","")
+--	temp = gsub(temp,"%s%%s%.","")
 	
 	--print(temp)
 	--print(v)
 	PatternLocale.enUS.StatIDLookup[temp] = v
+
+	--We tried to strip out Lua pattern code. But we also need the originals 
+	--e.g. "Equip: Experience gained is increased by 10%" needs the entry
+	-- "Experience gained is increased%"
+	PatternLocale.enUS.StatIDLookup[k] = v;
 end
 
 DisplayLocale.enUS = { -- {{{
