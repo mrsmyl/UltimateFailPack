@@ -863,8 +863,8 @@ function SC.RegisterEvents(self)
 
 	self:RegisterEvent("AUCTION_HOUSE_SHOW");
 	self:RegisterEvent("AUCTION_HOUSE_CLOSED");
---	self:RegisterEvent("BLACK_MARKET_OPEN");
---	self:RegisterEvent("BLACK_MARKET_CLOSE");
+	self:RegisterEvent("BLACK_MARKET_OPEN");
+	self:RegisterEvent("BLACK_MARKET_CLOSE");
 
 	self:RegisterEvent("PLAYER_MONEY");
 
@@ -1031,8 +1031,8 @@ function SC.LoadSavedData()
 	SC.data["TAXI"] = {Title = ACCLOC_TAXI};
 	SC.data["REPAIRS"] = {Title = ACCLOC_REPAIR};
 	SC.data["OTHER"] = {Title = ACCLOC_OTHER};
---	SC.data["BMAH"] = {Title = ACCLOC_BMAH};
---	SC.data["SYSTEM"] = {Title = ACCLOC_SYS};
+	SC.data["BMAH"] = {Title = ACCLOC_BMAH};
+	SC.data["SYSTEM"] = {Title = ACCLOC_SYS};
 
 	for key,value in next,SC.data do
 		for modekey,mode in next,SC.log_modes do
@@ -1645,12 +1645,12 @@ function SC.OnEvent(event, arg1)
 		
 	elseif event == "AUCTION_HOUSE_CLOSED" then
 		SC.mode = "";
-	--elseif event == "BLACK_MARKET_OPEN" then
-	--	SC.mode = "BMAH";
+	elseif event == "BLACK_MARKET_OPEN" then
+		SC.mode = "BMAH";
 		--debug
 		--DEFAULT_CHAT_FRAME:AddMessage("Ding, something works!");
-	--elseif event == "BLACK_MARKET_CLOSE" then
-	--	SC.mode = "";
+	elseif event == "BLACK_MARKET_CLOSE" then
+		SC.mode = "";
 		--debug
 		--DEFAULT_CHAT_FRAME:AddMessage("Ding, something works again.!");
 	elseif event == "PLAYER_MONEY" then
