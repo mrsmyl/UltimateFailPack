@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["timeslice.lua"] = "4.3.0.244r"
+QuestHelper_File["timeslice.lua"] = "5.0.5.255r"
 QuestHelper_Loadtime["timeslice.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["timeslice.lua"] == "Development Version")

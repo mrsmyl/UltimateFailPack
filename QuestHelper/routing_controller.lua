@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["routing_controller.lua"] = "4.3.0.244r"
+QuestHelper_File["routing_controller.lua"] = "5.0.5.255r"
 QuestHelper_Loadtime["routing_controller.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["routing_controller.lua"] == "Development Version")

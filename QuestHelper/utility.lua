@@ -6,7 +6,7 @@ end
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["utility.lua"] = "4.3.0.244r"
+QuestHelper_File["utility.lua"] = "5.0.5.255r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
 QuestHelper = CreateFrame("Frame", "QuestHelper", nil)

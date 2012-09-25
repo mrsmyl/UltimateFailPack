@@ -1,4 +1,4 @@
-QuestHelper_File["error.lua"] = "4.3.0.244r"
+QuestHelper_File["error.lua"] = "5.0.5.255r"
 QuestHelper_Loadtime["error.lua"] = GetTime()
 
 --[[

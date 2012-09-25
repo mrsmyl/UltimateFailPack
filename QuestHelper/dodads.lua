@@ -1,6 +1,6 @@
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["dodads.lua"] = "4.3.0.244r"
+QuestHelper_File["dodads.lua"] = "5.0.5.255r"
 QuestHelper_Loadtime["dodads.lua"] = GetTime()
 
 local ofs = 0.000723339 * (GetScreenHeight()/GetScreenWidth() + 1/3) * 70.4;
