@@ -1,0 +1,55 @@
+------------------------------------------------------------------------
+r1218 | elsia | 2012-09-24 03:44:24 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   A /tags/v5.0.5 release (from /trunk:1217)
+
+Tagging as v5.0.5 release
+------------------------------------------------------------------------
+r1217 | elsia | 2012-09-24 03:41:32 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/GUI_Realtime.lua
+
+- Realtime window titles now also follow the main bar number formating setting, i.e. if short is set for the main bar the title of the realtime window will also short-format numbers (16000=16k etc). Thanks to Cobalt747.
+------------------------------------------------------------------------
+r1216 | elsia | 2012-09-20 03:23:37 +0000 (Thu, 20 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/Tracker.lua
+
+- Second bandaid for absorb digit issues.
+------------------------------------------------------------------------
+r1215 | elsia | 2012-09-20 03:15:14 +0000 (Thu, 20 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/GUI_Main.lua
+
+- Fixed typo.
+------------------------------------------------------------------------
+r1214 | elsia | 2012-09-20 00:49:07 +0000 (Thu, 20 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/GUI_Main.lua
+
+- Fixing bug which leads to sub-integer floating point numbers to be displayed under certain conditions.
+------------------------------------------------------------------------
+r1213 | elsia | 2012-09-16 06:02:36 +0000 (Sun, 16 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/GUI_Main.lua
+
+- Fixed broken Button-pushed texture for fight segment selection icon. (Thanks to Galvin)
+------------------------------------------------------------------------
+r1211 | elsia | 2012-09-03 23:33:33 +0000 (Mon, 03 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/Tracker.lua
+
+- Added Priest absorb Spirit Shell ID. Thanks to MaximusDZ.
+------------------------------------------------------------------------
+r1209 | elsia | 2012-08-27 23:15:18 +0000 (Mon, 27 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Recount.toc
+
+- MOP preparedness repackaging (get post-bandaid LibGraph-2.0 and possible Ace3 fixes).
+------------------------------------------------------------------------
+r1208 | elsia | 2012-08-15 03:52:27 +0000 (Wed, 15 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/GUI_Config.lua
+
+- Added color config support in the config window for the monk class.
+------------------------------------------------------------------------

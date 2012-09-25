@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1211 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1216 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -1660,6 +1660,7 @@ function Recount:AddDamageData(source, victim, ability, element, hittype, damage
 		Recount.cleventtext = Recount.cleventtext .." ("..resist..L[" resisted"]..")"
 	end
 	if absorbed and absorbed > 0 then
+		absorbed = math.floor(absorbed + 0.5) -- Bandaid for weird rounding issues
 		Recount.cleventtext = Recount.cleventtext .." ("..absorbed.." "..L["Absorbed"]..")"
 	end
 	if element then
@@ -1856,6 +1857,7 @@ function Recount:AddDamageData(source, victim, ability, element, hittype, damage
 			end
 			
 			if absorbed then
+
 				Recount:AddAmount2(victimData,"ElementTakenAbsorb",element,absorbed)
 				Recount:AddTableDataStats(victimData,"PartialAbsorb",ability,L["Absorbed"],absorbed)
 
