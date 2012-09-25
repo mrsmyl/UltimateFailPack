@@ -16,6 +16,7 @@ local GetNumGroupMembers    = _G.GetNumGroupMembers
 local GetNumSubgroupMembers = _G.GetNumSubgroupMembers
 local GetWatchedFactionInfo = _G.GetWatchedFactionInfo
 local GetXPExhaustion       = _G.GetXPExhaustion
+local IsInRaid              = _G.IsInRaid
 local IsResting             = _G.IsResting
 local UnitLevel             = _G.UnitLevel
 local UnitXP                = _G.UnitXP
@@ -925,24 +926,26 @@ function BrokerXPBar:CHAT_MSG_COMBAT_XP_GAIN(_, xpMsg)
 	local mob
 	
 	if GetNumGroupMembers() > 0 then
-		mob, kxp, rpxp = smatch(xpMsg, XPGAIN_RAID)
-		
-		if not mob then
-			mob, kxp, rxp, bonusType, rpxp = smatch(xpMsg, XPGAIN_RAID_RESTED)
-		end
-		
-		if not mob then
-			mob, kxp, pxp, bonusType, rpxp = smatch(xpMsg, XPGAIN_RAID_PENALTY)
-		end
-	elseif GetNumSubgroupMembers() > 0 then
-		mob, kxp, gxp = smatch(xpMsg, XPGAIN_GROUP)
-		
-		if not mob then
-			mob, kxp, rxp, bonusType, gxp = smatch(xpMsg, XPGAIN_GROUP_RESTED)
-		end
-		
-		if not mob then
-			mob, kxp, pxp, bonusType, gxp = smatch(xpMsg, XPGAIN_GROUP_PENALTY)
+		if IsInRaid() then		
+			mob, kxp, rpxp = smatch(xpMsg, XPGAIN_RAID)
+			
+			if not mob then
+				mob, kxp, rxp, bonusType, rpxp = smatch(xpMsg, XPGAIN_RAID_RESTED)
+			end
+			
+			if not mob then
+				mob, kxp, pxp, bonusType, rpxp = smatch(xpMsg, XPGAIN_RAID_PENALTY)
+			end
+		else
+			mob, kxp, gxp = smatch(xpMsg, XPGAIN_GROUP)
+			
+			if not mob then
+				mob, kxp, rxp, bonusType, gxp = smatch(xpMsg, XPGAIN_GROUP_RESTED)
+			end
+			
+			if not mob then
+				mob, kxp, pxp, bonusType, gxp = smatch(xpMsg, XPGAIN_GROUP_PENALTY)
+			end
 		end
 	end
 

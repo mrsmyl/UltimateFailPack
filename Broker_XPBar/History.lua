@@ -15,6 +15,7 @@ local ceil    = math.ceil
 local GetNumGroupMembers    = _G.GetNumGroupMembers
 local GetNumSubgroupMembers = _G.GetNumSubgroupMembers
 local GetXPExhaustion       = _G.GetXPExhaustion
+local IsInRaid              = _G.IsInRaid
 local UnitXP                = _G.UnitXP
 local UnitXPMax             = _G.UnitXPMax
 
@@ -183,9 +184,11 @@ function History:GetKillsToLevel()
 	local bonus = 0
 	
 	if GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) > 0 then
-		bonus = self.raidPenaltyPerKill
-	elseif GetNumSubgroupMembers(LE_PARTY_CATEGORY_HOME) then
-		bonus = self.grpXpPerKill
+		if IsInRaid() then
+			bonus = self.raidPenaltyPerKill
+		else
+			bonus = self.grpXpPerKill
+		end
 	end
 	
 	-- NOTE: since there is no formula calculating the group bonus available 
