@@ -53,7 +53,7 @@ see the following when clicking that link:</p>
 	<div>+10 Stamina</div>
 	<div class="green">Equip: When struck in combat inflicts 3 Arcane damage to the attacker.&nbsp; 
 		<span class="pawnblue">(?)</span></div>
-	<div class="green">Equip: Increases your parry rating by 10.</div>
+	<div class="green">Equip: Increases your parry by 10.</div>
 	<div>&nbsp;</div>
 	<div class="pawnblue">Healing: 31</div>
 	<div class="pawnblue">PvP: 292</div>
@@ -270,7 +270,8 @@ get points based on the gem that Pawn suggests putting in those sockets.)</p>
 <p>If you&#39;re deciding whether to roll or bid on an item, you can&#39;t pick it up 
 and put it in a slot in the Compare tab, but you can still easily compare it to 
 what you already have.&nbsp; Just right-click on an item&#39;s icon in the roll 
-window to put it into the Compare tab.&nbsp; Or, if the item was linked in trade 
+window to put it into the Compare tab.&nbsp; If it's an upgrade the Loot Upgrade 
+Advisor appeared, you can click anywhere on the big yellow tooltip.&nbsp; Or, if the item was linked in trade 
 chat, click on the link to open the item link, and then right-click on the 
 window (tooltip) that appears.</p>
 <h4>Comparing items in AtlasLoot and other mods without clicking</h4>
@@ -605,8 +606,8 @@ of the stat values in each of your scales.&nbsp; This helps to compensate for
 how some scales might use numbers that average out to about 1.0, and others use 
 numbers in the tens.</p>
 <p>For example, if your scale were ( Stamina = 1, Intellect = 2, 
-		Crit rating = 1 ), then Wowhead would divide the item&#39;s total value by 4.&nbsp; 
-		An item with 10 Stamina, 10 Intellect, and 20 Crit rating would have a value 
+		Crit = 1 ), then Wowhead would divide the item&#39;s total value by 4.&nbsp; 
+		An item with 10 Stamina, 10 Intellect, and 20 Crit would have a value 
 		of 50 with this option off, and 12.5 with this option on.</p>
 <h3>Special effects (?)</h3>
 <p>It&#39;s normal for certain special item effects to be listed with an icon (?).&nbsp; 
@@ -658,13 +659,36 @@ and Pawn.</p>
 	<li>The Quest Upgrade Advisor doesn&#39;t suggest any items (with an upgrade or 
 	vendor icon) when one of the quest items is an item your character has never 
 	seen before.&nbsp; (If you accept the quest and then check your quest log, 
-	or close the quest window and reopen it, it can then suggest items.)</li>
+	or close the quest window and reopen it, it can then suggest items.&nbsp; It 
+	will be ready to suggest items typically in less than a second; long before 
+	you're ready to turn in the quest.)</li>
 	<li>The Quest Upgrade Advisor is not currently compatible with some quest 
 	log addons, such as QuestGuru.</li>
 	<li><em>For other known issues, see the </em>
 	<a href="Version%20history.htm"><em>version history</em></a><em> document.</em></li>
 </ul>
 <h2>Updates</h2>
+<h3>Version 1.6.8</h3>
+<ul>
+	<li>By default, if you have a two-handed weapon equipped, Pawn will now not 
+	show one-handed weapons or off-hand frill items as upgrades, and vice-versa.&nbsp; 
+	(This is determined solely based on your character's currently equipped 
+	weapon.)&nbsp; Enable the "Show upgrades for both 1H and 2H" option on the 
+	Options tab to get back the old behavior, where Pawn will try to keep track 
+	of your best two-handed weapon, main hand weapon, and off-hand weapon or 
+	frill item separately, and show you upgrades for all of them, even if you 
+	didn't typically use that type of item.</li>
+	<li>Changed the way that Pawn thinks about upgrades compared to heirloom 
+	items.&nbsp; Previously if you had an heirloom that scaled from level 1 to 
+	80 that granted an XP bonus, it would never suggest another item as an 
+	upgrade to that one until you hit level 81.&nbsp; Now it will immediately 
+	start showing upgrades to that item upon hitting level 80, because those 
+	items stop granting bonus XP as soon as you hit level 80.</li>
+	<li>Made a change for a Spanish translation (in development) due to the fact 
+	that the Spanish version of World of Warcraft doesn't use commas in numbers 
+	like the English version (12,345) or periods like the German version 
+	(12.345)—it displays with neither (12345).</li>
+</ul>
 <h3>Version 1.6.7</h3>
 <ul>
 	<li>Added some placeholder scales for monks so that you can use Pawn as you 

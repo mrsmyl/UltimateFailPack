@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.6.6: new VgerCore version
+-- Version 1.6.8: new VgerCore version
 ------------------------------------------------------------
 
 
-PawnVersion = 1.606
+PawnVersion = 1.608
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.08
@@ -817,7 +817,8 @@ end
 -- Recreates the tooltip annotation format strings.
 function PawnRecreateAnnotationFormats()
 	-- REVIEW: When the number of digits is set to 0, we should use commas (LARGE_NUMBER_SEPERATOR) instead
-	-- of a format string.  (These would have to be functions instead of just a format string.)
+	-- of a format string.  (These would have to be functions instead of just a format string.)  (Remember that the *SEPERATOR
+	-- constants don't exist in every locale.)
 	PawnNoValueAnnotationFormat = "%s%s:"
 	PawnUnenchantedAnnotationFormat = PawnNoValueAnnotationFormat .. "  %." .. PawnCommon.Digits .. "f"
 	PawnEnchantedAnnotationFormat = PawnUnenchantedAnnotationFormat .. "  %s(%." .. PawnCommon.Digits .. "f " .. PawnLocal.BaseValueWord .. ")"
@@ -1803,8 +1804,13 @@ function PawnLookForSingleStat(RegexTable, Stats, ThisString, DebugMessages)
 				else
 					MatchIndex = 1
 				end
-				local ExtractedValue = gsub(Matches[MatchIndex], "%" .. LARGE_NUMBER_SEPERATOR, "") -- remove commas in numbers (need to use % in case it's a dot!)
-				if DECIMAL_SEPERATOR ~= "." then
+				local ExtractedValue = Matches[MatchIndex]
+				if LARGE_NUMBER_SEPERATOR and LARGE_NUMBER_SEPERATOR ~= "" then
+					-- Remove commas in numbers.  We need to use % in case it's a dot, and we need to 
+					-- skip this entirely in case there's no large number separator at all (Spanish).
+					ExtractedValue = gsub(ExtractedValue, "%" .. LARGE_NUMBER_SEPERATOR, "")
+				end
+				if DECIMAL_SEPERATOR and DECIMAL_SEPERATOR ~= "." then
 					-- If this is the German client or any other version that uses something other than "." for
 					-- the decimal separator, we need to substitute here, because tonumber() parses things
 					-- in English format only.
@@ -2629,6 +2635,7 @@ end
 --	BestItemFor, SecondBestItemFor: a table of scales for which this item is already the player's best or second-best item, or nil if none.
 --		{ ["Scale1"] = true, ["Scale2"] = true }
 function PawnIsItemAnUpgrade(Item, DoNotRescan)
+
 	-- Before we begin, check for unsupported item types and bail out early if appropriate.
 	if Item and type(Item) ~= "table" then
 		VgerCore.Fail("Item must be a table of item stats, not '" .. type(Item) .. "'.")
@@ -2636,6 +2643,33 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 	end
 	local InvType = Item.InvType
 	if not InvType or InvType == "" or InvType == "INVTYPE_TRINKET" or InvType == "INVTYPE_BAG" or InvType == "INVTYPE_QUIVER" or InvType == "INVTYPE_TABARD" or InvType == "INVTYPE_BODY" or InvType == "INVTYPE_THROWN" or InvType == "INVTYPE_AMMO" or InvType == "INVTYPE_RELIC" then return nil end
+
+	-- If the user doesn't want to see upgrades for 2H items when they're using 1H items or vice-versa, do that
+	-- check now.
+	if not PawnCommon.ShowBoth1HAnd2HUpgrades then
+		local MainWeaponID = GetInventoryItemID("player", INVSLOT_MAINHAND) or GetInventoryItemID("player", INVSLOT_OFFHAND)
+		if MainWeaponID then
+			local MainWeapon = PawnGetItemData("item:" .. MainWeaponID)
+			if MainWeapon then
+				local MainWeaponInvType = MainWeapon.InvType
+				if MainWeaponInvType == "INVTYPE_RANGED"  or MainWeaponInvType == "INVTYPE_RANGEDRIGHT" then
+					if MainWeapon.Stats and MainWeapon.Stats.IsWand then
+						MainWeaponInvType = "INVTYPE_WEAPONMAINHAND"
+					else
+						MainWeaponInvType = "INVTYPE_2HWEAPON"
+					end
+				end
+				if MainWeaponInvType == "INVTYPE_2HWEAPON" then
+					-- They're using a two-handed weapon.  Bail out now if this is a one-handed weapon.
+					if InvType == "INVTYPE_WEAPON" or InvType == "INVTYPE_WEAPONMAINHAND" or InvType == "INVTYPE_WEAPONOFFHAND" or InvType == "INVTYPE_SHIELD" or InvType == "INVTYPE_HOLDABLE" then return end
+				else
+					-- They're using a one-handed weapon.  Bail out now if this is a two-handed weapon.
+					if InvType == "INVTYPE_2HWEAPON" then return end
+				end
+			end
+		end
+	end
+
 	-- Is this item an heirloom that will continue to either scale or provide an XP boost?
 	local IsScalingHeirloom = (UnitLevel("player") <= PawnGetMaxLevelItemIsUsefulHeirloom(Item))
 	
@@ -3391,11 +3425,10 @@ end
 -- is equal to or less than this number, this item is always considered superior to other items that don't meet
 -- these same requirements.
 function PawnGetMaxLevelItemIsUsefulHeirloom(Item)
-	if Item.UnenchantedStats and Item.UnenchantedStats.XpBoost and Item.UnenchantedStats.MaxScalingLevel then
-		-- This item provides an XP boost through MaxScalingLevel inclusive.
-		return Item.UnenchantedStats.MaxScalingLevel
-	elseif Item.UnenchantedStats and Item.UnenchantedStats.MaxScalingLevel then
+	if Item.UnenchantedStats and Item.UnenchantedStats.MaxScalingLevel then
 		-- This item scales until you reach MaxScalingLevel.
+		-- Verified as of patch 5.0.5: the level 1-80 heirloom items stop granting their XP bonus as soon as
+		-- you hit level 80.  Previously Pawn valued those items as being always superior until you hit level 81.
 		return Item.UnenchantedStats.MaxScalingLevel - 1
 	else
 		-- This item doesn't scale.

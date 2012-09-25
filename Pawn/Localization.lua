@@ -304,6 +304,8 @@ PawnUIFrame_ShowSocketingAdvisorCheck_Text = "Show socketing advisor"
 PawnUIFrame_ShowSocketingAdvisorCheck_Tooltip = "When adding gems to an item, Pawn will show a popup suggesting gems that you can add to the item that will maximize its power.  (To see the full list of gem suggestions for each color, see the Gems tab, where you can also customize the quality of gems to use.)"
 PawnUIFrame_ShowReforgingAdvisorCheck_Text = "Show reforging advisor"
 PawnUIFrame_ShowReforgingAdvisorCheck_Tooltip = "When visiting an arcane reforger, Pawn will show a popup suggesting which stats to change to maximize the item's power."
+PawnUIFrame_ShowBoth1HAnd2HUpgradesCheck_Text = "Show upgrades for both 1H and 2H"
+PawnUIFrame_ShowBoth1HAnd2HUpgradesCheck_Tooltip = "Pawn's upgrade advisors should track and show upgrades for your two-handed weapons and your dual-wield (or for casters, main hand and off-hand frill) weapon sets separately.\n\nIf checked, you could be using a two-handed weapon and still see clearly inferior one-handed weapons as upgrades if they're better than the previous best (or second-best) one-handed weapon you had, because Pawn is tracking upgrades separately for the two weapon sets.\n\nIf unchecked, equipping a two-handed weapon will prevent Pawn from showing you upgrades for one-handed items and vice-versa."
 
 PawnUIFrame_OtherOptionsHeaderLabel_Text = "Other options"
 PawnUIFrame_DebugCheck_Text = "Show debug info"

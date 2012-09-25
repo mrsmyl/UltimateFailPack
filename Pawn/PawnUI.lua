@@ -1882,6 +1882,7 @@ function PawnUIOptionsTabPage_OnShow()
 	PawnUIFrame_ShowQuestUpgradeAdvisorCheck:SetChecked(PawnCommon.ShowQuestUpgradeAdvisor)
 	PawnUIFrame_ShowSocketingAdvisorCheck:SetChecked(PawnCommon.ShowSocketingAdvisor)
 	PawnUIFrame_ShowReforgingAdvisorCheck:SetChecked(PawnCommon.ShowReforgingAdvisor)
+	PawnUIFrame_ShowBoth1HAnd2HUpgradesCheck:SetChecked(PawnCommon.ShowBoth1HAnd2HUpgrades)
 
 	-- Other options
 	PawnUIFrame_DebugCheck:SetChecked(PawnCommon.Debug)
@@ -1958,6 +1959,11 @@ end
 
 function PawnUIFrame_ShowReforgingAdvisorCheck_OnClick()
 	PawnCommon.ShowReforgingAdvisor = PawnUIFrame_ShowReforgingAdvisorCheck:GetChecked() ~= nil
+end
+
+function PawnUIFrame_ShowBoth1HAnd2HUpgradesCheck_OnClick()
+	PawnCommon.ShowBoth1HAnd2HUpgrades = PawnUIFrame_ShowBoth1HAnd2HUpgradesCheck:GetChecked() ~= nil
+	PawnResetTooltips()
 end
 
 function PawnUIFrame_ResetUpgradesButton_OnClick()
