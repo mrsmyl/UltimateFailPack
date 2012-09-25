@@ -8,7 +8,6 @@ local tmpTest2=nil
 local hbHealsMin=nil
 local hbHealsMax=nil
 local spell=nil
-local spellrank=nil
 local line1=nil
 local line2=nil
 local line3=nil
@@ -459,15 +458,15 @@ end
 
 
 function HealBot_Init_SmartCast()
-    if strsub(HealBot_PlayerClassEN,1,4)=="PRIE" then
+    if HealBot_PlayerClassTrim=="PRIE" then
         SmartCast_Res=HEALBOT_RESURRECTION;
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="DRUI" then
+    elseif HealBot_PlayerClassTrim=="DRUI" then
         SmartCast_Res=HEALBOT_REVIVE;
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="MONK" then
+    elseif HealBot_PlayerClassTrim=="MONK" then
         SmartCast_Res=HEALBOT_RESUSCITATE;
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="PALA" then
+    elseif HealBot_PlayerClassTrim=="PALA" then
         SmartCast_Res=HEALBOT_REDEMPTION;
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="SHAM" then
+    elseif HealBot_PlayerClassTrim=="SHAM" then
         SmartCast_Res=HEALBOT_ANCESTRALSPIRIT;
     end
 end

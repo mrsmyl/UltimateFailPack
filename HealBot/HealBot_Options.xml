@@ -321,7 +321,7 @@
               </Layer>
             </Layers>
             <Scripts>
-              <OnLoad>HealBot_Options_hbCommands_OnLoad(self)</OnLoad>
+              <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 310)</OnLoad>
             </Scripts>
           </Frame>
           <Button name="HealBot_Options_CommandsButton" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_RUN">
@@ -389,7 +389,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_EmergencyFClass_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 145)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_EFClassDruid" inherits="SendMailRadioButtonTemplate" id="1">
@@ -582,7 +582,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_ActionBarsCombo_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 240)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_ComboClassButton">
@@ -615,9 +615,9 @@
               </Frame>
               <Frame name="HealBot_Options_CastButton" inherits="UIDropDownMenuTemplate">
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ActionBarsCombo" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="-28" y="-8"/>
+                      <AbsDimension x="62" y="-55"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -635,7 +635,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CastButton_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_ButtonCastMethod" inherits="UIDropDownMenuTemplate">
@@ -660,7 +660,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_ButtonCastMethod_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 100)</OnLoad>
                 </Scripts>
               </Frame>
               <EditBox name="HealBot_Options_Click" inherits="HealBot_Options_EditBoxTemplate">
@@ -668,9 +668,9 @@
                   <AbsDimension x="230" y="20"/>
                 </Size>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ActionBarsCombo" relativePoint="BOTTOMLEFT">
+                  <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="5" y="-70"/>
+                      <AbsDimension x="95" y="-115"/>
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -1236,7 +1236,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_SelectHealSpellsCombo_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 245)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Options_HealSpellsSelect" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_SELECT">
@@ -1279,7 +1279,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_SelectOtherSpellsCombo_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 245)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Options_OtherSpellsSelect" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_SELECT">
@@ -1322,7 +1322,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_SelectMacrosCombo_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 245)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Options_MacrosSelect" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_SELECT">
@@ -1365,7 +1365,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_SelectItemsCombo_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 245)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Options_ItemsSelect" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_SELECT">
@@ -1408,7 +1408,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_SelectCmdsCombo_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 245)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Options_CmdsSelect" inherits="UIPanelButtonTemplate" text="HEALBOT_WORD_SELECT">
@@ -1470,7 +1470,7 @@
               </Anchor>
             </Anchors>
             <Scripts>
-              <OnLoad>HealBot_Options_Skins_OnLoad(self)</OnLoad>
+              <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
             </Scripts>
             <Frames>
               <Button name="HealBot_Options_DeleteSkin" inherits="UIPanelButtonTemplate" text="HEALBOT_OPTIONS_DELSKIN">
@@ -1555,7 +1555,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_ShareSkin_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 125)</OnLoad>
                 </Scripts>
               </Frame>
             </Frames>
@@ -2349,7 +2349,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarHealthNumFormatAggro_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 70)</OnLoad>
                 </Scripts>
               </Frame>
              
@@ -2376,7 +2376,7 @@
                       </Layer>
                     </Layers>
                     <Scripts>
-                      <OnLoad>HealBot_Options_AggroAlertLevel_OnLoad(self)</OnLoad>
+                      <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
                     </Scripts>
                   </Frame>
                   
@@ -2403,7 +2403,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_AggroAlertLevel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Aggro3Colorpickb">
@@ -2682,7 +2682,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_SkinDefault_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 138)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_ActionLocked" inherits="OptionsCheckButtonTemplate">
@@ -2746,7 +2746,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_ActionAnchor_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 120)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_ActionBarsAnchor" inherits="UIDropDownMenuTemplate">
@@ -2771,7 +2771,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_ActionBarsAnchor_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 120)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_ManaIndicator" inherits="UIDropDownMenuTemplate">
@@ -2796,7 +2796,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_ManaIndicator_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 170)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_ManaIndicatorInCombat" inherits="SendMailRadioButtonTemplate">
@@ -3539,7 +3539,7 @@
                       </Layer>
                     </Layers>
                     <Scripts>
-                      <OnLoad>HealBot_Options_EmergencyFilter_OnLoad(self)</OnLoad>
+                      <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 145)</OnLoad>
                     </Scripts>
                   </Frame>
                   <CheckButton name="HealBot_Options_EFGroup1" inherits="SendMailRadioButtonTemplate" id="1">
@@ -3720,7 +3720,7 @@
                       </Layer>
                     </Layers>
                     <Scripts>
-                      <OnLoad>HealBot_Options_ExtraSort_OnLoad(self)</OnLoad>
+                      <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 125)</OnLoad>
                     </Scripts>
                   </Frame>
                   <Frame name="HealBot_Options_ExtraSubSort" inherits="UIDropDownMenuTemplate" id="1">
@@ -3745,7 +3745,7 @@
                       </Layer>
                     </Layers>
                     <Scripts>
-                      <OnLoad>HealBot_Options_ExtraSubSort_OnLoad(self)</OnLoad>
+                      <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 125)</OnLoad>
                     </Scripts>
                   </Frame>
                   <CheckButton name="HealBot_Options_SubSortPlayerFirst" inherits="SendMailRadioButtonTemplate">
@@ -4569,7 +4569,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_HeadFontOutline_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
                 </Scripts>
               </Frame>
             </Frames>
@@ -4843,7 +4843,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarHealthColour_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 125)</OnLoad>
                 </Scripts>
                 <Layers>
                   <Layer level="OVERLAY">
@@ -4913,7 +4913,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarIncHealColour_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 125)</OnLoad>
                 </Scripts>
                 <Layers>
                   <Layer level="OVERLAY">
@@ -5284,7 +5284,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarHealthIncHeal_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 190)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BarHealthType" inherits="UIDropDownMenuTemplate">
@@ -5296,7 +5296,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarHealthType_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 125)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BarHealthNumFormat1" inherits="UIDropDownMenuTemplate">
@@ -5308,7 +5308,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarHealthNumFormat1_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BarHealthNumFormat2" inherits="UIDropDownMenuTemplate">
@@ -5320,7 +5320,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BarHealthNumFormat2_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 85)</OnLoad>
                 </Scripts>
               </Frame>
               <Slider name="HealBot_Options_TextAlign" inherits="HealBot_Options_SliderTemplate">
@@ -5393,7 +5393,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_FontOutline_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 110)</OnLoad>
                 </Scripts>
               </Frame>
             </Frames>
@@ -5726,7 +5726,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_FilterHoTctl_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 85)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_Class_HoTctlName" inherits="UIDropDownMenuTemplate">
@@ -5760,7 +5760,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_Class_HoTctlName_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 148)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_Class_HoTctlAction" inherits="UIDropDownMenuTemplate">
@@ -5784,7 +5784,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_Class_HoTctlAction_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 105)</OnLoad>
                 </Scripts>
               </Frame>
             </Frames>
@@ -6063,7 +6063,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCTxt1_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 190)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCGroups1" inherits="UIDropDownMenuTemplate">
@@ -6075,7 +6075,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCGroups1_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 130)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCTxt2" inherits="UIDropDownMenuTemplate" id="1">
@@ -6087,7 +6087,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCTxt2_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 190)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCGroups2" inherits="UIDropDownMenuTemplate">
@@ -6099,7 +6099,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCGroups2_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 130)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCTxt3" inherits="UIDropDownMenuTemplate" id="1">
@@ -6111,7 +6111,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCTxt3_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 190)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCGroups3" inherits="UIDropDownMenuTemplate">
@@ -6123,7 +6123,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCGroups3_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 130)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_IgnoreDebuffsClass" inherits="SendMailRadioButtonTemplate">
@@ -6216,7 +6216,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCPriority_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 70)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCPriority2" inherits="UIDropDownMenuTemplate">
@@ -6241,7 +6241,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCPriority_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 70)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCPriority3" inherits="UIDropDownMenuTemplate">
@@ -6266,7 +6266,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCPriority_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 70)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDCPriority4" inherits="UIDropDownMenuTemplate">
@@ -6291,7 +6291,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCPriority_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 70)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_DiseaseColorpickb">
@@ -6800,7 +6800,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDebuffCat_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 280)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_CDebuffTxt1" inherits="UIDropDownMenuTemplate" id="1">
@@ -6825,7 +6825,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDebuffTxt1_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 140)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Options_DeleteCDebuffBtn" inherits="UIPanelButtonTemplate" text="HEALBOT_OPTIONS_DELSKIN">
@@ -6937,7 +6937,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCPriority_OnLoadC(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 80)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_CustomColorpickb">--added by Diacono
@@ -7091,7 +7091,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCWarnRange_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 140)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_CDCCol_ShowOnAggroBar" inherits="OptionsCheckButtonTemplate">
@@ -7116,7 +7116,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCWarnRange_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 140)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_ShowDebuffWarning" inherits="OptionsCheckButtonTemplate">
@@ -7141,7 +7141,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCWarnRange_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 140)</OnLoad>
                 </Scripts>
               </Frame>
               <CheckButton name="HealBot_Options_SoundDebuffWarning" inherits="OptionsCheckButtonTemplate">
@@ -7166,7 +7166,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_CDCWarnRange_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 140)</OnLoad>
                 </Scripts>
               </Frame>
               <Slider name="HealBot_Options_WarningSound" inherits="HealBot_Options_SliderTemplate">
@@ -7404,7 +7404,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_TooltipPos_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 128)</OnLoad>
                 </Scripts>
               </Frame>
               <Slider name="HealBot_Options_TTAlpha" inherits="HealBot_Options_SliderTemplate">
@@ -7523,7 +7523,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt1_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups1" inherits="UIDropDownMenuTemplate">
@@ -7535,7 +7535,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups1_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff1Colourb">
@@ -7579,7 +7579,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt2_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups2" inherits="UIDropDownMenuTemplate">
@@ -7591,7 +7591,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups2_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff2Colourb">
@@ -7635,7 +7635,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt3_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups3" inherits="UIDropDownMenuTemplate">
@@ -7647,7 +7647,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups3_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff3Colourb">
@@ -7691,7 +7691,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt4_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups4" inherits="UIDropDownMenuTemplate">
@@ -7703,7 +7703,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups4_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff4Colourb">
@@ -7747,7 +7747,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt5_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups5" inherits="UIDropDownMenuTemplate">
@@ -7759,7 +7759,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups5_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff5Colourb">
@@ -7803,7 +7803,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt6_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups6" inherits="UIDropDownMenuTemplate">
@@ -7815,7 +7815,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups6_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff6Colourb">
@@ -7859,7 +7859,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt7_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups7" inherits="UIDropDownMenuTemplate">
@@ -7871,7 +7871,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups7_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff7Colourb">
@@ -7915,7 +7915,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt8_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups8" inherits="UIDropDownMenuTemplate">
@@ -7927,7 +7927,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups8_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff8Colourb">
@@ -7971,7 +7971,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt9_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups9" inherits="UIDropDownMenuTemplate">
@@ -7983,7 +7983,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups9_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff9Colourb">
@@ -8027,7 +8027,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffTxt10_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 175)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_BuffGroups10" inherits="UIDropDownMenuTemplate">
@@ -8039,7 +8039,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_BuffGroups10_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 95)</OnLoad>
                 </Scripts>
               </Frame>
               <Button name="HealBot_Buff10Colourb">
@@ -8319,7 +8319,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelDown" inherits="UIDropDownMenuTemplate">
@@ -8344,7 +8344,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelShiftUp" inherits="UIDropDownMenuTemplate">
@@ -8369,7 +8369,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelShiftDown" inherits="UIDropDownMenuTemplate">
@@ -8381,7 +8381,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelCtrlUp" inherits="UIDropDownMenuTemplate">
@@ -8406,7 +8406,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelCtrlDown" inherits="UIDropDownMenuTemplate">
@@ -8418,7 +8418,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelAltUp" inherits="UIDropDownMenuTemplate">
@@ -8443,7 +8443,7 @@
                   </Layer>
                 </Layers>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
               <Frame name="HealBot_Options_MouseWheelAltDown" inherits="UIDropDownMenuTemplate">
@@ -8455,7 +8455,7 @@
                   </Anchor>
                 </Anchors>
                 <Scripts>
-                  <OnLoad>HealBot_Options_MouseWheel_OnLoad(self)</OnLoad>
+                  <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 150)</OnLoad>
                 </Scripts>
               </Frame>
             </Frames>

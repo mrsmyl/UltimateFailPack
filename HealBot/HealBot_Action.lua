@@ -356,10 +356,9 @@ function HealBot_Action_RetHealBot_UnitStatus(unit)
 end
 
 function HealBot_Action_setpcClass()
-	if Healbot_Config_Skins.PowerCounter[Healbot_Config_Skins.Current_Skin]==1 and  
-           (strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] or strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_MONK]) then
+	if Healbot_Config_Skins.PowerCounter[Healbot_Config_Skins.Current_Skin]==1 and (HealBot_PlayerClassTrim==HealBot_Class_En[HEALBOT_PALADIN] or HealBot_PlayerClassTrim==HealBot_Class_En[HEALBOT_MONK]) then
         local prevHealBot_pcMax=HealBot_pcMax;
-		if strsub(HealBot_PlayerClassEN,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
+		if HealBot_PlayerClassTrim==HealBot_Class_En[HEALBOT_PALADIN] then
             HealBot_pcClass=9
             if UnitLevel("player")<85 then
                 HealBot_pcMax=3
@@ -397,7 +396,7 @@ function HealBot_Action_SetrSpell()
 	HealBot_dSpell=nil
 	HealBot_rSpell=nil
 	x=HealBot_GetBandageType()
-    if strsub(HealBot_PlayerClassEN,1,4)=="DRUI" then
+    if HealBot_PlayerClassTrim=="DRUI" then
         if HealBot_GetSpellId(HEALBOT_REMOVE_CORRUPTION) then 
 			HealBot_dSpell=HEALBOT_REMOVE_CORRUPTION
 			x=HEALBOT_REMOVE_CORRUPTION
@@ -414,7 +413,7 @@ function HealBot_Action_SetrSpell()
 			HealBot_hSpell=HEALBOT_REJUVENATION 
 			x=HEALBOT_REJUVENATION
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="MAGE" then
+    elseif HealBot_PlayerClassTrim=="MAGE" then
 		if HealBot_GetSpellId(HEALBOT_REMOVE_CURSE) then 
 			HealBot_dSpell=HEALBOT_REMOVE_CURSE
 			x=HEALBOT_REMOVE_CURSE
@@ -423,7 +422,7 @@ function HealBot_Action_SetrSpell()
 			HealBot_bSpell=HEALBOT_ARCANE_BRILLIANCE
 			x=HEALBOT_ARCANE_BRILLIANCE
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="PALA" then
+    elseif HealBot_PlayerClassTrim=="PALA" then
 		if HealBot_GetSpellId(HEALBOT_REDEMPTION) then 
 			HealBot_rSpell=HEALBOT_REDEMPTION
 			x=HEALBOT_REDEMPTION
@@ -440,7 +439,7 @@ function HealBot_Action_SetrSpell()
 			HealBot_hSpell=HEALBOT_HOLY_LIGHT
 			x=HEALBOT_HOLY_LIGHT
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="PRIE" then
+    elseif HealBot_PlayerClassTrim=="PRIE" then
 		if HealBot_GetSpellId(HEALBOT_RESURRECTION) then 
 			HealBot_rSpell=HEALBOT_RESURRECTION
 			x=HEALBOT_RESURRECTION
@@ -457,7 +456,7 @@ function HealBot_Action_SetrSpell()
 			HealBot_hSpell=HEALBOT_FLASH_HEAL
 			x=HEALBOT_FLASH_HEAL
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="SHAM" then
+    elseif HealBot_PlayerClassTrim=="SHAM" then
 		if HealBot_GetSpellId(HEALBOT_ANCESTRALSPIRIT) then 
 			HealBot_rSpell=HEALBOT_ANCESTRALSPIRIT
 			x=HEALBOT_ANCESTRALSPIRIT
@@ -477,7 +476,7 @@ function HealBot_Action_SetrSpell()
 			HealBot_hSpell=HEALBOT_HEALING_WAVE
 			x=HEALBOT_HEALING_WAVE
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="MONK" then
+    elseif HealBot_PlayerClassTrim=="MONK" then
 		if HealBot_GetSpellId(HEALBOT_RESUSCITATE) then 
 			HealBot_rSpell=HEALBOT_RESUSCITATE
 			x=HEALBOT_RESUSCITATE
@@ -494,12 +493,12 @@ function HealBot_Action_SetrSpell()
 			HealBot_hSpell=HEALBOT_SOOTHING_MIST
 			x=HEALBOT_SOOTHING_MIST
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="WARL" then
+    elseif HealBot_PlayerClassTrim=="WARL" then
 		if HealBot_GetSpellId(HEALBOT_UNENDING_BREATH) then 
 			HealBot_bSpell=HEALBOT_UNENDING_BREATH
 			x=HEALBOT_UNENDING_BREATH
 		end
-    elseif strsub(HealBot_PlayerClassEN,1,4)=="WARR" then
+    elseif HealBot_PlayerClassTrim=="WARR" then
         if HealBot_GetSpellId(HEALBOT_VIGILANCE) then 
 			HealBot_bSpell=HEALBOT_VIGILANCE 
 			x=HEALBOT_VIGILANCE
@@ -533,9 +532,9 @@ function HealBot_GetBandageType()
     return bandage
 end
 
-local hcr,hir,hcg,hig,hcb,hib=nil,nil,nil,nil,nil,nil
-local hcaggro,hcta,hcpct,hipct,hrpct=nil,nil,nil,nil,100
 function HealBot_HealthColor(unit,hlth,maxhlth,tooltipcol,hbGUID,UnitDead,Member_Buff,Member_Debuff,healin)
+    local hca,hcr,hir,hcg,hig,hcb,hib=nil,nil,nil,nil,nil,nil,nil
+    local hcaggro,hcta,hcpct,hipct,hrpct=nil,nil,nil,nil,100
     if UnitDead then
         hcpct=0
         hipct=0
@@ -1006,7 +1005,7 @@ local ebufastenable,ebuProcessThis=nil,nil
 local ebuUnitDead,ebuHealBot_UnitDebuff,ebuHealBot_UnitBuff=nil,nil,nil
 local activeUnit = true
 function HealBot_Action_EnableButton(button, hbGUID)
-    ebUnit=button.unit
+    local ebUnit=button.unit
 
 --    if not uName then return end
 --    if not uName then uName=HEALBOT_WORDS_UNKNOWN end
@@ -1628,8 +1627,8 @@ local sa=Healbot_Config_Skins.headtxtcola[Healbot_Config_Skins.Current_Skin];
 local btexture=Healbot_Config_Skins.btexture[Healbot_Config_Skins.Current_Skin];
 local btextheight=Healbot_Config_Skins.btextheight[Healbot_Config_Skins.Current_Skin]*frameScale;
 local btextoutline=Healbot_Config_Skins.btextoutline[Healbot_Config_Skins.Current_Skin];
-local b,bar,bar2,bar3,bar4,icon,txt,icon1,icon15,icon16,icon1t,icon15t,icon1ta,icon15ta, pIcon
-local barScale,h,hwidth,hheight,iScale,itScale,x
+local b,bar,bar2,bar3,bar4,icon,txt,icon1,icon15,icon16,icon1t,icon15t,icon1ta,icon15ta,pIcon,icont,iconta
+local barScale,h,hwidth,hheight,iScale,itScale,x,hcpct
 local abSize = ceil((Healbot_Config_Skins.AggroBarSize[Healbot_Config_Skins.Current_Skin] or 2)*frameScale)
 local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10]=4,[11]=4,[12]=4,[13]=4,[14]=4,[15]=5}
   

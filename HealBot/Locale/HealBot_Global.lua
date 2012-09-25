@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "5.0.5.0";
+HEALBOT_VERSION = "5.0.5.1";
 
 -- Bandages and pots
 HEALBOT_SILK_BANDAGE                    = GetItemInfo(6450) or "--Silk Bandage";

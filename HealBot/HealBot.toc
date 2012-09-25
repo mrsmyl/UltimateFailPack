@@ -4,8 +4,8 @@
 ## Notes: Adds a panel with skinable bars for healing, decursive, buffing, ressing, range checking and aggro tracking
 ## SavedVariablesPerCharacter:  HealBot_Config
 ## SavedVariables: Healbot_Config_Skins, HealBot_Globals
-## OptionalDeps: LibSharedMedia-3.0
-## Version: 5.0.5.0
+## OptionalDeps: LibSharedMedia-3.0, LibTalentQuery-1.0
+## Version: 5.0.5.1
 
 embeds.xml
 
