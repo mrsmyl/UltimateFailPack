@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 724 $")
+		end, "$Revision: 737 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -32,9 +32,7 @@ local UnitPowerType = UnitPowerType
 local partyHeader
 local partyAnchor
 
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-
-local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+local GetNumSubgroupMembers = GetNumSubgroupMembers
 
 
 
@@ -45,7 +43,7 @@ local XPerl_Party_HighlightCallback
 ----------------------
 function XPerl_Party_Events_OnLoad(self)
 	-- Added UNIT_POWER/UNIT_MAXPOWER to events list for 4.0 (By PlayerLin)
-	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "RAID_ROSTER_UPDATED", "PARTY_MEMBERS_CHANGED",
+	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "GROUP_ROSTER_UPDATED",
 			"UNIT_PHASE", "UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
 			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"RAID_TARGET_UPDATE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_LOGIN", "UNIT_THREAT_LIST_UPDATE",
@@ -55,7 +53,7 @@ function XPerl_Party_Events_OnLoad(self)
 	end
 
 	partyHeader:UnregisterEvent("UNIT_NAME_UPDATE")			-- IMPORTANT! Fix for WoW 2.1 UNIT_NAME_UPDATE lockup issues
-	UIParent:UnregisterEvent("RAID_ROSTER_UPDATE")			-- IMPORTANT! Stops raid framerate lagging when members join/leave/zone
+	UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")			-- IMPORTANT! Stops raid framerate lagging when members join/leave/zone
 
 	
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")--Try detecting when we switch to raid.
@@ -565,18 +563,10 @@ end
 -- XPerl_Party_UpdateLeader
 local function XPerl_Party_UpdateLeader(self)
 	
-	if (not isMOP) then
-		if ("party"..GetPartyLeaderIndex() == self.partyid) then
-			self.nameFrame.leaderIcon:Show()
-		else
-			self.nameFrame.leaderIcon:Hide()
-		end
+	if (UnitIsGroupLeader(self.partyid)) then
+		self.nameFrame.leaderIcon:Show()
 	else
-		if (UnitIsGroupLeader(self.partyid)) then
-			self.nameFrame.leaderIcon:Show()
-		else
-			self.nameFrame.leaderIcon:Hide()
-		end
+		self.nameFrame.leaderIcon:Hide()
 	end
 
 	
@@ -1077,7 +1067,7 @@ end
 
 -- PLAYER_ENTERING_WORLD
 function XPerl_Party_Events:PLAYER_ENTERING_WORLD()
-	UIParent:UnregisterEvent("RAID_ROSTER_UPDATE")	-- Re-do, in case
+	UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")	-- Re-do, in case
 	if (not startupDone) then
 		startupDone = true
 		XPerl_ProtectedCall(XPerl_Party_SetInitialAttributes)
@@ -1088,8 +1078,8 @@ function XPerl_Party_Events:PLAYER_ENTERING_WORLD()
 	XPerl_Party_UpdateDisplayAll()
 end
 
--- RAID_ROSTER_UPDATED
-function XPerl_Party_Events:RAID_ROSTER_UPDATED()
+-- GROUP_ROSTER_UPDATED
+function XPerl_Party_Events:GROUP_ROSTER_UPDATED()
 	CheckRaid()
 end
 
@@ -1109,9 +1099,9 @@ do
 	end
 
 	local function BuildGuidMap()
-		if (GetNumPartyMembers() > 0) then
+		if (GetNumSubgroupMembers() > 0) then
 			rosterGuids = XPerl_GetReusableTable()
-			for i = 1,GetNumPartyMembers() do
+			for i = 1,GetNumSubgroupMembers() do
 				local guid = UnitGUID("party"..i)
 				if (guid) then
 					rosterGuids[guid] = "party"..i
@@ -1122,7 +1112,7 @@ do
 		end
 	end
 
-	function XPerl_Party_Events:PARTY_MEMBERS_CHANGED()
+	function XPerl_Party_Events:GROUP_ROSTER_UPDATE()
 		BuildGuidMap()
 		checkRaidNextUpdate = 3
 		CheckRaid()
@@ -1131,7 +1121,7 @@ do
 	end
 end
 
-XPerl_Party_Events.PLAYER_LOGIN = XPerl_Party_Events.PARTY_MEMBERS_CHANGED
+XPerl_Party_Events.PLAYER_LOGIN = XPerl_Party_Events.GROUP_ROSTER_UPDATE
 
 -- UNIT_PORTRAIT_UPDATE
 function XPerl_Party_Events:UNIT_PORTRAIT_UPDATE()

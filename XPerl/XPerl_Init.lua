@@ -4,20 +4,12 @@
 
 local init_done, gradient, conf, doneOptions
 local errorCount = 0
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 684 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 741 $")
 
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
+local GetNumSubgroupMembers = GetNumSubgroupMembers
+local GetNumGroupMembers = GetNumGroupMembers
 
-local IsRaidOfficer = IsRaidOfficer;
-
-
-if (select(4, _G.GetBuildInfo()) >= 50000) then
-	IsRaidOfficer = function() return UnitIsGroupAssistant("player") end
-end
-
-
+local UnitIsGroupAssistant = UnitIsGroupAssistant;
 
 local classOrder = {"WARRIOR", "DEATHKNIGHT", "ROGUE", "HUNTER", "DRUID", "SHAMAN", "PALADIN", "PRIEST", "MAGE", "WARLOCK"}
 
@@ -193,21 +185,21 @@ local function GetNamesWithoutBuff(spellName, with, filter)
 	if (not checkExpiring) then
 		local cet = {}
 
-		if (class == "PRIEST" or IsRaidOfficer()) then
+		if (class == "PRIEST" or UnitIsGroupAssistant("player")) then
 			cet[GetSpellInfo(21562)] = 2			-- Sta
 			--cet[GetSpellInfo(27683)] = 2			-- Shadow Prot
 		end
 		
-		if (class == "DRUID" or IsRaidOfficer()) then
+		if (class == "DRUID" or UnitIsGroupAssistant("player")) then
 			cet[GetSpellInfo(1126)] = 2			-- Mark
 			--cet[GetSpellInfo(467)] = 1			-- Thorns
 		end
 		
-		if (class == "MAGE" or IsRaidOfficer()) then
+		if (class == "MAGE" or UnitIsGroupAssistant("player")) then
 			cet[GetSpellInfo(1459)] = 2			-- Int
 		end
 
-		if (class == "PALADIN" or IsRaidOfficer()) then
+		if (class == "PALADIN" or UnitIsGroupAssistant("player")) then
 			cet[GetSpellInfo(19740)] = 2			-- Blessing of Might
 			cet[GetSpellInfo(20217)] = 2			-- Blessing of Kings
 		end
@@ -354,7 +346,7 @@ end
 local function XPerl_ToolTip_AddBuffDuration(self, partyid, buffID, filter)
 	local name, rank, buff, count, _, dur, max, caster, isStealable = UnitAura(partyid, buffID, filter)
 
-	if (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) then
+	if (IsInRaid() or UnitInParty("player")) then
 		if (conf.buffHelper.enable and partyid and (UnitInParty(partyid) or UnitInRaid(partyid))) then
 			if (name) then
 				local names, count = GetNamesWithoutBuff(name, IsAltKeyDown(), filter)
@@ -679,7 +671,7 @@ end
 -- XPerl_OptionActions()
 function XPerl_OptionActions(which)
 
-	UIParent:UnregisterEvent("RAID_ROSTER_UPDATE")			-- IMPORTANT! Stops raid framerate lagging when members join/leave/zone
+	UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")			-- IMPORTANT! Stops raid framerate lagging when members join/leave/zone
 
 	if (InCombatLockdown()) then
 		XPerl_OutOfCombatOptionSet = true

@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 709 $")
+XPerl_SetModuleRevision("$Revision: 736 $")
 
 XPerl_MainTanks = {}
 local MainTankCount, blizzMTanks, ctraTanks = 0, 0, 0
@@ -16,10 +16,7 @@ local XTitle
 local pendingTankListChange		-- If in combat when tank list changes, then we'll defer it till next time we're out of combat
 local conf
 
-
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
-local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
+local GetNumGroupMembers = GetNumGroupMembers
 
 
 if type(RegisterAddonMessagePrefix) == "function" then
@@ -331,7 +328,7 @@ end
 
 -- GetRaidIDByName
 local function GetRaidIDByName(name)
-	for i = 1, GetNumRaidMembers() do
+	for i = 1, GetNumGroupMembers() do
 		if (strlower(UnitName("raid"..i)) == strlower(name)) then
 			return i
 		end
@@ -352,7 +349,7 @@ end
 local function ValidateTankList()
 	for index,entry in pairs(XPerl_MainTanks) do
 		local found
-		for i = 1,GetNumRaidMembers() do
+		for i = 1,GetNumGroupMembers() do
 			if (strlower(UnitName("raid"..i)) == strlower(entry[2])) then
 				found = true
 				break
@@ -415,7 +412,7 @@ function XPerl_MTRosterChanged()
 		end
 
 		-- Scan roster, adding any new ones, and removing found ones from old tanks list
-		for i = 1,GetNumRaidMembers() do
+		for i = 1,GetNumGroupMembers() do
 			local unitid = "raid"..i
 			if (UnitGroupRolesAssigned(unitid) == "TANK" or GetPartyAssignment("maintank", unitid)) then
 				local name = GetUnitName(unitid)
@@ -464,7 +461,7 @@ function XPerl_MTRosterChanged()
 		-- If no defined tanks, then make a list from the warriors in raid
 
 		if (blizzMTanks == 0 and conf.NoAutoList == 0 and not inBattlegrounds()) then
-			for i = 1,GetNumRaidMembers() do
+			for i = 1,GetNumGroupMembers() do
 				local id = "raid"..i
 				if (select(2, UnitClass(id)) == "WARRIOR") then
 					tinsert(MainTanks, new(i, UnitName(id)))
@@ -493,7 +490,7 @@ local function ProcessCTRAMessage(unitName, msg)
 		if (num and name) then
 			num = tonumber(num)
 			local mtID = 0
-			for i = 1, GetNumRaidMembers() do
+			for i = 1, GetNumGroupMembers() do
 				if (strlower(UnitName("raid"..i)) == strlower(name)) then
 					mtID = i
 					break
@@ -732,7 +729,7 @@ function XPerl_EnableDisable()
 		return
 	end
 
-	if (XPerlConfigHelper and conf and conf.RaidHelper == 1 and GetNumRaidMembers() > 0) then
+	if (XPerlConfigHelper and conf and conf.RaidHelper == 1 and IsInRaid()) then
 		if (not XPerl_Frame:IsShown()) then
 			XPerl_Frame:Show()
 			XPerl_Frame:SetScript("OnUpdate", OnUpdate)
@@ -762,15 +759,15 @@ function XPerl_EnableDisable()
 	XPerl_MTRosterChanged()
 end
 
--- RAID_ROSTER_UPDATE
-function Events:RAID_ROSTER_UPDATE()
-	if (GetNumRaidMembers() == 0) then
+-- GROUP_ROSTER_UPDATE
+function Events:GROUP_ROSTER_UPDATE()
+	if (not IsInRaid()) then
 		del(MainTanks, 1)
 		MainTanks = new()
 		del(BlizzardMainTanks)
 		BlizzardMainTanks = new()
 	end
-	XPerlRaidHelperCheck:show()
+	--XPerlRaidHelperCheck:show()
 end
 
 -- UNIT_HEALTH
@@ -1075,7 +1072,7 @@ function XPerl_MakeTankList()
 		pendingTankListChange = nil
 	end
 
-	if (not XPerlConfigHelper or (conf and conf.RaidHelper == 0) or GetNumRaidMembers() == 0) then
+	if (not XPerlConfigHelper or (conf and conf.RaidHelper == 0) or not IsInRaid()) then
 		XPerl_SetFrameSizes()
 		return
 	end

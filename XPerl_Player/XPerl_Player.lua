@@ -6,24 +6,9 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 723 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 736 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%.0f"..PERCENT_SYMBOL
-
-
-
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
-local GetPrimaryTalentTree = isMOP and GetSpecialization or GetPrimaryTalentTree
-
-local IsPartyLeader = IsPartyLeader;
-
-
-if (select(4, _G.GetBuildInfo()) >= 50000) then
-	IsPartyLeader = function() return UnitIsGroupLeader("player") end
-end
-
-
 
 --[===[@debug@
 local function d(...)
@@ -32,7 +17,7 @@ end
 --@end-debug@]===]
 
 local format = format
-local GetNumRaidMembers = GetNumRaidMembers
+local GetNumGroupMembers = GetNumGroupMembers
 local UnitIsDead = UnitIsDead
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsGhost = UnitIsGhost
@@ -233,34 +218,27 @@ function XPerl_Player_UpdateLeader(self)
 	local nf = self.nameFrame
 
 	-- Loot Master
-	local method, index
-	--if (UnitInParty("party1") or UnitInRaid("player")) then
-		method, pindex,rindex = GetLootMethod()
-	--end
+	local method, pindex, rindex, ml
+	if (UnitInParty("party1") or UnitInRaid("player")) then
+		method, pindex, rindex = GetLootMethod()
 	
-	if (method == "master") then
-		--Check pindex if not in raid
-		--if (not UnitInRaid("player")) then
-		
-		--end
-		local ml;
-		
-		if (rindex ~= nil) then
-			ml = UnitIsUnit("raid"..rindex, "player");
-		elseif (pindex == 0) then
-			ml = true;
-		end
-		
-		
-		if (ml) then
-			nf.masterIcon:Show()
-		else
-			nf.masterIcon:Hide()
-		end
-	end 
+		if (method == "master") then
+			if (rindex ~= nil) then
+				ml = UnitIsUnit("raid"..rindex, "player");
+			elseif (pindex and (pindex == 0)) then
+				ml = true;
+			end
+		end 
+	end
+
+	if (ml) then
+		nf.masterIcon:Show()
+	else
+		nf.masterIcon:Hide()
+	end
 
 	-- Leader
-	if (IsPartyLeader()) then
+	if (UnitIsGroupLeader("player")) then
 		nf.leaderIcon:Show()
 	else
 		nf.leaderIcon:Hide()
@@ -268,8 +246,8 @@ function XPerl_Player_UpdateLeader(self)
 
 	UpdateAssignedRoles(self)
 
-	if (pconf and pconf.partyNumber and GetNumRaidMembers() > 0) then
-		for i = 1,GetNumRaidMembers() do
+	if (pconf and pconf.partyNumber and IsInRaid()) then
+		for i = 1,GetNumGroupMembers() do
 			local name, rank, subgroup = GetRaidRosterInfo(i)
 			if (UnitIsUnit("raid"..i, "player")) then
 				if (pconf.withName) then
@@ -529,7 +507,7 @@ local function XPerl_Player_DruidBarUpdate(self)
 
 	local form = GetShapeshiftFormID()
 	if (self.runes ~= nil) then
-		if (form and form ~= MOONKIN_FORM) or GetPrimaryTalentTree() ~= 1 or (not pconf or not pconf.showRunes) then 
+		if (form and form ~= MOONKIN_FORM) or GetSpecialization() ~= 1 or (not pconf or not pconf.showRunes) then 
 			self.runes:Hide()
 		else
 			self.runes:Show()
@@ -858,8 +836,8 @@ function XPerl_Player_Events:VARIABLES_LOADED(who, what)
 	--print("VARIABLES_LOADED")
 	self:UnregisterEvent("VARIABLES_LOADED")
 
-	local events = {"PLAYER_ENTERING_WORLD", "PARTY_MEMBERS_CHANGED", "PARTY_LEADER_CHANGED",
-			"PARTY_LOOT_METHOD_CHANGED", "RAID_ROSTER_UPDATE", "PLAYER_UPDATE_RESTING", "PLAYER_REGEN_ENABLED",
+	local events = {"PLAYER_ENTERING_WORLD", "PARTY_LEADER_CHANGED",
+			"PARTY_LOOT_METHOD_CHANGED", "GROUP_ROSTER_UPDATE", "PLAYER_UPDATE_RESTING", "PLAYER_REGEN_ENABLED",
 			"PLAYER_REGEN_DISABLED", "PLAYER_ENTER_COMBAT", "PLAYER_LEAVE_COMBAT", "PLAYER_DEAD",
 			"UPDATE_FACTION", "UNIT_AURA", "PLAYER_CONTROL_LOST", "PLAYER_CONTROL_GAINED",
 			"UNIT_COMBAT","UNIT_POWER_FREQUENT","UNIT_MAXPOWER"}
@@ -895,9 +873,8 @@ end
 function XPerl_Player_Events:PARTY_LOOT_METHOD_CHANGED()
 	XPerl_Player_UpdateLeader(self)
 end
-XPerl_Player_Events.PARTY_MEMBERS_CHANGED	= XPerl_Player_Events.PARTY_LOOT_METHOD_CHANGED
 XPerl_Player_Events.PARTY_LEADER_CHANGED	= XPerl_Player_Events.PARTY_LOOT_METHOD_CHANGED
-XPerl_Player_Events.RAID_ROSTER_UPDATE		= XPerl_Player_Events.PARTY_LOOT_METHOD_CHANGED
+XPerl_Player_Events.GROUP_ROSTER_UPDATE		= XPerl_Player_Events.PARTY_LOOT_METHOD_CHANGED
 
 -- UNIT_HEALTH, UNIT_MAXHEALTH
 function XPerl_Player_Events:UNIT_HEALTH_FREQUENT()

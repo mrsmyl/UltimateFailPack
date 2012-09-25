@@ -1,4 +1,169 @@
 ------------------------------------------------------------------------
+r745 | tharai | 2012-09-25 02:36:29 +0000 (Tue, 25 Sep 2012) | 5 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+3.5.60
+
+Stuff, pandas, other stuff, more pandas.
+
+Wtb paladins being able to be pandas.
+------------------------------------------------------------------------
+r744 | asixandur | 2012-09-24 17:53:03 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Highlight.lua
+
+Trying to fix "attempt to perform arithmetic on local 'spent' (a boolean value)"
+------------------------------------------------------------------------
+r743 | tharai | 2012-09-24 15:20:06 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Usage.lua
+
+More party rather then raid code...
+------------------------------------------------------------------------
+r742 | tharai | 2012-09-24 15:18:27 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Usage.lua
+
+Merge party code into raid code since they are one event now.
+------------------------------------------------------------------------
+r741 | tharai | 2012-09-24 15:07:14 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Init.lua
+
+We dont want this only in raids...
+------------------------------------------------------------------------
+r740 | asixandur | 2012-09-24 10:37:25 +0000 (Mon, 24 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Fixed stupid bug (sorry for that)
+------------------------------------------------------------------------
+r739 | asixandur | 2012-09-23 14:08:01 +0000 (Sun, 23 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+GetRealNumRaidMembers doesn't exist anymore in 5.0.4
+------------------------------------------------------------------------
+r738 | asixandur | 2012-09-23 13:36:54 +0000 (Sun, 23 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/localization.koKR.lua
+
+Forgot to delete "end" tag
+------------------------------------------------------------------------
+r737 | asixandur | 2012-09-23 13:32:59 +0000 (Sun, 23 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Init.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/localization.deDE.lua
+   M /trunk/localization.esES.lua
+   M /trunk/localization.frFR.lua
+   M /trunk/localization.itIT.lua
+   M /trunk/localization.koKR.lua
+   M /trunk/localization.lua
+   M /trunk/localization.ruRU.lua
+   M /trunk/localization.zhCN.lua
+   M /trunk/localization.zhTW.lua
+
+More pre-MoP compat code removed
+------------------------------------------------------------------------
+r736 | asixandur | 2012-09-23 09:27:32 +0000 (Sun, 23 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Highlight.lua
+   M /trunk/XPerl_Init.lua
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_PartyPet/XPerl_Party_Pet.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.xml
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/XPerl_RaidHelper/XPerl_AssistFrame.lua
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+   M /trunk/XPerl_Usage.lua
+   M /trunk/XPerl_Voice.lua
+
+Removed a lot of pre-MOP compatiblity code
+Using IsInRaid() to check instead of GetNumGroupMembers() > 0 as said here:
+http://www.wowpedia.org/Patch_5.0.4/API_changes
+------------------------------------------------------------------------
+r735 | asixandur | 2012-09-23 08:35:35 +0000 (Sun, 23 Sep 2012) | 1 line
+Changed paths:
+   A /trunk/XPerl_RaidAdmin/localization.itIT.lua
+   A /trunk/XPerl_RaidFrames/localization.itIT.lua
+
+itIT locale files (forgot these two)
+------------------------------------------------------------------------
+r734 | asixandur | 2012-09-23 08:21:38 +0000 (Sun, 23 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/localization.itIT.lua
+
+Updated itIT locale
+------------------------------------------------------------------------
+r733 | tharai | 2012-09-20 06:38:06 +0000 (Thu, 20 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Rever change that uses a funciton that doesnt exist anymore. GG?
+------------------------------------------------------------------------
+r732 | tharai | 2012-09-20 06:21:02 +0000 (Thu, 20 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Usage.lua
+
+big numbars
+------------------------------------------------------------------------
+r731 | romracer | 2012-09-18 22:59:33 +0000 (Tue, 18 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Begin MoP compatibility functions cleanup
+------------------------------------------------------------------------
+r730 | romracer | 2012-09-18 22:40:42 +0000 (Tue, 18 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_PartyPet/XPerl_Party_Pet.lua
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.lua
+
+Fix additional instances of 'integer overflow attempting to store -1.#IND'
+------------------------------------------------------------------------
+r729 | tharai | 2012-09-16 00:22:23 +0000 (Sun, 16 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
+
+Remove call to XPerlRaidHelperCheck, something that isnt defined anywhere else in all of xperl....
+------------------------------------------------------------------------
+r728 | tharai | 2012-09-16 00:14:13 +0000 (Sun, 16 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Highlight.lua
+   M /trunk/XPerl_Init.lua
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_PartyPet/XPerl_Party_Pet.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.lua
+   M /trunk/XPerl_RaidAdmin/XPerl_RosterText.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/XPerl_RaidHelper/XPerl_AssistFrame.lua
+   M /trunk/XPerl_RaidHelper/XPerl_Config.lua
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.lua
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+   M /trunk/XPerl_Usage.lua
+   M /trunk/XPerl_Voice.lua
+
+Replace all occurrences of RAID_ROSTER_UPDATE and PARTY_MEMBERS_CHANGED with GROUP_ROSTER_UPDATE
+Might break some stuff, might fix some stuff, who knows!
+------------------------------------------------------------------------
 r727 | tharai | 2012-09-15 22:17:06 +0000 (Sat, 15 Sep 2012) | 1 line
 Changed paths:
    M /trunk/XPerl.toc
@@ -411,45 +576,4 @@ Changed paths:
 fixed wrong checkbox parenting / option name
 fixed missing deathknight checkbox in monitor module
 save frames position when using the align top function
-------------------------------------------------------------------------
-r669 | tharai | 2012-08-19 04:52:18 +0000 (Sun, 19 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl.lua
-   M /trunk/XPerl_Init.lua
-   M /trunk/XPerl_Party/XPerl_Party.lua
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Crush some mop functions
-------------------------------------------------------------------------
-r668 | THARAI | 2012-08-16 10:51:22 +0000 (Thu, 16 Aug 2012) | 4 lines
-Changed paths:
-   M /trunk/XPerl_Init.lua
-   M /trunk/XPerl_Player/XPerl_Player.lua
-   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
-
-Fix errors
-
-Work on special power bar stuff
-Druid frame looks funky atm, but you can drag it and move it and the buffs around. Gonna need some feedback on what looks the best. Haven't narrowed down why only druid frame gets the special background while monk & pally dont.
-------------------------------------------------------------------------
-r667 | THARAI | 2012-08-15 09:22:18 +0000 (Wed, 15 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl.toc
-
-Update toc version
-------------------------------------------------------------------------
-r666 | THARAI | 2012-08-15 03:10:43 +0000 (Wed, 15 Aug 2012) | 3 lines
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.lua
-
-Druid bar changes, now the buffs are below the druid bar
-Druid bar compat with mop
-XPerl_RaidMonitor.lua compat with mop
-------------------------------------------------------------------------
-r665 | THARAI | 2012-08-11 06:48:01 +0000 (Sat, 11 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
-
-redisable onupdate that were enabled during testing.
 ------------------------------------------------------------------------

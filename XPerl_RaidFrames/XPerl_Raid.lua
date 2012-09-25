@@ -16,11 +16,6 @@ local lastNamesList, lastName, lastWith, lastNamesCount -- Stores with/without b
 local fullyInitiallized
 
 
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
-local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
-
-
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
 end
@@ -35,7 +30,7 @@ local new, del, copy = XPerl_GetReusableTable, XPerl_FreeTable, XPerl_CopyTable
 
 local format = format
 local strsub = strsub
-local GetNumRaidMembers = GetNumRaidMembers
+local GetNumGroupMembers = GetNumGroupMembers
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitIsConnected = UnitIsConnected
@@ -55,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 704 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 740 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -92,7 +87,7 @@ local raidHeaders = {}
 -- XPerl_Raid_OnLoad
 function XPerl_Raid_OnLoad(self)
 	local events = {"CHAT_MSG_ADDON",
-			"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "RAID_ROSTER_UPDATE",
+			"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "GROUP_ROSTER_UPDATE",
 			"UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_POWER", "UNIT_MAXPOWER",
 			"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"UNIT_COMBAT", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_FAILED",
@@ -1018,7 +1013,7 @@ function XPerl_Raid_OnUpdate(self, elapsed)
 		if (XPerl_Custom) then
 			XPerl_Custom:UpdateUnits()
 		end
-		if (GetNumRaidMembers() == 0) then
+		if (not IsInRaid()) then
 			ResArray = {}
 			XPerl_Roster = {}
 			buffUpdates = {}
@@ -1253,7 +1248,7 @@ end
 function XPerl_Raid_Events:VARIABLES_LOADED()
 	self:UnregisterEvent("VARIABLES_LOADED")
 
-	if (GetNumRaidMembers() == 0) then
+	if (not IsInRaid()) then
 		ResArray = {}
 		XPerl_Roster = {}
 	else
@@ -1289,7 +1284,7 @@ function XPerl_Raid_Events:PLAYER_ENTERING_WORLD()
 	raidLoaded = true
 	rosterUpdated = nil
 
-	if (GetNumRaidMembers() > 0) then
+	if (IsInRaid()) then
 		XPerl_Raid_Frame:Show()
 	end
 
@@ -1312,9 +1307,9 @@ do
 	end
 
 	local function BuildGuidMap()
-		if (GetNumRaidMembers() > 0) then
+		if (IsInRaid()) then
 			rosterGuids = new()
-			for i = 1,GetNumRaidMembers() do
+			for i = 1,GetNumGroupMembers() do
 				local guid = UnitGUID("raid"..i)
 				if (guid) then
 					rosterGuids[guid] = "raid"..i
@@ -1325,11 +1320,11 @@ do
 		end
 	end
 
-	-- RAID_ROSTER_UPDATE
-	function XPerl_Raid_Events:RAID_ROSTER_UPDATE()
+	-- GROUP_ROSTER_UPDATE
+	function XPerl_Raid_Events:GROUP_ROSTER_UPDATE()
 		rosterUpdated = true -- Many roster updates can occur during 1 video frame, so we'll check everything at end of last one
 		BuildGuidMap()
-		if (GetNumRaidMembers() > 0) then
+		if (IsInRaid()) then
 			XPerl_Raid_Frame:Show()
 
 			if (rconf.raid_role ) then
@@ -1711,7 +1706,7 @@ local function SetRaidRoster()
 	del(RaidGroupCounts)
 	RaidGroupCounts = new(0,0,0,0,0,0,0,0,0,0,0)
 
-	for i = 1,GetNumRaidMembers() do
+	for i = 1,GetNumGroupMembers() do
 		local name, rank, group, level, class, fileName = GetRaidRosterInfo(i)
 
 		if (name) then
@@ -1745,7 +1740,7 @@ local function SetRaidRoster()
 		end
 	end
 
-	if (GetNumRaidMembers() > 0) then
+	if (IsInRaid()) then
 		XPerl_Raid_Frame:Show()
 	else
 		XPerl_Raid_Frame:Hide()
@@ -1983,7 +1978,7 @@ local function GetCombatRezzerList()
 
 	local anyCombat = 0
 	local anyAlive = 0
-	for i = 1,GetNumRaidMembers() do
+	for i = 1,GetNumGroupMembers() do
 		local unit = "raid"..i
 		if (normalRezzers[select(2, UnitClass(unit))]) then
 			if (UnitAffectingCombat(unit)) then
@@ -2000,7 +1995,7 @@ local function GetCombatRezzerList()
 		local ret = new()
 		local t = GetTime()
 
-		for i = 1,GetNumRaidMembers() do
+		for i = 1,GetNumGroupMembers() do
 			local raidid = "raid"..i
 			if (not UnitIsDeadOrGhost(raidid) and UnitIsVisible(raidid)) then
 				local name, rank, subgroup, level, _, fileName, zone, online, isDead = GetRaidRosterInfo(i)
@@ -2071,7 +2066,7 @@ function XPerl_RaidTipExtra(unitid)
 		local zone
 		local name, rank, subgroup, level, class, fileName, zone, online, isDead
 
-		for i = 1,GetNumRaidMembers() do
+		for i = 1,GetNumGroupMembers() do
 			name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(i)
 			if (name == unitName) then
 				break
@@ -2352,7 +2347,7 @@ function XPerl_Raid_Set_Bits(self)
 		self:UnregisterEvent("UNIT_HEAL_PREDICTION")
 	end
 
-	if (GetNumRaidMembers() > 0) then
+	if (IsInRaid()) then
 		XPerl_Raid_Frame:Show()
 	end
 end

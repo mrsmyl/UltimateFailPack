@@ -2,9 +2,8 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 670 $")
+XPerl_SetModuleRevision("$Revision: 737 $")
 
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
 local localGroups = LOCALIZED_CLASS_NAMES_MALE
 local WoWclassCount = 0
 for k,v in pairs(localGroups) do WoWclassCount = WoWclassCount + 1 end
@@ -913,23 +912,9 @@ function XPerl_Options_DoRangeTooltip(self)
 end
 
 -- DefaultRaidClasses
-	local function DefaultRaidClasses()
+local function DefaultRaidClasses()
 	
-	if (not isMop) then
 		return {
-			{enable = true, name = "WARRIOR"},
-			{enable = true, name = "DEATHKNIGHT"},
-			{enable = true, name = "ROGUE"},
-			{enable = true, name = "HUNTER"},
-			{enable = true, name = "MAGE"},
-			{enable = true, name = "WARLOCK"},
-			{enable = true, name = "PRIEST"},
-			{enable = true, name = "DRUID"},
-			{enable = true, name = "SHAMAN"},
-			{enable = true, name = "PALADIN"},
-		}
-		else
-				return {
 			{enable = true, name = "WARRIOR"},
 			{enable = true, name = "DEATHKNIGHT"},
 			{enable = true, name = "ROGUE"},
@@ -942,21 +927,14 @@ end
 			{enable = true, name = "PALADIN"},
 			{enable = true, name = "MONK"},
 		}
-		end
-	end
+end
 
 -- ValidateClassNames
 local function ValidateClassNames(part)
 	-- This should never happen, but I'm sure someone will find a way to break it
 
-	if (not isMop) then
 	local list = {WARRIOR = false, MAGE = false, ROGUE = false, DRUID = false,
-			HUNTER = false, SHAMAN = false, PRIEST = false,	WARLOCK = false, PALADIN = false, DEATHKNIGHT = false}
-
-	else
-			local list = {WARRIOR = false, MAGE = false, ROGUE = false, DRUID = false,
-			HUNTER = false, SHAMAN = false, PRIEST = false,	WARLOCK = false, PALADIN = false, DEATHKNIGHT = false,MONK = false}
-	end
+				HUNTER = false, SHAMAN = false, PRIEST = false,	WARLOCK = false, PALADIN = false, DEATHKNIGHT = false, MONK = false}
 	local valid
 	if (part.class) then
 		local classCount = 0

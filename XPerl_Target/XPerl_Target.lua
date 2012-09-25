@@ -12,11 +12,11 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 705 $")
+			end, "$Revision: 736 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
-local GetNumRaidMembers = GetNumRaidMembers
+local GetNumGroupMembers = GetNumGroupMembers
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitIsConnected = UnitIsConnected
@@ -33,14 +33,6 @@ local playerClass
 local lastInspectPending = 0
 local mobhealth
 
-
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local IsPartyLeader = IsPartyLeader;
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
-
-if (select(4, _G.GetBuildInfo()) >= 50000) then
-	IsPartyLeader = function() return UnitIsGroupLeader("player") end
-end
 ----------------------
 -- Loading Function --
 ----------------------
@@ -54,7 +46,7 @@ function XPerl_Target_OnLoad(self, partyid)
 	self.hitIndicator.text:SetPoint("CENTER", self.portraitFrame, "CENTER", 0, 0)
 
 	local events = {"UNIT_COMBAT", "PLAYER_FLAGS_CHANGED",
-		"PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "RAID_TARGET_UPDATE", "PARTY_MEMBERS_CHANGED",
+		"PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "RAID_TARGET_UPDATE", "GROUP_ROSTER_UPDATE",
 		"PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "UNIT_THREAT_LIST_UPDATE","UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS",
 			"UNIT_CLASSIFICATION_CHANGED", "UNIT_PORTRAIT_UPDATE", "UNIT_AURA", "UNIT_HEALTH_FREQUENT","UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE"}
 	for i,event in pairs(events) do
@@ -752,7 +744,7 @@ function XPerl_Target_SetHealth(self)
 		-- Try to work around the occasion WoW targettarget bug of a zero hp tank who is not at zero hp
 		if (not UnitIsDeadOrGhost(partyid)) then
 			if (UnitInRaid(partyid)) then
-				for i = 1,GetNumRaidMembers() do
+				for i = 1,GetNumGroupMembers() do
 					local id = "raid"..i
 					if (UnitIsUnit(id, partyid)) then
 						hp, hpMax, percent = UnitHealth(id), UnitHealthMax(id), false
@@ -866,11 +858,11 @@ local function XPerl_Target_UpdateLeader(self)
 	local leader
 	local partyid = self.partyid
 	if (UnitIsUnit(partyid, "player")) then
-		leader = IsPartyLeader()
+		leader = UnitIsGroupLeader("player")
 
 	elseif (UnitInRaid(partyid)) then
 		local find = UnitName(partyid)
-		for i = 1,GetNumRaidMembers() do
+		for i = 1,GetNumGroupMembers() do
 			local name, rank = GetRaidRosterInfo(i)
 			if (name == find) then
 				leader = (rank == 2)
@@ -1343,7 +1335,7 @@ XPerl_Target_Events.PARTY_MEMBER_DISABLE = XPerl_Target_Events.PARTY_MEMBER_ENAB
 function XPerl_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 	XPerl_Target_UpdateLeader(self)
 end
-XPerl_Target_Events.PARTY_MEMBERS_CHANGED = XPerl_Target_Events.PARTY_LOOT_METHOD_CHANGED
+XPerl_Target_Events.GROUP_ROSTER_UPDATE= XPerl_Target_Events.PARTY_LOOT_METHOD_CHANGED
 XPerl_Target_Events.PARTY_LEADER_CHANGED  = XPerl_Target_Events.PARTY_LOOT_METHOD_CHANGED
 
 function XPerl_Target_Events:UNIT_THREAT_LIST_UPDATE(unit)

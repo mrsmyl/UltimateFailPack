@@ -9,7 +9,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTargetTarget) then XPerl_TargetTargetTarget.conf = conf.targettargettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 665 $")
+			end, "$Revision: 736 $")
 
 local UnitName = UnitName
 local UnitHealth = UnitHealth
@@ -21,7 +21,6 @@ local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
-local GetNumRaidMembers = GetNumRaidMembers
 local GetDifficultyColor = GetDifficultyColor or GetQuestDifficultyColor
 
 local buffSetup

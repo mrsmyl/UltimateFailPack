@@ -6,8 +6,8 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 714 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 714 $")
+XPerl_SetModuleRevision("$Revision: 739 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 739 $")
  
 --Some local copies for speed
 local strsub = strsub
@@ -32,8 +32,8 @@ local UnitIsTapped = UnitIsTapped
 local UnitIsVisible = UnitIsVisible
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitReaction = UnitReaction
-local GetNumRaidMembers = GetNumRaidMembers
-local GetNumPartyMembers = GetNumPartyMembers
+local GetNumGroupMembers = GetNumGroupMembers
+local GetNumSubgroupMembers = GetNumSubgroupMembers
 local GetRaidRosterInfo = GetRaidRosterInfo
 local largeNumDiv = XPERL_LOC_LARGENUMDIV
 local largeNumTag = XPERL_LOC_LARGENUMTAG
@@ -43,13 +43,6 @@ local hugeNumDiv10 = hugeNumDiv * 10
 local largeNumDiv100 = largeNumDiv * 100
 local ArcaneExclusions = XPerl_ArcaneExclusions
 local GetDifficultyColor = GetDifficultyColor or GetQuestDifficultyColor
-
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
-local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
-local GetPrimaryTalentTree  =  isMOP and GetSpecialization or GetPrimaryTalentTree 
-
-local GetNumTalentTabs = isMOP and GetNumSpecializations or GetNumTalentTabs
 
 --[===[@debug@
 local function d(...)
@@ -1149,18 +1142,18 @@ function XPerl_MinimapButton_Details(tt, ldb)
 			tt:AddLine(XPERL_MINIMAP_HELP5)
 		end
 	end
-
-	if (GetRealNumRaidMembers) then
-		if (GetNumRaidMembers() > 0 and GetRealNumRaidMembers() > 0) then
+	--GetRealNumRaidMembers doesn't exist anymore in 5.0.4
+	--[==[if (GetRealNumRaidMembers) then
+		if (GetNumGroupMembers() > 0 and GetRealNumRaidMembers() > 0) then
 			if (select(2, IsInInstance()) == "pvp") then
-				tt:AddLine(format(XPERL_MINIMAP_HELP3, GetRealNumRaidMembers(), GetRealNumPartyMembers()))
+				tt:AddLine(format(XPERL_MINIMAP_HELP3, GetRealNumRaidMembers(), GetNumSubgroupMembers(LE_PARTY_CATEGORY_HOME)))
 
 				if (IsRealPartyLeader()) then
 					tt:AddLine(XPERL_MINIMAP_HELP4)
 				end
 			end
 		end
-	end
+	end]==]
 
 	if (UpdateAddOnMemoryUsage and IsAltKeyDown()) then
 		local showDiff = IsShiftKeyDown()
@@ -1467,7 +1460,7 @@ function XPerl_CombatFlashSetFrames(self)
 end
 
 local function GetTalentPosition(findName)
-	for i = 1,GetNumTalentTabs() do
+	for i = 1,GetNumSpecializations() do
 		for j = 1,GetNumTalents(i) do
 			local name = GetTalentInfo(i, j)
 			if (name == findName) then
@@ -1831,74 +1824,6 @@ end
  
 local DebuffExceptions
 local BuffExceptions
- 
-if (not isMOP) then
-
- BuffExceptions = {
-	PRIEST = {
-		[GetSpellInfo(774)] = true,					-- Rejuvenation
-		[GetSpellInfo(8936)] = true,				-- Regrowth
-		[GetSpellInfo(33076)] = true,				-- Prayer of Mending
-	},
-	DRUID = {
-		[GetSpellInfo(139)] = true,					-- Renew
-	},
-	WARLOCK = {
-		[GetSpellInfo(20707)] = true,				-- Soulstone Resurrection
-	},
-	HUNTER = {
-		
-		[GetSpellInfo(13165)] = "HUNTER",			-- Aspect of the Hawk
-		[GetSpellInfo(5118)] = "HUNTER",			-- Aspect of the Cheetah
-		[GetSpellInfo(13159)] = true,				-- Aspect of the Pack
-		[GetSpellInfo(20043)] = true,				-- Aspect of the Wild
-		[GetSpellInfo(61648)] = "HUNTER",			-- Aspect of the Beast
-		-- [GetSpellInfo(13163)] = "HUNTER",			-- Aspect of the Monkey
-		[GetSpellInfo(19506)] = true,				-- Trueshot Aura
-		[GetSpellInfo(5384)] = "HUNTER",			-- Feign Death
-	},
-	ROGUE = {
-		[GetSpellInfo(1784)] = "ROGUE",				-- Stealth
-		[GetSpellInfo(1856)] = "ROGUE",			-- Vanish
-		[GetSpellInfo(2983)] = "ROGUE",			-- Sprint
-		[GetSpellInfo(13750)] = "ROGUE",			-- Adrenaline Rush
-		[GetSpellInfo(13877)] = "ROGUE",			-- Blade Flurry
-	},
-	PALADIN = {
-		[GetSpellInfo(20154)] = true,				-- Seal of Righteousness
-		[GetSpellInfo(20165)] = true,				-- Seal of Insight
-		[GetSpellInfo(20164)] = true,				-- Seal of Justice
-		[GetSpellInfo(31801)] = true,				-- Seal of Truth
-		-- [GetSpellInfo(20375)] = true,				-- Seal of Command
-		-- [GetSpellInfo(20166)] = true,				-- Seal of Wisdom
-		-- [GetSpellInfo(20165)] = true,				-- Seal of Light
-		-- [GetSpellInfo(53736)] = true,				-- Seal of Corruption
-		-- [GetSpellInfo(31892)] = true,				-- Seal of Blood
-		-- [GetSpellInfo(31801)] = true,				-- Seal of Vengeance
-		
-		[GetSpellInfo(465)] = true,				-- Devotion Aura
-		[GetSpellInfo(7294)] = true,				-- Retribution Aura
-		[GetSpellInfo(19746)] = true,				-- Concentration Aura
-		[GetSpellInfo(19891)] = true,				-- Resistance Aura
-		[GetSpellInfo(32223)] = true,				-- Crusader Aura
-		[GetSpellInfo(25780)] = true,				-- Righteous Fury
-		[GetSpellInfo(20925)] = true,				-- Holy Shield
-		[GetSpellInfo(54428)] = true,				-- Divine Plea
-	},
-}
-
- DebuffExceptions = {
-	ALL = {
-		[GetSpellInfo(11196)] = true,				-- Recently Bandaged
-	},
-	PRIEST = {
-		[GetSpellInfo(6788)] = true,				-- Weakened Soul
-	},
-	PALADIN = {
-		[GetSpellInfo(25771)] = true				-- Forbearance
-	}
-}
-else
 
  BuffExceptions = {
 	PRIEST = {
@@ -1958,7 +1883,6 @@ else
 		[GetSpellInfo(25771)] = true				-- Forbearance
 	}
 }
-end
 
 local SeasonalDebuffs = {
 	[GetSpellInfo(26004)] = true,					-- Mistletoe
@@ -3272,7 +3196,7 @@ end
 -- nextMember(last)
 function XPerl_NextMember(_, last)
 	if (last) then
-		local raidCount = GetNumRaidMembers()
+		local raidCount = GetNumGroupMembers()
 		if (raidCount > 0) then
 			local i = tonumber(strmatch(last, "^raid(%d+)"))
 			if (i and i < raidCount) then
@@ -3281,7 +3205,7 @@ function XPerl_NextMember(_, last)
 				return "raid"..i, unitName, unitClass, group, zone, online, dead
 			end
 		else
-			local partyCount = GetNumPartyMembers()
+			local partyCount = GetNumSubgroupMembers()
 			if (partyCount > 0) then
 				local id
 				if (last == "player") then
@@ -3300,7 +3224,7 @@ function XPerl_NextMember(_, last)
 			end
 		end
 	else
-		if (GetNumRaidMembers() > 0) then
+		if (IsInRaid()) then
 			local unitName, rank, group, level, _, unitClass, zone, online, dead = GetRaidRosterInfo(1)
 			return "raid1", unitName, unitClass, group, zone, online, dead
 		else

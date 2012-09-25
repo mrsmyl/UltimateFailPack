@@ -5,15 +5,11 @@
 local XPerl_RaidPets_Events = {}
 local RaidPetFrameArray = {}
 local conf, rconf, raidconf
-XPerl_RequestConfig(function(New) conf = New raidconf = New.raid rconf = New.raidpet end, "$Revision: 644 $")
+XPerl_RequestConfig(function(New) conf = New raidconf = New.raid rconf = New.raidpet end, "$Revision: 736 $")
 
 local new, del, copy = XPerl_GetReusableTable, XPerl_FreeTable, XPerl_CopyTable
 
-local isMOP = select(4, _G.GetBuildInfo()) >= 50000
-local GetNumRaidMembers = isMOP and GetNumGroupMembers or GetNumRaidMembers
-local GetNumPartyMembers = isMOP and GetNumSubgroupMembers or GetNumPartyMembers
-
-
+local GetNumGroupMembers = GetNumGroupMembers
 
 -- XPerl_RaidPets_OnEvent
 local function XPerl_RaidPets_OnEvent(self, event, unit, ...)
@@ -51,7 +47,7 @@ do
 	function XPerl_RaidPet_UpdateGUIDs()
 		del(guids)
 		guids = new()
-		for i = 1,GetNumRaidMembers() do
+		for i = 1,GetNumGroupMembers() do
 			local id = "raidpet"..i
 			if (UnitExists(id)) then
 				guids[UnitGUID(id)] = RaidPetFrameArray[id]
@@ -158,7 +154,7 @@ local function XPerl_RaidPet_UpdateHealth(self)
 		if (healthmax == 0) then
 			self.healthBar.text:SetText("")
 		else
-			self.healthBar.text:SetFormattedText("%d%%", health / healthmax * 100)
+			self.healthBar.text:SetFormattedText("%.0f%%", health / healthmax * 100)
 		end
 	end
 end
@@ -220,11 +216,11 @@ function XPerl_RaidPets_Events:UNIT_EXITED_VEHICLE(unit)
 	TitlesUpdateFrame:Show()
 end
 
--- RAID_ROSTER_UPDATE
-function XPerl_RaidPets_Events:RAID_ROSTER_UPDATE()
+-- GROUP_ROSTER_UPDATE
+function XPerl_RaidPets_Events:GROUP_ROSTER_UPDATE()
 	TitlesUpdateFrame:Show()
 end
-XPerl_RaidPets_Events.PARTY_MEMBERS_CHANGED = XPerl_RaidPets_Events.RAID_ROSTER_UPDATE
+XPerl_RaidPets_Events.GROUP_ROSTER_UPDATE= XPerl_RaidPets_Events.GROUP_ROSTER_UPDATE
 
 -- UNIT_HEALTH
 function XPerl_RaidPets_Events:UNIT_HEALTH()
@@ -355,7 +351,7 @@ function XPerl_RaidPets_HideShow()
 		end
 	end
 
-	local on = (GetNumRaidMembers() > 0 and rconf.enable)
+	local on = (IsInRaid() and rconf.enable)
 
 	local events = {"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_NAME_UPDATE", "UNIT_AURA"}
 	for i,event in pairs(events) do
@@ -369,7 +365,7 @@ function XPerl_RaidPets_HideShow()
 	if (rconf.enable and not singleGroup) then
 		XPerl_Raid_GrpPets:Show()
 		XPerl_RaidPets_Frame:Show()
-		if (GetNumRaidMembers() > 0) then
+		if (IsInRaid()) then
 			XPerl_Raid_TitlePets:Show()
 		end
 	else
@@ -424,7 +420,7 @@ end
 function XPerl_RaidPets_OptionActions()
 	SetMainHeaderAttributes(XPerl_Raid_GrpPets)
 
-	local events = {"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "PARTY_MEMBERS_CHANGED", "RAID_ROSTER_UPDATE", "UNIT_PET", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE"}
+	local events = {"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "GROUP_ROSTER_UPDATE", "UNIT_PET", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE"}
 	for i,event in pairs(events) do
 		if (rconf.enable) then
 			XPerl_RaidPets_Frame:RegisterEvent(event)
