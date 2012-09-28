@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["db_get.lua"] = "5.0.5.255r"
+QuestHelper_File["db_get.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["db_get.lua"] = GetTime()
 
 local dev_mode = (QuestHelper_File["db_get.lua"] == "Development Version")
@@ -122,6 +122,12 @@ end
 
 function DB_HasItem(group, id)
   QuestHelper: Assert(initted)
+
+  if group == "quest" then
+    if type(id) == "number" and id > 0 then return true
+    else return false
+    end
+  end
   
   for _, db in ipairs(QHDB) do
     if db[group] then
@@ -137,6 +143,159 @@ function DB_HasItem(group, id)
   
   return false
 end
+local function GetBlizzardQuestInfoFrameMainLoop(qid)
+	local POIFrame, questFrame
+	QuestMapUpdateAllQuests()
+	QuestPOIUpdateIcons()
+	WorldMapFrame_UpdateQuests()
+
+	for i = 1, MAX_NUM_QUESTS do
+		questFrame = _G["WorldMapQuestFrame" .. i]
+		if questFrame then 
+			if questFrame.questId == qid then
+				POIFrame = questFrame.poiIcon
+				break
+			end
+		end
+	end
+
+	return questFrame, POIFrame
+end
+
+local function GetBlizzardQuestInfoFrame(qid, map)
+	if map then SetMapByID(map) end
+	QuestMapUpdateAllQuests()
+	QuestPOIUpdateIcons()
+	WorldMapFrame_UpdateQuests()
+
+	local POIFrame
+	local questFrame
+	local dLvl
+
+	if map and GetNumDungeonMapLevels() > 0 then -- Suspicion is that each dungeon level has to be iterated.
+		for i = 1, GetNumDungeonMapLevels() do
+			SetDungeonMapLevel(i)
+			questFrame, POIFrame = GetBlizzardQuestInfoFrameMainLoop(qid)
+			if POIFrame then 
+				dLvl = i
+				break 
+			end
+		end
+	else -- Only need to call once
+		questFrame, POIFrame = GetBlizzardQuestInfoFrameMainLoop(qid)
+	end
+
+	return questFrame, POIFrame, dLvl or 0
+end
+
+local function GetBlizzardQuestInfo(qid)
+	local questFrame, POIFrame, qdLvl = GetBlizzardQuestInfoFrame(qid)
+	local mapId = GetCurrentMapAreaID()
+	local c, z
+	local dLvl = false
+	local qMapId
+
+	if GetNumDungeonMapLevels() > 0 then dLvl = GetCurrentMapDungeonLevel() end
+
+	if not POIFrame then 
+		-- Iterate over all maps to try and find it (we are of course assuming that the player has the quest, otherwise we will be SOL.
+		local maps = QuestHelper.LibMapData:GetAllMapIDs()
+		for _, map in pairs(maps) do
+			if map >= 0 and not QuestHelper.LibMapData:IsContinentMap(map) then
+
+				questFrame, POIFrame, qdLvl = GetBlizzardQuestInfoFrame(qid, map)
+
+				if POIFrame then 
+					qMapId = map
+					break 
+				end
+			end
+		end
+		c, z = GetCurrentMapContinent(), GetCurrentMapZone()
+		SetMapByID(mapId)
+		if not POIFrame then return nil end -- At this point we either have the quest or we are SOL.
+	else
+		qMapId = mapId
+		c, z = GetCurrentMapContinent(), GetCurrentMapZone()
+	end
+
+	local _, _, _, x, y = POIFrame:GetPoint()
+
+	if not x or not y then return nil end
+
+	local frame = WorldMapDetailFrame
+	local width, height = frame:GetWidth(), frame:GetHeight()
+	local wm_scale, poi_scale =  frame:GetScale(), POIFrame:GetScale()
+
+	-- Convert from yards to %
+	local cx = ((x / (wm_scale / poi_scale)) / width)
+	local cy = ((-y / (wm_scale / poi_scale)) / height)
+
+
+	if cx < 0 or cx > 1 or cy < 0 or cy > 1 then return nil end
+	
+	-- Now we want to convert to proper format for QH.
+	-- Look at WoWPro:findBlizzCoords(qid) for remainder
+	local _, contX, contY = QuestHelper.Astrolabe:GetAbsoluteContinentPosition(c, z, cx, cy)
+	--contX, contY = contX / QuestHelper.Astrolabe:GetZoneWidth(c, 0), contY / QuestHelper.Astrolabe:GetZoneHeight(c, 0)
+
+	local solid = { ["continent"] = c, contX - 10, contY - 10, contX + 10, contY - 10, contX + 10, contY + 10, contX - 10, contY + 10 }
+	local ret = {}
+
+	ret.solid = solid
+	ret.criteria = {}
+
+	local questIdx = GetQuestLogIndexByID(qid)
+	local numCrit = GetNumQuestLeaderBoards(questIdx)
+	local loc = { ["loc"] = { { ["p"] = qMapId, ["x"] = contX, ["y"] = contY} } }
+	for i = 1, numCrit do
+		table.insert(ret.criteria, loc)
+	end
+
+	ret.name = GetQuestLogTitle(questIdx)
+	ret.Blizzard = true
+	return ret
+end
+
+local function GetLightHeadedQuestInfo(qid)
+	if not LightHeaded or type(LightHeaded) ~= "table" then return nil end -- LH not loaded
+
+	local npcid, npcname, stype
+	local coords = {}
+
+	_, _, _, _, _, _, _, stype, npcname, npcid = LightHeaded:GetQuestInfo(qid)
+
+	-- Note: If we want the quest giver, we need fields 5, 6 and 7 above, rather than what we have gotten.
+	--
+	if stype == "npc" then
+		local data = LightHeaded:LoadNPCData(tonumber(npcid))
+		if not data then return end -- LightHeaded has no clue about the given NPC, despite giving us the id.
+		for zid,x,y in data:gmatch("([^,]+),([^,]+),([^:]+):") do
+			table.insert(coords, {["p"] = zid, ["x"] = x, ["y"] = y})
+		end
+	end
+
+	--can't return coordinates until we know more about what we are getting and then convert accordingly.
+	for k, v in pairs(coords) do for k1, v1 in pairs(v) do print(k, k1, v1) end end
+	--return coords
+	return nil
+end
+
+local function GetSelfQuestInfo(qid)
+	return nil
+end
+
+-- Returns x and y in yards relative to something... Continent?
+local function GetQuestInfo(qid)
+	assert(type(qid) == "number")
+	local coords = GetSelfQuestInfo(qid)
+	--if not coords then coords = GetLightHeadedQuestInfo(qid) end
+	if not coords then 
+		coords = GetBlizzardQuestInfo(qid) 
+	end
+
+	return coords -- Might still be nil, but if we don't have anything from Blizz, prolly nothing can be done.
+end
 
 function DB_GetItem(group, id, silent, register)
   QuestHelper: Assert(initted)
@@ -144,6 +303,15 @@ function DB_GetItem(group, id, silent, register)
   QuestHelper: Assert(group, string.format("%s %s", tostring(group), tostring(id)))
   QuestHelper: Assert(id, string.format("%s %s", tostring(group), tostring(id)))
   local ite = DBC_Get(group, id)
+  
+  if not ite and group == "flightpaths" then return nil end
+
+  if not ite and group == "quest" then
+	  -- Loop over zones AND floors
+	  -- see QuestRouterLite.lua for specific calls.
+	  -- In the end, the item returned MUST be "formatted" the same as a true QHDB item.
+	ite = GetQuestInfo(id)
+  end
   
   if not ite then
     if type(id) == "string" then QuestHelper: Assert(not id:match("__.*")) end
@@ -232,7 +400,9 @@ function DB_ReleaseItem(ite)
   
   if frequencies[ite] == 0 then
     --print("incinerating", freq_group[ite], freq_id[ite])
-    cache[freq_group[ite]][freq_id[ite]] = nil
+    if cache[freq_group[ite]] then
+      cache[freq_group[ite]][freq_id[ite]] = nil
+    end
     freq_group[ite] = nil
     freq_id[ite] = nil
     

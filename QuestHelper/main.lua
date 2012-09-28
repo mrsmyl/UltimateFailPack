@@ -1,4 +1,4 @@
-QuestHelper_File["main.lua"] = "5.0.5.255r"
+QuestHelper_File["main.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["main.lua"] = GetTime()
 
 local GetTime = QuestHelper_GetTime
@@ -74,8 +74,7 @@ QuestHelper.quest_objects = {}
 QuestHelper.player_level = 1
 QuestHelper.locale = QuestHelper_Locale
 
-QuestHelper.faction = (UnitFactionGroup("player") == "Alliance" and 1) or
-                      (UnitFactionGroup("player") == "Horde" and 2)
+QuestHelper.faction = UnitFactionGroup("player")
 
 --[[ assert(QuestHelper.faction) ]]
 
@@ -182,21 +181,33 @@ local please_submit_enabled = true
 local please_submit_initted = false
 
 local spawned = false
+
+QHQuestsCompleted = false
+
 QH_Event("ADDON_LOADED", function (addonid)
   if addonid ~= "QuestHelper" then return end
   
   -- ONLY FAST STUFF ALLOWED IN HERE
-  
+--[[
+  QH_Event("QUEST_QUERY_COMPLETE", function ()
+    QHQuestsCompleted = GetQuestsCompleted()
+  end)
+
+  QueryQuestsCompleted()
+--]]
+
   -- Use DefaultPref as fallback for unset preference keys.
   setmetatable(QuestHelper_Pref, {__index=QuestHelper_DefaultPref})
   QuestHelper: Assert(QuestHelper_Pref.perfload_scale) -- if this fails, something is very botched
-  
+
+  --[[ 
   if not QuestHelper_Pref.track or QuestHelper_Pref.hide then
     QuestHelper:HideTracker()
   else
     QuestHelper:ShowTracker()  -- to respect the minimized setting
   end
-  
+  --]]
+
   local self = QuestHelper -- whee hack hack hack
   
   QuestHelper_Loadtime["init2_start"] = GetTime()
@@ -215,7 +226,7 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["manager_achievement.lua"] = true,
       ["manager_completed.lua"] = true,
       
-      ["upgrade.lua"] = true,
+--      ["upgrade.lua"] = true,
       ["main.lua"] = true,
       ["recycle.lua"] = true,
       ["objective.lua"] = true,
@@ -224,17 +235,17 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["dodads.lua"] = true,
       ["dodads_triangles.lua"] = true,
       ["teleport.lua"] = true,
-      ["pathfinding.lua"] = true,
+--      ["pathfinding.lua"] = true,
       ["routing.lua"] = true,
       ["custom.lua"] = true,
       ["menu.lua"] = true,
       ["nag.lua"] = true,
       ["comm.lua"] = true,
-      ["mapbutton.lua"] = true,
+--      ["mapbutton.lua"] = true,
       ["help.lua"] = true,
       ["pattern.lua"] = true,
-      ["flightpath.lua"] = true,
-      ["tracker.lua"] = true,
+--      ["flightpath.lua"] = true,
+--      ["tracker.lua"] = true,
       ["objtips.lua"] = true,
       ["tomtom.lua"] = true,
       ["textviewer.lua"] = true,
@@ -247,35 +258,6 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["radar.lua"] = true,
       
       ["config.lua"] = true,
---[[
-      ["static.lua"] = true,
-      ["static_1.lua"] = true,
-      ["static_2.lua"] = true,
-      ["static_deDE.lua"] = true,
-      ["static_deDE_1.lua"] = true,
-      ["static_deDE_2.lua"] = true,
-      ["static_enUS.lua"] = true,
-      ["static_enUS_1.lua"] = true,
-      ["static_enUS_2.lua"] = true,
-      ["static_esES.lua"] = true,
-      ["static_esES_1.lua"] = true,
-      ["static_esES_2.lua"] = true,
-      ["static_esMX.lua"] = true,
-      ["static_esMX_1.lua"] = true,
-      ["static_esMX_2.lua"] = true,
-      ["static_frFR.lua"] = true,
-      ["static_frFR_1.lua"] = true,
-      ["static_frFR_2.lua"] = true,
-      ["static_koKR.lua"] = true,
-      ["static_koKR_1.lua"] = true,
-      ["static_koKR_2.lua"] = true,
-      ["static_ruRU.lua"] = true,
-      ["static_ruRU_1.lua"] = true,
-      ["static_ruRU_2.lua"] = true,
-      ["static_zhTW.lua"] = true,
-      ["static_zhTW_1.lua"] = true,
-      ["static_zhTW_2.lua"] = true,
---]]
       ["collect.lua"] = true,
       ["collect_achievement.lua"] = true,
       ["collect_lzw.lua"] = true,
@@ -300,24 +282,24 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["collect_merchant.lua"] = true,
       ["collect_warp.lua"] = true,
       
-      ["filter_core.lua"] = true,
-      ["filter_base.lua"] = true,
+--      ["filter_core.lua"] = true,
+--      ["filter_base.lua"] = true,
       
-      ["routing_debug.lua"] = true,
-      ["routing_loc.lua"] = true,
-      ["routing_route.lua"] = true,
-      ["routing_core.lua"] = true,
-      ["routing_controller.lua"] = true,
-      ["routing_hidden.lua"] = true,
+--      ["routing_debug.lua"] = true,
+--      ["routing_loc.lua"] = true,
+--      ["routing_route.lua"] = true,
+--      ["routing_core.lua"] = true,
+--      ["routing_controller.lua"] = true,
+--      ["routing_hidden.lua"] = true,
       
-      ["director_quest.lua"] = true,
-      ["director_achievement.lua"] = true,
-      ["director_find.lua"] = true,
+--      ["director_quest.lua"] = true,
+--      ["director_achievement.lua"] = true,
+--      ["director_find.lua"] = true,
       
-      ["db_get.lua"] = true,
+--      ["db_get.lua"] = true,
       
-      ["graph_core.lua"] = true,
-      ["graph_flightpath.lua"] = true,
+--      ["graph_core.lua"] = true,
+--      ["graph_flightpath.lua"] = true,
       
       ["AstrolabeQH/Astrolabe.lua"] = true,
       ["AstrolabeQH/AstrolabeMapMonitor.lua"] = true,
@@ -416,15 +398,15 @@ QH_Event("ADDON_LOADED", function (addonid)
     -- 4.0.3a Breakage related
     local datime = time() + 30 -- We're gonna wait 30 seconds, just in case.
     --while datime >= time() do --[[sleep (busy wait)]] end
-    QuestHelper_BuildZoneLookup()
-    QH_Graph_Init()
-    load_graph_links()
+    --QuestHelper_BuildZoneLookup()
+    --QH_Graph_Init()
+    --load_graph_links()
     
     if QuestHelper_Locale ~= GetLocale() then
       self:TextOut(QHText("LOCALE_ERROR"))
       return
     end
-
+--[[
     if not self:ZoneSanity() then
       self:TextOut(QHFormat("ZONE_LAYOUT_ERROR", expected_version))
       QH_fixedmessage(QHFormat("ZONE_LAYOUT_ERROR", expected_version))
@@ -439,7 +421,7 @@ QH_Event("ADDON_LOADED", function (addonid)
       self:TextOut(QHFormat("NAG_POLLUTED"))
       self:Purge(nil, true, true)
     end
-
+--]]
     local signature = expected_version .. " on " .. GetBuildInfo()
     QuestHelper_Quests[signature] = QuestHelper_Quests[signature] or {}
     QuestHelper_Objectives[signature] = QuestHelper_Objectives[signature] or {}
@@ -456,7 +438,7 @@ QH_Event("ADDON_LOADED", function (addonid)
     QuestHelper.loading_init3:SetPercentage(0.1)
     QH_Collector_Init()
     QuestHelper.loading_init3:SetPercentage(0.5)
-    DB_Init()
+    --DB_Init()
     QuestHelper.loading_init3:SetPercentage(0.9)
     
     self.player_level = UnitLevel("player")
@@ -527,14 +509,14 @@ QH_Event("ADDON_LOADED", function (addonid)
     end
 
     if QuestHelper_Pref.map_button then
-        QuestHelper:InitMapButton()
+--        QuestHelper:InitMapButton()
     end
     
     if QuestHelper_Pref.tomtom_wp_new then
-      self:EnableTomTom()
+--      self:EnableTomTom()
     end
 
-    self.tracker:SetScale(QuestHelper_Pref.track_scale)
+--    self.tracker:SetScale(QuestHelper_Pref.track_scale)
 
     local version = GetAddOnMetadata("QuestHelper", "Version") or "Unknown"
 
@@ -572,6 +554,7 @@ QH_Event("ADDON_LOADED", function (addonid)
       end
     end)
 
+    --[[
     QH_Event({"PARTY_MEMBERS_CHANGED", "UNIT_LEVEL", "RAID_ROSTER_UPDATE"}, function ()
       QH_Filter_Group_Sync()
       QH_Route_Filter_Rescan("filter_quest_level")
@@ -582,20 +565,21 @@ QH_Event("ADDON_LOADED", function (addonid)
     QH_Event({"PARTY_MEMBERS_CHANGED", "RAID_ROSTER_UPDATE"}, function ()
       QH_Questcomm_Sync()
     end)
+    --]]
     
     QH_Event("PLAYER_LEVEL_UP", function ()
       self.player_level = arg1
-      QH_Route_Filter_Rescan("filter_quest_level")
+      --QH_Route_Filter_Rescan("filter_quest_level")
     end)
     
     QH_Event("TAXIMAP_OPENED", function ()
       self:taxiMapOpened()
     end)
-    
+--[[    
     QH_Event({"ZONE_CHANGED", "ZONE_CHANGED_INDOORS", "ZONE_CHANGED_NEW_AREA"}, function()
       QH_Route_Filter_Rescan(nil, true)
     end)
-    
+]]    
     QH_Event("CHAT_MSG_CHANNEL_NOTICE", function()
       if please_submit_enabled and not please_submit_initted then
         please_submit_enabled = QHNagInit()
@@ -967,12 +951,12 @@ Thanks for testing!]], "QuestHelper " .. version_string, 500, 20, 10)
       end
     end
 
-    if nc and nz > 0 and QuestHelper_IndexLookup[nc] then -- QuestHelper_IndexLookup is only initialized after we've finished the preinit step
+    if nc and nz > 0 then --and QuestHelper_IndexLookup[nc] then -- QuestHelper_IndexLookup is only initialized after we've finished the preinit step
       self.c, self.z, self.x, self.y = nc, nz, nx, ny
       local upd_zone = false
-      if self.i ~= QuestHelper_IndexLookup[nc][nz] then upd_zone = true end
-      self.i = QuestHelper_IndexLookup[nc][nz]
-      if upd_zone then QH_Route_Filter_Rescan("filter_zone") end
+      --if self.i ~= QuestHelper_IndexLookup[nc][nz] then upd_zone = true end
+      --self.i = QuestHelper_IndexLookup[nc][nz]
+      --if upd_zone then QH_Route_Filter_Rescan("filter_zone") end
     end
     
     if nc and nz and nx and ny and tc and tx and ty then

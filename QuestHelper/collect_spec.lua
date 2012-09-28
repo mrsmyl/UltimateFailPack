@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_spec.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_spec.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_spec.lua"] = GetTime()
 
 local Bitstream
@@ -16,7 +16,8 @@ local classlookup = {
   ["ROGUE"] = "R",
   ["SHAMAN"] = "S",
   ["WARLOCK"] = "L",
-  ["WARRIOR"] = "W"
+  ["WARRIOR"] = "W",
+  ["MONK"] = "O"
 };
 
 local racelookup = {
@@ -32,7 +33,8 @@ local racelookup = {
   ["Tauren"] = "N",
   ["Undead"] = "U",
   ["BloodElf"] = "B",
-  ["Goblin"] = "L"
+  ["Goblin"] = "L",
+  ["Pandaren"] = "P"
   -- lol i spelled nub
 }
 
@@ -42,11 +44,11 @@ local function GetSpecBolus()
   local _, race = UnitRace("player")
   
   --[[ assert(racelookup[race]) ]]
-  
+ --[[ 
   --local bso = Bitstream.Output(8)
   local talents = {}
   
-  local points = (GetUnspentTalentPoints() or 0)
+  --local points = (GetUnspentTalentPoints() or 0)
   local talents_learned = false
   for t = 1, GetNumTalentTabs() do -- come on. Is this ever not going to be 3? Seriously? Perhaps someday, but not as of Cat.
     local _, tab, _, _, p, _, _, yn = GetTalentTabInfo(t)
@@ -58,9 +60,9 @@ local function GetSpecBolus()
       if talent then talents[tab][talent] = rank end
     end
   end
-
+]]
   local spec = {}
-  spec.talents = talents
+ -- spec.talents = talents
   spec.class = id
   spec.race = race
   spec.level = level

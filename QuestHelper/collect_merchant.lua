@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_merchant.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_merchant.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_merchant.lua"] = GetTime()
 
 -- http://www.penny-arcade.com/comic/2005/01/05/

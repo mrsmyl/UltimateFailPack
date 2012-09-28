@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["director_achievement.lua"] = "5.0.5.255r"
+QuestHelper_File["director_achievement.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["director_achievement.lua"] = GetTime()
 
 local debug_output = false
@@ -289,20 +289,12 @@ function GetAchievementMetaObjective(achievement)
     if data.chunk then
       ttx.solid = horribledupe(data.chunk.solid)
       if data.chunk.loc then for _, v in ipairs(data.chunk.loc) do
--- Ugly database hack
-        if v.p == 26 then v.p = 48 end
-        if v.p == 38 then v.p = 168 end
--- end hack
         table.insert(ttx, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}})
       end end
     end
     
     if data.loc then
       ttx.solid = data.solid
--- Ugly database hack
-      if data.loc.p == 26 then data.loc.p = 48 end
-      if data.loc.p == 38 then data.loc.p = 168 end
--- end hack
       table.insert(ttx, {loc = {x = data.loc.x, y = data.loc.y, c = QuestHelper_ParentLookup[data.loc.p], p = data.loc.p}})
     end
     

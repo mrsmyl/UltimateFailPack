@@ -1,11 +1,11 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect.lua"] = "5.0.5.255r"
+QuestHelper_File["collect.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect.lua"] = GetTime()
 
-local --[[ static ]] MINSVNVERSION = 185
-local --[[ static ]] PURGEDEV = false
+local --[[ static ]] MINSVNVERSION = 255
+local --[[ static ]] PURGEDEV = true
 local debug_output = false
 if QuestHelper_File["collect.lua"] == "Development Version" then debug_output = true end
 
@@ -86,44 +86,18 @@ QH_Collect_LZW_Init(nil, API)
 
 local CompressCollection
 
-function QH_Collector_Init()
-  -- Dunno why, but these statements cause the 1% issue.
-  --[[
-  QH_Collector_UpgradeAll(QuestHelper_Collector)
-  
-  for _, v in pairs(QuestHelper_Collector) do
-    if not v.modified then v.modified = time() - 7 * 24 * 60 * 60 end  -- eugh. Yeah, we set it to be a week ago. It's pretty grim.
-  end
-  --]]
-  QuestHelper_Collector_Version = QuestHelper_Collector_Version_Current
-  
-  local svnversion = "255r"
+function QH_Collector_SetupData()
+  local svnversion = "262r"
   local buildInfo, locale, faction = GetBuildInfo(), GetLocale(), QuestHelper:PlayerFaction()
   local altfaction = ""
-  if faction == ALLIANCE then
+  if faction == "Alliance" then
 	  altfaction = "Alliance"
-  else
+  elseif faction == "Horde" then
 	  altfaction = "Horde"
+  else
+	  altfaction = "Neutral"
   end
   local realm = GetRealmName()
-
-  local remove_sigs = {}
-  for k, v in pairs(QuestHelper_Collector) do
-    local sig = k:match("^(%d)a$") or k:match("^(%d)b$") or k:match("^(%d)r$")
-    if sig then
-      if tonumber(sig) < MINSVNVERSION then
-        table.insert(remove_sigs, sig)
-      end
-    elseif k ~= svnversion then
-      table.insert(remove_sigs, k)
-    elseif k == "$svnversion\$" and PURGEDEV then
-      table.insert(remove_sigs, k)
-    end
-  end
-
-  for _, v in ipairs(remove_sigs) do
-    QuestHelper_Collector[v] = nil
-  end
 
   if not QuestHelper_Collector.created then
 	  QuestHelper_Collector.created = time();
@@ -151,10 +125,61 @@ function QH_Collector_Init()
     QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction] = {}
   end
 
+  local sessiontime = time()
+  if not QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction][sessiontime] then
+    QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction][sessiontime] = {}
+  end
+
   --if not QuestHelper_Collector[sig] or QuestHelper_Collector[sig].compressed then QuestHelper_Collector[sig] = {version = QuestHelper_Collector_Version} end -- fuckin' bullshit, man
-  local QHCData = QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction]
+  return QuestHelper_Collector[svnversion][realm][buildInfo][locale][altfaction][sessiontime]
+end
+
+function QH_Collector_FactionChange()
+  local QHCData = QH_Collector_SetupData() 
+
+  QH_Collect_Achievement_FactionChange(QHCData, API)
+  QH_Collect_Zone_FactionChange(QHCData, API)
+  QH_Collect_Hearth_FactionChange(QHCData, API)
+  QH_Collect_Monster_FactionChange(QHCData, API)
+  QH_Collect_Item_FactionChange(QHCData, API)
+  QH_Collect_Object_FactionChange(QHCData, API)
+  QH_Collect_Flight_FactionChange(QHCData, API)
+  QH_Collect_Quest_FactionChange(QHCData, API)
+  QH_Collect_Warp_FactionChange(QHCData, API)
+end
+
+function QH_Collector_Init()
+  -- Dunno why, but these statements cause the 1% issue.
+  --[[
+  QH_Collector_UpgradeAll(QuestHelper_Collector)
+  
+  for _, v in pairs(QuestHelper_Collector) do
+    if not v.modified then v.modified = time() - 7 * 24 * 60 * 60 end  -- eugh. Yeah, we set it to be a week ago. It's pretty grim.
+  end
+  --]]
+  QuestHelper_Collector_Version = QuestHelper_Collector_Version_Current
+  
+  local remove_sigs = {}
+  for k, v in pairs(QuestHelper_Collector) do
+    local sig = k:match("^(%d)a$") or k:match("^(%d)b$") or k:match("^(%d)r$")
+    if sig then
+      if tonumber(sig) < MINSVNVERSION then
+        table.insert(remove_sigs, sig)
+      end
+    elseif k ~= svnversion then
+      table.insert(remove_sigs, k)
+    elseif k == "$svnversion\$" and PURGEDEV then
+      table.insert(remove_sigs, k)
+    end
+  end
+
+  for _, v in ipairs(remove_sigs) do
+    QuestHelper_Collector[v] = nil
+  end
+
+  local QHCData = QH_Collector_SetupData()
   QuestHelper: Assert(not QHCData.compressed)
-  QHCData.modified = time()
+
   
   QH_Collect_Achievement_Init(QHCData, API)
   QH_Collect_Traveled_Init(QHCData, API)
@@ -177,26 +202,13 @@ function QH_Collector_Init()
     table.insert(QHCData.routing_dump, nt)
     QH_Collect_Routing_Dump = nt
   end
---[[ NOPE DO NOT DO THIS! IT'LL MESS UP THE NEW SYSTEM.  
-  do  -- Clean some stuff up!
-    local obliterate = {}
-    for k, v in pairs(QuestHelper_Collector) do
-      if not v.modified or v.modified + 30 * 24 * 60 * 60 < GetTime() then
-        table.insert(obliterate, k)
-      end
-    end
-    
-    for _, v in ipairs(obliterate) do
-      QuestHelper_Collector[v] = nil
-    end
-  end
---]]
   
   -- So, why do we delay it?
   -- It's simple. People are gonna update to this version, and then they're going to look at the memory usage. Then they will panic because omg this version uses so much more memory, I bet that will somehow hurt my framerates in a way which is not adequately explained!
   -- So instead, we just wait half an hour before compressing. Compression will still get done, and I won't have to deal with panicked comments about how bloated QH has gotten.
   -- addendum: yeah naturally I'm getting all sorts of panicked comments about how bloated qh has gotten, sigh
   --API.Utility_Notifier(GetTime() + (debug_output and 0 or (30 * 60)), function() CompressCollection(QHCData, QuestHelper_Collector[sig_altfaction], API.Utility_Merger, API.Utility_LZW.Compress) end)
+    QH_Event("NEUTRAL_FACTION_SELECT_RESULT", QH_Collector_FactionChange)
 end
 
 QH_OnUpdate(function ()

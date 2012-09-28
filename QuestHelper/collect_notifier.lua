@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_notifier.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_notifier.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_notifier.lua"] = GetTime()
 
 local NotificationsPending = {}

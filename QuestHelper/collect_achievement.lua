@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_achievement.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_achievement.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_achievement.lua"] = GetTime()
 
 local QHCA
@@ -59,10 +59,13 @@ function SetCloc()
   cloc = GetLoc() -- yoink
 end
 
-function QH_Collect_Achievement_Init(QHCData, API)
+function QH_Collect_Achievement_FactionChange(QHCData)
   if not QHCData.achievement then QHCData.achievement = {} end
   QHCA = QHCData.achievement
-  
+end
+
+function QH_Collect_Achievement_Init(QHCData, API)
+  QH_Collect_Achievement_FactionChange(QHCData)
   GetLoc = API.Callback_LocationBolusCurrent
   QuestHelper: Assert(GetLoc)
   

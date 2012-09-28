@@ -1,4 +1,5 @@
 function QuestHelper_GetTime()
+	if inWorld then return theTime end
 	if IsMacClient() then return debugprofilestop()
 	else return debugprofilestop() / 1000
 	end
@@ -6,10 +7,17 @@ end
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["utility.lua"] = "5.0.5.255r"
+QuestHelper_File["utility.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
+local theTime = GetTime()
+local inWorld = false
+
 QuestHelper = CreateFrame("Frame", "QuestHelper", nil)
+local TimeUpdater = CreateFrame("Frame", "TimeUpdater", nil)
+TimeUpdater:SetScript("OnUpdate", function () theTime = GetTime() end)
+TimeUpdater:RegisterEvent("PLAYER_ENTERING_WORLD")
+TimeUpdater:SetScript("OnEvent", function () inWorld = true end)
 
 --[[ static ]] ALLIANCE = 1
 --[[ static ]] HORDE = 2
@@ -131,7 +139,7 @@ function QuestHelper:TextOut(text)
   local theme = self:GetColourTheme()
   DEFAULT_CHAT_FRAME:AddMessage(string.format("|cff%2x%2x%2xQuestHelper: |r%s", theme.message_prefix[1]*255,
                                                                                 theme.message_prefix[2]*255,
-                                                                                theme.message_prefix[3]*255, text),
+                                                                                theme.message_prefix[3]*255, tostring(text)),
                                 theme.message[1],
                                 theme.message[2],
                                 theme.message[3])
@@ -269,7 +277,7 @@ function QuestHelper:UnitPosition(unit)
 end
 
 function QuestHelper:PlayerFaction()
-  return UnitFactionGroup("player") == "Alliance" and ALLIANCE or HORDE
+  return UnitFactionGroup("player")
 end
 
 function QuestHelper:LocationString(i, x, y)

@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["timeslice.lua"] = "5.0.5.255r"
+QuestHelper_File["timeslice.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["timeslice.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["timeslice.lua"] == "Development Version")
@@ -36,6 +36,10 @@ local last_stack = nil
 local yield_ct = 0
 local GetTime = GetTime
 local unyieldable = 0
+function QH_Timeslice_GetUnyieldable()
+	return unyieldable
+end
+
 function QH_Timeslice_PushUnyieldable()
   unyieldable = unyieldable + 1
   --print(unyieldable)
@@ -193,7 +197,7 @@ function QH_Timeslice_Work(time_used, time_this_frame, bonus_time, verbose)
       coroutine_running = true
       QuestHelper: Assert(unyieldable == 0)
       state, err = coroutine.resume(coro.coro)
-      QuestHelper: Assert(unyieldable == 0)
+      QuestHelper: Assert(unyieldable == 0, "Unyieldable was " .. unyieldable)
       coroutine_running = false
     end
     local stop = GetTime()

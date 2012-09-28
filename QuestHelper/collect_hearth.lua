@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_hearth.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_hearth.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_hearth.lua"] = GetTime()
 
 local debug_output = false
@@ -33,10 +33,13 @@ local function OnConfirmBinder(...)
   QHCZ[new_home].Innkeeper.ID = GetMonsterType(UnitGUID("target"))
 end
 
-function QH_Collect_Hearth_Init(QHCData, API)
+function QH_Collect_Hearth_FactionChange(QHCData)
   if not QHCData.hearth then QHCData.hearth = {} end
   QHCZ = QHCData.hearth
-  
+end
+
+function QH_Collect_Hearth_Init(QHCData, API)
+  QH_Collect_Hearth_FactionChange(QHCData)
   QH_Event("ZONE_CHANGED", OnZoneChanged)
   QH_Event("ZONE_CHANGED_INDOORS", OnZoneChanged)
   QH_Event("ZONE_CHANGED_NEW_AREA", OnZoneChanged)

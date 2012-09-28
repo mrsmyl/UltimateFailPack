@@ -1,6 +1,6 @@
 --[[
 Name: LibRangeCheck-2.0
-Revision: $Revision: 113 $
+Revision: $Revision: 124 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/librangecheck-2-0/
 Description: A range checking library based on interact distances and spell ranges
@@ -41,7 +41,7 @@ License: Public Domain
 -- @class file
 -- @name LibRangeCheck-2.0
 local MAJOR_VERSION = "LibRangeCheck-2.0"
-local MINOR_VERSION = tonumber(("$Revision: 113 $"):match("%d+")) + 100000
+local MINOR_VERSION = tonumber(("$Revision: 124 $"):match("%d+")) + 100000
 
 local lib, oldminor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then
@@ -122,12 +122,11 @@ HarmSpells["MAGE"] = {
 FriendSpells["PALADIN"] = {
     635, -- ["Holy Light"], -- 40
     20217, -- ["Blessing of Kings"], -- 30
-    20473, -- ["Holy Shock"], -- 20
 }
 HarmSpells["PALADIN"] = {
     62124, -- ["Hand of Reckoning"], -- 30
-    20473, -- ["Holy Shock"], -- 20
-    20271, -- ["Judgement"], -- 10 (Improved Judgement: +10, +20; Elnightened Judgements: +5, +10)
+--    20473, -- ["Holy Shock"], -- 20
+    20271, -- ["Judgement"], -- 10 (Improved Judgement: +10, +20; Enlightened Judgements: +5, +10)
     853, -- ["Hammer of Justice"], -- 10 (Glyph of Hammer of Justice: +5)
     35395, -- ["Crusader Strike"], -- 5
 } 
@@ -331,6 +330,8 @@ local tremove = tremove
 local BOOKTYPE_SPELL = BOOKTYPE_SPELL
 local GetSpellInfo = GetSpellInfo
 local GetSpellBookItemName = GetSpellBookItemName
+local GetNumSpellTabs = GetNumSpellTabs
+local GetSpellTabInfo = GetSpellTabInfo
 local GetItemInfo = GetItemInfo
 local UnitCanAttack = UnitCanAttack
 local UnitCanAssist = UnitCanAssist
@@ -427,14 +428,16 @@ local function initItemRequests(cacheAll)
     foundNewItems = nil
 end
 
+local function getNumSpells()
+    local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
+    return offset + numSpells
+end
+
 -- return the spellIndex of the given spell by scanning the spellbook
 local function findSpellIdx(spellName)
-    local i = 1
-    while true do
+    for i = 1, getNumSpells() do
         local spell, rank = GetSpellBookItemName(i, BOOKTYPE_SPELL)
-        if not spell then return nil end
         if spell == spellName then return i end
-        i = i + 1
     end
     return nil
 end

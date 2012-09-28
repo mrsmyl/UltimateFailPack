@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_monster.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_monster.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_monster.lua"] = GetTime()
 
 local debug_output = false
@@ -105,10 +105,14 @@ local function MouseoverUnit()
   end
 end
 
-function QH_Collect_Monster_Init(QHCData, API)
+function QH_Collect_Monster_FactionChange(QHCData)
   if not QHCData.monster then QHCData.monster = {} end
   QHCM = QHCData.monster
-  
+end
+
+function QH_Collect_Monster_Init(QHCData, API)
+  QH_Collect_Monster_FactionChange(QHCData)
+
   QH_Event("UPDATE_MOUSEOVER_UNIT", MouseoverUnit)
   QH_Event("CHAT_MSG_SYSTEM", SystemMessage)
   

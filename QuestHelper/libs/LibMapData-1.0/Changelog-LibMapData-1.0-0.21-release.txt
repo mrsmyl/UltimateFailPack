@@ -1,0 +1,25 @@
+------------------------------------------------------------------------
+r100 | kagaro | 2011-12-02 00:28:58 +0000 (Fri, 02 Dec 2011) | 1 line
+Changed paths:
+   A /tags/0.21-release (from /trunk:99)
+
+Tagging as 0.21-release
+------------------------------------------------------------------------
+r99 | kagaro | 2011-12-02 00:27:41 +0000 (Fri, 02 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/library.lua
+
+Updated lib from forum tests that shows game data incorrect
+------------------------------------------------------------------------
+r97 | kagaro | 2011-11-29 12:06:46 +0000 (Tue, 29 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/LibMapData-1.0.toc
+
+toc bump
+------------------------------------------------------------------------
+r96 | kagaro | 2011-11-28 13:01:19 +0000 (Mon, 28 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/library.lua
+
+Adding 4.3 zone data
+------------------------------------------------------------------------

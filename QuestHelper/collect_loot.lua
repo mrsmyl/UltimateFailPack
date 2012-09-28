@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_loot.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_loot.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_loot.lua"] = GetTime()
 
 local debug_output = false
@@ -36,7 +36,7 @@ local function MembersUpdate()
   --QuestHelper:TextOut("MU start")
   members = {} -- we burn a table every time this updates, but whatever
   members_count = 0
-  if GetNumRaidMembers() > 0 then
+  if IsInRaid() then
     -- we is in a raid
     for i = 1, 40 do
       local ite = string.format("raid%d", i)
@@ -47,7 +47,7 @@ local function MembersUpdate()
         --QuestHelper:TextOut(string.format("raid member %s added", UnitName(ite)))
       end
     end
-  elseif GetNumPartyMembers() > 0 then
+  elseif GetNumGroupMembers() > 0 then
     -- we is in a party
     for i = 1, 4 do
       local ite = string.format("party%d", i)
@@ -531,9 +531,7 @@ local function LootOpened()
   for i = 1, GetNumLootItems() do
     tex, name, quant, qual, locked = GetLootSlotInfo(i)
     link = GetLootSlotLink(i)
-    local curr = LootSlotIsCurrency(i)
-    local coin = LootSlotIsCoin(i)
-    local itm = LootSlotIsItem(i)
+    local slotType = GetLootSlotType(i)
 
     if quant == 0 then
       -- moneys
@@ -544,7 +542,7 @@ local function LootOpened()
       tot = (tonumber(gold) or 0) * 10000 + (tonumber(silver) or 0) * 100 + (tonumber(copper) or 0) * 1
       items[PseudoIDs["gold"]] = tot
     else
-      if curr then
+      if slotType == LOOT_SLOT_CURRENCY then
         if not QHC.PseudoIDs[name] then
           QHC.PseudoIDsMin = QHC.PseudoIDsMin - 1
           QHC.PseudoIDs[name] = QHC.PseudoIDsMin
@@ -553,9 +551,9 @@ local function LootOpened()
       else
         if not link and not name then
           local msg = "Texture is " .. tostring(tex) .. " with a quantity of " .. tostring(quant) .. ", a quality of " .. qual .. "."
-          if coin then
+          if slotType == LOOT_SLOT_MONEY then
             QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is coin. " .. msg)
-          elseif itm then
+          elseif slotType == LOOT_SLOT_ITEM then
             QuestHelper:Assert(false, "Loot slot " .. tostring(i) .. " is item. " .. msg)
           else
 	    QuestHelper_ErrorCatcher_ExplicitError(false, "Loot slot " .. tostring(i) .. " is ???. " .. msg)

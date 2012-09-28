@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_item.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_item.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_item.lua"] = GetTime()
 
 local debug_output = false
@@ -53,10 +53,13 @@ local function Tooltipy(self)
   end
 end
 
-function QH_Collect_Item_Init(QHCData, API)
+function QH_Collect_Item_FactionChange(QHCData)
   if not QHCData.item then QHCData.item = {} end
   QHCI = QHCData.item
-  
+end
+
+function QH_Collect_Item_Init(QHCData, API)
+  QH_Collect_Item_FactionChange(QHCData)
   API.Registrar_TooltipHook(Tooltipy)
   
   GetItemType = API.Utility_GetItemType

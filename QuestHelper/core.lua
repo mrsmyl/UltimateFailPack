@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["core.lua"] = "5.0.5.255r"
+QuestHelper_File["core.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["core.lua"] = GetTime()
 
 
@@ -9,6 +9,6 @@ QuestHelper.Astrolabe = QH_Astrolabe_Ready and DongleStub("Astrolabe-0.4-QuestHe
 local walker = QuestHelper:CreateWorldMapWalker()
 QuestHelper.minimap_marker = QuestHelper:CreateMipmapDodad()
 
-QH_Route_RegisterNotification(function (route) walker:RouteChanged(route) end)
-QH_Route_RegisterNotification(function (route) QH_Tracker_UpdateRoute(route) end)
-QH_Route_RegisterNotification(function (route) QuestHelper.minimap_marker:SetObjective(route[2]) end)
+--QH_Route_RegisterNotification(function (route) walker:RouteChanged(route) end)
+--QH_Route_RegisterNotification(function (route) QH_Tracker_UpdateRoute(route) end)
+--QH_Route_RegisterNotification(function (route) QuestHelper.minimap_marker:SetObjective(route[2]) end)

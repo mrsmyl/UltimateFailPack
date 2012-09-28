@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_zone.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_zone.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_zone.lua"] = GetTime()
 
 local debug_output = false
@@ -13,7 +13,8 @@ local GetLoc
 local Merger
 
 local function DoZoneUpdate(label, debugverbose)
-  local zname = string.format("%s@@%s@@%s", GetZoneText(), GetRealZoneText(), GetSubZoneText()) -- I don't *think* any zones will have a @@ in them :D
+  local zt, rzt, szt, mzt = GetZoneText() or "", GetRealZoneText() or "", GetSubZoneText() or "", GetMinimapZoneText() or ""
+  local zname = string.format("%s@@%s@@%s@@%s", zt, rzt, szt, mzt) -- I don't *think* any zones will have a @@ in them :D
   if zname == "@@@@" then return end -- denied
   if not QHCZ[zname] then QHCZ[zname] = {} end
   if not QHCZ[zname][label] then QHCZ[zname][label] = {} end
@@ -29,6 +30,12 @@ local function DoZoneUpdate(label, debugverbose)
   if loc.delayed == 128 and loc.c == 0 and loc.z == 0 and loc.x == -128 and loc.y == -128 then return end
   --if loc == "€\000\000\000€\000\000\000€€€" then return end -- this is kind of the "null value"
   local found = false
+
+  if not znl.locs then
+	  znl.locs = {}
+  end
+
+  table.insert(znl.locs, loc)
   
   -- Commented out, 'cause this module isn't really loaded anymore. I'll remove it after the next commit.
   --Merger.Add(znl, loc, true)
@@ -46,17 +53,18 @@ local function OnUpdate()
   end
 end
 
-function QH_Collect_Zone_Init(QHCData, API)
-  do return end -- we really don't need this anymore
-  
+function QH_Collect_Zone_FactionChange(QHCData)
   if not QHCData.zone then QHCData.zone = {} end
   QHCZ = QHCData.zone
-  
+end
+
+function QH_Collect_Zone_Init(QHCData, API)
+  QH_Collect_Zone_FactionChange(QHCData)  
   QH_Event("ZONE_CHANGED", OnEvent)
   QH_Event("ZONE_CHANGED_INDOORS", OnEvent)
   QH_Event("ZONE_CHANGED_NEW_AREA", OnEvent)
   
-  --API.Registrar_OnUpdateHook(OnUpdate)
+  API.Registrar_OnUpdateHook(OnUpdate)
   
   GetLoc = API.Callback_LocationBolusCurrent
   QuestHelper: Assert(GetLoc)

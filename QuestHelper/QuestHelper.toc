@@ -1,4 +1,4 @@
-## Interface: 40300
+## Interface: 50001
 ## Title: QuestHelper
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Calculates an optimal route for you to follow while questing.
@@ -7,7 +7,7 @@
 ## Notes-esES: Calcula la mejor ruta a seguir para usted.
 ## Notes-esMX: Calcula la mejor ruta a seguir para usted.
 ## Notes-koKR: 노선에 대한 계산을 수행합니다.
-## Version: 5.0.5.255r
+## Version: 5.0.5.262r
 ## Dependencies: QHData-base
 ## OptionalDeps: Cartographer_Waypoints, TomTom, Cartographer_InstanceMaps, !Swatter, tekticles, UnicodeFont, ClearFont2
 ## SavedVariables: QuestHelper_Pref QuestHelper_UID QuestHelper_SaveDate QuestHelper_Errors QuestHelper_Collector QuestHelper_Collector_Version QHDB_Export
@@ -62,13 +62,20 @@ libs\AceConfig-3.0\AceConfig-3.0.xml
 
 bst_astrolabe.lua
 libs\AstrolabeQH\Load.xml
+#MapMonitor.lua
+#AstroLabeToLibMapDataConversionStub.lua
 
 bst_ctl.lua
 libs\ChatThrottleLib\ChatThrottleLib.xml
 
 bst_range.lua
-libs\LibRangeCheck-2.0\CallbackHandler-1.0\CallbackHandler-1.0.xml
-libs\LibRangeCheck-2.0\LibRangeCheck-2.0.lua
+#-libs\LibRangeCheck-2.0\CallbackHandler-1.0\CallbackHandler-1.0.xml
+#-libs\LibRangeCheck-2.0\LibRangeCheck-2.0.lua
+
+bst_mapdata.lua
+libs\LibMapData-1.0\Libs\CallbackHandler-1.0
+libs\LibMapData-1.0\library.lua
+LibMapDataInit.lua
 
 changes.lua
 
@@ -107,7 +114,7 @@ recycle.lua
 pattern.lua
 
 # Database module. Depends on nothing, calls no external functions.
-db_get.lua
+#-db_get.lua
 
 # Timeslice module. Depends on nothing, calls no external functions besides a few basic system-API things.
 timeslice.lua
@@ -122,30 +129,30 @@ manager_achievement.lua
 manager_completed.lua
 
 # Graph module. Depends on nothing, calls no external functions.
-graph_core.lua
-graph_flightpath.lua
+#-graph_core.lua
+#-graph_flightpath.lua
 
 # Routing module. Depends on Timeslice and Filters, calls almost no external functions (handles its own get-player-position stuff via RetrieveRawLocation, but that's it.)
-routing_debug.lua
-routing_loc.lua
-routing_route.lua
-routing_core.lua
-routing_controller.lua
+#-routing_debug.lua
+#-routing_loc.lua
+#-routing_route.lua
+#-routing_core.lua
+#-routing_controller.lua
 # this segment uses the menu system as well
-routing_hidden.lua
+#-routing_hidden.lua
 
 # Filters. Pays attention to QH_pref but not a lot more.
-filter_core.lua
-filter_base.lua
+#-filter_core.lua
+#-filter_base.lua
 
 # New tooltip system. Depends on nothing, calls nothing besides WoW UI.
 tooltip.lua
 
 # Directors
 # Quest module. Depends on Database, Routing, Patterns, Tooltip, and Event Manager, interfaces with WoW UI.
-director_quest.lua
-director_achievement.lua
-director_find.lua
+#-director_quest.lua
+#-director_achievement.lua
+#-director_find.lua
 
 # Map and minimap dodads. Old code. Depends on nothing, interfaces with WoW UI.
 dodads.lua
@@ -160,21 +167,21 @@ core.lua
 radar.lua
 
 
-upgrade.lua
+#-upgrade.lua
 main.lua
 
 objective.lua
 quest.lua
 teleport.lua
-pathfinding.lua
+#-pathfinding.lua
 routing.lua
 custom.lua
 menu.lua
 nag.lua
 comm.lua
-mapbutton.lua
-flightpath.lua
-tracker.lua
+#-mapbutton.lua
+#-flightpath.lua
+#-tracker.lua
 objtips.lua
 textviewer.lua
 help.lua

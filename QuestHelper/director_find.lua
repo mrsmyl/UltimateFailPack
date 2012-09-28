@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["director_find.lua"] = "5.0.5.255r"
+QuestHelper_File["director_find.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["director_find.lua"] = GetTime()
 
 if not QH_API then QH_API = {} end
@@ -71,10 +71,6 @@ local function generate_objective(dbi)
     for _, v in ipairs(dbi.loc) do
       QuestHelper: Assert(QuestHelper_ParentLookup)
       QuestHelper: Assert(QuestHelper_ParentLookup[v.p], v.p)
--- Ugly database hack
-      if v.p == 26 then v.p = 48 end
-      if v.p == 38 then v.p = 168 end
--- end hack    
       table.insert(clooster, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, cluster = clooster, tracker_hidden = true, why = why, map_desc = {QuestHelper:HighlightText(dbi.name)}, tracker_desc = dbi.name, map_suppress_ignore = true, map_custom_menu = function (menu) QuestHelper:CreateMenuItem(menu, QHText("FIND_REMOVE")):SetFunction(function () QH_Route_ClusterRemove(clooster) end) end})
     end
   
@@ -140,124 +136,214 @@ local function QH_FindLoc(locd)
 end
 
 local elders = {
-  ["Alliance"] = {
-    ["Bladeswift"] = {21, 39, 32}, --"Darnassus 39 32",
-    ["Bronzebeard"] = {25, 29, 16}, --"Ironforge 29 16",
-    ["Hammershout"] = {37, 2, 10}, --"Elwynn Forest 34 50"
+  ["Alliance"] = { -- Achievement 915
+    ["Bladeswift"]  = {381, 39, 32, 8718, 1999}, --"Darnassus 39 32",
+    ["Bronzebeard"] = {341, 29, 16, 8866, 1997}, --"Ironforge 29 16",
+    ["Hammershout"] = { 30,  2, 10, 8646, 1998}, --"Elwynn Forest 34 50"
   },
-  ["Horde"] = {
-    ["Darkhorn"] = {1, 52, 60}, --"Orgrimmar 52 60",
-    ["Wheathoof"] = {23, 73.0, 23.3}, --"Thunder Bluff 73.0 23.3",
-    ["Darkcore"] = {45, 67, 38}, --"Undercity 67 38"
+  ["Horde"] = { -- Achievement 914
+    ["Darkhorn"]  = {321, 52,   60,   8677, 1991}, --"Orgrimmar 52 60",
+    ["Wheathoof"] = {362, 73.0, 23.3, 8678, 1993}, --"Thunder Bluff 73.0 23.3",
+    ["Darkcore"]  = {382, 67,   38,   8648, 1992}, --"Undercity 67 38"
   },
-  ["Kalimdor"] = {
-    ["Riversong"] = {2, 35.5, 48.9}, --"Ashenvale 35.5 48.9",
-    ["Skygleam"] = {15, 64.8, 79.3}, --"Azshara 64.8 79.3",
-    ["High Mountain"] = {203, 41.5, 47.5}, --"Southern Barrens 41.5 47.5",
-    ["Moonwarden"] = {11, 48.5, 59.2}, --"Northern Barrens 48.5 59.2",
-    ["Windtotem"] = {11, 68.4, 70}, --"Northern Barrens 68.4 70",
-    ["Starweave"] = {16, 49.5, 19.0}, --"Darkshore 49.5 19.0", NOTE TO SELF -- CONVERTING TO LOOKUP VALUES DON'T FORGET TO CHANGE THE FUNCTION!!!!!!!
-    ["Runetotem"] = {7, 53.2, 43.6}, --"Durotar 53.2 43.6",
-    ["Nightwind"] = {13, 38.3, 52.9}, --"Felwood 38.3 52.9",
-    ["Grimtotem"] = {17, 76.7, 37.9}, --"Feralas 76.7 37.9",
-    ["Mistwalker"] = {17, 62.6, 31.1}, --"Feralas 62.6 31.1",
-    ["Bloodhoof"] = {22, 48, 53}, --"Mulgore 48 53",
-    ["Bladesing"] = {5, 53, 35}, --"Silithus 53 35",
-    ["Primestone"] = {5, 30.7, 13.3}, --"Silithus 30.7 13.3",
-    ["Dreamseer"] = {8, 50, 28}, --"Tanaris 50 28",
-    ["Ragetotem"] = {8, 36, 80}, --"Tanaris 36 80",
-    ["Bladeleaf"] = {24, 56.8, 53.1}, --"Teldrassil 56.8 53.1",
-    ["Skyseer"] = {14, 46.3, 51.0}, --"Thousand Needles 46.3 51.0",
-    ["Morningdew"] = {14, 77.0, 75.6}, --"Thousand Needles 77.0 75.6",
-    ["Thunderhorn"] = {18, 51, 75}, --"Un'Goro Crater 51 75",
-    ["Brightspear"] = {19, 53.0, 56.7}, --"Winterspring 53.0 56.7",
-    ["Stonespire"] = {19, 60.0, 50.0}, --"Winterspring 60.0 50.0",
+  ["Kalimdor"] = { -- Achievement 911
+    ["Bladeleaf"]     = { 41, 56.8, 53.1, 8715, 1951}, --"Teldrassil 56.8 53.1",
+    ["Bladesing"]     = {261, 53,   35,   8719, 1966}, --"Silithus 53 35",
+    ["Bloodhoof"]     = {  9, 48,   53,   8673, 1953}, --"Mulgore 48 53",
+    ["Brightspear"]   = {281, 53.0, 56.7, 8726, 1963}, --"Winterspring 53.0 56.7",
+    ["Dreamseer"]     = {161, 50,   28,   8684, 1961}, --"Tanaris 50 28",
+    ["Grimtotem"]     = {121, 76.7, 37.9, 8679, 1955}, --"Feralas 76.7 37.9",
+    ["High Mountain"] = {607, 41.5, 47.5, 8686, 1919}, --"Southern Barrens 41.5 47.5",
+    ["Mistwalker"]    = {121, 62.6, 31.1, 8685, 1956}, --"Feralas 62.6 31.1",
+    ["Moonwarden"]    = { 11, 48.5, 59.2, 8717, 1918}, --"Northern Barrens 48.5 59.2",
+    ["Morningdew"]    = { 61, 77.0, 75.6, 8724, 1959}, --"Thousand Needles 77.0 75.6",
+    ["Nightwind"]     = {182, 38.3, 52.9, 8723, 1957}, --"Felwood 38.3 52.9",
+    ["Primestone"]    = {261, 30.7, 13.3, 8654, 1965}, --"Silithus 30.7 13.3",
+    ["Ragetotem"]     = {161, 36,   80,   8671, 1960}, --"Tanaris 36 80",
+    ["Riversong"]     = { 43, 35.5, 48.9, 8725, 1954}, --"Ashenvale 35.5 48.9",
+    ["Runetotem"]     = {  4, 53.2, 43.6, 8670, 1916}, --"Durotar 53.2 43.6",
+    ["Skygleam"]      = {181, 64.8, 79.3, 8720, 1917}, --"Azshara 64.8 79.3",
+    ["Skyseer"]       = { 61, 46.3, 51.0, 8682, 1958}, --"Thousand Needles 46.3 51.0",
+    ["Starweave"]     = { 42, 49.5, 19.0, 8721, 1952}, --"Darkshore 49.5 19.0",
+    ["Stonespire"]    = {281, 60.0, 50.0, 8672, 1964}, --"Winterspring 60.0 50.0",
+    ["Thunderhorn"]   = {201, 51,   75,   8681, 1962}, --"Un'Goro Crater 51 75",
+    ["Windtotem"]     = { 11, 68.4, 70,   8680, 1920}, --"Northern Barrens 68.4 70",
   },
-  ["Eastern Kingdoms"] = {
-    ["Bellowrage"] = {33, 54, 49}, --"Blasted Lands 54 49",
-    ["Rumblerock"] = {40, 70, 45}, --"Burning Steppes 70 45",
-    ["Dawnstrider"] = {40, 53, 24}, --"Burning Steppes 53 24",
-    ["Goldwell"] = {28, 53.9, 49.9}, --"Dun Morogh 53 49",
-    ["Windrun"] = {34, 35.6, 68.8}, --"Eastern Plaguelands 35 68",
-    ["Snowcrown"] = {34, 75.7, 54.5}, --"Eastern Plaguelands 75.7 54.5",
-    ["Stormbrow"] = {37, 40, 63}, --"Elwynn Forest 40 63",
-    ["Highpeak"] = {42, 50, 48}, --"Hinterlands 50 48",
-    ["Silvervein"] = {29, 33, 46}, --"Loch Modan 33 46",
-    ["Ironband"] = {32, 21, 79}, --"Searing Gorge 21 79",
-    ["Obsidian"] = {35, 45, 41}, --"Silverpine Forest 45 41",
-    ["Starglade"] = {38, 63, 22}, --"Stranglethorn Vale 63 22", -- Jungle 71 34
-    ["Winterhoof"] = {38, 37, 39}, --"Stranglethorn Vale 37 79", -- Cape 39 72
-    ["Graveborn"] = {43, 61, 53}, --"Tirisfal Glades 61 53",
-    ["Moonstrike"] = {50, 69, 73}, --"Western Plaguelands 69 73",
-    ["Meadowrun"] = {50, 63.5, 36.2}, --"Western Plaguelands 63 36",
-    ["Skychaser"] = {49, 56, 47}, --"Westfall 56 47"
+  ["Eastern Kingdoms"] = { -- Achievement 912
+    ["Bellowrage"] = {19, 54, 49, 8647}, --"Blasted Lands 54 49",
+    ["Rumblerock"] = {29, 70, 45, 8636}, --"Burning Steppes 70 45",
+    ["Dawnstrider"] = {29, 53, 24, 8683}, --"Burning Steppes 53 24",
+    ["Goldwell"] = {27, 53.9, 49.9, 8653}, --"Dun Morogh 53 49",
+    ["Windrun"] = {23, 35.6, 68.8, 8688}, --"Eastern Plaguelands 35 68",
+    ["Snowcrown"] = {23, 75.7, 54.5, 8650}, --"Eastern Plaguelands 75.7 54.5",
+    ["Stormbrow"] = {30, 40, 63, 8649}, --"Elwynn Forest 40 63",
+    ["Highpeak"] = {26, 50, 48, 8643}, --"Hinterlands 50 48",
+    ["Silvervein"] = {35, 33, 46, 8642}, --"Loch Modan 33 46",
+    ["Ironband"] = {28, 21, 79, 8651}, --"Searing Gorge 21 79",
+    ["Obsidian"] = {21, 45, 41, 8645}, --"Silverpine Forest 45 41",
+    ["Starglade"] = {37, 71, 34, 8716}, --"Northern Stranglethorn 71 34"
+    ["Winterhoof"] = {673, 39, 72, 8674}, --"The Cape of Stranglethorn 39 72"
+    ["Graveborn"] = {20, 61, 53, 8652}, --"Tirisfal Glades 61 53",
+    ["Moonstrike"] = {22, 69, 73, 8714}, --"Western Plaguelands 69 73",
+    ["Meadowrun"] = {22, 63.5, 36.2, 8722}, --"Western Plaguelands 63 36",
+    ["Skychaser"] = {39, 56, 47, 8675}, --"Westfall 56 47"
   },
-  ["Northrend"] = {
-    ["Arp"] = {65, 57, 44}, --"Borean Tundra 57 44",
-    ["Northal"] = {65, 34, 34}, --"Borean Tundra 34 34",
-    ["Pamuya"] = {65, 43, 50}, --"Borean Tundra 43 50",
-    ["Sardis"] = {65, 59, 66}, --"Borean Tundra 59 66",
-    ["Morthie"] = {68, 30, 56}, --"Dragonblight 30 56",
-    ["Skywarden"] = {68, 35, 48}, --"Dragonblight 35 48",
-    ["Thoim"] = {68, 49, 78}, --"Dragonblight 49 78",
-    ["Beldak"] = {69, 61, 28}, --"Grizzly Hills 61 28",
-    ["Lunaro"] = {69, 81, 37}, --"Grizzly Hills 81 37",
-    ["Whurain"] = {69, 64, 47}, --"Grizzly Hills 64 47",
-    ["Bluewolf"] = {74, 49, 14}, --"Wintergrasp 49 14",
-    ["Sandrene"] = {72, 50, 64}, --"Sholazar Basin 50 64",
-    ["Wanikaya"] = {72, 64, 49}, --"Sholazar Basin 64 49",
-    ["Fargal"] = {73, 29, 74}, --"Storm Peaks 29 74",
-    ["Graymane"] = {73, 41, 85}, --"Storm Peaks 41 85",
-    ["Muraco"] = {73, 64, 51}, --"Storm Peaks 64 51",
-    ["Stonebeard"] = {73, 31, 38}, --"Storm Peaks 31 38",
-    ["Tauros"] = {75, 59, 56}, --"Zul'Drak 59 56"
+  ["Northrend"] = { -- Achievement 1396
+    ["Arp"]        = {486, 57, 44, 13033, 5145}, --"Borean Tundra 57 44",
+    ["Northal"]    = {486, 34, 34, 13016, 5146}, --"Borean Tundra 34 34",
+    ["Pamuya"]     = {486, 43, 50, 13029, 5157}, --"Borean Tundra 43 50",
+    ["Sardis"]     = {486, 59, 66, 13012, 5141}, --"Borean Tundra 59 66",
+    ["Morthie"]    = {488, 30, 56, 13014, 5143}, --"Dragonblight 30 56",
+    ["Skywarden"]  = {488, 35, 48, 13031, 5159}, --"Dragonblight 35 48",
+    ["Thoim"]      = {488, 49, 78, 13019, 5154}, --"Dragonblight 49 78",
+    ["Beldak"]     = {490, 61, 28, 13013, 5142}, --"Grizzly Hills 61 28",
+    ["Lunaro"]     = {490, 81, 37, 13025, 5149}, --"Grizzly Hills 81 37",
+    ["Whurain"]    = {490, 64, 47, 13030, 5158}, --"Grizzly Hills 64 47",
+    ["Bluewolf"]   = {501, 49, 14, 13026, 5150}, --"Wintergrasp 49 14",
+    ["Sandrene"]   = {493, 50, 64, 13018, 5147}, --"Sholazar Basin 50 64",
+    ["Wanikaya"]   = {493, 64, 49, 13024, 5148}, --"Sholazar Basin 64 49",
+    ["Fargal"]     = {495, 29, 74, 13015, 5144}, --"Storm Peaks 29 74",
+    ["Graymane"]   = {495, 41, 85, 13028, 5155}, --"Storm Peaks 41 85",
+    ["Muraco"]     = {495, 64, 51, 13032, 5160}, --"Storm Peaks 64 51",
+    ["Stonebeard"] = {495, 31, 38, 13020, 5156}, --"Storm Peaks 31 38",
+    ["Tauros"]     = {496, 59, 56, 13027, 5151}, --"Zul'Drak 59 56"
+  },
+  ["Cataclysm"] = { -- Achievement 6006
+	  ["Moonlance"]   = {615, 57, 86, 29738, 18154}, -- Biel'aran Ridge, Shimmering Expanse
+	  ["Windsong"]    = {606, 27, 62, 29739, 18156}, -- Sanctuary of Malorne, Hyjal
+	  ["Evershade"]   = {606, 63, 23, 29740, 18155}, -- Nordrassil, Hyjal
+	  ["Stonebrand"]  = {640, 50, 55, 29735, 18157}, -- Temple of Earth, Deepholm
+	  ["Deepforge"]   = {640, 28, 69, 29734, 18158}, -- Stonehearth, Deepholm
+	  ["Menkhaf"]     = {720, 66, 19, 29742, 18159}, -- Khartut's Tomb, Uldum
+	  ["Sekhemi"]     = {720, 32, 63, 29741, 18160}, -- Ruins of Ammon, Uldum
+	  ["Firebeard"]   = {700, 51, 71, 29737, 18161}, -- Dunward Town Square, Dunward Ruins, Twilight Highlands
+	  ["Darkfeather"] = {700, 52, 33, 29736, 18162} -- Thundermar Ruins, Twilight Highlands
+  },
+  --[===[ Placeholder for Elders of the Dungeons. If enabled prior to 2013, stored coordinates should be the map ID of the zone where the instance is located and the coordinates of the entrance. With any luck, by 2013 dungeons will be mapable. Coordinates listed in comment after each elder need to have floor numbers determined, where necessary, ASAP.
+  ["Dungeons"] = { -- Achievement 910
+  	["Wildmane"]    = {,,,8676,  1910}, -- Zul'Farrak 34.52 39.35
+	["Splitrock"]   = {,,,8635,  1912}, -- Maraudon 51.47, 93.7
+	["Morndeep"]    = {,,,8619,  1914}, -- Blackrock Depths 50.52 62.97
+	["Jarten"]      = {,,,13017, 5259}, -- Utgarde Keep 47.4, 69.54
+	["Nurgen"]      = {,,,13022, 5261}, -- Azjol-Nerub 21.78 43.62
+	["Ohanzee"]     = {,,,13065, 5263}, -- Gundrak 45.7 61.55
+	["Chogan'gada"] = {,,,13067, 5265}, -- Utgarde Pinnacle 47.71 22.99
+	["Starsong"]    = {,,,8713,  1911}, -- Sunken Temple 62.92 34.46
+	["Stonefort"]   = {,,,8644,  1913}, -- Blackrock Spire 61.82 40
+	["Farwhisper"]  = {,,,8727,  1915}, -- Stratholme 78.62 22.14
+	["Igasho"]      = {,,,13021, 5260}, -- The Nexus 55.18 64.74
+	["Kilias"]      = {,,,13023, 5262}, -- Drak'tharon Keep 68.85 79.17
+	["Yurauk"]      = {,,,13066, 5264} -- Halls of Stone 29.39 62.03
   }
+  --]===]
 }
 
-local function QH_FindElders(elder_or_achievement, all_elders)
+trackedElders = {}
+
+local function UpdateElders()
+  local elder, elderinfo
+  local qid = GetQuestID()
+  for elder, elderinfo in pairs(trackedElders) do
+    local z, x, y, id = unpack(elderinfo)
+    if id == qid then
+      QH_FindCoord(x, y, z, elder)
+      trackedElders[elder] = nil
+      return
+    end
+  end
+end
+
+QH_Event("QUEST_COMPLETE", UpdateElders)
+
+local function QH_FindElders(elder_or_achievement, all_elders, forAchievement)
+  if elder_or_achievement == "CLEAR" then
+    for elder, elderinfo in pairs(trackedElders) do
+      local z, x, y = unpack(elderinfo)
+      QH_FindCoord(x, y, z, elder)
+    end
+
+    trackedElders = {}
+    return
+  end
+
   local achievement_match, elder_match = false, false
+
+  local elderCount = 0
+
   for achievement, eldrs in pairs(elders) do
     if not all_elders then
       if elder_or_achievement == string.upper(achievement) then achievement_match = true end
     end
 
-    for elder, elder_loc in pairs(eldrs) do
-      if not all_elders then
-        if achievement_match then -- just add it
-          local locz, locx, locy = unpack(elder_loc)
+    for elder, elder_info in pairs(eldrs) do
+      local locz, locx, locy, qid, aid = unpack(elder_info)
+      local okToAdd = true
+      if forAchievement then
+	if aid then
+	  local _, _, completed = GetAchievementCriteriaInfo(aid)
+	  if completed then okToAdd = false end
+	end
+      elseif qid and QHQuestsCompleted and QHQuestsCompleted[qid] then
+        okToAdd = false
+      end
+      if okToAdd then
+
+	if not all_elders then
+          if achievement_match then -- just add it
+            QH_FindCoord(locx, locy, locz, elder)
+	    if trackedElders[elder] then trackedElders[elder] = nil
+            else 
+	      trackedElders[elder] = elder_info
+	      elderCount = elderCount + 1
+	    end
+          elseif elder_or_achievement == string.upper(elder) then -- We have input and it's not an achievement, so it must be an elder.
+            elder_match = true
+            QH_FindCoord(locx, locy, locz, elder)
+	    if trackedElders[elder] then trackedElders[elder] = nil
+	    else 
+	      trackedElders[elder] = elder_info
+	      elderCount = elderCount + 1
+	    end
+
+            break -- We've found him or her.
+          end -- No need for else here. We alread know we don't need everything so we either have an achievement or we have an elder.
+        else -- We came in without an input, therefore we add all.
           QH_FindCoord(locx, locy, locz, elder)
-        elseif elder_or_achievement == string.upper(elder) then -- We have input and it's not an achievement, so it must be an elder.
-          elder_match = true
-          local locz, locx, locy = unpack(elder_loc)
-          QH_FindCoord(locx, locy, locz, elder)
-          break -- We've found him or her.
-        end -- No need for else here. We alread know we don't need everything so we either have an achievement or we have an elder.
-      else -- We came in without an input, therefore we add all.
-        local locz, locx, locy = unpack(elder_loc)
-        QH_FindCoord(locx, locy, locz, elder)
+	  if trackedElders[elder] then trackedElders[elder] = nil
+	  else 
+	    trackedElders[elder] = elder_info
+	    elderCount = elderCount + 1
+	  end
+        end
       end
     end
 
     if achievement_match or elder_match then break end -- We've done our match.
   end
+
+  if elderCount == 0 then QuestHelper:TextOut("No elders were added.") end
 end
 
 function QH_FindName(name)
   local locd = name:match("^loc (.+)")
-  local elder_loc
+  local forAchievement = false, elder_loc, temp
   
   if not locd then
     if name:find("^elders?") then
-      elder_loc = name:match("elders? (.+)")
-      if not elder_loc then elder_loc = true end
+      if name:find("^elders? achievement") then 
+        forAchievement = true
+        elder_loc = name:match("elders? achievement (.+)")
+      else
+	elder_loc = name:match("elders? (.+)")
+      end
     end
   end
 
   if locd then
     QH_FindLoc(locd)
   elseif elder_loc then
-    if elder_loc == true then QH_FindElders(nil, true)
-    else QH_FindElders(string.upper(elder_loc))
+    if elder_loc == true then QH_FindElders(nil, true, forAchievement)
+    else QH_FindElders(string.upper(elder_loc), false, forAchievement)
     end
   else
     if not DB_Ready() then
@@ -286,10 +372,6 @@ function QH_FindName(name)
       --[[ assert(dbi) ]]
       
       if dbi.loc then
--- Ugly database hack
-        if dbi.loc.p == 26 then dbi.loc.p = 48 end
-        if dbi.loc.p == 38 then dbi.loc.p = 168 end
--- end hack        
         table.insert(found_db, dbi)
         
         if has_name[dbi.name] then needs_postfix[dbi.name] = true end

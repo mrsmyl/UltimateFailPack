@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_equip.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_equip.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_equip.lua"] = GetTime()
 
 local debug_output = false
@@ -34,11 +34,11 @@ local invloc_lookup_proto = {
   INVTYPE_2HWEAPON = {"MainHandSlot"},
   INVTYPE_WEAPONMAINHAND = {"MainHandSlot"},
   INVTYPE_WEAPONOFFHAND = {"SecondaryHandSlot"},
-  INVTYPE_HOLDABLE = {"RangedSlot"},
-  INVTYPE_RANGED = {"RangedSlot"},
-  INVTYPE_THROWN = {"RangedSlot"},
-  INVTYPE_RANGEDRIGHT = {"RangedSlot"},
-  INVTYPE_RELIC = {"RangedSlot"},
+  --INVTYPE_HOLDABLE = {"RangedSlot"},
+  --INVTYPE_RANGED = {"RangedSlot"},
+  --INVTYPE_THROWN = {"RangedSlot"},
+  --INVTYPE_RANGEDRIGHT = {"RangedSlot"},
+  --INVTYPE_RELIC = {"RangedSlot"},
 }
 
 local invloc_lookup = {}
@@ -114,9 +114,13 @@ local function Looted(message)
   end
 end
 
-function QH_Collect_Equip_Init(QHCData, API)
+function QH_Collect_Equip_FactionChange(QHCData)
   if not QHCData.item then QHCData.item = {} end
   QHCI = QHCData.item
+end
+
+function QH_Collect_Equip_Init(QHCData, API)
+  QH_Collect_Equip_FactionChange(QHCData)
   
   Patterns = API.Patterns
   QuestHelper: Assert(Patterns)

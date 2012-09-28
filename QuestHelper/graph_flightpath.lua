@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["graph_flightpath.lua"] = "5.0.5.255r"
+QuestHelper_File["graph_flightpath.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["graph_flightpath.lua"] = GetTime()
 
 -- Name to Name, gives {time, accurate}

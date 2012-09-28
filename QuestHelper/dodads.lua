@@ -1,6 +1,6 @@
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["dodads.lua"] = "5.0.5.255r"
+QuestHelper_File["dodads.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["dodads.lua"] = GetTime()
 
 local ofs = 0.000723339 * (GetScreenHeight()/GetScreenWidth() + 1/3) * 70.4;
@@ -425,6 +425,26 @@ local function rightclick_menu(obj)
     
     menu:ShowAtCursor()
   end
+end
+
+function QuestHelper:PlaceIconOnWorldMap( worldMapFrame, icon, map, dLvl, xPos, yPos )
+	assert(type(worldMapFrame) == "table")
+	assert(worldMapFrame.GetWidth and worldmapFrame.GetHeight)
+	assert(type(icon) == "table")
+	assert(icon.SetPoint and icon.ClearAllPoints)
+	assert(type(map) == "number")
+	assert(type(dLvl) == "number" or dLvl == nil)
+	assert(type(xPos) == "number")
+	assert(type(yPos) == "number")
+
+	if dLvl == nil then dLvl = 0 end
+	if map == -1 then return end -- Can't do anything without continent knowledge
+
+	local nMap, nFloor = GetCurrentMapAreaID(), GetCurrentMapDungeonLevel() or 0
+
+	local nCont
+
+	if nMap == -1 then cont = GetCurrentMapContinent() end
 end
 
 function QuestHelper:CreateWorldMapDodad(objective, nxt)

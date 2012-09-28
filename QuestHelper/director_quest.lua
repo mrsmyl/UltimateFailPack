@@ -1,6 +1,6 @@
 
 local GetTime = QuestHelper_GetTime
-QuestHelper_File["director_quest.lua"] = "5.0.5.255r"
+QuestHelper_File["director_quest.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["director_quest.lua"] = GetTime()
 
 local debug_output = false
@@ -48,10 +48,6 @@ local function AppendObjlinks(target, source, tooltips, icon, last_name, map_lin
       for m, v in ipairs(source.loc) do
         QuestHelper: Assert(target)
         QuestHelper: Assert(QuestHelper_ParentLookup)
--- Ugly database hack
-        if v.p == 26 then v.p = 48 end -- Alterac Mountains merged to Hillsbrad Foothills
-        if v.p == 38 then v.p = 168 end -- Ditto Stranglethorn
--- end hack        
         QuestHelper: Assert(QuestHelper_ParentLookup[v.p], v.p)
         table.insert(target, {loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, path_desc = copy(map_lines), icon_id = icon or 6})
       end
@@ -121,6 +117,7 @@ local function GetQuestMetaobjective(questid, lbcount, qindex)
   if not quest_list[questid] then
     local q = DB_GetItem("quest", questid, true, true)
     
+    --[==[
     if not lbcount then
       QuestHelper: TextOut("Missing lbcount, guessing wildly")
       if q and q.criteria then
@@ -132,16 +129,19 @@ local function GetQuestMetaobjective(questid, lbcount, qindex)
         lbcount = 0 -- heh
       end
     end
+    --]==]
     
     -- just doublechecking here
     if not QuestCriteriaWarningBroadcast and q and q.criteria then for k, v in pairs(q.criteria) do
       if type(k) == "number" and k > lbcount then
-        --QuestHelper:TextOut(string.format("Too many stored objectives for this quest, please report on the Questhelper homepage (%s %s %s)", questid, lbcount, k))  -- we're just going to hide this for now
+        QuestHelper:TextOut(string.format("Too many stored objectives for this quest, please report on the Questhelper homepage (%s %s %s)", questid, lbcount, k))  -- we're just going to hide this for now
+	--[==[
         if qindex then
           QuestHelper_ErrorCatcher_ExplicitError(false, string.format("Too many stored objectives (%s %s %s %s)", questid, lbcount, k, select(1, GetQuestLogTitle(qindex))))
         else
           QuestHelper_ErrorCatcher_ExplicitError(false, string.format("Too many stored objectives (%s %s %s %s)", questid, lbcount, k, v))
         end
+	--]==]
         QuestCriteriaWarningBroadcast = true
       end
     end end
@@ -159,13 +159,6 @@ local function GetQuestMetaobjective(questid, lbcount, qindex)
       if qindex < 0 or (desc and typ ~= "log") then -- Ignore if no description.
         --QuestHelper:TextOut(string.format("critty %d %d", k, c.loc and #c.loc or -1))
       
---[[
-        if done then
-          print(string.format("Quest %s, Objective %s('%s') is done.", qindex, i, desc))
-        else
-          print(string.format("Quest %s, Objective %s('%s') is not done.", qindex, i, desc))
-        end
-]]
         ttx.tooltip_canned = {}
       
         if q and q.criteria and q.criteria[i] then
@@ -181,7 +174,7 @@ local function GetQuestMetaobjective(questid, lbcount, qindex)
         end
       
         if #ttx == 0 then
-          table.insert(ttx, {loc = {x = 5000, y = 5000, c = 0, p = 2}, icon_id = 7, type_quest_unknown = true, map_desc = {"Unknown"}})  -- this is Ashenvale, for no particularly good reason
+          table.insert(ttx, {loc = {x = 5000, y = 5000, c = 0, p = 43}, icon_id = 7, type_quest_unknown = true, map_desc = {"Unknown"}})  -- this is Ashenvale, for no particularly good reason
           ttx.type_quest_unknown = true
         end
       
@@ -201,32 +194,29 @@ local function GetQuestMetaobjective(questid, lbcount, qindex)
     end
     
     do
-      local ttx = {type_quest_finish = true}
-      --QuestHelper:TextOut(string.format("finny %d", q.finish.loc and #q.finish.loc or -1))
-      if q and q.finish and q.finish.loc then
-        ttx.solid = horribledupe(q.finish.solid)
-        for m, v in ipairs(q.finish.loc) do
-          --print(v.rc, v.rz)
-          --print(QuestHelper_IndexLookup[v.rc])
-          --print(QuestHelper_IndexLookup[v.rc][v.rz])
--- Ugly database hack
-          if v.p == 26 then v.p = 48 end
-          if v.p == 38 then v.p = 168 end
--- end hack
-          table.insert(ttx, {desc = "Turn in quest", why = ite, loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, tracker_hidden = true, cluster = ttx, icon_id = 7, type_quest = ite.type_quest})
+      if q and q.finish and q.loc then
+        local ttx = {type_quest_finish = true}
+        --QuestHelper:TextOut(string.format("finny %d", q.finish.loc and #q.finish.loc or -1))
+        if q and q.finish and q.finish.loc then
+          ttx.solid = horribledupe(q.finish.solid)
+          for m, v in ipairs(q.finish.loc) do
+            --print(v.rc, v.rz)
+            --print(QuestHelper_IndexLookup[v.rc])
+            --print(QuestHelper_IndexLookup[v.rc][v.rz])
+            table.insert(ttx, {desc = "Turn in quest", why = ite, loc = {x = v.x, y = v.y, c = QuestHelper_ParentLookup[v.p], p = v.p}, tracker_hidden = true, cluster = ttx, icon_id = 7, type_quest = ite.type_quest})
+          end
         end
-      end
       
-      if #ttx == 0 then
-        table.insert(ttx, {desc = "Turn in quest", why = ite, loc = {x = 5000, y = 5000, c = 0, p = 2}, tracker_hidden = true, cluster = ttx, icon_id = 7, type_quest = ite.type_quest, type_quest_unknown = true})  -- this is Ashenvale, for no particularly good reason
-        ttx.type_quest_unknown = true
-      end
+        if #ttx == 0 then
+          table.insert(ttx, {desc = "Turn in quest", why = ite, loc = {x = 5000, y = 5000, c = 0, p = 43}, tracker_hidden = true, cluster = ttx, icon_id = 7, type_quest = ite.type_quest, type_quest_unknown = true})  -- this is Ashenvale, for no particularly good reason
+          ttx.type_quest_unknown = true
+        end
       
-      ite.finish = ttx
+        ite.finish = ttx
+      end
     end
     
     quest_list[questid] = ite
-    
     if q then DB_ReleaseItem(q) end
   end
   
@@ -812,7 +802,9 @@ function QH_UpdateQuests(force)
               end
             end
           
-            db.finish.tooltip_defer_questname = title -- we're using this as our fallback right now
+	    if db.finish then
+              db.finish.tooltip_defer_questname = title -- we're using this as our fallback right now
+            end
           
             next_chunks[id] = chunk
           

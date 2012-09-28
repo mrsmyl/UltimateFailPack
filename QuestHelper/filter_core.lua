@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["filter_core.lua"] = "5.0.5.255r"
+QuestHelper_File["filter_core.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["filter_core.lua"] = GetTime()
 
 function QH_MakeFilter(name, func, params)

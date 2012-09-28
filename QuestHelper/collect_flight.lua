@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_flight.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_flight.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_flight.lua"] = GetTime()
 
 local debug_output = false
@@ -99,11 +99,14 @@ local function OnUpdate()
   end
 end
 
-function QH_Collect_Flight_Init(QHCData, API)
+function QH_Collect_Flight_FactionChange(QHCData)
   if not QHCData.flight_master then QHCData.flight_master = {} end
   if not QHCData.flight_times then QHCData.flight_times = {} end
   QHCFM, QHCFT = QHCData.flight_master, QHCData.flight_times
-  
+end
+
+function QH_Collect_Flight_Init(QHCData, API)
+  QH_Collect_Flight_FactionChange(QHCData)
   IsMonsterGUID = API.Utility_IsMonsterGUID
   GetMonsterType = API.Utility_GetMonsterType
   QuestHelper: Assert(IsMonsterGUID)

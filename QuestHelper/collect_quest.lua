@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_quest.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_quest.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_quest.lua"] = GetTime()
 
 local debug_output = false
@@ -402,10 +402,13 @@ local function MouseoverUnit()
   end
 end
 
-function QH_Collect_Quest_Init(QHCData, API)
+function QH_Collect_Quest_FactionChange(QHCData)
   if not QHCData.quest then QHCData.quest = {} end
   QHCQ = QHCData.quest
-  
+end
+
+function QH_Collect_Quest_Init(QHCData, API)
+  QH_Collect_Quest_FactionChange(QHCData)
   GetQuestType = API.Utility_GetQuestType
   GetItemType = API.Utility_GetItemType
   IsMonsterGUID = API.Utility_IsMonsterGUID

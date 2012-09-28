@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_warp.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_warp.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_warp.lua"] = GetTime()
 
 local debug_output = false
@@ -58,10 +58,13 @@ local function OnUpdate()
   last_delayed, last_rc, last_rz, last_rx, last_ry, last_valid = now_delayed, now_rc, now_rz, now_rx, now_ry, now_valid
 end
 
-function QH_Collect_Warp_Init(QHCData, API)
+function QH_Collect_Warp_FactionChange(QHCData)
   if not QHCData.warp then QHCData.warp = {} end
   QHCW = QHCData.warp
-  
+end
+
+function QH_Collect_Warp_Init(QHCData, API)
+  QH_Collect_Warp_FactionChange(QHCData)
   API.Registrar_OnUpdateHook(OnUpdate)
   
   GetLoc = API.Callback_LocationBolusCurrent

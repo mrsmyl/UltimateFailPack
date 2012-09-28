@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["routing_core.lua"] = "5.0.5.255r"
+QuestHelper_File["routing_core.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["routing_core.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["routing_core.lua"] == "Development Version")
@@ -1257,10 +1257,6 @@ function QH_Route_Core_ClusterAdd(clust, clustid_used)
   
   -- if we're doing hackery, clust will just be an empty table and we'll retrofit stuff later
   for _, v in ipairs(clust) do
--- Ugly database hack
-    if v.loc.p == 26 then v.loc.p = 48 end -- Somehow I doubt this is the problem location, but it IS a nice place to make a translation.
-    if v.loc.p == 38 then v.loc.p = 168 end -- Just following your lead.
--- end hack    
     local idx = QH_Route_Core_NodeAdd_Internal(v)
     Storage_NodeAdded(idx)
     ClusterLookup[idx] = clustid

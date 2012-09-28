@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_traveled.lua"] = "5.0.5.255r"
+QuestHelper_File["collect_traveled.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["collect_traveled.lua"] = GetTime()
 
 local debug_output = false
@@ -144,7 +144,7 @@ local function QH_Collect_Traveled_Point(c, x, y, rc, rz)
     swim, mount, flying, taxi = false, false, false, false
     local b = Bolus(c, x, y, rc, rz)
     b.faction = QuestHelper:PlayerFaction()
-    AddDataPrefix(Bolus(c, x, y, rc, rz) .. strchar(tostring(QuestHelper:PlayerFaction()))) -- The playerfaction can be removed, as it's now encoded in the collection shard. Not removing it for compatibility reasons.
+    AddDataPrefix(Bolus(c, x, y, rc, rz) .. QuestHelper:PlayerFaction()) -- The playerfaction can be removed, as it's now encoded in the collection shard. Not removing it for compatibility reasons.
   end
   
   AppendFlag(IsMounted(), 'M')

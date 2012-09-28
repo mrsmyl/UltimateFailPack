@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["custom.lua"] = "5.0.5.255r"
+QuestHelper_File["custom.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["custom.lua"] = GetTime()
 
 local search_frame = CreateFrame("Button", nil, UIParent)
@@ -308,8 +308,8 @@ local elders = {
     ["Silvervein"] = "Loch Modan 33 46",
     ["Ironband"] = "Searing Gorge 21 79",
     ["Obsidian"] = "Silverpine Forest 45 41",
-    ["Starglade"] = "Stranglethorn Vale 63 22", -- Jungle 71 34
-    ["Winterhoof"] = "Stranglethorn Vale 37 79", -- Cape 39 72
+    ["Starglade"] = "Northern Stranglethorn 71 34",
+    ["Winterhoof"] = "The Cape of Stranglethorn 39 72", -- Cape 39 72
     ["Graveborn"] = "Tirisfal Glades 61 53",
     ["Moonstrike"] = "Western Plaguelands 69 73",
     ["Meadowrun"] = "Western Plaguelands 63 36",
@@ -334,7 +334,18 @@ local elders = {
     ["Muraco"] = "Storm Peaks 64 51",
     ["Stonebeard"] = "Storm Peaks 31 38",
     ["Tauros"] = "Zul'Drak 59 56"
-  }
+  },
+  ["Cataclysm"] = {
+	  ["Moonlance"] = "Shimmering Expanse 57, 86", -- Biel'aran Ridge, Shimmering Expanse
+	  ["Windsong"] = "Mount Hyjal 27 62", -- Sanctuary of Malorne, Hyjal
+	  ["Evershade"] = "Mount Hyjal 63 23", -- Nordrassil, Hyjal
+	  ["Stonebrand"] = "Deepholm 50 55", -- Temple of Earth, Deepholm
+	  ["Deepforge"] = "Deepholm 28 69", -- Stonehearth, Deepholm
+	  ["Menkhaf"] = "Uldum 66 19", -- Khartut's Tomb, Uldum
+	  ["Sekhemi"] = "Uldum 32 63", -- Ruins of Ammon, Uldum
+	  ["Firebeard"] = "Twilight Highlands 51 71", -- Dunward Town Square, Dunward Ruins, Twilight Highlands
+	  ["Darkfeather"] = "Twilight Highlands 52 33" -- Thundermar Ruins, Twilight Highlands
+  },
 }
 
 local function searchItem(input, yield_countdown, yield_countdown_max)

@@ -1,6 +1,6 @@
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["arrow.lua"] = "5.0.5.255r"
+QuestHelper_File["arrow.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["arrow.lua"] = GetTime()
 
 --[[ This entire file is pretty liberally ganked from TomTom (and then modified) under the following license:
@@ -198,6 +198,7 @@ OnUpdate = function()
   self:Show()
 
   local dist, dx, dy = QuestHelper.Astrolabe:ComputeDistance(QuestHelper.collect_rc, QuestHelper.collect_rz, QuestHelper.collect_rx, QuestHelper.collect_ry, active_point.c, active_point.z, active_point.x, active_point.y)
+  --print(QuestHelper.collect_rc, QuestHelper.collect_rz, QuestHelper.collect_rx, QuestHelper.collect_ry, active_point.c, active_point.z, active_point.x, active_point.y)
   
   local text = ""
   

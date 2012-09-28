@@ -40,7 +40,7 @@ Note:
 	http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
 
-QuestHelper_File["AstrolabeQH/Astrolabe.lua"] = "5.0.5.255r"
+QuestHelper_File["AstrolabeQH/Astrolabe.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["AstrolabeQH/Astrolabe.lua"] = GetTime()
 
 -- WARNING!!!
@@ -194,7 +194,6 @@ function Astrolabe:GetMapVirtualZones(zone)
       return {[1] = k}
     end
   end
-  
   local curMapID = GetCurrentMapAreaID()
   local zones = {GetMapZones(zone)}
 
@@ -290,6 +289,8 @@ function Astrolabe:ComputeDistance( c1, z1, x1, y1, c2, z2, x2, y2 )
 	return dist, xDelta, yDelta;
 end
 
+local yards
+
 function Astrolabe:TranslateWorldMapPosition( C, Z, xPos, yPos, nC, nZ )
 	--[[
 	argcheck(C, 2, "number");
@@ -326,7 +327,7 @@ function Astrolabe:TranslateWorldMapPosition( C, Z, xPos, yPos, nC, nZ )
 		zoneData = WorldMapSize[C];
 		local parentContinent = zoneData.parentContinent;
 		xPos, yPos = getContPosition(zoneData, Z, xPos, yPos);
-    if not xPos or not yPos then return end -- there is no such zone. why are you asking me such silly things? you are a terrible person. leave me in my despair.
+  		if not xPos or not yPos then return end -- there is no such zone. why are you asking me such silly things? you are a terrible person. leave me in my despair.
 		if ( C ~= parentContinent ) then
 			-- translate up to world map if we aren't there already
 			xPos = xPos + zoneData.xOffset;
@@ -357,6 +358,8 @@ function Astrolabe:GetAbsoluteContinentPosition( C, Z, xPos, yPos )
     return
   end
   
+  if C == 6 then return end -- We're in Pandaria, we're just kind of fucked for now.
+
   assert(0, type(WorldMapSize[C].parentContinent) == "number")
   
   local x, y = Astrolabe:TranslateWorldMapPosition(C, Z, xPos, yPos, WorldMapSize[C].parentContinent, 0)
@@ -377,6 +380,14 @@ function Astrolabe:GetZoneWidth(c, z)
     return WorldMapSize[c][z].width
   else
     return WorldMapSize[c].width
+  end
+end
+
+function Astrolabe:GetZoneHeight(c, z)
+  if z ~= 0 then
+    return WorldMapSize[c][z].height
+  else
+    return WorldMapSize[c].height
   end
 end
 
@@ -1197,8 +1208,8 @@ WorldMapSize = {
 			AhnQirajTheFallenKingdom = {
 				height = 2700.0,
 				width = 4049.99983215332,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -3891.6665,
+				yOffset = -8033.333,
 	mapID = 772
 			},
 			Ashenvale = {
@@ -1223,8 +1234,8 @@ WorldMapSize = {
         mapID = 3524,
 			},
 			Barrens = {
-				height = 6756.202067150937,
-				width = 10133.44343943073,
+				height = 3831.24987792969,
+				width = 5745.83332824707,
 				xOffset = 14443.84117394525,
 				yOffset = 11187.32013604393,
         mapID = 17,
@@ -1288,15 +1299,15 @@ WorldMapSize = {
 			Hyjal = {
 				height = 2831.24975585938,
 				width = 4245.83337402344,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = 929.167,
+				yOffset = 6195.833,
 	mapID = 606
 			},
 			Hyjal_terrain1 = {
 				height = 2831.24975585938,
 				width = 4245.83337402344,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = 929.167,
+				yOffset = 6195.833,
 	mapID = 683
 			},
 			Moonglade = {
@@ -1330,8 +1341,8 @@ WorldMapSize = {
 			SouthernBarrens = {
 				height = 4941.66665649414,
 				width = 7412.5,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -1356.25,
+				yOffset = 204.167,
 	mapID = 607
 			},
 			StonetalonMountains = {
@@ -1379,8 +1390,8 @@ WorldMapSize = {
 			Uldum = {
 				height = 4129.16650390625,
 				width = 6193.74975585938,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -2441.667,
+				yOffset = -8029.1665,
 	mapID = 720
 			},
 			UngoroCrater = {
@@ -1520,17 +1531,17 @@ WorldMapSize = {
         mapID = 44,
 			},
 			RuinsofGilneas = {
-				height = 889.583251953125,
-				width = 593.749877929688,
-				xOffset = 0,
-				yOffset = 0,
+				height = 2097.916668701172,
+				width = 3145.83325195312,
+				xOffset = -3439.583,
+				yOffset = -533.333,
 	mapID = 611
 			},
 			RuinsofGilneasCity = {
 				height = 889.583251953125,
 				width = 593.749877929688,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -1933.333,
+				yOffset = -1306.25,
 	mapID = 685
 			},
 			SearingGorge = {
@@ -1562,8 +1573,8 @@ WorldMapSize = {
         mapID = 1519,
 			},
 			StranglethornVale = { -- Split to Vale, Jungle and Cape
-				height = 4254.18312444072,
-				width = 6381.248484543122,
+				height = 4368.75,
+				width = 6552.0830078125,
 				xOffset = 15951.13375783437,
 				yOffset = 22345.18258706305,
         mapID = 33,
@@ -1571,8 +1582,8 @@ WorldMapSize = {
 			StranglethornJungle = {
 				height = 2733.3330078125,
 				width = 4099.99987792969,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -1743.750,
+				yOffset = -11016.666,
 	mapID = 37
 			},
 			Sunwell = {
@@ -1592,8 +1603,8 @@ WorldMapSize = {
 			TheCapeOfStranglethorn = {
 				height = 2631.25,
 				width = 3945.83312988281,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -2108.333,
+				yOffset = -12516.666,
 	mapID = 673 
 			},
 			Tirisfal = {
@@ -1606,29 +1617,29 @@ WorldMapSize = {
 			TolBarad = {
 				height = 1343.75,
 				width = 2014.58329248428,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -2010.417,
+				yOffset = -560.417,
 	mapID = 708
 			},
 			TolBaradDailyArea = {
 				height = 1224.99993896484,
 				width = 1837.5,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -2412.5,
+				yOffset = 377.083,
 	mapID = 709
 			},
 			TwilightHighlands = {
 				height = 3514.5830078125,
 				width = 5270.8330078125,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = 2437.5,
+				yOffset = -2156.25,
 	mapID = 700
 			},
 			TwilightHighlands_terrain1 = {
 				height = 3514.5830078125,
 				width = 5270.8330078125,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = 2437.5,
+				yOffset = -2156.25,
 	mapID = 770
 			},
 			Undercity = {
@@ -1641,29 +1652,29 @@ WorldMapSize = {
 			Vashjir = {
 				height = 4631.24975585938,
 				width = 6945.83276367188,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -8754.166,
+				yOffset = -3720.833,
 	mapID = 613
 			},
 			VashjirDepths = {
 				height = 2716.66650390625,
 				width = 4075.0,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -8233.333,
+				yOffset = -4906.25,
 	mapID = 614
 			},
 			VashjirKelpForest = {
 				height = 1868.75024414062,
 				width = 2802.0830078125,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -5070.833,
+				yOffset = -4018.75,
 	mapID = 610
 			},
 			VashjirRuins = {
 				height = 3233.3330078125,
 				width = 4849.99963378906,
-				xOffset = 0,
-				yOffset = 0,
+				xOffset = -6681.25,
+				yOffset = -4756.25,
 	mapID = 615
 			},
 			WesternPlaguelands = {
@@ -1841,10 +1852,10 @@ WorldMapSize = {
         mapID = 66,
 			},
 		        HrothgarsLanding = {
-        			height = 2452.7,
-        			width = 2452.7*1.5,
-        			xOffset = 23967.599 - 17549.182,
-        			yOffset = 1027.392 - 1215.431,
+        			height = 2452.083984375,
+        			width = 3677.08312988281,
+        			xOffset = 6418.417,
+        			yOffset = -188.039,
       			}
 		},
 	},
@@ -1856,12 +1867,12 @@ WorldMapSize = {
 		xOffset = 0.0,
 		yOffset = 0.0,
 		zoneData = {
-			Deepholm = { height = 3399.999877929688, width = 5099.9987792969, xOffset = 0, yOffset = 0, mapID = 640 },
-			Kezan = { height = 900.00048828125, width = 1352.08319091797, xOffset = 0, yOffset = 0, mapID = 605 },
-			TheLostIsles = { height = 3010.41665649414, width = 4514.5830078125, xOffset = 0, yOffset = 0, mapID = 544 },
-			TheLostIsles_terrain1 = { height = 3010.41665649414, width = 4514.5830078125, xOffset = 0, yOffset = 0, mapID = 681 },
-			TheLostIsles_terrain2 = { height = 3010.41665649414, width = 4514.5830078125, xOffset = 0, yOffset = 0, mapID = 682 },
-			TheMaelstrom = { height = 1033.33325195312, width = 1550.0, xOffset = 0, yOffset = 0, mapID = 737 }
+			Deepholm = { height = 3399.999877929688, width = 5099.9987792969, xOffset = -3052.083, yOffset = 2795.833, mapID = 640 },
+			Kezan = { height = 900.00048828125, width = 1352.08319091797, xOffset = -2129.167, yOffset = -7731.25, mapID = 605 },
+			TheLostIsles = { height = 3010.41665649414, width = 4514.5830078125, xOffset = -4383.333, yOffset = 2881.25, mapID = 544 },
+			TheLostIsles_terrain1 = { height = 3010.41665649414, width = 4514.5830078125, xOffset = -4383.333, yOffset = 2881.25, mapID = 681 },
+			TheLostIsles_terrain2 = { height = 3010.41665649414, width = 4514.5830078125, xOffset = -4383.333, yOffset = 2881.25, mapID = 682 },
+			TheMaelstrom = { height = 1033.33325195312, width = 1550.0, xOffset = -1556.25, yOffset = 1370.833, mapID = 737 }
 		}
 	}
 }
@@ -1947,65 +1958,65 @@ VContinent(-118, "PitofSaron", 1022.3)
 
 VirtualContinentIndexes = { -- Don't change values here, since programs might want to store them
   ["ScarletEnclave"] = -77,
-  ["GilneasCity"] = -78,
-  ["GilneasZone"] = -79,
+--  ["GilneasCity"] = -78,
+--  ["GilneasZone"] = -79,
   
-  ["UtgardeKeep1"] = -80,
-  ["UtgardeKeep2"] = -81,
-  ["UtgardeKeep3"] = -82,
+--  ["UtgardeKeep1"] = -80,
+--  ["UtgardeKeep2"] = -81,
+--  ["UtgardeKeep3"] = -82,
   
-  ["TheNexus"] = -83,
+--  ["TheNexus"] = -83,
   
-  ["AzjolNerub1"] = -84,
-  ["AzjolNerub2"] = -85,
-  ["AzjolNerub3"] = -86,
+--  ["AzjolNerub1"] = -84,
+--  ["AzjolNerub2"] = -85,
+--  ["AzjolNerub3"] = -86,
   
-  ["Ahnkahet"] = -87,
+--  ["Ahnkahet"] = -87,
   
-  ["DrakTharonKeep1"] = -88,
-  ["DrakTharonKeep2"] = -89,
+--  ["DrakTharonKeep1"] = -88,
+--  ["DrakTharonKeep2"] = -89,
   
-  ["VioletHold"] = -90,
+--  ["VioletHold"] = -90,
   
-  ["Gundrak"] = -91,
+--  ["Gundrak"] = -91,
   
-  ["Ulduar77"] = -92, -- Halls of Stone
+--  ["Ulduar77"] = -92, -- Halls of Stone
   
-  ["HallsofLightning1"] = -93,
-  ["HallsofLightning2"] = -94,
+--  ["HallsofLightning1"] = -93,
+--  ["HallsofLightning2"] = -94,
   
-  ["Nexus801"] = -95, -- Oculus
-  ["Nexus802"] = -96,
-  ["Nexus803"] = -97,
-  ["Nexus804"] = -98,
+--  ["Nexus801"] = -95, -- Oculus
+--  ["Nexus802"] = -96,
+--  ["Nexus803"] = -97,
+--  ["Nexus804"] = -98,
   
-  ["CoTStratholme1"] = -99,
-  ["CoTStratholme2"] = -100,
+--  ["CoTStratholme1"] = -99,
+--  ["CoTStratholme2"] = -100,
   
-  ["UtgardePinnacle1"] = -101,  -- hey they spelled it right
-  ["UtgardePinnacle2"] = -102,
+--  ["UtgardePinnacle1"] = -101,  -- hey they spelled it right
+--  ["UtgardePinnacle2"] = -102,
   
-  ["VaultofArchavon"] = -103, -- Weirdly, Emalon is actually within the "Vault of Archavon"
+--  ["VaultofArchavon"] = -103, -- Weirdly, Emalon is actually within the "Vault of Archavon"
   
-  ["Naxxramas1"] = -104,
-  ["Naxxramas2"] = -105,
-  ["Naxxramas3"] = -106,
-  ["Naxxramas4"] = -107,
-  ["Naxxramas5"] = -108,
-  ["Naxxramas6"] = -109,
+--  ["Naxxramas1"] = -104,
+--  ["Naxxramas2"] = -105,
+--  ["Naxxramas3"] = -106,
+--  ["Naxxramas4"] = -107,
+--  ["Naxxramas5"] = -108,
+--  ["Naxxramas6"] = -109,
   
-  ["TheObsidianSanctum"] = -110,
+--  ["TheObsidianSanctum"] = -110,
   
-  ["TheEyeOfEternity"] = -111,
+--  ["TheEyeOfEternity"] = -111,
   
-  ["Ulduar"] = -112,
-  ["Ulduar1"] = -113,
-  ["Ulduar2"] = -114,
-  ["Ulduar3"] = -115,
-  ["Ulduar4"] = -116,
+--  ["Ulduar"] = -112,
+--  ["Ulduar1"] = -113,
+--  ["Ulduar2"] = -114,
+--  ["Ulduar3"] = -115,
+--  ["Ulduar4"] = -116,
   
-  ["TheForgeofSouls"] = -117,
-  ["PitofSaron"] = -118
+--  ["TheForgeofSouls"] = -117,
+--  ["PitofSaron"] = -118
 --[[
   ["AbyssalMaw"] = -120,
   ["ThroneOfTheTides"] = -130,

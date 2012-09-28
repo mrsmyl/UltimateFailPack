@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["routing_controller.lua"] = "5.0.5.255r"
+QuestHelper_File["routing_controller.lua"] = "5.0.5.262r"
 QuestHelper_Loadtime["routing_controller.lua"] = GetTime()
 
 local debug_output = (QuestHelper_File["routing_controller.lua"] == "Development Version")
@@ -375,7 +375,7 @@ Route_Core_Init(
     
     rvv = QuestHelper:CreateTable("route controller path shunt returnvalue")
     local rv = QH_Graph_Pathmultifind(loc1.loc, lt, reverse, true)
-    QuestHelper: Assert(#lt == #rv, string.format("lt has %d items, rt has %d items. Both should be the same.", #lt, #rv))
+    --QuestHelper: Assert(#lt == #rv, string.format("lt has %d items, rt has %d items. Both should be the same.", #lt, #rv))
     
     -- We want to store the math.max(sqrt(#rv), 10) shortest paths
     local tostore = complete_pass and math.max(sqrt(#rv), 10) or #rv

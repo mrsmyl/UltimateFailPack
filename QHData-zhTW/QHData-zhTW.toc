@@ -1,8 +1,8 @@
-## Interface: 40300
+## Interface: 50001
 ## Title: QuestHelper Data (zhTW)
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Contains the data needed by QuestHelper
-## Version: 5.0.5.255r
+## Version: 5.0.5.262r
 ## Dependencies: QHData-base
 ## LoadOnDemand: 1
 
