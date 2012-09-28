@@ -1,0 +1,29 @@
+------------------------------------------------------------------------
+r229 | mitch0 | 2012-09-27 13:31:45 +0000 (Thu, 27 Sep 2012) | 2 lines
+Changed paths:
+   A /tags/v2.2.0 (from /trunk:228)
+
+Tagging as v2.2.0
+- added option to disable bar(s) during pet battle (enabled by default)
+------------------------------------------------------------------------
+r228 | mitch0 | 2012-09-27 12:47:34 +0000 (Thu, 27 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+   M /trunk/Bazooka_Options/Options.lua
+   M /trunk/Bazooka_Options/localizations.lua
+
+add a bar option to disable it during pet battles [drycode]
+------------------------------------------------------------------------
+r226 | mitch0 | 2012-08-28 07:34:20 +0000 (Tue, 28 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Bazooka.toc
+   M /trunk/Bazooka_Options/Bazooka_Options.toc
+
+toc bump for teh pandas
+------------------------------------------------------------------------
+r225 | mitch0 | 2012-08-13 20:57:34 +0000 (Mon, 13 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+do not switch to simpleTip display if pressing alt while already showing the plugin's tooltip, only show simpleTip if entering the plugin area while holding alt
+------------------------------------------------------------------------

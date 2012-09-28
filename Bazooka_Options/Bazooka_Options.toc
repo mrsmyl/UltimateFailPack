@@ -1,14 +1,14 @@
 ## Interface: 50001
 ## Title: Bazooka Options
 ## Author: mitch0
-## Version: v2.1.5
+## Version: v2.2.0
 ## Notes: Configuration options for Bazooka
 ## OptionalDeps: AceGUI-3.0-SharedMediaWidgets
 ## Dependencies: Bazooka
 ## LoadOnDemand: 1
 ## X-License: Public Domain
 ## X-RelSite-WoWI:
-## X-Curse-Packaged-Version: v2.1.5
+## X-Curse-Packaged-Version: v2.2.0
 ## X-Curse-Project-Name: Bazooka
 ## X-Curse-Project-ID: bazooka
 ## X-Curse-Repository-ID: wow/bazooka/mainline
