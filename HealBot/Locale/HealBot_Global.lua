@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "5.0.5.1";
+HEALBOT_VERSION = "5.0.5.2";
 
 -- Bandages and pots
 HEALBOT_SILK_BANDAGE                    = GetItemInfo(6450) or "--Silk Bandage";
@@ -80,11 +80,11 @@ HEALBOT_CHAIN_HEAL                      = GetSpellInfo(1064) or "--Chain Heal";
 
 HEALBOT_SOOTHING_MIST                   = GetSpellInfo(115175) or "--Soothing Mist"
 HEALBOT_ZEN_MEDITATION                  = GetSpellInfo(115176) or "--Zen Meditation"
-HEALBOT_ENVELOPING_MIST                 = GetSpellInfo(124682) or "--Enveloping Mist"
+HEALBOT_ENVELOPING_MIST                 = GetSpellInfo(132120) or "--Enveloping Mist"
 HEALBOT_REVIVAL                         = GetSpellInfo(115310) or "--Revival"
 HEALBOT_RENEWING_MIST                   = GetSpellInfo(115151) or "--Renewing Mist"  HEALBOT_UPLIFT                          = GetSpellInfo(116670) or "--Uplift"
 HEALBOT_SURGING_MIST                    = GetSpellInfo(116694) or "--Surging Mist"
-HEALBOT_CHI_WAVE                        = GetSpellInfo(132467) or "--Chi Wave"
+HEALBOT_CHI_WAVE                        = GetSpellInfo(132463) or "--Chi Wave"
 HEALBOT_CHI_BURST                       = GetSpellInfo(130651) or "--Chi Burst"
 HEALBOT_ZEN_SPHERE                      = GetSpellInfo(124081) or "--Zen Sphere"
 

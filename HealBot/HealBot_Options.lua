@@ -3481,6 +3481,7 @@ function HealBot_Options_Class_HoTctlName_genList()
         [HEALBOT_TIDAL_WAVES]=HEALBOT_SHAMAN,
         [HEALBOT_DARK_INTENT]=HEALBOT_WARLOCK,
         [HEALBOT_ENVELOPING_MIST]=HEALBOT_MONK,
+        [HEALBOT_ZEN_SPHERE]=HEALBOT_MONK,
         [HEALBOT_LIFE_COCOON]=HEALBOT_MONK,
         [HEALBOT_THUNDER_FOCUS_TEA]=HEALBOT_MONK,
         [HEALBOT_SERPENT_ZEAL]=HEALBOT_MONK,
@@ -3546,13 +3547,16 @@ function HealBot_Options_Class_HoTctlAction_DropDown()
     for j=1, getn(HealBot_Options_Class_HoTctlAction_List), 1 do
         info.text = HealBot_Options_Class_HoTctlAction_List[j];
         info.func = function(self)
-                        HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]=self:GetID()
-                        UIDropDownMenu_SetSelectedID(HealBot_Options_Class_HoTctlAction,HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]) 
+                        local y=self:GetID()
+                        if y>1 then HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]=y end
+                        UIDropDownMenu_SetSelectedID(HealBot_Options_Class_HoTctlAction,y) 
                         HealBot_setOptions_Timer(170)
                     end
         info.checked = false;
-        if HealBot_Options_StorePrev["FilterHoTctlNameTrim"] and HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]] and HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] and
-           HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]==j then info.checked = true; end 
+        if HealBot_Options_StorePrev["FilterHoTctlNameTrim"] and HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]] then
+            local x=HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] or 1
+            if x==j then info.checked = true; end 
+        end
         UIDropDownMenu_AddButton(info);
     end
 end
@@ -7333,8 +7337,8 @@ function HealBot_Options_InitSub1(subNo)
         DoneInitTab[315]=true
     elseif subNo==316 and not DoneInitTab[316] then
         HealBot_Options_Class_HoTctlAction.initialize = HealBot_Options_Class_HoTctlAction_DropDown
-        if not HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] then HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]=1 end
-        UIDropDownMenu_SetText(HealBot_Options_Class_HoTctlAction, HealBot_Options_Class_HoTctlAction_List[HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]])
+        local x=HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] or 1
+        UIDropDownMenu_SetText(HealBot_Options_Class_HoTctlAction, HealBot_Options_Class_HoTctlAction_List[x])
         DoneInitTab[316]=true
     elseif subNo==317 and not DoneInitTab[317] then
         HealBot_Options_TooltipPos.initialize = HealBot_Options_TooltipPos_DropDown

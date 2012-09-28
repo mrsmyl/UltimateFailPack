@@ -440,6 +440,18 @@ function HealBot_Init_Spells_Defaults(class)
         [HEALBOT_SURGING_MIST] = {
             id = 116694, CastTime = 0, Mana = 101, Level = 32 }, 
             
+        [HEALBOT_ZEN_SPHERE] = {
+            id = 124081, CastTime = 0, Mana = 101, Level = 30 },
+                
+        [HEALBOT_ENVELOPING_MIST] = {
+            id = 132120, CastTime = 0, Mana = 101, Level = 34 },
+                
+        [HEALBOT_CHI_WAVE] = {
+            id = 132463, CastTime = 0, Mana = 101, Level = 30 },
+        
+        [HEALBOT_CHI_BURST] = {
+            id = 130651, CastTime = 0, Mana = 101, Level = 30 },
+            
     };
   end
 

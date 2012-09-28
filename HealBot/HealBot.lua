@@ -142,7 +142,6 @@ local iconName=nil
 local id=0
 local sName=nil
 local sRank=nil
-local sNameRank=nil
 local uName=nil
 local xUnit=nil
 local xGUID = nil
@@ -874,29 +873,24 @@ function HealBot_GetSpellName(id)
     if (not sName) then
         return nil;
     end
-    HealBot_Globals.spellIDs[sName]=id
     return sName, sRank, icon, powerCost, isFunnel, powerType, castingTime, minRange, maxRange
 end
 
 function HealBot_GetSpellId(spellName)
     if (not spellName) then return nil end
-    skillType, spellId = GetSpellBookItemInfo(spellName)
     if (HealBot_PlayerClassTrim=="SHAM") then
         if (strsub(GetLocale(),1,2)=="en") then
             if (spellName==HEALBOT_PURIFY_SPIRIT and HealBot_Config.CurrentSpec~=3) or (spellName==HEALBOT_CLEANSE_SPIRIT and HealBot_Config.CurrentSpec==3) then
                 return nil
             end
-        elseif (spellName==HEALBOT_PURIFY_SPIRIT) then
-            return nil
         end
     end
-    if not skillType then
-        if HealBot_Spells[spellName] and HealBot_Spells[spellName].Level and tonumber(HealBot_Spells[spellName].Level)<=UnitLevel("player") then
-            skillType="SPELL"
-        end
+    skillType, spellId = GetSpellBookItemInfo(spellName)
+    if not skillType and HealBot_Spells[spellName] and HealBot_Spells[spellName].id then
+        skillType="SPELL"
     end
     if skillType and skillType=="SPELL" then
-        x,y = 1,0;
+        x = 1;
         if HealBot_Spells[spellName] and HealBot_Spells[spellName].id then   
             sName = GetSpellInfo(HealBot_Spells[spellName].id)
             if (spellName == sName) then
@@ -905,13 +899,16 @@ function HealBot_GetSpellId(spellName)
                 HealBot_AddDebug("HealBot_GetSpellId Bad SpellID for HealBot_Spells["..spellName.."]")
             end   
         end
+        if spellId then 
+            return spellId 
+        end
         if HealBot_Globals.spellIDs[spellName] then 
             sName = GetSpellInfo(HealBot_Globals.spellIDs[spellName])
             if (spellName == sName) then
                 return HealBot_Globals.spellIDs[spellName];
             else
                 HealBot_Globals.spellIDs[spellName]=nil
-                HealBot_AddDebug("HealBot_GetSpellId spellIDs: set to nil")
+                HealBot_AddDebug("HealBot_GetSpellId spellIDs: set to nil for spell "..spellName)
             end   
         end
         while true do 
@@ -2500,6 +2497,13 @@ function HealBot_configClassHoT(class, race)
         HealBot_Watch_HoT[HEALBOT_ENVELOPING_MIST]="C"
     else
         HealBot_Watch_HoT[HEALBOT_ENVELOPING_MIST]=nil
+    end
+    if hbClassHoTwatch[HEALBOT_ZEN_SPHERE]==3 then
+        HealBot_Watch_HoT[HEALBOT_ZEN_SPHERE]="A"
+    elseif hbClassHoTwatch[HEALBOT_ZEN_SPHERE]==2 and class==HealBot_Class_En[HEALBOT_MONK] then
+        HealBot_Watch_HoT[HEALBOT_ZEN_SPHERE]="C"
+    else
+        HealBot_Watch_HoT[HEALBOT_ZEN_SPHERE]=nil
     end
     if hbClassHoTwatch[HEALBOT_LIFE_COCOON]==3 then
         HealBot_Watch_HoT[HEALBOT_LIFE_COCOON]="A"
