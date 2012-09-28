@@ -1,9 +1,72 @@
 ------------------------------------------------------------------------
-r284 | yossa | 2012-09-09 11:52:48 +0000 (Sun, 09 Sep 2012) | 1 line
+r292 | yossa | 2012-09-28 00:36:06 +0000 (Fri, 28 Sep 2012) | 1 line
 Changed paths:
-   A /tags/2.34 (from /trunk:283)
+   A /tags/2.36 (from /trunk:291)
 
-Tagging as 2.34
+Tagging as 2.36
+------------------------------------------------------------------------
+r291 | yossa | 2012-09-28 00:35:01 +0000 (Fri, 28 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+
+Skillet:
+- grouping for cooking
+
+------------------------------------------------------------------------
+r290 | yossa | 2012-09-28 00:34:23 +0000 (Fri, 28 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/SkilletData.lua
+   M /trunk/UI/MainFrame.lua
+   M /trunk/UI/MainFrame.xml
+
+Skillet:
+- grouping for cooking
+
+------------------------------------------------------------------------
+r289 | yossa | 2012-09-23 20:44:19 +0000 (Sun, 23 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/SkilletQueue.lua
+
+Skillet:
+- count nil check
+
+------------------------------------------------------------------------
+r288 | yossa | 2012-09-23 20:44:03 +0000 (Sun, 23 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/UI/MainFrame.lua
+
+Skillet:
+- check if auctionator loaded
+
+------------------------------------------------------------------------
+r287 | hotzed | 2012-09-20 13:54:59 +0000 (Thu, 20 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/UI/MainFrame.lua
+   M /trunk/UI/MainFrame.xml
+
+Skillet:
+-
+Add Auctionator support
+------------------------------------------------------------------------
+r286 | yossa | 2012-09-16 09:05:46 +0000 (Sun, 16 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/Skillet.lua
+   M /trunk/Skillet.toc
+   M /trunk/UI/MainFrame.lua
+
+Skillet:
+-
+
+------------------------------------------------------------------------
+r285 | yossa | 2012-09-16 08:53:12 +0000 (Sun, 16 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/Plugins/TradeSkillInfo.lua
+   M /trunk/UI/MainFrame.lua
+
+Skillet:
+- _ again
+
 ------------------------------------------------------------------------
 r283 | yossa | 2012-09-09 11:51:07 +0000 (Sun, 09 Sep 2012) | 3 lines
 Changed paths:
@@ -96,18 +159,5 @@ Changed paths:
 
 Skillet:
 - libdialog
-
-------------------------------------------------------------------------
-r268 | yossa | 2012-08-23 20:53:00 +0000 (Thu, 23 Aug 2012) | 4 lines
-Changed paths:
-   M /trunk/Skillet.lua
-   M /trunk/Skillet.toc
-   M /trunk/SkilletData.lua
-   M /trunk/UI/MerchantWindow.lua
-   M /trunk/UI/MerchantWindow.xml
-
-Skillet:
-- bugfix for WoW 5.0
-- added /skillet reset to reset window position
 
 ------------------------------------------------------------------------
