@@ -1,6 +1,16 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 977 $
--- $Date: 2012-09-16 19:44:15 +1000 (Sun, 16 Sep 2012) $
+-- $Revision: 1014 $
+-- $Date: 2012-09-28 14:26:34 +1000 (Fri, 28 Sep 2012) $
+
+
+local _G = _G
+local select = _G.select
+local pairs = _G.pairs
+local string = _G.string
+local type = _G.type
+local error = _G.error
+local table = _G.table
+local CreateFrame = _G.CreateFrame
 
 
 ArkInventory = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventory", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceBucket-3.0" )
@@ -15,6 +25,8 @@ ArkInventory.Lib = { -- libraries live here
 	DataBroker = LibStub( "LibDataBroker-1.1" ),
 	
 	Dewdrop = LibStub( "ArkDewdrop-3.0" ),
+	
+	Pet = LibStub( "LibPetJournal-2.0" ),
 	
 }
 
@@ -32,10 +44,11 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = 30310,
-		UIVersion = "3.3.10",
-		--Beta = "BETA 11-11-01-50",
+		Version = nil, -- calculated at runtime
+		--Beta = "BETA 11-11-01-50", -- remove comment to activate beta flag
 	},
+	
+	SLOT_SIZE = nil, -- calculated at runtime
 	
 	Frame = {
 		Main = {
@@ -79,8 +92,6 @@ ArkInventory.Const = { -- constants
 	
 	Debug = false,
 	
-	Profiler = false,
-
 	Event = {
 		BagUpdate = 1,
 		--ObjectLock = 2,
@@ -221,7 +232,7 @@ ArkInventory.Const = { -- constants
 	Fade = 0.6,
 	GuildTag = "+",
 
-	InventorySlotName = { "HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot", "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot" },
+	InventorySlotName = { "HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot", "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot" },
 
 	Category = {
 		
@@ -284,12 +295,20 @@ ArkInventory.Const = { -- constants
 					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"],
 				},
 				[423] = {
-					["id"] = "SYSTEM_PET_COMPANION",
-					["text"] = ArkInventory.Localise["WOW_AH_MISC_PET"],
+					["id"] = "SYSTEM_PET_COMPANION_BOUND",
+					["text"] = ArkInventory.Localise["PET_COMPANION_BOUND"],
+				},
+				[443] = {
+					["id"] = "SYSTEM_PET_COMPANION_TRADE",
+					["text"] = ArkInventory.Localise["PET"],
 				},
 				[441] = {
-					["id"] = "SYSTEM_PET_BATTLE",
-					["text"] = ArkInventory.Localise["WOW_AH_BATTLEPET"],
+					["id"] = "SYSTEM_PET_BATTLE_TRADE",
+					["text"] = ArkInventory.Localise["BATTLEPET"],
+				},
+				[442] = {
+					["id"] = "SYSTEM_PET_BATTLE_BOUND",
+					["text"] = ArkInventory.Localise["PET_BATTLE_BOUND"],
 				},
 				[428] = {
 					["id"] = "SYSTEM_REPUTATION",
@@ -887,6 +906,9 @@ ArkInventory.Const = { -- constants
 	
 	Soulbound = { ITEM_BIND_ON_PICKUP, ITEM_SOULBOUND, ITEM_BIND_TO_BNETACCOUNT, ITEM_BNETACCOUNTBOUND, ITEM_BIND_TO_ACCOUNT },
 	
+	PLAYER_MOUNT_LEVEL = 20,
+	MAX_PET_LEVEL = 25,
+	
 }
 
 ArkInventory.Const.Slot.Data = {
@@ -963,7 +985,7 @@ ArkInventory.Const.Slot.Data = {
 	[ArkInventory.Const.Slot.Type.Critter] = {
 		["name"] = ArkInventory.Localise["STATUS_NAME_CRITTER"],
 		["long"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
-		["type"] = ArkInventory.Localise["WOW_AH_MISC_PET"],
+		["type"] = ArkInventory.Localise["PET"],
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		["emptycolour"] = GREEN_FONT_COLOR_CODE, -- status text colour when no slots left
 		["hide"] = true,
@@ -1026,7 +1048,9 @@ ArkInventory.Const.Slot.Data = {
 }
 
 ArkInventory.Global = { -- globals
-
+	
+	Enabled = false,
+	
 	Version = "", --calculated
 
 	Me = nil,
@@ -1190,9 +1214,10 @@ ArkInventory.Global = { -- globals
 			canView = true,
 			canOverride = nil,
 			
-			template = "ARKINV_TemplateButtonCompanionItem",
+			template = "ARKINV_TemplateButtonBattlepetItem",
 			
 			drawState = ArkInventory.Const.Window.Draw.Init,
+			force = true, -- force initial scan, filters stick through reload
 		},
 		
 		[ArkInventory.Const.Location.Mount] = {
@@ -1213,7 +1238,7 @@ ArkInventory.Global = { -- globals
 			canView = true,
 			canOverride = nil,
 			
-			template = "ARKINV_TemplateButtonCompanionItem",
+			template = "ARKINV_TemplateButtonMountItem",
 			
 			drawState = ArkInventory.Const.Window.Draw.Init,
 		},
@@ -1335,8 +1360,6 @@ ArkInventory.Global = { -- globals
 		Rule = { }, -- key generated via ObjectIDCacheRule( )
 	},
 	
-	BAG_SLOT_SIZE = 32,
-
 	Thread = {
 		Restack = { },
 		Window = { },
@@ -1349,11 +1372,15 @@ ArkInventory.Global = { -- globals
 		CustomSortKeySort = true,
 		BarMoveSource = nil,
 		BarMoveDestination = nil,
+		PetJournalInit = true,
 	},
 	
 	Rules = {
 		Enabled = false,
 	},
+	
+	FloatingBattlePetLink = nil,
+	
 }
 
 ArkInventory.Config = {
@@ -1545,7 +1572,7 @@ ArkInventory.Const.DatabaseDefaults.global = {
 				["amount"] = 1,
 			},
 			["me"] = false, -- only show my data
-			["faction"] = false, -- only show my faction
+			["faction"] = true, -- only show my faction
 			["add"] = { -- things to add to the tooltip
 				["empty"] = false, -- empty line / seperator
 				["count"] = true, -- item count
@@ -1566,6 +1593,10 @@ ArkInventory.Const.DatabaseDefaults.global = {
 					["b"] = 0.5,
 				},
 				["class"] = false,
+			},
+			["battlepet"] = {
+				["source"] = true,
+				["description"] = true,
 			},
 		},
 		["tracking"] = {
@@ -1829,6 +1860,7 @@ ArkInventory.Const.DatabaseDefaults.profile = {
 						["global"] = false,
 						["combat"] = true,
 					},
+					["scale"] = 1,
 				},
 				["sort"] = {
 					["open"] = true,
@@ -1935,6 +1967,17 @@ ArkInventory.Const.DatabaseDefaults.profile = {
 
 function ArkInventory.OnLoad( )
 	
+	--ArkInventory.Output( "OnLoad: ", debugprofilestop( ) )
+	
+	ArkInventory.Const.Program.Version = 0 + GetAddOnMetadata( ArkInventory.Const.Program.Name, "Version" )
+	
+	ArkInventory.Global.Version = string.format( "v%s", string.gsub( ArkInventory.Const.Program.Version, "(%d-)(%d%d)(%d%d)$", "%1.%2.%3" ) )
+	
+	if ArkInventory.Const.Program.Beta then
+		ArkInventory.Global.Version = string.format( "%s %s(%s)%s", ArkInventory.Global.Version, RED_FONT_COLOR_CODE, ArkInventory.Const.Program.Beta or "unknown beta version", FONT_COLOR_CODE_CLOSE )
+	end
+	
+	
 	local loc_id
 	
 	-- bags
@@ -2000,17 +2043,7 @@ end
 
 function ArkInventory.OnInitialize( )
 	
-	--ArkInventory.Output( "OnInitialize" )
-	
-	if ArkInventory.Const.TOC > 50000 then
-		-- mop has no ranged slot
-		ArkInventory.Const.InventorySlotName = { "HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot", "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot" }
-	end
-	
-	ArkInventory.Global.Version = string.format( "v%s", ArkInventory.Const.Program.UIVersion )
-	if ArkInventory.Const.Program.Beta then
-		ArkInventory.Global.Version = string.format( "%s %s(%s)%s", ArkInventory.Global.Version, RED_FONT_COLOR_CODE, ArkInventory.Const.Program.Beta or "unknown beta version", FONT_COLOR_CODE_CLOSE )
-	end
+	--ArkInventory.Output( "OnInitialize: ", debugprofilestop( ) )
 	
 	-- pre acedb load, the database is just a table
 	
@@ -2151,8 +2184,9 @@ function ArkInventory.OnEnable( )
 
 	
 	--ArkInventory:RegisterEvent( "COMPANION_UPDATE" ) -- triggered from way too many irrelevant things, dont ever use it.  companions are scanned at OnEnable so its covered
-	ArkInventory:RegisterEvent( "COMPANION_LEARNED", "LISTEN_COMPANION_UPDATE" )
-	ArkInventory:RegisterEvent( "COMPANION_UNLEARNED", "LISTEN_COMPANION_UPDATE" )
+	ArkInventory:RegisterEvent( "COMPANION_LEARNED", "LISTEN_COMPANION_UPDATE" ) -- mounts only
+	ArkInventory:RegisterEvent( "COMPANION_UNLEARNED", "LISTEN_COMPANION_UPDATE" ) -- mounts only
+	ArkInventory.Lib.Pet.RegisterCallback( ArkInventory, "PetListUpdated", "LISTEN_BATTLEPET_UPDATE" )
 	
 	ArkInventory:RegisterEvent( "EQUIPMENT_SETS_CHANGED", "LISTEN_EQUIPMENT_SETS_CHANGED" )
 	
@@ -2187,12 +2221,14 @@ function ArkInventory.OnEnable( )
 	--ArkInventory.db.RegisterCallback( ArkInventory, "OnProfileDeleted", "OnProfileChanged" )
 	--ArkInventory.db.RegisterCallback( ArkInventory, "OnDatabaseReset", "OnProfileChanged" )
 	
+	ArkInventory.Global.Enabled = true
+	
 	ArkInventory.ScanProfessions( )
 	ArkInventory.ScanLocation( )
 	
 	ArkInventory.LDB.Money:Update( )
 	ArkInventory.LDB.Bags:Update( )
-	ArkInventory.LDB.Pets:Update( )
+	
 	ArkInventory.LDB.Mounts:Update( )
 	ArkInventory.LDB.Tracking_Currency:Update( )
 	ArkInventory.LDB.Tracking_Item:Update( )
@@ -2210,6 +2246,8 @@ end
 function ArkInventory.OnDisable( )
 	
 	--ArkInventory.Frame_Main_Hide( )
+	
+	ArkInventory.Global.Enabled = false
 	
 	ArkInventory.BlizzardAPIHooks( true )
 	
@@ -2387,7 +2425,7 @@ function ArkInventory.PT_ItemInSets( item, setnames )
 	
 	for setname in string.gmatch( setnames, "[^,]+" ) do
 		
-		local r = ArkInventory.Lib.PeriodicTable:ItemInSet( item, strtrim( setname ) )
+		local r = ArkInventory.Lib.PeriodicTable:ItemInSet( item, string.trim( setname ) )
 		
 		if r then
 			return true
@@ -2445,8 +2483,6 @@ function ArkInventory.OnProfileChanged( )
 	ArkInventory.ConvertOldOptions( )
 	ArkInventory.ItemCacheClear( )
 	ArkInventory.PlayerInfoSet( )
-	
-	ArkInventory.ItemCategoryClear( )
 	
 	ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Init )
 	
@@ -2530,7 +2566,11 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 		t = "!"
 		if i.h and sorting.active.name then
 			
-			t = v2 or "!"
+			t = v2
+			if i.cn and ( i.cn ~= "" ) then
+				t = string.format( "%s %s", t, i.cn )
+			end
+			t = t or "!"
 			
 			if sorting.reversed then
 				t = ArkInventory.ReverseName( t )
@@ -2566,7 +2606,7 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 		local item_type = "!"
 		local item_subtype = "!"
 		
-		if i.h and class == "item" and sorting.active.itemtype then
+		if i.h and ( class == "item" or class == "battlepet" ) and sorting.active.itemtype then
 			
 			item_type = v7
 			if not item_type or item_type == "" then
@@ -2621,7 +2661,7 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 		
 		if i.h and sorting.active.category then
 			
-			local cat_id = i.cat or ArkInventory.ItemCategoryGet( i )
+			local cat_id = ArkInventory.ItemCategoryGet( i )
 			
 			cat_type, cat_code = ArkInventory.CategoryCodeSplit( cat_id )
 			
@@ -2776,7 +2816,7 @@ function ArkInventory.SortKeyCustomAdd( name )
 	
 	v.data[v.next] = {
 		used = true,
-		name = strtrim( name ),
+		name = string.trim( name ),
 		bagslot = false,
 		ascending = true,
 		active = { },
@@ -3078,7 +3118,7 @@ function ArkInventory.CategoryCustomAdd( name )
 	end
 	
 	v.data[v.next].used = true
-	v.data[v.next].name = strtrim( name )
+	v.data[v.next].name = string.trim( name )
 	
 	ArkInventory.CategoryGenerate( )
 	
@@ -3101,7 +3141,7 @@ end
 
 function ArkInventory.CategoryCustomRename( id, name )
 	
-	ArkInventory.db.global.option.category[ArkInventory.Const.Category.Type.Custom].data[id].name = strtrim( name )
+	ArkInventory.db.global.option.category[ArkInventory.Const.Category.Type.Custom].data[id].name = string.trim( name )
 	
 	ArkInventory.CategoryGenerate( )
 	
@@ -3185,9 +3225,25 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 	-- local debuginfo = { ["m"]=gcinfo( ), ["t"]=GetTime( ) }
 
-	-- pets
+	-- pet journal pets
 	if i.loc_id == ArkInventory.Const.Location.Pet then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
+		
+		if not C_PetJournal.IsJournalUnlocked( ) then return end
+		
+		if i.bp then
+			if i.sb then
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_BOUND" )
+			else
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_TRADE" )
+			end
+		else
+			if i.sb then
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_BOUND" )
+			else
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_TRADE" )
+			end
+		end
+		
 	end
 	
 	-- mounts
@@ -3203,9 +3259,13 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	-- everything else
 	local class, _, itemName, _, itemRarity, _, _, itemType, itemSubType, _, equipSlot = ArkInventory.ObjectInfo( i.h )
 	
-	-- battle pets
+	-- (caged) battle pets
 	if class == "battlepet" then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE" )
+		if i.sb then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_BOUND" )
+		else
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_TRADE" )
+		end
 	end
 	
 	-- items only
@@ -3263,7 +3323,11 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
 	
 		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_PET"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_PET"] ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION" )
+			if i.sb then
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_BOUND" )
+			else
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_TRADE" )
+			end
 		end
 		
 		if itemSubType == ArkInventory.Localise["WOW_AH_MISC_MOUNT"] or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_MOUNT"] ) then
@@ -3379,20 +3443,27 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		local _, _, req = ArkInventory.TooltipFind( ArkInventory.Global.Tooltip.Scan, ArkInventory.Localise["WOW_TOOLTIP_SKILL"], false, true, true )
 		
 		for x = 1, ArkInventory.Const.Skills.Primary do
+			
 			if cp.info.skills[x] then
 				
 				local skill = ArkInventory.Const.Skills.Data[cp.info.skills[x]]
 				
-				if ArkInventory.PT_ItemInSets( i.h, skill.pt ) then
-					return ArkInventory.CategoryGetSystemID( skill.id )
-				end
-				
-				if req and string.find( req, skill.text ) then
-					return ArkInventory.CategoryGetSystemID( skill.id )
+				if skill then
+					
+					if ArkInventory.PT_ItemInSets( i.h, skill.pt ) then
+						return ArkInventory.CategoryGetSystemID( skill.id )
+					end
+					
+					if req and string.find( req, skill.text ) then
+						return ArkInventory.CategoryGetSystemID( skill.id )
+					end
+					
 				end
 				
 			end
+			
 		end
+		
 	end
 	
 	if itemType == ArkInventory.Localise["WOW_AH_MISC"] then
@@ -3589,8 +3660,7 @@ function ArkInventory.ItemCategoryGetRule( i, bt, bag_id, slot_id )
 			if em == nil then
 			
 				if a == true then
-					local id = ArkInventory.CategoryCodeJoin( t, rid )
-					return id
+					return ArkInventory.CategoryCodeJoin( t, rid )
 				end
 			
 			else
@@ -3612,19 +3682,14 @@ end
 
 function ArkInventory.ItemCategoryGetPrimary( i )
 	
-	i.cat = nil
-	
-	local id
-	
-	if i.h then -- only items can have a category, empty slots can oly be used by rules
+	if i.h then -- only items can have a category, empty slots can only be used by rules
 		
 		-- items category cache id
-		id = ArkInventory.ObjectIDCacheCategory( i.loc_id, i.bag_id, i.sb, i.h )
+		local id = ArkInventory.ObjectIDCacheCategory( i.loc_id, i.bag_id, i.sb, i.h )
 		
 		-- manually assigned item to a category?
 		if ArkInventory.db.profile.option.category[id] then
-			i.cat = ArkInventory.db.profile.option.category[id]
-			return
+			return ArkInventory.db.profile.option.category[id]
 		end
 		
 	end
@@ -3635,21 +3700,16 @@ function ArkInventory.ItemCategoryGetPrimary( i )
 		id = ArkInventory.ObjectIDCacheRule( i.loc_id, i.bag_id, i.sb, i.h )
 		
 		-- if the value has already been cached then use it
-		if ArkInventory.Global.Cache.Rule[id] then
-			i.cat = ArkInventory.Global.Cache.Rule[id]
-			return
+		if not ArkInventory.Global.Cache.Rule[id] then
+			-- check for any rule that applies to the item, cache the result, use true for no match (default)
+			ArkInventory.Global.Cache.Rule[id] = ArkInventory.ItemCategoryGetRule( i ) or true
 		end
 		
-		-- check for any rule that applies to the item
-		local rs = ArkInventory.ItemCategoryGetRule( i )
-		if rs then
-			-- cache the result
-			ArkInventory.Global.Cache.Rule[id] = rs
-			i.cat = ArkInventory.Global.Cache.Rule[id]
-			return
-		end
+		return ArkInventory.Global.Cache.Rule[id]
 		
 	end
+	
+	return true -- use the default
 	
 end
 
@@ -3660,58 +3720,26 @@ function ArkInventory.ItemCategorySet( i, cat_id )
 	local id = ArkInventory.ObjectIDCacheCategory( i.loc_id, i.bag_id, i.sb, i.h )
 	ArkInventory.db.profile.option.category[id] = cat_id
 	
-	--i["cat"] = cat_id
-	ArkInventory.ItemCategoryClear( )
-	
 end
 
 function ArkInventory.ItemCategoryGet( i )
 
-	if not i.cat then
-		ArkInventory.ItemCategoryGetPrimary( i )
-	end
-	
-	local default = ArkInventory.ItemCategoryGetDefault( i )
 	local unknown = ArkInventory.CategoryGetSystemID( "SYSTEM_UNKNOWN" )
 	
-	return i.cat or default or unknown, i.cat, default or unknown
+	local default = ArkInventory.ItemCategoryGetDefault( i )
+	
+	local cat = ArkInventory.ItemCategoryGetPrimary( i )
+	if cat == true then
+		cat = nil
+	end
+	
+	return cat or default or unknown, cat, default or unknown
 	
 end
 
 function ArkInventory.ItemCategoryClear( player_id, loc_id, empty_only )
-
-	-- clears the category for all items for all characters
 	
-	for p, pd in pairs( ArkInventory.db.realm.player.data ) do
-		
-		-- only process matching player id
-		if ( not player_id ) or ( player_id == pd.info.player_id ) then
-			
-			for l, ld in pairs( pd.location ) do
-				
-				-- only process matching location
-				if ( not loc_id ) or ( loc_id == l ) then
-					
-					for b, bd in pairs( ld.bag ) do
-					
-						for s, sd in pairs( bd.slot ) do
-							
-							-- only process empty slots
-							if ( not empty_only ) or ( empty_only and sd.h == nil ) then
-								sd["cat"] = nil
-							end
-							
-						end
-						
-					end
-					
-				end
-				
-			end
-			
-		end
-		
-	end
+	ArkInventory.ItemCacheClear( )
 	
 end
 
@@ -3767,7 +3795,6 @@ function ArkInventory.ItemCacheClear( h )
 	
 	ArkInventory.CategoryGenerate( )
 	ArkInventory.LocationSetValue( nil, "resort", true )
-	ArkInventory.ItemCategoryClear( )
 	--ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
 	
 end
@@ -4519,7 +4546,7 @@ function ArkInventory.Frame_Main_DrawThreadStart( frame )
 
 		ArkInventory.Frame_Main_DrawStatus( loc_id, ArkInventory.Const.Window.Draw.Refresh )
 	
-		ArkInventory.ItemCategoryClear( nil, loc_id )
+		ArkInventory.ItemCacheClear( )
 	
 		-- instant sort
 		if ArkInventory.LocationOptionGet( loc_id, "sort", "instant" ) then
@@ -4765,7 +4792,7 @@ function ArkInventory.Frame_Main_Search( frame )
 	local search = string.format( "%s%s", frame, "Search" )
 	local filter = _G[string.format( "%s%s", search, "Filter" )]:GetText( )
 	
-	ArkInventory.Global.Location[loc_id].filter = strtrim( filter )
+	ArkInventory.Global.Location[loc_id].filter = string.trim( filter )
 	
 	ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
 	
@@ -4963,7 +4990,7 @@ function ArkInventory.Frame_Container_CalculateBars( frame, Layout )
 					filter = ArkInventory.db.global.option.slotfilter.data[9999]
 				end
 				
-				local cat_id = i.cat or ArkInventory.ItemCategoryGet( i )
+				local cat_id = ArkInventory.ItemCategoryGet( i )
 				local bar_id = filter.slot[bag_id][slot_id] or ArkInventory.CategoryLocationGet( loc_id, cat_id )
 				
 				--ArkInventory.Output( "loc=[", loc_id, "], bag=[", bag_id, "], slot=[", slot_id, "], cat=[", cat_id, "], bar_id=[", bar_id, "]" )
@@ -5273,6 +5300,9 @@ function ArkInventory.Frame_Container_Draw( frame )
 	local loc_id = frame.ARK_Data.loc_id
 	local cp = ArkInventory.LocationPlayerInfoGet( loc_id )
 	
+	local slotScale = ArkInventory.LocationOptionGet( loc_id, "slot", "scale" ) or 1
+	local slotSize = ArkInventory.Const.SLOT_SIZE * slotScale
+	
 	--ArkInventory.Output( "draw frame=", frame:GetName( ), ", loc=", loc_id, ", state=", ArkInventory.Global.Location[loc_id].drawState )
 	
 	if ArkInventory.Global.Location[loc_id].drawState <= ArkInventory.Const.Window.Draw.Recalculate then
@@ -5379,9 +5409,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 					
 				end
 				
-				if j == 1 then
-					ArkInventory.Global.BAG_SLOT_SIZE = itemframe:GetWidth( )
-				end
+				itemframe:SetScale( slotScale )
 				
 				ArkInventory.Frame_Item_Update_Clickable( itemframe )
 				itemframe:Hide( )
@@ -5395,19 +5423,19 @@ function ArkInventory.Frame_Container_Draw( frame )
 	-- build the bar frames
 	
 	local name = frame:GetName( )
-		
-	local pad_slot = ArkInventory.LocationOptionGet( loc_id, "slot", "pad" )
-	local pad_bar_int = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "internal" )
-	local pad_bar_ext = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "external" )
-	local pad_window = ArkInventory.LocationOptionGet( loc_id, "window", "pad" )
-	local pad_label = ( ArkInventory.LocationOptionGet( loc_id, "bar", "name", "show" ) and ArkInventory.LocationOptionGet( loc_id, "bar", "name", "height" ) ) or 0
+	
+	local padSlot = ArkInventory.LocationOptionGet( loc_id, "slot", "pad" ) * slotScale
+	local padBarInternal = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "internal" ) * slotScale
+	local padBarExternal = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "external" )
+	local padWindow = ArkInventory.LocationOptionGet( loc_id, "window", "pad" )
+	local padLabel = ( ArkInventory.LocationOptionGet( loc_id, "bar", "name", "show" ) and ArkInventory.LocationOptionGet( loc_id, "bar", "name", "height" ) ) or 0
 	local anchor = ArkInventory.LocationOptionGet( loc_id, "bar", "anchor" )
 
 	--ArkInventory.Output( "Layout=[", ArkInventory.Global.Location[loc_id].Layout, "]" )
 	
 	for rownum, row in ipairs( ArkInventory.Global.Location[loc_id].Layout.container.row ) do
 		
-		row.width = pad_window * 2 + pad_bar_ext
+		row.width = padWindow * 2 + padBarExternal
 		
 		for bar_index, bar_id in ipairs( row.bar ) do
 			
@@ -5421,12 +5449,12 @@ function ArkInventory.Frame_Container_Draw( frame )
 			obj.ARK_Data.bar_id = bar_id
 			
 			if ArkInventory.Global.Location[loc_id].drawState <= ArkInventory.Const.Window.Draw.Recalculate then
-
-				local obj_width = bar.width * ArkInventory.Global.BAG_SLOT_SIZE + ( bar.width - 1 ) * pad_slot + pad_bar_int * 2
+				
+				local obj_width = ( bar.width * slotSize ) + ( ( bar.width - 1 ) * padSlot ) + ( padBarInternal * 2 )
 				obj:SetWidth( obj_width )
 				
-				row.width = row.width + obj_width + pad_bar_ext
-				row.height = bar.height * ArkInventory.Global.BAG_SLOT_SIZE + ( bar.height - 1 ) * pad_slot + pad_bar_int * 2 + pad_label
+				row.width = row.width + obj_width + padBarExternal
+				row.height = ( bar.height * slotSize ) + ( ( bar.height - 1 ) * padSlot ) + ( padBarInternal * 2 ) + padLabel
 				
 				obj:SetHeight( row.height )
 				obj:ClearAllPoints( )
@@ -5436,13 +5464,13 @@ function ArkInventory.Frame_Container_Draw( frame )
 				if bar.frame == 1 then
 					
 					if anchor == ArkInventory.Const.Anchor.BottomLeft then
-						obj:SetPoint( "BOTTOMLEFT", frame, "BOTTOMLEFT", pad_window + pad_bar_ext, pad_window + pad_bar_ext )
+						obj:SetPoint( "BOTTOMLEFT", frame, "BOTTOMLEFT", padWindow + padBarExternal, padWindow + padBarExternal )
 					elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-						obj:SetPoint( "TOPLEFT", frame, "TOPLEFT", pad_window + pad_bar_ext, 0 - pad_window - pad_bar_ext )
+						obj:SetPoint( "TOPLEFT", frame, "TOPLEFT", padWindow + padBarExternal, 0 - padWindow - padBarExternal )
 					elseif anchor == ArkInventory.Const.Anchor.TopRight then
-						obj:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0 - pad_window - pad_bar_ext, 0 - pad_window - pad_bar_ext )
+						obj:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0 - padWindow - padBarExternal, 0 - padWindow - padBarExternal )
 					else -- if anchor == ArkInventory.Const.Anchor.BottomRight then
-						obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0 - pad_window - pad_bar_ext, pad_window + pad_bar_ext )
+						obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0 - padWindow - padBarExternal, padWindow + padBarExternal )
 					end
 					
 				else
@@ -5455,13 +5483,13 @@ function ArkInventory.Frame_Container_Draw( frame )
 						local parent = string.format( "%s%s%s", name, "Bar", ArkInventory.Global.Location[loc_id].Layout.bar[prev].frame )
 						
 						if anchor == ArkInventory.Const.Anchor.BottomLeft then
-							obj:SetPoint( "BOTTOMLEFT", parent, "TOPLEFT", 0, pad_bar_ext )
+							obj:SetPoint( "BOTTOMLEFT", parent, "TOPLEFT", 0, padBarExternal )
 						elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-							obj:SetPoint( "TOPLEFT", parent, "BOTTOMLEFT", 0, 0 - pad_bar_ext )
+							obj:SetPoint( "TOPLEFT", parent, "BOTTOMLEFT", 0, 0 - padBarExternal )
 						elseif anchor == ArkInventory.Const.Anchor.TopRight then
-							obj:SetPoint( "TOPRIGHT", parent, "BOTTOMRIGHT", 0, 0 - pad_bar_ext )
+							obj:SetPoint( "TOPRIGHT", parent, "BOTTOMRIGHT", 0, 0 - padBarExternal )
 						else -- if anchor == ArkInventory.Const.Anchor.BottomRight then
-							obj:SetPoint( "BOTTOMRIGHT", parent, "TOPRIGHT", 0, pad_bar_ext )
+							obj:SetPoint( "BOTTOMRIGHT", parent, "TOPRIGHT", 0, padBarExternal )
 						end
 
 					else
@@ -5471,13 +5499,13 @@ function ArkInventory.Frame_Container_Draw( frame )
 						local parent = string.format( "%s%s%s", name, "Bar", bar.frame - 1 )
 						
 						if anchor == ArkInventory.Const.Anchor.BottomLeft then
-							obj:SetPoint( "BOTTOMLEFT", parent, "BOTTOMRIGHT", pad_bar_ext, 0 )
+							obj:SetPoint( "BOTTOMLEFT", parent, "BOTTOMRIGHT", padBarExternal, 0 )
 						elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-							obj:SetPoint( "TOPLEFT", parent, "TOPRIGHT", pad_bar_ext, 0 )
+							obj:SetPoint( "TOPLEFT", parent, "TOPRIGHT", padBarExternal, 0 )
 						elseif anchor == ArkInventory.Const.Anchor.TopRight then
-							obj:SetPoint( "TOPRIGHT", parent, "TOPLEFT", 0 - pad_bar_ext, 0 )
+							obj:SetPoint( "TOPRIGHT", parent, "TOPLEFT", 0 - padBarExternal, 0 )
 						else -- if anchor == ArkInventory.Const.Anchor.BottomRight then
-							obj:SetPoint( "BOTTOMRIGHT", parent, "BOTTOMLEFT", 0 - pad_bar_ext, 0 )
+							obj:SetPoint( "BOTTOMRIGHT", parent, "BOTTOMLEFT", 0 - padBarExternal, 0 )
 						end
 						
 					end
@@ -5509,7 +5537,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 		
 		c.width = ArkInventory.Const.Window.Min.Width
 		
-		c.height = pad_window * 2 + pad_bar_ext
+		c.height = padWindow * 2 + padBarExternal
 
 		for row_index, row in ipairs( c.row ) do
 		
@@ -5517,7 +5545,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 				c.width = row.width
 			end
 			
-			c.height = c.height + row.height + pad_bar_ext
+			c.height = c.height + row.height + padBarExternal
 		
 		end
 		
@@ -5645,25 +5673,23 @@ function ArkInventory.Frame_Bar_Paint( frame )
 		
 		local obj = _G[string.format( "%s%s", frame:GetName( ), "Edit" )]
 		
-		local pad_bar = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "internal" )
-		local pad_label = ( ArkInventory.LocationOptionGet( loc_id, "bar", "name", "show" ) and ArkInventory.LocationOptionGet( loc_id, "bar", "name", "height" ) ) or 0
-		local anchor = ArkInventory.LocationOptionGet( loc_id, "slot", "anchor" )
+		local padBarInternal = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "internal" )
+		local padLabel = ( ArkInventory.LocationOptionGet( loc_id, "bar", "name", "show" ) and ArkInventory.LocationOptionGet( loc_id, "bar", "name", "height" ) ) or 0
+		local slotAnchor = ArkInventory.LocationOptionGet( loc_id, "slot", "anchor" )
 		
 		obj:ClearAllPoints( )
 		
 		-- anchor to the opposite corner that items are
-		if anchor == ArkInventory.Const.Anchor.BottomLeft then
-			obj:SetPoint( "TOPRIGHT", 0 - pad_bar, 0 - pad_bar - pad_label ) -- OK
-		elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-			obj:SetPoint( "BOTTOMRIGHT", 0 - pad_bar, pad_bar + pad_label )
-		elseif anchor == ArkInventory.Const.Anchor.TopRight then
-			obj:SetPoint( "BOTTOMLEFT", pad_bar, pad_bar + pad_label )
-		else -- anchor == ArkInventory.Const.Anchor.BottomRight then
-			obj:SetPoint( "TOPLEFT", pad_bar, 0 - pad_bar - pad_label ) -- OK
+		if slotAnchor == ArkInventory.Const.Anchor.BottomLeft then
+			obj:SetPoint( "TOPRIGHT", 0 - padBarInternal, 0 - padBarInternal - padLabel ) -- OK
+		elseif slotAnchor == ArkInventory.Const.Anchor.TopLeft then
+			obj:SetPoint( "BOTTOMRIGHT", 0 - padBarInternal, padBarInternal + padLabel )
+		elseif slotAnchor == ArkInventory.Const.Anchor.TopRight then
+			obj:SetPoint( "BOTTOMLEFT", padBarInternal, padBarInternal + padLabel )
+		else -- slotAnchor == ArkInventory.Const.Anchor.BottomRight then
+			obj:SetPoint( "TOPLEFT", padBarInternal, 0 - padBarInternal - padLabel ) -- OK
 		end
 		
-		obj:SetWidth( ArkInventory.Global.BAG_SLOT_SIZE )
-		obj:SetHeight( ArkInventory.Global.BAG_SLOT_SIZE )
 		obj:Show( )
 		
 	else
@@ -5742,9 +5768,13 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 		
 	end
 	
+	-- DO NOT SCALE THESE VALUES
+	local slotSize = ArkInventory.Const.SLOT_SIZE
+	local slotAnchor = ArkInventory.LocationOptionGet( loc_id, "slot", "anchor" )
 	
-	local pad_slot = ArkInventory.LocationOptionGet( loc_id, "slot", "pad" )
-	local pad_bar = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "internal" )
+	local padSlot = ArkInventory.LocationOptionGet( loc_id, "slot", "pad" )
+	local padBarInternal = ArkInventory.LocationOptionGet( loc_id, "bar", "pad", "internal" )
+	
 	local col = bar.width
 	
 	-- cycle through the items in the bar
@@ -5764,26 +5794,23 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 				
 				-- anchor first item to bar frame - WARNING - item anchor point can only be bottom right, nothing else, so be relative
 				
-				local anchor = ArkInventory.LocationOptionGet( loc_id, "slot", "anchor" )
-				local item_size = obj:GetWidth( )
-				
 				if j == 1 then
 					
-					local pad_name = 0
+					local padName = 0
 					
 					if ArkInventory.LocationOptionGet( loc_id, "bar", "name", "show" ) then
 						
-						local name_anchor = ArkInventory.LocationOptionGet( loc_id, "bar", "name", "anchor" )
+						local nameAnchor = ArkInventory.LocationOptionGet( loc_id, "bar", "name", "anchor" )
 						
-						if name_anchor ~= ArkInventory.Const.Anchor.Automatic then
+						if nameAnchor ~= ArkInventory.Const.Anchor.Automatic then
 							
-							local slot_anchor = ArkInventory.Const.Anchor.Top
-							if anchor == ArkInventory.Const.Anchor.BottomLeft or anchor == ArkInventory.Const.Anchor.BottomRight then
-								slot_anchor = ArkInventory.Const.Anchor.Bottom
+							local tempAnchor = ArkInventory.Const.Anchor.Top
+							if slotAnchor == ArkInventory.Const.Anchor.BottomLeft or slotAnchor == ArkInventory.Const.Anchor.BottomRight then
+								tempAnchor = ArkInventory.Const.Anchor.Bottom
 							end
 							
-							if name_anchor == slot_anchor then
-								pad_name = ArkInventory.LocationOptionGet( loc_id, "bar", "name", "height" ) or 0
+							if nameAnchor == tempAnchor then
+								padName = ArkInventory.LocationOptionGet( loc_id, "bar", "name", "height" ) or 0
 							end
 							
 						end
@@ -5791,14 +5818,14 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 					end
 					
 					
-					if anchor == ArkInventory.Const.Anchor.BottomLeft then
-						obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMLEFT", pad_bar + item_size, pad_bar + pad_name ) -- OK
-					elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-						obj:SetPoint( "BOTTOMRIGHT", frame, "TOPLEFT", pad_bar + item_size, 0 - pad_bar - pad_name - item_size ) -- OK
-					elseif anchor == ArkInventory.Const.Anchor.TopRight then
-						obj:SetPoint( "BOTTOMRIGHT", frame, "TOPRIGHT", 0 - pad_bar, 0 - pad_bar - pad_name - item_size ) -- OK
-					else -- anchor == ArkInventory.Const.Anchor.BottomRight then
-						obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0 - pad_bar, pad_bar + pad_name ) -- OK
+					if slotAnchor == ArkInventory.Const.Anchor.BottomLeft then
+						obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMLEFT", padBarInternal + slotSize, padBarInternal + padName ) -- OK
+					elseif slotAnchor == ArkInventory.Const.Anchor.TopLeft then
+						obj:SetPoint( "BOTTOMRIGHT", frame, "TOPLEFT", padBarInternal + slotSize, 0 - padBarInternal - padName - slotSize ) -- OK
+					elseif slotAnchor == ArkInventory.Const.Anchor.TopRight then
+						obj:SetPoint( "BOTTOMRIGHT", frame, "TOPRIGHT", 0 - padBarInternal, 0 - padBarInternal - padName - slotSize ) -- OK
+					else -- slotAnchor == ArkInventory.Const.Anchor.BottomRight then
+						obj:SetPoint( "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0 - padBarInternal, padBarInternal + padName ) -- OK
 					end
 					
 				else
@@ -5806,32 +5833,32 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 					if mod( ( j - 1 ), col ) == 0 then
 					
 						-- next row, anchor to first item in previous row
-						local anchorframe = ArkInventory.ContainerItemNameGet( loc_id, bar.item[j-col].bag, bar.item[j-col].slot )
+						local anchorFrame = ArkInventory.ContainerItemNameGet( loc_id, bar.item[j-col].bag, bar.item[j-col].slot )
 						
-						if anchor == ArkInventory.Const.Anchor.BottomLeft then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, 0, pad_slot + item_size ) -- OK
-						elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, 0, 0 - pad_slot - item_size ) -- OK
-						elseif anchor == ArkInventory.Const.Anchor.TopRight then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, 0, 0 - pad_slot - item_size ) -- OK
-						else -- if anchor == ArkInventory.Const.Anchor.BottomRight then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, 0, pad_slot + item_size ) -- OK
+						if slotAnchor == ArkInventory.Const.Anchor.BottomLeft then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, 0, padSlot + slotSize ) -- OK
+						elseif slotAnchor == ArkInventory.Const.Anchor.TopLeft then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, 0, 0 - padSlot - slotSize ) -- OK
+						elseif slotAnchor == ArkInventory.Const.Anchor.TopRight then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, 0, 0 - padSlot - slotSize ) -- OK
+						else -- if slotAnchor == ArkInventory.Const.Anchor.BottomRight then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, 0, padSlot + slotSize ) -- OK
 						end
 							
 					else
 					
 						-- anchor to last item
 						
-						local anchorframe = ArkInventory.ContainerItemNameGet( loc_id, bar.item[j-1].bag, bar.item[j-1].slot )
+						local anchorFrame = ArkInventory.ContainerItemNameGet( loc_id, bar.item[j-1].bag, bar.item[j-1].slot )
 						
-						if anchor == ArkInventory.Const.Anchor.BottomLeft then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, pad_slot + item_size, 0 )
-						elseif anchor == ArkInventory.Const.Anchor.TopLeft then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, pad_slot + item_size, 0 )
-						elseif anchor == ArkInventory.Const.Anchor.TopRight then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, 0 - pad_slot - item_size, 0 )
-						else -- if anchor == ArkInventory.Const.Anchor.BottomRight then
-							obj:SetPoint( "BOTTOMRIGHT", anchorframe, 0 - pad_slot - item_size, 0 )
+						if slotAnchor == ArkInventory.Const.Anchor.BottomLeft then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, padSlot + slotSize, 0 )
+						elseif slotAnchor == ArkInventory.Const.Anchor.TopLeft then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, padSlot + slotSize, 0 )
+						elseif slotAnchor == ArkInventory.Const.Anchor.TopRight then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, 0 - padSlot - slotSize, 0 )
+						else -- if slotAnchor == ArkInventory.Const.Anchor.BottomRight then
+							obj:SetPoint( "BOTTOMRIGHT", anchorFrame, 0 - padSlot - slotSize, 0 )
 						end
 						
 					end
@@ -5843,13 +5870,23 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 			obj:Show( )
 			
 			if ArkInventory.Global.Location[loc_id].drawState <= ArkInventory.Const.Window.Draw.Refresh then
+				
 				ArkInventory.Frame_Item_Update_Border( obj )
 				ArkInventory.Frame_Item_Update_Fade( obj )
+				
 				ArkInventory.Frame_Item_Update_Count( obj )
+				
 				ArkInventory.Frame_Item_Update_Texture( obj )
+				
 				ArkInventory.Frame_Item_Update_Quest( obj )
+				
 				ArkInventory.Frame_Item_Update_Cooldown( obj )
 				ArkInventory.Frame_Item_Update_Lock( obj )
+				
+				if loc_id == ArkInventory.Const.Location.Pet then
+					ArkInventory.Frame_Item_Battlepet_Update( obj )
+				end
+				
 			end
 			
 		end
@@ -6269,12 +6306,45 @@ function ArkInventory.SetItemButtonDesaturate( frame, desaturate, r, g, b )
 end
 
 function ArkInventory.Frame_Item_Update_Count( frame )
-
+	
 	local i = ArkInventory.Frame_Item_GetDB( frame )
 	
-	if i then
-		SetItemButtonCount( frame, i.count )
-		--SetItemButtonStock( frame, i.slot_id ) -- display slot number for debugging purposes
+	local obj = _G[frame:GetName().."Count"]
+	
+	local count = ( i and i.count ) or 0
+	local class, speciesID, level
+	
+	frame.count = count
+	
+	if i and i.h then
+		class, speciesID, level = ArkInventory.ObjectStringDecode( i.h )
+		if class == "battlepet" then
+			count = level
+			if level == 1 and i.loc_id == ArkInventory.Const.Location.Pet then
+				level = nil
+			end
+		else
+			level = nil
+		end
+	end
+	
+	if level or ( count > 1 or ( frame.isBag and count > 0 ) ) then
+		
+		if ( count > ( frame.maxDisplayCount or 9999 ) ) then
+			count = "*"
+		end
+		
+		if level then
+			count = string.format( "%s%s|r", GREEN_FONT_COLOR_CODE, level )
+		end
+		
+		obj:SetText( count )
+		obj:Show( )
+		
+	else
+		
+		obj:Hide( )
+		
 	end
 	
 end
@@ -6307,11 +6377,11 @@ function ArkInventory.Frame_Item_Update_Fade( frame )
 	
 	end
 
-	local f = string.lower( strtrim( ArkInventory.Global.Location[loc_id].filter or "" ) )
+	local f = string.lower( string.trim( ArkInventory.Global.Location[loc_id].filter or "" ) )
 	if f ~= "" then
 		local i = ArkInventory.Frame_Item_GetDB( frame ) or { }
 		local n = string.lower( select( 3, ArkInventory.ObjectInfo( i.h ) ) or "" )
-		if not string.find( n, strtrim( f ) ) then
+		if not string.find( n, string.trim( f ) ) then
 			-- drop fade to 0.2 for all non matching items
 			fade = 0.2
 		end
@@ -6515,63 +6585,100 @@ function ArkInventory.Frame_Item_OnEnter( frame )
 	
 	--ArkInventory.Output( "item=[", i.h, "]" )
 	
-	local usedmycode = false
-	
-	if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline or blizzard_id == BANK_CONTAINER or loc_id == ArkInventory.Const.Location.Vault or loc_id == ArkInventory.Const.Location.Wearing or loc_id == ArkInventory.Const.Location.Mail or loc_id == ArkInventory.Const.Location.Pet or loc_id == ArkInventory.Const.Location.Mount or loc_id == ArkInventory.Const.Location.Token  or loc_id == ArkInventory.Const.Location.Auction or loc_id == ArkInventory.Const.Location.Spellbook or loc_id == ArkInventory.Const.Location.Tradeskill or loc_id == ArkInventory.Const.Location.Void then
+	if i.h then
 		
-		usedmycode = true -- edit mode, offline, bank, vault, mail, pet, token, auciton, spellbook, tradeskills, void storage
+		local showSell = nil
 		
-		if i.h then
+		ArkInventory.GameTooltipSetPosition( frame )
+		
+		if ArkInventory.Global.Location[loc_id].isOffline then
 			
-			ArkInventory.GameTooltipSetPosition( frame )
+			ArkInventory.GameTooltipSetHyperlink( frame, i.h )
 			
-			if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline then
-				
-				ArkInventory.GameTooltipSetHyperlink( frame, i.h )
-				
-			elseif blizzard_id == BANK_CONTAINER then
-				
-				GameTooltip:SetInventoryItem( "player", BankButtonIDToInvSlotID( i.slot_id ) )
-				
-			elseif loc_id == ArkInventory.Const.Location.Vault then
-				
-				local tab_id = i.bag_id
-				
-				local _, _, isViewable = GetGuildBankTabInfo( tab_id )
-				
-				if isViewable then
-					GameTooltip:SetGuildBankItem( tab_id, i.slot_id )
-				else
-					GameTooltip:SetHyperlink( i.h )
-				end
-				
-			else
-				
-				ArkInventory.GameTooltipSetHyperlink( frame, i.h )
-				
+		elseif blizzard_id == BANK_CONTAINER then
+			
+			local hasItem, hasCooldown, repairCost, speciesID = ArkInventory.TooltipSetInventoryItem( GameTooltip, BankButtonIDToInvSlotID( i.slot_id ) )
+			if ( speciesID and speciesID > 0 ) then
+				--BattlePetToolTip_Show(speciesID, level, quality, maxHealth, power, speed, name )
+				ArkInventory.TooltipSetBattlePet( GameTooltip, i.h )
+				return
 			end
 			
+		elseif loc_id == ArkInventory.Const.Location.Pet then
 			
-			if IsModifiedClick( "CHATLINK" ) then
-				GameTooltip_ShowCompareItem( )
-			elseif IsModifiedClick( "DRESSUP" ) then
-				ShowInspectCursor( )
-			elseif frame.readable then
-				ShowInspectCursor( )
-			else
-				ResetCursor( )
+			ArkInventory.TooltipSetBattlePet( GameTooltip, i.h, i )
+			return
+			
+		elseif loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Bank then
+			
+--			ContainerFrameItemButton_OnEnter( frame )
+--			if true then return end
+			
+			local _, repairCost, speciesID = ArkInventory.TooltipSetBagItem( GameTooltip, blizzard_id, i.slot_id )
+			if ( speciesID and speciesID > 0 ) then
+				--BattlePetToolTip_Show(speciesID, level, quality, maxHealth, power, speed, name )
+				ArkInventory.TooltipSetBattlePet( GameTooltip, i.h )
+				return
 			end
 			
-			CursorUpdate( frame )
+			if ( InRepairMode( ) and ( repairCost and repairCost > 0 ) ) then
+				GameTooltip:AddLine( REPAIR_COST, "", 1, 1, 1 )
+				SetTooltipMoney( GameTooltip, repairCost )
+				GameTooltip:Show( )
+			elseif ( MerchantFrame:IsShown( ) and MerchantFrame.selectedTab == 1 ) then
+				ShowContainerSellCursor( blizzard_id, i.slot_id )
+			end
+			
+		elseif loc_id == ArkInventory.Const.Location.Vault then
+			
+			local _, _, isViewable = GetGuildBankTabInfo( i.bag_id )
+			
+			if isViewable then
+				GameTooltip:SetGuildBankItem( i.bag_id, i.slot_id )
+			else
+				GameTooltip:SetHyperlink( i.h )
+			end
+		
+		else
+			
+			ArkInventory.GameTooltipSetHyperlink( frame, i.h )
 			
 		end
-
+		
+		
+		if IsModifiedClick( "DRESSUP" ) then
+			
+			ShowInspectCursor( )
+			
+		elseif IsModifiedClick( "CHATLINK" ) then
+			
+			GameTooltip_ShowCompareItem( )
+			ResetCursor( )
+			
+		elseif ( not ArkInventory.Global.Location[loc_id].isOffline ) then
+			
+			if showSell then
+				
+				ShowContainerSellCursor( blizzard_id, i.slot_id )
+				
+			elseif frame.readable then
+				
+				ShowInspectCursor( )
+				
+			end
+		
+		else
+			
+			ResetCursor( )
+			
+		end
+		
+	else
+		
+		ResetCursor( )
+		
 	end
 	
-	if not usedmycode then
-		ContainerFrameItemButton_OnEnter( frame )
-	end
-
 end
 
 function ArkInventory.Frame_Tainted_OnEnter( frame )
@@ -6621,7 +6728,7 @@ function ArkInventory.Frame_Item_OnMouseUp( frame, button )
 	local loc_id = frame.ARK_Data.loc_id
 	local i = ArkInventory.Frame_Item_GetDB( frame )
 	
-	if ArkInventory.Global.Location[loc_id].isOffline or ArkInventory.Global.Mode.Edit then
+	if not ArkInventory.Global.Location[loc_id].template or ArkInventory.Global.Location[loc_id].isOffline or ArkInventory.Global.Mode.Edit then
 		
 		if IsModifierKeyDown( ) then
 			
@@ -6733,6 +6840,36 @@ function ArkInventory.Frame_Item_Update_Lock( frame )
 
 end
 
+function ArkInventory.Frame_Item_Battlepet_Update( frame )
+	
+	if ArkInventory.ValidFrame( frame, true ) == false then
+		return
+	end
+	
+	local loc_id = frame.ARK_Data.loc_id
+	
+	frame.active:Hide( )
+	frame.slotted:Hide( )
+	frame.dead:Hide( )
+	frame.favorite:Hide( )
+	
+	if ArkInventory.Global.Location[loc_id].isOffline then
+		return
+	end
+	
+	local i = ArkInventory.Frame_Item_GetDB( frame )
+	
+	if i and i.pet_id then
+		
+		frame.active:SetShown( i.pet_id == C_PetJournal.GetSummonedPetID( ) )
+		frame.slotted:SetShown( C_PetJournal.PetIsSlotted( i.pet_id ) )
+		frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pet_id ) ) <= 0 )
+		frame.favorite:SetShown( C_PetJournal.PetIsFavorite( i.pet_id ) )
+		
+	end
+
+end
+
 function ArkInventory.Frame_Item_Update_Clickable( frame )
 
 	if ArkInventory.ValidFrame( frame, true ) == false then
@@ -6744,10 +6881,7 @@ function ArkInventory.Frame_Item_Update_Clickable( frame )
 	local action = false
 
 	if ArkInventory.Global.Mode.Edit
-	or ArkInventory.Global.Location[loc_id].isOffline 
-	or loc_id == ArkInventory.Const.Location.Wearing
-	or loc_id == ArkInventory.Const.Location.Mail
-	or loc_id == ArkInventory.Const.Location.Token then
+	or ArkInventory.Global.Location[loc_id].isOffline then
 		
 		action = true
 		
@@ -6776,9 +6910,9 @@ function ArkInventory.Frame_Item_Update_Clickable( frame )
 	end
 	
 end
-	
-function ArkInventory.Frame_Item_OnLoad( frame )
 
+function ArkInventory.Frame_Item_OnLoad( frame )
+	
 	local framename = frame:GetName( )
 	
 	local loc_id, bag_id, slot_id = string.match( framename, "^.-(%d+)ContainerBag(%d+)Item(%d+)" )
@@ -6790,14 +6924,14 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 	loc_id = tonumber( loc_id )
 	bag_id = tonumber( bag_id )
 	slot_id = tonumber( slot_id )
-
+	
 	frame:SetID( slot_id )
 	
 	frame.ARK_Data = {
-		["loc_id"] = loc_id,
-		["bag_id"] = bag_id,
-		["slot_id"] = slot_id,
-		["tainted"] = false,
+		loc_id = loc_id,
+		bag_id = bag_id,
+		slot_id = slot_id,
+		tainted = false,
 	}
 	
 	ContainerFrameItemButton_OnLoad( frame )
@@ -6823,7 +6957,7 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 		
 	end
 	
-	--ArkInventory.MediaSetFontFrame( frame )
+	ArkInventory.Const.SLOT_SIZE = frame:GetWidth( )
 	
 end
 
@@ -6865,7 +6999,42 @@ function ArkInventory.Frame_Item_Tainted_OnLoad( frame )
 	
 end
 
-function ArkInventory.Frame_Companion_Item_OnClick( frame, button )
+function ArkInventory.Frame_Item_Battlepet_OnClick( frame, button )
+	
+	if ArkInventory.ValidFrame( frame, true ) == false then
+		return
+	end
+
+	local loc_id = frame.ARK_Data.loc_id
+	local i = ArkInventory.Frame_Item_GetDB( frame )
+	
+	if IsModifiedClick( "CHATLINK" ) then
+		
+		ChatEdit_InsertLink( i.h )
+		
+	else
+		
+		if not ArkInventory.Global.Location[loc_id].isOffline or not ArkInventory.Global.Mode.Edit then
+			
+			if ( button == "LeftButton" ) then
+				
+				if C_PetJournal.PetIsSummonable( i.pet_id ) then
+					C_PetJournal.SummonPetByID( i.pet_id )
+				end
+				
+			elseif ( button == "RightButton" ) then
+				
+				ArkInventory.MenuBattlePet( frame, i.pet_id )
+				
+			end
+			
+		end
+		
+	end
+
+end
+
+function ArkInventory.Frame_Item_Companion_OnClick( frame, button )
 	
 	if ArkInventory.ValidFrame( frame, true ) == false then
 		return
@@ -6890,7 +7059,17 @@ function ArkInventory.Frame_Companion_Item_OnClick( frame, button )
 				
 			elseif i.type == "CRITTER" then
 				
-				-- do nothing, cant call pets any more
+				if ( button == "LeftButton" ) then
+					
+					if C_PetJournal.PetIsSummonable( i.pet_id ) then
+						C_PetJournal.SummonPetByID( i.pet_id )
+					end
+					
+				elseif ( button == "RightButton" ) then
+					
+					ArkInventory.MenuBattlePet( frame, i.pet_id )
+					
+				end
 				
 			elseif i.type == "MOUNT" then
 				
@@ -6912,7 +7091,7 @@ function ArkInventory.Frame_Companion_Item_OnClick( frame, button )
 
 end
 
-function ArkInventory.Frame_Companion_Item_OnDrag( frame )
+function ArkInventory.Frame_Item_Companion_OnDrag( frame )
 	
 	if ArkInventory.Global.Mode.Edit then
 		return
@@ -6934,16 +7113,26 @@ end
 function ArkInventory.Frame_Item_Update( loc_id, bag_id, slot_id )
 	
 	local framename = ArkInventory.ContainerItemNameGet( loc_id, bag_id, slot_id )	
-	local frame = _G[framename]
+	local obj = _G[framename]
 	
-	if frame and not ArkInventory.Global.Location[loc_id].isOffline then
-		ArkInventory.Frame_Item_Update_Border( frame )
-		ArkInventory.Frame_Item_Update_Fade( frame )
-		ArkInventory.Frame_Item_Update_Count( frame )
-		ArkInventory.Frame_Item_Update_Texture( frame )
-		ArkInventory.Frame_Item_Update_Quest( frame )
-		ArkInventory.Frame_Item_Update_Cooldown( frame )
-		ArkInventory.Frame_Item_Update_Lock( frame )
+	if obj and not ArkInventory.Global.Location[loc_id].isOffline then
+		
+		ArkInventory.Frame_Item_Update_Border( obj )
+		ArkInventory.Frame_Item_Update_Fade( obj )
+		
+		ArkInventory.Frame_Item_Update_Count( obj )
+		
+		ArkInventory.Frame_Item_Update_Texture( obj )
+		
+		ArkInventory.Frame_Item_Update_Quest( obj )
+		
+		ArkInventory.Frame_Item_Update_Cooldown( obj )
+		ArkInventory.Frame_Item_Update_Lock( obj )
+		
+		if loc_id == ArkInventory.Const.Location.Pet then
+			ArkInventory.Frame_Item_Battlepet_Update( obj )
+		end
+		
 	end
 	
 end
@@ -6996,7 +7185,7 @@ function ArkInventory.Frame_Status_Update( frame )
 	end
 	
 	
-	-- update currency tracking
+	-- update token tracking
 	ArkInventory.Frame_Status_Update_Tracking( loc_id )
 	
 end
@@ -7096,31 +7285,29 @@ function ArkInventory.Frame_Status_Update_Tracking( loc_id )
 	
 	for i = 1, MAX_WATCHED_TOKENS do
 		
-		local t = _G[string.format( "%s%s%s", frame:GetName( ), "TrackingIcon", i )]
-		local c = _G[string.format( "%s%s%s", frame:GetName( ), "TrackingCount", i )]
-		local d = _G[string.format( "%s%s%s", frame:GetName( ), "TrackingData", i )]
+		local obj = _G[string.format( "%s%s%s", frame:GetName( ), "Tracking", i )]
 		
-		local name, count, icon = GetBackpackCurrencyInfo( i )
+		local name, count, icon, currencyID = GetBackpackCurrencyInfo( i )
 		
-		if name then
+		if currencyID then
 			
-			t:SetTexture( icon )
-			t:Show( )
+			local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( currencyID )
 			
-			c:SetText( string.format( "%s", count ) )
-			c:Show( )
+			if not string.find( icon, "\\" ) then
+				icon = string.format( "Interface\\Icons\\%s", icon )
+			end
 			
-			d.item = string.format( "|Htoken:%s:%s|h[%s]|h", name, icon, name )
-			d:Show( )
+			obj.currencyID = currencyID
+			
+			obj.icon:SetTexture( icon )
+			obj.count:SetText( amount )
+			obj:SetWidth( 2 * obj.icon:GetWidth( ) + obj.count:GetWidth( ) )
+			obj:Show( )
 			
 		else
 			
-			t:Hide( )
-			
-			c:Hide( )
-			
-			d.item = nil
-			d:Hide( )
+			obj:SetWidth( 1 )
+			obj:Hide( )
 			
 		end
 		
@@ -8227,6 +8414,29 @@ function ArkInventory.HookVoidStorageEvent( self, event )
 	--ArkInventory.Output( "void storage event ", event )
 end
 
+function ArkInventory.HookFloatingBattlePet_Show( ... )
+	
+	local h = ArkInventory.BattlepetBaseHyperlink( ... )
+	
+	FloatingBattlePetTooltip:Hide( )
+	
+	if not ItemRefTooltip:IsVisible( ) then
+		ItemRefTooltip:SetOwner( UIParent, "ANCHOR_PRESERVE" )
+	end
+	ArkInventory.TooltipSetBattlePet( ItemRefTooltip, h )
+	
+end
+
+function ArkInventory.HookBattlePetToolTip_Show( ... )
+	
+	local h = ArkInventory.BattlepetBaseHyperlink( ... )
+	
+	BattlePetTooltip:Hide( )
+	
+	ArkInventory.TooltipSetBattlePet( GameTooltip, h )
+	
+end
+
 
 
 function ArkInventory.BlizzardAPIHooks( disable )
@@ -8400,19 +8610,24 @@ function ArkInventory.BlizzardAPIHooks( disable )
 	local tooltip_functions = {
 		"SetAuctionItem", "SetAuctionSellItem", "SetAuctionCompareItem", "SetBagItem", "SetBuybackItem", "SetCraftItem", "SetCraftSpell", "SetGuildBankItem", "SetHyperlink",
 		"SetHyperlinkCompareItem", "SetInboxItem", "SetInventoryItem", "SetLootItem", "SetLootRollItem", "SetMerchantCompareItem", "SetMerchantItem", "SetQuestItem",
-		"SetQuestLogItem", "SetSendMailItem", "SetTradePlayerItem", "SetTradeSkillItem", "SetTradeTargetItem", "SetCurrencyToken", "SetBackpackToken", "SetMerchantCostItem",
-		"SetText"
+		"SetQuestLogItem", "SetSendMailItem", "SetTradePlayerItem", "SetTradeSkillItem", "SetTradeTargetItem", "SetMerchantCostItem",
 	}
     
 	if disable or not ArkInventory.db.global.option.tooltip.show then
 		
 		ArkInventory.MyUnhook( "GameTooltip_ShowCompareItem", "TooltipShowCompare" )
+		ArkInventory.MyUnhook( "GameTooltip", "SetCurrencyToken" )
+		ArkInventory.MyUnhook( "GameTooltip", "SetBackpackToken" )
+		ArkInventory.MyUnhook( "FloatingBattlePet_Show", "HookFloatingBattlePet_Show" )
+		ArkInventory.MyUnhook( "BattlePetToolTip_Show", "HookBattlePetToolTip_Show" )
+		
+		
 		
 		for _, obj in pairs( ArkInventory.Global.Tooltip.WOW ) do
 			for _, func in pairs( tooltip_functions ) do
 				if obj then
 					if obj[func] then
-						ArkInventory.MyUnhook( obj, func, ArkInventory.TooltipAdd )
+						ArkInventory.MyUnhook( obj, func, ArkInventory.TooltipHook )
 					end
 					if obj.ARK_Data then
 						table.wipe( obj.ARK_Data )
@@ -8428,7 +8643,7 @@ function ArkInventory.BlizzardAPIHooks( disable )
 			for _, func in pairs( tooltip_functions ) do
 				if obj then
 					if obj[func] then
-						ArkInventory.MySecureHook( obj, func, ArkInventory.TooltipAdd )
+						ArkInventory.MySecureHook( obj, func, ArkInventory.TooltipHook )
 					end
 					if ArkInventory.db.global.option.tooltip.scale.enabled then
 						obj:SetScale( ArkInventory.db.global.option.tooltip.scale.amount or 1 )
@@ -8438,7 +8653,11 @@ function ArkInventory.BlizzardAPIHooks( disable )
 			end
 		end
 		
-		ArkInventory.MySecureHook( "GameTooltip_ShowCompareItem", "TooltipShowCompare" )
+		ArkInventory.MySecureHook( "BattlePetToolTip_Show", ArkInventory.HookBattlePetToolTip_Show )
+		ArkInventory.MySecureHook( "FloatingBattlePet_Show", ArkInventory.HookFloatingBattlePet_Show )
+		ArkInventory.MySecureHook( GameTooltip, "SetBackpackToken", ArkInventory.TooltipHookSetBackpackToken )
+		ArkInventory.MySecureHook( GameTooltip, "SetCurrencyToken", ArkInventory.TooltipHookSetCurrencyToken )
+		ArkInventory.MySecureHook( "GameTooltip_ShowCompareItem", ArkInventory.TooltipShowCompare )
 		
 	end
 	
@@ -8575,19 +8794,13 @@ end
 
 function ArkInventory.GameTooltipSetHyperlink( frame, h )
 
-	local class = ArkInventory.ObjectStringDecode( h )
+	local class, id = ArkInventory.ObjectStringDecode( h )
 	
 	ArkInventory.GameTooltipSetPosition( frame )
 	
-	if class == "token" then
+	if class == "battlepet" then
 		
-		local _, _, name = ArkInventory.ObjectInfo( h )
-		GameTooltip:SetText( h, 1, 1, 1, 1 )
-		
-	elseif class == "battlepet" then
-		
-		local _, _, _, _, breedQuality, level, _, _, _, _, _, _, speciesID, maxHealth, power, speed, customName = ArkInventory.ObjectInfo( h )
-		BattlePetToolTip_Show( speciesID, level, breedQuality, maxHealth, power, speed, customName )
+		ArkInventory.TooltipSetBattlePet( GameTooltip, h )
 		
 	else
 		
@@ -8944,7 +9157,7 @@ function ArkInventory.ItemAgeGet( age )
 			t = string.format( "%d%s", m, string.sub( s, 3, 3 ) )
 		end
 		
-		return x, strtrim( t )
+		return x, string.trim( t )
 		
 	end
 	

@@ -141,6 +141,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_BAG"] = "Сумка"
 	L["MENU_ITEM_DEBUG_SLOT"] = "Ячейка"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "Тип"
+--	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "Короткий ID"
 	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "ID кэша"
 --	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = ""
@@ -222,6 +223,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
 --	L["CONFIG_SYSTEM_BUGFIX"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = ""
@@ -470,7 +473,6 @@ if not L then return end
 --	L["RULE_FAILED_ARGUMENT_IS_NIL"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
---	L["RULE_FAILED_ADDON_NOT_LOADED"] = ""
 	
 	
 --	new item indicators
@@ -505,8 +507,8 @@ if not L then return end
 	
 	
 --	misc chat stuff
-	L["UPGRADE_PROFILE"] = "Обновление профиля [%1$s] до %2$.2f"
-	L["UPGRADE_GLOBAL"] = "Обновление общей %1$s информации до v%2$.4f"
+	L["UPGRADE_PROFILE"] = "Обновление профиля [%1$s] до %2$d"
+	L["UPGRADE_GLOBAL"] = "Обновление общей %1$s информации до v%2$d"
 --	L["UPGRADE_CHAR"] = ""
 	
 	L["MISC_ALERT"] = "Внимание!"

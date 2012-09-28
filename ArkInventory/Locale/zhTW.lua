@@ -141,6 +141,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_BAG"] = "背包"
 	L["MENU_ITEM_DEBUG_SLOT"] = "空格"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "背包類型"
+--	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "簡短ID"
 	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "快取ID"
 --	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = ""
@@ -222,6 +223,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "除錯/規避錯誤"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "切換除錯或規避錯誤的程式碼"
@@ -470,7 +473,6 @@ if not L then return end
 	L["RULE_FAILED_ARGUMENT_IS_NIL"] = "%1$s( ... ), 參數 %2$i 為零"
 	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), 參數 %2$i 不是 %3$s"
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
---	L["RULE_FAILED_ADDON_NOT_LOADED"] = ""
 	
 	
 --	new item indicators
@@ -505,9 +507,9 @@ if not L then return end
 	
 	
 --	misc chat stuff
-	L["UPGRADE_PROFILE"] = "升級設定檔「%1$s」到%2$.4f"
-	L["UPGRADE_GLOBAL"] = "升級全域資料%1$s至v%2$.4f"
-	L["UPGRADE_CHAR"] = "升級角色資料%1$s至v%2$.4f"
+	L["UPGRADE_PROFILE"] = "升級設定檔「%1$s」到%2$df"
+	L["UPGRADE_GLOBAL"] = "升級全域資料%1$s至v%2$df"
+	L["UPGRADE_CHAR"] = "升級角色資料%1$s至v%2$d"
 	
 	L["MISC_ALERT"] = "警告！"
 	L["MISC_ALERT_FRAMELEVEL_1"] = "除錯完成"

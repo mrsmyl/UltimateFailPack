@@ -56,6 +56,7 @@ L["WOW_SKILL_FISHING"] = PROFESSIONS_FISHING or true
 L["LOCATION_BAG"] = INVTYPE_BAG or true
 
 
+
 --	category descriptions
 L["CATEGORY_CLASS"] = CLASS or true -- calculated keyword
 L["CATEGORY_CUSTOM"] = CUSTOM or true -- calculated keyword
@@ -108,7 +109,7 @@ L["TOTAL"] = TOTAL or true
 L["TRACKING"] = TRACKING or true
 L["UNKNOWN"] = UNKNOWNOBJECT or true
 L["YES"] = YES or true
-
+L["BATTLEPET"] = TOOLTIP_BATTLE_PET or true
 
 -- calculated
 local text = ITEM_MIN_SKILL
@@ -121,6 +122,9 @@ text = string.gsub( text, "%%d", "%(%%d+%)", 1 ) -- replace %d with (%d+)
 L["WOW_TOOLTIP_SKILL"] = string.format( "^%s", text )
 
 L["WOW_TOOLTIP_CLASS"] = string.format( "^%s", string.gsub( ITEM_CLASSES_ALLOWED, "%%s", "(.+)", 1 ) )
+L["PET_BATTLE_BOUND"] = string.format( "%s (%s)", TOOLTIP_BATTLE_PET, ITEM_ACCOUNTBOUND )
+L["PET_COMPANION_BOUND"] = string.format( "%s (%s)", PET, ITEM_ACCOUNTBOUND )
+L["PET_CANNOT_BATTLE"] = string.gsub( BATTLE_PET_CANNOT_BATTLE, "\n", " " )
 
 
 -- generated from auction house categories
@@ -187,8 +191,6 @@ local auctionTable = {
 	{ "WOW_AH_MISC_MOUNT", 9, 6 },
 	
 	{ "WOW_AH_QUEST", 10 },
-	
-	{ "WOW_AH_BATTLEPET", 11 },
 	
 	
 	{ "CATEGORY_CONSUMABLE", 4 }, -- calculated keyword
@@ -287,8 +289,6 @@ L["WOW_AH_RECIPE_ENGINEERING"] = true
 L["WOW_AH_RECIPE_INSCRIPTION"] = true
 L["WOW_AH_RECIPE_LEATHERWORKING"] = true
 L["WOW_AH_RECIPE_TAILORING"] = true
-
-L["WOW_AH_BATTLEPET"] = true
 
 L["WOW_SKILL_HERBALISM"] = true
 L["WOW_SKILL_MINING"] = true

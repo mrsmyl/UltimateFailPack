@@ -1,6 +1,16 @@
 ﻿-- (c) 2009-2012, all rights reserved.
--- $Revision: 976 $
--- $Date: 2012-09-16 19:43:22 +1000 (Sun, 16 Sep 2012) $
+-- $Revision: 996 $
+-- $Date: 2012-09-24 02:47:07 +1000 (Mon, 24 Sep 2012) $
+
+
+local _G = _G
+local select = _G.select
+local pairs = _G.pairs
+local string = _G.string
+local type = _G.type
+local error = _G.error
+local table = _G.table
+
 
 ArkInventoryRules = LibStub( "AceAddon-3.0" ):NewAddon( "ArkInventoryRules" )
 
@@ -256,7 +266,7 @@ function ArkInventoryRules.System.type( ... )
 				error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 			end
 			
-			if e == string.lower( strtrim( arg ) ) then
+			if e == string.lower( string.trim( arg ) ) then
 				return true
 			end
 			
@@ -298,7 +308,7 @@ function ArkInventoryRules.System.subtype( ... )
 				error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 			end
 			
-			if e == string.lower( strtrim( arg ) ) then
+			if e == string.lower( string.trim( arg ) ) then
 				return true
 			end
 			
@@ -316,11 +326,11 @@ function ArkInventoryRules.System.equip( ... )
 		return false
 	end
 	
-	local e = strtrim( select( 9, GetItemInfo( ArkInventoryRules.Object.h ) ) or "" )
+	local e = string.trim( select( 9, GetItemInfo( ArkInventoryRules.Object.h ) ) or "" )
 	if string.len( e ) > 1 then
 		e = _G[e]
 	end
-	e = string.lower( strtrim( e ) )
+	e = string.lower( string.trim( e ) )
 	
 	if e ~= "" then
 		
@@ -351,7 +361,7 @@ function ArkInventoryRules.System.equip( ... )
 					error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 				end
 				
-				if e == string.lower( strtrim( arg ) ) then
+				if e == string.lower( string.trim( arg ) ) then
 					return true
 				end
 				
@@ -393,7 +403,7 @@ function ArkInventoryRules.System.name( ... )
 			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 		end
 		
-		if string.find( e, string.lower( strtrim( arg ) ) ) then
+		if string.find( e, string.lower( string.trim( arg ) ) ) then
 			return true
 		end
 		
@@ -433,7 +443,7 @@ function ArkInventoryRules.System.quality( ... )
 			
 		elseif type( arg ) == "string" then
 			
-			if string.lower( strtrim( arg ) ) == string.lower( _G[string.format( "ITEM_QUALITY%d_DESC", ArkInventoryRules.Object.q )] ) then
+			if string.lower( string.trim( arg ) ) == string.lower( _G[string.format( "ITEM_QUALITY%d_DESC", ArkInventoryRules.Object.q )] ) then
 				return true
 			end
 			
@@ -559,7 +569,7 @@ function ArkInventoryRules.System.periodictable( ... )
 			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 		end
 		
-		if ArkInventory.Lib.PeriodicTable:ItemInSet( ArkInventoryRules.Object.h, strtrim( arg ) ) then
+		if ArkInventory.Lib.PeriodicTable:ItemInSet( ArkInventoryRules.Object.h, string.trim( arg ) ) then
 			return true
 		end
 		
@@ -595,7 +605,7 @@ function ArkInventoryRules.System.tooltipgeneric( ... )
 			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 		end
 		
-		if ArkInventory.TooltipContains( ArkInventoryRules.Tooltip, strtrim( arg ) ) then
+		if ArkInventory.TooltipContains( ArkInventoryRules.Tooltip, string.trim( arg ) ) then
 			return true
 		end
 	
@@ -640,7 +650,7 @@ function ArkInventoryRules.System.tooltipslot( ... )
 			error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 		end
 		
-		if ArkInventory.TooltipContains( ArkInventoryRules.Tooltip, strtrim( arg ) ) then
+		if ArkInventory.TooltipContains( ArkInventoryRules.Tooltip, string.trim( arg ) ) then
 			return true
 		end
 	
@@ -692,7 +702,7 @@ end
 
 function ArkInventoryRules.System.outfit_outfitter( ... )
 	
-	if not ArkInventoryRules.Object.h or not IsAddOnLoaded( "Outfitter" ) then --or not Outfitter:IsInitialized( ) then
+	if not ArkInventoryRules.Object.h then
 		return false
 	end
 	
@@ -727,7 +737,7 @@ function ArkInventoryRules.System.outfit_outfitter( ... )
 		end
 		
 		for _, o in pairs( Outfits ) do
-			if o and o.Name and string.lower( strtrim( o.Name ) ) == string.lower( strtrim( arg ) ) then
+			if o and o.Name and string.lower( string.trim( o.Name ) ) == string.lower( string.trim( arg ) ) then
 				return true
 			end
 		end
@@ -742,7 +752,9 @@ function ArkInventoryRules.System.outfit_itemrack( ... )
 
 	-- item rack 2.1
 
-	if not ArkInventoryRules.Object.h or not IsAddOnLoaded( "ItemRack" ) then return false end
+	if not ArkInventoryRules.Object.h then
+		return false
+	end
 	
 	local id = string.match( ArkInventoryRules.Object.h or "", "item:(.+):%-?%d+" ) or 0
 	
@@ -754,7 +766,7 @@ function ArkInventoryRules.System.outfit_itemrack( ... )
 			--ArkInventory.Output( "pos=[", k, "], item=[", setitem, "], id=[", id, "]" )
 			if not ( setitem == 0 or setitem == nil ) then
 				if id == setitem and string.sub( setname, 1, 1 ) ~= "~" then
-					tinsert( Outfits, strtrim( setname ) )
+					tinsert( Outfits, string.trim( setname ) )
 					--ArkInventory.Output( "added set [", setname, "] for item [", id, "]" )
 					break
 				end
@@ -783,7 +795,7 @@ function ArkInventoryRules.System.outfit_itemrack( ... )
 		end
 		
 		for _, o in pairs( Outfits ) do
-			if o and string.lower( strtrim( o ) ) == string.lower( strtrim( arg ) ) then
+			if o and string.lower( string.trim( o ) ) == string.lower( string.trim( arg ) ) then
 				return true
 			end
 		end
@@ -858,7 +870,7 @@ function ArkInventoryRules.System.outfit_blizzard( ... )
 		end
 		
 		for _, o in pairs( Outfits ) do
-			if o and string.lower( strtrim( o ) ) == string.lower( strtrim( arg ) ) then
+			if o and string.lower( string.trim( o ) ) == string.lower( string.trim( arg ) ) then
 				return true
 			end
 		end
@@ -1071,7 +1083,7 @@ function ArkInventoryRules.System.location( ... )
 		end
 		
 		
-		local k = string.lower( strtrim( arg ) )
+		local k = string.lower( string.trim( arg ) )
 		if k == "bag" or k == string.lower( ArkInventory.Localise["LOCATION_BAG"] ) then
 			k = ArkInventory.Const.Location.Bag
 		elseif k == "bank" or k == string.lower( ArkInventory.Localise["LOCATION_BANK"] ) then
@@ -1704,10 +1716,10 @@ function ArkInventoryRules.EntryFormat( data )
 	end
 	
 	local zName = ""
-	zName = strtrim( tostring( data.name or zName ) )
+	zName = string.trim( tostring( data.name or zName ) )
 
 	local zFormula = "false"
-	zFormula = strtrim( tostring( data.formula or zFormula ) )
+	zFormula = string.trim( tostring( data.formula or zFormula ) )
 	zFormula = string.gsub( zFormula, "[\r]", " " ) -- replace carriage return with space
 	zFormula = string.gsub( zFormula, "[\n]", " " ) -- replace new line with space
 	zFormula = string.gsub( zFormula, "%s+", " " ) -- replace multiple spaces with a single space
@@ -1772,12 +1784,12 @@ function ArkInventoryRules.EntryIsValid( rid, data )
 	ArkInventoryRules.EntryFormat( data )
 	
 	
-	if not data.name or strtrim( data.name ) == "" then
+	if not data.name or string.trim( data.name ) == "" then
 		em = string.format( "%s, %s", em, ArkInventory.Localise["RULE_FAILED_DESCRIPTION_NIL"] )
 		ok = false
 	end
 	
-	if not data.formula or strtrim( data.formula ) == "" then
+	if not data.formula or string.trim( data.formula ) == "" then
 		
 		em = string.format( "%s, %s", em, ArkInventory.Localise["RULE_FAILED_FORMULA_NIL"] )
 		ok = false

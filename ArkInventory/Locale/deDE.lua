@@ -141,6 +141,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_BAG"] = "Tasche"
 	L["MENU_ITEM_DEBUG_SLOT"] = "Platz"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "Taschenart"
+--	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 --	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = ""
 --	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = "Regel ID"
@@ -222,6 +223,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "Fehlerbehebungen / Workarounds"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "Schaltet die Fehlerbehebung f\195\188r diese Problem ein."
@@ -470,7 +473,6 @@ if not L then return end
 --	L["RULE_FAILED_ARGUMENT_IS_NIL"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
---	L["RULE_FAILED_ADDON_NOT_LOADED"] = ""
 	
 	
 --	new item indicators
@@ -505,9 +507,9 @@ if not L then return end
 	
 	
 --	misc chat stuff
-	L["UPGRADE_PROFILE"] = "aktualisiere Profil von [%1$s] auf Version %2$.4f" -- profile name, version
-	L["UPGRADE_GLOBAL"] = "aktualisiere globale Daten von %1$s auf Version %2$.4f"  -- profile type, version
---	L["UPGRADE_CHAR"] = "Upgrading character data for %1$s to v%2$.4f"  -- character, version
+	L["UPGRADE_PROFILE"] = "aktualisiere Profil von [%1$s] auf Version %2$d" -- profile name, version
+	L["UPGRADE_GLOBAL"] = "aktualisiere globale Daten von %1$s auf Version %2$d"  -- profile type, version
+--	L["UPGRADE_CHAR"] = "Upgrading character data for %1$s to v%2$d"  -- character, version
 	
 	L["MISC_ALERT"] = "ACHTUNG!"
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Fehlerbehebung abgeschlossen"

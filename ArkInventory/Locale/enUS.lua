@@ -141,6 +141,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_BAG"] = "Bag"
 	L["MENU_ITEM_DEBUG_SLOT"] = "Slot"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "Type"
+	L["MENU_ITEM_DEBUG_PET_ID"] = "Pet ID"
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "Short ID"
 	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "Cache ID"
 	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = "Rule ID"
@@ -222,6 +223,8 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = "Faction only"
 	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = "only show data for the current faction"
 	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = "include data from %1$s" -- %1$s = vault
+	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = "include source text in tooltip"
+	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = "include description text in tooltip"
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "Bug Fixes / Workarounds"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "toggle the code to fix or work around this issue"
@@ -472,7 +475,6 @@ if not L then return end
 	L["RULE_FAILED_ARGUMENT_IS_NIL"] = "%1$s( ... ), argument %2$i is nil"
 	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), argument %2$i is not a %3$s"
 	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = "%1$s( ... ), no arguments specified"
-	L["RULE_FAILED_ADDON_NOT_LOADED"] = "%1$s( ... ), required addon is not loaded"
 	
 	
 --	new item indicators
@@ -507,9 +509,9 @@ if not L then return end
 	
 	
 --	misc chat stuff
-	L["UPGRADE_PROFILE"] = "Upgrading profile data for [%1$s] to v%2$.4f" -- profile name, version
-	L["UPGRADE_GLOBAL"] = "Upgrading global %1$s data to v%2$.4f" -- profile type, version
-	L["UPGRADE_CHAR"] = "Upgrading character data for %1$s to v%2$.4f" -- character, version
+	L["UPGRADE_PROFILE"] = "Upgrading profile data for [%1$s] to v%2$d" -- profile name, version
+	L["UPGRADE_GLOBAL"] = "Upgrading global %1$s data to v%2$d" -- profile type, version
+	L["UPGRADE_CHAR"] = "Upgrading character data for %1$s to v%2$d" -- character, version
 	
 	L["MISC_ALERT"] = "Alert!"
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Bug fix complete."

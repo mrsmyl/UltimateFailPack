@@ -141,6 +141,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_BAG"] = "Sac"
 	L["MENU_ITEM_DEBUG_SLOT"] = "Emplacement"
 --	L["MENU_ITEM_DEBUG_BAG_TYPE"] = ""
+--	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "ID court"
 	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "ID cache"
 	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = "ID de règle"
@@ -222,6 +223,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "Corriger/Contourner le bogue"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "Activer le code pour corriger ou contourner ce problème"
@@ -470,7 +473,6 @@ if not L then return end
 --	L["RULE_FAILED_ARGUMENT_IS_NIL"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
---	L["RULE_FAILED_ADDON_NOT_LOADED"] = ""
 	
 	
 --	new item indicators
@@ -505,8 +507,8 @@ if not L then return end
 	
 	
 --	misc chat stuff
-	L["UPGRADE_PROFILE"] = "Mise à jour des données de profile pour [%1$s] vers v%2$.4f"
-	L["UPGRADE_GLOBAL"] = "Mise à jour global des données de %1$s vers v%2$.4f"
+	L["UPGRADE_PROFILE"] = "Mise à jour des données de profile pour [%1$s] vers v%2$d"
+	L["UPGRADE_GLOBAL"] = "Mise à jour global des données de %1$s vers v%2$d"
 --	L["UPGRADE_CHAR"] = ""
 	
 	L["MISC_ALERT"] = "Alerte !"

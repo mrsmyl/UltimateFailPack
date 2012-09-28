@@ -1,12 +1,111 @@
 ------------------------------------------------------------------------
-r363 | arkayenro | 2012-09-16 14:15:06 +0000 (Sun, 16 Sep 2012) | 4 lines
+r374 | arkayenro | 2012-09-28 04:32:22 +0000 (Fri, 28 Sep 2012) | 5 lines
 Changed paths:
-   A /tags/3.03.10 (from /trunk:362)
+   A /tags/3.03.15 (from /trunk:373)
 
-*3.03.10 (17-SEP-2012)*
- * fixed - outfitter support code should now work properly
- * changed - outfit rule will now check against each supported addon and then lastly check the equipment manager
+*3.03.15 (28-SEP-2012)*
+ * added - config > settings > [location] > items > scale
+ * fixed - optional dependency link for libpetjournal
+ * fixed - x-embed dependency link for libpetjournal
 
+------------------------------------------------------------------------
+r373 | arkayenro | 2012-09-28 04:29:44 +0000 (Fri, 28 Sep 2012) | 5 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryConfig.lua
+   M /trunk/ArkInventoryMenu.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.15 (28-SEP-2012)*
+ * added - config > settings > [location] > items > scale
+ * fixed - optional dependency link for libpetjournal
+ * fixed - x-embed dependency link for libpetjournal
+
+------------------------------------------------------------------------
+r372 | arkayenro | 2012-09-27 21:42:02 +0000 (Thu, 27 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventoryExternals.lua
+   M /trunk/VersionHistory.txt
+
+fixed embeds for no lib
+------------------------------------------------------------------------
+r370 | arkayenro | 2012-09-27 06:27:10 +0000 (Thu, 27 Sep 2012) | 5 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventoryExternals.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryUpgrades.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.14 (27-SEP-2012)*
+ * fixed - optional dependency link to libpetjournal for everyone
+ * fixed - x-embed dependency link to libpetjournal for curse no lib users
+ * fixed - idiot programmers really stupid mistake
+ * note - all data has been erased, again, sorry.  last time though.  please login to each character to update its data
+------------------------------------------------------------------------
+r368 | arkayenro | 2012-09-26 22:48:22 +0000 (Wed, 26 Sep 2012) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryMenu.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryUpgrades.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.13 (27-SEP-2012)*
+ * fixed - issue with guild data not erasing gold value when erased
+ * fixed - possible issue with erase data function (might not be fixed as i couldnt duplicate the issue)
+ * changed - a guild bank now only has an option to erase all data
+------------------------------------------------------------------------
+r366 | arkayenro | 2012-09-26 12:33:53 +0000 (Wed, 26 Sep 2012) | 5 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventoryUpgrades.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.12 (26-SEP-2012)*
+ * fixed - issue with cursor not showing sell icon
+ * changed - tooltip item counts, by default they now show only your own faction
+ * note - all token data has been erased, again, the erase confirmation should appear in your chat window, please login to each character to update its data
+
+------------------------------------------------------------------------
+r364 | arkayenro | 2012-09-26 07:00:49 +0000 (Wed, 26 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryCompanion.lua
+   M /trunk/ArkInventoryConfig.lua
+   M /trunk/ArkInventoryLDB.lua
+   M /trunk/ArkInventoryMenu.lua
+   M /trunk/ArkInventoryRestack.lua
+   M /trunk/ArkInventorySearch.lua
+   M /trunk/ArkInventorySearch.xml
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryTooltip.lua
+   M /trunk/ArkInventoryTranslate.lua
+   M /trunk/ArkInventoryUpgrades.lua
+   M /trunk/Locale/deDE.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Locale/esES.lua
+   M /trunk/Locale/esMX.lua
+   M /trunk/Locale/frFR.lua
+   M /trunk/Locale/game.lua
+   M /trunk/Locale/koKR.lua
+   M /trunk/Locale/ruRU.lua
+   M /trunk/Locale/zhCN.lua
+   M /trunk/Locale/zhTW.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.xml
+   M /trunk/Modules/ArkInventoryRulesExample/ArkInventoryRulesExample.toc
+   M /trunk/VersionHistory.txt
+   M /trunk/embeds.xml
+
+testing git lib works for curse users
 ------------------------------------------------------------------------
 r362 | arkayenro | 2012-09-16 14:10:33 +0000 (Sun, 16 Sep 2012) | 3 lines
 Changed paths:
@@ -154,27 +253,5 @@ Changed paths:
  * added - battle pet category
  * added - battle pet item and tooltip support
  * removed - ability to summon pets (via window and ldb, will return in a later version)
-
-------------------------------------------------------------------------
-r343 | arkayenro | 2012-08-21 01:18:30 +0000 (Tue, 21 Aug 2012) | 7 lines
-Changed paths:
-   M /trunk/ArkInventory.lua
-   M /trunk/ArkInventory.toc
-   M /trunk/ArkInventoryCompanion.lua
-   M /trunk/ArkInventoryStorage.lua
-   M /trunk/ArkInventoryTranslate.lua
-   M /trunk/Bindings.xml
-   M /trunk/Locale/game.lua
-   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
-   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.toc
-   M /trunk/ReadMe.txt
-   M /trunk/VersionHistory.txt
-
-*3.03.00 (21-AUG-2012) BETA 08-21-11-00*
- * changed - toc set to 50001
- * changed - will not load on live servers
- * fixed - caged battlepet items and offline tooltips
- * removed (temporarily) - pets (theyre now account wide so i need to decide what to do with them)
- * removed (temporarily) - mounts
 
 ------------------------------------------------------------------------

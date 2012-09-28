@@ -141,6 +141,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_BAG"] = "背包"
 	L["MENU_ITEM_DEBUG_SLOT"] = "包格"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "背包类别"
+--	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "短ID"
 	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "缓存ID"
 	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = "规则ID"
@@ -222,6 +223,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "错误修正/绕开"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "切换代码修正或者绕开这个问题"
@@ -470,7 +473,6 @@ if not L then return end
 --	L["RULE_FAILED_ARGUMENT_IS_NIL"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
---	L["RULE_FAILED_ADDON_NOT_LOADED"] = ""
 	
 	
 --	new item indicators
@@ -505,8 +507,8 @@ if not L then return end
 	
 	
 --	misc chat stuff
-	L["UPGRADE_PROFILE"] = "更新配置文件 %1$s 到 %2$.4f"
-	L["UPGRADE_GLOBAL"] = "更新全局配置文件 %1$s 到 v%2$.4f"
+	L["UPGRADE_PROFILE"] = "更新配置文件 %1$s 到 %2$d"
+	L["UPGRADE_GLOBAL"] = "更新全局配置文件 %1$s 到 v%2$d"
 --	L["UPGRADE_CHAR"] = ""
 	
 	L["MISC_ALERT"] = "警告!"

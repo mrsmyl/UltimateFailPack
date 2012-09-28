@@ -14,6 +14,40 @@
  * faq - http://code.google.com/p/arkinventory/wiki/FAQ
  * local help files can be downloaded from http://code.google.com/p/arkinventory/wiki/LocalHelpFiles
 
+*3.03.15 (28-SEP-2012)*
+ * added - config > settings > [location] > items > scale
+ * fixed - optional dependency link for libpetjournal
+ * fixed - x-embed dependency link for libpetjournal
+
+ *3.03.14 (27-SEP-2012)*
+ * fixed - idiot programmers really stupid mistake
+ * note - all data has been erased.  please login to each character to update its data
+ 
+*3.03.13 (27-SEP-2012)*
+ * fixed - issue with guild data not erasing gold value when erased
+ * fixed - possible issue with erase data function (might not be fixed as i couldnt duplicate the issue)
+ * changed - a guild bank now only has an option to erase all data
+
+*3.03.12 (26-SEP-2012)*
+ * fixed - issue with cursor not showing sell icon
+ * changed - tooltip item counts, by default they now show only your own faction
+  
+*3.03.11 (26-SEP-2012)*
+ * fixed - issue with clicking on gold amount in bag window
+ * fixed - issue with rule caching
+ * fixed - currency tokens now using blizzard linktype
+ * fixed - currency tooltips now include item counts
+ * fixed - the chatlink and dressup functions work for items in wearing, token, mail and void storage locations
+ * fixed - pet window, summon/dismiss via left click, right click menu as per pet journal
+ * fixed - ldb pet object, left click to summon next pet, shift left click to dismiss active pet, right click for setup
+ * added - pets now break down into four categories, pet (bound), pet (tradeable), battle pet (bound) and battle pet (tradeable)
+ * added - for sorting purposes item (stat) level = pet level, and item type and subtype = pet type
+ * added - for rule purposes ilvl( ) matches pet level, and type( ) matches pet type
+ * added - summoned/active pet has a pulsing glow
+ * added - custom tooltip for battle pets, should override blizzard tooltip
+ * added - option to not display source and description text from battlepet tooltip
+ * note - pet, mount and currency tracking data for ldb has been erased, please login to each character to setup ldb
+ 
 *3.03.10 (17-SEP-2012)*
  * fixed - outfitter support code should now work properly
  * changed - outfit rule will now check against each supported addon and then lastly check the equipment manager
