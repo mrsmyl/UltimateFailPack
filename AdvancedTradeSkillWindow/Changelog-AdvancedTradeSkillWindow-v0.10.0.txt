@@ -1,0 +1,23 @@
+------------------------------------------------------------------------
+r26 | slartibartfast | 2012-08-29 21:37:23 +0000 (Wed, 29 Aug 2012) | 1 line
+Changed paths:
+   A /tags/v0.10.0 (from /trunk:25)
+
+WoW 5.0.4 compatibility
+------------------------------------------------------------------------
+r25 | slartibartfast | 2012-08-29 21:36:52 +0000 (Wed, 29 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/AdvancedTradeSkillWindow.toc
+   M /trunk/README.txt
+
+WoW 5.0.4 compatibility
+------------------------------------------------------------------------
+r24 | slartibartfast | 2012-08-29 21:35:37 +0000 (Wed, 29 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/AdvancedTradeSkillWindow.toc
+   M /trunk/atsw.lua
+   M /trunk/atsw.xml
+   M /trunk/atsw_language.lua
+
+WoW 5.0.4 compatibility
+------------------------------------------------------------------------
