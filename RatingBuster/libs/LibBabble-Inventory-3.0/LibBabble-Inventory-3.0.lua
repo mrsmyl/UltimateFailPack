@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Inventory-3.0
-Revision: $Rev: 158 $
+Revision: $Rev: 159 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-inventory-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Inventory-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 158 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 159 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -112,6 +112,7 @@ lib:SetBaseTranslations {
 	Mining = "Mining",
 	["Mining Bag"] = "Mining Bag",
 	Miscellaneous = "Miscellaneous",
+	Money = "Money",
 	Mount = "Mount",
 	Mounts = "Mounts",
 	Neck = "Neck",
@@ -280,6 +281,7 @@ elseif GAME_LOCALE == "deDE" then
 	Mining = "Bergbau",
 	["Mining Bag"] = "Bergbautasche",
 	Miscellaneous = "Verschiedenes",
+	-- Money = "",
 	Mount = "Reittier",
 	Mounts = "Reittiere",
 	Neck = "Hals",
@@ -444,6 +446,7 @@ elseif GAME_LOCALE == "frFR" then
 	Mining = "Minage",
 	["Mining Bag"] = "Sac de mineur",
 	Miscellaneous = "Divers",
+	-- Money = "",
 	Mount = "Monture",
 	Mounts = "Montures",
 	Neck = "Cou",
@@ -608,6 +611,7 @@ elseif GAME_LOCALE == "koKR" then
 	Mining = "채광",
 	["Mining Bag"] = "채광 가방",
 	Miscellaneous = "기타",
+	-- Money = "",
 	Mount = "탈것",
 	Mounts = "탈것",
 	Neck = "목",
@@ -773,6 +777,7 @@ elseif GAME_LOCALE == "esES" then
 	Mining = "Minería",
 	["Mining Bag"] = "Bolsa de minería",
 	Miscellaneous = "Misceláneas",
+	-- Money = "",
 	Mount = "Montura",
 	Mounts = "Monturas",
 	Neck = "Cuello",
@@ -937,6 +942,7 @@ elseif GAME_LOCALE == "esMX" then
 	Mining = "Mining", -- Needs review
 	["Mining Bag"] = "Bolsa de Minería",
 	Miscellaneous = "Miscelánea",
+	-- Money = "",
 	Mount = "Montura",
 	Mounts = "Mounts", -- Needs review
 	Neck = "Cuello",
@@ -1101,6 +1107,7 @@ elseif GAME_LOCALE == "ptBR" then
 	Mining = "Mineração",
 	["Mining Bag"] = "Bolsa de Mineração",
 	Miscellaneous = "Diversos",
+	-- Money = "",
 	Mount = "Montaria",
 	Mounts = "Montarias",
 	Neck = "Pescoço",
@@ -1265,6 +1272,7 @@ elseif GAME_LOCALE == "itIT" then
 	Mining = "Estrazione",
 	["Mining Bag"] = "Sacca da Minatore",
 	Miscellaneous = "Varie",
+	-- Money = "",
 	Mount = "Cavalcatura",
 	Mounts = "Cavalcature",
 	Neck = "Collo",
@@ -1429,6 +1437,7 @@ elseif GAME_LOCALE == "ruRU" then
 	Mining = "Горное дело",
 	["Mining Bag"] = "Сумка шахтера",
 	Miscellaneous = "Разное",
+	-- Money = "",
 	Mount = "Верховые животные",
 	Mounts = "Верховые животные",
 	Neck = "Шея",
@@ -1593,6 +1602,7 @@ elseif GAME_LOCALE == "zhCN" then
 	Mining = "采矿",
 	["Mining Bag"] = "矿石袋",
 	Miscellaneous = "其它",
+	Money = "金钱",
 	Mount = "坐骑",
 	Mounts = "坐骑",
 	Neck = "颈部",
@@ -1757,6 +1767,7 @@ elseif GAME_LOCALE == "zhTW" then
 	Mining = "採礦",
 	["Mining Bag"] = "礦石包",
 	Miscellaneous = "其他",
+	Money = "金錢", -- Needs review
 	Mount = "座騎",
 	Mounts = "座騎",
 	Neck = "頸部",

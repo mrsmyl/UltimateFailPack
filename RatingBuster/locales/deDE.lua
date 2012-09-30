@@ -39,8 +39,11 @@ L["Disable Blizzard stat change summary when using the built-in comparison toolt
 L["Enable Stat Mods"] = "Aktiviere Stat Mods"
 L["Enable support for Stat Mods"] = "Aktiviert die Unterstützung von Stat Mods"
 -- /rb subtract_equip
---L["Enable Subtract Equipped Stats"] = ""
---L["Enable for more accurate calculation of Mana Regen from Intellect and Spirit, and diminishing stats like Dodge, Parry, Resilience"] = ""
+L["Enable Subtract Equipped Stats"] = "Aktiviere Subtraktion von angelegten Stats"
+L["Enable for more accurate calculation of Mana Regen from Intellect and Spirit, and diminishing stats like Dodge, Parry, Resilience"] = "Aktivieren, um eine genauere Berechnung der Manaregeneration und von Werten mit abnehmender Wirkung wie Ausweichen, Parieren und Abhärtung zu erhalten"
+-- /rb enable_reforge_ui
+L["Enable integration with Blizzard Reforging UI"] = "Aktiviere Integration mit dem Blizzard Umschmiedungs-UI"
+L["Add rating information to the Blizzard Reforging UI"] = "Zeigt Wertungsinformationen im Blizzard Umschmiedungs-UI"
 -- /rb usereqlv
 L["Use Required Level"] = "Nutze benötigten Level"
 L["Calculate using the required level if you are below the required level"] = "Berechne auf Basis des benötigten Levels, falls du unter diesem bist"
@@ -48,17 +51,17 @@ L["Calculate using the required level if you are below the required level"] = "B
 L["Set Level"] = "Setze Level"
 L["Set the level used in calculations (0 = your level)"] = "Legt den Level der zur Berechnung benutzt wird fest (0 = dein Level)"
 -- /rb ilvlid
---L["Item Level and ID"] = ""
---L["Settings for Item Level and Item ID"] = ""
+L["Item Level and ID"] = "Gegenstandsstufe und ID"
+L["Settings for Item Level and Item ID"] = "Einstellungen für die Gegenstandsstufe und ID"
 -- /rb ilvlid coloritemlevel
---L["Colorize Item Level"] = ""
---L["Customize the color of the Item Level text"] = ""
+L["Colorize Item Level"] = "Gegenstandsstufe einfärben"
+L["Customize the color of the Item Level text"] = "Ändere die Farbe des Gegenstandsstufe-Textes"
 -- /rb ilvlid itemlevelall
---L["Show Item Level on all items"] = ""
---L["Display the Item Level on all items instead of just on equippable items"] = ""
+L["Show Item Level on all items"] = "Zeige Gegenstandsstufe auf allen Gegenständen"
+L["Display the Item Level on all items instead of just on equippable items"] = "Zeigt die Gegenstandsstufe auf allen Gegenständen, anstatt nur auf ausrüstbaren Gegenständen"
 -- /rb ilvlid itemid
---L["Show Item ID"] = ""
---L["Display the Item ID on all items"] = ""
+L["Show Item ID"] = "Zeige Item ID"
+L["Display the Item ID on all items"] = "Zeige die Item ID auf allen Gegenständen"
 ---------------------------------------------------------------------------
 -- /rb rating
 L["Rating"] = "Wertung"
@@ -543,7 +546,7 @@ L["Can't use the same modifier as Gem Set 2"] = "Kann nicht die gleiche Umschalt
 -----------------------
 -- Item Level and ID --
 -----------------------
-L["ItemLevel: "] = true
+L["ItemLevel: "] = "Gegenstandsstufe: "
 L["ItemID: "] = true
 -----------------------
 -- Matching Patterns --

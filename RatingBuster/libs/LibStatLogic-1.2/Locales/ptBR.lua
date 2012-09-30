@@ -1,4 +1,8 @@
-﻿--These constants need to be built outside the table before they can be referenced
+﻿
+
+if GetLocale() ~= 'ptBR' then return end
+
+--These constants need to be built outside the table before they can be referenced
 local LOCALE_STHOUSAND = "%p";  --Character used to separate groups of digits
 local LOCALE_SDECIMAL = "%p"; --Character(s) used for the decimal separator
 local patNumber = "%d+[%p%d]*"; --regular expression to find a localized number e.g. "1,234"  = %d+[,%d]*
@@ -292,7 +296,26 @@ PatternLocale.ptBR = { -- {{{
 	},
 } -- }}}
 
-DisplayLocale.esES = { -- {{{
+-- TODO for localizer: This was drycoded. Please test and fix if needed, especially the part that removes "by" or "by up to"!
+function PatternLocale.ptBR.ProcessNeutralStatIDLookupPlaceholders(statIDLookupWithPlaceholders, targetStatIDLookup)
+	for k, v in pairs(statIDLookupWithPlaceholders) do
+		-- "%%" -> "%"
+		local newKey = gsub(k, "%%%%", "%%")
+		-- Remove tailing .
+		newKey = gsub(newKey, "%.$", "")
+		-- Remove <space><+-><"%d", "%s", "%c", "%g", "%2$d", "%.2f">
+		newKey = gsub(newKey, " ?[%+%-]?%%%d?%.?%d?%$?[cdsgf]", "")
+		-- Remove " by" or " by up to". This is important for a match with SingleEquipStatCheck.
+		-- If you don't remove it, it might still work, but then it will use a DeepScanPattern.
+		newKey = gsub(newKey, " h?a?s?t?a? ?", "")
+		
+		--print("'"..k.."'")
+		--print("'"..newKey.."'")
+		targetStatIDLookup[newKey] = v
+	end
+end
+
+DisplayLocale.ptBR = { -- {{{
   --ToDo
 	----------------
 	-- Stat Names --

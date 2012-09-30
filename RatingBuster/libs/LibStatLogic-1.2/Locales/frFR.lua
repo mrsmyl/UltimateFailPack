@@ -1,5 +1,7 @@
 ﻿-- frFR localization by Tixu
 
+if GetLocale() ~= 'frFR' then return end
+
 --These constants need to be built outside the table before they can be referenced
 local LOCALE_STHOUSAND = ".";  --Character used to separate groups of digits
 local LOCALE_SDECIMAL = ","; --Character(s) used for the decimal separator
@@ -269,6 +271,25 @@ PatternLocale.frFR = { -- {{{
 	-----------------------
 
 } -- }}}
+
+-- TODO for localizer: This was drycoded. Please test and fix if needed, especially the part that removes "by" or "by up to"!
+function PatternLocale.frFR.ProcessNeutralStatIDLookupPlaceholders(statIDLookupWithPlaceholders, targetStatIDLookup)
+	for k, v in pairs(statIDLookupWithPlaceholders) do
+		-- "%%" -> "%"
+		local newKey = gsub(k, "%%%%", "%%")
+		-- Remove tailing .
+		newKey = gsub(newKey, "%.$", "")
+		-- Remove <space><+-><"%d", "%s", "%c", "%g", "%2$d", "%.2f">
+		newKey = gsub(newKey, " ?[%+%-]?%%%d?%.?%d?%$?[cdsgf]", "")
+		-- Remove " by" or " by up to". This is important for a match with SingleEquipStatCheck.
+		-- If you don't remove it, it might still work, but then it will use a DeepScanPattern.
+		newKey = gsub(newKey, " de ?", "")
+		
+		--print("'"..k.."'")
+		--print("'"..newKey.."'")
+		targetStatIDLookup[newKey] = v
+	end
+end
 
 DisplayLocale.frFR = { -- {{{
   --ToDo

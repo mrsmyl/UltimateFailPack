@@ -1,4 +1,6 @@
-﻿-- esES localization by Kaie Estirpe de las Sombras from Minahonda
+﻿
+
+if GetLocale() ~= 'itIT' then return end
 
 --These constants need to be built outside the table before they can be referenced
 local LOCALE_STHOUSAND = ".";  --Character used to separate groups of digits
@@ -176,7 +178,26 @@ PatternLocale.itIT = { -- {{{
 
 } -- }}}
 
-DisplayLocale.esES = { -- {{{
+-- TODO for localizer: This was drycoded. Please test and fix if needed, especially the part that removes "by" or "by up to"!
+function PatternLocale.itIT.ProcessNeutralStatIDLookupPlaceholders(statIDLookupWithPlaceholders, targetStatIDLookup)
+	for k, v in pairs(statIDLookupWithPlaceholders) do
+		-- "%%" -> "%"
+		local newKey = gsub(k, "%%%%", "%%")
+		-- Remove tailing .
+		newKey = gsub(newKey, "%.$", "")
+		-- Remove <space><+-><"%d", "%s", "%c", "%g", "%2$d", "%.2f">
+		newKey = gsub(newKey, " ?[%+%-]?%%%d?%.?%d?%$?[cdsgf]", "")
+		-- Remove " by" or " by up to". This is important for a match with SingleEquipStatCheck.
+		-- If you don't remove it, it might still work, but then it will use a DeepScanPattern.
+		newKey = gsub(newKey, " h?a?s?t?a? ?", "")
+		
+		--print("'"..k.."'")
+		--print("'"..newKey.."'")
+		targetStatIDLookup[newKey] = v
+	end
+end
+
+DisplayLocale.itIT = { -- {{{
   --ToDo
 	----------------
 	-- Stat Names --

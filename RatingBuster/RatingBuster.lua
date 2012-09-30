@@ -1,10 +1,10 @@
-﻿--[[ 
+﻿--[[  
 Name: RatingBuster
 Description: Converts combat ratings in tooltips into normal percentages.
-Revision: $Revision: 380 $
+Revision: $Revision: 384 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
-LastUpdate: $Date: 2012-09-20 06:26:08 +0000 (Thu, 20 Sep 2012) $
+LastUpdate: $Date: 2012-09-30 14:00:40 +0000 (Sun, 30 Sep 2012) $
 ]]
  
 ---------------
@@ -25,8 +25,8 @@ local BI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
 --------------------
 -- AceAddon Initialization
 RatingBuster = LibStub("AceAddon-3.0"):NewAddon("RatingBuster", "AceConsole-3.0", "AceEvent-3.0")
-RatingBuster.version = "5.0.4 (r"..gsub("$Revision: 380 $", "$Revision: (%d+) %$", "%1")..")"
-RatingBuster.date = gsub("$Date: 2012-09-20 06:26:08 +0000 (Thu, 20 Sep 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
+RatingBuster.version = "5.0.4 (r"..gsub("$Revision: 384 $", "$Revision: (%d+) %$", "%1")..")"
+RatingBuster.date = gsub("$Date: 2012-09-30 14:00:40 +0000 (Sun, 30 Sep 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
 
 
 -----------
@@ -537,7 +537,7 @@ local options = {
 					order = 5,
 					width = "double",
 					name = L["Enable integration with Blizzard Reforging UI"],
-					desc = L["Add rating informatoin to the Blizzard Reforging UI"],
+					desc = L["Add rating information to the Blizzard Reforging UI"],
 					arg = "enableReforgeUi",
 					get = getProfileOption,
 					set = setProfileOptionAndClearCache,

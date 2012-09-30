@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 154 $
+Revision: $Revision: 164 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2012-09-22 20:53:11 +0000 (Sat, 22 Sep 2012) $
+Last Update: $Date: 2012-09-30 13:52:52 +0000 (Sun, 30 Sep 2012) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 154 $";
+local MINOR = "$Revision: 164 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -124,6 +124,7 @@ local ItemNotRecognizedWarningDefault = (GetLocale() == "enUS") and false;
 if (BNConnected()) then
 	local _, battleTag = BNGetInfo();
 	if battleTag == "Pauladin#1741" then --us developers need to see warnings - otherwise we'd have no idea things are broken
+		print("Greetings Professor Falken");
 		ItemNotRecognizedWarningDefault = true;
 	end;
 end
@@ -367,28 +368,24 @@ end
 	This means you will attempt to match english patterns against German text.
 	At best these patterns will never match.
 	At worst these patterns will match the wrong things.
+	
+	But what we DO want is to use the language neutral entries (GlobalStrings.lua constants) automatically in all locales.
 --]]
-local tempL = L
-L = PatternLocale.enUS;
--- Setup any values from current PatternLocale into enUS Pattern Locale, since that's the gold version
-local function SetupPatternLocale(locale, enUS)
-	for k in pairs(enUS) do
-		--If the k-th item is a table, the recursively call SetupDisplayLocale
-		if type(enUS[k]) == "table" and type(locale[k]) == "table" then
-			SetupPatternLocale(locale[k], enUS[k])
-		elseif locale[k] then
-			enUS[k] = locale[k]
-		end
-	end
+-- First, copy Exclude entries.
+for k, v in pairs(PatternLocale.neutral.NeutralExclude) do
+	L.Exclude[k] = v
 end
 
---copy DisplayLocale[locale] items into enUS
-if PatternLocale[locale] then
-	SetupPatternLocale(PatternLocale[locale], PatternLocale.enUS)
+-- Second, copy StatIDLookup entries that can be used like they are.
+for k, v in pairs(PatternLocale.neutral.NeutralStatIDLookup) do
+	L.StatIDLookup[k] = v
 end
 
+-- Third, copy StatIDLookup entries that contain placeholders and therefore must be processed first.
+-- The implementation of this is language specific.
+L.ProcessNeutralStatIDLookupPlaceholders(PatternLocale.neutral.NeutralStatIDLookupWithPlaceholders, L.StatIDLookup)
 
-L["StatIDLookup"]  = PatternLocale.enUS.StatIDLookup
+
 -- Setup any values from current DisplayLocale into enUSDisplayLocale, since that's the gold version
 local function SetupDisplayLocale(locale, enUS)
 	for k in pairs(enUS) do
@@ -408,7 +405,7 @@ end
 local D = DisplayLocale.enUS;
 
 
---Dispose of the unused locale variables
+--Dispose of the unused global variables
 PatternLocale = nil; 
 DisplayLocale = nil;
 
@@ -3983,7 +3980,7 @@ local K = {
 	0.988, -- 3: HUNTER
 	0.988, -- 4: ROGUE
 	0.983, -- 5: PRIEST
-	0.885, -- 6: DEATHKNIGHT Updated  --It's likely that DeathKnight value matches either the exact Paladin value (0.886) or the exact warrior value (0.956), and is likely *not* 0.885
+	0.956, -- 6: DEATHKNIGHT 9/28/2012: Confirmed, it is 0.956 - the warrior value.  --It's likely that DeathKnight value matches either the exact Paladin value (0.886) or the exact warrior value (0.956), and is likely *not* 0.885
 	0.988, -- 7: SHAMAN
 	0.983, -- 8: MAGE
 	0.983, -- 9: WARLOCK
@@ -4043,12 +4040,12 @@ local C_d = {
 	1/0.006870,			    -- 3: HUNTER
 	1/0.006870,			    -- 4: ROGUE
 	1/0.006650,			    -- 5: PRIEST
-	1/0.01523660,		    -- 6: DEATHKNIGHT Updated & Tested Works
+	90.6424636103365,	    -- 6: DEATHKNIGHT 9/28/2012: It's not 65ish, it's 90ish.  --Updated & Tested Works
 	1/0.006870,			    -- 7: SHAMAN
 	1/0.006650,			    -- 8: MAGE
 	1/0.006650,			    -- 9: WARLOCK
 	1/0.010989010989011,	--10: MONK  Updated
-	1/0.0066533599467731,	--11: DRUID Updated & Tested Works
+	150.370955843361,		--11: DRUID 9/26/2012: added the more decimal places.  1/0.0066533599467731 = 150.3  
 }
 
 --C_b - Block Chance % cap constant
@@ -4099,9 +4096,22 @@ local BaseBlock = {
 	13,	-- 9: WARLOCK
 	13,	--10: MONK
 	13,	--11: DRUID
-	
 }
 
+--Agility per Dodge Chance
+local Q_d = {
+	10000,				-- 1: WARRIOR  9/26/2012: Assumed to be exactly 10,000 for warriors
+	10000,				-- 2: PALADIN  9/26/2012: Assumed to be exactly 10,000 for paladins
+	10000,				-- 3: HUNTER   For lack of a better number we'll say 10k
+	10000,				-- 4: ROGUE   For lack of a better number we'll say 10k
+	10000,				-- 5: PRIEST   For lack of a better number we'll say 10k
+	10000,				-- 6: DEATHKNIGHT   For lack of a better number we'll say 10k
+	10000,				-- 7: SHAMAN   For lack of a better number we'll say 10k
+	10000,				-- 8: MAGE   For lack of a better number we'll say 10k
+	10000,				-- 9: WARLOCK   For lack of a better number we'll say 10k
+	10000,				--10: MONK   For lack of a better number we'll say 10k
+	243.614509289585,	--11: DRUID  9/26/2012  From regression of agility values
+}
 --[[
 	Returns your 
 --]]
@@ -4392,6 +4402,11 @@ function StatLogic:GetAvoidanceGainAfterDR(avoidanceType, gainBeforeDR)
 	end
 end
 
+local function toSingle(value)
+	--perform 15-bit rounding
+	return floor(value*32768 + 0.5) / 32768;
+end;
+
 --[[
 	parryChance, parryBeforeDR, freeParry = StatLogic:GetParryChance([parryRating], [strength], [classId]);
 	
@@ -4489,7 +4504,7 @@ function StatLogic:GetParryChance(parryRating, strength, class)
 	local Pc = 265.078336847015; --Parry% from Parry Rating, before diminishing returns
 
 	local freeParry = baseParry + baseStr/Qs;
-	local bonusParry = (strength-baseStr)/Qs + parryRating/Pc;
+	local bonusParry = toSingle((strength-baseStr)/Qs + parryRating/Pc);
 
 	local parryBeforeDR = freeParry + bonusParry; --combination of free Parry, Parry from Parry Rating, and Parry from bonus Strength
 
@@ -4505,7 +4520,6 @@ function StatLogic:GetParryChance(parryRating, strength, class)
 
 	return parryChance, parryBeforeDR, freeParry;
 end;
-
 
 --[[
 	dodgeChance, dodgeBeforeDR, freeDodge = StatLogic:GetDodgeChance([dodgeRating], [agility], [classId]);
@@ -4583,7 +4597,7 @@ function StatLogic:GetDodgeChance(dodgeRating, agility, class)
 		class = ClassNameToID[playerClass]
 	end;
 
-	local baseDodge = BaseDodge[class]; --e.g. 5%, Humans have base dodge of 5%
+	local baseDodge = StatLogic:GetBaseDodge(class); --e.g. 5%, Humans have base dodge of 5%
 
 	local baseAgi;
 	local base, stat, posBuff, negBuff = UnitStat("player", 2); --1=Agility
@@ -4591,13 +4605,13 @@ function StatLogic:GetDodgeChance(dodgeRating, agility, class)
 	
 	local Cd = C_d[class]; --dodge cap constant (e.g. 66.56745)
 	local k = K[class]; --diminishing returns constant, e.g. 0.886 for Paladin
-	local Qd = 10000; --conversion factor of Agility to Dodge Chance %. E.g. 10000 Agility --> +1% Dodge (before DR)
+	local Qd = Q_d[class]; --conversion factor of Agility to Dodge Chance %. E.g. 10000 Agility --> +1% Dodge (before DR)
 	
 	local Dc = 265.078336847015; --Dodge Chance % from Dodge Rating, before diminishing returns (same value as for Parry)
 
 	local freeDodge = baseDodge + baseAgi/Qd;
-	local bonusDodge = (agility-baseAgi)/Qd + dodgeRating/Dc;
-
+	local bonusDodge = toSingle((agility-baseAgi)/Qd + dodgeRating/Dc);
+	
 	local dodgeBeforeDR = freeDodge + bonusDodge; --combination of free Dodge, Dodge from Dodge Rating, and Dodge from bonus Agility
 
 	--print(string.format("Cp = %s, k=%s, Q=%s, strength=%s, baseStr=%s, dodgeRating=%s, freeDodge=%s, bonusDodge=%s, dodgeBeforeDR=%s", 
@@ -5232,29 +5246,28 @@ Level34Ratings = {
 }
 
 -- 80-90 H data - Combat ratings adjustment factors; we start with level 60 values, then divide by these constants
---TODO: Add combat ratings adjustment factors for level 86-90
 local H = {
   [80] = 3.2789989471436,
   [81] = 4.3056015014648,
   [82] = 5.6539749145508,
   [83] = 7.4275451660156,
   [84] = 9.7527236938477,
-  [85] = 12.8057174456713, --12.8057169037337  --1744 gives better residuals in mastery than 16903
-  [86] = 16.8186864597624, --TODO: figure out adjustment factor for level 86
-  [87] = 22.0870256249850, --TODO: figure out adjustment factor for level 87
-  [88] = 29.0056362086221, --TODO: figure out adjustment factor for level 88
-  [89] = 38.0914545105255, --TODO: figure out adjustment factor for level 89
-  [90] = 50.0233436112710, --TODO: figure out adjustment factor for level 90
-  [91] = 1, --TODO: figure out adjustment factor
-  [92] = 1, --TODO: figure out adjustment factor
-  [93] = 1, --TODO: figure out adjustment factor
-  [94] = 1, --TODO: figure out adjustment factor
-  [95] = 1, --TODO: figure out adjustment factor
-  [96] = 1, --TODO: figure out adjustment factor
-  [97] = 1, --TODO: figure out adjustment factor
-  [98] = 1, --TODO: figure out adjustment factor
-  [99] = 1, --TODO: figure out adjustment factor
-  [100] = 1, --TODO: figure out adjustment factor
+  [85] = 12.8057174456713, --old value: 12.8057169037337  --1744 gives better residuals in mastery than 16903
+  [86] = 16.1835749821923, --9/29/2012: Updated for Mists from real data
+  [87] = 21.6065102063036, --TODO: power-law extension of 80-86. Figure out real level 87 value
+  [88] = 28.2578178037443, --TODO: power-law extension of 80-86. Figure out real level 88 value
+  [89] = 36.9566514631615, --TODO: power-law extension of 80-86. Figure out real level 89 value
+  [90] = 48.3333177690963, --TODO: power-law extension of 80-86. Figure out real level 906 value
+  [91] = 63.2121557034754, --TODO: power-law extension of 80-86.
+  [92] = 82.6712672150821, --TODO: power-law extension of 80-86.
+  [93] = 108.120635135557, --TODO: power-law extension of 80-86.
+  [94] = 141.404288768221, --TODO: power-law extension of 80-86.
+  [95] = 184.933919940236, --TODO: power-law extension of 80-86.
+  [96] = 241.863631169775, --TODO: power-law extension of 80-86.
+  [97] = 316.318477981397, --TODO: power-law extension of 80-86.
+  [98] = 413.693365259341, --TODO: power-law extension of 80-86.
+  [99] = 541.043955293887, --TODO: power-law extension of 80-86.
+  [100] = 707.59791222792, --TODO: power-law extension of 80-86.
 }
 -- 80-90 H data for resilience - Combat ratings adjustment factors for resiliance; we start with level 60 combat rating values, then divide by these constants
 --TODO: Add combat rating resilience adjustment factors for level 86-90
@@ -5337,6 +5350,9 @@ local combatRatingBonus = {
 		--9/20/2012: Dodge and Parry from a single regression of 760 data points. Intercept===0 (0 rating gives 0 bonus)
 		[CR_PARRY] =     265.0783373415960, --Rating / Parry %  Varies by level.  Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
 		[CR_DODGE] =     265.0783373415960, --Rating / Dodge %  Varies by level. Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
+	},
+	[86] = {
+		[CR_DODGE] = 335.0000000, --Rating / Dodge %  Varies by level. Comes from linear regression of Dodge Rating vs Dodge
 	},
 }
 
@@ -5779,7 +5795,7 @@ BaseDodge = {
 	3.4575,				--Mage
 	2.0350,				--Warlock
 	0,					--Monk  TODO: Get real base value for Monk (i only put zero because it's not unreasonable)
-	3.37,				--Druid
+	3,					--Druid. 9/26/2012  Base Dodge Chance of 3%, with +0.3489% from base agility
 }
 
 function StatLogic:GetBaseDodge(class)
@@ -5816,9 +5832,9 @@ Notes:
   ** A_g=Total Agility - Base Agility
   ** Let d be the Dodge/Agi value we are going to calculate.
 
-  #  1     1     k
-  # --- = --- + ---
-  #  x'    c     x
+  x' =    x
+        -------
+		x/c + k
 
   # x'=D'-D_b-A_b*d
   # x=A_g*d+D_r
@@ -8274,7 +8290,11 @@ local LibStatLogicTests = {
 				print(string.format("Rating %s. Expected: %.5f. Calculated: %.5f", 
 						StatLogic:GetRatingIdOrStatId(nCombatRatingID), expectedBonus, bonus));
 			
-				if (math.abs(bonus-expectedBonus) > 0.00001) then
+				--Five should work all the time, but Single-precision math rounding issues causes the errors to get too high when we get large values
+				--local epsilon = 0.00001; --five decimal places (recommended)
+				local epsilon = 0.0001;  --four decimal places
+				
+				if (math.abs(bonus-expectedBonus) > epsilon) then
 					checkEquals(expectedBonus, bonus, string.format("Calculated rating per bonus didn't match actual %s (to within 5 decimal places)", 
 							StatLogic:GetRatingIdOrStatId(nCombatRatingID)));
 				end;

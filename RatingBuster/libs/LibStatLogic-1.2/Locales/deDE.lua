@@ -1,4 +1,6 @@
-﻿-- deDE localization by Gailly, Dleh
+﻿-- deDE localization by Gailly, Dleh, cremor
+
+if GetLocale() ~= 'deDE' then return end
 
 --These constants need to be built outside the table before they can be referenced
 local LOCALE_STHOUSAND = ".";  --Character used to separate groups of digits
@@ -21,6 +23,7 @@ PatternLocale.deDE = { -- {{{
 	Mail = "Kette",
 	Leather = "Leder",
 	Cloth = "Stoff",
+	
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -29,99 +32,39 @@ PatternLocale.deDE = { -- {{{
 	-- unused strings should be added in the "Exclude" table, because an unmatched 
 	-- string costs a lot of CPU time, and should be prevented whenever possible.
 	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 5, -- using string.utf8len
 	["Exclude"] = {
 		[""] = true,
 		[" \n"] = true,
-		["Binds"] = true,
-		[ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
-		[ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item will be bound when picked up
-		[ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
-		[ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
-		[ITEM_BIND_TO_ACCOUNT] = true, -- ITEM_BIND_QUEST = "Binds to account";
-		[ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
-		[ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
-		[ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
-		[ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
-		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
-
-		["Entza"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
-		-- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
-		["Dauer"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
-		["<Herg"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r"; -- %s is the creator of the item
-		["Verbl"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d day";
-		["Einzi"] = true, -- ITEM_UNIQUE = "Unique"; -- Item is unique
-		["Limit"] = true, -- ITEM_UNIQUE_MULTIPLE = "Unique (%d)"; -- Item is unique
-		["Benöt"] = true, -- Requires Level xx -- ITEM_MIN_LEVEL = "Requires Level %d"; -- Required level to use the item
-		["\nBenö"] = true, -- Requires Level xx -- ITEM_MIN_SKILL = "Requires %s (%d)"; -- Required skill rank to use the item
-		["Klass"] = true, -- Classes: xx -- ITEM_CLASSES_ALLOWED = "Classes: %s"; -- Lists the classes allowed to use this item
-		["Völke"] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
-		["Benut"] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
-		["Treff"] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
-		-- Set Bonuses
-		-- ITEM_SET_BONUS = "Set: %s";
-		-- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
-		-- ITEM_SET_NAME = "%s (%d/%d)"; -- Set name (2/5)
-		["Set: "] = true,
-		["(2) S"] = true,
-		["(3) S"] = true,
-		["(4) S"] = true,
-		["(5) S"] = true,
-		["(6) S"] = true,
-		["(7) S"] = true,
-		["(8) S"] = true,
-		-- Equip type
-		["Projektil"] = true, -- Ice Threaded Arrow ID:19316
-		[INVTYPE_AMMO] = true,
-		[INVTYPE_HEAD] = true,
-		[INVTYPE_NECK] = true,
-		[INVTYPE_SHOULDER] = true,
-		[INVTYPE_BODY] = true,
-		[INVTYPE_CHEST] = true,
-		[INVTYPE_ROBE] = true,
-		[INVTYPE_WAIST] = true,
-		[INVTYPE_LEGS] = true,
-		[INVTYPE_FEET] = true,
-		[INVTYPE_WRIST] = true,
-		[INVTYPE_HAND] = true,
-		[INVTYPE_FINGER] = true,
-		[INVTYPE_TRINKET] = true,
-		[INVTYPE_CLOAK] = true,
-		[INVTYPE_WEAPON] = true,
-		[INVTYPE_SHIELD] = true,
-		[INVTYPE_2HWEAPON] = true,
-		[INVTYPE_WEAPONMAINHAND] = true,
-		[INVTYPE_WEAPONOFFHAND] = true,
-		[INVTYPE_HOLDABLE] = true,
-		[INVTYPE_RANGED] = true,
-		[INVTYPE_THROWN] = true,
-		[INVTYPE_RANGEDRIGHT] = true,
-		[INVTYPE_RELIC] = true,
-		[INVTYPE_TABARD] = true,
-		[INVTYPE_BAG] = true,
-		--4.0.6
-		["Gegen"] = true, -- ITEM_LEVEL = "Item Level %d"
-		[REFORGED] = true,
-		[ITEM_HEROIC] = true,
-		[ITEM_HEROIC_EPIC] = true,
-		[ITEM_HEROIC_QUALITY0_DESC] = true,
-		[ITEM_HEROIC_QUALITY1_DESC] = true,
-		[ITEM_HEROIC_QUALITY2_DESC] = true,
-		[ITEM_HEROIC_QUALITY3_DESC] = true,
-		[ITEM_HEROIC_QUALITY4_DESC] = true,
-		[ITEM_HEROIC_QUALITY5_DESC] = true,
-		[ITEM_HEROIC_QUALITY6_DESC] = true,
-		[ITEM_HEROIC_QUALITY7_DESC] = true,
-		[ITEM_QUALITY0_DESC] = true,
-		[ITEM_QUALITY1_DESC] = true,
-		[ITEM_QUALITY2_DESC] = true,
-		[ITEM_QUALITY3_DESC] = true,
-		[ITEM_QUALITY4_DESC] = true,
-		[ITEM_QUALITY5_DESC] = true,
-		[ITEM_QUALITY6_DESC] = true,
-		[ITEM_QUALITY7_DESC] = true,
-		--4.3.0
-		["Schla"] = true, --e.g. "Schlachtzugsbrowser" i.e. "Raid Finder"  e.g. Gauntlets of Radiant Glory - Raid Finder version
+		
+		 -- The following can't directly use the constant from GlobalStrings.lua because of placeholder patterns.
+		["Entza"] = true, -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)";
+		["Dauer"] = true, -- ITEM_DURATION_DAYS = "Duration: %d |4day:days;";
+		["<Herg"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r";
+		["Verbl"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d |4day:days;";
+		["Limit"] = true, -- ITEM_UNIQUE_MULTIPLE = "Unique (%d)";
+		["Einzi"] = true, -- ITEM_LIMIT_CATEGORY = "Unique: %s (%d)"; -- Note: Please do not remove that line, it might require a own entry in a localized version.
+		--["Einzi"] = true, -- ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)"; -- Note: Please do not remove that line, it might require a own entry in a localized version.
+		["Benöt"] = true,  -- ITEM_MIN_LEVEL = "Requires Level %d";
+		["Klass"] = true, -- ITEM_CLASSES_ALLOWED = "Classes: %s";
+		["Völke"] = true, -- ITEM_RACES_ALLOWED = "Races: %s";
+		["Gegen"] = true, -- ITEM_LEVEL = "Item Level %d";
+		["Set: "] = true, -- ITEM_SET_BONUS = "Set: %s";
+		["(2) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(3) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(4) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(5) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(6) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(7) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(8) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		
+		-- The following can't directly use the constant from GlobalStrings.lua because they are just the beginning of the line.
+		["Benut"] = true, -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
+		["Treff"] = true, -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
+		
+		-- Misc
 		["Saiso"] = true, --e.g. "Season 10"  PvP Season items e.g. Vicious Gladiator's Emblem of Tenacity
 	},
   
@@ -145,8 +88,13 @@ PatternLocale.deDE = { -- {{{
 		["Hervorragendes Zauberöl"] = {["SPELL_DMG"] = 36, ["HEAL"] = 36, ["SPELL_CRIT_RATING"] = 14}, -- ID: 20749  Brilliant Wizard Oil
 		["Überragendes Zauberöl"] = {["SPELL_DMG"] = 42, ["HEAL"] = 42}, -- ID: 22522
 		["Gesegnetes Zauberöl"] = {["SPELL_DMG_UNDEAD"] = 60}, -- ID: 23123
+		
+		["Gesang des Herzens"] = false, -- Enchant 4084
+		["Machtstrom"] = false, --20120915 Enchant 4907  /dump StatLogic:GetSum("item:77196:4097:0:0:0:0:0:0")
 		["Windwandler"] = false, --ID: 74244  Windwalk: Permanently enchant a weapon to sometimes increase dodge rating by 600 and movement speed by 15% for 10 sec
-
+		["Erdrutsch"] = false,
+		["Berserker"] = false,
+		["Flintlockes Holzhacker"] = false, --ItemID: 70139  Flintlocke's Woodchucker
 
 		["Schwaches Manaöl"] = {["COMBAT_MANA_REGEN"] = 4}, --
 		["Geringes Manaöl"] = {["COMBAT_MANA_REGEN"] = 8}, --
@@ -180,6 +128,7 @@ PatternLocale.deDE = { -- {{{
 		["Besserung"] = false, -- SpellID: 74195  EnchantID: 4066
 		["Hell leuchtendes Garn"] = false, -- spell=75171
 		["Gnomisches Röntgenzielfernrohr"] = false, -- item=59594
+		["Rune des gefallenen Kreuzfahrers"] = false,
 
 		["Vitalität der Tuskarr"] = {["RUN_SPEED"] = 8, ["STA"] = 15}, -- EnchantID: 3232 +15 Stamina and Minor Speed Increase
 		["Weisheit"] = {["MOD_THREAT"] = -2, ["SPI"] = 10}, -- EnchantID: 3296 +10 Spirit and 2% Reduced Threat
@@ -189,15 +138,27 @@ PatternLocale.deDE = { -- {{{
 		["Sammler"] = {["HERBALISM"] = 5, ["MINING"] = 5, ["SKINNING"] = 5}, -- EnchantID: 3296
 		["Große Vitalität"] = {["COMBAT_MANA_REGEN"] = 6, ["COMBAT_HEALTH_REGEN"] = 6}, -- EnchantID: 3244 +7 Health and Mana every 5 sec
 
-		["+37 Ausdauer und +20 Verteidigung"] = {["STA"] = 37, ["DEFENSE_RATING"] = 20}, -- EnchantID: 3818 Defense does not equal Defense Rating...
+		--["+37 Ausdauer und +20 Verteidigung"] = {["STA"] = 37, ["DEFENSE_RATING"] = 20}, -- EnchantID: 3818 Defense does not equal Defense Rating...
 		["Rune des Schwertbrechens"] = {["PARRY"] = 2}, -- EnchantID: 3594
 		["Rune des Schwertberstens"] = {["PARRY"] = 4}, -- EnchantID: 3365
 		["Rune des Steinhautgargoyles"] = {["MOD_ARMOR"] = 4, ["MOD_STA"] = 2}, -- EnchantID: 3847
 		["Rune der nerubischen Panzerung"] = {["MOD_ARMOR"] = 2, ["MOD_STA"] = 1}, -- EnchantID: 3883
 
 		--These are so rare to come across, who actually cares:
-		["Equip: Guaranteed by Belbi Quikswitch to make EVERYONE look attractive!"] = nil, --ID: 33047  Belbi's Eyesight Enhancing Romance Goggles
-		["Equip: When worn with the Twilight Trappings Set, allows access to a Wind Stone in Silithus."] = nil,
+		["Anlegen: Mit Belbi Blitzknips' Garantie, dass damit JEDER attraktiv aussieht!"] = false, --ID: 33047  Belbi's Eyesight Enhancing Romance Goggles
+		--["Equip: When worn with the Twilight Trappings Set, allows access to a Wind Stone in Silithus."] = false,
+		["Anlegen: Erliegt dem Fluch von Bürgi Schwarzherz."] = false, --20120915 ID: 65665 Burgy Blackheart's Handsome Hat
+		["Anlegen: Gestattet es Euch, schneller zu kochen."] = false, --20120915 ID; 46349  /dump StatLogic:SetTip("item:46349")
+		["Anlegen: Eure Angriffe können unter Umständen kleine himmlische Objekte anziehen."] = false, --20120915 ID: 70144   Ricket's Magnetic Fireball  /dump StatLogic:GetSum("item:70144")
+		["Anlegen: Erhöht die Reichweite Eurer Schockzauber sowie von 'Windstoß' um 5 Meter."] = false, --20120915 ID=51510 (among others) /dump StatLogic:GetSum("item:51510")
+		["Anlegen: Eure Nahkampfangriffe gewähren Euch 10 Sek. lang 78 Stärke, bis zu 10-mal stapelbar."] = false, --ID: 77977  Eye of Unmaking
+		["Anlegen: Ermöglicht Euch, zusätzliche Erzadern und Kräutervorkommen aufzuspüren, während Ihr Euch in Pandaria befindet."] = false, --ID: 87213 Mist-Piercing Goggles
+		["Anlegen: Schützt den Träger davor, vollständig von der Schattenflamme verzehrt zu werden."] = false, --ID:15138 Onyxia Scale Cloak
+
+		["Anlegen: Heilt Euch um 2% Eurer maximalen Gesundheit, wenn Ihr ein Ziel tötet, das Erfahrung oder Ehre gewährt."] = false, --Heirlooms ("Equip: Heals you for 2% of your maximum health whenever you kill a target that yields experience or honor.")
+		["Anlegen: Stellt 2% Eures maximalen Manas wieder her, wenn Ihr ein Ziel tötet, das Erfahrung oder Ehre gewährt."] = false, --Heirlooms ("Equip: Restores 2% of your maximum mana whenever you kill a target that yields experience or honor.")
+
+		["Anlegen: Jedes Mal, wenn Eure regelmäßigen Zauber Schaden verursachen, wird Eure Meisterschaft 10 Sek. lang um 39 erhöht. Bis zu 10-mal stapelbar."] = false, --ItemID: 68982  Necromantic Focus
 	},
 
 	----------------------------
@@ -216,8 +177,8 @@ PatternLocale.deDE = { -- {{{
 	-----------------------------
 	-- stat1, value, stat2 = strfind
 	-- stat = stat1..stat2
-  -- "^Equip: (.-) by u?p? ?t?o? ?(%d+) ?(.-)%.$"
-  ["SingleEquipStatCheck"] = "^Anlegen: (.-) um b?i?s? ?z?u? ?("..patNumber..") ?(.-)%.$",
+	-- "^Equip: (.-) by u?p? ?t?o? ?(%d+) ?(.-)%.?$"
+    ["SingleEquipStatCheck"] = "^"..ITEM_SPELL_TRIGGER_ONEQUIP.." (.-) um b?i?s? ?z?u? ?("..patNumber..") ?(.-)%.?$",
 
 	-------------
 	-- PreScan --
@@ -227,11 +188,10 @@ PatternLocale.deDE = { -- {{{
 	["PreScanPatterns"] = {
 		--["^Equip: Increases attack power by (%d+) in Cat"] = "FERAL_AP",
 		--["^Equip: Increases attack power by (%d+) when fighting Undead"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
-		["^Erhöht die Angriffskraft um (%d+) nur in Katzen%-, Bären%-, Terrorbären%- und Mondkingestalt%.$"] = "FERAL_AP", -- 3.0.8 FAP change
 		["^("..patNumber..") Rüstung$"] = "ARMOR",
 		["Verstärkte %(%+(%d+) Rüstung%)"] = "ARMOR_BUFF",
 		["Mana Regeneration (%d+) alle 5 Sek%.$"] = "COMBAT_MANA_REGEN",
-		["^%+?"..patNumber.." %- ("..patNumber..") .-[Ss]chaden$"] = "MAX_DAMAGE",
+		["^%+?"..patDecimal.." %- ("..patDecimal..") .-[Ss]chaden$"] = "MAX_DAMAGE",
 		["^%(("..patDecimal..") Schaden pro Sekunde%)$"] = "DPS",  --e.g. "(1.103 Schaden pro Sekunde)"
 
 		-- Exclude
@@ -242,14 +202,27 @@ PatternLocale.deDE = { -- {{{
 		--["[Cc]hance"] = false, -- [Mark of Defiance] ID:27924 -- [Staff of the Qiraji Prophets] ID:21128 -- Commented out because it was blocking [Insightful Earthstorm Diamond]
 		["[Ee]s besteht eine Chance"] = false, -- [Darkmoon Card: Heroism] ID:19287
 		["[Ff]ügt dem Angreifer"] = false, -- [Essence of the Pure Flame] ID: 18815
-		["^Increases attack power by (%d+) in Cat, Bear, Dire Bear, and Moonkin forms only%.$"] = "FERAL_AP", -- 3.0.8 FAP change
+		["^Erhöht die Angriffskraft um (%d+) nur in Katzen%-, Bären%-, Terrorbären%- und Mondkingestalt%.$"] = "FERAL_AP", -- 3.0.8 FAP change
+		
+		--Reputation tabbard
+		["^Anlegen: Ihr tragt die Insignien.-"] = false, --"Equip: You champion the cause of Gnomeregan. All reputation gains while in dungeons will be applied to your standing with them."
+		["^Anlegen: Ihr streitet für die Sache.-"] = false, --"Equip: You champion the causes of your guild. All guild reputation gains are increased by 100%.
+
+		--We don't handle anything that has a chance to proc
+		--[[
+			Equip: Your melee attacks have a chance to cause you to summon a Tentacle of the Old Ones to fight by your side for 12 sec.
+			Equip: Your melee attacks have a chance to trigger a whirlwind attack dealing 8029 to 12044 physical damage to all targets within 10 yards.
+			Equip: When you heal you have a chance to gain 2904 haste rating for 20 sec.
+			Equip: Your spells have a chance to grant you 1,962 haste for 10 sec and 392 haste to up to 3 allies within 20 yards.
+		--]]
+		["^Anlegen: .- (eine Chance).-"] = false,
 	},
 	
 	--------------
 	-- DeepScan --
 	--------------
 	-- Strip leading "Equip: ", "Socket Bonus: "
-	["Equip: "] = "Anlegen: ", -- ITEM_SPELL_TRIGGER_ONEQUIP = "Equip:";
+	[ITEM_SPELL_TRIGGER_ONEQUIP] = ITEM_SPELL_TRIGGER_ONEQUIP, -- ITEM_SPELL_TRIGGER_ONEQUIP = "Equip:";
 	["Socket Bonus: "] = "Sockelbonus: ", -- ITEM_SOCKET_BONUS = "Socket Bonus: %s"; -- Tooltip tag for socketed item matched socket bonuses
 	-- Strip trailing "."
 	["."] = ".",
@@ -270,6 +243,7 @@ PatternLocale.deDE = { -- {{{
 	},
 	["DeepScanPatterns"] = {
 		"^(.-) um b?i?s? ?z?u? ?(%d+) ?(.-)$", -- "xxx by up to 22 xxx" (scan first)
+		-- Special for deDE: "5 Sek." DeepScanPattern needed because otherwise it matches the "5" of "5 Sek." since "5 Sek." is before the actual value in German.
 		"^(.-)5 [Ss]ek%. (%d+) (.-)$",  -- "xxx 5 Sek. 8 xxx" (scan 2nd)
 		"^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
 		"^(.-) ?([%d%.]+) ?(.-)$", -- 22.22 xxx xxx (scan last)
@@ -277,113 +251,53 @@ PatternLocale.deDE = { -- {{{
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
 	["StatIDLookup"] = {
-	},
-	["TAB"] ={
-	[ITEM_MOD_ATTACK_POWER] = {"AP",},
-	["Eure Angriffe ignorierenRüstung eures Gegners"] = {"IGNORE_ARMOR"},
-	--["Erhöht die Angriffskraft um "] = {"AP",},
-	},
-
-	["BPB"]={
-		["Eure Angriffe ignorierenRüstung eures Gegners"] = {"IGNORE_ARMOR"}, -- StatLogic:GetSum("item:33733")
-		["% Bedrohung"] = {"MOD_THREAT"}, -- StatLogic:GetSum("item:23344:2613")
+		["% Schildblockwert"] = {"MOD_BLOCK_VALUE"}, --  "% Shield Block Value"[Eternal Earthsiege Diamond] ID: 41396
+		["Zielfernrohr (Schaden)"] = {"RANGED_DMG"}, -- Khorium Scope EnchantID: 2723
+		["Zielfernrohr (kritischer Trefferwert)"] = {"RANGED_CRIT_RATING"}, -- Stabilized Eternium Scope EnchantID: 2724
 		["Erhöht Eure effektive Verstohlenheitsstufe"] = {"STEALTH_LEVEL"}, -- [Nightscape Boots] ID: 8197
-		["Waffenschaden"] = {"MELEE_DMG"}, -- Enchant
-		["Erhöht das Reittiertempo%"] = {"MOUNT_SPEED"}, -- [Highlander's Plate Greaves] ID: 20048
-
-		["Alle Werte"] = {"STR", "AGI", "STA", "INT", "SPI",},
-		["Stärke"] = {"STR",},
-		["Beweglichkeit"] = {"AGI",},
-		["Ausdauer"] = {"STA",},
-		["Intelligenz"] = {"INT",},
-		["Willenskraft"] = {"SPI",},
-
-		["Arkanwiderstand"] = {"ARCANE_RES",},
-		["Feuerwiderstand"] = {"FIRE_RES",},
-		["Naturwiderstand"] = {"NATURE_RES",},
-		["Frostwiderstand"] = {"FROST_RES",},
-		["Shadow Resistance"] = {"SHADOW_RES",},
+		
+		["alle Werte"] = {"STR", "AGI", "STA", "INT", "SPI",}, -- Different from SPELL_STATALL
+		
 		["Arcane Resist"] = {"ARCANE_RES",}, -- Arcane Armor Kit +8 Arcane Resist
 		["Fire Resist"] = {"FIRE_RES",}, -- Flame Armor Kit +8 Fire Resist
 		["Nature Resist"] = {"NATURE_RES",}, -- Frost Armor Kit +8 Frost Resist
 		["Frost Resist"] = {"FROST_RES",}, -- Nature Armor Kit +8 Nature Resist
 		["Shadow Resist"] = {"SHADOW_RES",}, -- Shadow Armor Kit +8 Shadow Resist
 		["Schattenwiderstand"] = {"SHADOW_RES",}, -- Demons Blood ID: 10779
-		["Alle Widerstände"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
-		["Alle Widerstandsarten"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
+		["Alle Widerstände"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",}, -- Different from ITEM_RESIST_ALL
 
-		["Angeln"] = {"FISHING",}, -- Fishing enchant ID:846
 		["Angelfertigkeit"] = {"FISHING",}, -- Fishing lure
-		["Increased Fishing"] = {"FISHING",}, -- Equip: Increased Fishing +20.
+		["Fertigkeit im Angelnerhöht"] = {"FISHING"}, --Weather-Beaten Fishing Hat "Equip: Fishing skill increased by 5."
 		["Bergbau"] = {"MINING",}, -- Mining enchant ID:844
+		["Bergbau; muss nicht ausgerüstet sein"] = {"MINING"}, --ID: 2901 Mining Pick  "+10 Mining; does not need to be equipped." added in 5.0.4
 		["Kräuterkunde"] = {"HERBALISM",}, -- Herbalism enchant ID:845
+		["Kräuterkunde; muss nicht ausgerüstet sein"] = {"HERBALISM",}, -- ID:85663 Herbalist's Spade
 		["Kürschnerei"] = {"SKINNING",}, -- Skinning enchant ID:865
+		["Erhöht die Kürschnereifertigkeit. Ist mit anderen Fertigkeitsboni, die die Kürschnereifertigkeit erhöhen, nicht stapelbar"] = {"SKINNING",}, --20120915 ID: 12709  Finkle's Skinner
 
-		["Rüstung"] = {"ARMOR_BONUS",},
-		["Verteidigung"] = {"DEFENSE",},
-		["Erhöht die Verteidigungswertung"] = {"DEFENSE",},
-
-		["Gesundheit"] = {"HEALTH",},
-		["HP"] = {"HEALTH",},
-		["Mana"] = {"MANA",},
-
-		["Angriffskraft"] = {"AP",},
-		["Erhöht Angriffskraft"] = {"AP",},
-		
-		--[gITEM_MOD_ATTACK_POWER] = {"AP",},
-
-		["Erhöht die Angriffskraft un"] = {"AP",},
 		["Erhöht die Angriffskraft im Kampf gegen Untote"] = {"AP_UNDEAD",}, -- [Wristwraps of Undead Slaying] ID:23093
 		-- [Wristwraps of Undead Slaying] ID:23093
 		["Erhöht die Angriffskraft gegen Untote"] = {"AP_UNDEAD",}, -- [Seal of the Dawn] ID:13209
 		["Erhöht die Angriffskraft im Kampf gegen Untote. Ermöglicht das Einsammeln von Geißelsteinen im Namen der Argentumdämmerung"] = {"AP_UNDEAD",}, -- [Seal of the Dawn] ID:13209
 		["Erhöht die Angriffskraft im Kampf gegen Dämonen"] = {"AP_DEMON",}, -- [Mark of the Champion] ID:23206
-		["Angriffskraft in Katzengestalt, Bärengestalt oder Terrorbärengestalt"] = {"FERAL_AP",},
-		["Erhöht die Angriffskraft in Katzengestalt, Bärengestalt, Terrorbärengestalt oder Mondkingestalt"] = {"FERAL_AP",},
-		["Distanzangriffskraft"] = {"RANGED_AP",},
-		["Erhöht die Distanzangriffskraft"] = {"RANGED_AP",}, -- [High Warlord's Crossbow] ID: 18837
 
-		["Health Regen"] = {"COMBAT_HEALTH_REGEN",},
-		["Health per"] = {"COMBAT_HEALTH_REGEN",},
-		["Gesundheit wieder her"] = {"COMBAT_HEALTH_REGEN",}, -- Frostwolf Insignia Rank 6 ID:17909
-		["Health every"] = {"COMBAT_HEALTH_REGEN",},
-		["health every"] = {"COMBAT_HEALTH_REGEN",}, -- [Resurgence Rod] ID:17743
-		["Gesundheitsregeneration"] = {"COMBAT_HEALTH_REGEN",}, -- Demons Blood ID: 10779
-		["stellt alle gesundheit wieder her"] = {"COMBAT_HEALTH_REGEN",}, -- Shard of the Flame ID: 17082
-		["Restoreshealth every 5 sec"] = {"COMBAT_HEALTH_REGEN",}, -- [Resurgence Rod] ID:17743
-		["Mana Regen"] = {"COMBAT_MANA_REGEN",}, -- Prophetic Aura +4 Mana Regen/+10 Stamina/+24 Healing Spells http://wow.allakhazam.com/db/spell.html?wspell=24167
-		["Mana wieder her"] = {"COMBAT_MANA_REGEN",},
-		["mana per"] = {"COMBAT_MANA_REGEN",}, -- Resurgence Rod ID:17743 Most common
-		["Mana every"] = {"COMBAT_MANA_REGEN",},
-		["mana every"] = {"COMBAT_MANA_REGEN",},
-		["Mana alle 5 Sek"] = {"COMBAT_MANA_REGEN",}, -- [Royal Nightseye] ID: 24057
-		["Mana alle 5 Sekunden"] = {"COMBAT_MANA_REGEN",},
-		["alle 5 Sek.Mana"] = {"COMBAT_MANA_REGEN",}, -- [Royal Shadow Draenite] ID: 23109
-		["Mana bei allen Gruppenmitgliedern, die sich im Umkreis von 30 befinden, wieder her"] = {"COMBAT_MANA_REGEN",}, -- Atiesh
-		["Manaregeneration"] = {"COMBAT_MANA_REGEN",},
-		["alle Mana"] = {"COMBAT_MANA_REGEN",},
-		["stellt alle Mana wieder her"] = {"COMBAT_MANA_REGEN",},
-
-		["Zauberdurchschlagskraft"] = {"SPELLPEN",},
-		["Erhöht Eure Zauberdurchschlagskraft"] = {"SPELLPEN",},
 		["Schaden und Heilung"] = {"SPELL_DMG", "HEAL",},
-		["Damage and Healing Spells"] = {"SPELL_DMG", "HEAL",},
 		["Zauberschaden und Heilung"] = {"SPELL_DMG", "HEAL",},
-		["Zauberschaden"] = {"SPELL_DMG", "HEAL",},
 		["Zauberkraft"] = {"SPELL_DMG", "HEAL",},
 		["Erhöht durch Zauber und magische Effekte verursachten Schaden und Heilung"] = {"SPELL_DMG", "HEAL"},
 		["Erhöht durch Zauber und magische Effekte zugefügten Schaden und Heilung aller Gruppenmitglieder, die sich im Umkreis von 30 befinden,"] = {"SPELL_DMG", "HEAL"}, -- Atiesh
 		["Zauberschaden und Heilung"] = {"SPELL_DMG", "HEAL",}, --StatLogic:GetSum("item:22630")
 		["Schaden"] = {"SPELL_DMG",},
-		["Erhöht Euren Zauberschaden"] = {"SPELL_DMG",}, -- Atiesh ID:22630, 22631, 22632, 22589
-		["Zauberschaden"] = {"SPELL_DMG",},
 		["Zaubermacht"] = {"SPELL_DMG", "HEAL",},
 		["Erhöht die Zaubermacht"] = {"SPELL_DMG", "HEAL",}, -- WotLK
 		["Erhöht Zaubermacht"] = {"SPELL_DMG", "HEAL",}, -- WotLK
 		["Erhöht Zaubermacht um"] = {"SPELL_DMG", "HEAL",},
 		["Erhöht die Zaubermacht um"] = {"SPELL_DMG", "HEAL",},
 		["Schadenszauber"] = {"SPELL_DMG"},
+		
 		["Heiligschaden"] = {"HOLY_SPELL_DMG",},
 		["Arkanschaden"] = {"ARCANE_SPELL_DMG",},
 		["Feuerschaden"] = {"FIRE_SPELL_DMG",},
@@ -411,117 +325,35 @@ PatternLocale.deDE = { -- {{{
 		["Heilung"] = {"HEAL",},
 		["Heilzauber"] = {"HEAL",}, -- [Royal Nightseye] ID: 24057
 
-		["Erhöht durch Zauber und Effekte verursachte Heilung"] = {"HEAL",},
 		["Erhöht durch Zauber und magische Effekte zugefügte Heilung aller Gruppenmitglieder, die sich im Umkreis von 30 befinden,"] = {"HEAL",}, -- Atiesh
-		--["your healing"] = {"HEAL",}, -- Atiesh
-
-		["Schaden pro Sekunde"] = {"DPS",},
-		["Verursacht zusätzlichen Schaden pro Sekunde"] = {"DPS",}, -- [Thorium Shells] ID: 15997
-		["zusätzlichen Schaden pro Sekunde"] = {"DPS",}, -- [Thorium Shells] ID: 15997 "Verursacht 17.5 zusätzlichen Schaden pro Sekunde."
-
-		["Verteidigungswertung"] = {"DEFENSE_RATING",},
-		["Erhöht Verteidigungswertung"] = {"DEFENSE_RATING",},
-		["Erhöht die Verteidigungswertung"] = {"DEFENSE_RATING",},
-		["Ausweichwertung"] = {"DODGE_RATING",},
-		["Ausweichen"] = {"DODGE_RATING",},  --5.0.3 "+25 Dodge"
-		["Erhöht Eure Ausweichwertung"] = {"DODGE_RATING",},
-		["Parierwertung"] = {"PARRY_RATING",},
-		["Parieren"] = {"PARRY_RATING",}, --5.0.3 "+25 Parry"
-		["Erhöht Eure Parierwertung"] = {"PARRY_RATING",},
-		["Blockwertung"] = {"BLOCK_RATING",},
-		["Erhöht Eure Blockwertung"] = {"BLOCK_RATING",},
-		["Erhöht den Blockwet Eures Schildes"] = {"BLOCK_RATING",},
-
-		["Trefferwertung"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"},
-		["Trefferwert"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- 5.0.4
-		["Erhöht Trefferwertung"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- ITEM_MOD_HIT_RATING
-		["Erhöht Eure Trefferwertung"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- ITEM_MOD_HIT_MELEE_RATING
-		["Zaubertrefferwertung"] = {"SPELL_HIT_RATING",},
-		["Erhöht Zaubertrefferwertung"] = {"SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_SPELL_RATING
-		["Erhöht Eure Zaubertrefferwertung"] = {"SPELL_HIT_RATING",},
-		["Distanztrefferwertung"] = {"RANGED_HIT_RATING",},
-		["Erhöht Distanztrefferwertung"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
-		["Erhöht Eure Distanztrefferwertung"] = {"RANGED_HIT_RATING",},
-
-		["kritische Trefferwertung"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["kritischer Trefferwert"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, -- 5.0.4
-		["Erhöht kritische Trefferwertung"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["Erhöht den kritischen Trefferwert"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, -- 5.0.4
-		["Erhöht Eure kritische Trefferwertung"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
-		["kritische Zaubertrefferwertung"] = {"SPELL_CRIT_RATING",},
-		["Erhöht kritische Zaubertrefferwertung"] = {"SPELL_CRIT_RATING",},
-		["Erhöht Eure kritische Zaubertrefferwertung"] = {"SPELL_CRIT_RATING",},
-		["Erhöht die kritische Zaubertrefferwertung aller Gruppenmitglieder innerhalb von 30 Metern"] = {"SPELL_CRIT_RATING",},
-		["Erhöht Eure kritische Distanztrefferwertung"] = {"RANGED_CRIT_RATING",}, -- Fletcher's Gloves ID:7348
-
-		--	["Improves hit avoidance rating"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RATING
-		--	["Improves melee hit avoidance rating"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_MELEE_RATING
-		--	["Improves ranged hit avoidance rating"] = {"RANGED_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RANGED_RATING
-		--	["Improves spell hit avoidance rating"] = {"SPELL_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_SPELL_RATING
-		["Abhärtung"] = {"RESILIENCE_RATING",},
-		["Abhärtungswertung"] = {"RESILIENCE_RATING",},
-		["Erhöht Eure Abhärtungswertung"] = {"RESILIENCE_RATING",},
-		["Erhöht die PvP-Abhärtung"] = {"RESILIENCE_RATING",},	--5.0.3  e.g. "Equip: Increases your pvp resilience by 359."
-		--	["Improves critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
-		--	["Improves melee critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
-		--	["Improves ranged critical avoidance rating"] = {"RANGED_CRIT_AVOID_RATING",},
-		--	["Improves spell critical avoidance rating"] = {"SPELL_CRIT_AVOID_RATING",},
-
-		["Tempo"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, -- 5.0.4
-		["Tempowertung"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Erhöht Tempowertung"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, -- [Pfeilabwehrender Brustschutz] ID:33328
-		["Erhöht Eure Tempowertung"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Angriffstempowertung"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Erhöht Angriffstempowertung"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Erhöht Eure Angriffstempowertung"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
-		["Zaubertempowertung"] = {"SPELL_HASTE_RATING"},
-		["Erhöht Zaubertempowertung"] = {"SPELL_HASTE_RATING"},
-		["Erhöht Eure Zaubertempowertung"] = {"SPELL_HASTE_RATING"},
-		["Distanzangriffstempowertung"] = {"RANGED_HASTE_RATING"},
-		["Erhöht Distanzangriffstempowertung"] = {"RANGED_HASTE_RATING"},
-		["Erhöht Eure Distanzangriffstempowertung"] = {"RANGED_HASTE_RATING"},
-
-		["Erhöht die Fertigkeitswertung für Dolche"] = {"DAGGER_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Schwerter"] = {"SWORD_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Zweihandschwerter"] = {"2H_SWORD_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Äxte"] = {"AXE_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Zweihandäxte"] = {"2H_AXE_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Kolben"] = {"MACE_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Zweihandkolben"] = {"2H_MACE_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Schusswaffen"] = {"GUN_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Armbrüste"] = {"CROSSBOW_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Bögen"] = {"BOW_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für 'Wilder Kampf'"] = {"FERAL_WEAPON_RATING"},
-		["Erhöht die Fertigkeitswertung für Faustwaffen"] = {"FIST_WEAPON_RATING"}, -- Demonblood Eviscerator
-		["Erhöht die Fertigkeitswertung für unbewaffneten Kampf"] = {"FIST_WEAPON_RATING"}, -- Demonblood Eviscerator ID:27533
-		["Increases staff skill rating"] = {"STAFF_WEAPON_RATING"}, -- Leggings of the Fang ID:10410
-
-		["Waffenkundewertung"] = {"EXPERTISE_RATING"},
-		["Erhöht die Waffenkunde"] = {"EXPERTISE_RATING"}, -- 5.0.4
-		["Erhöht die Waffenkundewertung"] = {"EXPERTISE_RATING"},
-		["Erhöht Eure Waffenkundewertung um"] = {"EXPERTISE_RATING"},
-
-		["Rüstungsdurchschlagwertung"] = {"ARMOR_PENETRATION_RATING"},
-		["Erhöht den Rüstungsdurchschlagwert um"] = {"ARMOR_PENETRATION_RATING"},
-		["Erhöht die Rüstungsdurchschlagwertung um"] = {"ARMOR_PENETRATION_RATING"},
-		["Erhöht Eure Rüstungsdurchschlagwertung um"] = {"ARMOR_PENETRATION_RATING"}, -- ID:43178
-
-		["Meisterschaftswertung"] = {"MASTERY_RATING"}, -- gems
-		["Meisterschaft"] = {"MASTERY_RATING"}, -- 5.0.4
-		["Erhöht Meisterschaftswertung"] = {"MASTERY_RATING"},
-		["Erhöht Eure Meisterschaftswertung"] = {"MASTERY_RATING"},
-		["Fishing skill increased"] = {"FISHING"}, --Weather-Beaten Fishing Hat "Equip: Fishing skill increased by 5."
 
 		-- Exclude
 		["Sek"] = false,
 		["bis"] = false,
-		["Platz Tasche"] = false,
-		["Platz Köcher"] = false,
-		["Platz Munitionsbeutel"] = false,
-		["Erhöht das Distanzangriffstempo"] = false, -- AV quiver
-		["Experience gained is increased%"] = false, -- Heirlooms
+		["Erhöht die erhaltene Erfahrung%"] = false, -- Heirlooms  e.g. /sl analyze 42984  Preened Ironfeather Shoulders
+		["Durch das Töten von Monstern und das Abschließen von Quests erhaltene Erfahrung% erhöht"] = false, -- Heirlooms  e.g. /sl analyze 62040  Ancient Bloodmoon Cloak
 	},
 } -- }}}
+
+function PatternLocale.deDE.ProcessNeutralStatIDLookupPlaceholders(statIDLookupWithPlaceholders, targetStatIDLookup)
+	for k, v in pairs(statIDLookupWithPlaceholders) do
+		-- "%%" -> "%"
+		local newKey = gsub(k, "%%%%", "%%")
+		-- Remove tailing .
+		newKey = gsub(newKey, "%.$", "")
+		-- Remove <space><+-><"%d", "%s", "%c", "%g", "%2$d", "%.2f">
+		newKey = gsub(newKey, " ?[%+%-]?%%%d?%.?%d?%$?[cdsgf]", "")
+		-- Remove " by" or " by up to". This is important for a match with SingleEquipStatCheck.
+		-- If you don't remove it, it might still work, but then it will use a DeepScanPattern.
+		newKey = gsub(newKey, " um ?b?i?s? ?z?u?", "")
+		-- Special for deDE: "5 Sek" is still a special DeepScanPattern, so we need to remove it here.
+		newKey = gsub(newKey, "5 [Ss]ek%. ", "")
+		
+		--print("'"..k.."'")
+		--print("'"..newKey.."'")
+		targetStatIDLookup[newKey] = v
+	end
+end
 
 DisplayLocale.deDE = { -- {{{
 	----------------
@@ -544,8 +376,6 @@ DisplayLocale.deDE = { -- {{{
 		["EMPTY_SOCKET_YELLOW"] = {EMPTY_SOCKET_YELLOW, EMPTY_SOCKET_YELLOW}, -- EMPTY_SOCKET_YELLOW = "Yellow Socket";
 		["EMPTY_SOCKET_BLUE"] = {EMPTY_SOCKET_BLUE, EMPTY_SOCKET_BLUE}, -- EMPTY_SOCKET_BLUE = "Blue Socket";
 		["EMPTY_SOCKET_META"] = {EMPTY_SOCKET_META, EMPTY_SOCKET_META}, -- EMPTY_SOCKET_META = "Meta Socket";
-
-		["IGNORE_ARMOR"] = {"Rüstung ignorieren", "Rüstung igno."},
 
 		["STEALTH_LEVEL"] = {"Verstohlenheitslevel", "Verstohlenheit"},
 		["MELEE_DMG"] = {"Waffenschaden", "Waffenschaden"}, -- DAMAGE = "Damage"

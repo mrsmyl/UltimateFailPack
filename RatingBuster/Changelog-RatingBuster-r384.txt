@@ -1,4 +1,23 @@
 ------------------------------------------------------------------------
+r384 | cremor | 2012-09-30 14:00:40 +0000 (Sun, 30 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/RatingBuster.lua
+   M /trunk/locales/deDE.lua
+   M /trunk/locales/enUS.lua
+   M /trunk/locales/itIT.lua
+
+- deDE updates.
+- enUS typo fix.
+- This also pulls the latest LibStatLogic with the localization refactoring. deDE should now work again.
+------------------------------------------------------------------------
+r383 | gathirer | 2012-09-29 16:36:58 +0000 (Sat, 29 Sep 2012) | 3 lines
+Changed paths:
+   M /trunk/RatingBuster.lua
+
+- New push to get the Lib-StatLocic updates
+
+
+------------------------------------------------------------------------
 r382 | gathirer | 2012-09-23 17:17:24 +0000 (Sun, 23 Sep 2012) | 1 line
 Changed paths:
    M /trunk/RatingBuster.toc

@@ -1,7 +1,236 @@
-﻿
---Include LibStatLogic's enUS.lua file before any other locales, and before LibStatLogic.lua itself.
+﻿--Include LibStatLogic's enUS.lua file before any other locales, and before LibStatLogic.lua itself.
 PatternLocale = {};
 DisplayLocale = {};
+
+-- The neutral table contains all entries that are build by using a constant from GlobalStrings.lua
+-- DO NOT include any hardcoded english strings here!
+PatternLocale.neutral = {
+	-- The entries of that table will be copied to PatternLocale.<ClientLocale>.Exclude at startup.
+	-- DO NOT include any hardcoded english strings here!
+	-- DO NOT include any constants here that have placeholders like %d in their value! This won't work since the
+	-- Exclude entries have to match exactly!
+	["NeutralExclude"] = {
+		-- Binds
+		[ITEM_BIND_ON_EQUIP] = true, -- "Binds when equipped"
+		[ITEM_BIND_ON_PICKUP] = true, -- "Binds when picked up"
+		[ITEM_BIND_ON_USE] = true, -- "Binds when used"
+		[ITEM_BIND_TO_ACCOUNT] = true, -- "Binds to account"
+		[ITEM_ACCOUNTBOUND] = true, -- "Account Bound"
+		[ITEM_BIND_TO_BNETACCOUNT] = true, -- "Binds to Battle.net account"
+		[ITEM_BNETACCOUNTBOUND] = true, -- "Battle.net Account Bound"
+		[ITEM_SOULBOUND] = true, -- "Soulbound"
+		
+		-- Uniques
+		[ITEM_UNIQUE] = true, -- "Unique"
+		[ITEM_UNIQUE_EQUIPPABLE] = true, -- "Unique-Equipped"
+
+		-- Quests
+		[ITEM_BIND_QUEST] = true, -- "Quest Item"
+		[ITEM_STARTS_QUEST] = true, -- "This Item Begins a Quest"
+		
+		-- Equip types
+		[INVTYPE_2HWEAPON] = true, -- "Two-Hand"
+		[INVTYPE_AMMO] = true, -- "Ammo"
+		[INVTYPE_BAG] = true, -- "Bag"
+		[INVTYPE_BODY] = true, -- "Shirt"
+		[INVTYPE_CHEST] = true, -- "Chest"
+		[INVTYPE_CLOAK] = true, -- "Back"
+		[INVTYPE_FEET] = true, -- "Feet"
+		[INVTYPE_FINGER] = true, -- "Finger"
+		[INVTYPE_HAND] = true, -- "Hands"
+		[INVTYPE_HEAD] = true, -- "Head"
+		[INVTYPE_HOLDABLE] = true, -- "Held In Off-hand"
+		[INVTYPE_LEGS] = true, -- "Legs"
+		[INVTYPE_NECK] = true, -- "Neck"
+		[INVTYPE_QUIVER] = true, -- "Quiver"
+		[INVTYPE_RANGED] = true, -- "Ranged"
+		[INVTYPE_RANGEDRIGHT] = true, -- "Ranged"
+		[INVTYPE_RELIC] = true, -- "Relic"
+		[INVTYPE_ROBE] = true, -- "Chest"
+		[INVTYPE_SHIELD] = true, -- "Off Hand"
+		[INVTYPE_SHOULDER] = true, -- "Shoulder"
+		[INVTYPE_TABARD] = true, -- "Tabard"
+		[INVTYPE_THROWN] = true, -- "Thrown"
+		[INVTYPE_TRINKET] = true, -- "Trinket"
+		[INVTYPE_WAIST] = true, -- "Waist"
+		[INVTYPE_WEAPON] = true, -- "One-Hand"
+		[INVTYPE_WEAPONMAINHAND] = true, -- "Main Hand"
+		[INVTYPE_WEAPONMAINHAND_PET] = true, -- "Main Attack"
+		[INVTYPE_WEAPONOFFHAND] = true, -- "Off Hand"
+		[INVTYPE_WRIST] = true, -- "Wrist"
+		
+		-- Item quality
+		[ITEM_QUALITY0_DESC] = true, -- "Poor"
+		[ITEM_QUALITY1_DESC] = true, -- "Common"
+		[ITEM_QUALITY2_DESC] = true, -- "Uncommon"
+		[ITEM_QUALITY3_DESC] = true, -- "Rare"
+		[ITEM_QUALITY4_DESC] = true, -- "Epic"
+		[ITEM_QUALITY5_DESC] = true, -- "Legendary"
+		[ITEM_QUALITY6_DESC] = true, -- "Artifact"
+		[ITEM_QUALITY7_DESC] = true, -- "Heirloom"
+		[ITEM_HEROIC] = true, -- "Heroic"
+		[ITEM_HEROIC_EPIC] = true, -- "Heroic Epic"
+		[ITEM_HEROIC_QUALITY0_DESC] = true, -- "Heroic Poor"
+		[ITEM_HEROIC_QUALITY1_DESC] = true, -- "Heroic Common"
+		[ITEM_HEROIC_QUALITY2_DESC] = true, -- "Heroic Uncommon"
+		[ITEM_HEROIC_QUALITY3_DESC] = true, -- "Heroic Rare"
+		[ITEM_HEROIC_QUALITY4_DESC] = true, -- "Heroic Epic"
+		[ITEM_HEROIC_QUALITY5_DESC] = true, -- "Heroic Legendary"
+		[ITEM_HEROIC_QUALITY6_DESC] = true, -- "Heroic Artifact"
+		[ITEM_HEROIC_QUALITY7_DESC] = true, -- "Heroic Heirloom"
+		[RAID_FINDER] = true, -- "Raid Finder"
+		
+		-- Misc
+		[REFORGED] = true, -- "Reforged"
+		[ITEM_CANT_BE_DESTROYED] = true, -- "That item cannot be destroyed."
+		[ITEM_CONJURED] = true, -- "Conjured Item"
+		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- "Cannot be disenchanted"
+		[ITEM_DISENCHANT_ANY_SKILL] = true, -- "Disenchantable"
+	},
+	
+	-- The entries of that table will be copied to PatternLocale.<ClientLocale>.StatIDLookup at startup.
+	-- DO NOT include any hardcoded english strings here!
+	-- DO NOT include any constants here that have placeholders like %d in their value! This won't work since the
+	-- StatIDLookup entries must contain the lookup string with the values completely removed. If they have placeholders,
+	-- include them in NeutralStatIDLookupWithPlaceholders!
+	["NeutralStatIDLookup"] = {
+		[SPELL_STATALL] = {"STR", "AGI", "STA", "INT", "SPI"}, -- "all stats"
+		[SPELL_STAT1_NAME] = {"STR"}, -- "Strength"
+		[SPELL_STAT2_NAME] = {"AGI"}, -- "Agility"
+		[SPELL_STAT3_NAME] = {"STA"}, -- "Stamina"
+		[SPELL_STAT4_NAME] = {"INT"}, -- "Intellect"
+		[SPELL_STAT5_NAME] = {"SPI"}, -- "Spirit"
+
+		[HEALTH] = {"HEALTH"}, -- "Health"
+		[HP] = {"HEALTH"}, -- "HP"
+		[MANA] = {"MANA"}, -- "Mana"
+		[MP] = {"MANA"}, -- "MP"
+		
+		[DAMAGE_TOOLTIP] = {"MELEE_DMG"}, -- "Weapon Damage"
+		[DAMAGE_PER_SECOND] = {"DPS"}, -- "Damage per Second"
+		
+		[ATTACK_POWER_TOOLTIP] = {"AP"}, -- "Attack Power"
+		[ITEM_MOD_RANGED_ATTACK_POWER_SHORT] = {"RANGED_AP"}, -- "Ranged Attack Power"
+		[ITEM_MOD_FERAL_ATTACK_POWER_SHORT] = {"FERAL_AP"}, -- "Attack Power In Forms"
+		
+		[ITEM_MOD_SPELL_POWER_SHORT] = {"SPELL_DMG", "HEAL"}, -- "Spell Power"
+		[STAT_SPELLDAMAGE] = {"SPELL_DMG"}, -- "Spell Damage"
+		[STAT_SPELLHEALING] = {"HEAL"}, -- "Spell Healing"
+		
+		[ITEM_MOD_HIT_RATING_SHORT] = {"MELEE_HIT_RATING", "RANGED_HIT_RATING", "SPELL_HIT_RATING"}, -- "Hit"
+		[ITEM_MOD_HIT_MELEE_RATING_SHORT] = {"MELEE_HIT_RATING"}, -- "Hit (Melee)"
+		[ITEM_MOD_HIT_RANGED_RATING_SHORT] = {"RANGED_HIT_RATING"}, -- "Hit (Ranged)"
+		[ITEM_MOD_HIT_SPELL_RATING_SHORT] = {"SPELL_HIT_RATING"}, -- "Hit (Spell)"
+		[ITEM_MOD_EXPERTISE_RATING_SHORT] = {"EXPERTISE_RATING"}, -- "Expertise"
+		
+		[ITEM_MOD_CRIT_RATING_SHORT] = {"MELEE_CRIT_RATING", "RANGED_CRIT_RATING", "SPELL_CRIT_RATING"}, -- "Critical Strike"
+		[ITEM_MOD_CRIT_MELEE_RATING_SHORT] = {"MELEE_CRIT_RATING"}, -- "Critical Strike (Melee)"
+		[ITEM_MOD_CRIT_RANGED_RATING_SHORT] = {"RANGED_CRIT_RATING"}, -- "Critical Strike (Ranged)"
+		[ITEM_MOD_CRIT_SPELL_RATING_SHORT] = {"SPELL_CRIT_RATING"}, -- "Critical Strike (Spell)"
+		
+		[ITEM_MOD_HASTE_RATING_SHORT] = {"MELEE_HASTE_RATING", "RANGED_HASTE_RATING", "SPELL_HASTE_RATING"}, -- "Haste"
+		[ITEM_MOD_HASTE_MELEE_RATING_SHORT] = {"MELEE_HASTE_RATING"}, -- "Haste (Melee)"
+		[ITEM_MOD_HASTE_RANGED_RATING_SHORT] = {"RANGED_HASTE_RATING"}, -- "Haste (Ranged)"
+		[ITEM_MOD_HASTE_SPELL_RATING_SHORT] = {"SPELL_HASTE_RATING"}, -- "Haste (Spell)"
+		
+		[ITEM_MOD_MASTERY_RATING_SHORT] = {"MASTERY_RATING"}, -- "Mastery"
+		[ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT] = {"ARMOR_PENETRATION_RATING"}, -- "Armor Penetration"
+
+		[ITEM_MOD_DEFENSE_SKILL_RATING_SHORT] = {"DEFENSE_RATING"}, -- "Defense"
+		[ITEM_MOD_DODGE_RATING_SHORT] = {"DODGE_RATING"}, -- "Dodge"
+		[ITEM_MOD_PARRY_RATING_SHORT] = {"PARRY_RATING"}, -- "Parry"
+		[ITEM_MOD_BLOCK_RATING_SHORT] = {"BLOCK_RATING"}, -- "Block"
+		
+		[ITEM_MOD_HIT_TAKEN_RATING_SHORT] = {"MELEE_HIT_AVOID_RATING", "RANGED_HIT_AVOID_RATING", "SPELL_HIT_AVOID_RATING"}, -- "Hit Avoidance"
+		[ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT] = {"MELEE_HIT_AVOID_RATING"}, -- "Hit Avoidance (Melee)";
+		[ITEM_MOD_HIT_TAKEN_RANGED_RATING_SHORT] = {"RANGED_HIT_AVOID_RATING"}, --"Hit Avoidance (Ranged)";
+		[ITEM_MOD_HIT_TAKEN_SPELL_RATING_SHORT] = {"SPELL_HIT_AVOID_RATING"}, -- "Hit Avoidance (Spell)"
+		
+		[ITEM_MOD_CRIT_TAKEN_RATING_SHORT] = {"MELEE_CRIT_AVOID_RATING", "RANGED_CRIT_AVOID_RATING", "SPELL_CRIT_AVOID_RATING"}, -- "Critical Strike Avoidance"
+		[ITEM_MOD_CRIT_TAKEN_MELEE_RATING_SHORT] = {"MELEE_CRIT_AVOID_RATING"}, -- "Critical Strike Avoidance (Melee)"
+		[ITEM_MOD_CRIT_TAKEN_RANGED_RATING_SHORT] = {"RANGED_CRIT_AVOID_RATING"}, -- "Critical Strike Avoidance (Ranged)"
+		[ITEM_MOD_CRIT_TAKEN_SPELL_RATING_SHORT] = {"SPELL_CRIT_AVOID_RATING"}, -- "Critical Strike Avoidance (Spell)"
+		
+		[ITEM_MOD_RESILIENCE_RATING_SHORT] = {"RESILIENCE_RATING"}, -- "PvP Resilience"
+		[ITEM_MOD_PVP_POWER_SHORT] = {"PVP_POWER"}, -- "PvP Power"
+		[ITEM_MOD_SPELL_PENETRATION_SHORT] = {"SPELLPEN"}, -- "Spell Penetration" -- Enchant Cloak - Spell Penetration
+		
+		[ITEM_MOD_HEALTH_REGENERATION_SHORT] = {"COMBAT_HEALTH_REGEN"}, -- "Health Regeneration"
+		[ITEM_MOD_MANA_REGENERATION_SHORT] = {"COMBAT_MANA_REGEN"}, -- "Mana Regeneration"
+		
+		[RESISTANCE0_NAME] = {"ARMOR_BONUS"}, -- "Armor"
+		[RESISTANCE1_NAME] = {"HOLY_RES"}, -- "Holy Resistance"
+		[RESISTANCE2_NAME] = {"FIRE_RES"}, -- "Fire Resistance"
+		[RESISTANCE3_NAME] = {"NATURE_RES"}, -- "Nature Resistance"
+		[RESISTANCE4_NAME] = {"FROST_RES"}, --  "Frost Resistance"
+		[RESISTANCE5_NAME] = {"SHADOW_RES"}, -- "Shadow Resistance"
+		[RESISTANCE6_NAME] = {"ARCANE_RES"}, -- "Arcane Resistance"
+		
+		[PROFESSIONS_FISHING] = {"FISHING"}, -- "Fishing" -- Fishing enchant ID:846
+	},
+	
+	-- The entries of that table will be copied to PatternLocale.<ClientLocale>.StatIDLookup at startup, but only after
+	-- beeing cleaned so that they don't contain the placeholders any more. This cleaning happens in the function
+	-- PatternLocale.<ClientLocale>.ProcessNeutralStatIDLookupPlaceholders (will fallback to the enUS function if the
+	-- function is nil in the client locale).
+	-- DO NOT include any hardcoded english strings here!
+	-- ONLY include constants here that have placeholders like %d in their value! If they don't have placeholders,
+	-- include them in NeutralStatIDLookup!
+	["NeutralStatIDLookupWithPlaceholders"] = {
+		[ITEM_MOD_ATTACK_POWER] = {"AP"}, -- "Increases attack power by %s."
+		[ITEM_MOD_RANGED_ATTACK_POWER] = {"RANGED_AP"}, -- "Increases ranged attack power by %s." -- [High Warlord's Crossbow] ID: 18837
+		[ITEM_MOD_FERAL_ATTACK_POWER] = {"FERAL_AP"}, -- "Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."
+		
+		[ITEM_MOD_SPELL_POWER] = {"SPELL_DMG", "HEAL"}, -- "Increases spell power by %s."
+		[ITEM_MOD_SPELL_HEALING_DONE] = {"HEAL"}, -- "Increases healing done by magical spells and effects by up to %s."
+		[BONUS_HEALING_TOOLTIP] = {"HEAL"}, -- "Increases your healing by up to %d"
+
+		[ITEM_MOD_HIT_RATING] = {"MELEE_HIT_RATING", "RANGED_HIT_RATING", "SPELL_HIT_RATING"}, -- "Increases your hit by %s."
+		[ITEM_MOD_HIT_MELEE_RATING] = {"MELEE_HIT_RATING"}, -- "Improves melee hit by %s."
+		[ITEM_MOD_HIT_RANGED_RATING] = {"RANGED_HIT_RATING"}, -- "Improves ranged hit by %s."
+		[ITEM_MOD_HIT_SPELL_RATING] = {"SPELL_HIT_RATING"}, -- "Improves spell hit by %s.
+		[ITEM_MOD_EXPERTISE_RATING] = {"EXPERTISE_RATING"}, --  "Increases your expertise by %s."
+		
+		[ITEM_MOD_CRIT_RATING] = {"MELEE_CRIT_RATING", "RANGED_CRIT_RATING", "SPELL_CRIT_RATING"}, -- "Increases your critical strike by %s."
+		[ITEM_MOD_CRIT_MELEE_RATING] = {"MELEE_CRIT_RATING"}, -- "Improves melee critical strike by %s."
+		[ITEM_MOD_CRIT_RANGED_RATING] = {"RANGED_CRIT_RATING"}, -- "Improves ranged critical strike by %s."
+		[ITEM_MOD_CRIT_SPELL_RATING] = {"SPELL_CRIT_RATING"}, -- "Improves spell critical strike by %s."
+
+		[ITEM_MOD_HASTE_RATING] = {"MELEE_HASTE_RATING", "RANGED_HASTE_RATING", "SPELL_HASTE_RATING"}, -- "Increases your haste by %s."
+		[ITEM_MOD_HASTE_MELEE_RATING] = {"MELEE_HASTE_RATING"}, -- "Improves melee haste by %s."
+		[ITEM_MOD_HASTE_RANGED_RATING] = {"RANGED_HASTE_RATING"}, -- "Improves ranged haste by %s."
+		[ITEM_MOD_HASTE_SPELL_RATING] = {"SPELL_HASTE_RATING"}, -- "Improves spell haste by %s."
+		
+		[ITEM_MOD_MASTERY_RATING] = {"MASTERY_RATING"}, -- "Increases your mastery by %s."
+		[ITEM_MOD_ARMOR_PENETRATION_RATING] = {"ARMOR_PENETRATION_RATING"}, --"Increases your armor penetration by %s."
+		
+		[ITEM_MOD_DEFENSE_SKILL_RATING] = {"DEFENSE_RATING"}, -- "Increases defense by %s."
+		[ITEM_MOD_DODGE_RATING] = {"DODGE_RATING"}, -- "Increases your dodge by %s."
+		[ITEM_MOD_PARRY_RATING] = {"PARRY_RATING"}, -- "Increases your parry by %s."
+		[ITEM_MOD_BLOCK_RATING] = {"BLOCK_RATING"}, -- "Increases your shield block by %s."
+
+		[ITEM_MOD_HIT_TAKEN_RATING] = {"MELEE_HIT_AVOID_RATING", "RANGED_HIT_AVOID_RATING", "SPELL_HIT_AVOID_RATING"}, -- "Improves hit avoidance by %s."
+		[ITEM_MOD_HIT_TAKEN_MELEE_RATING] = {"MELEE_HIT_AVOID_RATING"}, -- "Improves melee hit avoidance by %s."
+		[ITEM_MOD_HIT_TAKEN_RANGED_RATING] = {"RANGED_HIT_AVOID_RATING"}, -- "Improves ranged hit avoidance by %s."
+		[ITEM_MOD_HIT_TAKEN_SPELL_RATING] = {"SPELL_HIT_AVOID_RATING"}, -- "Improves spell hit avoidance by %s."
+		
+		[ITEM_MOD_CRIT_TAKEN_RATING] = {"MELEE_CRIT_AVOID_RATING", "RANGED_CRIT_AVOID_RATING", "SPELL_CRIT_AVOID_RATING"}, -- "Improves critical avoidance by %s."
+		[ITEM_MOD_CRIT_TAKEN_MELEE_RATING] = {"MELEE_CRIT_AVOID_RATING"}, -- "Improves melee critical avoidance by %s."
+		[ITEM_MOD_CRIT_TAKEN_RANGED_RATING] = {"RANGED_CRIT_AVOID_RATING"}, -- "Improves ranged critical avoidance by %s."
+		[ITEM_MOD_CRIT_TAKEN_SPELL_RATING] = {"SPELL_CRIT_AVOID_RATING"}, -- "Improves spell critical avoidance by %s."
+
+		[ITEM_MOD_RESILIENCE_RATING] = {"RESILIENCE_RATING"}, -- "Increases your pvp resilience by %s."
+		[ITEM_MOD_PVP_POWER] = {"PVP_POWER"}, -- "Increases your pvp power by %s."
+		[ITEM_MOD_SPELL_PENETRATION] = {"SPELLPEN"}, -- "Increases spell penetration by %s."
+		
+		[ITEM_MOD_HEALTH_REGEN] = {"COMBAT_HEALTH_REGEN"}, -- "Restores %s health per 5 sec." [Onyxia Blood Talisman] ID: 18406
+		[ITEM_MOD_MANA_REGENERATION] = {"COMBAT_MANA_REGEN"}, -- "Restores %s mana per 5 sec."
+		
+		[THREAT_TOOLTIP] = {"MOD_THREAT"}, -- "%d%% Threat" -- StatLogic:GetSum("item:23344:2613")
+		[ITEM_RESIST_ALL] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES"}, -- "%c%d to All Resistances"
+	}
+}
+
 
 --These constants need to be built outside the table before they can be referenced
 --9/20/2012 You can't use %p. It fails for numbers like 1,234.5 (Unit Tests caught the regression)
@@ -25,6 +254,7 @@ PatternLocale.enUS = { -- {{{
 	Mail = "Mail",
 	Leather = "Leather",
 	Cloth = "Cloth",
+	
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -33,105 +263,40 @@ PatternLocale.enUS = { -- {{{
 	-- unused strings should be added in the "Exclude" table, because an unmatched 
 	-- string costs a lot of CPU time, and should be prevented whenever possible.
 	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 5, -- using string.utf8len
 	["Exclude"] = {
 		[""] = true,
 		[" \n"] = true,
 		["Binds"] = true,
-		[ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
-		[ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item will be bound when picked up
-		[ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
-		[ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
-		[ITEM_BIND_TO_ACCOUNT] = true, -- ITEM_BIND_QUEST = "Binds to account";
-		[ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
-		[ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
-		[ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
-		[ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
-		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
-
-		[ITEM_DISENCHANT_ANY_SKILL] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
-		-- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
-		["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
-		["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r"; -- %s is the creator of the item
-		["Coold"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d day";
-
-		[ITEM_UNIQUE] = true, -- ITEM_UNIQUE = "Unique"; -- Item is unique 
-		[ITEM_UNIQUE_EQUIPPABLE] = true, --ITEM_UNIQUE_EQUIPPABLE = "Unique-Equipped";
-		["Uniqu"] = true, --ITEM_UNIQUE_MULTIPLE = "Unique (%d)"; -- Item is unique
-		--["Uniqu"] = true, --"Unique-Equipped: Resolve of Undying (1)"  --ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)";
-
-		--The reason we can't use the ITEM_MIN_LEVEL string (i.e. "Requires Level %d") is that it won't work.
-		--It won't work because the exclude strings need to be either the *exact* string, or exactly ExcludeLen characters long.
-		["Requi"] = true,  --"Requires Level 85" -- ITEM_MIN_LEVEL = "Requires Level %d" Required level to use the item
-		["Class"] = true, -- Classes: xx -- ITEM_CLASSES_ALLOWED = "Classes: %s"; -- Lists the classes allowed to use this item
-		["Races"] = true, -- Races: xx (vendor mounts) -- ITEM_RACES_ALLOWED = "Races: %s"; -- Lists the races allowed to use this item
-		["Use: "] = true, -- Use: -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
-		["Chanc"] = true, -- Chance On Hit: -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
-		-- Set Bonuses
-		-- ITEM_SET_BONUS = "Set: %s";
-		-- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
-		-- ITEM_SET_NAME = "%s (%d/%d)"; -- Set name (2/5)
-		["Set: "] = true,
-		["(2) S"] = true,
-		["(3) S"] = true,
-		["(4) S"] = true,
-		["(5) S"] = true,
-		["(6) S"] = true,
-		["(7) S"] = true,
-		["(8) S"] = true,
-		-- Equip type
-		["Projectile"] = true, -- Ice Threaded Arrow ID:19316
-		[INVTYPE_AMMO] = true,
-		[INVTYPE_HEAD] = true,
-		[INVTYPE_NECK] = true,
-		[INVTYPE_SHOULDER] = true,
-		[INVTYPE_BODY] = true,
-		[INVTYPE_CHEST] = true,
-		[INVTYPE_ROBE] = true,
-		[INVTYPE_WAIST] = true,
-		[INVTYPE_LEGS] = true,
-		[INVTYPE_FEET] = true,
-		[INVTYPE_WRIST] = true,
-		[INVTYPE_HAND] = true,
-		[INVTYPE_FINGER] = true,
-		[INVTYPE_TRINKET] = true,
-		[INVTYPE_CLOAK] = true,
-		[INVTYPE_WEAPON] = true,
-		[INVTYPE_SHIELD] = true,
-		[INVTYPE_2HWEAPON] = true,
-		[INVTYPE_WEAPONMAINHAND] = true,
-		[INVTYPE_WEAPONOFFHAND] = true,
-		[INVTYPE_HOLDABLE] = true,
-		[INVTYPE_RANGED] = true,
-		[INVTYPE_THROWN] = true,
-		[INVTYPE_RANGEDRIGHT] = true,
-		[INVTYPE_RELIC] = true,
-		[INVTYPE_TABARD] = true,
-		[INVTYPE_BAG] = true,
-		--4.0.6
-		--We can't use strings with patterns in them. It has to be either the entire string, or exactly ExcludeLen characters long
-		["Item "] = true, --"Item Level 378"  --ITEM_LEVEL="Item Level %d"
-		[REFORGED] = true,
-		[ITEM_HEROIC] = true,
-		[ITEM_HEROIC_EPIC] = true,
-		[ITEM_HEROIC_QUALITY0_DESC] = true,
-		[ITEM_HEROIC_QUALITY1_DESC] = true,
-		[ITEM_HEROIC_QUALITY2_DESC] = true,
-		[ITEM_HEROIC_QUALITY3_DESC] = true,
-		[ITEM_HEROIC_QUALITY4_DESC] = true,
-		[ITEM_HEROIC_QUALITY5_DESC] = true,
-		[ITEM_HEROIC_QUALITY6_DESC] = true,
-		[ITEM_HEROIC_QUALITY7_DESC] = true,
-		[ITEM_QUALITY0_DESC] = true,
-		[ITEM_QUALITY1_DESC] = true,
-		[ITEM_QUALITY2_DESC] = true,
-		[ITEM_QUALITY3_DESC] = true,
-		[ITEM_QUALITY4_DESC] = true,
-		[ITEM_QUALITY5_DESC] = true,
-		[ITEM_QUALITY6_DESC] = true,
-		[ITEM_QUALITY7_DESC] = true,
-		--4.3.0
-		["Raid "] = true, --e.g. "Raid Finder"  e.g. Gauntlets of Radiant Glory - Raid Finder version
+		
+		 -- The following can't directly use the constant from GlobalStrings.lua because of placeholder patterns.
+		["Disen"] = true, -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)";
+		["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d |4day:days;";
+		["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r";
+		["Coold"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d |4day:days;";
+		["Uniqu"] = true, -- ITEM_UNIQUE_MULTIPLE = "Unique (%d)";
+		--["Uniqu"] = true, -- ITEM_LIMIT_CATEGORY = "Unique: %s (%d)"; -- Note: Please do not remove that line, it might require a own entry in a localized version.
+		--["Uniqu"] = true, -- ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)"; -- Note: Please do not remove that line, it might require a own entry in a localized version.
+		["Requi"] = true,  -- ITEM_MIN_LEVEL = "Requires Level %d";
+		["Class"] = true, -- ITEM_CLASSES_ALLOWED = "Classes: %s";
+		["Races"] = true, -- ITEM_RACES_ALLOWED = "Races: %s";
+		["Item "] = true, -- ITEM_LEVEL = "Item Level %d";
+		["Set: "] = true, -- ITEM_SET_BONUS = "Set: %s";
+		["(2) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(3) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(4) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(5) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(6) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(7) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		["(8) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
+		
+		-- The following can't directly use the constant from GlobalStrings.lua because they are just the beginning of the line.
+		["Use: "] = true, -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
+		["Chanc"] = true, -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
+		
+		-- Misc
 		["Seaso"] = true, --e.g. "Season 10"  PvP Season items e.g. Vicious Gladiator's Emblem of Tenacity
 	},
 
@@ -155,9 +320,12 @@ PatternLocale.enUS = { -- {{{
 		["Brilliant Wizard Oil"] = {["SPELL_DMG"] = 36, ["HEAL"] = 36, ["SPELL_CRIT_RATING"] = 14}, -- ID: 20749  Brilliant Wizard Oil
 		["Superior Wizard Oil"] = {["SPELL_DMG"] = 42, ["HEAL"] = 42}, -- ID: 22522
 		["Blessed Wizard Oil"] = {["SPELL_DMG_UNDEAD"] = 60}, -- ID: 23123
+		
+		["Heartsong"] = false, -- Enchant 4084
 		["Power Torrent"] = false, --20120915 Enchant 4907  /dump StatLogic:GetSum("item:77196:4097:0:0:0:0:0:0")
 		["Windwalk"] = false, --Enchant 4098    Windwalk: Permanently enchant a weapon to sometimes increase dodge rating by 600 and movement speed by 15% for 10 sec
 		["Landslide"] = false, --20120915 EnchantID 4099   /dump StatLogic:GetSum("item:77196:4099:0:0:0:0:0:0")
+		["Berserking"] = false,
 		["Flintlocke's Woodchucker"] = false, --ItemID: 70139  Flintlocke's Woodchucker
 
 		["Minor Mana Oil"] = {["COMBAT_MANA_REGEN"] = 4}, -- ID: 20745
@@ -192,6 +360,7 @@ PatternLocale.enUS = { -- {{{
 		["Mending"] = false, -- SpellID: 74195  EnchantID: 4066
 		["Lightweave Embroidery"] = false, -- spell=75171
 		["Gnomish X-Ray Scope"] = false, -- item=59594
+		["Rune of the Fallen Crusader"] = false,
 
 		--["Tuskar's Vitality"] = {["RUN_SPEED"] = 8, ["STA"] = 15}, -- EnchantID: 3232 +15 Stamina and Minor Speed Increase
 		--["Wisdom"] = {["MOD_THREAT"] = -2, ["SPI"] = 10}, -- EnchantID: 3296 +10 Spirit and 2% Reduced Threat
@@ -215,6 +384,8 @@ PatternLocale.enUS = { -- {{{
 		["Equip: Your attacks may occasionally attract small celestial objects."] = false, --20120915 ID: 70144   Ricket's Magnetic Fireball  /dump StatLogic:GetSum("item:70144")
 		["Equip: Improves the range of your Shock and Wind Shear spells by 5 yards."] = false, --20120915 ID=51510 (among others) /dump StatLogic:GetSum("item:51510")
 		["Equip: Your melee attacks grant 78 Strength for the next 10 sec, stacking up to 10 times."] = false, --ID: 77977  Eye of Unmaking
+		["Equip: Allows you to see additional mining nodes and herbs while in Pandaria."] = false, --ID: 87213 Mist-Piercing Goggles
+		["Equip: Protects the wearer from being fully engulfed by Shadow Flame."] = false, --ID:15138 Onyxia Scale Cloak
 		--["Equip: Fishing skill increased by 30."] = {["FISHING"] = 30}, -- +30 Fishing  ID: 44050  Mastercraft Kalu'ak Fishing Pole   This should already be handled by skill lookups
 
 		["Heals you for 2% of your maximum health whenever you kill a target that yields experience or honor"] = false, --Heirlooms ("Equip: Heals you for 2% of your maximum health whenever you kill a target that yields experience or honor.")
@@ -323,29 +494,14 @@ PatternLocale.enUS = { -- {{{
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
-
-	["StatIDLookup"] = { },
-	["StatIDLookupLong"]= {
-		[THREAT_TOOLTIP] = {"MOD_THREAT"}, --  "% Threat" -- StatLogic:GetSum("item:23344:2613")
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
+	["StatIDLookup"] = {
 		["% Shield Block Value"] = {"MOD_BLOCK_VALUE"}, --  "% Shield Block Value"[Eternal Earthsiege Diamond] ID: 41396
 		["Scope (Damage)"] = {"RANGED_DMG"}, -- Khorium Scope EnchantID: 2723
 		["Scope (Critical Strike Rating)"] = {"RANGED_CRIT_RATING"}, -- Stabilized Eternium Scope EnchantID: 2724
 		["Your attacks ignoreof your opponent's armor"] = {"IGNORE_ARMOR"}, -- StatLogic:GetSum("item:33733")
 		["Increases your effective stealth level"] = {"STEALTH_LEVEL"}, -- [Nightscape Boots] ID: 8197
-		[DAMAGE_TOOLTIP] = {"MELEE_DMG"}, --  "Weapon Damage" Enchant
-		[SPELL_STATALL] = {"STR", "AGI", "STA", "INT", "SPI",}, --All Stats
-		[SPELL_STAT1_NAME] = {"STR",},
-		[SPELL_STAT2_NAME] = {"AGI",},
-		[SPELL_STAT3_NAME] = {"STA",},
-		[SPELL_STAT4_NAME] = {"INT",},
-		[SPELL_STAT5_NAME] = {"SPI",},
-
-		[RESISTANCE6_NAME] = {"ARCANE_RES",}, -- "Arcane Resistance"
-		[RESISTANCE2_NAME] = {"FIRE_RES",}, --"Fire Resistance"
-		[RESISTANCE3_NAME] = {"NATURE_RES",}, --"Nature Resistance"
-		[RESISTANCE4_NAME] = {"FROST_RES",}, --"Frost Resistance"
-		[RESISTANCE5_NAME] = {"SHADOW_RES",}, --"Shadow Resistance"
-		[RESISTANCE1_NAME] = {"HOLY_RES",}, --"Holy Resistance"
 
 		["Arcane Resist"] = {"ARCANE_RES",}, -- Arcane Armor Kit +8 Arcane Resist
 		["Fire Resist"] = {"FIRE_RES",}, -- Flame Armor Kit +8 Fire Resist
@@ -356,26 +512,15 @@ PatternLocale.enUS = { -- {{{
 		["All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
 		--["Resist All"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
 		--["to All Resistances"] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
-		[ITEM_RESIST_ALL] = {"ARCANE_RES", "FIRE_RES", "FROST_RES", "NATURE_RES", "SHADOW_RES",},
 
-
-		[PROFESSIONS_FISHING] = {"FISHING",}, -- Fishing enchant ID:846
+		["Fishing skill increased"] = {"FISHING"}, --Weather-Beaten Fishing Hat "Equip: Fishing skill increased by 5."
 		["Mining"] = {"MINING",}, -- Mining enchant ID:844
+		["Mining; does not need to be equipped"] = {"MINING"}, --ID: 2901 Mining Pick  "+10 Mining; does not need to be equipped." added in 5.0.4
 		["Herbalism"] = {"HERBALISM",}, -- Herbalism enchant ID:845
+		["Herbalism; does not need to be equipped"] = {"HERBALISM",}, -- ID:85663 Herbalist's Spade
 		["Skinning"] = {"SKINNING",}, -- Skinning enchant ID:865
 		["Skinning skill increased"] = {"SKINNING",}, --20120915 ID: 12709  Finkle's Skinner
-
-		[ARMOR] = {"ARMOR_BONUS",},
-		[DEFENSE] = {"DEFENSE",},
-		[ITEM_MOD_DEFENSE_SKILL_RATING] = {"DEFENSE",}, --"Increased Defense"
-
-		[HEALTH] = {"HEALTH",},
-		[HP] = {"HEALTH",},
-		[MANA] = {"MANA",},
-		[MP] = {"MANA",},
-
-		[ATTACK_POWER_TOOLTIP] = {"AP",},
-		[ITEM_MOD_ATTACK_POWER] = {"AP",}, --"Increases attack power by %s."
+		
 		["Attack Power when fighting Undead"] = {"AP_UNDEAD",},
 		["Attack Power versus Undead"] = {"AP_UNDEAD",}, -- Scourgebane EnchantID: 3247
 		-- [Wristwraps of Undead Slaying] ID:23093
@@ -384,27 +529,13 @@ PatternLocale.enUS = { -- {{{
 		["Increases attack powerwhen fighting Demons"] = {"AP_DEMON",},
 		["Increases attack powerwhen fighting Undead and Demons"] = {"AP_UNDEAD", "AP_DEMON",}, -- [Mark of the Champion] ID:23206
 
-		[ITEM_MOD_FERAL_ATTACK_POWER] = {"FERAL_AP",}, -- "Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."
-		[ITEM_MOD_RANGED_ATTACK_POWER_SHORT] = {"RANGED_AP",},
-		[ITEM_MOD_RANGED_ATTACK_POWER] = {"RANGED_AP",}, -- [High Warlord's Crossbow] ID: 18837
-		[ITEM_MOD_HEALTH_REGENERATION_SHORT] = {"COMBAT_HEALTH_REGEN",}, --"Health Regeneration";
-		[ITEM_MOD_HEALTH_REGEN] = {"COMBAT_HEALTH_REGEN",}, -- "Restores %s health per 5 sec."; [Onyxia Blood Talisman] ID: 18406
-		[ITEM_MOD_MANA_REGENERATION_SHORT] = {"COMBAT_MANA_REGEN",}, -- "Mana Regen"  
-		[ITEM_MOD_MANA_REGENERATION] = {"COMBAT_MANA_REGEN",}, -- "Restores %s mana per 5 sec.";
-
-		[ITEM_MOD_SPELL_PENETRATION_SHORT] = {"SPELLPEN",}, -- Enchant Cloak - Spell Penetration "+20 Spell Penetration" http://wow.allakhazam.com/db/spell.html?wspell=34003
-		[ITEM_MOD_SPELL_PENETRATION] = {"SPELLPEN",}, --"Increases spell penetration by %s.";
-
 		["Healing and Spell Damage"] = {"SPELL_DMG", "HEAL",}, -- Arcanum of Focus +8 Healing and Spell Damage http://wow.allakhazam.com/db/spell.html?wspell=22844
 		["Damage and Healing Spells"] = {"SPELL_DMG", "HEAL",},
 		["Spell Damage and Healing"] = {"SPELL_DMG", "HEAL",},
-		["STAT_SPELLDAMAGE"] = {"SPELL_DMG", "HEAL",},
 		["Increases damage and healing done by magical spells and effects"] = {"SPELL_DMG", "HEAL"},
 		["Increases damage and healing done by magical spells and effects of all party members within 30 yards"] = {"SPELL_DMG", "HEAL"}, -- Atiesh
 		["Spell Damage and Healing"] = {"SPELL_DMG", "HEAL",}, --StatLogic:GetSum("item:22630")
 		["Damage"] = {"SPELL_DMG",},
-		["ITEM_MOD_SPELL_POWER_SHORT"] = {"SPELL_DMG", "HEAL",}, --ITEM_MOD_SPELL_POWER_SHORT = "Spell Power";
-		["Increases spell power"] = {"SPELL_DMG", "HEAL",}, -- ITEM_MOD_SPELL_POWER = "Increases spell power by %s.";
 		["Holy Damage"] = {"HOLY_SPELL_DMG",},
 		["Arcane Damage"] = {"ARCANE_SPELL_DMG",},
 		["Fire Damage"] = {"FIRE_SPELL_DMG",},
@@ -435,9 +566,8 @@ PatternLocale.enUS = { -- {{{
 		--PvP, per-class, item bonuses
 		["Increases the damage dealt by your Crusader Strike ability%"] = false, ----Equip: Increases the damage dealt by your Crusader Strike ability by 5%.
 		["Increases the critical effect chance of your Flash of Light%"] = false, --Equip: Increases the critical effect chance of your Flash of Light by 2%."
-		["Increases the Holy damage of your Judgments"] = false, --Level 60 legacy armor: Blood Guard's Lamellar Guantlets  "Equip: Increases the Holy damage of your Judgements by 20."  
-                                                       
-
+		["Increases the Holy damage of your Judgments"] = false, --Level 60 legacy armor: Blood Guard's Lamellar Guantlets  "Equip: Increases the Holy damage of your Judgements by 20."
+		
 		["Increases damage done to Undead by magical spells and effects"] = {"SPELL_DMG_UNDEAD"}, -- [Robe of Undead Cleansing] ID:23085
 		["Increases damage done to Undead by magical spells and effects.  It also allows the acquisition of Scourgestones on behalf of the Argent Dawn"] = {"SPELL_DMG_UNDEAD"}, -- [Rune of the Dawn] ID:19812
 		["Increases damage done to Undead and Demons by magical spells and effects"] = {"SPELL_DMG_UNDEAD", "SPELL_DMG_DEMON"}, -- [Mark of the Champion] ID:23207
@@ -450,86 +580,8 @@ PatternLocale.enUS = { -- {{{
 		["Healing Spells"] = {"HEAL",}, -- [Royal Nightseye] ID: 24057
 		["Increases healing done"] = {"HEAL",}, -- 2.3.0
 		["damage donefor all magical spells"] = {"SPELL_DMG",}, -- 2.3.0
-		[ITEM_MOD_SPELL_HEALING_DONE] = {"HEAL",}, --"Increases healing done by spells and effects"
 		["Increases healing done by magical spells and effects of all party members within 30 yards"] = {"HEAL",}, -- Atiesh
-		[BONUS_HEALING_TOOLTIP] = {"HEAL",}, -- "Increases your healing by up to %d";
-
-		[DAMAGE_PER_SECOND] = {"DPS",},
-
-		[ITEM_MOD_DEFENSE_SKILL_RATING_SHORT] = {"DEFENSE_RATING",},
-		[ITEM_MOD_DEFENSE_SKILL_RATING] = {"DEFENSE_RATING",}, --"Increases defense by %s.";
-		[ITEM_MOD_DODGE_RATING_SHORT] = {"DODGE_RATING",},
-		[DODGE] = {"DODGE_RATING",}, --5.0.3 "+25 Dodge"
-		[ITEM_MOD_DODGE_RATING] = {"DODGE_RATING",}, --5.0.1 "Equip: Increases your dodge by  %s (Gauntlets of Temporal Interference)
-		[ITEM_MOD_PARRY_RATING_SHORT] = {"PARRY_RATING",}, --5.0.3 "+25 Parry"
-		[ITEM_MOD_PARRY_RATING] = {"PARRY_RATING",}, --5.0.1 "Equip: Increases your parry by %s" (Bracers of the Fiery Path)
-		[ITEM_MOD_BLOCK_RATING_SHORT] = {"BLOCK_RATING",},
-		[ITEM_MOD_BLOCK_RATING] = {"BLOCK_RATING",}, --"Increases your shield block by %s.";
-
-		[ITEM_MOD_HIT_RATING_SHORT] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, --"Hit"
-		[ITEM_MOD_HIT_RATING] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- "Increases your hit by %s.";
-		[ITEM_MOD_HIT_MELEE_RATING] = {"MELEE_HIT_RATING",}, -- "Improves melee hit by %s.";
-		[ITEM_MOD_HIT_MELEE_RATING_SHORT] = {"MELEE_HIT_RATING",}, --"Hit (Melee)"
-
-		[ITEM_MOD_HIT_SPELL_RATING_SHORT] = {"SPELL_HIT_RATING",}, -- "Hit (Spell)"
-		[ITEM_MOD_HIT_SPELL_RATING] = {"SPELL_HIT_RATING",}, -- "Improves spell hit by %s."
-
-		[ITEM_MOD_HIT_RANGED_RATING_SHORT] = {"RANGED_HIT_RATING",}, -- "Hit (Ranged)";
-		[ITEM_MOD_HIT_RANGED_RATING] = {"RANGED_HIT_RATING",}, -- "Improves ranged hit by %s.";
-
-		[ITEM_MOD_CRIT_RATING] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, --"Increases your critical strike by %s.";
-		[ITEM_MOD_CRIT_RATING_SHORT] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, --"Critical Strike"
 		
-		[ITEM_MOD_CRIT_MELEE_RATING] = {"MELEE_CRIT_RATING"}, --"Improves melee critical strike by %s.";
-		[ITEM_MOD_CRIT_MELEE_RATING_SHORT] = {"MELEE_CRIT_RATING"}, -- "Critical Strike (Melee)";
-		[ITEM_MOD_CRIT_RANGED_RATING] = {"RANGED_CRIT_RATING", }, --"Improves ranged critical strike by %s.";
-		[ITEM_MOD_CRIT_RANGED_RATING_SHORT] = {"RANGED_CRIT_RATING", }, --"Critical Strike (Ranged)";
-		[ITEM_MOD_CRIT_SPELL_RATING] = {"SPELL_CRIT_RATING"}, --"Improves spell critical strike by %s.";
-		[ITEM_MOD_CRIT_SPELL_RATING_SHORT] ={"SPELL_CRIT_RATING"}, -- "Critical Strike (Spell)";
-
-		[ITEM_MOD_HIT_TAKEN_MELEE_RATING] = {"MELEE_HIT_AVOID_RATING"}, -- "Improves melee hit avoidance by %s.";
-		[ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT] = {"MELEE_HIT_AVOID_RATING"}, -- "Hit Avoidance (Melee)";
-		
-		[ITEM_MOD_HIT_TAKEN_RANGED_RATING] = {"RANGED_HIT_AVOID_RATING"}, -- "Improves ranged hit avoidance by %s."
-		[ITEM_MOD_HIT_TAKEN_RANGED_RATING_SHORT] = {"SPELL_HIT_AVOID_RATING"}, --"Hit Avoidance (Ranged)";
-		[RESILIENCE_ABBR] = {"RESILIENCE_RATING",},
-		[ITEM_MOD_RESILIENCE_RATING_SHORT] = {"RESILIENCE_RATING",}, --5.0.4  "+40 PvP Resilience", "Socket Bonus: +10 PvP Resilience"
-		[ITEM_MOD_RESILIENCE_RATING] = {"RESILIENCE_RATING",},	--5.0.3  "Increases your pvp resilience by %s."
-		[ITEM_MOD_PVP_POWER] = {"PVP_POWER", }, --5.0.4  e.g. "Equip: Increases your pvp power by %s."
-		[ITEM_MOD_PVP_POWER_SHORT] = {"PVP_POWER",}, --5.0.4 "+50 PvP Power"
-		[ITEM_MOD_CRIT_TAKEN_MELEE_RATING_SHORT] = {"MELEE_CRIT_AVOID_RATING",},--"Critical Strike Avoidance (Melee)"
-		[ITEM_MOD_CRIT_TAKEN_MELEE_RATING] = {"MELEE_CRIT_AVOID_RATING",}, --"Improves melee critical avoidance by %s.";
-		[ITEM_MOD_CRIT_TAKEN_RANGED_RATING] = {"RANGED_CRIT_AVOID_RATING",},--"Improves ranged critical avoidance by %s.";
-		[ITEM_MOD_CRIT_TAKEN_RANGED_RATING_SHORT] = {"RANGED_CRIT_AVOID_RATING",},--"Critical Strike Avoidance (Ranged)";
-		[ITEM_MOD_CRIT_TAKEN_RATING] = {"MELEE_CRIT_AVOID_RATING", "SPELL_CRIT_AVOID_RATING","RANGED_CRIT_AVOID_RATING",},-- "Improves critical avoidance by %s.";
-		[ITEM_MOD_CRIT_TAKEN_RATING_SHORT] = {"MELEE_CRIT_AVOID_RATING", "SPELL_CRIT_AVOID_RATING","RANGED_CRIT_AVOID_RATING",},-- "Critical Strike Avoidance";
-		[ITEM_MOD_CRIT_TAKEN_SPELL_RATING] = {"SPELL_CRIT_AVOID_RATING",},-- "Improves spell critical avoidance by %s.";
-		[ITEM_MOD_CRIT_TAKEN_SPELL_RATING_SHORT] = {"SPELL_CRIT_AVOID_RATING",},--"Critical Strike Avoidance (Spell)";
-
-		[ITEM_MOD_HASTE_MELEE_RATING] = {"MELEE_HASTE_RATING", },-- "Improves melee haste by %s.";
-		[ITEM_MOD_HASTE_MELEE_RATING_SHORT] = {"MELEE_HASTE_RATING", },-- "Haste (Melee)";
-		[ITEM_MOD_HASTE_RANGED_RATING] = {"RANGED_HASTE_RATING",},-- "Improves ranged haste by %s.";
-		[ITEM_MOD_HASTE_RANGED_RATING_SHORT] = {"RANGED_HASTE_RATING",},--"Haste (Ranged)";
-		[ITEM_MOD_HASTE_RATING] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING","RANGED_HASTE_RATING",},--"Increases your haste by %s.";
-		[ITEM_MOD_HASTE_RATING_SHORT] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING","RANGED_HASTE_RATING",},-- "Haste";
-		[ITEM_MOD_HASTE_SPELL_RATING] = {"SPELL_HASTE_RATING"},-- "Improves spell haste by %s.";
-		[ITEM_MOD_HASTE_SPELL_RATING_SHORT] = { "SPELL_HASTE_RATING"},-- "Haste (Spell)";
-
-		[ITEM_MOD_EXPERTISE_RATING] = {"EXPERTISE_RATING"}, --  "Increases your expertise by %s.";
-		[ITEM_MOD_EXPERTISE_RATING_SHORT] = {"EXPERTISE_RATING"}, -- "Expertise";
-
-		[ITEM_MOD_ARMOR_PENETRATION_RATING] = {"ARMOR_PENETRATION_RATING"}, --"Increases your armor penetration by %s.";
-		[ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT] = {"ARMOR_PENETRATION_RATING"}, --"Armor Penetration";
-
-		[ITEM_MOD_MASTERY_RATING] = {"MASTERY_RATING"}, -- "Increases your mastery by %s.";
-		[ITEM_MOD_MASTERY_RATING_SHORT] = {"MASTERY_RATING"}, -- "Mastery";
-		[ITEM_MOD_MASTERY_RATING_SPELL] = {"MASTERY_RATING"}, -- "(%s)";
-		[ITEM_MOD_MASTERY_RATING_TWO_SPELLS] = {"MASTERY_RATING"};
-		
-		["Fishing skill increased"] = {"FISHING"}, --Weather-Beaten Fishing Hat "Equip: Fishing skill increased by 5."
-
-		["Mining; does not need to be equipped"] = {"MINING"}, --Mining Pick  "+10 Mining; does not need to be equipped." added in 5.0.4
-
 		-- Exclude
 		["sec"] = false,
 		["to"] = false,
@@ -539,23 +591,22 @@ PatternLocale.enUS = { -- {{{
 	},
 } -- }}}
 
-
-for k, v in pairs(PatternLocale.enUS.StatIDLookupLong) do
-	local temp = gsub(k,"%s?[%+%-]?%%.?","");
-	temp = gsub(temp,"%.?","");
---	local temp = gsub(k,"%s[%+%-]?%%.?%s?%.?","")
---	local temp = gsub(k,"^([%+%-]%%s) (.-)%.?","")
---	local temp = gsub(k,"%+","")
---	temp = gsub(temp,"%s%%s%.","")
-	
-	--print(temp)
-	--print(v)
-	PatternLocale.enUS.StatIDLookup[temp] = v
-
-	--We tried to strip out Lua pattern code. But we also need the originals 
-	--e.g. "Equip: Experience gained is increased by 10%" needs the entry
-	-- "Experience gained is increased%"
-	PatternLocale.enUS.StatIDLookup[k] = v;
+function PatternLocale.enUS.ProcessNeutralStatIDLookupPlaceholders(statIDLookupWithPlaceholders, targetStatIDLookup)
+	for k, v in pairs(statIDLookupWithPlaceholders) do
+		-- "%%" -> "%"
+		local newKey = gsub(k, "%%%%", "%%")
+		-- Remove tailing .
+		newKey = gsub(newKey, "%.$", "")
+		-- Remove <space><+-><"%d", "%s", "%c", "%g", "%2$d", "%.2f">
+		newKey = gsub(newKey, " ?[%+%-]?%%%d?%.?%d?%$?[cdsgf]", "")
+		-- Remove " by" or " by up to". This is important for a match with SingleEquipStatCheck.
+		-- If you don't remove it, it might still work, but then it will use a DeepScanPattern.
+		newKey = gsub(newKey, " by ?u?p? ?t?o?", "")
+		
+		--print("'"..k.."'")
+		--print("'"..newKey.."'")
+		targetStatIDLookup[newKey] = v
+	end
 end
 
 DisplayLocale.enUS = { -- {{{

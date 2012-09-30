@@ -43,7 +43,7 @@ L["Enable Subtract Equipped Stats"] = true
 L["Enable for more accurate calculation of Mana Regen from Intellect and Spirit, and diminishing stats like Dodge, Parry, Resilience"] = true
 -- /rb enable_reforge_ui
 L["Enable integration with Blizzard Reforging UI"] = true
-L["Add rating informatoin to the Blizzard Reforging UI"] = true
+L["Add rating information to the Blizzard Reforging UI"] = true
 -- /rb usereqlv
 L["Use Required Level"] = true
 L["Calculate using the required level if you are below the required level"] = true

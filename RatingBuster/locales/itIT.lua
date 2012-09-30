@@ -43,7 +43,7 @@ L["Enable Subtract Equipped Stats"] = "Abilita la sottrazione delle statistiche 
 L["Enable for more accurate calculation of Mana Regen from Intellect and Spirit, and diminishing stats like Dodge, Parry, Resilience"] = "Abilita per un calcolo più accurato di rigenerazione mana da intelletto e spirito, diminuendo statistiche come Schivata, Parata, Resilienza" 
 -- /rb enable_reforge_ui
 L["Enable integration with Blizzard Reforging UI"] = "Abilità l'integrazione con l'interfaccia utente di Riforgiamento di Blizzard"
-L["Add rating informatoin to the Blizzard Reforging UI"] = "Aggiunge l'indice di informazioni sopra l'interfaccia utente di Riforgiamento di Blizzard"
+L["Add rating information to the Blizzard Reforging UI"] = "Aggiunge l'indice di informazioni sopra l'interfaccia utente di Riforgiamento di Blizzard"
 -- /rb usereqlv
 L["Use Required Level"] = "Utilizza il livello richiesto"
 L["Calculate using the required level if you are below the required level"] = "Calcola usando il livello richiesto se ti trovi al di sotto di quest'ultimo"
