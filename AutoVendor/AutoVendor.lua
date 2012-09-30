@@ -138,6 +138,7 @@ local defaults = {
 			[3951] = "Twill Vest",
 			[18230] = "Broken I.W.I.N. Button",
 			[33820] = "Weather-Beaten Fishing Hat",
+			[38506] = "Don Carlos' Famous Hat",
 		},
 		junk = {
 		},
@@ -376,11 +377,16 @@ end
 
 function AV:IsJunk(link)
 	local itemId = tonumber(strmatch(link, "item:(%d+)"))
-	if itemsJunk[itemId] == nil then
-		itemsJunk[itemId] = self:ShouldSell(link)
-	end
 	
-	return itemsJunk[itemId]
+	if itemId == nil then
+		return false
+	else
+		if itemsJunk[itemId] == nil then
+			itemsJunk[itemId] = self:ShouldSell(link)
+		end
+		
+		return itemsJunk[itemId]
+	end
 end
 
 function AV:ShouldSell(link)

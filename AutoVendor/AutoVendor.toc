@@ -3,8 +3,8 @@
 ## Notes: Automatically sells useless stuff and repairs your gear
 ## SavedVariables: AutoVendorDB
 ## Author: Olafski
-## Version: 0.17
-## X-Curse-Packaged-Version: v0.17.0
+## Version: 0.18
+## X-Curse-Packaged-Version: v0.18
 ## X-Curse-Project-Name: AutoVendor
 ## X-Curse-Project-ID: autovendor
 ## X-Curse-Repository-ID: wow/autovendor/mainline
