@@ -103,7 +103,7 @@ end
 
 function ReputationHistory:GetTimeToLevel(faction)
 	if not self.factions[faction] then 
-		return nil
+		return "~"
 	end
 	
 	local data = self.factions[faction]
@@ -136,16 +136,12 @@ end
 function ReputationHistory:GetRepPerHour(faction)
 	local rps = self:GetRepPerSecond(faction)
 
-	if not rps then 
-		return nil
-	end
-	
 	return rps * 3600
 end
 
 function ReputationHistory:GetRepPerSecond(faction)
 	if not self.factions[faction] then 
-		return nil
+		return 0
 	end
 	
 	local data = self.factions[faction]
@@ -153,7 +149,7 @@ function ReputationHistory:GetRepPerSecond(faction)
 	local duration = time() - self.startTime
 
 	if duration == 0 then
-		return nil
+		return 0
 	end
 
 	if self.timeframe == 0 or duration < self.timeframe then
@@ -165,12 +161,10 @@ end
 
 function ReputationHistory:GetTotalRep(faction)
 	if not self.factions[faction] then 
-		return nil
+		return 0
 	end
 	
-	local data = self.factions[faction]
-
-	return data.totalRep
+	return self.factions[faction].totalRep
 end
 
 function ReputationHistory:Process()

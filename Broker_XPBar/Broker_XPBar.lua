@@ -841,11 +841,11 @@ function BrokerXPBar:UpdateLabel()
     elseif show == "KTL" then
 		self.History:Process()
 			
-		ldbObj.text = L["KTL"] .. ": " .. NS:Colorize("Red", self.History:GetKillsToLevel() )
+		ldbObj.text = L["KTL"] .. ": " .. NS:Colorize("Red", self.History:GetKillsToLevel())
     elseif show == "TTLRep" then		
 		self.ReputationHistory:Process()
 			
-		ldbObj.text = L["TTLRep"] .. ": " .. (self.ReputationHistory:GetTimeToLevel(self.faction) or L["no data"])
+		ldbObj.text = L["TTLRep"] .. ": " .. self.ReputationHistory:GetTimeToLevel(self.faction)
     else
         ldbObj.text = self.FULLNAME
     end

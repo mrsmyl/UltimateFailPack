@@ -150,21 +150,9 @@ function BrokerXPBar:DrawTooltip()
 		if not self:GetSetting("TTHideXPDetails") and self.playerLvl < self.MAX_LEVEL then
 			self.History:Process()
 			
-			local kph  = self.History:GetKillsPerHour()
-			local xpph = self.History:GetXPPerHour()
+			local kph  = floor(self.History:GetKillsPerHour())
+			local xpph = floor(self.History:GetXPPerHour())
 			
-			if kph then
-				kph = floor(kph)
-			else
-				kph = "~"
-			end
-
-			if xpph then
-				xpph = floor(xpph)
-			else
-				xpph = "~"
-			end
-
 			tooltip:AddLine( " " )
 			lineNum = tooltip:AddLine( " " )
 			tooltip:SetCell( lineNum, 1, NS:Colorize("Blueish", L["Session XP"]), "LEFT" )
@@ -244,14 +232,8 @@ function BrokerXPBar:DrawTooltip()
 		if not self:GetSetting("TTHideRepDetails") and not self.atMaxRep then
 			self.ReputationHistory:Process()
 			
-			local total = self.ReputationHistory:GetTotalRep(self.faction) or L["no data"]
-			local repph = self.ReputationHistory:GetRepPerHour(self.faction)
-			
-			if repph then
-				repph = floor(repph)
-			else
-				repph = "~"
-			end
+			local total = self.ReputationHistory:GetTotalRep(self.faction)
+			local repph = floor(self.ReputationHistory:GetRepPerHour(self.faction))
 			
 			tooltip:AddLine( " " )
 			lineNum = tooltip:AddLine( " " )
@@ -264,7 +246,7 @@ function BrokerXPBar:DrawTooltip()
 
 			lineNum = tooltip:AddLine( " " )
 			tooltip:SetCell( lineNum, 1, NS:Colorize("Orange", L["Time to level"]), "LEFT" )
-			tooltip:SetCell( lineNum, 2, self.ReputationHistory:GetTimeToLevel(self.faction) or L["no data"], "LEFT" )
+			tooltip:SetCell( lineNum, 2, self.ReputationHistory:GetTimeToLevel(self.faction), "LEFT" )
 		end
 		
 	end

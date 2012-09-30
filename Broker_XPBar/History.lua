@@ -206,7 +206,7 @@ function History:GetKillsPerHour()
 	local duration = time() - self.startTime
 
 	if duration == 0 then
-		return nil
+		return 0
 	end
 
 	if self.timeframe == 0 or duration < self.timeframe then
@@ -220,7 +220,7 @@ function History:GetXPPerHour()
 	local duration = time() - self.startTime
 
 	if duration == 0 then
-		return nil
+		return 0
 	end
 
 	if self.timeframe == 0 or duration < self.timeframe then
