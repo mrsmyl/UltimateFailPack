@@ -98,6 +98,8 @@ function HealBot_Options_InitBuffSpellsClassList(tClass)
             HEALBOT_LEGACY_EMPEROR,
             HEALBOT_LEGACY_WHITETIGER,
             HEALBOT_RUSHING_JADE_WIND,
+            HEALBOT_STANCE_MONK_TIGER,
+            HEALBOT_STANCE_MONK_SERPENT,
         }
     elseif tClass=="PALA" then
         HealBot_Buff_Spells_Class_List = {
@@ -111,7 +113,6 @@ function HealBot_Options_InitBuffSpellsClassList(tClass)
             HEALBOT_DEVOTION_AURA,
             HEALBOT_BEACON_OF_LIGHT,
             HEALBOT_SEAL_OF_RIGHTEOUSNESS,
-            HEALBOT_SEAL_OF_JUSTICE,
             HEALBOT_SEAL_OF_INSIGHT,
             HEALBOT_SEAL_OF_TRUTH,
             HEALBOT_DIVINE_PLEA,
@@ -211,6 +212,9 @@ function HealBot_Options_GetDebuffSpells_List(class)
       ["WARR"] = {},
       ["DEAT"] = {},
     }
+    if (strsub(GetLocale(),1,2)~="en") then
+        HealBot_Debuff_Spells["SHAM"] = {HEALBOT_CLEANSE_SPIRIT}
+    end
     return HealBot_Debuff_Spells[class]
 end
 
@@ -253,9 +257,9 @@ local HealBot_Debuff_Types = {
 
 
 function HealBot_Options_setDebuffTypes()
-   -- if HealBot_PlayerClassTrim=="SHAM" then
-        --
-   -- end
+    if HealBot_PlayerClassTrim=="SHAM" and (strsub(GetLocale(),1,2)~="en") and HealBot_Config.CurrentSpec==3 then
+        HealBot_Debuff_Types[HEALBOT_CLEANSE_SPIRIT]={HEALBOT_MAGIC_en, HEALBOT_CURSE_en}
+    end
 end
 
 local CPUProfiler=0
@@ -2634,6 +2638,7 @@ local HealBot_Options_hbCommands_List = {
     HEALBOT_CMD_RESETSKINS,
     HEALBOT_CMD_RESETSPELLS,
     HEALBOT_CMD_TOGGLEACCEPTSKINS,
+    HEALBOT_CMD_TOGGLEDISLIKEMOUNT,
     HEALBOT_CMD_SUPPRESSERRORS,
     HEALBOT_CMD_SUPPRESSSOUND,
 }
@@ -2676,8 +2681,10 @@ function HealBot_Options_CommandsButton_OnClick(self)
     elseif HealBot_Options_StorePrev["hbCommands"]==11 then
         HealBot_ToggleAcceptSkins()
     elseif HealBot_Options_StorePrev["hbCommands"]==12 then
-        HealBot_ToggleSuppressSetting("error")
+        HealBot_Action_DislikeMount()
     elseif HealBot_Options_StorePrev["hbCommands"]==13 then
+        HealBot_ToggleSuppressSetting("error")
+    elseif HealBot_Options_StorePrev["hbCommands"]==14 then
         HealBot_ToggleSuppressSetting("sound")
     end
 end
@@ -3010,7 +3017,6 @@ local function HealBot_Options_SelectOtherSpellsCombo_DDlist()
         HEALBOT_REMOVE_CORRUPTION,
         HEALBOT_NATURES_CURE,
         HEALBOT_PURIFY,
-        HEALBOT_PURIFY_SPIRIT,
         HEALBOT_CLEANSE_SPIRIT,
         HEALBOT_LIFE_TAP,
         HEALBOT_DIVINE_SHIELD,
@@ -3031,6 +3037,9 @@ local function HealBot_Options_SelectOtherSpellsCombo_DDlist()
         if HealBot_GetSpellId(HealBot_Options_SelectOtherSpellsCombo_List[j]) then
             table.insert(tmpOtherDDlist,HealBot_Options_SelectOtherSpellsCombo_List[j])
         end
+    end
+    if HealBot_PlayerClassTrim=="SHAM" and (strsub(GetLocale(),1,2)=="en") and HealBot_GetSpellId(HEALBOT_PURIFY_SPIRIT) then
+        table.insert(tmpOtherDDlist,HEALBOT_PURIFY_SPIRIT)
     end
     for j=1, getn(HealBot_Buff_Spells_List), 1 do
         table.insert(tmpOtherDDlist,HealBot_Buff_Spells_List[j])
@@ -3376,6 +3385,7 @@ end
 --------------------------------------------------------------------------------
 
 local HealBot_Options_FilterHoTctl_List = {
+    HEALBOT_CLASSES_ALL,
     HEALBOT_DEATHKNIGHT,
     HEALBOT_DRUID,
     HEALBOT_PALADIN,
@@ -3394,9 +3404,11 @@ HealBot_Options_StorePrev["FilterHoTctlNameTrim"]=HealBot_Class_En[HealBot_Optio
 
 function HealBot_Options_Class_HoTctlName_genList()
     local HealBot_Options_Class_HoTctlName_List = {
-        [HEALBOT_GIFT_OF_THE_NAARU]="ALL",
+        [HEALBOT_GIFT_OF_THE_NAARU]=HEALBOT_CLASSES_ALL,
         [HEALBOT_LIFEBLOOM]=HEALBOT_DRUID,
         [HEALBOT_MENDPET]=HEALBOT_HUNTER,
+        [HEALBOT_EVOCATION]=HEALBOT_MAGE,
+        [HEALBOT_VANISH]=HEALBOT_ROGUE,
         [HEALBOT_PRAYER_OF_MENDING]=HEALBOT_PRIEST,
         [HEALBOT_REGROWTH]=HEALBOT_DRUID,
         [HEALBOT_REJUVENATION]=HEALBOT_DRUID,
@@ -3451,7 +3463,7 @@ function HealBot_Options_Class_HoTctlName_genList()
         [HEALBOT_GRACE]=HEALBOT_PRIEST,
         [HEALBOT_LEVITATE]=HEALBOT_PRIEST,
         [HEALBOT_LIGHTWELL_RENEW]=HEALBOT_PRIEST,
-        [HEALBOT_PROTANCIENTKINGS]="ALL",
+        [HEALBOT_PROTANCIENTKINGS]=HEALBOT_CLASSES_ALL,
         [HEALBOT_EARTHLIVING_WEAPON]=HEALBOT_SHAMAN,
         [HEALBOT_EARTH_SHIELD]=HEALBOT_SHAMAN,
         [HEALBOT_LIGHTNING_SHIELD]=HEALBOT_SHAMAN,
@@ -3492,11 +3504,9 @@ function HealBot_Options_Class_HoTctlName_genList()
     }
     local class=nil
     local tmpHoTctlName_List={}
-    for x,_ in pairs(tmpHoTctlName_List) do
-        tmpHoTctlName_List[x]=nil;
-    end
+
     for bName,class in pairs(HealBot_Options_Class_HoTctlName_List) do
-        if class=="ALL" or HealBot_Options_StorePrev["FilterHoTctlName"]==class then
+        if HealBot_Options_StorePrev["FilterHoTctlName"]==class then
             table.insert(tmpHoTctlName_List, bName)
         elseif bName==HEALBOT_NATURE_SWIFTNESS and HealBot_Options_StorePrev["FilterHoTctlName"]==HEALBOT_SHAMAN then  -- patch in the Shaman
             table.insert(tmpHoTctlName_List, bName)
@@ -3539,25 +3549,42 @@ end
 local HealBot_Options_Class_HoTctlAction_List = {
     HEALBOT_WORD_NEVER,
     HEALBOT_OPTIONS_SELFCASTS,
+    HEALBOT_OPTIONS_MYCLASS,
     HEALBOT_WORD_ALWAYS,
 }
 
 function HealBot_Options_Class_HoTctlAction_DropDown()
     local info = UIDropDownMenu_CreateInfo()
     for j=1, getn(HealBot_Options_Class_HoTctlAction_List), 1 do
-        info.text = HealBot_Options_Class_HoTctlAction_List[j];
-        info.func = function(self)
-                        local y=self:GetID()
-                        if y>1 then HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]=y end
-                        UIDropDownMenu_SetSelectedID(HealBot_Options_Class_HoTctlAction,y) 
-                        HealBot_setOptions_Timer(170)
-                    end
-        info.checked = false;
-        if HealBot_Options_StorePrev["FilterHoTctlNameTrim"] and HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]] then
-            local x=HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] or 1
-            if x==j then info.checked = true; end 
+        local hbText = nil
+        if HealBot_Options_StorePrev["FilterHoTctlName"]==HEALBOT_CLASSES_ALL then
+            if j==3 then
+                hbText=HEALBOT_WORD_ALWAYS
+            elseif j<3 then
+                hbText=HealBot_Options_Class_HoTctlAction_List[j];
+            end
+        else
+            hbText=HealBot_Options_Class_HoTctlAction_List[j];
         end
-        UIDropDownMenu_AddButton(info);
+        if hbText then
+            info.text = hbText
+            info.func = function(self)
+                            local y=self:GetID()
+                            if y>1 then 
+                                HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]=y 
+                            else
+                                HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname]=nil
+                            end
+                            UIDropDownMenu_SetSelectedID(HealBot_Options_Class_HoTctlAction,y) 
+                            HealBot_setOptions_Timer(170)
+                        end
+            info.checked = false;
+            if HealBot_Options_StorePrev["FilterHoTctlNameTrim"] and HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]] then
+                local x=HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] or 1
+                if x==j then info.checked = true; end 
+            end
+            UIDropDownMenu_AddButton(info);
+        end
     end
 end
 
@@ -5482,7 +5509,6 @@ function HealBot_Options_DeleteCDebuffBtn_OnClick(self)
     if HealBot_Globals.CDCBarColour[HealBot_Options_StorePrev["CDebuffcustomName"]] then HealBot_Globals.CDCBarColour[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil end
     HealBot_Globals.HealBot_Custom_Debuffs_RevDur[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil
     HealBot_Globals.HealBot_Custom_Debuffs_ShowBarCol[HealBot_Options_StorePrev["CDebuffcustomName"]]=nil
-    HealBot_clearDebuffTexture(HealBot_Options_StorePrev["CDebuffcustomName"])
     HealBot_Options_InitSub(406)
     HealBot_Options_InitSub(408)
     HealBot_SetCDCBarColours();
@@ -7329,9 +7355,9 @@ function HealBot_Options_InitSub1(subNo)
         UIDropDownMenu_SetText(HealBot_Options_FilterHoTctl, HealBot_Options_StorePrev["FilterHoTctlName"])
         DoneInitTab[314]=true
     elseif subNo==315 and not DoneInitTab[315] then
-        local _ = HealBot_Options_Class_HoTctlName_genList()
+        local HoTctlName_List = HealBot_Options_Class_HoTctlName_genList()
         if HealBot_Options_StorePrev["FilterHoTctlNameTrim"] and HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]] and not
-           HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] then HealBot_Globals.HoTname=HEALBOT_GIFT_OF_THE_NAARU end
+           HealBot_Globals.WatchHoT[HealBot_Options_StorePrev["FilterHoTctlNameTrim"]][HealBot_Globals.HoTname] then HealBot_Globals.HoTname=HoTctlName_List[1] end
         HealBot_Options_Class_HoTctlName.initialize = HealBot_Options_Class_HoTctlName_DropDown
         UIDropDownMenu_SetText(HealBot_Options_Class_HoTctlName, HealBot_Globals.HoTname)
         DoneInitTab[315]=true

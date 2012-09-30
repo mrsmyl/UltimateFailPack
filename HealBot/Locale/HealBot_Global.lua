@@ -1,4 +1,4 @@
-HEALBOT_VERSION = "5.0.5.2";
+HEALBOT_VERSION = "5.0.5.3";
 
 -- Bandages and pots
 HEALBOT_SILK_BANDAGE                    = GetItemInfo(6450) or "--Silk Bandage";
@@ -128,7 +128,7 @@ HEALBOT_MAGE_WARD                       = GetSpellInfo(543) or "--Mage Ward";
 HEALBOT_MAGE_ARMOR                      = GetSpellInfo(6117) or "--Mage Armor";
 HEALBOT_MOLTEN_ARMOR                    = GetSpellInfo(30482) or "--Molten Armor";
 HEALBOT_FOCUS_MAGIC                     = GetSpellInfo(54646) or "--Focus Magic";
-HEALBOT_FROST_ARMOR                     = GetSpellInfo(168) or "--Frost Armor";
+HEALBOT_FROST_ARMOR                     = GetSpellInfo(7302) or "--Frost Armor";
 
 HEALBOT_HANDOFPROTECTION                = GetSpellInfo(1022) or "--Hand of Protection";
 HEALBOT_BEACON_OF_LIGHT                 = GetSpellInfo(53563) or "--Beacon of Light";
@@ -149,7 +149,7 @@ HEALBOT_RIGHTEOUS_DEFENSE               = GetSpellInfo(31789) or "--Righteous De
 HEALBOT_BLESSING_OF_MIGHT               = GetSpellInfo(19740) or "--Blessing of Might";
 HEALBOT_BLESSING_OF_KINGS               = GetSpellInfo(20217) or "--Blessing of Kings";
 HEALBOT_SEAL_OF_RIGHTEOUSNESS           = GetSpellInfo(20154) or "--Seal of Righteousness";
-HEALBOT_SEAL_OF_JUSTICE                 = GetSpellInfo(20164) or "--Seal of Justice";
+--HEALBOT_SEAL_OF_JUSTICE                 = GetSpellInfo(20164) or "--Seal of Justice";
 HEALBOT_SEAL_OF_INSIGHT                 = GetSpellInfo(20165) or "--Seal of Insight";
 HEALBOT_SEAL_OF_TRUTH                   = GetSpellInfo(31801) or "--Seal of Truth";
 HEALBOT_HAND_OF_FREEDOM                 = GetSpellInfo(1044) or "--Hand of Freedom";
@@ -235,6 +235,8 @@ HEALBOT_LIFE_COCOON                     = GetSpellInfo(116849) or "--Life Cocoon
 HEALBOT_THUNDER_FOCUS_TEA               = GetSpellInfo(116680) or "--Thunder Focus Tea"
 HEALBOT_SERPENT_ZEAL                    = GetSpellInfo(127722) or "--Serpent's Zeal"
 HEALBOT_MANA_TEA                        = GetSpellInfo(115867) or "--Mana Tea"
+HEALBOT_STANCE_MONK_TIGER               = GetSpellInfo(103985) or "--Stance of the Fierce Tiger"
+HEALBOT_STANCE_MONK_SERPENT             = GetSpellInfo(115070) or "--Stance of the Wise Serpent"
 
 HEALBOT_DEMON_ARMOR                     = GetSpellInfo(687) or "--Demon Armor";
 HEALBOT_FEL_ARMOR                       = GetSpellInfo(28176) or "--Fel Armor";
@@ -252,6 +254,10 @@ HEALBOT_LAST_STAND                      = GetSpellInfo(12975) or "--Last Stand";
 HEALBOT_SHIELD_WALL                     = GetSpellInfo(871) or "--Shield Wall";
 HEALBOT_SHIELD_BLOCK                    = GetSpellInfo(2565) or "--Shield Block";
 HEALBOT_ENRAGED_REGEN                   = GetSpellInfo(55694) or "--Enraged Regeneration";
+
+HEALBOT_EVOCATION                       = GetSpellInfo(12051) or "--Evocation";
+
+HEALBOT_VANISH                          = GetSpellInfo(1856) or "--Vanish";
 
 -- Res Spells
 HEALBOT_RESURRECTION                    = GetSpellInfo(2006) or "--Resurrection";

@@ -4154,7 +4154,7 @@ function HealBot_Action_ToggelMount(mountType)
                     end
                     sName = HealBot_FMount[i];
                 else
-                    HealBot_Globals.dislikeMount[sName]=25
+                    HealBot_Globals.dislikeMount[sName]=250
                 end
             end
             if HealBot_mountData["PrevFlying#"]>0 then
@@ -4187,7 +4187,7 @@ function HealBot_Action_ToggelMount(mountType)
                     end
                     sName = HealBot_GMount[i];
                 else
-                    HealBot_Globals.dislikeMount[sName]=29
+                    HealBot_Globals.dislikeMount[sName]=250
                 end
             end
             if HealBot_mountData["PrevGround#"]>0 then
@@ -4203,24 +4203,24 @@ function HealBot_Action_ToggelMount(mountType)
     end
 end
 
-function HealBot_Action_DislikeMount(clear)
-    z = GetNumCompanions("MOUNT");
+function HealBot_Action_DislikeMount()
+    local z = GetNumCompanions("MOUNT");
+    local mount=nil
 	for i=1,z do
- 		_, x, _, _, y = GetCompanionInfo("MOUNT", i);
+ 		local _, x, _, _, y = GetCompanionInfo("MOUNT", i);
  		if y then
- 			sName=x
+ 			mount=x
             do break end
  		end
  	end
-    if clear then
-        HealBot_Globals.dislikeMount[sName]=nil
-    else
-        if HealBot_Globals.dislikeMount[sName] then
-            HealBot_AddDebug("already dislikeMount "..sName)
+    if mount then
+        if HealBot_Globals.dislikeMount[mount] then
+            HealBot_AddChat(HEALBOT_OPTION_DISLIKEMOUNT_OFF.." "..mount)
+            HealBot_Globals.dislikeMount[mount]=nil
         else
-            HealBot_AddDebug("now dislikeMount "..sName)
+            HealBot_AddChat(HEALBOT_OPTION_DISLIKEMOUNT_ON.." "..mount)
+            HealBot_Globals.dislikeMount[mount]=75
         end
-        HealBot_Globals.dislikeMount[sName]=5
     end
 end
 

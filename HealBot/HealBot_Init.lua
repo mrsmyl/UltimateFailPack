@@ -146,9 +146,6 @@ function HealBot_Init_Spells_Defaults(class)
         [HEALBOT_HAND_OF_FREEDOM] = {
             id = 1044, CastTime = 0, Mana = 155, Level = 52 }, 
             
-        [HEALBOT_SEAL_OF_JUSTICE] = {
-            id = 20164, CastTime = 0, Mana = 155, Level = 70 }, 
-            
         [HEALBOT_HAND_OF_SALVATION] = {
             id = 1038, CastTime = 0, Mana = 155, Level = 66 }, 
             
@@ -463,6 +460,15 @@ function HealBot_Init_Spells_Defaults(class)
             
         [HEALBOT_A_FOX] = {
             id = 82661, CastTime = 0, Mana = 155, Level = 83 }, 
+    };
+  end
+  
+  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_MAGE] then
+--  Mage
+    HealBot_Spells = {
+        [HEALBOT_FROST_ARMOR] = {
+            id = 7302, CastTime = 0, Mana =  40, Level = 54}, 
+
     };
   end
 
