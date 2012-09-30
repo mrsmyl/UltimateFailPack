@@ -1,8 +1,8 @@
-## Interface: 40300
+## Interface: 50001
 ## Title: QuestAnnouncer4
 ## Notes: Sends a party message as you advance in a quest.
 ## Author: Jason Olivarez
-## Version: 1.3
+## Version: 1.4
 ## SavedVariables: QuestAnnouncer4DB
 ## OptionalDeps: Ace3
 

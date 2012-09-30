@@ -1,5 +1,5 @@
 QuestAnnouncer4 = LibStub("AceAddon-3.0"):NewAddon("QuestAnnouncer4", "AceConsole-3.0", "AceComm-3.0", "AceEvent-3.0", "AceSerializer-3.0", "AceTimer-3.0");
-QuestAnnouncer4.version = "1.3";
+QuestAnnouncer4.version = "1.4";
 QuestAnnouncer4.author = "Jason Olivarez (Svetlania, Ragu, and Pyroclastic of Garrosh-US)";
 
 -- Local variables
@@ -85,7 +85,7 @@ function QuestAnnouncer4:ProcessAnnouncement(typ, msg)
 		UIErrorsFrame:AddMessage(string.format(locl, msg),color.r,color.g,color.b,1.0,UIERRORS_HOLD_TIME);
 	end
 
-	if (GetNumPartyMembers() > 0) then
+	if (GetNumSubgroupMembers(LE_PARTY_CATEGORY_HOME) > 0) then
 		local serializedData = self:Serialize(string.format(broadcast, myname, msg), color);
 		self:SendCommMessage("QA4", serializedData, "RAID");
 		
