@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["config.lua"] = "5.0.5.262r"
+QuestHelper_File["config.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["config.lua"] = GetTime()
 
 -- This is pretty much ganked wholesale from lightsfuryuther's QuestHelperConfig UI mod, then tweaked heavily because I'm kind of an obsessive asshole when it comes to make things work.
@@ -152,6 +152,7 @@ function addon:GenerateOptions()
 							if QuestHelper.MapButton then
 								QuestHelper.MapButton:GetNormalTexture():SetDesaturated(QuestHelper_Pref['hide']);
 							end
+							--[[
 							if QuestHelper_Pref['hide'] then
 								if QuestHelper_Pref['track'] then
 									QuestHelper:HideTracker();
@@ -164,6 +165,7 @@ function addon:GenerateOptions()
 								QuestHelper.map_overlay:Show();
 								QuestHelper.minimap_marker:Show();
 							end
+							]]
 						end,
 					},
 					Performance = {

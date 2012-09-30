@@ -1,6 +1,6 @@
 
 local GetTime = QuestHelper_GetTime
-QuestHelper_File["director_quest.lua"] = "5.0.5.262r"
+QuestHelper_File["director_quest.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["director_quest.lua"] = GetTime()
 
 local debug_output = false

@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["dodads_triangles.lua"] = "5.0.5.262r"
+QuestHelper_File["dodads_triangles.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["dodads_triangles.lua"] = GetTime()
 
 -- I'm really curious what people might make out of this file. I'm not actually open-sourcing it yet, but let's say that if you *were* to come up with a neat idea, and wanted to use this code, I would almost certainly be willing to let you use it. Contact me as ZorbaTHut on EFNet/Freenode/Synirc, or zorba-qh-triangles@pavlovian.net email, or ZorbaTHut on AIM.

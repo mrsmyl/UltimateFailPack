@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["pathfinding.lua"] = "5.0.5.262r"
+QuestHelper_File["pathfinding.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["pathfinding.lua"] = GetTime()
 
 -- Update flying for Mount Up guild achievement.

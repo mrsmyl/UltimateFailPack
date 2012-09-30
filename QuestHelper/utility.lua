@@ -7,7 +7,7 @@ end
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["utility.lua"] = "5.0.5.262r"
+QuestHelper_File["utility.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["utility.lua"] = GetTime()
 
 local theTime = GetTime()

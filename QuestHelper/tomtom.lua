@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["tomtom.lua"] = "5.0.5.262r"
+QuestHelper_File["tomtom.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["tomtom.lua"] = GetTime()
 
 local tomtom_cb

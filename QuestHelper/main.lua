@@ -1,4 +1,4 @@
-QuestHelper_File["main.lua"] = "5.0.5.262r"
+QuestHelper_File["main.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["main.lua"] = GetTime()
 
 local GetTime = QuestHelper_GetTime
@@ -253,9 +253,9 @@ QH_Event("ADDON_LOADED", function (addonid)
       ["timeslice.lua"] = true,
 --      ["lang.lua"] = true,
       ["core.lua"] = true,
-      ["tooltip.lua"] = true,
+--      ["tooltip.lua"] = true,
       ["arrow.lua"] = true,
-      ["radar.lua"] = true,
+--      ["radar.lua"] = true,
       
       ["config.lua"] = true,
       ["collect.lua"] = true,
@@ -571,11 +571,11 @@ QH_Event("ADDON_LOADED", function (addonid)
       self.player_level = arg1
       --QH_Route_Filter_Rescan("filter_quest_level")
     end)
-    
+--[[    
     QH_Event("TAXIMAP_OPENED", function ()
       self:taxiMapOpened()
     end)
---[[    
+    
     QH_Event({"ZONE_CHANGED", "ZONE_CHANGED_INDOORS", "ZONE_CHANGED_NEW_AREA"}, function()
       QH_Route_Filter_Rescan(nil, true)
     end)
@@ -819,11 +819,11 @@ function QuestHelper:OnEvent(event)
       end
     end
   end]]
-
+--[[
   if event == "TAXIMAP_OPENED" then
     self:taxiMapOpened()
   end
-  
+  ]]
   --[[if event == "PLAYER_CONTROL_GAINED" then
     interruptcount = interruptcount + 1
   end]]
@@ -886,7 +886,7 @@ Thanks for testing!]], "QuestHelper " .. version_string, 500, 20, 10)
     please_submit_enabled = false
   end
   QHUpdateNagTick() -- These probably shouldn't be in OnUpdate. Eventually I'll move them somewhere cleaner.
-  
+--[[  
   if not ontaxi and UnitOnTaxi("player") then
     self:flightBegan()
     interruptcount = 0
@@ -894,7 +894,7 @@ Thanks for testing!]], "QuestHelper " .. version_string, 500, 20, 10)
     self:flightEnded(interruptcount > 1)
   end
   ontaxi = UnitOnTaxi("player")
-  
+  ]]
   -- For now I'm ripping out the update_count code
   --update_count = update_count - 1
   --if update_count <= 0 then
@@ -926,7 +926,7 @@ Thanks for testing!]], "QuestHelper " .. version_string, 500, 20, 10)
     local nc, nz, nx, ny = self.Astrolabe:GetCurrentPlayerPosition()
     local tc, tx, ty
     
-    if nc and nc ~= -1 then -- We just want the raw data here, before we've done anything clever.
+    if nc and nc ~= -1 and nc ~= 6 then -- We just want the raw data here, before we've done anything clever.
       tc, tx, ty = self.Astrolabe:GetAbsoluteContinentPosition(nc, nz, nx, ny)
       QuestHelper: Assert(tc and tx and ty)  -- is it true? nobody knows! :D
     end

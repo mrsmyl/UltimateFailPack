@@ -2,7 +2,7 @@
 ## Title: QuestHelper Data (ruRU)
 ## Author: zorbathut, smariot, vipersniper, nesher, nconantj
 ## Notes: Contains the data needed by QuestHelper
-## Version: 5.0.5.262r
+## Version: 5.0.5.267r
 ## Dependencies: QHData-base
 ## LoadOnDemand: 1
 

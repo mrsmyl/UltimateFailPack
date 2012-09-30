@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_monster.lua"] = "5.0.5.262r"
+QuestHelper_File["collect_monster.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["collect_monster.lua"] = GetTime()
 
 local debug_output = false

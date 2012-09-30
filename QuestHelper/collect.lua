@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect.lua"] = "5.0.5.262r"
+QuestHelper_File["collect.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["collect.lua"] = GetTime()
 
 local --[[ static ]] MINSVNVERSION = 255
@@ -87,7 +87,7 @@ QH_Collect_LZW_Init(nil, API)
 local CompressCollection
 
 function QH_Collector_SetupData()
-  local svnversion = "262r"
+  local svnversion = "267r"
   local buildInfo, locale, faction = GetBuildInfo(), GetLocale(), QuestHelper:PlayerFaction()
   local altfaction = ""
   if faction == "Alliance" then

@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["pattern.lua"] = "5.0.5.262r"
+QuestHelper_File["pattern.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["pattern.lua"] = GetTime()
 
 -- The following junk is for building functions to parse strings for various locales.

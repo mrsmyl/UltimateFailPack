@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_location.lua"] = "5.0.5.262r"
+QuestHelper_File["collect_location.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["collect_location.lua"] = GetTime()
 
 -- little endian two's complement

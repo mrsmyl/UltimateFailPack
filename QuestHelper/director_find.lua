@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["director_find.lua"] = "5.0.5.262r"
+QuestHelper_File["director_find.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["director_find.lua"] = GetTime()
 
 if not QH_API then QH_API = {} end

@@ -7,7 +7,7 @@
 ## Notes-esES: Calcula la mejor ruta a seguir para usted.
 ## Notes-esMX: Calcula la mejor ruta a seguir para usted.
 ## Notes-koKR: 노선에 대한 계산을 수행합니다.
-## Version: 5.0.5.262r
+## Version: 5.0.5.267r
 ## Dependencies: QHData-base
 ## OptionalDeps: Cartographer_Waypoints, TomTom, Cartographer_InstanceMaps, !Swatter, tekticles, UnicodeFont, ClearFont2
 ## SavedVariables: QuestHelper_Pref QuestHelper_UID QuestHelper_SaveDate QuestHelper_Errors QuestHelper_Collector QuestHelper_Collector_Version QHDB_Export
@@ -146,7 +146,7 @@ manager_completed.lua
 #-filter_base.lua
 
 # New tooltip system. Depends on nothing, calls nothing besides WoW UI.
-tooltip.lua
+#-tooltip.lua
 
 # Directors
 # Quest module. Depends on Database, Routing, Patterns, Tooltip, and Event Manager, interfaces with WoW UI.
@@ -164,7 +164,7 @@ dodads_triangles.lua
 core.lua
 
 # beep beep
-radar.lua
+#-radar.lua
 
 
 #-upgrade.lua

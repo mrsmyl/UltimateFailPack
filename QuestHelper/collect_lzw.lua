@@ -1,7 +1,7 @@
 
 local GetTime = QuestHelper_GetTime
 
-QuestHelper_File["collect_lzw.lua"] = "5.0.5.262r"
+QuestHelper_File["collect_lzw.lua"] = "5.0.5.267r"
 QuestHelper_Loadtime["collect_lzw.lua"] = GetTime()
 
 local Merger
