@@ -1,9 +1,23 @@
 ------------------------------------------------------------------------
-r99 | tuhljin | 2012-09-01 00:22:52 +0000 (Sat, 01 Sep 2012) | 1 line
+r101 | tuhljin | 2012-09-29 21:51:01 +0000 (Sat, 29 Sep 2012) | 1 line
 Changed paths:
-   A /tags/v0.66 (from /trunk:98)
+   A /tags/v0.67 (from /trunk:100)
 
-Tagging as v0.66
+Tagging as v0.67
+------------------------------------------------------------------------
+r100 | tuhljin | 2012-09-29 06:17:59 +0000 (Sat, 29 Sep 2012) | 2 lines
+Changed paths:
+   M /trunk/AchieveID.lua
+   M /trunk/GameTip.lua
+   M /trunk/Options.lua
+   M /trunk/Overachiever.toc
+   M /trunk/Overachiever_Tabs/Overachiever_Tabs.toc
+   M /trunk/Overachiever_Trade/Overachiever_Trade.toc
+   M /trunk/libs/TjBagWatch.lua
+   M /trunk/readme.txt
+
++ "To All the Squirrels I Once Caressed?": Critters' /loved status for this achievement is now part of the option that exists for the other "To All the Squirrels..." achievements.
+- Fixed an issue where an error was thrown if a battle pet container item is in your inventory.
 ------------------------------------------------------------------------
 r98 | tuhljin | 2012-09-01 00:13:34 +0000 (Sat, 01 Sep 2012) | 1 line
 Changed paths:
