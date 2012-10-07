@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1216 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1219 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -730,6 +730,7 @@ function Recount:SpellAuraRefresh(timestamp, eventtype, srcGUID, srcName, srcFla
 			local absorb = AllShields[dstName][spellId][srcName] - amount
 			AllShields[dstName][spellId][srcName] = amount
 			if absorb > 0 then
+				absorb = math.floor(absorb + 0.5) -- Bandaid for weird rounding issues
 				Recount:AddAbsorbCredit(srcName, dstName, spellName, spellId, absorb)
 			end
 		else
@@ -776,6 +777,7 @@ function Recount:SpellAuraRemoved(timestamp, eventtype, srcGUID, srcName, srcFla
 --				Recount:DPrint("B1: "..spellName.." "..amount)
 				local absorb = AllShields[dstName][spellId][srcName] - amount
 				if absorb > 0 then
+					absorb = math.floor(absorb + 0.5) -- Bandaid for weird rounding issues
 					Recount:AddAbsorbCredit(srcName, dstName, spellName, spellId, absorb)
 				end
 

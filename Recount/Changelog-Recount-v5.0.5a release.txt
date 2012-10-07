@@ -1,9 +1,15 @@
 ------------------------------------------------------------------------
-r1218 | elsia | 2012-09-24 03:44:24 +0000 (Mon, 24 Sep 2012) | 1 line
+r1220 | elsia | 2012-10-02 12:30:10 +0000 (Tue, 02 Oct 2012) | 1 line
 Changed paths:
-   A /tags/v5.0.5 release (from /trunk:1217)
+   A /tags/v5.0.5a release (from /trunk:1219)
 
-Tagging as v5.0.5 release
+Tagging as v5.0.5a release
+------------------------------------------------------------------------
+r1219 | elsia | 2012-09-29 02:20:18 +0000 (Sat, 29 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/Tracker.lua
+
+- More bandaids for the absorb issue.
 ------------------------------------------------------------------------
 r1217 | elsia | 2012-09-24 03:41:32 +0000 (Mon, 24 Sep 2012) | 1 line
 Changed paths:
@@ -40,16 +46,4 @@ Changed paths:
    M /trunk/Tracker.lua
 
 - Added Priest absorb Spirit Shell ID. Thanks to MaximusDZ.
-------------------------------------------------------------------------
-r1209 | elsia | 2012-08-27 23:15:18 +0000 (Mon, 27 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/Recount.toc
-
-- MOP preparedness repackaging (get post-bandaid LibGraph-2.0 and possible Ace3 fixes).
-------------------------------------------------------------------------
-r1208 | elsia | 2012-08-15 03:52:27 +0000 (Wed, 15 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/GUI_Config.lua
-
-- Added color config support in the config window for the monk class.
 ------------------------------------------------------------------------
