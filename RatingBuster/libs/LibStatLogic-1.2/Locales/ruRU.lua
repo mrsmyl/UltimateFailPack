@@ -23,6 +23,7 @@ PatternLocale.ruRU = { -- {{{
 	Mail = "Кольчуга",
 	Leather = "Кожа",
 	Cloth = "Ткань",
+	
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -30,20 +31,14 @@ PatternLocale.ruRU = { -- {{{
 	-- Turn on /sldebug and see if there are any "No Match" strings, any 
 	-- unused strings should be added in the "Exclude" table, because an unmatched 
 	-- string costs a lot of CPU time, and should be prevented whenever possible.
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 5, -- using string.utf8len
 	["Exclude"] = {
 		[""] = true,
 		[" \n"] = true,
-		[ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
-		[ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item wil be bound when picked up
-		[ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
-		[ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
-		[ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
-		[ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
-		[ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
-		[ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
-		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
+		
 		["Перек"] = true, -- Перековано
 		["Герои"] = true, -- Героический
 		["Может"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
@@ -71,54 +66,6 @@ PatternLocale.ruRU = { -- {{{
 		["(6) S"] = true,
 		["(7) S"] = true,
 		["(8) S"] = true,
-		-- Equip type
-		["Боеприпасы"] = true, -- Ice Threaded Arrow ID:19316
-		[INVTYPE_AMMO] = true,
-		[INVTYPE_HEAD] = true,
-		[INVTYPE_NECK] = true,
-		[INVTYPE_SHOULDER] = true,
-		[INVTYPE_BODY] = true,
-		[INVTYPE_CHEST] = true,
-		[INVTYPE_ROBE] = true,
-		[INVTYPE_WAIST] = true,
-		[INVTYPE_LEGS] = true,
-		[INVTYPE_FEET] = true,
-		[INVTYPE_WRIST] = true,
-		[INVTYPE_HAND] = true,
-		[INVTYPE_FINGER] = true,
-		[INVTYPE_TRINKET] = true,
-		[INVTYPE_CLOAK] = true,
-		[INVTYPE_WEAPON] = true,
-		[INVTYPE_SHIELD] = true,
-		[INVTYPE_2HWEAPON] = true,
-		[INVTYPE_WEAPONMAINHAND] = true,
-		[INVTYPE_WEAPONOFFHAND] = true,
-		[INVTYPE_HOLDABLE] = true,
-		[INVTYPE_RANGED] = true,
-		[INVTYPE_THROWN] = true,
-		[INVTYPE_RANGEDRIGHT] = true,
-		[INVTYPE_RELIC] = true,
-		[INVTYPE_TABARD] = true,
-		[INVTYPE_BAG] = true,
-		[REFORGED] = true,
-		[ITEM_HEROIC] = true,
-		[ITEM_HEROIC_EPIC] = true,
-		[ITEM_HEROIC_QUALITY0_DESC] = true,
-		[ITEM_HEROIC_QUALITY1_DESC] = true,
-		[ITEM_HEROIC_QUALITY2_DESC] = true,
-		[ITEM_HEROIC_QUALITY3_DESC] = true,
-		[ITEM_HEROIC_QUALITY4_DESC] = true,
-		[ITEM_HEROIC_QUALITY5_DESC] = true,
-		[ITEM_HEROIC_QUALITY6_DESC] = true,
-		[ITEM_HEROIC_QUALITY7_DESC] = true,
-		[ITEM_QUALITY0_DESC] = true,
-		[ITEM_QUALITY1_DESC] = true,
-		[ITEM_QUALITY2_DESC] = true,
-		[ITEM_QUALITY3_DESC] = true,
-		[ITEM_QUALITY4_DESC] = true,
-		[ITEM_QUALITY5_DESC] = true,
-		[ITEM_QUALITY6_DESC] = true,
-		[ITEM_QUALITY7_DESC] = true,
 	},
 
 	-----------------------
@@ -267,116 +214,13 @@ PatternLocale.ruRU = { -- {{{
 		"^(.-)%s?([%+%-]%d+)%s?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 2ed)
 		"^(.-)%s?([%d%,]+)%s(.-)$", -- 22.22 xxx xxx (scan last)
 	},
+	
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
 	["StatIDLookup"] = {
-		--[[
-		["Weapon Damage"] = {"MELEE_DMG"}, -- Enchant
-		["All Stats"] = {"STR", "AGI", "STA", "INT", "SPI",},
-		["Fishing"] = {"FISHING",}, -- Fishing enchant ID:846
-		["Fishing Skill"] = {"FISHING",}, -- Fishing lure
-		["Increased Fishing"] = {"FISHING",}, -- Equip: Increased Fishing +20.
-		["Mining"] = {"MINING",}, -- Mining enchant ID:844
-		["Herbalism"] = {"HERBALISM",}, -- Herbalism enchant ID:845
-		["Skinning"] = {"SKINNING",}, -- Skinning enchant ID:865
-		["Attack Power versus Undead"] = {"AP_UNDEAD",}, -- Scourgebane EnchantID: 3247
-		["Increases attack powerwhen fighting Undead"] = {"AP_UNDEAD",}, -- [Seal of the Dawn] ID:13209
-		["Increases attack powerwhen fighting Undead.  It also allows the acquisition of Scourgestones on behalf of the Argent Dawn"] = {"AP_UNDEAD",}, -- [Seal of the Dawn] ID:13209
-		["Increases attack powerwhen fighting Demons"] = {"AP_DEMON",},
-		["Increases attack powerwhen fighting Undead and Demons"] = {"AP_UNDEAD", "AP_DEMON",}, -- [Mark of the Champion] ID:23206
-		["Attack Power in Cat, Bear, and Dire Bear forms only"] = {"FERAL_AP",},
-		["Ranged Attack Power"] = {"RANGED_AP",},
-		["Healing and Spell Damage"] = {"SPELL_DMG", "HEAL",}, -- Arcanum of Focus +8 Healing and Spell Damage http://wow.allakhazam.com/db/spell.html?wspell=22844
-		["Damage and Healing Spells"] = {"SPELL_DMG", "HEAL",},
-		["Spell Damage and Healing"] = {"SPELL_DMG", "HEAL",}, --StatLogic:GetSum("item:22630")
-		["Damage"] = {"SPELL_DMG",},
-		["Increases your spell damage"] = {"SPELL_DMG",}, -- Atiesh ID:22630, 22631, 22632, 22589
-		["Spell Power"] = {"SPELL_DMG", "HEAL",},
-		["Increases spell power"] = {"SPELL_DMG", "HEAL",}, -- WotLK
-		["Holy Damage"] = {"HOLY_SPELL_DMG",},
-		["Arcane Damage"] = {"ARCANE_SPELL_DMG",},
-		["Fire Damage"] = {"FIRE_SPELL_DMG",},
-		["Nature Damage"] = {"NATURE_SPELL_DMG",},
-		["Frost Damage"] = {"FROST_SPELL_DMG",},
-		["Shadow Damage"] = {"SHADOW_SPELL_DMG",},
-		["Holy Spell Damage"] = {"HOLY_SPELL_DMG",},
-		["Arcane Spell Damage"] = {"ARCANE_SPELL_DMG",},
-		["Fire Spell Damage"] = {"FIRE_SPELL_DMG",},
-		["Nature Spell Damage"] = {"NATURE_SPELL_DMG",},
-		["Shadow Spell Damage"] = {"SHADOW_SPELL_DMG",},
-		["Increases your block rating"] = {"BLOCK_RATING",},
-		["Increases your shield block rating"] = {"BLOCK_RATING",},
-		["Improves hit rating"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_RATING
-		["Improves melee hit rating"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_MELEE_RATING
-		["Increases your hit rating"] = {"MELEE_HIT_RATING",},
-		["Improves spell hit rating"] = {"SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_SPELL_RATING
-		["Increases your spell hit rating"] = {"SPELL_HIT_RATING",},
-		["Ranged Hit Rating"] = {"RANGED_HIT_RATING",},
-		["Improves ranged hit rating"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
-		["Increases your ranged hit rating"] = {"RANGED_HIT_RATING",},
-		["Increases damage done by Holy spells and effects"] = {"HOLY_SPELL_DMG",},
-		["Increases damage done by Arcane spells and effects"] = {"ARCANE_SPELL_DMG",},
-		["Increases damage done by Fire spells and effects"] = {"FIRE_SPELL_DMG",},
-		["Increases damage done to Undead by magical spells and effects.  It also allows the acquisition of Scourgestones on behalf of the Argent Dawn"] = {"SPELL_DMG_UNDEAD"}, -- [Rune of the Dawn] ID:19812
-		["Healing Spells"] = {"HEAL",}, -- Enchant Gloves - Major Healing "+35 Healing Spells" http://wow.allakhazam.com/db/spell.html?wspell=33999
-		["Increases Healing"] = {"HEAL",},
-		["Healing"] = {"HEAL",}, -- StatLogic:GetSum("item:23344:206")
-		["healing Spells"] = {"HEAL",},
-		["Damage Spells"] = {"SPELL_DMG",}, -- 2.3.0 StatLogic:GetSum("item:23344:2343")
-		["Increases damage and healing done by magical spells and effects of all party members within 30 yards"] = {"SPELL_DMG", "HEAL"}, -- Atiesh
-		["Increases healing done"] = {"HEAL",}, -- 2.3.0
-		["damage donefor all magical spells"] = {"SPELL_DMG",}, -- 2.3.0
-		["Increases healing done by spells and effects"] = {"HEAL",},
-		["Increases healing done by magical spells and effects of all party members within 30 yards"] = {"HEAL",}, -- Atiesh
-		["your healing"] = {"HEAL",}, -- Atiesh
-		["damage per second"] = {"DPS",},
-		["Critical Strike Rating"] = {"MELEE_CRIT_RATING",},
-		["Increases your critical hit rating"] = {"MELEE_CRIT_RATING",},
-		["Increases your critical strike rating"] = {"MELEE_CRIT_RATING",},
-		["Improves critical strike rating"] = {"MELEE_CRIT_RATING",},
-		["Improves melee critical strike rating"] = {"MELEE_CRIT_RATING",}, -- [Cloak of Darkness] ID:33122
-		["Increases the spell critical strike rating of all party members within 30 yards"] = {"SPELL_CRIT_RATING",},
-		["Increases your ranged critical strike rating"] = {"RANGED_CRIT_RATING",}, -- Fletcher's Gloves ID:7348
-		["Improves hit avoidance rating"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RATING
-		["Improves melee hit avoidance rating"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_MELEE_RATING
-		["Improves ranged hit avoidance rating"] = {"RANGED_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RANGED_RATING
-		["Improves spell hit avoidance rating"] = {"SPELL_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_SPELL_RATING
-		["Improves your resilience rating"] = {"RESILIENCE_RATING",},
-		["Improves critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
-		["Improves melee critical avoidance rating"] = {"MELEE_CRIT_AVOID_RATING",},
-		["Improves ranged critical avoidance rating"] = {"RANGED_CRIT_AVOID_RATING",},
-		["Improves spell critical avoidance rating"] = {"SPELL_CRIT_AVOID_RATING",},
-		["Increases your parry rating"] = {"PARRY_RATING",},
-		["Ranged Haste Rating"] = {"RANGED_HASTE_RATING"},
-		["Improves haste rating"] = {"MELEE_HASTE_RATING"},
-		["Improves melee haste rating"] = {"MELEE_HASTE_RATING"},
-		["Improves spell haste rating"] = {"SPELL_HASTE_RATING"},
-		["Improves ranged haste rating"] = {"RANGED_HASTE_RATING"},
-		["Increases dagger skill rating"] = {"DAGGER_WEAPON_RATING"},
-		["Increases sword skill rating"] = {"SWORD_WEAPON_RATING"}, -- [Warblade of the Hakkari] ID:19865
-		["Increases Two-Handed Swords skill rating"] = {"2H_SWORD_WEAPON_RATING"},
-		["Increases axe skill rating"] = {"AXE_WEAPON_RATING"},
-		["Two-Handed Axe Skill Rating"] = {"2H_AXE_WEAPON_RATING"}, -- [Ethereum Nexus-Reaver] ID:30722
-		["Increases two-handed axes skill rating"] = {"2H_AXE_WEAPON_RATING"},
-		["Increases mace skill rating"] = {"MACE_WEAPON_RATING"},
-		["Increases two-handed maces skill rating"] = {"2H_MACE_WEAPON_RATING"},
-		["Increases gun skill rating"] = {"GUN_WEAPON_RATING"},
-		["Increases Crossbow skill rating"] = {"CROSSBOW_WEAPON_RATING"},
-		["Increases Bow skill rating"] = {"BOW_WEAPON_RATING"},
-		["Increases feral combat skill rating"] = {"FERAL_WEAPON_RATING"},
-		["Increases fist weapons skill rating"] = {"FIST_WEAPON_RATING"}, -- Demonblood Eviscerator
-		["Increases unarmed skill rating"] = {"FIST_WEAPON_RATING"}, -- Demonblood Eviscerator ID:27533
-		["Increases staff skill rating"] = {"STAFF_WEAPON_RATING"}, -- Leggings of the Fang ID:10410
-		-- Exclude
-		["sec"] = false,
-		["to"] = false,
-		["Slot Bag"] = false,
-		["Slot Quiver"] = false,
-		["Slot Ammo Pouch"] = false,
-		["Increases ranged attack speed"] = false, -- AV quiver
-		--]]
-
 		["Увеличивает рейтинг пробивания брони на"] = {"IGNORE_ARMOR"}, -- StatLogic:GetSum("item:33733")
 		["Повышает рейтинг пробивания брони на"] = {"ARMOR_PENETRATION_RATING"},
 		["% угрозы"] = {"MOD_THREAT"}, -- StatLogic:GetSum("item:23344:2613")

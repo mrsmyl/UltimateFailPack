@@ -27,20 +27,18 @@ PatternLocale.koKR = { -- {{{
 	------------------
 	-- Fast Exclude --
 	------------------
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- Note to localizers: This is important for reducing lag on mouse over.
+	-- Turn on /sldebug and see if there are any "No Match" strings, any 
+	-- unused strings should be added in the "Exclude" table, because an unmatched 
+	-- string costs a lot of CPU time, and should be prevented whenever possible.
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 3,
   ["Exclude"] = {
     [""] = true,
     [" \n"] = true,
-    [ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "착용 시 귀속"; -- Item will be bound when equipped
-    [ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "획득 시 귀속"; -- Item wil be bound when picked up
-    [ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "사용 시 귀속"; -- Item will be bound when used
-    [ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "퀘스트 아이템"; -- Item is a quest item (same logic as ON_PICKUP)
-    [ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "귀속 아이템"; -- Item is Soulbound
-    [ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "퀘스트 시작 아이템"; -- Item is a quest giver
-    [ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "그 아이템은 버릴 수 없습니다."; -- Attempted to destroy a NO_DESTROY item
-    [ITEM_CONJURED] = true, -- ITEM_CONJURED = "창조된 아이템"; -- Item expires
-    [ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "마력 추출 불가"; -- Items which cannot be disenchanted ever
+	
     ["마력 "] = true, -- ITEM_DISENCHANT_ANY_SKILL = "마력 추출 가능"; -- Items that can be disenchanted at any skill level
     -- ITEM_DISENCHANT_MIN_SKILL = "마력 추출 요구 사항: %s (%d)"; -- Minimum enchanting skill needed to disenchant
     ["지속시"] = true, -- ITEM_DURATION_DAYS = "지속시간: %d일";
@@ -65,54 +63,6 @@ PatternLocale.koKR = { -- {{{
     ["(6)"] = true,
     ["(7)"] = true,
     ["(8)"] = true,
-    -- Equip type
-    ["투사체"] = true, -- Ice Threaded Arrow ID:19316
-    [INVTYPE_AMMO] = true,
-    [INVTYPE_HEAD] = true,
-    [INVTYPE_NECK] = true,
-    [INVTYPE_SHOULDER] = true,
-    [INVTYPE_BODY] = true,
-    [INVTYPE_CHEST] = true,
-    [INVTYPE_ROBE] = true,
-    [INVTYPE_WAIST] = true,
-    [INVTYPE_LEGS] = true,
-    [INVTYPE_FEET] = true,
-    [INVTYPE_WRIST] = true,
-    [INVTYPE_HAND] = true,
-    [INVTYPE_FINGER] = true,
-    [INVTYPE_TRINKET] = true,
-    [INVTYPE_CLOAK] = true,
-    [INVTYPE_WEAPON] = true,
-    [INVTYPE_SHIELD] = true,
-    [INVTYPE_2HWEAPON] = true,
-    [INVTYPE_WEAPONMAINHAND] = true,
-    [INVTYPE_WEAPONOFFHAND] = true,
-    [INVTYPE_HOLDABLE] = true,
-    [INVTYPE_RANGED] = true,
-    [INVTYPE_THROWN] = true,
-    [INVTYPE_RANGEDRIGHT] = true,
-    [INVTYPE_RELIC] = true,
-    [INVTYPE_TABARD] = true,
-    [INVTYPE_BAG] = true,
-    [REFORGED] = true,
-    [ITEM_HEROIC] = true,
-    [ITEM_HEROIC_EPIC] = true,
-    [ITEM_HEROIC_QUALITY0_DESC] = true,
-    [ITEM_HEROIC_QUALITY1_DESC] = true,
-    [ITEM_HEROIC_QUALITY2_DESC] = true,
-    [ITEM_HEROIC_QUALITY3_DESC] = true,
-    [ITEM_HEROIC_QUALITY4_DESC] = true,
-    [ITEM_HEROIC_QUALITY5_DESC] = true,
-    [ITEM_HEROIC_QUALITY6_DESC] = true,
-    [ITEM_HEROIC_QUALITY7_DESC] = true,
-    [ITEM_QUALITY0_DESC] = true,
-    [ITEM_QUALITY1_DESC] = true,
-    [ITEM_QUALITY2_DESC] = true,
-    [ITEM_QUALITY3_DESC] = true,
-    [ITEM_QUALITY4_DESC] = true,
-    [ITEM_QUALITY5_DESC] = true,
-    [ITEM_QUALITY6_DESC] = true,
-    [ITEM_QUALITY7_DESC] = true,
   },
   -----------------------
   -- Whole Text Lookup --
@@ -238,9 +188,12 @@ PatternLocale.koKR = { -- {{{
     "^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 2ed)
     "^(.-) ?([%d%.]+) ?(.-)$", -- 22.22 xxx xxx (scan last)
   },
+	
   -----------------------
   -- Stat Lookup Table --
   -----------------------
+  -- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+  -- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
   ["StatIDLookup"] = {
     ["위협 수준%"] = {"MOD_THREAT"}, -- StatLogic:GetSum("item:23344:2613")
     ["지능%"] = {"MOD_INT"}, -- [Ember Skyflare Diamond] ID: 41333

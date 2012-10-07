@@ -23,6 +23,7 @@ PatternLocale.itIT = { -- {{{
 	Mail = "Maglia",
 	Leather = "Cuoio",
 	Cloth = "Stoffa",
+	
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -30,9 +31,13 @@ PatternLocale.itIT = { -- {{{
 	-- Turn on /sldebug and see if there are any "No Match" strings, any 
 	-- unused strings should be added in the "Exclude" table, because an unmatched 
 	-- string costs a lot of CPU time, and should be prevented whenever possible.
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	-- ExcludeLen Mirando a las primeras letras de una linea podemos excluir un monton de lineas
 	["ExcludeLen"] = 5, -- using string.utf8len
+	["Exclude"] = {
+	},
 
 
 	-----------------------
@@ -172,10 +177,14 @@ PatternLocale.itIT = { -- {{{
 		"^(.-) ?([%+%-]?%d+[%p%d+]*)(%s? ?.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
 
 	},
+	
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
-
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
+	["StatIDLookup"] = {
+	},
 } -- }}}
 
 -- TODO for localizer: This was drycoded. Please test and fix if needed, especially the part that removes "by" or "by up to"!

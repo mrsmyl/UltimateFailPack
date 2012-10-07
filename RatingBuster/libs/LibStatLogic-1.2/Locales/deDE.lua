@@ -31,7 +31,7 @@ PatternLocale.deDE = { -- {{{
 	-- Turn on /sldebug and see if there are any "No Match" strings, any 
 	-- unused strings should be added in the "Exclude" table, because an unmatched 
 	-- string costs a lot of CPU time, and should be prevented whenever possible.
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
 	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
 	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 5, -- using string.utf8len
@@ -248,6 +248,7 @@ PatternLocale.deDE = { -- {{{
 		"^(.-) ?([%+%-]%d+) ?(.-)$", -- "xxx xxx +22" or "+22 xxx xxx" or "xxx +22 xxx" (scan 3rd)
 		"^(.-) ?([%d%.]+) ?(.-)$", -- 22.22 xxx xxx (scan last)
 	},
+	
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------

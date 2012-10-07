@@ -17,7 +17,7 @@
 ## X-Curse-Project-Name: RatingBuster
 ## X-Curse-Project-ID: rating-buster
 ## X-Curse-Repository-ID: wow/rating-buster/mainline
-## X-Curse-Packaged-Version: r384
+## X-Curse-Packaged-Version: r386
 ## X-Curse-Project-Name: RatingBuster
 ## X-Curse-Project-ID: rating-buster
 ## X-Curse-Repository-ID: wow/rating-buster/mainline

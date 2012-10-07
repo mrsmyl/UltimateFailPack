@@ -571,20 +571,12 @@ L["ItemID: "] = "ID de l'objet :"
 --
 -- Tip2: The strings are passed into string.find, so you should escape the magic characters ^$()%.[]*+-? with a %
 L["numberPatterns"] = {
-	{pattern = "de (%d+) (le .+)", addInfo = "AfterNumber", space = " ", },
-	{pattern = "de (%d+) (la .+)", addInfo = "AfterNumber", space = " ", },
+	{pattern = "de (%d+)", addInfo = "AfterNumber", space = " ", },
 	{pattern = "([%+%-]%d+)[^%%]", addInfo = "AfterStat", space = " ", },
-	{pattern = "grant.-(%d+)", addInfo = "AfterNumber",}, -- for "grant you xx stat" type pattern, ex: Quel'Serrar ID:18348, Assassination Armor set
-	{pattern = "add.-(%d+)", addInfo = "AfterNumber",}, -- for "add xx stat" type pattern, ex: Adamantite Sharpening Stone ID:23529
-	 --Added [^%%] so that it doesn't match strings like "Increases healing by up to 10% of your total Intellect." [Whitemend Pants] ID:24261
-	--Added [^|] so that it doesn't match enchant strings (JewelTips)
-	{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = " ", }, -- [ç™¼å…‰çš„æš—å½±å“å¥ˆçŸ³] +6æ³•è¡“å‚·å®³åŠ5è€åŠ›
+	{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = " ", }, 
 }
 L["separators"] = {
 	"/", " et ", "%. ", " pour ", "&", ":",
-	-- Fix for [Mirror of Truth]
-	-- Equip: Chance on melee and ranged critical strike to increase your attack power by 1000 for 10 secs.
-	-- 1000 was falsely detected detected as ranged critical strike
 	"augmente",
 }
 --[[ Rating ID
@@ -619,6 +611,73 @@ SPELL_STAT3_NAME = "Stamina"
 SPELL_STAT4_NAME = "Intellect"
 SPELL_STAT5_NAME = "Spirit"
 --]]
+
+-- TODO: Find a way to insert the two crit entries without copying the whole table from enUS.
+L["statList"] = {
+--Stats
+	{pattern = string.lower(SPELL_STAT1_NAME), id = SPELL_STAT1_NAME}, -- Strength
+	{pattern = string.lower(SPELL_STAT2_NAME), id = SPELL_STAT2_NAME}, -- Agility
+	{pattern = string.lower(SPELL_STAT3_NAME), id = SPELL_STAT3_NAME}, -- Stamina
+	{pattern = string.lower(SPELL_STAT4_NAME), id = SPELL_STAT4_NAME}, -- Intellect
+	{pattern = string.lower(SPELL_STAT5_NAME), id = SPELL_STAT5_NAME}, -- Spirit
+	{pattern = string.lower(ITEM_MOD_STRENGTH_SHORT), id = SPELL_STAT1_NAME}, -- Strength
+	{pattern = string.lower(ITEM_MOD_AGILITY_SHORT), id = SPELL_STAT2_NAME}, -- Agility
+	{pattern = string.lower(ITEM_MOD_STAMINA_SHORT), id = SPELL_STAT3_NAME}, -- Stamina
+	{pattern = string.lower(ITEM_MOD_INTELLECT_SHORT), id = SPELL_STAT4_NAME}, -- Intellect
+	{pattern = string.lower(ITEM_MOD_SPIRIT_SHORT), id = SPELL_STAT5_NAME}, -- Spirit
+--Dodge
+	{pattern = string.lower(STAT_DODGE), id = CR_DODGE},
+	{pattern = string.lower(ITEM_MOD_DODGE_RATING_SHORT), id = CR_DODGE},
+--Parry
+	{pattern = string.lower(STAT_PARRY), id = CR_PARRY},
+	{pattern = string.lower(ITEM_MOD_PARRY_RATING_SHORT), id = CR_PARRY},
+--Block
+	{pattern = string.lower(STAT_BLOCK), id = CR_BLOCK}, -- block enchant: "+10 Shield Block"
+	{pattern = string.lower(ITEM_MOD_BLOCK_VALUE_SHORT), id = CR_BLOCK}, -- block enchant: "+10 Shield Block"
+--Hit
+	{pattern = string.lower(ITEM_MOD_HIT_SPELL_RATING_SHORT), id = CR_HIT_SPELL},	
+	{pattern = string.lower(ITEM_MOD_HIT_RANGED_RATING_SHORT), id = CR_HIT_RANGED},	
+	{pattern = string.lower(ITEM_MOD_HIT_RATING_SHORT), id = CR_HIT_MELEE},	
+	{pattern = string.lower(ITEM_MOD_HIT_RATING_SHORT), id = CR_HIT_MELEE},
+--Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_RATING_SHORT), id = CR_CRIT_MELEE}, --Crit
+	{pattern = "score de critique", id = CR_CRIT_MELEE}, --Crit
+	{pattern = "score de coup critique", id = CR_CRIT_MELEE}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_RANGED_RATING_SHORT), id = CR_CRIT_RANGED}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_SPELL_RATING_SHORT), id = CR_CRIT_SPELL}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_MELEE_RATING_SHORT), id = CR_CRIT_MELEE}, --Crit
+--Hit Taken
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT), id = CR_HIT_TAKEN_RANGED},
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RANGED_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_SPELL_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
+--PVP Resil
+	{pattern = string.lower(ITEM_MOD_RESILIENCE_RATING_SHORT), id = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN}, -- resilience is implicitly a
+--Expertise
+	{pattern = string.lower(ITEM_MOD_EXPERTISE_RATING_SHORT), id = CR_EXPERTISE},
+--Mastery
+	{pattern = string.lower(ITEM_MOD_MASTERY_RATING_SHORT), id = CR_MASTERY},
+--Haste
+	{pattern = string.lower(ITEM_MOD_HASTE_SPELL_RATING_SHORT), id = CR_HASTE_SPELL},
+	{pattern = string.lower(ITEM_MOD_HASTE_RANGED_RATING_SHORT), id = CR_HASTE_RANGED},
+	{pattern = string.lower(ITEM_MOD_HASTE_MELEE_RATING_SHORT), id = CR_HASTE_MELEE},
+	{pattern = string.lower(ITEM_MOD_HASTE_RATING_SHORT), id = CR_HASTE_MELEE},
+--Expertise	
+	{pattern = string.lower(ITEM_MOD_EXPERTISE_RATING_SHORT), id = CR_HASTE_MELEE},
+	{pattern = string.lower(STAT_CATEGORY_DEFENSE), id = CR_DEFENSE_SKILL},
+	{pattern = string.lower(SKILL), id = CR_WEAPON_SKILL},
+--PVP Power
+	{pattern = string.lower(ITEM_MOD_PVP_POWER_SHORT), id = CR_PVP_POWER}, 
+--Spell Power
+	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT),id = SPELL_POWER},
+	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT),id = SPELL_POWER},
+	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT), id = SPELL_DMG},
+	{pattern = string.lower(ITEM_MOD_SPELL_DAMAGE_DONE_SHORT), id = SPELL_DMG},
+	{pattern = string.lower(ITEM_MOD_SPELL_DAMAGE_DONE_SHORT), id = SPELL_DMG},
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
+	{pattern = string.lower(ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT), id = CR_ARMOR_PENETRATION},
+	{pattern = string.lower(ARMOR), id = ARMOR},
+}
 
 -------------------------
 -- Added info patterns --

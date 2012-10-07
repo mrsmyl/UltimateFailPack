@@ -23,6 +23,7 @@ PatternLocale.frFR = { -- {{{
 	Mail = "Mailles",
 	Leather = "Cuir",
 	Cloth = "Tissu",
+	
 	------------------
 	-- Fast Exclude --
 	------------------
@@ -30,23 +31,16 @@ PatternLocale.frFR = { -- {{{
 	-- Turn on /sldebug and see if there are any "No Match" strings, any 
 	-- unused strings should be added in the "Exclude" table, because an unmatched 
 	-- string costs a lot of CPU time, and should be prevented whenever possible.
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 5, -- using string.utf8len
 	["Exclude"] = {
 		[""] = true,
 		[" \n"] = true,
-		[ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
-		[ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item will be bound when picked up
-		[ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
-		[ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
-		[ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
-		[ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
-		[ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
-		[ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
-		[ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
-
-		--["Disen"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
-		--["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
+		
+		--["Disen"] = true, -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)";
+		--["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d |4day:days;";
 		["Temps"] = true, -- temps de recharge...
 		["<Arti"] = true, -- artisan
 		["Uniqu"] = true, -- Unique (20)
@@ -69,58 +63,7 @@ PatternLocale.frFR = { -- {{{
 		["(6) E"] = true,
 		["(7) E"] = true,
 		["(8) E"] = true,
-		-- Equip type
-		["Proje"] = true, -- Ice Threaded Arrow ID:19316
-		[INVTYPE_AMMO] = true,
-		[INVTYPE_HEAD] = true,
-		[INVTYPE_NECK] = true,
-		[INVTYPE_SHOULDER] = true,
-		[INVTYPE_BODY] = true,
-		[INVTYPE_CHEST] = true,
-		[INVTYPE_ROBE] = true,
-		[INVTYPE_WAIST] = true,
-		[INVTYPE_LEGS] = true,
-		[INVTYPE_FEET] = true,
-		[INVTYPE_WRIST] = true,
-		[INVTYPE_HAND] = true,
-		[INVTYPE_FINGER] = true,
-		[INVTYPE_TRINKET] = true,
-		[INVTYPE_CLOAK] = true,
-		[INVTYPE_WEAPON] = true,
-		[INVTYPE_SHIELD] = true,
-		[INVTYPE_2HWEAPON] = true,
-		[INVTYPE_WEAPONMAINHAND] = true,
-		[INVTYPE_WEAPONOFFHAND] = true,
-		[INVTYPE_HOLDABLE] = true,
-		[INVTYPE_RANGED] = true,
-		[INVTYPE_THROWN] = true,
-		[INVTYPE_RANGEDRIGHT] = true,
-		[INVTYPE_RELIC] = true,
-		[INVTYPE_TABARD] = true,
-		[INVTYPE_BAG] = true,
-		--4.0.6
-		["Item "] = true, -- ITEM_LEVEL = "Item Level %d"
-		[REFORGED] = true,
-		[ITEM_HEROIC] = true,
-		[ITEM_HEROIC_EPIC] = true,
-		[ITEM_HEROIC_QUALITY0_DESC] = true,
-		[ITEM_HEROIC_QUALITY1_DESC] = true,
-		[ITEM_HEROIC_QUALITY2_DESC] = true,
-		[ITEM_HEROIC_QUALITY3_DESC] = true,
-		[ITEM_HEROIC_QUALITY4_DESC] = true,
-		[ITEM_HEROIC_QUALITY5_DESC] = true,
-		[ITEM_HEROIC_QUALITY6_DESC] = true,
-		[ITEM_HEROIC_QUALITY7_DESC] = true,
-		[ITEM_QUALITY0_DESC] = true,
-		[ITEM_QUALITY1_DESC] = true,
-		[ITEM_QUALITY2_DESC] = true,
-		[ITEM_QUALITY3_DESC] = true,
-		[ITEM_QUALITY4_DESC] = true,
-		[ITEM_QUALITY5_DESC] = true,
-		[ITEM_QUALITY6_DESC] = true,
-		[ITEM_QUALITY7_DESC] = true,
-		--4.3.0
-		["Raid "] = true, --e.g. "Raid Finder"  e.g. Gauntlets of Radiant Glory - Raid Finder version
+		
 		["Seaso"] = true, --e.g. "Season 10"  PvP Season items e.g. Vicious Gladiator's Emblem of Tenacity
 	},
 
@@ -182,8 +125,6 @@ PatternLocale.frFR = { -- {{{
 		["Marcheglace"] = {["MELEE_HIT_RATING"] = 12, ["SPELL_HIT_RATING"] = 12, ["MELEE_CRIT_RATING"] = 12, ["SPELL_CRIT_RATING"] = 12}, -- EnchantID: 3826
 		["Récolteur"] = {["HERBALISM"] = 5, ["MINING"] = 5, ["SKINNING"] = 5}, -- EnchantID: 3296
 		["Vitalité supérieure"] = {["COMBAT_MANA_REGEN"] = 6, ["COMBAT_HEALTH_REGEN"] = 6}, -- EnchantID: 3244
-
-
 	},
 
 	----------------------------
@@ -195,16 +136,16 @@ PatternLocale.frFR = { -- {{{
 	-- +19 耐力 = "^%+(patNumber) (.-)%.?$"
 	-- Some have a "." at the end of string like:
 	-- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec. "
-	["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
-
+	--["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+	["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") a?u? ?(.-)%.?$",
 	-----------------------------
 	-- Single Equip Stat Check --
 	-----------------------------
 	-- stat1, value, stat2 = strfind
 	-- stat = stat1..stat2
 	-- "^Equip: (.-) by u?p? ?t?o? ?(%d+) ?(.-)%.?$"
-	["SingleEquipStatCheck"] = "^Équipé\194\160: Augmente (.-) ?de (%d+) ?a?u? ?m?a?x?i?m?u?m? ?(.-)%.?.-$",
-
+	--["SingleEquipStatCheck"] = "^Équipé\194\160: Augmente (.-) ?de (%d+) ?a?u? ?m?a?x?i?m?u?m? ?(.-)%.?.-$",
+	["SingleEquipStatCheck"] = "^"..ITEM_SPELL_TRIGGER_ONEQUIP.." (.-)Augmente ?de (%d+) (.-) ?%.?$",
 	-------------
 	-- PreScan --
 	-------------
@@ -266,13 +207,17 @@ PatternLocale.frFR = { -- {{{
     "^.-: (.-)([%+%-]%d+) ?(.-)%.?$", --Bonus de sertissage : +3 xxx
     "^(.-) augmentée?s? de (%d+) ?(.-)%%?%.?$",--sometimes this pattern is needed but not often
 	},
+	
 	-----------------------
 	-- Stat Lookup Table --
 	-----------------------
-
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
+	["StatIDLookup"] = {
+		["Score de critique"] = {"MELEE_CRIT_RATING", "RANGED_CRIT_RATING", "SPELL_CRIT_RATING"}, -- need for wierd reason. (need to investigate)
+	},
 } -- }}}
 
--- TODO for localizer: This was drycoded. Please test and fix if needed, especially the part that removes "by" or "by up to"!
 function PatternLocale.frFR.ProcessNeutralStatIDLookupPlaceholders(statIDLookupWithPlaceholders, targetStatIDLookup)
 	for k, v in pairs(statIDLookupWithPlaceholders) do
 		-- "%%" -> "%"
@@ -283,11 +228,20 @@ function PatternLocale.frFR.ProcessNeutralStatIDLookupPlaceholders(statIDLookupW
 		newKey = gsub(newKey, " ?[%+%-]?%%%d?%.?%d?%$?[cdsgf]", "")
 		-- Remove " by" or " by up to". This is important for a match with SingleEquipStatCheck.
 		-- If you don't remove it, it might still work, but then it will use a DeepScanPattern.
-		newKey = gsub(newKey, " de ?", "")
-		
-		--print("'"..k.."'")
-		--print("'"..newKey.."'")
+		newKey = gsub(newKey, "Augmente de ?", "") 
+			
+		--print("'"..k.."'------>'"..newKey.."'")
 		targetStatIDLookup[newKey] = v
+		
+		--autogenerate few known and useful string
+		if string.find(newKey, "^l’") then
+			newKey = "à ".. newKey;
+			targetStatIDLookup[newKey] = v;
+		end
+		if string.find(newKey, "^la") then
+			newKey = "à ".. newKey;
+			targetStatIDLookup[newKey] = v;
+		end		
 	end
 end
 

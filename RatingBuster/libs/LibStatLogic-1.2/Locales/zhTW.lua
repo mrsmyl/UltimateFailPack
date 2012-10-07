@@ -23,29 +23,21 @@ PatternLocale.zhTW = { -- {{{
 	Mail = "鎖甲",
 	Leather = "皮甲",
 	Cloth = "布甲",
-	--["Dual Wield"] = "雙武器",
-	-------------------
-	-- Exclude Table --
-	-------------------
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	
+	------------------
+	-- Fast Exclude --
+	------------------
+	-- Note to localizers: This is important for reducing lag on mouse over.
+	-- Turn on /sldebug and see if there are any "No Match" strings, any 
+	-- unused strings should be added in the "Exclude" table, because an unmatched 
+	-- string costs a lot of CPU time, and should be prevented whenever possible.
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 3, -- using string.utf8len
 	["Exclude"] = {
 	    [""] = true,
     [" \n"] = true,
-    [ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
-    [ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item wil be bound when picked up
-    [ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
-    [ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
-    [ITEM_BIND_TO_ACCOUNT] = true, -- ITEM_BIND_QUEST = "Binds to account";
-    [ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
-    --[EMPTY_SOCKET_BLUE] = true, -- EMPTY_SOCKET_BLUE = "Blue Socket";
-    --[EMPTY_SOCKET_META] = true, -- EMPTY_SOCKET_META = "Meta Socket";
-    --[EMPTY_SOCKET_RED] = true, -- EMPTY_SOCKET_RED = "Red Socket";
-    --[EMPTY_SOCKET_YELLOW] = true, -- EMPTY_SOCKET_YELLOW = "Yellow Socket";
-    [ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
-    [ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
-    [ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
-    [ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
 
     --["Disen"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
     -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
@@ -53,7 +45,6 @@ PatternLocale.zhTW = { -- {{{
     --["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r"; -- %s is the creator of the item
     --["Coold"] = true, -- ITEM_COOLDOWN_TIME_DAYS = "Cooldown remaining: %d day";
     ["裝備單一限定"] = true, -- Unique-Equipped
-    [ITEM_UNIQUE] = true, -- ITEM_UNIQUE = "Unique";
     ["唯一("] = true, -- ITEM_UNIQUE_MULTIPLE = "Unique (%d)";
     ["需要等"] = true, -- Requires Level xx
     ["\n需要"] = true, -- Requires Level xx
@@ -79,55 +70,8 @@ PatternLocale.zhTW = { -- {{{
     ["(6)"] = true,
     ["(7)"] = true,
     ["(8)"] = true,
-    -- Equip type
-    ["彈藥"] = true, -- Ice Threaded Arrow ID:19316
-    [INVTYPE_AMMO] = true,
-    [INVTYPE_HEAD] = true,
-    [INVTYPE_NECK] = true,
-    [INVTYPE_SHOULDER] = true,
-    [INVTYPE_BODY] = true,
-    [INVTYPE_CHEST] = true,
-    [INVTYPE_ROBE] = true,
-    [INVTYPE_WAIST] = true,
-    [INVTYPE_LEGS] = true,
-    [INVTYPE_FEET] = true,
-    [INVTYPE_WRIST] = true,
-    [INVTYPE_HAND] = true,
-    [INVTYPE_FINGER] = true,
-    [INVTYPE_TRINKET] = true,
-    [INVTYPE_CLOAK] = true,
-    [INVTYPE_WEAPON] = true,
-    [INVTYPE_SHIELD] = true,
-    [INVTYPE_2HWEAPON] = true,
-    [INVTYPE_WEAPONMAINHAND] = true,
-    [INVTYPE_WEAPONOFFHAND] = true,
-    [INVTYPE_HOLDABLE] = true,
-    [INVTYPE_RANGED] = true,
-    [INVTYPE_THROWN] = true,
-    [INVTYPE_RANGEDRIGHT] = true,
-    [INVTYPE_RELIC] = true,
-    [INVTYPE_TABARD] = true,
-    [INVTYPE_BAG] = true,
+	
     ["物品等"] = true,
-    [REFORGED] = true,
-    [ITEM_HEROIC] = true,
-    [ITEM_HEROIC_EPIC] = true,
-    [ITEM_HEROIC_QUALITY0_DESC] = true,
-    [ITEM_HEROIC_QUALITY1_DESC] = true,
-    [ITEM_HEROIC_QUALITY2_DESC] = true,
-    [ITEM_HEROIC_QUALITY3_DESC] = true,
-    [ITEM_HEROIC_QUALITY4_DESC] = true,
-    [ITEM_HEROIC_QUALITY5_DESC] = true,
-    [ITEM_HEROIC_QUALITY6_DESC] = true,
-    [ITEM_HEROIC_QUALITY7_DESC] = true,
-    [ITEM_QUALITY0_DESC] = true,
-    [ITEM_QUALITY1_DESC] = true,
-    [ITEM_QUALITY2_DESC] = true,
-    [ITEM_QUALITY3_DESC] = true,
-    [ITEM_QUALITY4_DESC] = true,
-    [ITEM_QUALITY5_DESC] = true,
-    [ITEM_QUALITY6_DESC] = true,
-    [ITEM_QUALITY7_DESC] = true,
   },
   --[[
   textTable = {
@@ -300,6 +244,7 @@ PatternLocale.zhTW = { -- {{{
     "^(.-) ?([%d%.]+) ?點(.-)$", --
     "^(.-) ?([%d%.]+) ?(.-)$", --
   },
+  
   -----------------------
   -- Stat Lookup Table --
   -----------------------

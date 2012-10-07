@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 164 $
+Revision: $Revision: 168 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2012-09-30 13:52:52 +0000 (Sun, 30 Sep 2012) $
+Last Update: $Date: 2012-10-02 00:18:56 +0000 (Tue, 02 Oct 2012) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 164 $";
+local MINOR = "$Revision: 168 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -3995,7 +3995,7 @@ local K = {
 		--SpellID: 3127   Parry (Warrior)
 		--SpellID: 82245  Parry (Rogue)
 		--SpellID: 82246  Parry (Death Knight)
-		--SpellID: 82247  Parry (Paladin)
+		--SpellID: 82242  Parry (Paladin)
 		--SpellID: 116812 Parry (Monk)
 
 	9/19/2012: Updated To Mists from values on http://elitistjerks.com/f15/t29453-combat_ratings_level_85_cataclysm/p40/
@@ -4009,7 +4009,7 @@ local K = {
 --]]
 local C_p = {
 	237.1859113309,			-- 1: WARRIOR     SpellID 3127.  9/21/2012: 237.1859113309 is the parry cap for Warriors and Paladins
-	237.1859113309,			-- 2: PALADIN	  SpellID 82247. 9/21/2012: 237.1859113309 is the parry cap for Warriors and Paladins
+	237.1859113309,			-- 2: PALADIN	  SpellID 82242. 9/21/2012: 237.1859113309 is the parry cap for Warriors and Paladins
 	0,						-- 3: HUNTER        Hunters cannot parry
 	1/0.006870,				-- 4: ROGUE       SpellID 82245. value not yet known for 5.0.4
 	0,						-- 5: PRIEST        Priests cannot parry
@@ -4488,7 +4488,7 @@ function StatLogic:GetParryChance(parryRating, strength, class)
 	--SpellID: 3127   Parry (Warrior)
 	--SpellID: 82245  Parry (Rogue)
 	--SpellID: 82246  Parry (Death Knight)
-	--SpellID: 82247  Parry (Paladin)
+	--SpellID: 82242  Parry (Paladin)
 	--SpellID: 116812 Parry (Monk)
 	
 	local base, stat, posBuff, negBuff = UnitStat("player", 1); --1=Strength
@@ -4498,13 +4498,24 @@ function StatLogic:GetParryChance(parryRating, strength, class)
 	local Cp = C_p[class]; --(varies by class) parry cap constant (e.g. 237.164919575071)
 	
 	local QsL85 = 243.605345852; --conversion factor of Strength to Parry%. E.g. 243.6 Strength --> +1% Parry (before DR)
-	local QsL90 = 951.158596; --conversion factor of Strength to Parry for Paladins and warriors (exact, given by Blizzard)
-	local Qs = QsL85;
+	local QsL86 = 319.31752794619; --conversion factor of Strengh to Parry%. 
+	local QsL87 = nil;
+	local QsL88 = nil;
+	local QsL89 = nil;
+	local QsL90 = 951.158596; --conversion factor of Strength to Parry for Paladins and warriors (exact, given by Ghostcrawler: http://us.battle.net/wow/en/forum/topic/5889309137?page=90#1785)
+	local Qs = StatLogic:GetParryPerStr();
 	
-	local Pc = 265.078336847015; --Parry% from Parry Rating, before diminishing returns
+	local Qsi;
+	if (Qs ~= 0) then
+		Qsi = 1/Qs;
+	else
+		Qsi = 0;
+	end;
+	
+	--local Pc = 265.078336847015; --Parry% from Parry Rating, before diminishing returns
 
-	local freeParry = baseParry + baseStr/Qs;
-	local bonusParry = toSingle((strength-baseStr)/Qs + parryRating/Pc);
+	local freeParry = baseParry + baseStr*Qsi;
+	local bonusParry = toSingle((strength-baseStr)*Qsi + StatLogic:GetEffectFromRating(parryRating, CR_PARRY));
 
 	local parryBeforeDR = freeParry + bonusParry; --combination of free Parry, Parry from Parry Rating, and Parry from bonus Strength
 
@@ -4607,10 +4618,10 @@ function StatLogic:GetDodgeChance(dodgeRating, agility, class)
 	local k = K[class]; --diminishing returns constant, e.g. 0.886 for Paladin
 	local Qd = Q_d[class]; --conversion factor of Agility to Dodge Chance %. E.g. 10000 Agility --> +1% Dodge (before DR)
 	
-	local Dc = 265.078336847015; --Dodge Chance % from Dodge Rating, before diminishing returns (same value as for Parry)
+	--local Dc = 265.078336847015; --Dodge Chance % from Dodge Rating, before diminishing returns (same value as for Parry)
 
 	local freeDodge = baseDodge + baseAgi/Qd;
-	local bonusDodge = toSingle((agility-baseAgi)/Qd + dodgeRating/Dc);
+	local bonusDodge = toSingle((agility-baseAgi)/Qd + StatLogic:GetEffectFromRating(dodgeRating, CR_DODGE));
 	
 	local dodgeBeforeDR = freeDodge + bonusDodge; --combination of free Dodge, Dodge from Dodge Rating, and Dodge from bonus Agility
 
@@ -5203,8 +5214,8 @@ local RatingBase
 RatingBase = {
 	[CR_WEAPON_SKILL] = 2.5,
 	[CR_DEFENSE_SKILL] = 1.5, --TODO: Remove Defense, since defense was removed
-	[CR_DODGE] = 13.8, --Confirmed 20120905 with level 60 paladin. 13.8  (36 -> 1.74%)
-	[CR_PARRY] = 13.8, --Confirmed 20120905 with level 60 paladin. 13.8  (36 -> 1.74%), 90->6.52%
+	[CR_DODGE] = 20.7, --9/30/2012  The value was increased by 1.5.  (bounds: 20.61 - 20.76)
+	[CR_PARRY] = 20.7, --9/30/2012  The value was increased by 1.5
 	[CR_BLOCK] = 6.9,
 	[CR_HIT_MELEE] = 8, --If H[85] is to be valid for melee, then L60 base rating needs to be 8.000000017.   Old value: 9.37931,  
 	[CR_HIT_RANGED] = 8, --If H[85] is to be valid for hit ranged, then L60 base rating needs to be 8. Old value: 9.37931,
@@ -5338,21 +5349,37 @@ local combatRatingBonus = {
 	[60] = {
 		[CR_MASTERY] = RatingBase[CR_MASTERY], --14.000
 		[CR_EXPERTISE] = RatingBase[CR_EXPERTISE],
-		[CR_DODGE] = RatingBase[CR_DODGE], --13.80
-		[CR_PARRY] = RatingBase[CR_PARRY], --13.80
+		[CR_DODGE] = RatingBase[CR_DODGE], --20.7
+		[CR_PARRY] = RatingBase[CR_PARRY], --20.7
 		--[CR_BLOCK] we don't include CR_BLOCK because Block Rating was removed from the game in 5.0.4 (nobody has block rating anymore)
 	},
 	[85] = {
-		[CR_MASTERY] =   179.2800442393960, --Rating / Mastery %   updated 9/22/2012
-		[CR_EXPERTISE] = 102.445737393460, --102.4 Rating / Expertise % (i.e. 0.00976126508962818 Expertise% per Rating)
-		[CR_HIT_MELEE] = 102.4457395653704, --H[85]*8 = 12.8057174456713*8
-		[CR_HIT_RANGED] = 102.4457395653704, --H[85]*8 = 12.8057174456713*8
 		--9/20/2012: Dodge and Parry from a single regression of 760 data points. Intercept===0 (0 rating gives 0 bonus)
-		[CR_PARRY] =     265.0783373415960, --Rating / Parry %  Varies by level.  Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
-		[CR_DODGE] =     265.0783373415960, --Rating / Dodge %  Varies by level. Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
+		[CR_PARRY] =       265.0783373415960, --Rating / Parry %  Varies by level.  Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
+		[CR_DODGE] =       265.0783373415960, --Rating / Dodge %  Varies by level. Comes from a linear regression of Dodge Rating vs Dodge %. Has a zero intercept.
+		[CR_MASTERY] =     179.2800442393960, --Rating / Mastery %   updated 9/22/2012
+		[CR_CRIT_MELEE] =  179.2800411044490,
+		[CR_HASTE_MELEE] = 128.057165021941,
+		[CR_EXPERTISE] =   102.445737393460, --102.4 Rating / Expertise % (i.e. 0.00976126508962818 Expertise% per Rating)
+		[CR_HIT_MELEE] =   102.4457395653704, --H[85]*8 = 12.8057174456713*8
+			[CR_HIT_RANGED] =  102.4457395653704, --H[85]*8 = 12.8057174456713*8
+			[CR_HIT_SPELL] =   102.4457395653704, --H[85]*8 = 12.8057174456713*8
 	},
 	[86] = {
-		[CR_DODGE] = 335.0000000, --Rating / Dodge %  Varies by level. Comes from linear regression of Dodge Rating vs Dodge
+		--comes from linear regressions of Rating -> Bonus
+		[CR_PARRY] =       335.000000, --Parry Rating / Parry Chance %
+		[CR_DODGE] =       335.000000, --Dodge Rating / Dodge Chance %
+		[CR_MASTERY] =     228.000000, --Mastery Rating / Mastery
+		[CR_CRIT_MELEE] =  228.000000, --Crit Rating / Crit Chance %
+			[CR_CRIT_SPELL] = 228, 
+			[CR_CRIT_RANGED] = 228, 
+		[CR_HASTE_MELEE] = 162.000000,
+			[CR_HASTE_SPELL] = 162,
+			[CR_HASTE_RANGED] = 162,
+		[CR_EXPERTISE] =   130.000000,
+		[CR_HIT_MELEE] =   130.000000, --Hit Rating / Hit Chance %
+			[CR_HIT_SPELL] =   130, --Hit Rating / Hit Chance %
+			[CR_HIT_RANGED] =  130, --Hit Rating / Hit Chance %
 	},
 }
 
@@ -5478,11 +5505,35 @@ function StatLogic:GetEffectFromRating(rating, id, level, class)
 		return 0, RatingIDToConvertedStat[id]; --e.g. 0, "adslfkjasd;lfjas"
 	end;
 	
-	
 	assert(combatUnitRatingBase ~= nil, string.format('RatingBase[id=%d] is nil', id));
 	assert(combatUnitRatingBase ~= 0, string.format('RatingBase[id=%d] is 0', id));	
 	
-	if (level >= 80) then
+	local ratingPerBonus = nil;
+	
+	if (level > 85) then
+		if (combatRatingBonus[level]) then
+			ratingPerBonus = combatRatingBonus[level][id];
+		end;
+			
+		if (ratingPerBonus == null) then
+			local hvalue;
+			if id == COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN then --16 = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN
+				hvalue = H_Resilience[level];
+				assert(hvalue ~= nil, string.format("H_Resilience[level=%d] is nil", level));
+				assert(hvalue ~= 0, string.format("H_Resilience[level=%d] is zero", level));
+			else
+				hvalue = H[level];
+				assert(hvalue ~= nil, string.format("H[level=%d] is nil", level));
+				assert(hvalue ~= 0, string.format("H[level=%d] is zero", level));
+			end
+
+			--print(string.format("combatUnitRatingBase[%s] = %s", RatingNameToID[id], combatUnitRatingBase));
+			--print(string.format("hvalue = %s", hvalue));
+			ratingPerBonus = combatUnitRatingBase*hvalue;
+		end;
+		
+		--print(string.format("ratingPerBonus[%s] = %s", RatingNameToID[id], ratingPerBonus));
+	elseif (level >= 80) then
 		local hvalue;
 	    if id == COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN then --16 = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN
 			hvalue = H_Resilience[level];
@@ -5493,27 +5544,19 @@ function StatLogic:GetEffectFromRating(rating, id, level, class)
 			assert(hvalue ~= nil, string.format("H[level=%d] is nil", level));
 			assert(hvalue ~= 0, string.format("H[level=%d] is zero", level));
 		end
-		
-		if (id == CR_DODGE) or (id == CR_PARRY) then
-			--Dodge and parry use a higher scaling factor.
-			--Level 85.  12.80571 --> 19.20857  (for dodge and parry only), a factor of 1.5 larger
-			--The H scaling factor is 1.5 times higher for Dodge&Parry; 
-			--While the rating value is only ~1.48 times larger. 
-			--The different comes from the fact that Mastery is 14 at level 60, 
-			--while dodge and parry are 13.8 at level 60
-			hvalue = hvalue*1.49999993092243; --1.5 gives a slight bias. The value of H must need adjustment, (or ratingBase) 1.5000000; 
-		end;
 
-		combatEffect = rating/combatUnitRatingBase/hvalue;
+		ratingPerBonus = combatUnitRatingBase*hvalue;
 	elseif level >= 70 then
-	    combatEffect = rating/combatUnitRatingBase/((82/52)*(131/63)^((level-70)/10));
+	    ratingPerBonus = combatUnitRatingBase*((82/52)*(131/63)^((level-70)/10));
 	elseif level >= 60 then
-	    combatEffect = rating/combatUnitRatingBase/(82/(262-3*level));
+	    ratingPerBonus = combatUnitRatingBase*(82/(262-3*level));
 	elseif level >= 10 then
-	    combatEffect = rating/combatUnitRatingBase/((level-8)/52);
+	    ratingPerBonus = combatUnitRatingBase*((level-8)/52);
 	else
-	    combatEffect = rating/combatUnitRatingBase/(2/52);
+	    ratingPerBonus = combatUnitRatingBase*(2/52);
 	end
+	
+	combatEffect = rating / ratingPerBonus;
 	
 	return combatEffect, RatingIDToConvertedStat[id]; --e.g. 6.47162208, "PARRY"
 end
@@ -6138,6 +6181,80 @@ function StatLogic:GetHealthFromSta(sta, level)
 	-- Calculate
 	return sta * mod, "HEALTH"
 end
+
+--[[
+  :GetParryPerStr()
+-------------------------------------
+Arguments:
+  None
+Returns:
+  ; parry : number - Parry percentage per Strength (before diminishing returns)
+  ; statid : string - "PARRY"
+Example:
+  local parry, statid = StatLogic:GetParryPerStr()
+-----------------------------------]]
+function StatLogic:GetParryPerStr()
+--[[
+	We know some values, but Parry/Str varies by level:
+	
+		QsL85 = 243.605345852; --conversion factor of Strength to Parry%. E.g. 243.6 Strength --> +1% Parry (before DR)
+		QsL86 = 319.31752794619; --conversion factor of Strengh to Parry%. 
+		QsL87 = 
+		QsL88 = 
+		QsL89 = 
+		QsL90 = 951.158596; --conversion factor of Strength to Parry for Paladins and warriors (exact, given by Ghostcrawler: http://us.battle.net/wow/en/forum/topic/5889309137?page=90#1785)
+		
+	The problem is that we don't know other levels, other classes, or *if* it even varies by class.
+	So we'll follow the rouge of GetDogePerAgi, and using the player's current stats,
+	try to dig out and reverse engineer a value.
+--]]	
+
+	--[[Only five classes *can* even parry
+			--SpellID: 3127   Parry (Warrior)
+			--SpellID: 82242  Parry (Paladin)
+			--SpellID: 82245  Parry (Rogue)
+			--SpellID: 82246  Parry (Death Knight)
+			--SpellID: 116812 Parry (Monk)
+	--]]
+
+	if not (IsSpellKnown(3127) or IsSpellKnown(82242) or IsSpellKnown(82245) or IsSpellKnown(82246) or IsSpellKnown(116812)) then
+		return 0, "PARRY";
+	end;
+
+	--[[
+	q = -b +- sqrt( b^2 - 4ac)
+	    -----------------------
+		         2a
+
+	--]]
+	
+	local str, _, posBuff = UnitStat("player", 1); --1=Strength
+	
+	local p = 3; --Base Parry (e.g. 3%)
+	local R = GetCombatRatingBonus(CR_PARRY); --Parry Rating Bonus (e.g. 13.73% Parry from Parry Rating)
+	local P = GetParryChance(); --Parry Chance, after diminishing returns (e.g. 27.18% Parry Chance)
+	local s = str-posBuff; --Base Strength
+	local S = posBuff; --Bonus Strength
+	local C = 237.1859113309; --Parry Cap
+	local k = 0.886; --diminishing returns constant
+	
+	--print(string.format("p=%s, R=%s, P=%s, s=%s, S=%s, C=%s, k=%s", p, R, P, s, S, C, k));
+	
+	local a = C*k*p-C*k*P+C*R+p*R-P*R;
+	
+	--print(string.format("a=%s", a));
+	
+	local Qs = 
+			(
+				-((C*k*s+C*S+p*S-P*S+R*s)^2 - 4*s*S*a)^0.5 - C*k*s-C*S-p*S+P*S-R*s
+			)
+			/
+			(2*a)
+			
+	
+	--print(string.format("GetParryPerStr: Qs = %s", Qs));
+	return Qs, "PARRY";
+end;
 
 
 --[[---------------------------------
@@ -8258,17 +8375,57 @@ local LibStatLogicTests = {
 			end;
 		end;
 	end;
+
+	testGetParryPerStr = function()
+		local Qs = StatLogic:GetParryPerStr();
+		
+		print("GetParryPerStat: Qs="..Qs or 'nil');
+	end;
 	
 	testGetParryChance = function()
 		local parryChance, parryBeforeDR, freeParry = StatLogic:GetParryChance(1000, 1000);
+		
+		local expectedParryChance = GetParryChance();
+		parryChance = StatLogic:GetParryChance();
+		
+		local epsilon = 0.0001;  --four decimal places
+		if (math.abs(parryChance-expectedParryChance) > epsilon) then	
+			checkEquals(expectedParryChance, parryChance, "GetParryChance() does not match player.");		
+		end;
 	end;
 	
 	testGetDodgeChance = function()
 		local dodgeChance, dodgeBeforeDR, freeDodge = StatLogic:GetDodgeChance(1000, 1000);
+		
+		local expectedDodgeChance = GetDodgeChance();
+		dodgeChance = StatLogic:GetDodgeChance();
+
+		local epsilon = 0.0001;  --four decimal places
+		if (math.abs(dodgeChance-expectedDodgeChance) > epsilon) then	
+			checkEquals(expectedDodgeChance, dodgeChance, "GetDodgeChance() does not match player.");		
+		end;
 	end;
 	
 	testGetBlockChance = function()
 		local blockChance, blockChanceBeforeDR, freeBlock = StatLogic:GetBlockChance(1000);
+	end;
+	
+	testGetEffectFromRatingMatchesCurrentPlayer = function()
+		local bonus, expectedBonus;
+		
+		local nCombatRatingID;
+		for nCombatRatingID = 1, CR_MAX do
+			bonus = StatLogic:GetEffectFromRating(GetCombatRating(nCombatRatingID), nCombatRatingID);
+			expectedBonus = GetCombatRatingBonus(nCombatRatingID);
+			
+			print(string.format("Combat rating %s. Expected: %.7f%%. Calculated: %.7f%%", 
+					StatLogic:GetRatingIdOrStatId(nCombatRatingID), expectedBonus, bonus));
+			
+			if (math.abs(bonus-expectedBonus) > 0.00001) then
+				checkEquals(expectedBonus, bonus, string.format("Calculated combat bonus didn't match actual combat bonus for %s (to within 5 decimal places)", 
+						StatLogic:GetRatingIdOrStatId(nCombatRatingID)));
+			end;
+		end;
 	end;
 	
 	testGetRatingPerBonusMatchesCurrentPlayer = function()
@@ -8301,25 +8458,7 @@ local LibStatLogicTests = {
 			end;
 		end;
 	end;
-	
-	hiddentestGetEffectFromRatingMatchesCurrentPlayer = function()
-		local bonus, expectedBonus;
-		
-		local nCombatRatingID;
-		for nCombatRatingID = 1, CR_MAX do
-			bonus = StatLogic:GetEffectFromRating(GetCombatRating(nCombatRatingID), nCombatRatingID);
-			expectedBonus = GetCombatRatingBonus(nCombatRatingID);
-			
-			print(string.format("Combat rating %s. Expected: %.7f%%. Calculated: %.7f%%", 
-					StatLogic:GetRatingIdOrStatId(nCombatRatingID), expectedBonus, bonus));
-			
-			if (math.abs(bonus-expectedBonus) > 0.00001) then
-				checkEquals(expectedBonus, bonus, string.format("Calculated combat bonus didn't match actual combat bonus for %s (to within 5 decimal places)", 
-						StatLogic:GetRatingIdOrStatId(nCombatRatingID)));
-			end;
-		end;
-	end;
-	
+
 	testParseLineEnUS = function()
 		local locale = GetLocale();
 		if (locale ~= "enUS") then
@@ -8392,8 +8531,8 @@ local LibStatLogicTests = {
 		testStats("491.96 - 913.64 Damage", "MAX_DAMAGE", 913.64);
 		testStats("(251.00 damage per second)", "DPS", 251.00);
 		testStats("Equip: Increases spell power by 2,783.", "SPELL_DMG", 2783, "HEAL", 2783);
-		
 	end;
+
 };	
 
 WoWUnit:AddTestSuite("lsl", LibStatLogicTests);

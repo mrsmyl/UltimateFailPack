@@ -23,23 +23,21 @@ PatternLocale.zhCN = { -- {{{
 	Mail = "锁甲",
 	Leather = "皮甲",
 	Cloth = "布甲",
+	
 	------------------
 	-- Fast Exclude --
 	------------------
-	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines
+	-- Note to localizers: This is important for reducing lag on mouse over.
+	-- Turn on /sldebug and see if there are any "No Match" strings, any 
+	-- unused strings should be added in the "Exclude" table, because an unmatched 
+	-- string costs a lot of CPU time, and should be prevented whenever possible.
+	-- By looking at the first ExcludeLen letters of a line we can exclude a lot of lines.
+	-- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+	-- Instead include them in the NeutralExclude table in the enUS.lua file so other locales can use them too.
 	["ExcludeLen"] = 3, -- using string.utf8len
   ["Exclude"] = {
     [""] = true,
     [" \n"] = true,
-    [ITEM_BIND_ON_EQUIP] = true, -- ITEM_BIND_ON_EQUIP = "Binds when equipped"; -- Item will be bound when equipped
-    [ITEM_BIND_ON_PICKUP] = true, -- ITEM_BIND_ON_PICKUP = "Binds when picked up"; -- Item wil be bound when picked up
-    [ITEM_BIND_ON_USE] = true, -- ITEM_BIND_ON_USE = "Binds when used"; -- Item will be bound when used
-    [ITEM_BIND_QUEST] = true, -- ITEM_BIND_QUEST = "Quest Item"; -- Item is a quest item (same logic as ON_PICKUP)
-    [ITEM_SOULBOUND] = true, -- ITEM_SOULBOUND = "Soulbound"; -- Item is Soulbound
-    [ITEM_STARTS_QUEST] = true, -- ITEM_STARTS_QUEST = "This Item Begins a Quest"; -- Item is a quest giver
-    [ITEM_CANT_BE_DESTROYED] = true, -- ITEM_CANT_BE_DESTROYED = "That item cannot be destroyed."; -- Attempted to destroy a NO_DESTROY item
-    [ITEM_CONJURED] = true, -- ITEM_CONJURED = "Conjured Item"; -- Item expires
-    [ITEM_DISENCHANT_NOT_DISENCHANTABLE] = true, -- ITEM_DISENCHANT_NOT_DISENCHANTABLE = "Cannot be disenchanted"; -- Items which cannot be disenchanted ever
     ["分解"] = true, -- ITEM_DISENCHANT_ANY_SKILL = "Disenchantable"; -- Items that can be disenchanted at any skill level
     ["分解需"] = true, -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)"; -- Minimum enchanting skill needed to disenchant
     ["持续时"] = true, -- ITEM_DURATION_DAYS = "Duration: %d days";
@@ -68,54 +66,6 @@ PatternLocale.zhCN = { -- {{{
     ["(6) 套装"] = true,
     ["(7) 套装"] = true,
     ["(8) 套装"] = true,
-    -- Equip type
-    ["弹药"] = true, -- Ice Threaded Arrow ID:19316
-    [INVTYPE_AMMO] = true,
-    [INVTYPE_HEAD] = true,
-    [INVTYPE_NECK] = true,
-    [INVTYPE_SHOULDER] = true,
-    [INVTYPE_BODY] = true,
-    [INVTYPE_CHEST] = true,
-    [INVTYPE_ROBE] = true,
-    [INVTYPE_WAIST] = true,
-    [INVTYPE_LEGS] = true,
-    [INVTYPE_FEET] = true,
-    [INVTYPE_WRIST] = true,
-    [INVTYPE_HAND] = true,
-    [INVTYPE_FINGER] = true,
-    [INVTYPE_TRINKET] = true,
-    [INVTYPE_CLOAK] = true,
-    [INVTYPE_WEAPON] = true,
-    [INVTYPE_SHIELD] = true,
-    [INVTYPE_2HWEAPON] = true,
-    [INVTYPE_WEAPONMAINHAND] = true,
-    [INVTYPE_WEAPONOFFHAND] = true,
-    [INVTYPE_HOLDABLE] = true,
-    [INVTYPE_RANGED] = true,
-    [INVTYPE_THROWN] = true,
-    [INVTYPE_RANGEDRIGHT] = true,
-    [INVTYPE_RELIC] = true,
-    [INVTYPE_TABARD] = true,
-    [INVTYPE_BAG] = true,
-    [REFORGED] = true,
-    [ITEM_HEROIC] = true,
-    [ITEM_HEROIC_EPIC] = true,
-    [ITEM_HEROIC_QUALITY0_DESC] = true,
-    [ITEM_HEROIC_QUALITY1_DESC] = true,
-    [ITEM_HEROIC_QUALITY2_DESC] = true,
-    [ITEM_HEROIC_QUALITY3_DESC] = true,
-    [ITEM_HEROIC_QUALITY4_DESC] = true,
-    [ITEM_HEROIC_QUALITY5_DESC] = true,
-    [ITEM_HEROIC_QUALITY6_DESC] = true,
-    [ITEM_HEROIC_QUALITY7_DESC] = true,
-    [ITEM_QUALITY0_DESC] = true,
-    [ITEM_QUALITY1_DESC] = true,
-    [ITEM_QUALITY2_DESC] = true,
-    [ITEM_QUALITY3_DESC] = true,
-    [ITEM_QUALITY4_DESC] = true,
-    [ITEM_QUALITY5_DESC] = true,
-    [ITEM_QUALITY6_DESC] = true,
-    [ITEM_QUALITY7_DESC] = true,
   },
   --[[
   textTable = {
@@ -294,9 +244,12 @@ PatternLocale.zhCN = { -- {{{
     "^(.-) ?([%d%.]+) ?点(.-)$", --
     "^(.-) ?([%d%.]+) ?(.-)$", --
   },
+	
   -----------------------
   -- Stat Lookup Table --
   -----------------------
+  -- Please DO NOT include any strings here that are available as constant in GlobalStrings.lua.
+  -- Instead include them in the NeutralStatIDLookup or NeutralStatIDLookupWithPlaceholders table in the enUS.lua file so other locales can use them too.
   ["StatIDLookup"] = {
     ["你的攻击无视目标的点护甲值"] = {"IGNORE_ARMOR"}, -- StatLogic:GetSum("item:33733")
     ["% 威胁"] = {"MOD_THREAT"}, -- StatLogic:GetSum("item:23344:2613")
