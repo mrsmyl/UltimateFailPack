@@ -1,0 +1,14 @@
+tag 1.21
+ff73944339f724372bbd03bef3662587287006cb
+Sal Scotto <sal.scotto@gmail.com>
+2012-10-03 10:16:01 -0400
+
+Pickup PT localizations
+
+
+--------------------
+
+Sal Scotto:
+	- Added mists to expansion list for import
+	- Fixed some icon dimensions. updated rare node mappings for golden lotus
+	- Fixed floating debris pool

@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.6.8: new VgerCore version
+-- Version 1.6.9: updated Wowhead scales
 ------------------------------------------------------------
 
 
-PawnVersion = 1.608
+PawnVersion = 1.609
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.08
