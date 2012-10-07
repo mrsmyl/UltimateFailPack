@@ -5,7 +5,7 @@
 if (not XPerl_GetUsage) then
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 743 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 746 $")
 
 XPerl_Usage = {}
 
@@ -106,7 +106,7 @@ function mod:ProcessXPerlMessage(sender, msg, channel)
 		if (XPerlTest) then myUsage.packets = (myUsage.packets or 0) + 1 end
 
 		myUsage.old = nil
-		local ver = strsub(msg, 6)
+		local ver = strsub(msg, 5)
 
 		if (ver == XPerl_VersionNumber) then
 			myUsage.version = nil

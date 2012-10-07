@@ -1,4 +1,52 @@
 ------------------------------------------------------------------------
+r751 | playerlin | 2012-10-03 13:00:52 +0000 (Wed, 03 Oct 2012) | 4 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+3.6.0
+
+Some bugfixes for bugged on 3.5.60 and older.
+And enough with 3.5.x so just bumped to 3.6.0, sorry and eat me.
+------------------------------------------------------------------------
+r750 | tharai | 2012-10-03 08:28:36 +0000 (Wed, 03 Oct 2012) | 2 lines
+Changed paths:
+   M /trunk/XPerl.lua
+
+Proper fix for curable debuffs.
+Add monk code for curable debuffs.
+------------------------------------------------------------------------
+r749 | asixandur | 2012-10-02 17:45:41 +0000 (Tue, 02 Oct 2012) | 4 lines
+Changed paths:
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Don't really know why Tharai committed that.
+Probably because of a taint in 5.0.4 and it isn't here anymore.
+This should fix bugs about Blizz Raid Manager not showing.
+I haven't time to check if removing next line gets the taint back or if it just makes the Blizz raid organizer work again.
+------------------------------------------------------------------------
+r748 | asixandur | 2012-10-02 17:22:40 +0000 (Tue, 02 Oct 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Fixes problem with X-Perl not showing Magic debuffs with Shamans
+------------------------------------------------------------------------
+r747 | romracer | 2012-09-25 22:47:41 +0000 (Tue, 25 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+Fix Faction icons for Neutral pandas and that ugly green box
+------------------------------------------------------------------------
+r746 | tharai | 2012-09-25 09:09:36 +0000 (Tue, 25 Sep 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Usage.lua
+
+How did this get revereted again..
+------------------------------------------------------------------------
 r745 | tharai | 2012-09-25 02:36:29 +0000 (Tue, 25 Sep 2012) | 5 lines
 Changed paths:
    M /trunk/XPerl.toc
@@ -395,185 +443,4 @@ Changed paths:
    M /trunk/XPerl_Options/localization.itIT.lua
 
 More itIT Strings. With the help of some friends, I will probably finish itIT translation in a few days
-------------------------------------------------------------------------
-r692 | asixandur | 2012-09-01 13:42:16 +0000 (Sat, 01 Sep 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Options/localization.itIT.lua
-
-Lots of itIT strings
-------------------------------------------------------------------------
-r691 | tharai | 2012-08-31 22:12:54 +0000 (Fri, 31 Aug 2012) | 2 lines
-Changed paths:
-   M /trunk/XPerl_Party/XPerl_Party.lua
-
-Party frames fix for not showing up without either raid option enabled. 
-Fix party frames not being hidden once entering a raid.
-------------------------------------------------------------------------
-r690 | asixandur | 2012-08-31 16:22:09 +0000 (Fri, 31 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Options/localization.itIT.lua
-
-More itIT work
-------------------------------------------------------------------------
-r689 | asixandur | 2012-08-31 13:40:34 +0000 (Fri, 31 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Options/localization.itIT.lua
-
-More itIT work
-------------------------------------------------------------------------
-r688 | tharai | 2012-08-31 12:15:16 +0000 (Fri, 31 Aug 2012) | 2 lines
-Changed paths:
-   M /trunk/XPerl.toc
-   M /trunk/localization.deDE.lua
-   M /trunk/localization.esES.lua
-   M /trunk/localization.frFR.lua
-   M /trunk/localization.koKR.lua
-   M /trunk/localization.lua
-   M /trunk/localization.ruRU.lua
-   M /trunk/localization.zhCN.lua
-   M /trunk/localization.zhTW.lua
-
-localization updates
-Bump version number so people stop crying about issues that have been fixed.
-------------------------------------------------------------------------
-r687 | asixandur | 2012-08-31 08:06:15 +0000 (Fri, 31 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Options/localization.itIT.lua
-
-More itIT work, I won't finish that before the end of next week (so many strings)
-------------------------------------------------------------------------
-r686 | tharai | 2012-08-30 21:08:35 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-
-Shadow priest power bar.
-------------------------------------------------------------------------
-r685 | tharai | 2012-08-30 18:37:40 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Fix focus frame issues.
-------------------------------------------------------------------------
-r684 | tharai | 2012-08-30 18:13:01 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Init.lua
-
-Remove some invalid spellids
-------------------------------------------------------------------------
-r683 | tharai | 2012-08-30 16:17:28 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Hack together talent display.
-------------------------------------------------------------------------
-r682 | asixandur | 2012-08-30 06:06:20 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   A /trunk/XPerl_Options/localization.itIT.lua
-   M /trunk/localization.itIT.lua
-
-Some more work on the itIT Locale
-------------------------------------------------------------------------
-r681 | tharai | 2012-08-30 04:28:31 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-remove some unused events, comment out some combo point code.
-------------------------------------------------------------------------
-r680 | asixandur | 2012-08-30 04:24:57 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Globals.xml
-   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
-   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.xml
-   M /trunk/XPerl_RaidFrames/XPerl_Raid.xml
-   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.xml
-   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.xml
-   A /trunk/localization.itIT.lua
-
-First itIT locale file
-------------------------------------------------------------------------
-r679 | tharai | 2012-08-30 04:04:09 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl.lua
-
-More lua changes.
-------------------------------------------------------------------------
-r678 | tharai | 2012-08-30 04:01:27 +0000 (Thu, 30 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Party/XPerl_Party.lua
-   M /trunk/XPerl_Player/XPerl_Player.lua
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Fix loot issues.
-------------------------------------------------------------------------
-r677 | tharai | 2012-08-29 15:58:54 +0000 (Wed, 29 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl.lua
-
-more api changes.
-------------------------------------------------------------------------
-r676 | tharai | 2012-08-29 00:13:11 +0000 (Wed, 29 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Seriously, I always forget to recomment this stuff out.
-------------------------------------------------------------------------
-r675 | tharai | 2012-08-29 00:12:04 +0000 (Wed, 29 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-   M /trunk/XPerl_Target/XPerl_Target.lua
-
-Fix master loot icon in raid. Haven't tested in 5man only.
-------------------------------------------------------------------------
-r674 | tharai | 2012-08-28 22:55:44 +0000 (Tue, 28 Aug 2012) | 2 lines
-Changed paths:
-   M /trunk/XPerl.toc
-   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.toc
-   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.toc
-   M /trunk/XPerl_Options/XPerl_Options.toc
-   M /trunk/XPerl_Party/XPerl_Party.toc
-   M /trunk/XPerl_PartyPet/XPerl_PartyPet.toc
-   M /trunk/XPerl_Player/XPerl_Player.toc
-   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.toc
-   M /trunk/XPerl_PlayerPet/XPerl_PlayerPet.toc
-   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.toc
-   M /trunk/XPerl_RaidFrames/XPerl_RaidFrames.toc
-   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.toc
-   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.toc
-   M /trunk/XPerl_RaidPets/XPerl_RaidPets.toc
-   M /trunk/XPerl_Target/XPerl_Target.toc
-   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.toc
-   M /trunk/localization.lua
-
-Toc bump
-Update version number in the localization.lua as well.
-------------------------------------------------------------------------
-r673 | tharai | 2012-08-28 22:20:07 +0000 (Tue, 28 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Usage.lua
-
-fix error
-------------------------------------------------------------------------
-r672 | tharai | 2012-08-27 15:37:23 +0000 (Mon, 27 Aug 2012) | 2 lines
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-   M /trunk/XPerl_Player/XPerl_Player.xml
-
-Better warlock bar stuff
-Also get rid of backdrop for druid bar.
-------------------------------------------------------------------------
-r671 | tharai | 2012-08-27 05:23:12 +0000 (Mon, 27 Aug 2012) | 1 line
-Changed paths:
-   M /trunk/XPerl_Player/XPerl_Player.lua
-
-basic warlock shiz
-------------------------------------------------------------------------
-r670 | sontix | 2012-08-19 17:42:10 +0000 (Sun, 19 Aug 2012) | 3 lines
-Changed paths:
-   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
-   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
-
-fixed wrong checkbox parenting / option name
-fixed missing deathknight checkbox in monitor module
-save frames position when using the align top function
 ------------------------------------------------------------------------

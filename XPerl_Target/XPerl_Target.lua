@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 736 $")
+			end, "$Revision: 747 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -287,7 +287,7 @@ end
 local function XPerl_Target_UpdatePVP(self)
 	local partyid = self.partyid
 
-	local pvp = self.conf.pvpIcon and (UnitIsPVP(partyid) and UnitFactionGroup(partyid)) or (UnitIsPVPFreeForAll(partyid) and "FFA")
+	local pvp = self.conf.pvpIcon and (UnitIsPVPFreeForAll(partyid) and "FFA") or (UnitIsPVP(partyid) and (UnitFactionGroup(partyid) ~= "Neutral") and UnitFactionGroup(partyid))
 	if (pvp) then
 		self.nameFrame.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..pvp)
 		self.nameFrame.pvpIcon:Show()

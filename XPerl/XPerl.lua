@@ -6,8 +6,8 @@ local conf
 local percD	= "%d"..PERCENT_SYMBOL
 local perc1F = "%.1f"..PERCENT_SYMBOL
 
-XPerl_SetModuleRevision("$Revision: 739 $")
-XPerl_RequestConfig(function(New) conf = New end, "$Revision: 739 $")
+XPerl_RequestConfig(function(New) conf = New end, "$Revision: 751 $")
+XPerl_SetModuleRevision("$Revision: 751 $")
  
 --Some local copies for speed
 local strsub = strsub
@@ -1487,15 +1487,16 @@ end
 }]]--
 
 local MagicCureTalents = {
-	["DRUID"] = 88423,			-- Nature's Cure
-	["PALADIN"] = 53551,			-- Sacred Cleansing
-	["SHAMAN"] = 77130,			-- Improved Cleanse Spirit
+	["DRUID"] = 4,	--Resto
+	["PALADIN"] = 1,	 --Holy
+	["SHAMAN"] = 3, -- Resto
+	["MONK"] = 2, -- Mistweaver
 }
 
 local function CanClassCureMagic(class)
 	if (MagicCureTalents[class]) then
 		--return GetTalentValueByName(MagicCureTalents[class]) > 0
-		return IsSpellKnown(MagicCureTalents[class])	
+		return (GetSpecialization() == MagicCureTalents[class])--IsSpellKnown(MagicCureTalents[class])	
 	end
 end
 
@@ -1540,6 +1541,18 @@ function XPerl_DebufHighlightInit()
 				show = Curses.Magic or Curses.Curse or Curses.Poison or Curses.Disease
 			end
 			return Curses.Magic or show
+		end
+	elseif (playerClass == "MONK") then
+		getShow = function(Curses)
+			local show
+			if (not conf.highlightDebuffs.class) then
+				show = Curses.Magic or Curses.Curse or Curses.Poison or Curses.Disease
+			end
+			local magic
+			if (CanClassCureMagic(playerClass)) then
+				magic = Curses.Magic
+			end
+			return Curses.Poison or Curses.Disease or magic or show
 		end
 
 	elseif (playerClass == "PALADIN") then

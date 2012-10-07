@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 736 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 747 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%.0f"..PERCENT_SYMBOL
 
@@ -431,7 +431,7 @@ local function XPerl_Player_UpdatePVP(self)
 		XPerl_ColourFriendlyUnit(nf.text, "player")
 	end
 
-	local pvp = pconf.pvpIcon and (UnitIsPVP("player") and UnitFactionGroup("player")) or (UnitIsPVPFreeForAll("player") and "FFA")
+	local pvp = pconf.pvpIcon and (UnitIsPVPFreeForAll("player") and "FFA") or (UnitIsPVP("player") and (UnitFactionGroup("player") ~= "Neutral") and UnitFactionGroup("player"))
 	if (pvp) then
 		nf.pvp.icon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..pvp)
 		nf.pvp:Show()
