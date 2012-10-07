@@ -1,0 +1,12 @@
+tag v1.5.30
+5707dfc0e9332ba9f755f8d374363ba4f90c1c78
+Dorwido <darkz@gmx.de>
+2012-10-01 23:01:36 +0200
+
+v1.5.30
+
+
+--------------------
+
+Dorwido:
+	- -fixed error when opening the flight map -fixed error with missing flight master module

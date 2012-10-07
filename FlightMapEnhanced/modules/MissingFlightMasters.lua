@@ -24,10 +24,12 @@ function ns:initmfm()
 		local dis = FlightMapEnhanced_Config.discovery;
 		local faction =  UnitFactionGroup("player");
 		local missingcont = false;
-		for i=1,4 do
-			missing[i] = {};
-			if(ns.flocdis.count[i]==0) then
-				missingcont = true;
+		for i=1,6 do
+			if i ~= 5 then
+				missing[i] = {};
+				if(ns.flocdis.count[i]==0) then
+					missingcont = true;
+				end
 			end
 		end
 		local c=0;
@@ -103,13 +105,14 @@ function ns:initmfm()
 	function module:onevent(event,...)
 		if(event=="WORLD_MAP_UPDATE") then
 			local curcont = GetCurrentMapContinent(); 
-			if(WorldMapFrame:IsVisible() and curcont~=-1 and curcont<5) then
+			if(WorldMapFrame:IsVisible() and curcont~=-1 and curcont<7 and curcont~=5) then
 				module:hideall();
 				local curmapid = GetCurrentMapAreaID();
 				if(curcont==0) then
 					module:ShowContinent(1,20);
 					module:ShowContinent(2,20);
 					module:ShowContinent(4,20);
+					module:ShowContinent(6,20);
 				elseif(showconts[curmapid]) then
 					module:ShowContinent(showconts[curmapid],25);
 				else

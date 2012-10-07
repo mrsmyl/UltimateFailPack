@@ -619,6 +619,7 @@ function FlightMapEnhanced_OnEvent(self,event,...)
 				flocn["count"][2] = 0;
 				flocn["count"][3] = 0;
 				flocn["count"][4] = 0;
+				flocn["count"][6] = 0;
 			end
 			
 			ns.flocn = flocn;
@@ -629,6 +630,7 @@ function FlightMapEnhanced_OnEvent(self,event,...)
 				flocdis["count"][2] = 0;
 				flocdis["count"][3] = 0;
 				flocdis["count"][4] = 0;
+				flocdis["count"][6] = 0;
 			 end
 			
 			
@@ -650,13 +652,13 @@ function FlightMapEnhanced_OnEvent(self,event,...)
 			end
 			ns:LoadModules();
 			if not(FlightMapEnhanced_Config.vconf.version) then
-				ns:configchange(0,9);
-			elseif(FlightMapEnhanced_Config.vconf.version<9) then
-				ns:configchange(FlightMapEnhanced_Config.vconf.version,9);
+				ns:configchange(0,10);
+			elseif(FlightMapEnhanced_Config.vconf.version<10) then
+				ns:configchange(FlightMapEnhanced_Config.vconf.version,10);
 			end
 			ns.configchange = nil;
-			if(ns.gconf.version < 5) then
-				ns:gconfigchange(5);
+			if(ns.gconf.version < 6) then
+				ns:gconfigchange(6);
 			end
 			ns.gconfigchange = nil;
 			collectgarbage();
