@@ -133,6 +133,7 @@ L["Mineral Veins"] = true
 L["Minimap Icon Scale"] = true
 L["Minimap Icon Tooltips"] = true
 L["Mining"] = true
+L["Mists of Pandaria"] = true
 L["Never show"] = true
 L["Only import selected expansion data from WoWDB"] = true
 L["Only import selected expansion data from WoWhead"] = true

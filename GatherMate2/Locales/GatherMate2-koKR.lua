@@ -129,6 +129,7 @@ L["Mineral Veins"] = "광맥"
 L["Minimap Icon Scale"] = "미니맵 아이콘 크기"
 L["Minimap Icon Tooltips"] = "미니맵 아이콘 툴팁"
 L["Mining"] = "채광"
+L["Mists of Pandaria"] = "판다리아의 안개" -- Needs review
 L["Never show"] = "항상 숨김"
 L["Only import selected expansion data from WoWDB"] = "WoWDB에서 선택한 확장 데이터만 추가합니다."
 L["Only import selected expansion data from WoWhead"] = "WoWhead에서 선택한 확장 데이터만 추가합니다."

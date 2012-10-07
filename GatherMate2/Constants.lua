@@ -17,7 +17,7 @@ local node_ids = {
 	["Fishing"] = {
 		[NL["Floating Wreckage"]] 				= 101, -- treasure.tga
 		--[NL["Patch of Elemental Water"]] 		= 102, -- purewater.tga
-		[NL["Floating Debris Pool"]]			= 103, -- debris.tga
+		[NL["Floating Debris"]]			= 103, -- debris.tga
 		--[NL["Oil Spill"]] 					= 104, -- oilspill.tga
 		[NL["Firefin Snapper School"]] 			= 105, -- firefin.tga
 		[NL["Greater Sagefish School"]] 		= 106, -- greatersagefish.tga
@@ -334,6 +334,7 @@ local rare_spawns = {
 	[240] = {[236]=true}, -- rich pyrite
 	[243] = {[242]=true,[241]=true}, -- black trillium ore
 	[244] = {[242]=true,[241]=true}, -- white trillium ore
+	[462] = {[462]=true,[463]=true,[464]=true,[465]=true,[466]=true,[467]=true,[468]=true}, -- golden lotus
 }
 Collector.rareNodes = rare_spawns
 -- Format zone = { "Database", "new node id"}

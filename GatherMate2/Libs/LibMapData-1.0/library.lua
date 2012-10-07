@@ -2,7 +2,7 @@
 	Library contains a dataset for Map file names and floors giving the raw map data
 	it also has a few functions to help determine distance and directions.
 --]]
-local MAJOR, MINOR = "LibMapData-1.0", tonumber("110") or 999
+local MAJOR, MINOR = "LibMapData-1.0", 16057
 assert(LibStub, MAJOR.." requires LibStub")
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
@@ -57,7 +57,7 @@ local transforms_x = {
 	[3] = 0,
 	[4] = 0,
 	[5] = 0,
-	[6] = 0,
+	[6] = 0, --1600,
 }
 local transforms_y = {
 	[1] = 17600.0,
@@ -65,7 +65,7 @@ local transforms_y = {
 	[3] = 0,
 	[4] = 0,
 	[5] = 0,
-	[6] = 0,
+	[6] = 0, --2800,
 }
 
 do
@@ -80,7 +80,7 @@ do
 	setmetatable(mapData, { __index = function(t, k) 
 			if k then 
 				if missingCache.data[k] == nil then
-					--DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing data for "..k) 
+					--print("LibMapData-1.0 is missing data for ",k) 
 					missingCache.data[k] = true
 				end
 			end 
@@ -90,7 +90,7 @@ do
 	setmetatable(idToMap, { __index = function(t, k) 
 			if k then 
 				if missingCache.aid[k] == nil then
-					--DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing data for area id "..k) 
+					--print("LibMapData-1.0 is missing data for area id ",k) 
 					missingCache.aid[k] = true
 				end
 			end 
@@ -100,7 +100,7 @@ do
 	setmetatable(mapToLocal, { __index = function(t,k) 
 			if k then 
 				if missingCache.locale[k] == nil then
-					--DEFAULT_CHAT_FRAME:AddMessage("LibMapData-1.0 is missing localized data for "..k) 
+					--print("LibMapData-1.0 is missing localized data for ",k) 
 					missingCache.locale[k] = true
 				end
 			end
@@ -1583,7 +1583,7 @@ function lib:ConvertToWorldPoint(mapfile,x,y)
 	local fl = mapData[mapfile]
 	-- Convert to continet data
 	local x1,y1 = self:ConvertToContinent(mapfile,0,x,y)
-	return x1 + contOffsets[fl.continent], y1 + contOffsets[fl.continent]
+	return x1 + contOffsets[fl.continent][1], y1 + contOffsets[fl.continent][2]
 end
 
 --- API to convert from the world poistion in yars to the world map scale

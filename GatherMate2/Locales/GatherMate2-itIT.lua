@@ -129,6 +129,7 @@ Kagaro, Xinhuan, Nevcairiel and Ammo]=] ]==]
 -- L["Minimap Icon Scale"] = "Minimap Icon Scale"
 -- L["Minimap Icon Tooltips"] = "Minimap Icon Tooltips"
 -- L["Mining"] = "Mining"
+-- L["Mists of Pandaria"] = "Mists of Pandaria"
 -- L["Never show"] = "Never show"
 -- L["Only import selected expansion data from WoWDB"] = "Only import selected expansion data from WoWDB"
 -- L["Only import selected expansion data from WoWhead"] = "Only import selected expansion data from WoWhead"
