@@ -444,13 +444,13 @@ function BrokerXPBar:OnEnable()
 	-- init xp history
 	self.History:Initialize()
 	
-	self.History:SetTimeFrame(self:GetSetting("TimeFrame") * 60)
+	self.History:SetTimeFrame(self:GetSetting("TimeFrame"))
 	self.History:SetWeight(self:GetSetting("Weight"))
 
 	-- init reputation history
 	self.ReputationHistory:Initialize()
 	
-	self.ReputationHistory:SetTimeFrame(self:GetSetting("TimeFrame") * 60)
+	self.ReputationHistory:SetTimeFrame(self:GetSetting("TimeFrame"))
 	self.ReputationHistory:SetWeight(self:GetSetting("Weight"))
 	
 	self:RegisterBucketEvent("UPDATE_EXHAUSTION", 60, "Update")
@@ -1033,8 +1033,8 @@ function BrokerXPBar:UpdateWatchedFactionIndex()
 
 	if currentname ~= watchedname then
 		for i = 1, GetNumFactions() do
-			local name, _, _, _, _, _, _, _, isHeader  = GetFactionInfo(i)			
-			if name == watchedname and not isHeader then
+			local name, _, _, _, _, _, _, _, isHeader, _, hasRep  = GetFactionInfo(i)			
+			if name == watchedname and (not isHeader or hasRep) then
 				index = i
 				break
 			end

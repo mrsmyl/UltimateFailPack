@@ -854,9 +854,9 @@ function BrokerXPBar:QueryFactions()
 	clear_table(lookupNames)
 	
 	for factionIndex = 1, GetNumFactions() do
-		local name, _, standing, _, _ , _ ,_ , _, isHeader = GetFactionInfo(factionIndex)
+		local name, _, standing, _, _ , _ ,_ , _, isHeader, _, hasRep = GetFactionInfo(factionIndex)
 		
-		if not isHeader then
+		if not isHeader or hasRep then
 			local r, g, b = self:GetBlizzardReputationColor(standing)
 			
 			tinsert(sortingTable, {factionIndex, name, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..name.."|r"})
@@ -942,8 +942,8 @@ end
 
 function BrokerXPBar:UpdateHistorySetting(option)
 	if option == "TimeFrame" then
-		self.History:SetTimeFrame(self:GetSetting(option) * 60)
-		self.ReputationHistory:SetTimeFrame(self:GetSetting(option) * 60)
+		self.History:SetTimeFrame(self:GetSetting(option))
+		self.ReputationHistory:SetTimeFrame(self:GetSetting(option))
 	elseif option == "Weight" then
 		self.History:SetWeight(self:GetSetting(option))
 		self.ReputationHistory:SetWeight(self:GetSetting(option))

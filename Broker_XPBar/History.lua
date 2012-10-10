@@ -117,7 +117,7 @@ function History:GetTimeToLevel()
 		return "~"
 	end
 
-	local duration_rest = duration
+	local duration_rest = 0
 	
 	if self.endRestTime then
 		duration_rest = self.endRestTime - self.startTime
@@ -126,20 +126,21 @@ function History:GetTimeToLevel()
 	local xp_togo = UnitXPMax("player") - UnitXP("player")
 	
 	-- xp/s (current)
-	local xppersec_c
+	local xppersec_c = self:GetXPPerSecond()
 	-- kills/s (current)
-	local killspersec_c
+	local killspersec_c = self:GetKillsPerSecond()
 	-- fraction of time with rested bonus
 	local rest_factor
 
 	if self.timeframe == 0 or duration < self.timeframe then
-		xppersec_c    = self.totalXP / duration
-		killspersec_c = self.totalKills / duration
 		rest_factor   = duration_rest / duration
 	else
-		xppersec_c    = (self.activityXP / self.timeframe) * self.weight + (self.totalXP / duration) * (1-self.weight)
-		killspersec_c = (self.activityKills / self.timeframe) * self.weight + (self.totalKills / duration) * (1-self.weight)
-		local duration_rest_activity = duration_rest - (duration - self.timeframe)
+		local duration_rest_activity = 0
+		
+		if duration_rest > 0 then
+			duration_rest_activity = duration_rest - (duration - self.timeframe)
+		end
+		
 		rest_factor   = (duration_rest_activity / self.timeframe) * self.weight + (duration_rest / duration) * (1-self.weight)		
 	end
 
@@ -203,6 +204,10 @@ function History:GetKillsToLevel()
 end
 
 function History:GetKillsPerHour()
+	return self:GetKillsPerSecond() * 3600
+end
+
+function History:GetKillsPerSecond()
 	local duration = time() - self.startTime
 
 	if duration == 0 then
@@ -210,13 +215,17 @@ function History:GetKillsPerHour()
 	end
 
 	if self.timeframe == 0 or duration < self.timeframe then
-		return self.totalKills / duration * 3600
+		return self.totalKills / duration
 	else
-		return ((self.activityKills / self.timeframe) * self.weight + (self.totalKills / duration) * (1-self.weight)) * 3600
+		return ((self.activityKills / self.timeframe) * self.weight + (self.totalKills / duration) * (1-self.weight))
 	end
 end
 
 function History:GetXPPerHour()
+	return self:GetXPPerSecond() * 3600
+end
+
+function History:GetXPPerSecond()
 	local duration = time() - self.startTime
 
 	if duration == 0 then
@@ -224,9 +233,9 @@ function History:GetXPPerHour()
 	end
 
 	if self.timeframe == 0 or duration < self.timeframe then
-		return self.totalXP / duration * 3600
+		return self.totalXP / duration
 	else		
-		return ((self.activityXP / self.timeframe) * self.weight + (self.totalXP / duration) * (1-self.weight)) * 3600
+		return ((self.activityXP / self.timeframe) * self.weight + (self.totalXP / duration) * (1-self.weight))
 	end
 end
 
@@ -242,7 +251,7 @@ function History:ProcessXPHistory()
 	end
 	
 	self.activeBucket = currentBucket
-	
+
 	-- remove old buckets
 	while #self.historyXP ~= 0 and self.historyXP[1].time <= (self.activeBucket - self.timeframe) do
 		tremove(self.historyXP, 1)
