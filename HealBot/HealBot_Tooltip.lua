@@ -418,7 +418,7 @@ function HealBot_Tooltip_setspellName(unit, spellName, uName)
             else
                 validSpellName = HealBot_Tooltip_GetHealSpell(unit,spellName,uName) 
                 if validSpellName and HealBot_Globals.Tooltip_ShowCD==1 then
-                    z, x, _ = GetSpellCooldown(validSpellName);
+                    z, x, _ = GetSpellCooldown(spellName);
                     if x and x>1 then 
                         z = HealBot_Comm_round(x-(GetTime()-z),1)
                         validSpellName=validSpellName..HEALBOT_TOOLTIP_CD..z..HEALBOT_TOOLTIP_SECS 
@@ -704,9 +704,7 @@ local hbTT_Valid={}
 
 function HealBot_Tooltip_GetHealSpell(unit,pattern,unitName)
  
-    if HealBot_Globals.spellIDs[pattern] then
-        id = HealBot_Globals.spellIDs[pattern];
-    elseif not HealBot_Spells[pattern] then
+    if not HealBot_Spells[pattern] then
         id = HealBot_GetSpellId(pattern);
     elseif HealBot_Spells[pattern].id then
         id = HealBot_Spells[pattern].id

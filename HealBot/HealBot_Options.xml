@@ -6028,7 +6028,7 @@
                   <Anchors>
                     <Anchor point="CENTER">
                       <Offset>
-                        <AbsDimension x="" y="-52" />
+                        <AbsDimension x="" y="-70" />
                       </Offset>
                     </Anchor>
                   </Anchors>
@@ -6037,7 +6037,7 @@
                   <Anchors>
                     <Anchor point="TOPLEFT">
                       <Offset>
-                        <AbsDimension x="17" y="-178" />
+                        <AbsDimension x="17" y="-192" />
                       </Offset>
                     </Anchor>
                   </Anchors>
@@ -6130,7 +6130,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="HealBot_Options_CDCTxt3" relativePoint="BOTTOMLEFT">>
                     <Offset>
-                      <AbsDimension x="95" y="-25" />
+                      <AbsDimension x="95" y="-20" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6194,6 +6194,19 @@
                   <OnValueChanged>HealBot_Options_IgnoreDebuffsDurationSecs_OnValueChanged(self)</OnValueChanged>
                 </Scripts>
               </Slider>
+              <CheckButton name="HealBot_Options_IgnoreDebuffsCoolDown" inherits="SendMailRadioButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_IgnoreDebuffsDuration" relativePoint="TOPLEFT">>
+                    <Offset>
+                      <AbsDimension x="0" y="-32" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>HealBot_Options_SetText(self,HEALBOT_OPTIONS_IGNOREDEBUFFCOOLDOWN)</OnLoad>
+                  <OnClick>HealBot_Options_IgnoreDebuffsCoolDown_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
               <Frame name="HealBot_Options_CDCPriority1" inherits="UIDropDownMenuTemplate">
                 <Layers>
                   <Layer level="BACKGROUND">
@@ -6211,7 +6224,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="15" y="-275" />
+                      <AbsDimension x="15" y="-295" />
                     </Offset>
                   </Anchor>
                 </Anchors>

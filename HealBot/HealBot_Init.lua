@@ -107,6 +107,9 @@ function HealBot_Init_Spells_Defaults(class)
         [HEALBOT_HOLY_RADIANCE] = {
             id = 82327, CastTime = 0, Mana = 200, Level = 28}, 
 
+        [HEALBOT_HOLY_PRISM] = {
+            id = 114165, CastTime = 0, Mana = 200, Level = 25}, 
+            
         [HEALBOT_LIGHT_OF_DAWN] = {
             id = 85222, CastTime = 0, Mana =  35, Level = 70 },
             
@@ -186,7 +189,7 @@ function HealBot_Init_Spells_Defaults(class)
     local _, talent = GetTalentRowSelectionInfo(6)
     if talent then
         if talent==16 then
-            HealBot_Spells[HEALBOT_HOLY_PRISM] = { id = 114163, CastTime = 0, Mana = 3.5, Level = 90}
+            HealBot_Spells[HEALBOT_HOLY_PRISM] = { id = 114165, CastTime = 0, Mana = 3.5, Level = 90}
         elseif talent==18 then
             HealBot_Spells[HEALBOT_EXECUTION_SENTENCE] = { id = 114157, CastTime = 0, Mana = 3.5, Level = 90}
         end
@@ -288,6 +291,9 @@ function HealBot_Init_Spells_Defaults(class)
     
         [HEALBOT_POWER_WORD_SHIELD] = {
             id = 17, CastTime = 0, Mana =  45, Level = 5 }, 
+            
+        [HEALBOT_SPIRIT_SHELL] = {
+            id = 109964, CastTime = 0, Mana =  45, Level = 28 }, 
             
         [HEALBOT_DIVINE_HYMN] = {
             id = 64843, CastTime = 0, Mana =  30, Level = 78}, 

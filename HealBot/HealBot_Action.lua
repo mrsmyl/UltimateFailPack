@@ -2543,9 +2543,28 @@ function HealBot_Action_SetButtonAttrib(button,bbutton,bkey,status,j)
             button:SetAttribute(HB_prefix.."type"..j, "mainassist")
             button:SetAttribute(HB_prefix.."type-mainassist"..j, "toggle")
             hbAttribsMinReset[button.id..HB_prefix..status..j]=true
+        elseif IsUsableItem(sName) then
+            button:SetAttribute(HB_prefix.."helpbutton"..j, "item"..j);
+            button:SetAttribute(HB_prefix.."type-item"..j, "item");
+            button:SetAttribute(HB_prefix.."item-item"..j, sName);
         else
-            sID=HealBot_GetSpellId(sName)
-            if sID then
+            mId=GetMacroIndexByName(sName)
+            if mId ~= 0 then
+                _,_,mText=GetMacroInfo(mId)
+     --        mUnit = button.unit
+                if UnitExists(HealBot_UnitPet(button.unit)) then
+                    mText=string.gsub(mText,"hbtargetpet",HealBot_UnitPet(button.unit))
+                end
+                mText=string.gsub(mText,"hbtargettargettarget",button.unit.."targettarget")
+                mText=string.gsub(mText,"hbtargettarget",button.unit.."target")
+                mText=string.gsub(mText,"hbtarget",button.unit)
+                button:SetAttribute(HB_prefix.."helpbutton"..j, nil);
+                button:SetAttribute(HB_prefix.."type"..j,"macro")
+                button:SetAttribute(HB_prefix.."macrotext"..j, mText)
+                if status=="Enabled" then
+                    HealBotButtonMacroAttribs[HB_prefix..j]=sName
+                end
+            else
                 if sTar==1 or sTrin1==1 or sTrin2==1 then
                     mText = HealBot_Action_AlterSpell2Macro(sName, sTar, sTrin1, sTrin2, button.unit, HB_combo_prefix)
                     button:SetAttribute(HB_prefix.."helpbutton"..j, nil);
@@ -2556,28 +2575,6 @@ function HealBot_Action_SetButtonAttrib(button,bbutton,bkey,status,j)
                     button:SetAttribute(HB_prefix.."type-heal"..j, "spell");
                     button:SetAttribute(HB_prefix.."spell-heal"..j, sName);
                     hbAttribsMinReset[button.id..HB_prefix..status..j]=true
-                end
-            else
-                mId=GetMacroIndexByName(sName)
-                if mId ~= 0 then
-                    _,_,mText=GetMacroInfo(mId)
-         --        mUnit = button.unit
-                    if UnitExists(HealBot_UnitPet(button.unit)) then
-                        mText=string.gsub(mText,"hbtargetpet",HealBot_UnitPet(button.unit))
-                    end
-                    mText=string.gsub(mText,"hbtargettargettarget",button.unit.."targettarget")
-                    mText=string.gsub(mText,"hbtargettarget",button.unit.."target")
-                    mText=string.gsub(mText,"hbtarget",button.unit)
-                    button:SetAttribute(HB_prefix.."helpbutton"..j, nil);
-                    button:SetAttribute(HB_prefix.."type"..j,"macro")
-                    button:SetAttribute(HB_prefix.."macrotext"..j, mText)
-                    if status=="Enabled" then
-                        HealBotButtonMacroAttribs[HB_prefix..j]=sName
-                    end
-                else
-                    button:SetAttribute(HB_prefix.."helpbutton"..j, "item"..j);
-                    button:SetAttribute(HB_prefix.."type-item"..j, "item");
-                    button:SetAttribute(HB_prefix.."item-item"..j, sName);
                 end
             end
         end
@@ -4146,6 +4143,11 @@ function HealBot_Action_ToggelMount(mountType)
                         z = math.random(1, #HealBot_FMount); 
                         if z==i then 
                             i = math.random(1, #HealBot_FMount); 
+                            if z==i then 
+                                i = math.random(1, #HealBot_FMount); 
+                            else
+                                i=z
+                            end
                         else
                             i=z
                         end
@@ -4179,6 +4181,11 @@ function HealBot_Action_ToggelMount(mountType)
                         z = math.random(1, #HealBot_GMount);
                         if z==i then 
                             i = math.random(1, #HealBot_GMount);
+                            if z==i then 
+                                i = math.random(1, #HealBot_GMount);
+                            else
+                                i=z
+                            end
                         else
                             i=z
                         end
