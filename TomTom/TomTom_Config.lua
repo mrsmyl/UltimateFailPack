@@ -186,6 +186,7 @@ local function createconfig()
 				type = "toggle",
 				name = L["Lock waypoint arrow"],
 				desc = L["Locks the waypoint arrow, so it can't be moved accidentally"],
+				width = "double",
 				arg = "arrow.lock",
 			},
 			rightclick = {
@@ -226,6 +227,7 @@ local function createconfig()
 				name = L["\"Arrival Distance\""],
 				desc = L["This setting will control the distance at which the waypoint arrow switches to a downwards arrow, indicating you have arrived at your destination"],
 				min = 0, max = 150, step = 5,
+				width = "double",
 				arg = "arrow.arrival",
 			},
             enablePing = {
@@ -236,10 +238,26 @@ local function createconfig()
                 width = "double",
                 arg = "arrow.enablePing",
             },
+			hideDuringPetBattles = {
+				order = 13,
+				type = "toggle",
+				name = L["Hide the crazy arrow display during pet battles"],
+				desc = L["When a pet battle begins, the crazy arrow will be hidden from view. When you exit the pet battle, it will be re-shown."],
+				width = "double",
+				arg = "arrow.hideDuringPetBattles",
+			},
+			stickyCorpse = {
+				order = 14,
+				type = "toggle",
+				name = L["Allow the corpse arrow to override other waypoints"],
+				desc = L["When the player is dead and has a waypoint towards their corpse, it will prevent other waypoints from changing the crazy arrow"],
+				width = "double",
+				arg = "arrow.stickycorpse",
+			},
 			display = {
 				type = "group",
 				name = L["Arrow display"],
-				order = 13,
+				order = 15,
 				inline = true,
 				args = {
 					help = {
@@ -326,7 +344,7 @@ local function createconfig()
 			color = {
 				type = "group",
 				name = L["Arrow colors"],
-				order = 10,
+				order = 15,
 				inline = true,
 				args = {
 					help = {
@@ -641,6 +659,7 @@ local function createconfig()
 				name = L["Clear waypoint distance"],
 				desc = L["Waypoints can be automatically cleared when you reach them.  This slider allows you to customize the distance in yards that signals your \"arrival\" at the waypoint.  A setting of 0 turns off the auto-clearing feature\n\nChanging this setting only takes effect after reloading your interface."],
 				min = 0, max = 150, step = 1,
+				width = "double",
 				arg = "persistence.cleardistance",
 			},
 			corpse_arrow = {

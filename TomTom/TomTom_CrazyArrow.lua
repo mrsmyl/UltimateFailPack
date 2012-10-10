@@ -83,6 +83,11 @@ wayframe.arrow:SetAllPoints()
 local active_point, arrive_distance, showDownArrow, point_title
 
 function TomTom:SetCrazyArrow(uid, dist, title)
+	if active_point and active_point.corpse and self.db.profile.arrow.stickycorpse then
+		-- do not change the waypoint arrow from corpse
+		return
+	end
+
 	active_point = uid
 	arrive_distance = dist
 	point_title = title
@@ -231,6 +236,11 @@ end
 
 function TomTom:ShowHideCrazyArrow()
 	if self.profile.arrow.enable then
+		if self.profile.arrow.hideDuringPetBattles and C_PetBattles.IsInBattle() then
+			wayframe:Hide()
+			return
+		end
+
 		wayframe:Show()
 
 		if self.profile.arrow.noclick then
