@@ -1506,3 +1506,18 @@ function AutoBar:StupidLog(p_text)
 	end
 
 end
+
+function AutoBar:MakeSet(list)
+   local set = {}
+   for _, l in ipairs(list) do set[l] = true end
+   return set
+ end
+
+AutoBar.set_mana_users = AutoBar:MakeSet{"DRUID","MAGE","PRIEST","PALADIN","SHAMAN","WARLOCK"}
+
+function AutoBar:ClassUsesMana(class_name)
+
+	return AutoBar.set_mana_users[class_name]
+
+end
+

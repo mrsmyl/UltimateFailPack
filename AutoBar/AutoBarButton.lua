@@ -1796,6 +1796,9 @@ function AutoBarButtonFood.prototype:init(parentBar, buttonDB)
 --AutoBar:Print("AutoBarButtonFood.prototype:init buttonDB.disableConjure " .. tostring(buttonDB.disableConjure))
 		self:AddCategory("Consumable.Food.Conjure")
 	end
+	self:AddCategory("AutoBar.Food.Health.Basic")
+	self:AddCategory("AutoBar.Food.Combo.Basic")
+
 	self:AddCategory("Consumable.Food.Percent.Basic")
 	self:AddCategory("Consumable.Food.Edible.Basic.Non-Conjured")
 	self:AddCategory("Consumable.Food.Edible.Combo.Conjured")
@@ -1839,7 +1842,8 @@ function AutoBarButtonFoodBuff.prototype:init(parentBar, buttonDB)
 	self:AddCategory("Consumable.Food.Buff.Stamina")
 	self:AddCategory("Consumable.Food.Buff.HP Regen")
 	self:AddCategory("Consumable.Food.Percent.Bonus")
-	--self:AddCategory("Consumable.Food.Bonus")
+
+	self:AddCategory("AutoBar.Food.Health.Buff")
 
 	if (AutoBar.CLASS == "DEATHKNIGHT" or AutoBar.CLASS == "WARRIOR") then
 		self:AddCategory("Consumable.Food.Buff.Strength")
@@ -1900,6 +1904,8 @@ AutoBar.Class["AutoBarButtonFoodCombo"] = AutoBarButtonFoodCombo
 function AutoBarButtonFoodCombo.prototype:init(parentBar, buttonDB)
 	AutoBarButtonFoodCombo.super.prototype.init(self, parentBar, buttonDB)
 
+	self:AddCategory("AutoBar.Food.Combo.Basic")
+
 	self:AddCategory("Consumable.Food.Combo Percent")
 	self:AddCategory("Consumable.Food.Edible.Combo.Non-Conjured")
 	self:AddCategory("Consumable.Food.Edible.Battleground.Arathi Basin.Basic")
@@ -1944,16 +1950,23 @@ AutoBar.Class["AutoBarButtonHeal"] = AutoBarButtonHeal
 function AutoBarButtonHeal.prototype:init(parentBar, buttonDB)
 	AutoBarButtonHeal.super.prototype.init(self, parentBar, buttonDB)
 
-	self:AddCategory("Consumable.Cooldown.Potion.Health.PvP")
+	self:AddCategory("Consumable.Potion.Recovery.Healing.Endless")
+	self:AddCategory("Consumable.Potion.Recovery.Healing.Basic")
+	
+	self:AddCategory("Consumable.Potion.Recovery.Rejuvenation.Basic")
+	
+	
 	self:AddCategory("Consumable.Cooldown.Stone.Health.Other")
 	self:AddCategory("Consumable.Cooldown.Stone.Health.Statue")
-	self:AddCategory("Consumable.Cooldown.Potion.Health.Basic")
-	self:AddCategory("Consumable.Cooldown.Potion.Rejuvenation")
 	self:AddCategory("Consumable.Cooldown.Stone.Health.Warlock")
-	self:AddCategory("Consumable.Cooldown.Potion.Health.Coilfang")
-	self:AddCategory("Consumable.Cooldown.Potion.Health.Tempest Keep")
-	self:AddCategory("Consumable.Cooldown.Potion.Health.Blades Edge")
-	self:AddCategory("Consumable.Cooldown.Potion.Health.Anywhere")
+
+	--self:AddCategory("Consumable.Cooldown.Potion.Rejuvenation")
+	--self:AddCategory("Consumable.Cooldown.Potion.Health.Coilfang")
+	--self:AddCategory("Consumable.Cooldown.Potion.Health.Tempest Keep")
+	--self:AddCategory("Consumable.Cooldown.Potion.Health.Blades Edge")
+	--self:AddCategory("Consumable.Cooldown.Potion.Health.Anywhere")
+	--self:AddCategory("Consumable.Cooldown.Potion.Health.PvP")
+	--self:AddCategory("Consumable.Cooldown.Potion.Health.Basic")
 end
 
 
@@ -2296,14 +2309,19 @@ function AutoBarButtonRecovery.prototype:init(parentBar, buttonDB)
 	elseif (AutoBar.CLASS == "WARRIOR") then
 		self:AddCategory("Consumable.Buff.Rage")
 	else
+		self:AddCategory("Consumable.Potion.Recovery.Mana.Endless")
+		self:AddCategory("Consumable.Potion.Recovery.Mana.Basic")
+	
+		self:AddCategory("Consumable.Potion.Recovery.Rejuvenation.Basic")
+
 		self:AddCategory("Consumable.Cooldown.Stone.Mana.Other")
-		self:AddCategory("Consumable.Cooldown.Potion.Rejuvenation")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Basic")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Pvp")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Coilfang")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Tempest Keep")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Blades Edge")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Anywhere")
+		--self:AddCategory("Consumable.Cooldown.Potion.Rejuvenation")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Basic")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Pvp")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Coilfang")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Tempest Keep")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Blades Edge")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Anywhere")
 		if (AutoBar.CLASS == "MAGE") then
 			self:AddCategory("Consumable.Cooldown.Stone.Mana.Mana Stone")
 		end
@@ -2969,9 +2987,11 @@ function AutoBarButtonWater.prototype:init(parentBar, buttonDB)
 	if (AutoBar.CLASS == "MAGE" and not buttonDB.disableConjure) then
 		self:AddCategory("Consumable.Water.Conjure")
 	end
-	if (AutoBar.CLASS ~= "ROGUE" and AutoBar.CLASS ~= "WARRIOR") then
+	if (AutoBar:ClassUsesMana(AutoBar.CLASS)) then
 		self:AddCategory("Consumable.Water.Percentage")
 		self:AddCategory("Consumable.Water.Basic")
+
+		self:AddCategory("AutoBar.Drink.Basic")
 	end
 end
 
@@ -3002,8 +3022,9 @@ AutoBar.Class["AutoBarButtonWaterBuff"] = AutoBarButtonWaterBuff
 function AutoBarButtonWaterBuff.prototype:init(parentBar, buttonDB)
 	AutoBarButtonWaterBuff.super.prototype.init(self, parentBar, buttonDB)
 
-	if (AutoBar.CLASS ~= "ROGUE" and AutoBar.CLASS ~= "WARRIOR") then
+	if (AutoBar.ClassUsesMana(AutoBar.CLASS)) then
 		self:AddCategory("Consumable.Water.Buff")
+		self:AddCategory("AutoBar.Food.Mana.Buff")
 	end
 end
 
