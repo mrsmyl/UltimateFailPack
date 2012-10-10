@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7835 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7887 $"):sub(12, -3))
 mod:SetCreatureID(60491)
 mod:SetModelID(41448)
 mod:SetZone(809)--Kun-Lai Summit (zoneid not yet known)
@@ -13,6 +13,7 @@ mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
 -- Also, you can enter combat while boss fights (not 100% health). 
 -- On this situration, block OnCombatStart() function will be better (+ do not record kill time)
 mod:RegisterCombat("combat")
+mod:SetWipeTime(180)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -132,7 +133,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			table.insert(mcTargetIcons, DBM:GetRaidUnitId(args.destName))
 			self:UnscheduleMethod("SetMCIcons")
 			if self:LatencyCheck() then
-				self:ScheduleMethod(0.5, "SetMCIcons")
+				self:ScheduleMethod(1.2, "SetMCIcons")
 			end
 		end
 		if args:IsPlayer() then
@@ -142,7 +143,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if #warnpreMCTargets >= 3 then
 			showpreMC()
 		else
-			self:Schedule(1.0, showpreMC)
+			self:Schedule(1.2, showpreMC)
 		end
 	elseif args:IsSpellID(119626) then
 		--Maybe add in function to update icons here in case of a spread that results in more then the original 3 getting the final MC debuff.

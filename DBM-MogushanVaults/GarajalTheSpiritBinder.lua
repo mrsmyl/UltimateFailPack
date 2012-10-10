@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(682, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7834 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7901 $"):sub(12, -3))
 mod:SetCreatureID(60143)
 mod:SetModelID(41256)
 mod:SetZone()
@@ -26,24 +26,26 @@ mod:RegisterEventsInCombat(
 --Syncing is used for all warnings because the realms don't share combat events. You won't get warnings for other realm any other way.
 --Voodoo dolls do not have a CD, they are linked to banishment (or player deaths), when he banishes current tank, he reapplies voodoo dolls to new tank and new players. If tank dies, he just recasts voodoo on a new current threat target.
 --Latency checks are used for good reason (to prevent lagging users from sending late events and making our warnings go off again incorrectly). if you play with high latency and want to bypass latency check, do so with in game GUI option.
-local warnTotem							= mod:NewSpellAnnounce(116174, 2)
-local warnVoodooDolls					= mod:NewTargetAnnounce(122151, 3)
-local warnSpiritualInnervation			= mod:NewTargetAnnounce(117549, 3)
-local warnBanishment					= mod:NewTargetAnnounce(116272, 3)
-local warnSuicide						= mod:NewPreWarnAnnounce(116325, 5, 4)--Pre warn 5 seconds before you die so you take whatever action you need to, to prevent. (this is effect that happens after 30 seconds of Soul Sever
+local warnTotem						= mod:NewSpellAnnounce(116174, 2)
+local warnVoodooDolls				= mod:NewTargetAnnounce(122151, 3)
+local warnSpiritualInnervation		= mod:NewTargetAnnounce(117549, 3)
+local warnBanishment				= mod:NewTargetAnnounce(116272, 3)
+local warnSuicide					= mod:NewPreWarnAnnounce(116325, 5, 4)--Pre warn 5 seconds before you die so you take whatever action you need to, to prevent. (this is effect that happens after 30 seconds of Soul Sever
 
-local specWarnTotem						= mod:NewSpecialWarningSpell(116174, false)
-local specWarnBanishment				= mod:NewSpecialWarningYou(116272)
-local specWarnBanishmentOther			= mod:NewSpecialWarningTarget(116272, mod:IsTank())
-local specWarnVoodooDolls				= mod:NewSpecialWarningSpell(122151, false)
+local specWarnTotem					= mod:NewSpecialWarningSpell(116174, false)
+local specWarnBanishment			= mod:NewSpecialWarningYou(116272)
+local specWarnBanishmentOther		= mod:NewSpecialWarningTarget(116272, mod:IsTank())
+local specWarnVoodooDolls			= mod:NewSpecialWarningSpell(122151, false)
 
-local timerTotemCD						= mod:NewNextTimer(36, 116174)
-local timerBanishmentCD					= mod:NewNextTimer(70, 116272)
-local timerSoulSever					= mod:NewBuffFadesTimer(30, 116278)--Tank version of spirit realm
-local timerSpiritualInnervation			= mod:NewBuffFadesTimer(30, 117549)--Dps version of spirit realm
-local timerShadowyAttackCD				= mod:NewCDTimer(8, "ej6698", nil, nil, nil, 117222)
+local timerTotemCD					= mod:NewNextTimer(36, 116174)
+local timerBanishmentCD				= mod:NewNextTimer(65, 116272)
+local timerSoulSever				= mod:NewBuffFadesTimer(30, 116278)--Tank version of spirit realm
+local timerSpiritualInnervation		= mod:NewBuffFadesTimer(30, 117549)--Dps version of spirit realm
+local timerShadowyAttackCD			= mod:NewCDTimer(8, "ej6698", nil, nil, nil, 117222)
 
-mod:AddBoolOption("SetIconOnVoodoo")
+local berserkTimer					= mod:NewBerserkTimer(360)
+
+mod:AddBoolOption("SetIconOnVoodoo", false)
 
 local voodooDollTargets = {}
 local spiritualInnervationTargets = {}
@@ -108,10 +110,9 @@ function mod:OnCombatStart(delay)
 	table.wipe(voodooDollTargetIcons)
 	timerShadowyAttackCD:Start(7-delay)
 	timerTotemCD:Start(-delay)
-	if self:IsDifficulty("lfr25") then
-		timerBanishmentCD:Start(65-delay)
-	else
-		timerBanishmentCD:Start(-delay)
+	timerBanishmentCD:Start(-delay)
+	if not self:IsDifficulty("lfr25") then -- lfr seems not berserks.
+		berserkTimer:Start(-delay)
 	end
 end
 
@@ -183,7 +184,7 @@ function mod:OnSync(msg, guid)
 			table.insert(voodooDollTargetIcons, DBM:GetRaidUnitId(guids[guid]))
 			self:UnscheduleMethod("SetVoodooIcons")
 			if self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
-				self:ScheduleMethod(0.5, "SetVoodooIcons")--Still seems touchy and .3 is too fast even on a 70ms connection in rare cases so back to .5
+				self:ScheduleMethod(1, "SetVoodooIcons")
 			end
 		end
 	elseif msg == "VoodooGoneTargets" and guids[guid] and self.Options.SetIconOnVoodoo then
@@ -194,11 +195,7 @@ function mod:OnSync(msg, guid)
 		self:Schedule(0.3, warnSpiritualInnervationTargets)
 	elseif msg == "BanishmentTarget" and guids[guid] then
 		warnBanishment:Show(guids[guid])
-		if self:IsDifficulty("lfr25") then
-			timerBanishmentCD:Start(65)
-		else
-			timerBanishmentCD:Start()
-		end
+		timerBanishmentCD:Start()
 		if guid ~= UnitGUID("player") then--make sure YOU aren't target before warning "other"
 			specWarnBanishmentOther:Show(guids[guid])
 		end
