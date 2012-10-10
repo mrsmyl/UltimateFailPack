@@ -1,10 +1,10 @@
-﻿--[[
+﻿--[[ 
 Name: RatingBuster
 Description: Converts combat ratings in tooltips into normal percentages.
-Revision: $Revision: 385 $
+Revision: $Revision: 389 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
-LastUpdate: $Date: 2012-10-01 16:01:52 +0000 (Mon, 01 Oct 2012) $
+LastUpdate: $Date: 2012-10-10 16:08:55 +0000 (Wed, 10 Oct 2012) $
 ]]
  
 ---------------
@@ -25,8 +25,8 @@ local BI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
 --------------------
 -- AceAddon Initialization
 RatingBuster = LibStub("AceAddon-3.0"):NewAddon("RatingBuster", "AceConsole-3.0", "AceEvent-3.0")
-RatingBuster.version = "5.0.4 (r"..gsub("$Revision: 385 $", "$Revision: (%d+) %$", "%1")..")"
-RatingBuster.date = gsub("$Date: 2012-10-01 16:01:52 +0000 (Mon, 01 Oct 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
+RatingBuster.version = "5.0.4 (r"..gsub("$Revision: 389 $", "$Revision: (%d+) %$", "%1")..")"
+RatingBuster.date = gsub("$Date: 2012-10-10 16:08:55 +0000 (Wed, 10 Oct 2012) $", "^.-(%d%d%d%d%-%d%d%-%d%d).-$", "%1")
 
 
 -----------
@@ -2666,10 +2666,10 @@ function RatingBuster.ProcessTooltip(tooltip, name, link, ...)
 	tooltip:Show()
 	for i = 2, tooltip:NumLines() do
 		local fontString = _G[tipTextLeft..i]
-    _, relativeTo, _, xOfs, _ = fontString:GetPoint(0)
-    fontString:ClearAllPoints()
-    fontString:SetPoint("TOPLEFT", relativeTo, "BOTTOMLEFT", xOfs, -2)
-  end
+		local _, relativeTo, _, xOfs, _ = fontString:GetPoint(0)
+		fontString:ClearAllPoints()
+		fontString:SetPoint("TOPLEFT", relativeTo, "BOTTOMLEFT", xOfs, -2)
+	end
 end
 
 ---------------------------------------------------------------------------------
@@ -3119,19 +3119,26 @@ function RatingBuster:ProcessText(text, tooltip)
 							infoString = gsub(strsub(text, s), "%d+[%p%d]*", "%0"..num.space..infoString, 1) -- sub "33" with "33 (3.33%)"
 						elseif num.addInfo == "AfterPattern" then -- Add after pattern
 							infoString = gsub(infoString, "%%", "%%%%") -- sub "%" with "%%%%"
-              infoString = strsub(text, s, e)..num.space..infoString
+							infoString = strsub(text, s, e)..num.space..infoString
 						else -- Add after stat
 							infoString = gsub(infoString, "%%", "%%%%")
 							s, e = strfind(lowerText, stat.pattern)
 							infoString = "%0"..num.space..infoString
 						end
+						
+						-- Escape "(" and ")" since they would cause problems with gsub.
+						local cleanedText = gsub(strsub(text, s), "%(", "%%(")
+						cleanedText = gsub(cleanedText, "%)", "%%)")
+						--RatingBuster:Print("Итоговая строка состоит из " .. text .. " в котором " .. strsub(text, s, e) .. " меняется на " .. infoString ..", в итоге " .. gsub(text, cleanedText, infoString, 1))
+						--RatingBuster:Print(cleanedText)
+						--RatingBuster:Print("-----------------------")
+						
+						-- If it ends with "%" it would cause errors. Just escaping it isn't required since we don't need to add
+						-- any rating conversion info for values that are already percentages, we just return the original text.
+						if strmatch(cleanedText, "%%$") then return text end
+						
 						-- Insert info into text
-						RusLocalstr = gsub(strsub(text, s),"%(","%%(")
-						RusLocalstr = gsub(RusLocalstr,"%)","%%)")
-						--RatingBuster:Print("Итоговая строка состоит из " .. text .. " в котором " .. strsub(text, s, e) .. " меняется на " .. infoString ..", в итоге " .. gsub(text, RusLocalstr, infoString, 1))
-						--RatingBuster:Print(RusLocalstr)
-						--RatingBuster:Print("-----------------------") 
-						return (gsub(text, RusLocalstr, infoString, 1)) -- because gsub has 2 return values, but we only want 1
+						return (gsub(text, cleanedText, infoString, 1)) -- because gsub has 2 return values, but we only want 1
 					end
 					return text
 				end
@@ -3316,22 +3323,21 @@ local summaryCalcData = {
 		name = "MELEE_HIT_RATING",
 		func = function(sum, sumType, link) return (sum["MELEE_HIT_RATING"] or 0) end,
 	},
-	-- Ranged Hit Chance - MELEE_HIT_RATING, RANGED_HIT_RATING
+	-- Ranged Hit Chance - RANGED_HIT_RATING
 	{
 		option = "sumRangedHit",
 		name = "RANGED_HIT",
 		func = function(sum, sumType, link)
 			local s = 0
-			return s + StatLogic:GetEffectFromRating((sum["MELEE_HIT_RATING"] or 0), "MELEE_HIT_RATING", calcLevel)
-					 + StatLogic:GetEffectFromRating((sum["RANGED_HIT_RATING"] or 0), "RANGED_HIT_RATING", calcLevel)
+			return s + StatLogic:GetEffectFromRating((sum["RANGED_HIT_RATING"] or 0), "RANGED_HIT_RATING", calcLevel)
 		end,
 		ispercent = true,
 	},
-	-- Ranged Hit Rating - MELEE_HIT_RATING, RANGED_HIT_RATING
+	-- Ranged Hit Rating - RANGED_HIT_RATING
 	{
 		option = "sumRangedHitRating",
 		name = "RANGED_HIT_RATING",
-		func = function(sum, sumType, link) return (sum["MELEE_HIT_RATING"] or 0) + (sum["RANGED_HIT_RATING"] or 0) end,
+		func = function(sum, sumType, link) return (sum["RANGED_HIT_RATING"] or 0) end,
 	},
 	-- Crit Chance - MELEE_CRIT_RATING, AGI
 	{
@@ -3350,23 +3356,22 @@ local summaryCalcData = {
 		name = "MELEE_CRIT_RATING",
 		func = function(sum, sumType, link) return (sum["MELEE_CRIT_RATING"] or 0) end,
 	},
-	-- Ranged Crit Chance - MELEE_CRIT_RATING, AGI, RANGED_CRIT_RATING
+	-- Ranged Crit Chance - RANGED_CRIT_RATING, AGI
 	{
 		option = "sumRangedCrit",
 		name = "RANGED_CRIT",
 		func = function(sum, sumType, link)
 			local s = 0
-			return s + StatLogic:GetEffectFromRating((sum["MELEE_CRIT_RATING"] or 0), "MELEE_CRIT_RATING", calcLevel)
-					 + StatLogic:GetEffectFromRating((sum["RANGED_CRIT_RATING"] or 0), "RANGED_CRIT_RATING", calcLevel)
+			return s + StatLogic:GetEffectFromRating((sum["RANGED_CRIT_RATING"] or 0), "RANGED_CRIT_RATING", calcLevel)
 					 + StatLogic:GetCritFromAgi(sum["AGI"], class, calcLevel)
 		end,
 		ispercent = true,
 	},
-	-- Ranged Crit Rating - MELEE_CRIT_RATING, RANGED_CRIT_RATING
+	-- Ranged Crit Rating - RANGED_CRIT_RATING
 	{
 		option = "sumRangedCritRating",
 		name = "RANGED_CRIT_RATING",
-		func = function(sum, sumType, link) return (sum["MELEE_CRIT_RATING"] or 0) + (sum["RANGED_CRIT_RATING"] or 0) end,
+		func = function(sum, sumType, link) return (sum["RANGED_CRIT_RATING"] or 0) end,
 	},
 	-- Haste - MELEE_HASTE_RATING
 	{
@@ -3381,22 +3386,19 @@ local summaryCalcData = {
 		name = "MELEE_HASTE_RATING",
 		func = function(sum, sumType, link) return (sum["MELEE_HASTE_RATING"] or 0) end,
 	},
-	-- Ranged Haste - MELEE_HASTE_RATING, RANGED_HASTE_RATING
+	-- Ranged Haste - RANGED_HASTE_RATING
 	{
 		option = "sumRangedHaste",
 		name = "RANGED_HASTE",
-		func = function(sum, sumType, link)
-			return (StatLogic:GetEffectFromRating((sum["MELEE_HASTE_RATING"] or 0), "MELEE_HASTE_RATING", calcLevel)
-				+ StatLogic:GetEffectFromRating((sum["RANGED_HASTE_RATING"] or 0), "RANGED_HASTE_RATING", calcLevel))
-        * RatingBuster:GetStatMod("MOD_MELEE_HASTE")
-		end,
+		-- Use MOD_MELEE_HASTE for ranged too because there is none for ranged and all MOD_MELEE_HASTE buffs also affect ranged.
+		func = function(sum, sumType, link) return StatLogic:GetEffectFromRating((sum["RANGED_HASTE_RATING"] or 0), "RANGED_HASTE_RATING", calcLevel) * RatingBuster:GetStatMod("MOD_MELEE_HASTE") end,
 		ispercent = true,
 	},
-	-- Ranged Haste Rating - MELEE_HASTE_RATING, RANGED_HASTE_RATING
+	-- Ranged Haste Rating - RANGED_HASTE_RATING
 	{
 		option = "sumRangedHasteRating",
 		name = "RANGED_HASTE_RATING",
-		func = function(sum, sumType, link) return (sum["MELEE_HASTE_RATING"] or 0) + (sum["RANGED_HASTE_RATING"] or 0) end,
+		func = function(sum, sumType, link) return (sum["RANGED_HASTE_RATING"] or 0) end,
 	},
 	-- Expertise - EXPERTISE_RATING
 	{
@@ -4020,7 +4022,7 @@ for _, calcData in ipairs(summaryCalcData) do
 end
 
 
-function sumSortAlphaComp(a, b)
+local function sumSortAlphaComp(a, b)
 	return a[1] < b[1]
 end
 

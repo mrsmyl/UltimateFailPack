@@ -1,6 +1,6 @@
 ﻿--[[
 Name: RatingBuster zhTW locale
-Revision: $Revision: 339 $
+Revision: $Revision: 388 $
 Translated by:
 - Whitetooth@Cenarius (hotdogee@bahamut.twbbs.org)
 - CuteMiyu
@@ -600,14 +600,14 @@ L["ItemID: "] = "物品編號: "
 --
 -- Tip2: The strings are passed into string.find, so you should escape the magic characters ^$()%.[]*+-? with a %
 L["numberPatterns"] = {
-	{pattern = "提高.-(%d+)點", addInfo = "AfterPattern", space = "", },
-	{pattern = "提升.-(%d+)點", addInfo = "AfterPattern", space = "", }, -- [奎克米瑞之眼] ID:27683
-	{pattern = "提高.-(%d+)", addInfo = "AfterNumber", space = "", },
-	{pattern = "提升.-(%d+)", addInfo = "AfterNumber", space = "", }, -- [奎克米瑞之眼] ID:27683
-	{pattern = "(%d+)。", addInfo = "AfterNumber", space = "", },
-	{pattern = "([%+%-]%d+)", addInfo = "AfterStat", space = "", },
-	{pattern = "佩戴者.-(%d+)", addInfo = "AfterNumber", space = "", }, -- for "grant you xx stat" type pattern, ex: Quel'Serrar, Assassination Armor set
-	{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = "", }, -- [發光的暗影卓奈石] +6法術傷害及5耐力
+{pattern = "(%d+)。", addInfo = "AfterNumber", space = "", },
+{pattern = "([%+%-]%d+)", addInfo = "AfterStat", space = "", },
+{pattern = "佩戴者.-(%d+)", addInfo = "AfterNumber", space = "", }, -- for "grant you xx stat" type pattern, ex: Quel'Serrar, Assassination Armor set
+{pattern = "提高.-(%d+)", addInfo = "AfterNumber", space = "", },
+{pattern = "提高.-(%d+)點", addInfo = "AfterPattern", space = "", },
+{pattern = "提升.-(%d+)點", addInfo = "AfterPattern", space = "", }, -- [奎克米瑞之眼] ID:27683
+{pattern = "提升.-(%d+)", addInfo = "AfterNumber", space = "", }, -- [奎克米瑞之眼] ID:27683
+{pattern = "(%d+)([^%d%%|]+)", addInfo = "AfterStat", space = "", }, -- [發光的暗影卓奈石] +6法術傷害及5耐力
 }
 L["separators"] = {
 	"/", "和", "。", " 持續 ", "&", "及", "並", "，",
@@ -644,6 +644,66 @@ SPELL_STAT3_NAME = "Stamina"
 SPELL_STAT4_NAME = "Intellect"
 SPELL_STAT5_NAME = "Spirit"
 --]]
+L["statList"] = {
+{pattern = string.lower(SPELL_STAT1_NAME), id = SPELL_STAT1_NAME}, -- Strength
+{pattern = string.lower(SPELL_STAT2_NAME), id = SPELL_STAT2_NAME}, -- Agility
+{pattern = string.lower(SPELL_STAT3_NAME), id = SPELL_STAT3_NAME}, -- Stamina
+{pattern = string.lower(SPELL_STAT4_NAME), id = SPELL_STAT4_NAME}, -- Intellect
+{pattern = string.lower(SPELL_STAT5_NAME), id = SPELL_STAT5_NAME}, -- Spirit
+{pattern = "防禦", id = CR_DEFENSE_SKILL},
+{pattern = "閃躲", id = CR_DODGE},
+{pattern = "格擋", id = CR_BLOCK}, -- block enchant: "+10 Shield Block Rating"
+{pattern = "招架", id = CR_PARRY},
+
+{pattern = "法術致命一擊等級", id = CR_CRIT_SPELL},
+{pattern = "遠程攻擊致命一擊", id = CR_CRIT_RANGED},
+{pattern = "致命一擊", id = CR_CRIT_MELEE},
+--{pattern = "spell crit rating", id = CR_CRIT_SPELL},
+--{pattern = "ranged critical strike rating", id = CR_CRIT_RANGED},
+--{pattern = "ranged critical strike", id = CR_CRIT_RANGED}, -- [Heartseeker Scope]
+--{pattern = "ranged critical hit rating", id = CR_CRIT_RANGED},
+--{pattern = "ranged critical rating", id = CR_CRIT_RANGED},
+{pattern = "遠程致命一擊等級", id = CR_CRIT_RANGED},
+--{pattern = "critical strike rating", id = CR_CRIT_MELEE},
+--{pattern = "critical hit rating", id = CR_CRIT_MELEE},
+--{pattern = "critical rating", id = CR_CRIT_MELEE},
+--{pattern = "crit rating", id = CR_CRIT_MELEE},
+
+{pattern = "法術命中等級", id = CR_HIT_SPELL},
+{pattern = "遠程命中等級", id = CR_HIT_RANGED},
+{pattern = "命中", id = CR_HIT_MELEE},
+
+{pattern = "韌性", id = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN}, -- resilience is implicitly a rating
+
+{pattern = "法術加速等級", id = CR_HASTE_SPELL},
+{pattern = "遠程攻擊加速等級", id = CR_HASTE_RANGED},
+{pattern = "加速", id = CR_HASTE_MELEE},
+{pattern = "攻擊速度", id = CR_HASTE_MELEE}, -- [Drums of Battle]
+
+{pattern = "技能等級", id = CR_WEAPON_SKILL},
+{pattern = "熟練", id = CR_EXPERTISE}, -- 2.3
+
+{pattern = "命中迴避率", id = CR_HIT_TAKEN_MELEE},
+{pattern = "護甲穿透等級", id = CR_ARMOR_PENETRATION},
+{pattern = "精通", id = CR_MASTERY},
+{pattern = string.lower(ARMOR), id = ARMOR},
+--[[
+{pattern = "匕首技能等級", id = CR_WEAPON_SKILL},
+{pattern = "劍技能等級", id = CR_WEAPON_SKILL},
+{pattern = "雙手劍技能等級", id = CR_WEAPON_SKILL},
+{pattern = "斧技能等級", id = CR_WEAPON_SKILL},
+{pattern = "弓技能等級", id = CR_WEAPON_SKILL},
+{pattern = "弩技能等級", id = CR_WEAPON_SKILL},
+{pattern = "槍械技能等級", id = CR_WEAPON_SKILL},
+{pattern = "野性戰鬥技能等級", id = CR_WEAPON_SKILL},
+{pattern = "錘技能等級", id = CR_WEAPON_SKILL},
+{pattern = "長柄武器技能等級", id = CR_WEAPON_SKILL},
+{pattern = "法杖技能等級", id = CR_WEAPON_SKILL},
+{pattern = "雙手斧技能等級", id = CR_WEAPON_SKILL},
+{pattern = "雙手錘技能等級", id = CR_WEAPON_SKILL},
+{pattern = "徒手戰鬥技能等級", id = CR_WEAPON_SKILL},
+--]]
+}
 
 -------------------------
 -- Added info patterns --

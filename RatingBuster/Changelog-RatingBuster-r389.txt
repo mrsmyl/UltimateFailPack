@@ -1,4 +1,30 @@
 ------------------------------------------------------------------------
+r389 | gathirer | 2012-10-10 16:08:55 +0000 (Wed, 10 Oct 2012) | 4 lines
+Changed paths:
+   M /trunk/RatingBuster.lua
+
+- New push to get the Lib-StatLocic updates
+
+
+
+------------------------------------------------------------------------
+r388 | playerlin | 2012-10-05 15:42:44 +0000 (Fri, 05 Oct 2012) | 1 line
+Changed paths:
+   M /trunk/locales/zhTW.lua
+
+- zhTW update for missing locale about patterns and stats strings, zhTW users got lost when Whitetooth MIA...fix based on r384 and thanks jump2004 @ forum.gamer.com.tw.
+------------------------------------------------------------------------
+r387 | cremor | 2012-10-05 09:46:39 +0000 (Fri, 05 Oct 2012) | 4 lines
+Changed paths:
+   M /trunk/RatingBuster.lua
+   M /trunk/locales/enUS.lua
+   M /trunk/locales/frFR.lua
+
+- Fixed all ranged rating values to not show double amounts in the summary any more.
+- Fixed many statList patterns that were mapped to the wrong stat id.
+- Fixed error with Cataclysmic Gladiator's Ornamented Gloves in Chinese as suggested by lostcoaster in ticket 257.
+- Fixed some leaked globals.
+------------------------------------------------------------------------
 r386 | cremor | 2012-10-02 15:48:27 +0000 (Tue, 02 Oct 2012) | 1 line
 Changed paths:
    M /trunk/locales/frFR.lua
@@ -176,99 +202,5 @@ Changed paths:
 -replaced call to depricated GetPrimaryTalentTree with new GetSpecialization
 -added optional dependancy on WoWUnit
 -forcing a revision to pickup updated LibStatLogic
-
-------------------------------------------------------------------------
-r364 | whyv | 2012-09-04 01:02:41 +0000 (Tue, 04 Sep 2012) | 1 line
-Changed paths:
-   M /trunk/locales/zhTW.lua
-
-- update zhTW due to client translate changed,more incoming.
-------------------------------------------------------------------------
-r363 | JackTripper | 2012-09-03 21:57:08 +0000 (Mon, 03 Sep 2012) | 2 lines
-Changed paths:
-   M /trunk/RatingBuster.wowproj
-
-- project file change
-
-------------------------------------------------------------------------
-r362 | JackTripper | 2012-09-03 21:53:58 +0000 (Mon, 03 Sep 2012) | 2 lines
-Changed paths:
-   M /trunk/RatingBuster.toc
-   M /trunk/RatingBuster.wowproj
-
-- bumping version so i can commit LibStatLogic changes
-
-------------------------------------------------------------------------
-r361 | Phanx | 2012-09-03 11:52:19 +0000 (Mon, 03 Sep 2012) | 1 line
-Changed paths:
-   M /trunk
-   M /trunk/.pkgmeta
-   M /trunk/RatingBuster.toc
-   M /trunk/embeds.xml
-
-- Restored UTF8 lib. Yes, it's "only" used by LibStatLogic, but if you don't include it, where do you think LSL is going to get it? Removing it breaks LSL, thus breaking RatingBuster, for end users who don't have some other addon loading UTF8 first.
-------------------------------------------------------------------------
-r360 | Dessa | 2012-09-02 15:13:24 +0000 (Sun, 02 Sep 2012) | 2 lines
-Changed paths:
-   M /trunk/RatingBuster.toc
-
-- fix typo
-~lart Dessa
-------------------------------------------------------------------------
-r359 | Dessa | 2012-09-02 15:00:59 +0000 (Sun, 02 Sep 2012) | 3 lines
-Changed paths:
-   M /trunk
-   M /trunk/.pkgmeta
-   D /trunk/RatingBuster-Locale-deDE.lua
-   D /trunk/RatingBuster-Locale-enUS.lua
-   D /trunk/RatingBuster-Locale-esES.lua
-   D /trunk/RatingBuster-Locale-frFR.lua
-   D /trunk/RatingBuster-Locale-koKR.lua
-   D /trunk/RatingBuster-Locale-ruRU.lua
-   D /trunk/RatingBuster-Locale-zhCN.lua
-   D /trunk/RatingBuster-Locale-zhTW.lua
-   M /trunk/RatingBuster.toc
-   M /trunk/RatingBuster.wowproj
-   D /trunk/UTF8
-   A /trunk/locales
-   A /trunk/locales/deDE.lua
-   A /trunk/locales/enUS.lua
-   A /trunk/locales/esES.lua
-   A /trunk/locales/frFR.lua
-   A /trunk/locales/koKR.lua
-   A /trunk/locales/locales.xml
-   A /trunk/locales/ruRU.lua
-   A /trunk/locales/zhCN.lua
-   A /trunk/locales/zhTW.lua
-
-- nuke UTF8 lib since its only used in LSL
-- move locale files to own folder
-- fix CBH repo url to not point at ace3 repo but to its own
-------------------------------------------------------------------------
-r358 | JackTripper | 2012-09-02 14:41:19 +0000 (Sun, 02 Sep 2012) | 2 lines
-Changed paths:
-   M /trunk/RatingBuster.toc
-   M /trunk/RatingBuster.wowproj
-
-- updating LibStatLogic
-
-------------------------------------------------------------------------
-r357 | JackTripper | 2012-09-01 22:48:03 +0000 (Sat, 01 Sep 2012) | 3 lines
-Changed paths:
-   M /trunk/RatingBuster.lua
-   M /trunk/RatingBuster.toc
-
-- changing the version number so that subversion allows me to issue a commit
-- so that the embedded libraries will get updated
-
-------------------------------------------------------------------------
-r356 | JackTripper | 2012-08-31 22:36:58 +0000 (Fri, 31 Aug 2012) | 3 lines
-Changed paths:
-   M /trunk/RatingBuster.lua
-   M /trunk/RatingBuster.toc
-   A /trunk/RatingBuster.wowproj
-
-- Fine. i put the updated version of LibStatLogic for you, and committed it to SVN.
-- But DON'T be thinking i'm going to maintain it!
 
 ------------------------------------------------------------------------

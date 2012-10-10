@@ -650,6 +650,7 @@ L["statList"] = {
 --gsub(ITEM_MOD_CRIT_RATING,"%s[%+%-]?%%.%.?","")
 
 --Stats
+	{pattern = string.lower(ARMOR), id = ARMOR},
 	{pattern = string.lower(SPELL_STAT1_NAME), id = SPELL_STAT1_NAME}, -- Strength
 	{pattern = string.lower(SPELL_STAT2_NAME), id = SPELL_STAT2_NAME}, -- Agility
 	{pattern = string.lower(SPELL_STAT3_NAME), id = SPELL_STAT3_NAME}, -- Stamina
@@ -661,11 +662,10 @@ L["statList"] = {
 	{pattern = string.lower(ITEM_MOD_STAMINA_SHORT), id = SPELL_STAT3_NAME}, -- Stamina
 	{pattern = string.lower(ITEM_MOD_INTELLECT_SHORT), id = SPELL_STAT4_NAME}, -- Intellect
 	{pattern = string.lower(ITEM_MOD_SPIRIT_SHORT), id = SPELL_STAT5_NAME}, -- Spirit
-
 --Dodge
 	{pattern = string.lower(STAT_DODGE), id = CR_DODGE},
 	{pattern = string.lower(ITEM_MOD_DODGE_RATING_SHORT), id = CR_DODGE},
-	{pattern = string.lower(gsub(ITEM_MOD_DODGE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_PARRY}, 
+	{pattern = string.lower(gsub(ITEM_MOD_DODGE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_DODGE}, 
 --Parry
 	{pattern = string.lower(STAT_PARRY), id = CR_PARRY},
 	{pattern = string.lower(ITEM_MOD_PARRY_RATING_SHORT), id = CR_PARRY},
@@ -673,96 +673,77 @@ L["statList"] = {
 --Block
 	{pattern = string.lower(STAT_BLOCK), id = CR_BLOCK}, -- block enchant: "+10 Shield Block"
 	{pattern = string.lower(ITEM_MOD_BLOCK_VALUE_SHORT), id = CR_BLOCK}, -- block enchant: "+10 Shield Block"
-	{pattern = string.lower(gsub(ITEM_MOD_BLOCK_VALUE,"%s[%+%-]?%%.%.?","")), id = CR_PARRY}, 
+	{pattern = string.lower(gsub(ITEM_MOD_BLOCK_VALUE,"%s[%+%-]?%%.%.?","")), id = CR_BLOCK}, 
 --Hit
-	{pattern = string.lower(ITEM_MOD_HIT_SPELL_RATING_SHORT), id = CR_HIT_SPELL},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_SPELL}, 
+	{pattern = string.lower(ITEM_MOD_HIT_RATING_SHORT), id = CR_HIT_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_MELEE}, 
+	
+	{pattern = string.lower(ITEM_MOD_HIT_MELEE_RATING_SHORT), id = CR_HIT_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_MELEE}, 
 	
 	{pattern = string.lower(ITEM_MOD_HIT_RANGED_RATING_SHORT), id = CR_HIT_RANGED},
 	{pattern = string.lower(gsub(ITEM_MOD_HIT_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_RANGED}, 
 	
-	{pattern = string.lower(ITEM_MOD_HIT_RATING_SHORT), id = CR_HIT_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_MELEE}, 
-	
-	{pattern = string.lower(ITEM_MOD_HIT_RATING_SHORT), id = CR_HIT_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_MELEE}, 
+	{pattern = string.lower(ITEM_MOD_HIT_SPELL_RATING_SHORT), id = CR_HIT_SPELL},
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_SPELL}, 
 --Crit
-	{pattern = string.lower(ITEM_MOD_CRIT_RATING_SHORT), id = CR_CRIT_MELEE}, --Crit
-	{pattern = string.lower(gsub(ITEM_MOD_CRIT_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_MELEE}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_RATING_SHORT), id = CR_CRIT_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_CRIT_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_MELEE},
 	
-	{pattern = string.lower(ITEM_MOD_CRIT_RANGED_RATING_SHORT), id = CR_CRIT_RANGED}, --Crit
-	{pattern = string.lower(gsub(ITEM_MOD_CRIT_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_RANGED}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_MELEE_RATING_SHORT), id = CR_CRIT_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_CRIT_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_MELEE},
 	
-	{pattern = string.lower(ITEM_MOD_CRIT_SPELL_RATING_SHORT), id = CR_CRIT_SPELL}, --Crit
-	{pattern = string.lower(gsub(ITEM_MOD_CRIT_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_SPELL}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_RANGED_RATING_SHORT), id = CR_CRIT_RANGED},
+	{pattern = string.lower(gsub(ITEM_MOD_CRIT_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_RANGED},
 	
-	{pattern = string.lower(ITEM_MOD_CRIT_MELEE_RATING_SHORT), id = CR_CRIT_MELEE}, --Crit
-	{pattern = string.lower(gsub(ITEM_MOD_CRIT_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_MELEE}, --Crit
---Hit Taken
-	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_MELEE}, --Crit
-	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT), id = CR_HIT_TAKEN_RANGED},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_RANGED}, --Crit
-	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RANGED_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_SPELL}, --Crit
-	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_SPELL_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_SPELL}, --Crit
---PVP Resil
-	{pattern = string.lower(ITEM_MOD_RESILIENCE_RATING_SHORT), id = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN}, -- resilience is implicitly a
-	{pattern = string.lower(gsub(ITEM_MOD_RESILIENCE_RATING,"%s[%+%-]?%%.%.?","")), id = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN}, --Crit
+	{pattern = string.lower(ITEM_MOD_CRIT_SPELL_RATING_SHORT), id = CR_CRIT_SPELL},
+	{pattern = string.lower(gsub(ITEM_MOD_CRIT_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_CRIT_SPELL},
+--Haste
+	{pattern = string.lower(ITEM_MOD_HASTE_RATING_SHORT), id = CR_HASTE_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_HASTE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_MELEE},
 
- 
+	{pattern = string.lower(ITEM_MOD_HASTE_MELEE_RATING_SHORT), id = CR_HASTE_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_HASTE_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_MELEE},
+	
+	{pattern = string.lower(ITEM_MOD_HASTE_RANGED_RATING_SHORT), id = CR_HASTE_RANGED},
+	{pattern = string.lower(gsub(ITEM_MOD_HASTE_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_RANGED},
+	
+	{pattern = string.lower(ITEM_MOD_HASTE_SPELL_RATING_SHORT), id = CR_HASTE_SPELL},
+	{pattern = string.lower(gsub(ITEM_MOD_HASTE_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_SPELL}, 
 --Expertise
 	{pattern = string.lower(ITEM_MOD_EXPERTISE_RATING_SHORT), id = CR_EXPERTISE},
 	{pattern = string.lower(gsub(ITEM_MOD_EXPERTISE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_EXPERTISE},
 --Mastery
 	{pattern = string.lower(ITEM_MOD_MASTERY_RATING_SHORT), id = CR_MASTERY},
 	{pattern = string.lower(gsub(ITEM_MOD_MASTERY_RATING,"%s[%+%-]?%%.%.?","")), id = CR_MASTERY},
---Haste
-	{pattern = string.lower(ITEM_MOD_HASTE_SPELL_RATING_SHORT), id = CR_HASTE_SPELL},
-	{pattern = string.lower(gsub(ITEM_MOD_HASTE_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_SPELL},
-	
-	{pattern = string.lower(ITEM_MOD_HASTE_RANGED_RATING_SHORT), id = CR_HASTE_RANGED},
-	{pattern = string.lower(gsub(ITEM_MOD_HASTE_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_RANGED},
-
-	{pattern = string.lower(ITEM_MOD_HASTE_MELEE_RATING_SHORT), id = CR_HASTE_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HASTE_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HASTE_MELEE}, 
-
-	{pattern = string.lower(ITEM_MOD_HASTE_RATING_SHORT), id = CR_HASTE_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_HASTE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_EXPERTISE},
---Expertise	
-	{pattern = string.lower(ITEM_MOD_EXPERTISE_RATING_SHORT), id = CR_HASTE_MELEE},
-	{pattern = string.lower(gsub(ITEM_MOD_EXPERTISE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_EXPERTISE},
-
-	{pattern = string.lower(STAT_CATEGORY_DEFENSE), id = CR_DEFENSE_SKILL},
-	{pattern = string.lower(SKILL), id = CR_WEAPON_SKILL},
-
-
---PVP Power
-	{pattern = string.lower(ITEM_MOD_PVP_POWER_SHORT), id = CR_PVP_POWER}, 
-	{pattern = string.lower(gsub(ITEM_MOD_PVP_POWER,"%s[%+%-]?%%.%.?","")), id = CR_PVP_POWER}, --Crit
-
-
 --Spell Power
-
-	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT),id = SPELL_POWER},
-	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT),id = SPELL_POWER},
-	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT), id = SPELL_DMG},
-	{pattern = string.lower(gsub(ITEM_MOD_SPELL_POWER,"%s[%+%-]?%%.%.?","")), id = SPELL_DMG}, 
+	{pattern = string.lower(ITEM_MOD_SPELL_POWER_SHORT), id = SPELL_POWER},
+	{pattern = string.lower(gsub(ITEM_MOD_SPELL_POWER,"%s[%+%-]?%%.%.?","")), id = SPELL_POWER}, 
 
 	{pattern = string.lower(ITEM_MOD_SPELL_DAMAGE_DONE_SHORT), id = SPELL_DMG},
 	{pattern = string.lower(gsub(ITEM_MOD_SPELL_DAMAGE_DONE,"%s[%+%-]?%%.%.?","")), id = SPELL_DMG}, 
-	{pattern = string.lower(ITEM_MOD_SPELL_DAMAGE_DONE_SHORT), id = SPELL_DMG},
-	{pattern = string.lower(gsub(ITEM_MOD_SPELL_DAMAGE_DONE,"%s[%+%-]?%%.%.?","")), id = SPELL_DMG},
-
+--PVP Power
+	{pattern = string.lower(ITEM_MOD_PVP_POWER_SHORT), id = CR_PVP_POWER}, 
+	{pattern = string.lower(gsub(ITEM_MOD_PVP_POWER,"%s[%+%-]?%%.%.?","")), id = CR_PVP_POWER},
+--PVP Resil
+	{pattern = string.lower(ITEM_MOD_RESILIENCE_RATING_SHORT), id = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN},
+	{pattern = string.lower(gsub(ITEM_MOD_RESILIENCE_RATING,"%s[%+%-]?%%.%.?","")), id = COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN},
+--Hit Taken
 	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
-
-
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_MELEE},
+	
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT), id = CR_HIT_TAKEN_MELEE},
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_MELEE_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_MELEE},
+	
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_RANGED_RATING_SHORT), id = CR_HIT_TAKEN_RANGED},
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_RANGED_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_RANGED},
+	
+	{pattern = string.lower(ITEM_MOD_HIT_TAKEN_SPELL_RATING_SHORT), id = CR_HIT_TAKEN_SPELL},
+	{pattern = string.lower(gsub(ITEM_MOD_HIT_TAKEN_SPELL_RATING,"%s[%+%-]?%%.%.?","")), id = CR_HIT_TAKEN_SPELL},
+--Misc
+	{pattern = string.lower(STAT_CATEGORY_DEFENSE), id = CR_DEFENSE_SKILL},
+	{pattern = string.lower(SKILL), id = CR_WEAPON_SKILL},
 	{pattern = string.lower(ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT), id = CR_ARMOR_PENETRATION},
-
-
-	{pattern = string.lower(ARMOR), id = ARMOR},
-
 }
 -------------------------
 -- Added info patterns --
