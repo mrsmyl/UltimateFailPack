@@ -243,6 +243,22 @@ function TomTom:ClearAllWaypoints()
     end
 end
 
+function TomTom:ResetWaypointOptions()
+	local minimap = self.profile.minimap.enable
+	local world = self.profile.worldmap.enable
+    local cleardistance = self.profile.persistence.cleardistance
+    local arrivaldistance = self.profile.arrow.arrival
+
+	for map, data in pairs(self.waypointprofile) do
+		for key, waypoint in pairs(data) do
+			waypoint.minimap = minimap
+			waypoint.world = sorld
+			waypoint.cleardistance = cleardistance
+			waypoint.arrivaldistance = arrivaldistance
+		end
+	end
+end
+
 function TomTom:ReloadWaypoints()
     self:ClearAllWaypoints()
 
@@ -274,7 +290,10 @@ function TomTom:ReloadWaypoints()
 			-- Override options with what is stored in the profile
 			for k,v in pairs(waypoint) do
 				if type(k) == "string" then
-					options[k] = v
+					if k ~= "callbacks" then
+						-- we can never import callbacks, so ditch them
+						options[k] = v
+					end
 				end
 			end
 
@@ -715,7 +734,8 @@ local function _both_tooltip_update(event, tooltip, uid, dist)
 end
 
 local function _both_clear_distance(event, uid, range, distance, lastdistance)
-    if not UnitOnTaxi("player") then
+	-- Only clear the waypoint if we weren't inside it when it was set
+    if lastdistance and not UnitOnTaxi("player") then
         TomTom:RemoveWaypoint(uid)
     end
 end
