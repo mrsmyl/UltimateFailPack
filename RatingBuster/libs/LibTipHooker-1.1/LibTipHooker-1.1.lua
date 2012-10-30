@@ -1,10 +1,10 @@
 ﻿--[[
 Name: LibTipHooker-1.1.lua
 Description: A Library for hooking tooltips.
-Revision: $Revision: 19 $
+Revision: $Revision: 20 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
-LastUpdate: $Date: 2012-09-15 18:50:18 +0000 (Sat, 15 Sep 2012) $
+LastUpdate: $Date: 2012-10-15 13:57:28 +0000 (Mon, 15 Oct 2012) $
 Website:
 Documentation:
 SVN: $URL $
@@ -32,7 +32,7 @@ For a complete item scanning solution to stat scanning you can use ItemBonusLib 
 
 
 local MAJOR = "LibTipHooker-1.1"
-local MINOR = "$Revision: 19 $"
+local MINOR = "$Revision: 20 $"
 
 local TipHooker = LibStub:NewLibrary(MAJOR, MINOR)
 if not TipHooker then return end -- this file is older version
@@ -145,6 +145,8 @@ local MethodList = {
 		"SetBackpackToken",
 		-- 4.0
 		"SetReforgeItem",
+		-- 4.2
+		"SetItemByID",
 	},
 	buff = {
 		"SetPlayerBuff",

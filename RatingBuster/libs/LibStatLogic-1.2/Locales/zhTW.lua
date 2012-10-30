@@ -181,6 +181,7 @@ PatternLocale.zhTW = { -- {{{
     --["^Equip: Increases attack power by (%d+) in Cat"] = "FERAL_AP",
     --["^Equip: Increases attack power by (%d+) when fighting Undead"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
     ["^(%d+)點護甲$"] = "ARMOR",
+	["^("..patNumber..")點護甲$"] = "ARMOR",
     ["使你的精通等級提高(%d+).-%)$"] = "MASTERY_RATING",
     ["%d+秒"] = false, -- Procs
     ["強化護甲 %+(%d+)"] = "ARMOR_BONUS",
@@ -238,6 +239,14 @@ PatternLocale.zhTW = { -- {{{
     "^(.-)提高([%d%.]+)點(.-)$", --
     "^(.-)提高([%d%.]+)(.-)$", --
     "^提高(.-)([%d%.]+)點(.-)$", -- 提高法術能量98點 ID: 40685
+---
+	"^(.-)提高("..patNumber..")點(.-)$",
+	"^提高(.-)("..patNumber..")點(.-)$",
+	"^(.-)("..patNumber..")點(.-)$", --
+	"^(.-) ?("..patNumber..") ?點(.-)$", --
+	"^(.-) ?([%+%-]"..patNumber..") ?(.-)$", --
+	"^(.-) ?("..patNumber..") ?(.-)$", --
+	"^(.-) ?("..patDecimal..") ?(.-)$", --
     "^(.-)([%d%.]+)點(.-)$", --
     "^(.-) ?([%+%-][%d%.]+) ?點(.-)$", --
     "^(.-) ?([%+%-][%d%.]+) ?(.-)$", --
@@ -397,6 +406,38 @@ PatternLocale.zhTW = { -- {{{
     ["使盾牌格擋等級"] = {"BLOCK_RATING",},
     ["使你的盾牌格擋等級"] = {"BLOCK_RATING",},
 
+---
+    ["防禦"] = {"DEFENSE_RATING",},
+    ["提高防禦"] = {"DEFENSE_RATING",},
+    ["提高你的防禦"] = {"DEFENSE_RATING",},
+    ["使防禦"] = {"DEFENSE_RATING",},
+    ["使你的防禦"] = {"DEFENSE_RATING",},
+    ["閃躲"] = {"DODGE_RATING",},
+    ["提高閃躲"] = {"DODGE_RATING",},
+    ["提高你的閃躲"] = {"DODGE_RATING",},
+    ["使閃躲"] = {"DODGE_RATING",},
+    ["使你的閃躲"] = {"DODGE_RATING",},
+    ["招架"] = {"PARRY_RATING",},
+    ["提高招架"] = {"PARRY_RATING",},
+    ["提高你的招架"] = {"PARRY_RATING",},
+    ["使招架"] = {"PARRY_RATING",},
+    ["使你的招架"] = {"PARRY_RATING",},
+    ["格擋機率"] = {"BLOCK_RATING",},
+    ["提高格擋機率"] = {"BLOCK_RATING",},
+    ["提高你的格擋機率"] = {"BLOCK_RATING",},
+    ["使格擋機率"] = {"BLOCK_RATING",},
+    ["使你的格擋機率"] = {"BLOCK_RATING",},
+    ["格擋"] = {"BLOCK_RATING",},
+    ["提高格擋"] = {"BLOCK_RATING",},
+    ["提高你的格擋"] = {"BLOCK_RATING",},
+    ["使格擋"] = {"BLOCK_RATING",},
+    ["使你的格擋"] = {"BLOCK_RATING",},
+    ["盾牌格擋"] = {"BLOCK_RATING",},
+    ["提高盾牌格擋"] = {"BLOCK_RATING",},
+    ["提高你的盾牌格擋"] = {"BLOCK_RATING",},
+    ["使盾牌格擋"] = {"BLOCK_RATING",},
+    ["使你的盾牌格擋"] = {"BLOCK_RATING",},
+
     ["命中等級"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"},
     ["提高命中等級"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- ITEM_MOD_HIT_RATING
     ["提高近戰命中等級"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_MELEE_RATING
@@ -407,6 +448,18 @@ PatternLocale.zhTW = { -- {{{
     ["遠程命中等級"] = {"RANGED_HIT_RATING",},
     ["提高遠距命中等級"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
     ["使你的遠程命中等級"] = {"RANGED_HIT_RATING",},
+	
+------
+    ["命中"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"},
+    ["提高命中"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING"}, -- ITEM_MOD_HIT_RATING
+    ["提高近戰命中"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_MELEE_RATING
+    ["使你的命中"] = {"MELEE_HIT_RATING",},
+    ["法術命中"] = {"SPELL_HIT_RATING",},
+    ["提高法術命中"] = {"SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_SPELL_RATING
+    ["使你的法術命中"] = {"SPELL_HIT_RATING",},
+    ["遠程命中"] = {"RANGED_HIT_RATING",},
+    ["提高遠距命中"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
+    ["使你的遠程命中"] = {"RANGED_HIT_RATING",},
 
     ["致命一擊"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, -- ID:31868
     ["致命一擊等級"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
@@ -422,6 +475,20 @@ PatternLocale.zhTW = { -- {{{
     ["遠程致命一擊等級"] = {"RANGED_CRIT_RATING",},
     ["提高遠程致命一擊等級"] = {"RANGED_CRIT_RATING",},
     ["使你的遠程致命一擊等級"] = {"RANGED_CRIT_RATING",},
+---
+    ["致命一擊"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"}, -- ID:31868
+    ["提高致命一擊"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
+    ["使你的致命一擊"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING"},
+    ["近戰致命一擊"] = {"MELEE_CRIT_RATING",},
+    ["提高近戰致命一擊"] = {"MELEE_CRIT_RATING",}, -- [屠殺者腰帶] ID:21639
+    ["使你的近戰致命一擊"] = {"MELEE_CRIT_RATING",},
+    ["法術致命一擊"] = {"SPELL_CRIT_RATING",},
+    ["提高法術致命一擊"] = {"SPELL_CRIT_RATING",}, -- [伊利達瑞的復仇] ID:28040
+    ["使你的法術致命一擊"] = {"SPELL_CRIT_RATING",},
+    ["使半徑30碼範圍內所有小隊成員的法術致命一擊"] = {"SPELL_CRIT_RATING",}, -- Atiesh, ID: 22589
+    ["遠程致命一擊"] = {"RANGED_CRIT_RATING",},
+    ["提高遠程致命一擊"] = {"RANGED_CRIT_RATING",},
+    ["使你的遠程致命一擊"] = {"RANGED_CRIT_RATING",},
 
     ["提高命中迴避率"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RATING, Necklace of Trophies ID: 31275 (Patch 2.0.10 changed it to Hit Rating)
     ["提高近戰命中迴避率"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_MELEE_RATING
@@ -444,6 +511,16 @@ PatternLocale.zhTW = { -- {{{
     ["提高法術加速等級"] = {"SPELL_HASTE_RATING"},
     ["遠程攻擊加速等級"] = {"RANGED_HASTE_RATING"},
     ["提高遠程攻擊加速等級"] = {"RANGED_HASTE_RATING"},
+---
+    ["加速"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, -- Enchant Gloves
+    ["攻擊速度"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
+    ["攻擊速度"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
+    ["提高加速"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
+    ["提高近戰加速"] = {"MELEE_HASTE_RATING"},
+    ["法術加速"] = {"SPELL_HASTE_RATING"},
+    ["提高法術加速"] = {"SPELL_HASTE_RATING"},
+    ["遠程攻擊加速"] = {"RANGED_HASTE_RATING"},
+    ["提高遠程攻擊加速"] = {"RANGED_HASTE_RATING"},
 
     ["使匕首技能等級"] = {"DAGGER_WEAPON_RATING"},
     ["匕首武器技能等級"] = {"DAGGER_WEAPON_RATING"},
@@ -482,6 +559,21 @@ PatternLocale.zhTW = { -- {{{
     ["你的護甲穿透等級提高"] = {"ARMOR_PENETRATION_RATING"},
     ["精通等級"] = {"MASTERY_RATING",},
     ["使你的精通等級"] = {"MASTERY_RATING",},
+---
+    ["使你的熟練提高"] = {"EXPERTISE_RATING"},
+    ["熟練"] = {"EXPERTISE_RATING"},
+    ["護甲穿透"] = {"ARMOR_PENETRATION_RATING"},
+    ["你的護甲穿透提高"] = {"ARMOR_PENETRATION_RATING"},
+    ["精通"] = {"MASTERY_RATING",},
+    ["使你的精通"] = {"MASTERY_RATING",},
+
+--[[
+		[RESILIENCE_ABBR] = {"RESILIENCE_RATING",},	
+		[ITEM_MOD_RESILIENCE_RATING_SHORT] = {"RESILIENCE_RATING",}, --5.0.4  "+40 PvP Resilience", "Socket Bonus: +10 PvP Resilience"
+		[ITEM_MOD_RESILIENCE_RATING] = {"RESILIENCE_RATING",},	--5.0.3  "Increases your pvp resilience by %s."
+		[ITEM_MOD_PVP_POWER] = {"PVP_POWER", }, --5.0.4  e.g. "Equip: Increases your pvp power by %s."
+		[ITEM_MOD_PVP_POWER_SHORT] = {"PVP_POWER",}, --5.0.4 "+50 PvP Power"
+--]]
 
     -- Exclude
     ["秒"] = false,

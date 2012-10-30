@@ -177,6 +177,7 @@ PatternLocale.zhCN = { -- {{{
     ["^装备: 猫形态下的攻击强度增加(%d+)"] = "FERAL_AP",
     ["^装备: 与亡灵作战时的攻击强度提高(%d+)点"] = "AP_UNDEAD", -- Seal of the Dawn ID:13029
     ["^(%d+)点护甲$"] = "ARMOR",
+	["^("..patNumber..")点护甲$"] = "ARMOR",
     ["强化护甲 %+(%d+)"] = "ARMOR_BONUS",
     ["护甲值提高(%d+)点"] = "ARMOR_BONUS",
     ["每5秒恢复(%d+)点法力值。$"] = "COMBAT_MANA_REGEN",
@@ -237,6 +238,14 @@ PatternLocale.zhCN = { -- {{{
     "^(.-)最多([%d%.]+)点(.-)$", --
     "^(.-)最多([%d%.]+)(.-)$", --
     "^(.-)提高([%d%.]+)点(.-)$", --
+---
+	"^(.-)提高("..patNumber..")点(.-)$",
+    "^提高(.-)("..patNumber..")点(.-)$",
+	"^(.-)("..patNumber..")点(.-)$", --
+	"^(.-) ?("..patNumber..") ?点(.-)$", --
+	"^(.-) ?([%+%-]"..patNumber..") ?(.-)$", --
+	"^(.-) ?("..patNumber..") ?(.-)$", --
+	"^(.-) ?("..patDecimal..") ?(.-)$", --
     "^(.-)提高([%d%.]+)(.-)$", --
     "^(.-)([%d%.]+)点(.-)$", --
     "^(.-) ?([%+%-][%d%.]+) ?点(.-)$", --
@@ -383,7 +392,13 @@ PatternLocale.zhCN = { -- {{{
     ["提高你的防御等级"] = {"DEFENSE_RATING",},
     ["使防御等级"] = {"DEFENSE_RATING",},
     ["使你的防御等级"] = {"DEFENSE_RATING",},
-
+---
+    ["防御"] = {"DEFENSE_RATING",},
+    ["防御提高"] = {"DEFENSE_RATING",},
+    ["提高你的防御"] = {"DEFENSE_RATING",},
+    ["使防御"] = {"DEFENSE_RATING",},
+    ["使你的防御"] = {"DEFENSE_RATING",},
+	
     ["躲闪等级"] = {"DODGE_RATING",},
     ["提高躲闪等级"] = {"DODGE_RATING",},
     ["躲闪等级提高"] = {"DODGE_RATING",},
@@ -391,66 +406,134 @@ PatternLocale.zhCN = { -- {{{
     ["提高你的躲闪等级"] = {"DODGE_RATING",},
     ["使躲闪等级"] = {"DODGE_RATING",},
     ["使你的躲闪等级"] = {"DODGE_RATING",},
-
+---
+    ["躲闪"] = {"DODGE_RATING",},
+    ["提高躲闪"] = {"DODGE_RATING",},
+    ["躲闪提高"] = {"DODGE_RATING",},
+    ["躲闪提高(%d+)"] = {"DODGE_RATING",},
+    ["提高你的躲闪"] = {"DODGE_RATING",},
+    ["使躲闪"] = {"DODGE_RATING",},
+    ["使你的躲闪"] = {"DODGE_RATING",},
+	
     ["招架等级"] = {"PARRY_RATING",},
     ["提高招架等级"] = {"PARRY_RATING",},
     ["提高你的招架等级"] = {"PARRY_RATING",},
     ["使招架等级"] = {"PARRY_RATING",},
     ["使你的招架等级"] = {"PARRY_RATING",},
-
+---
+    ["招架"] = {"PARRY_RATING",},
+    ["提高招架"] = {"PARRY_RATING",},
+    ["提高你的招架"] = {"PARRY_RATING",},
+    ["使招架"] = {"PARRY_RATING",},
+    ["使你的招架"] = {"PARRY_RATING",},
+	
     ["盾挡等级"] = {"BLOCK_RATING",},
     ["提高盾挡等级"] = {"BLOCK_RATING",},
     ["提高你的盾挡等级"] = {"BLOCK_RATING",},
     ["使盾挡等级"] = {"BLOCK_RATING",},
     ["使你的盾挡等级"] = {"BLOCK_RATING",},
-
+---
+    ["盾挡"] = {"BLOCK_RATING",},
+    ["提高盾挡"] = {"BLOCK_RATING",},
+    ["提高你的盾挡"] = {"BLOCK_RATING",},
+    ["使盾挡"] = {"BLOCK_RATING",},
+    ["使你的盾挡"] = {"BLOCK_RATING",},
+	
     ["格挡等级"] = {"BLOCK_RATING",},
     ["提高格挡等级"] = {"BLOCK_RATING",},
     ["提高你的格挡等级"] = {"BLOCK_RATING",},
     ["使格挡等级"] = {"BLOCK_RATING",},
     ["使你的格挡等级"] = {"BLOCK_RATING",},
-
+---
+    ["格挡"] = {"BLOCK_RATING",},
+    ["提高格挡"] = {"BLOCK_RATING",},
+    ["提高你的格挡"] = {"BLOCK_RATING",},
+    ["使格挡"] = {"BLOCK_RATING",},
+    ["使你的格挡"] = {"BLOCK_RATING",},
+	
     ["盾牌格挡等级"] = {"BLOCK_RATING",},
     ["提高盾牌格挡等级"] = {"BLOCK_RATING",},
     ["提高你的盾牌格挡等级"] = {"BLOCK_RATING",},
     ["使盾牌格挡等级"] = {"BLOCK_RATING",},
     ["使你的盾牌格挡等级"] = {"BLOCK_RATING",},
+---
+    ["盾牌格挡"] = {"BLOCK_RATING",},
+    ["提高盾牌格挡"] = {"BLOCK_RATING",},
+    ["提高你的盾牌格挡"] = {"BLOCK_RATING",},
+    ["使盾牌格挡"] = {"BLOCK_RATING",},
+    ["使你的盾牌格挡"] = {"BLOCK_RATING",},
 
     ["命中等级"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
     ["提高命中等级"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_RATING
     ["使你的命中等级"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
     ["提高近战命中等级"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_MELEE_RATING
-
+---
+    ["命中"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
+    ["提高命中"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_RATING
+    ["使你的命中"] = {"MELEE_HIT_RATING", "SPELL_HIT_RATING",},
+    ["提高近战命中"] = {"MELEE_HIT_RATING",}, -- ITEM_MOD_HIT_MELEE_RATING
+	
     ["法术命中等级"] = {"SPELL_HIT_RATING",},
     ["提高法术命中等级"] = {"SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_SPELL_RATING
     ["使你的法术命中等级"] = {"SPELL_HIT_RATING",},
-
+---
+    ["法术命中"] = {"SPELL_HIT_RATING",},
+    ["提高法术命中"] = {"SPELL_HIT_RATING",}, -- ITEM_MOD_HIT_SPELL_RATING
+    ["使你的法术命中"] = {"SPELL_HIT_RATING",},
+	
     ["远程命中等级"] = {"RANGED_HIT_RATING",},
     ["提高远程命中等级"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
     ["使你的远程命中等级"] = {"RANGED_HIT_RATING",},
+---
+    ["远程命中"] = {"RANGED_HIT_RATING",},
+    ["提高远程命中"] = {"RANGED_HIT_RATING",}, -- ITEM_MOD_HIT_RANGED_RATING
+    ["使你的远程命中"] = {"RANGED_HIT_RATING",},
 
     ["爆击等级"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
     ["提高爆击等级"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
     ["使你的爆击等级"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
-
+---
+    ["爆击"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
+    ["提高爆击"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
+    ["使你的爆击"] = {"MELEE_CRIT_RATING", "SPELL_CRIT_RATING",},
+	
     ["近战爆击等级"] = {"MELEE_CRIT_RATING",},
     ["提高近战爆击等级"] = {"MELEE_CRIT_RATING",}, -- [屠杀者腰带] ID:21639
     ["使你的近战爆击等级"] = {"MELEE_CRIT_RATING",},
-
+---
+    ["近战爆击"] = {"MELEE_CRIT_RATING",},
+    ["提高近战爆击"] = {"MELEE_CRIT_RATING",}, -- [屠杀者腰带] ID:21639
+    ["使你的近战爆击"] = {"MELEE_CRIT_RATING",},
+	
     ["法术爆击等级"] = {"SPELL_CRIT_RATING",},
     ["法术爆击"] = {"SPELL_CRIT_RATING",},
     ["提高法术爆击等级"] = {"SPELL_CRIT_RATING",}, -- [伊利达瑞的复仇] ID:28040
     ["使你的法术爆击等级"] = {"SPELL_CRIT_RATING",},
     ["使周围半径30码范围内的所有小队成员的法术爆击等级"] = {"SPELL_CRIT_RATING",}, -- Atiesh, ID: 22589
+---
+    ["法术爆击"] = {"SPELL_CRIT_RATING",},
+    ["法术爆击"] = {"SPELL_CRIT_RATING",},
+    ["提高法术爆击"] = {"SPELL_CRIT_RATING",}, -- [伊利达瑞的复仇] ID:28040
+    ["使你的法术爆击"] = {"SPELL_CRIT_RATING",},
+    ["使周围半径30码范围内的所有小队成员的法术爆击"] = {"SPELL_CRIT_RATING",}, -- Atiesh, ID: 22589
 
     ["远程爆击等级"] = {"RANGED_CRIT_RATING",},
     ["提高远程爆击等级"] = {"RANGED_CRIT_RATING",},
     ["使你的远程爆击等级"] = {"RANGED_CRIT_RATING",},
-
+---
+    ["远程爆击"] = {"RANGED_CRIT_RATING",},
+    ["提高远程爆击"] = {"RANGED_CRIT_RATING",},
+    ["使你的远程爆击"] = {"RANGED_CRIT_RATING",},
+	
     ["提高命中躲闪等级"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RATING, Necklace of Trophies ID: 31275 (Patch 2.0.10 changed it to Hit Rating)
     ["提高近战命中躲闪等级"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_MELEE_RATING
     ["提高远程命中躲闪等级"] = {"RANGED_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RANGED_RATING
     ["提高法术命中躲闪等级"] = {"SPELL_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_SPELL_RATING
+---
+    ["提高命中躲闪"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RATING, Necklace of Trophies ID: 31275 (Patch 2.0.10 changed it to Hit Rating)
+    ["提高近战命中躲闪"] = {"MELEE_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_MELEE_RATING
+    ["提高远程命中躲闪"] = {"RANGED_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_RANGED_RATING
+    ["提高法术命中躲闪"] = {"SPELL_HIT_AVOID_RATING"}, -- ITEM_MOD_HIT_TAKEN_SPELL_RATING
 
     ["韧性"] = {"RESILIENCE_RATING",},
     ["韧性等级"] = {"RESILIENCE_RATING",},
@@ -459,6 +542,14 @@ PatternLocale.zhCN = { -- {{{
     ["提高近战爆击躲闪等级"] = {"MELEE_CRIT_AVOID_RATING",},
     ["提高远程爆击躲闪等级"] = {"RANGED_CRIT_AVOID_RATING",},
     ["提高法术爆击躲闪等级"] = {"SPELL_CRIT_AVOID_RATING",},
+---
+    ["韧性"] = {"RESILIENCE_RATING",},
+    ["韧性"] = {"RESILIENCE_RATING",},
+    ["使你的韧性"] = {"RESILIENCE_RATING",},
+    ["提高爆击躲闪"] = {"MELEE_CRIT_AVOID_RATING",},
+    ["提高近战爆击躲闪"] = {"MELEE_CRIT_AVOID_RATING",},
+    ["提高远程爆击躲闪"] = {"RANGED_CRIT_AVOID_RATING",},
+    ["提高法术爆击躲闪"] = {"SPELL_CRIT_AVOID_RATING",},
 
     ["急速等级"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, -- Enchant Gloves
     ["攻击速度"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
@@ -468,7 +559,16 @@ PatternLocale.zhCN = { -- {{{
     ["提高近战急速等级"] = {"MELEE_HASTE_RATING"},
     ["提高法术急速等级"] = {"SPELL_HASTE_RATING"},
     ["提高远程急速等级"] = {"RANGED_HASTE_RATING"},
-
+---
+    ["急速"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"}, -- Enchant Gloves
+    ["攻击速度"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
+    ["提高急速"] = {"MELEE_HASTE_RATING", "SPELL_HASTE_RATING"},
+    ["法术急速"] = {"SPELL_HASTE_RATING"},
+    ["远程急速"] = {"RANGED_HASTE_RATING"},
+    ["提高近战急速"] = {"MELEE_HASTE_RATING"},
+    ["提高法术急速"] = {"SPELL_HASTE_RATING"},
+    ["提高远程急速"] = {"RANGED_HASTE_RATING"},
+	
     ["匕首技能"] = {"DAGGER_WEAPON_RATING"},
     ["匕首技能等级"] = {"DAGGER_WEAPON_RATING"},
     ["剑类技能"] = {"SWORD_WEAPON_RATING"},
@@ -504,9 +604,26 @@ PatternLocale.zhCN = { -- {{{
     ["精准等级"] = {"EXPERTISE_RATING",},
     ["提高精准等级"] = {"EXPERTISE_RATING",},
     ["精准等级提高"] = {"EXPERTISE_RATING",},
-
+---
+    ["使你的精准提高"] = {"EXPERTISE_RATING"},
+    ["精准"] = {"EXPERTISE_RATING",},
+    ["提高精准"] = {"EXPERTISE_RATING",},
+    ["精准提高"] = {"EXPERTISE_RATING",},
+	
     ["护甲穿透等级"] = {"ARMOR_PENETRATION_RATING"},
     ["护甲穿透等级提高"] = {"ARMOR_PENETRATION_RATING"},
+---
+    ["护甲穿透"] = {"ARMOR_PENETRATION_RATING"},
+    ["护甲穿透提高"] = {"ARMOR_PENETRATION_RATING"},
+
+--[[	
+		[RESILIENCE_ABBR] = {"RESILIENCE_RATING",},	
+		[ITEM_MOD_RESILIENCE_RATING_SHORT] = {"RESILIENCE_RATING",}, --5.0.4  "+40 PvP Resilience", "Socket Bonus: +10 PvP Resilience"
+		[ITEM_MOD_RESILIENCE_RATING] = {"RESILIENCE_RATING",},	--5.0.3  "Increases your pvp resilience by %s."
+		[ITEM_MOD_PVP_POWER] = {"PVP_POWER", }, --5.0.4  e.g. "Equip: Increases your pvp power by %s."
+		[ITEM_MOD_PVP_POWER_SHORT] = {"PVP_POWER",}, --5.0.4 "+50 PvP Power"
+--]]
+
     -- Exclude
     ["秒"] = false,
     ["到"] = false,
