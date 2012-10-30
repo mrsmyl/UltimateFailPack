@@ -946,6 +946,16 @@ function AutoBarCategory:Initialize()
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Combat"] = AutoBarItems:new(
 			"Consumable.Cooldown.Potion.Combat", "INV_Potion_54", "Consumable.Cooldown.Potion.Combat")
 
+	AutoBarCategoryList["AutoBar.Potion.Health"] = AutoBarItems:new(
+			"AutoBar.Potion.Health", "INV_Potion_54", "AutoBar.Potion.Health")
+
+	AutoBarCategoryList["AutoBar.Potion.Mana"] = AutoBarItems:new(
+			"AutoBar.Potion.Mana", "INV_Potion_76", "AutoBar.Potion.Mana")
+			
+	AutoBarCategoryList["AutoBar.SunsongRanch"] = AutoBarItems:new(
+			"AutoBar.SunsongRanch", "INV_Potion_76", "AutoBar.SunsongRanch")
+
+
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Health.Anywhere"] = AutoBarItems:new(
 			"Consumable.Cooldown.Potion.Health.Anywhere", "INV_Alchemy_EndlessFlask_06", "Consumable.Cooldown.Potion.Health.Anywhere")
 	AutoBarCategoryList["Consumable.Cooldown.Potion.Health.Anywhere"]:SetAnywhere(true)

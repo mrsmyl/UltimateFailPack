@@ -251,6 +251,7 @@ if (GetLocale() == "enUS") then
 		["AutoBarButtonQuest"] = "Quest",
 		["AutoBarButtonMiscFun"] = "Misc, Fun",
 		["AutoBarButtonGuildSpell"] = "Guild Spells",
+		["AutobarSunsongRanch"] = "Sunsong Ranch",
 		["AutoBarButtonRecovery"] = "Mana / Rage / Energy",
 		["AutoBarButtonRotationDrums"] = "Rotation: Drums",
 		["AutoBarButtonShields"] = "Shields",
@@ -267,13 +268,13 @@ if (GetLocale() == "enUS") then
 		["AutoBarButtonTotemAir"] = "Air Totem",
 		["AutoBarButtonTotemFire"] = "Fire Totem",
 		["AutoBarButtonTotemWater"] = "Water Totem",
-		["AutoBarButtonTrack"] = "Track",
 		["AutoBarButtonTrap"] = "Trap",
 		["AutoBarButtonTrinket1"] = "Trinket 1",
 		["AutoBarButtonTrinket2"] = "Trinket 2",
 		["AutoBarButtonWarlockStones"] = "Warlock Stones",
 		["AutoBarButtonWater"] = "Water",
 		["AutoBarButtonWaterBuff"] = "Water Buff",
+
 
 		["AutoBarButtonBear"] = "Bear",
 		["AutoBarButtonBoomkinTree"] = "Tree of Life / Boomkin",
@@ -510,6 +511,7 @@ if (GetLocale() == "enUS") then
 		["AutoBar.Trinket"] = INVTYPE_TRINKET;
 		
 		["Spell.Guild"] = "Guild Spells";
+		["Autobar.SunsongRanch"] = "Sunsong Ranch";
 
 		["Spell.Aspect"] = "Aspect";
 		["Spell.Poison.Lethal"] = "Poison: Lethal";
@@ -533,7 +535,6 @@ if (GetLocale() == "enUS") then
 		["Spell.Totem.Fire"] = "Fire Totem";
 		["Spell.Totem.Water"] = "Water Totem";
 		["Spell.Seal"] = "Seal";
-		["Spell.Track"] = "Track";
 		["Spell.Trap"] = "Trap";
 		["Misc.Booze"] = "Booze";
 		["Misc.Hearth"] = "Hearthstone";

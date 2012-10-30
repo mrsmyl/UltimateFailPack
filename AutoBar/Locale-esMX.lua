@@ -262,7 +262,6 @@ if (GetLocale() == "esMX") then
 		["AutoBarButtonTotemAir"] = "Totem de Aire",
 		["AutoBarButtonTotemFire"] = "Totem de Fuego",
 		["AutoBarButtonTotemWater"] = "Totem de Agua",
-		["AutoBarButtonTrack"] = "Pista",
 		["AutoBarButtonTrap"] = "Trampa",
 		["AutoBarButtonTrinket1"] = "Abalorio 1",
 		["AutoBarButtonTrinket2"] = "Abalorio 2",
@@ -525,7 +524,6 @@ if (GetLocale() == "esMX") then
 		["Spell.Totem.Fire"] = "Totem de Fuego";
 		["Spell.Totem.Water"] = "Totem de Agua";
 		["Spell.Seal"] = "Sello";
-		["Spell.Track"] = "Pista";
 		["Spell.Trap"] = "Trampa";
 		["Misc.Booze"] = "Alcohol";
 		["Misc.Hearth"] = "Piedra de hogar";

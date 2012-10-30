@@ -267,7 +267,6 @@ if (GetLocale() == "itIT") then
 		["AutoBarButtonTotemAir"] = "Air Totem",
 		["AutoBarButtonTotemFire"] = "Fire Totem",
 		["AutoBarButtonTotemWater"] = "Water Totem",
-		["AutoBarButtonTrack"] = "Track",
 		["AutoBarButtonTrap"] = "Trap",
 		["AutoBarButtonTrinket1"] = "Trinket 1",
 		["AutoBarButtonTrinket2"] = "Trinket 2",
@@ -533,7 +532,6 @@ if (GetLocale() == "itIT") then
 		["Spell.Totem.Fire"] = "Fire Totem";
 		["Spell.Totem.Water"] = "Water Totem";
 		["Spell.Seal"] = "Seal";
-		["Spell.Track"] = "Track";
 		["Spell.Trap"] = "Trap";
 		["Misc.Booze"] = "Booze";
 		["Misc.Hearth"] = "Hearthstone";

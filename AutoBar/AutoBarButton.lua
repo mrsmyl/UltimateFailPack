@@ -1950,11 +1950,12 @@ AutoBar.Class["AutoBarButtonHeal"] = AutoBarButtonHeal
 function AutoBarButtonHeal.prototype:init(parentBar, buttonDB)
 	AutoBarButtonHeal.super.prototype.init(self, parentBar, buttonDB)
 
-	self:AddCategory("Consumable.Potion.Recovery.Healing.Endless")
-	self:AddCategory("Consumable.Potion.Recovery.Healing.Basic")
+	--self:AddCategory("Consumable.Potion.Recovery.Healing.Endless")
+	--self:AddCategory("Consumable.Potion.Recovery.Healing.Basic")
 	
-	self:AddCategory("Consumable.Potion.Recovery.Rejuvenation.Basic")
+	--self:AddCategory("Consumable.Potion.Recovery.Rejuvenation.Basic")
 	
+	self:AddCategory("AutoBar.Potion.Health")
 	
 	self:AddCategory("Consumable.Cooldown.Stone.Health.Other")
 	self:AddCategory("Consumable.Cooldown.Stone.Health.Statue")
@@ -2286,6 +2287,15 @@ function AutoBarButtonMiscFun.prototype:init(parentBar, buttonDB)
 	self:AddCategory("Misc.Usable.Replenished")
 end
 
+local AutoBarButtonSunsongRanch = AceOO.Class(AutoBarButton)
+AutoBar.Class["AutoBarButtonSunsongRanch"] = AutoBarButtonSunsongRanch
+
+function AutoBarButtonSunsongRanch.prototype:init(parentBar, buttonDB)
+	AutoBarButtonSunsongRanch.super.prototype.init(self, parentBar, buttonDB)
+
+	self:AddCategory("AutoBar.SunsongRanch")
+end
+
 local AutoBarButtonQuest = AceOO.Class(AutoBarButton)
 AutoBar.Class["AutoBarButtonQuest"] = AutoBarButtonQuest
 
@@ -2309,10 +2319,13 @@ function AutoBarButtonRecovery.prototype:init(parentBar, buttonDB)
 	elseif (AutoBar.CLASS == "WARRIOR") then
 		self:AddCategory("Consumable.Buff.Rage")
 	else
-		self:AddCategory("Consumable.Potion.Recovery.Mana.Endless")
-		self:AddCategory("Consumable.Potion.Recovery.Mana.Basic")
+		--self:AddCategory("Consumable.Potion.Recovery.Mana.Endless")
+		--self:AddCategory("Consumable.Potion.Recovery.Mana.Basic")
 	
-		self:AddCategory("Consumable.Potion.Recovery.Rejuvenation.Basic")
+		--self:AddCategory("Consumable.Potion.Recovery.Rejuvenation.Basic")
+		
+		self:AddCategory("AutoBar.Potion.Mana")
+
 
 		self:AddCategory("Consumable.Cooldown.Stone.Mana.Other")
 		--self:AddCategory("Consumable.Cooldown.Potion.Rejuvenation")
@@ -2466,12 +2479,14 @@ function AutoBarButtonCooldownPotionMana.prototype:init(parentBar, buttonDB)
 	elseif (AutoBar.CLASS == "WARRIOR") then
 		self:AddCategory("Consumable.Buff.Rage")
 	else
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Basic")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Pvp")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Coilfang")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Tempest Keep")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Blades Edge")
-		self:AddCategory("Consumable.Cooldown.Potion.Mana.Anywhere")
+		self:AddCategory("AutoBar.Potion.Mana")
+
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Basic")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Pvp")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Coilfang")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Tempest Keep")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Blades Edge")
+		--self:AddCategory("Consumable.Cooldown.Potion.Mana.Anywhere")
 	end
 end
 
@@ -2872,16 +2887,6 @@ function AutoBarButtonTotemWater.prototype:UpdateCooldown()
 end
 
 
-local AutoBarButtonTrack = AceOO.Class(AutoBarButton)
-AutoBar.Class["AutoBarButtonTrack"] = AutoBarButtonTrack
-
-function AutoBarButtonTrack.prototype:init(parentBar, buttonDB)
-	AutoBarButtonTrack.super.prototype.init(self, parentBar, buttonDB)
-
-	self:AddCategory("Spell.Track")
-end
-
-
 local AutoBarButtonTrap = AceOO.Class(AutoBarButton)
 AutoBar.Class["AutoBarButtonTrap"] = AutoBarButtonTrap
 
@@ -2889,15 +2894,6 @@ function AutoBarButtonTrap.prototype:init(parentBar, buttonDB)
 	AutoBarButtonTrap.super.prototype.init(self, parentBar, buttonDB)
 
 	self:AddCategory("Spell.Trap")
-end
-
-local AutoBarButtonGuildSpell = AceOO.Class(AutoBarButton)
-AutoBar.Class["AutoBarButtonGuildSpell"] = AutoBarButtonGuildSpell
-
-function AutoBarButtonGuildSpell.prototype:init(parentBar, buttonDB)
-	AutoBarButtonGuildSpell.super.prototype.init(self, parentBar, buttonDB)
-
-	self:AddCategory("Spell.Guild")
 end
 
 
@@ -3027,6 +3023,7 @@ function AutoBarButtonWaterBuff.prototype:init(parentBar, buttonDB)
 		self:AddCategory("AutoBar.Food.Mana.Buff")
 	end
 end
+
 
 
 --[[

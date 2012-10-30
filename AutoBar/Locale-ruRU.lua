@@ -264,7 +264,6 @@ if (GetLocale() == "ruRU") then
 		["AutoBarButtonTotemAir"] = "Тотемы воздуха",
 		["AutoBarButtonTotemFire"] = "Тотемы огня",
 		["AutoBarButtonTotemWater"] = "Тотемы воды",
-		["AutoBarButtonTrack"] = "Выслеживание",
 		["AutoBarButtonTrap"] = "Ловушки",
 		["AutoBarButtonTrinket1"] = "Аксессуар 1",
 		["AutoBarButtonTrinket2"] = "Аксессуар 2",
@@ -526,7 +525,6 @@ if (GetLocale() == "ruRU") then
 		["Spell.Totem.Fire"] = "Тотемы огня";
 		["Spell.Totem.Water"] = "Тотемы воды";
 		["Spell.Seal"] = "Печати";
-		["Spell.Track"] = "Выслеживание";
 		["Spell.Trap"] = "Ловушки";
 		["Misc.Booze"] = "Выпивка";
 		["Misc.Hearth"] = "Камень возвращения";

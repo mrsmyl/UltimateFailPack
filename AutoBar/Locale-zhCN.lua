@@ -264,7 +264,6 @@ if (GetLocale() == "zhCN") then
 		["AutoBarButtonTotemAir"] = "风之图腾",
 		["AutoBarButtonTotemFire"] = "火焰图腾",
 		["AutoBarButtonTotemWater"] = "水之图腾",
-		["AutoBarButtonTrack"] = "追踪技能",
 		["AutoBarButtonTrap"] = "陷阱",
 		["AutoBarButtonTrinket1"] = "饰品1",
 		["AutoBarButtonTrinket2"] = "饰品2",
@@ -526,7 +525,6 @@ if (GetLocale() == "zhCN") then
 		["Spell.Totem.Fire"] = "火焰图腾";
 		["Spell.Totem.Water"] = "水之图腾";
 		["Spell.Seal"] = "圣印";
-		["Spell.Track"] = "追踪技能";
 		["Spell.Trap"] = "陷阱";
 		["Misc.Booze"] = "酒类";
 		["Misc.Hearth"] = "炉石";

@@ -646,7 +646,8 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].MONK = true
 			buttonClass = "AutoBarButtonHeal",
 			barKey = "AutoBarClassBarBasic",
 			defaultButtonIndex = 4,
-			enabled = false,
+			enabled = true,
+			shuffle = true,
 		}
 	end
 	if (not AutoBar.db.account.buttonList["AutoBarButtonRecovery"]) then
@@ -664,7 +665,7 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].MONK = true
 			buttonClass = "AutoBarButtonCooldownPotionHealth",
 			barKey = "AutoBarClassBarBasic",
 			defaultButtonIndex = 6,
-			enabled = true,
+			enabled = false,
 			shuffle = true,
 		}
 	end
@@ -823,16 +824,6 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].MONK = true
 			arrangeOnUse = true,
 		}
 	end
-	if (not AutoBar.db.account.buttonList["AutoBarButtonTrack"]) then
-		AutoBar.db.account.buttonList["AutoBarButtonTrack"] = {
-			buttonKey = "AutoBarButtonTrack",
-			buttonClass = "AutoBarButtonTrack",
-			barKey = "AutoBarClassBarBasic",
-			defaultButtonIndex = 23,
-			enabled = true,
-			arrangeOnUse = true,
-		}
-	end
 	if (not AutoBar.db.account.buttonList["AutoBarButtonCrafting"]) then
 		AutoBar.db.account.buttonList["AutoBarButtonCrafting"] = {
 			buttonKey = "AutoBarButtonCrafting",
@@ -954,6 +945,17 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].MONK = true
 			buttonClass = "AutoBarButtonGuildSpell",
 			barKey = "AutoBarClassBarExtras",
 			defaultButtonIndex = 9,
+			enabled = true,
+			arrangeOnUse = true,
+		}
+	end
+
+	if (not AutoBar.db.account.buttonList["AutoBarButtonSunsongRanch"]) then
+		AutoBar.db.account.buttonList["AutoBarButtonSunsongRanch"] = {
+			buttonKey = "AutoBarButtonSunsongRanch",
+			buttonClass = "AutoBarButtonSunsongRanch",
+			barKey = "AutoBarClassBarExtras",
+			defaultButtonIndex = 10,
 			enabled = true,
 			arrangeOnUse = true,
 		}
@@ -1260,7 +1262,7 @@ AutoBar.db.account.barList["AutoBarClassBarExtras"].MONK = true
 		end
 	end
 	
-	local deprecated = {"AutoBarButtonWarlockStones", "AutoBarButtonSting", "AutoBarButtonAura"  }
+	local deprecated = {"AutoBarButtonWarlockStones", "AutoBarButtonSting", "AutoBarButtonAura", "AutoBarButtonTrack"  }
 	
 	for _, dep in ipairs(deprecated) do
 		if (AutoBar.db.account.buttonList[dep]) then

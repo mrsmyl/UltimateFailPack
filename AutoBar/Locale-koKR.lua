@@ -264,7 +264,6 @@ if (GetLocale() == "koKR") then
 		["AutoBarButtonTotemAir"] = "바람의 토템",
 		["AutoBarButtonTotemFire"] = "불의 토템",
 		["AutoBarButtonTotemWater"] = "물의 토템",
-		["AutoBarButtonTrack"] = "추적",
 		["AutoBarButtonTrap"] = "덫",
 		["AutoBarButtonTrinket1"] = "장신구 1",
 		["AutoBarButtonTrinket2"] = "장신구 2",
@@ -526,7 +525,6 @@ if (GetLocale() == "koKR") then
 		["Spell.Totem.Fire"] = "불의 토템";
 		["Spell.Totem.Water"] = "물의 토템";
 		["Spell.Seal"] = "문장";
-		["Spell.Track"] = "추적";
 		["Spell.Trap"] = "덫";
 		["Misc.Booze"] = "술";
 		["Misc.Hearth"] = "귀환석";
