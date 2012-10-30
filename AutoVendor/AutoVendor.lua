@@ -568,7 +568,7 @@ AV_UNUSABLE_ITEMS = {
 		['Weapon'] = { 'One-Handed Axes', 'Two-Handed Axes', 'Bows', 'Guns', 'One-Handed Maces', 'Two-Handed Maces', 'Polearms', 'Two-Handed Swords', 'Fist Weapons', 'Thrown', 'Crossbows' },
 	},
 	['MONK'] = {
-		['Armor'] = { 'Idols', 'Totems', 'Shields', 'Sigils' },
+		['Armor'] = { 'Mail', 'Plate', 'Idols', 'Totems', 'Shields', 'Sigils' },
 		['Weapon'] = { 'Bows', 'Guns', 'Daggers', 'Thrown', 'Crossbows', 'Wands', 'Two-Handed Axes', 'Two-Handed Swords', 'Two-Handed Maces' },
 	},
 	['PALADIN'] = {
