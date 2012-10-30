@@ -1,0 +1,12 @@
+tag 1.22
+6858d82a94b4993f51d21989272f1d2f1bbdd179
+Sal Scotto <sal.scotto@gmail.com>
+2012-10-12 09:21:41 -0400
+
+Tag to pickup fix for Show with Digsites and alot of localizaiton additions in es,zn,it and ru
+
+
+--------------------
+
+Sal Scotto:
+	- updated IsActiveDigSite to check the cvar as well as the mapid of active ig sites.
