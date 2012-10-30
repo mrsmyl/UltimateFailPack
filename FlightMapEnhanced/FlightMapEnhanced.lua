@@ -513,6 +513,29 @@ function FlightMapEnhanced_GetClosestFlightPath(mapcont,mapareaid,coordx,coordy)
 	end
 end
 
+function FlightMapEnhanced_SetNextFlyByID(id)
+	FlightMapEnhanced_SetNextFly(flocn[id]);
+
+end
+
+function FlightMapEnhanced_GetDistanceOfTwoFlightPoints(sourceid,destid)
+	local source,target;
+	for index,value in pairs(floc) do
+		for i2,v2 in pairs(value) do
+			if(i2==sourceid) then
+				source=v2;
+				source["map"] = index;
+			elseif(i2==destid) then
+				target=v2;
+				target["map"] = index;
+			end
+		end
+	end
+	--print(source["map"]);
+	local dist=ns.Astrolabe:ComputeDistance(source.map,0,source.x,source.y,target.map,0,target.x,target.y);
+	return dist;
+end
+
 
 
 function FlightMapEnhanced_OnEvent(self,event,...)
@@ -731,7 +754,8 @@ function FlightMapEnhancedMinimapButton_OnClick()
 FlightMapEnhanced_menuFrame = FlightMapEnhanced_menuFrame or CreateFrame("Frame", "FlightMapEnhanced_menuFrame", UIParent, "UIDropDownMenuTemplate")
 EasyMenu(menu, FlightMapEnhanced_menuFrame, "cursor", 0 , 0, "MENU");
 end
-	 
+
+
 function FlightMapEnhancedShowToolTip(self,which)
 	if(which=="minimap") then
 		GameTooltip:SetOwner(self, "ANCHOR_LEFT");
