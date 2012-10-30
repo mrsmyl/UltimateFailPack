@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Unfit. If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local Lib = LibStub:NewLibrary('Unfit-1.0', 4)
+local Lib = LibStub:NewLibrary('Unfit-1.0', 5)
 if not Lib then
 	return
 else
@@ -63,8 +63,6 @@ for class = 1, 2 do
 	Unusable[class] = nil
 	subs = nil
 end
-
-TTT = Unusable
 
 
 --[[ API ]]--

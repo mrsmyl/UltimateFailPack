@@ -6,4 +6,6 @@
 ## OptionalDeps: BagSync, Armory
 ## SavedVariables: BrotherBags
 
-BagBrother.lua
+Startup.lua
+Events.lua
+API.lua
