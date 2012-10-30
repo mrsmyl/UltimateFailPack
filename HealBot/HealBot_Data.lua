@@ -43,12 +43,19 @@ HealBot_ConfigDefaults = {
   IgnoreClassDebuffs = 1,
   IgnoreMovementDebuffs = 1,
   IgnoreFastDurDebuffs = 1,
-  IgnoreOnCooldownDebuffs = 1,
+  IgnoreOnCooldownDebuffs = 0,
   IgnoreNonHarmfulDebuffs = 1,
-  ShortBuffTimer=30,
+  IgnoreFriendDebuffs = 1,
+  HealBot_Custom_Defuffs_All = {
+        [HEALBOT_DISEASE_en] = 0,
+        [HEALBOT_MAGIC_en]   = 0,
+        [HEALBOT_POISON_en]  = 0,
+        [HEALBOT_CURSE_en]   = 0,
+    },
+  ShortBuffTimer=10,
   LongBuffTimer=120,
   ShowDebuffIcon=1,
-  IgnoreFastDurDebuffsSecs=3,
+  IgnoreFastDurDebuffsSecs=2,
   CDCshownHB=1,
   CDCshownAB=0,
   CurrentSpec=9,
@@ -75,8 +82,7 @@ HealBot_ConfigDefaults = {
     [HEALBOT_POISON_en] = { R = 0.12, G = 0.46, B = 0.24, },
     [HEALBOT_CURSE_en] = { R = 0.83, G = 0.43, B = 0.09, },
   },
-  SkinDefault = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,
-             [HEALBOT_SKIN_FLUID] = 1, [HEALBOT_SKIN_VIVID] = 1, [HEALBOT_SKIN_LIGHT] = 1, [HEALBOT_SKIN_SQUARE] = 1, [HEALBOT_MAGIC] = 1,},
+  SkinDefault = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
   EnabledKeyCombo=nil,
   EnabledSpellTarget={},
   EnabledSpellTrinket1={},
@@ -144,7 +150,7 @@ HealBot_GlobalsDefaults = {
     SmartCastBuff = 1,
     SmartCastHeal = 0,
     SmartCastRes = 1,
-    RangeCheckFreq=0.4,
+    RangeCheckFreq=0.2,
     HealBot_ButtonRadius=78,
     HealBot_ButtonPosition=300,
     ButtonShown=1,
@@ -172,30 +178,29 @@ HealBot_GlobalsDefaults = {
     EnLibQuickHealth=1,
     HealBot_MouseWheelIndex={ ["AltUp"]=2, ["AltDown"]=3 },
     HealBot_MouseWheelTxt={ ["AltUp"]=HEALBOT_BLIZZARD_MENU, ["AltDown"]=HEALBOT_HB_MENU },
-    spellIDs = {},
     EmergIncRange = {
         [HEALBOT_DRUID]    = 0, [HEALBOT_HUNTER]   = 1, [HEALBOT_MAGE]     = 1,
         [HEALBOT_PALADIN]  = 0, [HEALBOT_PRIEST]   = 0, [HEALBOT_ROGUE]    = 0,
         [HEALBOT_SHAMAN]   = 0, [HEALBOT_WARLOCK]  = 1, [HEALBOT_WARRIOR]  = 0, 
-        [HEALBOT_MONK]     = 0, [HEALBOT_DEATHKNIGHT] = 0,
+        [HEALBOT_MONK]     = 0, [HEALBOT_DEATHKNIGHT] = 0, [HEALBOT_MONK]  = 0,
     },
     EmergIncMelee = {
         [HEALBOT_DRUID]    = 0, [HEALBOT_HUNTER]   = 0, [HEALBOT_MAGE]     = 0,
         [HEALBOT_PALADIN]  = 0, [HEALBOT_PRIEST]   = 0, [HEALBOT_ROGUE]    = 1,
         [HEALBOT_SHAMAN]   = 0, [HEALBOT_WARLOCK]  = 0, [HEALBOT_WARRIOR]  = 1, 
-        [HEALBOT_MONK]     = 0, [HEALBOT_DEATHKNIGHT] = 1,
+        [HEALBOT_MONK]     = 0, [HEALBOT_DEATHKNIGHT] = 1, [HEALBOT_MONK]  = 0,
     },
     EmergIncHealers = {
         [HEALBOT_DRUID]    = 1, [HEALBOT_HUNTER]   = 0, [HEALBOT_MAGE]     = 0,
         [HEALBOT_PALADIN]  = 0, [HEALBOT_PRIEST]   = 1, [HEALBOT_ROGUE]    = 0,
         [HEALBOT_SHAMAN]   = 0, [HEALBOT_WARLOCK]  = 0, [HEALBOT_WARRIOR]  = 0, 
-        [HEALBOT_MONK]     = 1, [HEALBOT_DEATHKNIGHT] = 0,
+        [HEALBOT_MONK]     = 1, [HEALBOT_DEATHKNIGHT] = 0, [HEALBOT_MONK]  = 0,
     },
     EmergIncCustom = {
         [HEALBOT_DRUID]    = 1, [HEALBOT_HUNTER]   = 0, [HEALBOT_MAGE]     = 1,
         [HEALBOT_PALADIN]  = 1, [HEALBOT_PRIEST]   = 1, [HEALBOT_ROGUE]    = 0,
         [HEALBOT_SHAMAN]   = 1, [HEALBOT_WARLOCK]  = 1, [HEALBOT_WARRIOR]  = 0, 
-        [HEALBOT_MONK]     = 1, [HEALBOT_DEATHKNIGHT] = 0,
+        [HEALBOT_MONK]     = 1, [HEALBOT_DEATHKNIGHT] = 0, [HEALBOT_MONK]  = 0,
     },
     CDCBarColour = {
         [HEALBOT_CUSTOM_en] = { R = 0.45, G = 0, B = 0.26, }, -- added by Diacono
@@ -204,8 +209,113 @@ HealBot_GlobalsDefaults = {
     HealBot_Custom_Debuffs_ShowBarCol={},
     IgnoreCustomDebuff={},
     FilterCustomDebuff={},
-    HealBot_Custom_Debuffs = {},
-    Custom_Debuff_Categories = {},
+    HealBot_Custom_Debuffs = {
+        -- Karazhan
+        [HEALBOT_DEBUFF_ICE_TOMB]         = 10, -- Karazhan - Ice Tomb
+        [HEALBOT_DEBUFF_SACRIFICE]        = 10, -- Illhoof - Sacrifice
+        -- Hyjal    
+        [HEALBOT_DEBUFF_ICEBOLT]          = 10, -- Rage Winterchill - Icebolt
+        [HEALBOT_DEBUFF_DOOMFIRE]         = 10, -- Archimonde - Doomfire
+        -- Black Temple    
+        [HEALBOT_DEBUFF_IMPALING_SPINE]   = 10, -- Naj'entus - Impaling Spine
+        [HEALBOT_DEBUFF_FEL_RAGE]         = 10, -- Bloodboil - Fel Rage
+        [HEALBOT_DEBUFF_FEL_RAGE2]        = 10, -- Bloodboil - Fel Rage 2
+        [HEALBOT_DEBUFF_FATAL_ATTRACTION] = 10, -- Mother Shahraz - Fatal Attraction
+        [HEALBOT_DEBUFF_AGONIZING_FLAMES] = 10, -- Illidan - Agonizing Flames
+        [HEALBOT_DEBUFF_DARK_BARRAGE]     = 10, -- Illidan - Dark Barrage
+        [HEALBOT_DEBUFF_PARASITIC_SHADOWFIEND] = 10, -- Illidan - Parasitic Shadowfiend
+        -- Zul'Aman    
+        [HEALBOT_DEBUFF_GRIEVOUS_THROW]    = 10, -- Zul'jin - Grievous Throw
+        -- Sunwell    
+        [HEALBOT_DEBUFF_BURN]              = 10, -- Brutallus - Burn
+        [HEALBOT_DEBUFF_ENCAPSULATE]       = 10, -- Felymyst - Encapsulate
+        [HEALBOT_DEBUFF_FLAME_SEAR]        = 10, -- Warlock Alythess - Flame Sear        
+        [HEALBOT_DEBUFF_FIRE_BLOOM]        = 10, -- Kil'jaeden - Fire Bloom
+        -- WotLK Dungeons    
+        [HEALBOT_DEBUFF_GRIEVOUS_BITE]     = 10, -- Drak'Tharon Keep - Grievous Bite
+        [HEALBOT_DEBUFF_FROST_TOMB]        = 10, -- Utgarde Keep - Frost Tomb
+        -- Naxxramas    
+        [HEALBOT_DEBUFF_WEB_WRAP]          = 10, -- Maexxna - Web Wrap
+        [HEALBOT_DEBUFF_JAGGED_KNIFE]      = 10, -- Razuvious - Jagged Knife        
+        [HEALBOT_DEBUFF_FROST_BLAST]       = 10, -- Kel'Thuzad - Frost Blast
+        -- Ulduar
+        [HEALBOT_DEBUFF_SLAG_POT]          = 10, -- Ignis - Slag Pot
+        [HEALBOT_DEBUFF_GRAVITY_BOMB]      = 10, -- XT-002 - Gravity Bomb       
+        [HEALBOT_DEBUFF_STONE_GRIP]        = 10, -- Kologarn - Stone Grip
+        [HEALBOT_DEBUFF_FERAL_POUNCE]      = 10, -- Auriaya - Feral Pounce      
+        [HEALBOT_DEBUFF_NAPALM_SHELL]      = 10, -- Mimiron - Napalm Shell
+        [HEALBOT_DEBUFF_IRON_ROOTS]        = 10, -- Freya - Iron Roots
+        [HEALBOT_DEBUFF_SARA_BLESSING]     = 10, -- Yogg-Saron - Sara's Blessing
+        -- Trial of the Crusader
+        [HEALBOT_DEBUFF_IMPALE]            = 10, -- Northrend Beasts - Impale
+        [HEALBOT_DEBUFF_SNOBOLLED]         = 10, -- Northrend Beasts - Snobolled!
+        [HEALBOT_DEBUFF_FIRE_BOMB]         = 10, -- Northrend Beasts - Fire Bomb
+        [HEALBOT_DEBUFF_BURNING_BILE]      = 10, -- Northrend Beasts - Burning Bile
+        [HEALBOT_DEBUFF_PARALYTIC_TOXIN]   = 10, -- Northrend Beasts - Paralytic Toxin
+        [HEALBOT_DEBUFF_INCINERATE_FLESH]  = 10, -- Lord Jaraxxus - Incinerate Flesh
+        [HEALBOT_DEBUFF_LEGION_FLAME]      = 10, -- Lord Jaraxxus - Legion Flame
+        [HEALBOT_DEBUFF_MISTRESS_KISS]     = 10, -- Lord Jaraxxus - Mistress' Kiss
+        [HEALBOT_DEBUFF_SPINNING_PAIN_SPIKE] = 10, -- Lord Jaraxxus - Spinning Pain Spike
+        [HEALBOT_DEBUFF_TOUCH_OF_LIGHT]    = 10, -- Twin Val'kyr - Touch of Light
+        [HEALBOT_DEBUFF_TOUCH_OF_DARKNESS] = 10, -- Twin Val'kyr - Touch of Darkness
+        [HEALBOT_DEBUFF_PENETRATING_COLD]  = 10, -- Anub'arak - Penetrating Cold
+        [HEALBOT_DEBUFF_ACID_DRENCHED_MANDIBLES] = 10, -- Anub'arak - Acid-Drenched Mandibles
+        [HEALBOT_DEBUFF_EXPOSE_WEAKNESS]   = 10, -- Anub'arak - Expose Weakness
+        -- Icecrown Citadel - Lower Spire
+        [HEALBOT_DEBUFF_IMPALED]           = 10, -- Lord Marrowgar - Impaled
+        [HEALBOT_DEBUFF_NECROTIC_STRIKE]   = 10, -- Lady Deathwhisper - Necrotic Strike
+        [HEALBOT_DEBUFF_FALLEN_CHAMPION]   = 10, -- Deathbringer Saurfang - Mark of the Fallen Champion
+        [HEALBOT_DEBUFF_BOILING_BLOOD]     = 10, -- Deathbringer Saurfang - Boiling Blood
+        [HEALBOT_DEBUFF_RUNE_OF_BLOOD]     = 10, -- Deathbringer Saurfang - Rune of Blood
+        -- Icecrown Citadel - The Plagueworks
+        [HEALBOT_DEBUFF_VILE_GAS]          = 10, -- Festergut - Vile Gas
+        [HEALBOT_DEBUFF_GASTRIC_BLOAT]     = 10, -- Festergut - Gastric Bloat   
+        [HEALBOT_DEBUFF_GAS_SPORE]         = 10, -- Festergut - Gas Spore        
+        [HEALBOT_DEBUFF_MUTATED_INFECTION] = 10, -- Rotface - Mutated Infection
+        [HEALBOT_DEBUFF_GASEOUS_BLOAT]     = 10, -- Professor Putricide - Gaseous Bloat
+        [HEALBOT_DEBUFF_VOLATILE_OOZE]     = 10, -- Professor Putricide - Volatile Ooze Adhesive
+        [HEALBOT_DEBUFF_MUTATED_PLAGUE]    = 10, -- Professor Putricide - Mutated Plague
+        -- Icecrown Citadel - The Crimson Hall
+        [HEALBOT_DEBUFF_GLITTERING_SPARKS] = 10, -- Blood Prince Council - Glittering Sparks
+        [HEALBOT_DEBUFF_SHADOW_PRISON]     = 10, -- Blood Prince Council - Shadow Prison
+        [HEALBOT_DEBUFF_SWARMING_SHADOWS]  = 10, -- Queen Lana'thel - Swarming Shadows
+        [HEALBOT_DEBUFF_PACT_DARKFALLEN]   = 10, -- Queen Lana'thel - Pact of the Darkfallen
+        [HEALBOT_DEBUFF_ESSENCE_BLOOD_QUEEN] = 10, -- Queen Lana'thel - Essence of the Blood Queen
+        [HEALBOT_DEBUFF_DELIRIOUS_SLASH]   = 10, -- Queen Lana'thel - Delirious Slash
+        -- Icecrown Citadel - Frostwing Halls
+        [HEALBOT_DEBUFF_CORROSION]         = 10, -- Valithiria Dreamwalker - Corrosion
+        [HEALBOT_DEBUFF_GUT_SPRAY]         = 10, -- Valithiria Dreamwalker - Gut Spray
+        [HEALBOT_DEBUFF_ICE_TOMB]          = 10, -- Sindragosa - Ice Tomb
+        [HEALBOT_DEBUFF_FROST_BEACON]      = 10, -- Sindragosa - Frost Beacon
+        [HEALBOT_DEBUFF_CHILLED_BONE]      = 10, -- Sindragosa - Chilled to the Bone
+        [HEALBOT_DEBUFF_INSTABILITY]       = 10, -- Sindragosa - Instability
+        [HEALBOT_DEBUFF_MYSTIC_BUFFET]     = 10, -- Sindragosa - Mystic Buffet
+        [HEALBOT_DEBUFF_FROST_BREATH]      = 10, -- Sindragosa - Frost Breath
+        -- Icecrown Citadel - The Frozen Throne
+        [HEALBOT_DEBUFF_INFEST]            = 10, -- Lich King - Infest
+        [HEALBOT_DEBUFF_NECROTIC_PLAGUE]   = 10, -- Lich King - Necrotic Plague
+        [HEALBOT_DEBUFF_DEFILE]            = 10, -- Lich King - Defile
+        [HEALBOT_DEBUFF_HARVEST_SOUL]      = 10, -- Lich King - Harvest Soul 
+        -- Ruby Sanctum
+        [HEALBOT_DEBUFF_CONFLAGRATION]     = 10, -- Saviana Ragefire - Conflagration
+        [HEALBOT_DEBUFF_FIERY_COMBUSTION]  = 10, -- Halion - Fiery Combustion
+        [HEALBOT_DEBUFF_COMBUSTION]        = 10, -- Halion (heroic) - Combustion
+        [HEALBOT_DEBUFF_SOUL_CONSUMPTION]  = 10, -- Halion - Soul Consumption
+        [HEALBOT_DEBUFF_CONSUMPTION]       = 10, -- Halion (heroic) - Consumption
+        -- Throne of the Four Winds
+        [HEALBOT_DEBUFF_TOXIC_SPORES]      = 10, -- Conclave of Wind - Toxic Spores
+        [HEALBOT_DEBUFF_LIGHTNING_ROD]     = 10, -- Al'Akir - Lightning Rod
+        -- Blackwing Descent
+        [HEALBOT_DEBUFF_PARASITIC_INFECT]  = 10, -- Magmaw - Parasitic Infection
+        [HEALBOT_DEBUFF_CONSUMING_FLAMES]  = 10, -- Maloriak - Consuming Flames
+        [HEALBOT_DEBUFF_FLASH_FREEZE]      = 10, -- Maloriak - Flash Freeze
+        [HEALBOT_DEBUFF_EXPLOSIVE_CINDERS] = 10, -- Nefarian - Explosive Cinders
+        -- Bastion of Twilight
+        [HEALBOT_DEBUFF_WATERLOGGED]       = 10, -- Ascendant Council - Waterlogged
+        [HEALBOT_DEBUFF_GRAVITY_CORE]      = 10, -- Ascendant Council (heroic) - Gravity Core
+        [HEALBOT_DEBUFF_GRAVITY_CRUSH]     = 10, -- Ascendant Council - Gravity Crush
+    },
+    Custom_Debuff_Categories=HEALBOT_CUSTOM_DEBUFF_CATS;
     HoTReserve = {
         ["DRUI"] = {[1] = 1, [2] = 1, [3] = 1, [4] = 1},
         ["HUNT"] = {[1] = 1, [2] = 1, [3] = 1, [4] = 1},
@@ -350,7 +460,7 @@ HealBot_Config_SkinsDefaults = {
               [HEALBOT_OPTIONS_EMERGENCYHEALS] = HealBot_Default_Textures[7].name, [HEALBOT_ZONE_AV] = HealBot_Default_Textures[9].name,},
   bcspace = {[HEALBOT_SKINS_STD] = 2, [HEALBOT_OPTIONS_GROUPHEALS] = 4, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 2, [HEALBOT_ZONE_AV] = 1,},
   brspace = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 0, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 2, [HEALBOT_ZONE_AV] = 1,},
-  bwidth =  {[HEALBOT_SKINS_STD] = 144, [HEALBOT_OPTIONS_GROUPHEALS] = 152, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 95, [HEALBOT_ZONE_AV] = 72,},
+  bwidth =  {[HEALBOT_SKINS_STD] = 144, [HEALBOT_OPTIONS_GROUPHEALS] = 158, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 95, [HEALBOT_ZONE_AV] = 72,},
   bheight = {[HEALBOT_SKINS_STD] = 25, [HEALBOT_OPTIONS_GROUPHEALS] = 28, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 18, [HEALBOT_ZONE_AV] = 17,},
   btextenabledcolr = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
   btextenabledcolg = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
@@ -364,22 +474,22 @@ HealBot_Config_SkinsDefaults = {
   btextcursecolg = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
   btextcursecolb = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
   btextcursecola = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
-  backcola = {[HEALBOT_SKINS_STD] = 0.05, [HEALBOT_OPTIONS_GROUPHEALS] = 0.5, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.02, [HEALBOT_ZONE_AV] = 0.01,},
+  backcola = {[HEALBOT_SKINS_STD] = 0.05, [HEALBOT_OPTIONS_GROUPHEALS] = 0.25, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.02, [HEALBOT_ZONE_AV] = 0.01,},
   Barcola    = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 0.98, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.92, [HEALBOT_ZONE_AV] = 0.88,},
-  BarcolaInHeal = {[HEALBOT_SKINS_STD] = 0.12, [HEALBOT_OPTIONS_GROUPHEALS] = 0.22, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.12, [HEALBOT_ZONE_AV] = 0.12,},
+  BarcolaInHeal = {[HEALBOT_SKINS_STD] = 0.12, [HEALBOT_OPTIONS_GROUPHEALS] = 0.5, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.12, [HEALBOT_ZONE_AV] = 0.12,},
   backcolr = {[HEALBOT_SKINS_STD] = 0.1, [HEALBOT_OPTIONS_GROUPHEALS] = 0.1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.1, [HEALBOT_ZONE_AV] = 0.2,},
   backcolg = {[HEALBOT_SKINS_STD] = 0.1, [HEALBOT_OPTIONS_GROUPHEALS] = 0.1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.1, [HEALBOT_ZONE_AV] = 0.2,},
   backcolb = {[HEALBOT_SKINS_STD] = 0.1, [HEALBOT_OPTIONS_GROUPHEALS] = 0.5, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.7, [HEALBOT_ZONE_AV] = 0.2,},
   borcolr = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 0.2,},
   borcolg = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 0.2,},
   borcolb = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 0.2,},
-  borcola = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 0.25, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.04, [HEALBOT_ZONE_AV] = 0.5,},
+  borcola = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 0.5, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.04, [HEALBOT_ZONE_AV] = 0.5,},
   btextfont = {[HEALBOT_SKINS_STD] = HealBot_Default_Font, [HEALBOT_OPTIONS_GROUPHEALS] = HealBot_Default_Font, 
                [HEALBOT_OPTIONS_EMERGENCYHEALS] = HealBot_Default_Font, [HEALBOT_ZONE_AV] = HealBot_Default_Font,},
   btextheight = {[HEALBOT_SKINS_STD] = 10, [HEALBOT_OPTIONS_GROUPHEALS] = 10, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 9, [HEALBOT_ZONE_AV] = 10,},
   btextoutline = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
-  bardisa = {[HEALBOT_SKINS_STD] = 0.22, [HEALBOT_OPTIONS_GROUPHEALS] = 0.24, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.12, [HEALBOT_ZONE_AV] = 0.05,},
-  bareora = {[HEALBOT_SKINS_STD] = 0.52, [HEALBOT_OPTIONS_GROUPHEALS] = 0.52, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.35, [HEALBOT_ZONE_AV] = 0.3,},
+  bardisa = {[HEALBOT_SKINS_STD] = 0.22, [HEALBOT_OPTIONS_GROUPHEALS] = 0.01, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.12, [HEALBOT_ZONE_AV] = 0.05,},
+  bareora = {[HEALBOT_SKINS_STD] = 0.52, [HEALBOT_OPTIONS_GROUPHEALS] = 0.7, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.35, [HEALBOT_ZONE_AV] = 0.3,},
   bar2size = {[HEALBOT_SKINS_STD] = 0, [HEALBOT_OPTIONS_GROUPHEALS] = 0, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0, [HEALBOT_ZONE_AV] = 0,},
   ShowHeader = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 0, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 0,},
   headbarcolr = {[HEALBOT_SKINS_STD] = 0.1, [HEALBOT_OPTIONS_GROUPHEALS] = 0.1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.1, [HEALBOT_ZONE_AV] = 0.1,},
@@ -422,12 +532,17 @@ HealBot_Config_SkinsDefaults = {
   SetClassColourText = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0, [HEALBOT_ZONE_AV] = 0,},
   IncHealBarColour = {[HEALBOT_SKINS_STD] = 4, [HEALBOT_OPTIONS_GROUPHEALS] = 4, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 4, [HEALBOT_ZONE_AV] = 4,},
   HlthBarColour = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
+  HlthBackColour = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 2, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
   barcolr = {[HEALBOT_SKINS_STD] = 0.4, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.2, [HEALBOT_ZONE_AV] = 0,},
   barcolg = {[HEALBOT_SKINS_STD] = 0.4, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.4, [HEALBOT_ZONE_AV] = 0.2,},
   barcolb = {[HEALBOT_SKINS_STD] = 0.7, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.4, [HEALBOT_ZONE_AV] = 0.2,},
   ihbarcolr = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 0.4, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.2, [HEALBOT_ZONE_AV] = 0,},
   ihbarcolg = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.8, [HEALBOT_ZONE_AV] = 0.5,},
   ihbarcolb = {[HEALBOT_SKINS_STD] = 0.2, [HEALBOT_OPTIONS_GROUPHEALS] = 0.4, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.2, [HEALBOT_ZONE_AV] = 0,},
+  barbackcolr = {[HEALBOT_SKINS_STD] = 0.4, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.2, [HEALBOT_ZONE_AV] = 0,},
+  barbackcolg = {[HEALBOT_SKINS_STD] = 0.4, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.4, [HEALBOT_ZONE_AV] = 0.2,},
+  barbackcolb = {[HEALBOT_SKINS_STD] = 0.7, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.4, [HEALBOT_ZONE_AV] = 0.2,},
+  barbackcola = {[HEALBOT_SKINS_STD] = 0.1, [HEALBOT_OPTIONS_GROUPHEALS] = 0.5, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0.1, [HEALBOT_ZONE_AV] = 0,},
   ShowIconTextCount = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 1,},
   ShowIconTextCountSelfCast = {[HEALBOT_SKINS_STD] = 0, [HEALBOT_OPTIONS_GROUPHEALS] = 0, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 0, [HEALBOT_ZONE_AV] = 0,},
   ShowIconTextDuration = {[HEALBOT_SKINS_STD] = 1, [HEALBOT_OPTIONS_GROUPHEALS] = 1, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 1, [HEALBOT_ZONE_AV] = 0,},
