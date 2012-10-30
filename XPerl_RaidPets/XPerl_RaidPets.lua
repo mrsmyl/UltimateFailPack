@@ -5,7 +5,7 @@
 local XPerl_RaidPets_Events = {}
 local RaidPetFrameArray = {}
 local conf, rconf, raidconf
-XPerl_RequestConfig(function(New) conf = New raidconf = New.raid rconf = New.raidpet end, "$Revision: 736 $")
+XPerl_RequestConfig(function(New) conf = New raidconf = New.raid rconf = New.raidpet end, "$Revision: 760 $")
 
 local new, del, copy = XPerl_GetReusableTable, XPerl_FreeTable, XPerl_CopyTable
 
@@ -188,6 +188,18 @@ TitlesUpdateFrame:SetScript("OnUpdate",
 	end
 )
 TitlesUpdateFrame:Hide()
+
+function XPerl_RaidPets_Events:PET_BATTLE_OPENING_START()
+	if(self) then
+		XPerl_RaidPets_HideShow()
+	end
+end
+
+function XPerl_RaidPets_Events:PET_BATTLE_CLOSE()
+	if(self) then
+		XPerl_RaidPets_HideShow()
+	end
+end
 
 -- PLAYER_ENTERING_WORLD
 function XPerl_RaidPets_Events:PLAYER_ENTERING_WORLD()
@@ -420,7 +432,7 @@ end
 function XPerl_RaidPets_OptionActions()
 	SetMainHeaderAttributes(XPerl_Raid_GrpPets)
 
-	local events = {"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "GROUP_ROSTER_UPDATE", "UNIT_PET", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE"}
+	local events = {"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "GROUP_ROSTER_UPDATE", "UNIT_PET", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE","PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE"}
 	for i,event in pairs(events) do
 		if (rconf.enable) then
 			XPerl_RaidPets_Frame:RegisterEvent(event)

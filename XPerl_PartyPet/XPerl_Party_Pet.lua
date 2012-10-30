@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(New) conf = New
 			for k,v in pairs(PartyPetFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 736 $")
+		end, "$Revision: 760 $")
 
 local new, del, copy = XPerl_GetReusableTable, XPerl_FreeTable, XPerl_CopyTable
 
@@ -37,7 +37,7 @@ function XPerl_Party_Pet_OnLoadEvents(self)
 	self.time = 0
 
 	local events = {"UNIT_COMBAT", "UNIT_FACTION", "UNIT_AURA", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS",
-			"UNIT_HEALTH", "UNIT_MAXHEALTH", "PLAYER_ENTERING_WORLD"}
+			"UNIT_HEALTH", "UNIT_MAXHEALTH", "PLAYER_ENTERING_WORLD", "PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE"}
 
 	for k,v in pairs(events) do
 		self:RegisterEvent(v)
@@ -419,6 +419,18 @@ function XPerl_Party_Pet_Events:UNIT_COMBAT(...)
 		XPerl_Party_Pet_CombatFlash(self, 0, true, true)
 	elseif (damage and damage > 0) then
 		XPerl_Party_Pet_CombatFlash(self, 0, true)
+	end
+end
+
+function XPerl_Party_Pet_Events:PET_BATTLE_OPENING_START()
+	if(self) then
+		self:Hide()
+	end
+end
+
+function XPerl_Party_Pet_Events:PET_BATTLE_CLOSE()
+	if(self) then
+		self:Show()
 	end
 end
 

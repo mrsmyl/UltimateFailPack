@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 747 $")
+		end, "$Revision: 760 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -47,7 +47,7 @@ function XPerl_Party_Events_OnLoad(self)
 			"UNIT_PHASE", "UNIT_COMBAT", "UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_PORTRAIT_UPDATE",
 			"UNIT_TARGET", "UNIT_POWER", "UNIT_MAXPOWER", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"RAID_TARGET_UPDATE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_LOGIN", "UNIT_THREAT_LIST_UPDATE",
-			"PLAYER_TARGET_CHANGED","PARTY_LOOT_METHOD_CHANGED"}
+			"PLAYER_TARGET_CHANGED","PARTY_LOOT_METHOD_CHANGED", "PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE"}
 	for i,event in pairs(events) do
 		self:RegisterEvent(event)
 	end
@@ -972,6 +972,18 @@ function XPerl_Party_Events:PARTY_LOOT_METHOD_CHANGED()
 	end
 end
 
+function XPerl_Party_Events:PET_BATTLE_OPENING_START()
+	for k,v in pairs(PartyFrames) do
+		v:Hide()
+	end
+end
+
+function XPerl_Party_Events:PET_BATTLE_CLOSE()
+	for k,v in pairs(PartyFrames) do
+		v:Show()
+	end
+end
+
 -- RAID_TARGET_UPDATE
 function XPerl_Party_Events:RAID_TARGET_UPDATE()
 	for i,frame in pairs(PartyFrames) do
@@ -1600,11 +1612,6 @@ function XPerl_Party_Set_Bits()
 		XPerl_Party_Events_Frame:UnregisterEvent("UNIT_HEAL_PREDICTION")
 	end
 
-	if (startupDone) then
-		partyHeader:Hide()
-		XPerl_Party_SetMainAttributes()
-		CheckRaid()
-	end
 	XPerl_Party_SetInitialAttributes()
 
 	if (XPerl_Party_AnchorVirtual:IsShown()) then

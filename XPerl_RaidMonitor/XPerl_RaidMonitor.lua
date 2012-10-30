@@ -12,7 +12,7 @@ local GetNumGroupMembers = GetNumGroupMembers
 local GetNumSubgroupMembers = GetNumSubgroupMembers
 
 
-XPerl_SetModuleRevision("$Revision: 736 $")
+XPerl_SetModuleRevision("$Revision: 761 $")
 
 XPERL_RAIDMON_UNIT_WIDTH_MIN = 50
 XPERL_RAIDMON_UNIT_WIDTH_MAX = 150
@@ -761,7 +761,7 @@ function cast:Init()
 	self.area:SetAttribute("templateType", "Button")
 	self.area:SetAttribute("sortOrder", "NAME")
 	self.area:SetAttribute("groupBy", "CLASS")		-- For API version 20003
-	self.area:SetAttribute("groupingOrder", "PRIEST,DRUID,SHAMAN,PALADIN,MAGE,WARLOCK,HUNTER,ROGUE,WARRIOR,DEATHKNIGHT")
+	self.area:SetAttribute("groupingOrder", "PRIEST,DRUID,SHAMAN,PALADIN,MAGE,WARLOCK,HUNTER,ROGUE,WARRIOR,DEATHKNIGHT,MONK")
 
 	self.area.initialConfigFunction = function(self)
 		-- This is the only place we're allowed to set attributes whilst in combat

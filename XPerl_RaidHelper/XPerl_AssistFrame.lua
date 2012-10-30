@@ -3,7 +3,7 @@
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
 local conf
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 736 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 771 $")
 
 local myClass
 local playerAggro, petAggro
@@ -545,7 +545,7 @@ function XPerl_UpdateAssists()
 		end
 	end
 
-	if (not IsInRaid()) then
+	if (GetNumGroupMembers() == 0) then
 		-- Don't show it if we're on our own... we know we have aggro..
 		playerAggro, petAggro = false, false
 	end

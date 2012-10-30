@@ -15,7 +15,6 @@ local percD = "%d"..PERCENT_SYMBOL
 local lastNamesList, lastName, lastWith, lastNamesCount -- Stores with/without buff list (OnUpdate optimization)
 local fullyInitiallized
 
-
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
 end
@@ -50,7 +49,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 749 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 772 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -92,7 +91,7 @@ function XPerl_Raid_OnLoad(self)
 			"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"UNIT_COMBAT", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_FAILED",
 			"UNIT_SPELLCAST_INTERRUPTED", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED",
-			"RAID_TARGET_UPDATE", "PLAYER_LOGIN", "ROLE_CHANGED_INFORM"
+			"RAID_TARGET_UPDATE", "PLAYER_LOGIN", "ROLE_CHANGED_INFORM", "PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE","UNIT_CONNECTION"
 			}
 			
 			
@@ -104,7 +103,7 @@ function XPerl_Raid_OnLoad(self)
 	self:SetScript("OnEvent", XPerl_Raid_OnEvent);
 
 	for i = 1,WoWclassCount do
-		_G["XPerl_Raid_Grp"..i]:UnregisterEvent("UNIT_NAME_UPDATE")
+		--_G["XPerl_Raid_Grp"..i]:UnregisterEvent("UNIT_NAME_UPDATE")
 		tinsert(raidHeaders, _G[XPERL_RAIDGRP_PREFIX..i])
 	end
 
@@ -633,6 +632,7 @@ end
 -- onAttrChanged
 local function onAttrChanged(self, name, value)
 	if (name == "unit") then
+		--print(debugstack())
 		if (value) then
 			SetFrameArray(self, value)
 			if (self.lastID ~= value or self.lastName ~= UnitName(value)) then
@@ -1128,6 +1128,9 @@ end
 
 -- XPerl_Raid_RoleUpdate
 local function XPerl_Raid_RoleUpdate(self, role)
+	if(not self) then
+		return
+	end
 	local icon = self.nameFrame.roleIcon or nil
 
 	if (role) then
@@ -1202,7 +1205,7 @@ function XPerl_Raid_HideShowRaid()
 	end
 
 	for i = 1,WoWclassCount do
-		if (rconf.group[i] == 1 and enable and (i < 9 or rconf.sortByClass) and not singleGroup) then
+		if (rconf.group[i] == 1 and enable and (i < 11 or rconf.sortByClass) and not singleGroup) then
 			if (not raidHeaders[i]:IsShown()) then
 				raidHeaders[i]:Show()
 			end
@@ -1263,6 +1266,18 @@ function XPerl_Raid_Events:VARIABLES_LOADED()
 	XPerl_Raid_Events.VARIABLES_LOADED = nil
 end
 
+function XPerl_Raid_Events:PET_BATTLE_OPENING_START()
+	if(self) then
+		XPerl_Raid_HideShowRaid();
+	end
+end
+
+function XPerl_Raid_Events:PET_BATTLE_CLOSE()
+	if(self) then
+		XPerl_Raid_HideShowRaid();
+	end
+end
+
 -- XPerl_Raid_Events:PLAYER_ENTERING_WORLDsmall()
 function XPerl_Raid_Events:PLAYER_ENTERING_WORLDsmall()
 	-- Force a re-draw. Events not processed for anything that happens during
@@ -1273,6 +1288,13 @@ function XPerl_Raid_Events:PLAYER_ENTERING_WORLDsmall()
 		LoadAddOn("XPerl_CustomHighlight")
 	end
 end
+
+function XPerl_Raid_Events:UNIT_CONNECTION()
+--Update players health when their connection state changes.
+XPerl_Raid_UpdateHealth(self)
+
+end
+
 
 -- PLAYER_ENTERING_WORLD
 function XPerl_Raid_Events:PLAYER_ENTERING_WORLD()
@@ -1326,7 +1348,6 @@ do
 		BuildGuidMap()
 		if (IsInRaid()) then
 			XPerl_Raid_Frame:Show()
-
 			if (rconf.raid_role ) then
 				for i,frame in pairs(FrameArray) do
 					if (frame.partyid) then
@@ -1697,7 +1718,7 @@ function XPerl_Raid_Events:CHAT_MSG_ADDON(prefix, msg, channel, sender)
 end
 
 -- SetRaidRoster
-local function SetRaidRoster()
+function SetRaidRoster()
 	local NewRoster = new()
 
 	del(RaidPositions)
@@ -2284,7 +2305,7 @@ function XPerl_Raid_ChangeAttributes()
 		end
 	end
 
-	for i = 1,rconf.sortByClass and WoWclassCount or 8 do
+	for i = 1,rconf.sortByClass and WoWclassCount or 11 do
 		local groupHeader = raidHeaders[i]
 
 		-- Hide this when we change attributes, so the whole re-calc is only done once, instead of for every attribute change

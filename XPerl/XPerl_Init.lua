@@ -4,14 +4,14 @@
 
 local init_done, gradient, conf, doneOptions
 local errorCount = 0
-XPerl_RequestConfig(function(new) conf = new end, "$Revision: 741 $")
+XPerl_RequestConfig(function(new) conf = new end, "$Revision: 761 $")
 
 local GetNumSubgroupMembers = GetNumSubgroupMembers
 local GetNumGroupMembers = GetNumGroupMembers
 
 local UnitIsGroupAssistant = UnitIsGroupAssistant;
 
-local classOrder = {"WARRIOR", "DEATHKNIGHT", "ROGUE", "HUNTER", "DRUID", "SHAMAN", "PALADIN", "PRIEST", "MAGE", "WARLOCK"}
+local classOrder = {"WARRIOR", "DEATHKNIGHT", "ROGUE", "HUNTER", "DRUID", "SHAMAN", "PALADIN", "PRIEST", "MAGE", "WARLOCK", "MONK"}
 
 -- SetTex
 local highlightPositions = {	{0, 0.25, 0, 0.5},

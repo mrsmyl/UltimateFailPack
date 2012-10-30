@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 706 $")
+		end, "$Revision: 760 $")
 local XPerl_Player_Pet_HighlightCallback
 
 -- XPerl_Player_Pet_OnLoad
@@ -73,7 +73,7 @@ function XPerl_Player_Pet_OnLoad(self)
 					"UNIT_FLAGS", "UNIT_DYNAMIC_FLAGS", "UNIT_AURA",
 					"UNIT_PET", "PET_ATTACK_START", "UNIT_COMBAT", "UNIT_SPELLMISS", "VARIABLES_LOADED",
 					"PLAYER_REGEN_ENABLED", "PLAYER_ENTERING_WORLD", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE",
-					"UNIT_THREAT_LIST_UPDATE", "PLAYER_TARGET_CHANGED", "UNIT_TARGET"}
+					"UNIT_THREAT_LIST_UPDATE", "PLAYER_TARGET_CHANGED", "UNIT_TARGET", "PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE"}
 	for i,event in pairs(events) do
 		self:RegisterEvent(event)
 	end
@@ -295,6 +295,18 @@ end
 function XPerl_Player_Pet_Events:UNIT_PET()
 	if (conf) then		-- DK can issue very early UNIT_PET, long before PEW. We refresh on entering world regardless
 		XPerl_Player_Pet_UpdateDisplay(XPerl_Player_Pet)
+	end
+end
+
+function XPerl_Player_Pet_Events:PET_BATTLE_OPENING_START()
+	if(self) then
+		self:Hide()
+	end
+end
+
+function XPerl_Player_Pet_Events:PET_BATTLE_CLOSE()
+	if(self) then
+		self:Show()
 	end
 end
 

@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 736 $")
+XPerl_SetModuleRevision("$Revision: 761 $")
 
 if type(RegisterAddonMessagePrefix) == "function" then
 	RegisterAddonMessagePrefix("CTRA")
@@ -82,17 +82,13 @@ if (not XPerlColourTable) then
 end
 
 if (not XPerl_ClassPos) then
-	XPerl_ClassPos = function(class)
-		if(class=="WARRIOR") then return 0,    0.25,    0,	0.25;	end
-		if(class=="MAGE")    then return 0.25, 0.5,     0,	0.25;	end
-		if(class=="ROGUE")   then return 0.5,  0.75,    0,	0.25;	end
-		if(class=="DRUID")   then return 0.75, 1,       0,	0.25;	end
-		if(class=="HUNTER")  then return 0,    0.25,    0.25,	0.5;	end
-		if(class=="SHAMAN")  then return 0.25, 0.5,     0.25,	0.5;	end
-		if(class=="PRIEST")  then return 0.5,  0.75,    0.25,	0.5;	end
-		if(class=="WARLOCK") then return 0.75, 1,       0.25,	0.5;	end
-		if(class=="PALADIN") then return 0,    0.25,    0.5,	0.75;	end
-		return 0.25, 0.5, 0.5, 0.75	-- Returns empty next one, so blank
+	local ClassPos = CLASS_BUTTONS
+	function XPerl_ClassPos(class)
+		local b = ClassPos[class]		-- Now using the Blizzard supplied from FrameXML/WorldStateFrame.lua
+		if (b) then
+			return unpack(b)
+		end
+		return 0.25, 0.5, 0.5, 0.75
 	end
 end
 
