@@ -905,7 +905,7 @@
 		      </Anchor>
 	       </Anchors>
       </CheckButton>
-      <EditBox name="comix_options_critgap" letters="4" autoFocus="false">
+      <EditBox name="comix_options_critgap" letters="8" autoFocus="false">
         <Size>
       		<AbsDimension x="40" y="32"></AbsDimension>
 	      </Size>
