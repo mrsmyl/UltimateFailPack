@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(682, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7901 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7955 $"):sub(12, -3))
 mod:SetCreatureID(60143)
 mod:SetModelID(41256)
 mod:SetZone()
@@ -28,7 +28,7 @@ mod:RegisterEventsInCombat(
 --Latency checks are used for good reason (to prevent lagging users from sending late events and making our warnings go off again incorrectly). if you play with high latency and want to bypass latency check, do so with in game GUI option.
 local warnTotem						= mod:NewSpellAnnounce(116174, 2)
 local warnVoodooDolls				= mod:NewTargetAnnounce(122151, 3)
-local warnSpiritualInnervation		= mod:NewTargetAnnounce(117549, 3)
+local warnCrossedOver				= mod:NewTargetAnnounce(116161, 3)
 local warnBanishment				= mod:NewTargetAnnounce(116272, 3)
 local warnSuicide					= mod:NewPreWarnAnnounce(116325, 5, 4)--Pre warn 5 seconds before you die so you take whatever action you need to, to prevent. (this is effect that happens after 30 seconds of Soul Sever
 
@@ -36,21 +36,24 @@ local specWarnTotem					= mod:NewSpecialWarningSpell(116174, false)
 local specWarnBanishment			= mod:NewSpecialWarningYou(116272)
 local specWarnBanishmentOther		= mod:NewSpecialWarningTarget(116272, mod:IsTank())
 local specWarnVoodooDolls			= mod:NewSpecialWarningSpell(122151, false)
+local specWarnVoodooDollsMe			= mod:NewSpecialWarningYou(122151, false)
 
 local timerTotemCD					= mod:NewNextTimer(36, 116174)
 local timerBanishmentCD				= mod:NewNextTimer(65, 116272)
 local timerSoulSever				= mod:NewBuffFadesTimer(30, 116278)--Tank version of spirit realm
-local timerSpiritualInnervation		= mod:NewBuffFadesTimer(30, 117549)--Dps version of spirit realm
+local timerCrossedOver				= mod:NewBuffFadesTimer(30, 116161)--Dps version of spirit realm
 local timerShadowyAttackCD			= mod:NewCDTimer(8, "ej6698", nil, nil, nil, 117222)
 
+local countdownCrossedOver			= mod:NewCountdown(30, 116161)
 local berserkTimer					= mod:NewBerserkTimer(360)
 
-mod:AddBoolOption("SetIconOnVoodoo", false)
+mod:AddBoolOption("SetIconOnVoodoo", true)
 
 local voodooDollTargets = {}
-local spiritualInnervationTargets = {}
+local crossedOverTargets = {}
 local voodooDollTargetIcons = {}
 local guids = {}
+local voodooDollWarned = false
 local guidTableBuilt = false--Entirely for DCs, so we don't need to reset between pulls cause it doesn't effect building table on combat start and after a DC then it will be reset to false always
 local function buildGuidTable()
 	table.wipe(guids)
@@ -61,13 +64,16 @@ end
 
 local function warnVoodooDollTargets()
 	warnVoodooDolls:Show(table.concat(voodooDollTargets, "<, >"))
-	specWarnVoodooDolls:Show()
+	if not voodooDollWarned then
+		specWarnVoodooDolls:Show()
+	end
+	voodooDollWarned = false
 	table.wipe(voodooDollTargets)
 end
 
-local function warnSpiritualInnervationTargets()
-	warnSpiritualInnervation:Show(table.concat(spiritualInnervationTargets, "<, >"))
-	table.wipe(spiritualInnervationTargets)
+local function warnCrossedOverTargets()
+	warnCrossedOver:Show(table.concat(crossedOverTargets, "<, >"))
+	table.wipe(crossedOverTargets)
 end
 
 local function removeIcon(target)
@@ -75,6 +81,7 @@ local function removeIcon(target)
 		if j == target then
 			table.remove(voodooDollTargetIcons, i)
 			mod:SetIcon(target, 0)
+			break
 		end
 	end
 end
@@ -103,10 +110,10 @@ do
 end
 
 function mod:OnCombatStart(delay)
+	voodooDollWarned = false
 	buildGuidTable()
-	guidTableBuilt = true
 	table.wipe(voodooDollTargets)
-	table.wipe(spiritualInnervationTargets)
+	table.wipe(crossedOverTargets)
 	table.wipe(voodooDollTargetIcons)
 	timerShadowyAttackCD:Start(7-delay)
 	timerTotemCD:Start(-delay)
@@ -118,18 +125,25 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actual debuff on >player< warnings since it has a chance to be resisted.
 	if args:IsSpellID(122151) then
+		if args:IsPlayer() then
+			specWarnVoodooDollsMe:Show()
+			voodooDollWarned = true
+		end
 		if self:LatencyCheck() then
 			self:SendSync("VoodooTargets", args.destGUID)
 		end
-	elseif args:IsSpellID(117549) then
-		if args:IsPlayer() then--no latency check for personal notice you aren't syncing.
-			timerSpiritualInnervation:Start()
+	elseif args:IsSpellID(116161, 116160) then -- 116161 is normal and heroic, 116160 is lfr.
+		if args:IsPlayer() then
 			warnSuicide:Schedule(25)
+			countdownCrossedOver:Start(30)
+			timerCrossedOver:Start(30)
 		end
-		if self:LatencyCheck() then
-			self:SendSync("SpiritualTargets", args.destGUID)
+		if not self:IsDifficulty("lfr25") then -- lfr totems not breakable, instead totems can click. so lfr warns can be spam, not needed to warn. also CLEU fires all players, no need to use sync.
+			crossedOverTargets[#crossedOverTargets + 1] = args.destName
+			self:Unschedule(warnCrossedOverTargets)
+			self:Schedule(0.3, warnCrossedOverTargets)		
 		end
-	elseif args:IsSpellID(116278) then
+	elseif args:IsSpellID(116278) then--this is tank spell, no delays?
 		if args:IsPlayer() then--no latency check for personal notice you aren't syncing.
 			timerSoulSever:Start()
 			warnSuicide:Schedule(25)
@@ -138,9 +152,10 @@ function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actua
 end
 
 function mod:SPELL_AURA_REMOVED(args)--We don't use spell cast success for actual debuff on >player< warnings since it has a chance to be resisted.
-	if args:IsSpellID(117549) and args:IsPlayer() then
-		timerSpiritualInnervation:Cancel()
+	if args:IsSpellID(116161, 116160) and args:IsPlayer() then
 		warnSuicide:Cancel()
+		countdownCrossedOver:Cancel()
+		timerCrossedOver:Cancel()	
 	elseif args:IsSpellID(116278) and args:IsPlayer() then
 		timerSoulSever:Cancel()
 		warnSuicide:Cancel()
@@ -188,11 +203,7 @@ function mod:OnSync(msg, guid)
 			end
 		end
 	elseif msg == "VoodooGoneTargets" and guids[guid] and self.Options.SetIconOnVoodoo then
-		removeIcon(guids[guid])
-	elseif msg == "SpiritualTargets" and guids[guid] then
-		spiritualInnervationTargets[#spiritualInnervationTargets + 1] = guids[guid]
-		self:Unschedule(warnSpiritualInnervationTargets)
-		self:Schedule(0.3, warnSpiritualInnervationTargets)
+		removeIcon(DBM:GetRaidUnitId(guids[guid]))
 	elseif msg == "BanishmentTarget" and guids[guid] then
 		warnBanishment:Show(guids[guid])
 		timerBanishmentCD:Start()

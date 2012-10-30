@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(686, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7902 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7946 $"):sub(12, -3))
 mod:SetCreatureID(56884)
 mod:SetModelID(41121)
 mod:SetZone()
@@ -31,7 +31,7 @@ local Hate = EJ_GetSectionInfo(5827)
 function mod:OnCombatStart(delay)
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(Hate)
-		DBM.InfoFrame:Show(5, "playerpower", 5, ALTERNATE_POWER_INDEX) -- this not works. need to find another way.
+		DBM.InfoFrame:Show(5, "playerpower", 5, ALTERNATE_POWER_INDEX)
 	end
 end
 
