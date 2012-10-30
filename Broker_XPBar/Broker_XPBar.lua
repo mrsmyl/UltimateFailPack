@@ -269,6 +269,28 @@ function NS:Colorize(color, text)
 	return text
 end
 
+function NS:ColorizeByValue(value, from, to, ...)
+	if value and Crayon then
+		from = from or 0
+		to   = to or 1
+		
+		local hexColor = Crayon:GetThresholdHexColor(value, from, to)
+		
+		local args = {...}
+		local ret = {}
+		
+		for k, v in ipairs(args) do
+			v = "|cff" .. hexColor .. v .. "|r"
+			
+			ret[k] = v
+		end
+		
+		return unpack(ret)
+	else
+		return ...
+	end
+end
+
 -- aux variables
 local countInitial = 0
 
@@ -373,6 +395,8 @@ local defaults = {
 		ShowValues       = true,
 		ShowPercentage   = true,
 		ShowFactionName  = true,
+		ShowRestedValue  = false,
+		ShowRestedPerc   = false,
 		ColoredText      = true,
 		Separators       = false,
 		Abbreviations    = false,
@@ -408,6 +432,13 @@ local defaults = {
 		MouseOver        = false,
 		Font             = BrokerXPBar.FONT_NAME_DEFAULT,
 		FontSize         = 6,
+		BarToGo            = false,
+		BarShowValues      = true,
+		BarShowPercentage  = false,
+		BarShowFactionName = false,
+		BarShowRestedValue = false,
+		BarShowRestedPerc  = false,
+		BarAbbreviations   = false,
 	}
 }
 
@@ -444,13 +475,13 @@ function BrokerXPBar:OnEnable()
 	-- init xp history
 	self.History:Initialize()
 	
-	self.History:SetTimeFrame(self:GetSetting("TimeFrame"))
+	self.History:SetTimeFrame(self:GetSetting("TimeFrame") * 60)
 	self.History:SetWeight(self:GetSetting("Weight"))
 
 	-- init reputation history
 	self.ReputationHistory:Initialize()
 	
-	self.ReputationHistory:SetTimeFrame(self:GetSetting("TimeFrame"))
+	self.ReputationHistory:SetTimeFrame(self:GetSetting("TimeFrame") * 60)
 	self.ReputationHistory:SetWeight(self:GetSetting("Weight"))
 	
 	self:RegisterBucketEvent("UPDATE_EXHAUSTION", 60, "Update")
@@ -526,7 +557,11 @@ function BrokerXPBar:OnProfileChanged(event, database, newProfileKey)
 	self.History:SetTimeFrame(self:GetSetting("TimeFrame") * 60)
 	self.History:SetWeight(self:GetSetting("Weight"))
 	
+	self.ReputationHistory:SetTimeFrame(self:GetSetting("TimeFrame") * 60)
+	self.ReputationHistory:SetWeight(self:GetSetting("Weight"))
+	
 	self.History:Process()
+	self.ReputationHistory:ProcessFaction(self.faction)
 	
 	self:RegisterAutoTrack()
 	self:RegisterTTL()		
@@ -689,6 +724,10 @@ function BrokerXPBar:UpdateBar()
 		local maxXP     = UnitXPMax("player")
 		local restXP    = GetXPExhaustion() or 0
 		
+		if maxXP == 0 then
+			return
+		end
+		
 		local xp     = currentXP / maxXP
 		local rested = restXP / maxXP
 		
@@ -705,7 +744,7 @@ function BrokerXPBar:UpdateBar()
 		local text = ""
 		
 		if self:GetSetting("ShowBarText") then
-			text = string.format("%s / %s", self:FormatNumberLabel(currentXP), self:FormatNumberLabel(maxXP))
+			text = self:GetInfoText("XP", "Bar")
 		end
 		
 		self.Bar:SetText("XP", text)		
@@ -720,10 +759,14 @@ function BrokerXPBar:UpdateBar()
 			
 			name, _, standing, minRep, maxRep, currentRep = GetFactionInfo(self.faction)
 			
+			if maxRep == minRep then
+				return
+			end
+			
 			reputation = (currentRep - minRep) / (maxRep - minRep)
 			
 			if self:GetSetting("ShowBarText") then
-				text = string.format("%s / %s", self:FormatNumberLabel(currentRep - minRep), self:FormatNumberLabel(maxRep - minRep))
+				text = self:GetInfoText("Rep", "Bar")
 			end
 		end
 
@@ -773,67 +816,8 @@ function BrokerXPBar:UpdateLabel()
 		return
 	end
 
-    if show == "Rep" or show == "XP"  then
-		local current, min, max = 0, 0, 100
-		local name
-		local label, values, percentage  = "", "", ""
-		
-		if show == "XP" then
-			current, max = UnitXP("player"), UnitXPMax("player")
-		else
-			if self.faction == 0 then
-				ldbObj.text = L["No watched faction"]
-				return
-			end
-			
-			name, _, _, min, max, current = GetFactionInfo(self.faction)
-						
-			current = current - min
-			max     = max - min
-			
-			if self:GetSetting("ShowFactionName") then
-				label  = name ..": "
-			end
-		end
-        
-        if self:GetSetting("ToGo") then
-			local toGo        = max - current
-			local percentToGo = floor(toGo / max * 100)
-			
-			if Crayon and self:GetSetting("ColoredText") then
-				values     = "|cff"..Crayon:GetThresholdHexColor(toGo, max, max * 0.75, max * 0.5, max * 0.25, 1) .. self:FormatNumberLabel(toGo) .. "|r"
-				percentage = "|cff"..Crayon:GetThresholdHexColor(percentToGo, 100, 75, 50, 1) .. percentToGo .. "|r"
-			else
-				values     = self:FormatNumberLabel(toGo)
-				percentage = percentToGo
-			end			
-        else 
-			local percent = floor(current/max * 100)
-			
-			if Crayon and self:GetSetting("ColoredText") then
-				values     = "|cff"..Crayon:GetThresholdHexColor(current, 1, max * 0.25, max * 0.5, max * 0.75, max) .. self:FormatNumberLabel(current) .. "|r"
-				percentage = "|cff"..Crayon:GetThresholdHexColor(percent, 1, 25, 50, 75, 100) .. percent .. "|r"
-			else
-				values     = self:FormatNumberLabel(current)
-				percentage = percent
-			end
-			
-			values = values .. "/" .. self:FormatNumberLabel(max)
-        end
-		
-		if self:GetSetting("ShowValues") then
-			label = label .. values
-		end
-			
-		if self:GetSetting("ShowPercentage") then
-			if self:GetSetting("ShowValues") then
-				label = label .. " (" .. percentage .. "%)"
-			else
-				label = label .. percentage .. "%"
-			end
-		end
-		
-		ldbObj.text = label
+    if show == "Rep" or show == "XP"  then		
+		ldbObj.text = self:GetInfoText(show)
     elseif show == "TTL" then		
 		self.History:Process()
 			
@@ -843,7 +827,7 @@ function BrokerXPBar:UpdateLabel()
 			
 		ldbObj.text = L["KTL"] .. ": " .. NS:Colorize("Red", self.History:GetKillsToLevel())
     elseif show == "TTLRep" then		
-		self.ReputationHistory:Process()
+		self.ReputationHistory:ProcessFaction(self.faction)
 			
 		ldbObj.text = L["TTLRep"] .. ": " .. self.ReputationHistory:GetTimeToLevel(self.faction)
     else
@@ -909,6 +893,111 @@ function BrokerXPBar:MaxReputationReached()
 		
 		self.Bar:SetSetting("ShowRep", self:IsBarRequired("Rep"))
 	end
+end
+
+function BrokerXPBar:GetInfoText(source, prefix)
+	if source ~= "XP" and source ~= "Rep" then
+		return ""
+	end
+	
+	if not prefix then
+		prefix = ""
+	end
+	
+	if type(prefix) ~= "string" then
+		return ""
+	end
+
+	local current, min, max = 0, 0, 100
+	local name
+	local label, values, percentage  = "", "", ""
+	
+	if source == "XP" then
+		current, max = UnitXP("player"), UnitXPMax("player")
+	else
+		if self.faction == 0 then
+			return L["No watched faction"]
+		end
+		
+		name, _, _, min, max, current = GetFactionInfo(self.faction)
+					
+		current = current - min
+		max     = max - min
+		
+		if self:GetSetting(prefix .. "ShowFactionName") then
+			label  = name ..": "
+		end
+	end
+	
+	if self:GetSetting(prefix .. "ToGo") then
+		local toGo = max - current
+		
+		values     = self:FormatNumber(toGo, prefix)
+		percentage = floor((toGo / max * 100) + 0.5)
+			
+		if self:GetSetting(prefix .. "ColoredText") then
+			values, percentage = NS:ColorizeByValue(toGo, max, 0, values, percentage)
+		end			
+	else 
+		values     = self:FormatNumber(current, prefix)
+		percentage = floor(current/max * 100)
+		
+		if Crayon and self:GetSetting(prefix .. "ColoredText") then
+			values, percentage = NS:ColorizeByValue(current, 0, max, values, percentage)
+		end
+		
+		values = values .. "/" .. self:FormatNumber(max, prefix)
+	end
+	
+	if self:GetSetting(prefix .. "ShowValues") then
+		label = label .. values
+	end
+		
+	if self:GetSetting(prefix .. "ShowPercentage") then
+		if label == "" then
+			label = percentage .. "%"
+		else
+			label = label .. " (" .. percentage .. "%)"
+		end
+	end
+	
+	if source == "XP" then
+		local showRestValue = self:GetSetting(prefix .. "ShowRestedValue")
+		local showRestPerc  = self:GetSetting(prefix .. "ShowRestedPerc")
+		
+		local exhaustion = GetXPExhaustion()
+		
+		if exhaustion and (showRestValue or showRestPerc) then
+			if label ~= "" then
+				label = label .. " - "
+			end
+			
+			label = label .. L["R:"]
+			
+			values = self:FormatNumber(exhaustion, prefix)
+			percentage = floor(((exhaustion / max) * 100) + 0.5)
+			
+			if self:GetSetting(prefix .. "ColoredText") then
+				values, percentage = NS:ColorizeByValue(percentage, 0, 150, values, percentage)
+			end
+			
+			if showRestValue then
+				label = label .. " " .. values
+			end
+			
+			if showRestPerc then
+				if showRestValue then
+					percentage = " (" .. percentage .. "%)"
+				else
+					percentage = percentage .. "%"
+				end
+				
+				label = label .. " " .. percentage
+			end
+		end
+	end
+
+	return label
 end
 
 -- events
@@ -1033,7 +1122,7 @@ function BrokerXPBar:UpdateWatchedFactionIndex()
 
 	if currentname ~= watchedname then
 		for i = 1, GetNumFactions() do
-			local name, _, _, _, _, _, _, _, isHeader, _, hasRep  = GetFactionInfo(i)			
+			local name, _, _, _, _, _, _, _, isHeader, _, hasRep = GetFactionInfo(i)			
 			if name == watchedname and (not isHeader or hasRep) then
 				index = i
 				break
@@ -1063,12 +1152,16 @@ function BrokerXPBar:Debug(msg)
 	end
 end
 
-function BrokerXPBar:FormatNumberLabel(number)
-	return FormatNumber(number, self:GetSetting("Separators"), self:GetSetting("Abbreviations"), self:GetSetting("DecimalPlaces"))
-end
-
-function BrokerXPBar:FormatNumberTip(number)
-	return FormatNumber(number, self:GetSetting("Separators"), self:GetSetting("TTAbbreviations"), self:GetSetting("DecimalPlaces"))
+function BrokerXPBar:FormatNumber(number, prefix)
+	if not prefix then
+		prefix = ""
+	end
+	
+	if type(prefix) ~= "string" then
+		return number
+	end
+	
+	return FormatNumber(number, self:GetSetting("Separators"), self:GetSetting(prefix .. "Abbreviations"), self:GetSetting("DecimalPlaces"))
 end
 
 function BrokerXPBar:GetBlizzardReputationColor(standing)
@@ -1134,12 +1227,8 @@ function BrokerXPBar:OutputExperience()
 		local toLevelXP = totalXP - currentXP
 		local xpEx = GetXPExhaustion() or 0
 
-		local xpExPercent
-		if xpEx - toLevelXP > 0 then
-			xpExPercent = floor(((xpEx - toLevelXP) / totalXP) * 100)
-		else
-			xpExPercent = floor((xpEx / totalXP) * 100)
-		end
+		local xpExPercent = floor(((xpEx / totalXP) * 100) + 0.5)
+
 		DEFAULT_CHAT_FRAME.editBox:SetText(string.format(L["%s/%s (%3.0f%%) %d to go (%3.0f%% rested)"], 
 					currentXP,
 					totalXP, 

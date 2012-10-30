@@ -38,6 +38,7 @@ end
 
 -- constants
 local MAX_HISTORY = 12
+local MAX_TIME_MINUTES = 120
 
 local History = {
 	-- data
@@ -61,7 +62,7 @@ local History = {
 	
 	-- params
 	weight        = 0.5,
-	timeframe     = 60,
+	timeframe     = 3600,
 }
 
 Addon.History = History
@@ -253,15 +254,21 @@ function History:ProcessXPHistory()
 	self.activeBucket = currentBucket
 
 	-- remove old buckets
-	while #self.historyXP ~= 0 and self.historyXP[1].time <= (self.activeBucket - self.timeframe) do
+	local oldest = self.activeBucket - MAX_TIME_MINUTES
+	
+	while #self.historyXP ~= 0 and self.historyXP[1].time <= oldest do
 		tremove(self.historyXP, 1)
 	end
 
 	local xp, mobxp, kills = 0, 0, 0
 	
+	oldest = self.activeBucket - self.timeframe / 60
+	
 	for _, bucket in pairs(self.historyXP) do
-		xp    = xp + bucket.totalXP
-		kills = kills + bucket.kills
+		if bucket.time > oldest then
+			xp    = xp + bucket.totalXP
+			kills = kills + bucket.kills
+		end
 	end
 
 	self.activityXP    = xp

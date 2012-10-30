@@ -32,23 +32,22 @@ end
 
 -- constants
 local MAX_HISTORY = 12
+local MAX_TIME_MINUTES = 120
 
 local ReputationHistory = {
 	-- data
 	startTime     = nil,
-	activeBucket  = floor(time() / 60) - 1,
 	factions      = {},
 		
 	-- params
 	weight        = 0.5,
-	timeframe     = 60,
+	timeframe     = 3600,
 }
 
 Addon.ReputationHistory = ReputationHistory
 
 function ReputationHistory:Initialize()
 	self.startTime = time()
-	activeBucket   = floor(time() / 60) - 1
 	
 	for faction in pairs(self.factions) do
 		self.factions[faction] = nil
@@ -61,9 +60,9 @@ function ReputationHistory:InitFaction(faction)
 		return nil
 	end
 
-	local _, _, standing, minRep, maxRep, currentRep, _, _, isHeader = GetFactionInfo(faction)
+	local _, _, standing, minRep, maxRep, currentRep, _, _, isHeader, _, hasRep = GetFactionInfo(faction)
 	
-	if isHeader then
+	if isHeader and not hasRep then
 		return nil
 	end
 
@@ -72,6 +71,7 @@ function ReputationHistory:InitFaction(faction)
 		totalRep      = 0,
 		activityRep   = 0,
 		tainted       = false,
+		activeBucket  = floor(time() / 60) - 1,
 		history       = {},
 	}
 	
@@ -85,7 +85,7 @@ function ReputationHistory:GetWriteBucket(faction)
 		return nil
 	end
 
-	local history = self.factions[faction]
+	local history = self.factions[faction].history
 	
 	local bucketTime = floor(time() / 60)
 	local bucket = history[#history]
@@ -170,35 +170,39 @@ end
 function ReputationHistory:Process()
 	-- TODO for all factions process
 	for faction, data in pairs(self.factions) do
-		if data.tainted then
-			self:Process(faction)
-		end
+		self:ProcessFaction(faction)
 	end
 end
 
-function ReputationHistory:Process(faction)
+function ReputationHistory:ProcessFaction(faction)
 	if not self.factions[faction] then 
 		return 
 	end
-	
+
 	local data = self.factions[faction]
 	local currentBucket = floor(time() / 60)
-	
+
 	if not data.tainted and currentBucket == data.activeBucket then 
 		return 
 	end
-	
+		
 	data.activeBucket = currentBucket
 	
 	-- remove old buckets
-	while #data.history ~= 0 and data.history[1].time <= (data.activeBucket - self.timeframe) do
+	local oldest = data.activeBucket - MAX_TIME_MINUTES
+	
+	while #data.history ~= 0 and data.history[1].time <= oldest do
 		tremove(data.history, 1)
 	end
 
 	local reputation = 0
 	
+	oldest = data.activeBucket - self.timeframe / 60
+
 	for _, bucket in pairs(data.history) do
-		reputation = reputation + bucket.reputation
+		if bucket.time > oldest then
+			reputation = reputation + bucket.reputation
+		end
 	end
 
 	data.activityRep = reputation
@@ -209,9 +213,9 @@ end
 function ReputationHistory:Update()
 	-- update all known factions
 	for faction = 1, GetNumFactions() do
-		local _, _, _, _, _, currentRep, _, _, isHeader  = GetFactionInfo(faction)
+		local _, _, _, _, _, currentRep, _, _, isHeader, _, hasRep  = GetFactionInfo(faction)
 		
-		if not isHeader then		
+		if not isHeader or hasRep then		
 			if not self.factions[faction] then
 				self:InitFaction(faction)
 			end
@@ -224,10 +228,11 @@ function ReputationHistory:Update()
 					local bucket = self:GetWriteBucket(faction)
 
 					local delta = totalRep - data.totalRep
+										
+					local b = bucket.reputation
 					
 					bucket.reputation = bucket.reputation + delta
-					data.totalRep     = totalRep
-					
+										
 					data.tainted = true
 				end
 			end
@@ -253,7 +258,7 @@ function ReputationHistory:SetWeight(weight)
 	
 	self.weight = weight
 	
-	self.tainted = true
+	self:Taint()
 end
 
 function ReputationHistory:GetTimeFrame()
@@ -271,10 +276,18 @@ function ReputationHistory:SetTimeFrame(timeframe)
 	
 	self.timeframe = timeframe
 	
-	self.tainted = true
+	self:Taint()
 end
 
 -- helper
+function ReputationHistory:Taint()
+	for faction, data in pairs(self.factions) do
+		data.tainted = true
+	end
+	
+	return false
+end
+
 function ReputationHistory:IsTainted()
 	for faction, data in pairs(self.factions) do
 		if self.factions[faction].tainted then

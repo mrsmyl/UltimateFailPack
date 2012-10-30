@@ -11,9 +11,6 @@ local QT		= LibStub:GetLibrary("LibQTip-1.0")
 -- get translations
 local L         = LibStub:GetLibrary("AceLocale-3.0"):GetLocale( ADDON )
 
--- coloring tools
-local Crayon	= LibStub:GetLibrary("LibCrayon-3.0")
-
 -- local functions
 local floor = math.floor
 
@@ -23,6 +20,9 @@ local GetFactionInfo  = _G.GetFactionInfo
 local GetXPExhaustion = _G.GetXPExhaustion
 
 local _
+
+-- constants
+local FORMAT_NUMBER_PREFIX = "TT"
 
 -- icons
 local ICON_PLUS	 = [[|TInterface\BUTTONS\UI-PlusButton-Up:16:16|t]]
@@ -68,7 +68,7 @@ function BrokerXPBar:DrawTooltip()
 	local totalXP = UnitXPMax("player")
 	local currentXP = UnitXP("player")
 	local toLevelXP = totalXP - currentXP
-	local toLevelXPPercent = floor((currentXP / totalXP) * 100)
+	local toLevelXPPercent = floor(((currentXP / totalXP) * 100) + 0.5)
 
 	-- add header
 	local lineNum = tooltip:AddHeader( " " )
@@ -80,32 +80,21 @@ function BrokerXPBar:DrawTooltip()
 		tooltip:AddLine(" ")
 		
 		if self.playerLvl < self.MAX_LEVEL then
-			currentXP = self:FormatNumberTip(currentXP)
-			toLevelXP = self:FormatNumberTip(toLevelXP)
+			currentXP = self:FormatNumber(currentXP, FORMAT_NUMBER_PREFIX)
+			toLevelXP = self:FormatNumber(toLevelXP, FORMAT_NUMBER_PREFIX)
 			
-			if Crayon then
-				local hexColor   = Crayon:GetThresholdHexColor(toLevelXPPercent, 1, 25, 50, 75, 100)
-				
-				currentXP        = "|cff" .. hexColor .. currentXP .. "|r"
-				toLevelXP        = "|cff" .. hexColor .. toLevelXP .. "|r"
-				toLevelXPPercent = "|cff" .. hexColor .. toLevelXPPercent .. "|r"
-			end
-
+			currentXP, toLevelXP, toLevelXPPercent = NS:ColorizeByValue(toLevelXPPercent, 0, 100, currentXP, toLevelXP, toLevelXPPercent)
+			
 			local exhaustion = GetXPExhaustion()
 
 			local xpEx, xpExPercent
 			
 			if exhaustion then
-				xpEx = self:FormatNumberTip(exhaustion)
+				xpEx = self:FormatNumber(exhaustion, FORMAT_NUMBER_PREFIX)
 				
-				xpExPercent = floor((exhaustion / totalXP) * 100)
+				xpExPercent = floor(((exhaustion / totalXP) * 100) + 0.5)
 				
-				if Crayon then
-					local hexColor = Crayon:GetThresholdHexColor(xpExPercent, 1, 25, 50, 75, 100)
-					
-					xpEx           = "|cff" .. hexColor .. xpEx .. "|r"
-					xpExPercent    = "|cff" .. hexColor .. xpExPercent .. "|r"
-				end
+				xpEx, xpExPercent = NS:ColorizeByValue(xpExPercent, 0, 150, xpEx, xpExPercent)
 			end
 						
 			lineNum = tooltip:AddLine(" ")
@@ -114,7 +103,7 @@ function BrokerXPBar:DrawTooltip()
 
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Current XP"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, string.format("%s/%s (%s%%)", currentXP, self:FormatNumberTip(totalXP), toLevelXPPercent), "LEFT")
+			tooltip:SetCell(lineNum, 2, string.format("%s/%s (%s%%)", currentXP, self:FormatNumber(totalXP, FORMAT_NUMBER_PREFIX), toLevelXPPercent), "LEFT")
 
 			if exhaustion then
 				lineNum = tooltip:AddLine(" ")
@@ -145,7 +134,7 @@ function BrokerXPBar:DrawTooltip()
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Session XP"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, self:FormatNumberTip(self.History.totalXP), "LEFT")
+			tooltip:SetCell(lineNum, 2, self:FormatNumber(self.History.totalXP, FORMAT_NUMBER_PREFIX), "LEFT")
 			
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Session kills"]), "LEFT")
@@ -154,7 +143,7 @@ function BrokerXPBar:DrawTooltip()
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["XP per hour"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, self:FormatNumberTip(xpph), "LEFT")
+			tooltip:SetCell(lineNum, 2, self:FormatNumber(xpph, FORMAT_NUMBER_PREFIX), "LEFT")
 
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Kills per hour"]), "LEFT")
@@ -193,20 +182,14 @@ function BrokerXPBar:DrawTooltip()
 			local atLevelRep   = fullLevelRep - toLevelRep
 			local percentRep   = floor((atLevelRep / fullLevelRep) * 100)
 
-			atLevelRep = self:FormatNumberTip(atLevelRep)
-			toLevelRep = self:FormatNumberTip(toLevelRep)
+			atLevelRep = self:FormatNumber(atLevelRep, FORMAT_NUMBER_PREFIX)
+			toLevelRep = self:FormatNumber(toLevelRep, FORMAT_NUMBER_PREFIX)
 				
-			if Crayon then
-				local hexColor   = Crayon:GetThresholdHexColor(percentRep, 1, 25, 50, 75, 100)
-				
-				atLevelRep = "|cff" .. hexColor .. atLevelRep .. "|r"
-				toLevelRep = "|cff" .. hexColor .. toLevelRep .. "|r"
-				percentRep = "|cff" .. hexColor .. percentRep .. "|r"
-			end
+			atLevelRep, toLevelRep, percentRep = NS:ColorizeByValue(percentRep, 0, 100, atLevelRep, toLevelRep, percentRep)
 
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Current reputation"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, string.format("%s/%s (%s%%)", atLevelRep, self:FormatNumberTip(fullLevelRep), percentRep), "LEFT")
+			tooltip:SetCell(lineNum, 2, string.format("%s/%s (%s%%)", atLevelRep, self:FormatNumber(fullLevelRep, FORMAT_NUMBER_PREFIX), percentRep), "LEFT")
 
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["To next standing"]), "LEFT")
@@ -219,7 +202,7 @@ function BrokerXPBar:DrawTooltip()
 		
 		-- show history data
 		if not self:GetSetting("TTHideRepDetails") and not self.atMaxRep then
-			self.ReputationHistory:Process()
+			self.ReputationHistory:ProcessFaction(self.faction)
 			
 			local total = self.ReputationHistory:GetTotalRep(self.faction)
 			local repph = floor(self.ReputationHistory:GetRepPerHour(self.faction))
@@ -227,11 +210,11 @@ function BrokerXPBar:DrawTooltip()
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Session rep"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, self:FormatNumberTip(total), "LEFT")
+			tooltip:SetCell(lineNum, 2, self:FormatNumber(total, FORMAT_NUMBER_PREFIX), "LEFT")
 			
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Rep per hour"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, self:FormatNumberTip(repph), "LEFT")
+			tooltip:SetCell(lineNum, 2, self:FormatNumber(repph, FORMAT_NUMBER_PREFIX), "LEFT")
 
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Time to level"]), "LEFT")

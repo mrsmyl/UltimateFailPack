@@ -181,6 +181,13 @@ function BrokerXPBar:SetupOptions()
 		Texture         = BrokerXPBar.UpdateTextureSetting,
 		Ticks           = BrokerXPBar.UpdateBarSetting,
 		ShowBarText     = BrokerXPBar.UpdateBarTextSetting,
+		BarToGo            = BrokerXPBar.UpdateBarTextSetting,
+		BarShowFactionName = BrokerXPBar.UpdateBarTextSetting,
+		BarShowValues      = BrokerXPBar.UpdateBarTextSetting,
+		BarShowPercentage  = BrokerXPBar.UpdateBarTextSetting,
+		BarShowRestedValue = BrokerXPBar.UpdateBarTextSetting,
+		BarShowRestedPerc  = BrokerXPBar.UpdateBarTextSetting,
+		BarAbbreviations   = BrokerXPBar.UpdateBarTextSetting,
 		MouseOver       = BrokerXPBar.UpdateBarSetting,
 		Font            = BrokerXPBar.UpdateBarSetting,
 		FontSize        = BrokerXPBar.UpdateBarSetting,
@@ -197,6 +204,8 @@ function BrokerXPBar:SetupOptions()
 		ShowFactionName = BrokerXPBar.UpdateLabelSetting,
 		ShowValues      = BrokerXPBar.UpdateLabelSetting,
 		ShowPercentage  = BrokerXPBar.UpdateLabelSetting,
+		ShowRestedValue = BrokerXPBar.UpdateLabelSetting,
+		ShowRestedPerc  = BrokerXPBar.UpdateLabelSetting,
 		ColoredText     = BrokerXPBar.UpdateLabelSetting,
 		Separators      = BrokerXPBar.UpdateLabelSetting,
 		Abbreviations   = BrokerXPBar.UpdateLabelSetting,
@@ -220,6 +229,7 @@ function BrokerXPBar:SetupOptions()
 				type = 'group',
 				name = L["Bar Properties"],
 				desc = L["Set the Bar Properties"],
+				order = 1,
 				args = {
 					spark = {
 						type = 'range',
@@ -332,10 +342,198 @@ function BrokerXPBar:SetupOptions()
 						values = tickConfig,
 						order = 9,
 					},
+					frame = {
+						type = 'group',
+						name = L["Frame"],
+						desc = L["Frame Connection Properties"],
+						order = 1,
+						args = {
+							attached = {
+								type = "input",
+								name = L["Frame to attach to"],
+								desc = L["The exact name of the frame to attach to"],
+								get = function()
+										return self:GetSetting("Frame")
+									end,
+								set = function(info, value)
+									self:SetSetting("Frame", value)
+								end,
+								order = 1,
+							},
+							attach = {
+								type = "execute",
+								name = L["Select by Mouse"],
+								desc = L["Click to activate the frame selector (Left-Click to select frame, Right-Click do deactivate selector)"],
+								func = function() mousehook:Start() end,
+								order = 2,
+							},
+							location = {
+								type = "select", 
+								name = L["Attach to side"],
+								desc = L["Select side to attach the bars to"],
+								get = function()
+										return self:GetSetting("Location")
+									end,
+								set = function(info, value)
+									self:SetSetting("Location", value)
+								end,
+								values = { Top = L["Top"], Bottom = L["Bottom"], Left = L["Left"], Right = L["Right"] },
+								order = 3,
+							},
+							strata = {
+								type = "select", 
+								name = L["Strata"],
+								desc = L["Select the strata of the bars"],
+								get = function() return strata.val2opt[self:GetSetting("Strata")] end,
+								set = function(info, value)
+									self:SetSetting("Strata", strata.opt2val[value] or "BACKGROUND")
+								end,
+								values = strata.opt2val,
+								order = 4,
+							},
+							xoffset = {
+								type = 'range',
+								name = L["X-Offset"],
+								desc = L["Set x-Offset of the bars"],
+								get = function() return self:GetSetting("xOffset") end,
+								set = function(info, value)
+									self:SetSetting("xOffset", value)
+								end,
+								min = -250,
+								max =  250,
+								step = 1,
+								order = 5,
+							},
+							yoffset = {
+								type = 'range',
+								name = L["Y-Offset"],
+								desc = L["Set y-Offset of the bars"],
+								get = function() return self:GetSetting("yOffset") end,
+								set = function(info, value)
+									self:SetSetting("yOffset", value)
+								end,
+								min = -250,
+								max =  250,
+								step = 1,
+								order = 6,
+							},
+							inside = {
+								type = 'toggle',
+								name = L["Inside"],
+								desc = L["Attach bars to the inside of the frame"],
+								get = function() return self:GetSetting("Inside") end,
+								set = function()
+									self:ToggleSetting("Inside")
+								end,
+								order = 7,
+							},
+							jostle = {
+								type = 'toggle',
+								name = L["Jostle"],
+								desc = L["Jostle Blizzard Frames"],
+								get = function() return self:GetSetting("Jostle") end,
+								set = function()
+									self:ToggleSetting("Jostle")
+								end,
+								order = 8,
+							},
+							refresh = {
+								type = 'execute',
+								name = L["Refresh"],
+								desc = L["Refresh Bar Position"],
+								func = function() self.Bar:Reanchor() end,
+								order = 9,
+							},
+						},
+					},
+					colors = {
+						type = 'group',
+						name = L["Colors"],
+						desc = L["Set the Bar Colors"],
+						order = 2,
+						args = {
+							currentXP = {
+								type = "color",
+								name = L["Current XP"],
+								desc = L["Set the color of the XP Bar"],
+								hasAlpha = true,
+								get = function ()
+									return self:GetColor("XP")
+								end,
+								set = function (info, r, g, b, a)
+									self:SetColor("XP", r, g, b, a)
+								end,
+								order = 1,
+							},
+							restedXP = {
+								type = 'color',
+								name = L["Rested XP"],
+								desc = L["Set the color of the Rested Bar"],
+								hasAlpha = true,
+								get = function ()
+									return self:GetColor("Rest")
+								end,
+								set = function (info, r, g, b, a)
+									self:SetColor("Rest", r, g, b, a)
+								end,
+								order = 2,
+							},
+							noxp = {
+								type = 'color',
+								name = L["No XP"],
+								desc = L["Set the empty color of the XP Bar"],
+								hasAlpha = true,
+								get = function ()
+									return self:GetColor("None")
+								end,
+								set = function (info, r, g, b, a)
+									self:SetColor("None", r, g, b, a)
+								end,
+								order = 3,
+							},
+							rep = {
+								type = 'color',
+								name = L["Reputation"],
+								desc = L["Set the color of the Rep Bar"],
+								hasAlpha = true,
+								get = function ()
+									return self:GetColor("Rep")
+								end,
+								set = function (info, r, g, b, a)
+									self:SetColor("Rep", r, g, b, a)
+								end,
+								order = 4,
+							},
+							norep = {
+								type = 'color',
+								name = L["No Rep"],
+								desc = L["Set the empty color of the Reputation Bar"],
+								hasAlpha = true,
+								get = function ()
+									return self:GetColor("NoRep")
+								end,
+								set = function (info, r, g, b, a)
+									self:SetColor("NoRep", r, g, b, a)
+								end,
+								order = 5,
+							},
+							blizzrep = {
+								type = 'toggle',
+								name = L["Blizzard Rep Colors"],
+								desc = L["Toggle Blizzard Reputation Colors"],
+								get = function() return self:GetSetting("BlizzRep") end,
+								set = function()
+									self:ToggleSetting("BlizzRep")
+								end,
+								order = 6,
+							},
+						},
+					},
 					bartext = {
 						type = 'group',
 						name = L["Bar Text"],
 						desc = L["Display settings for bar text."],
+						order = 3,
 						args = {
 							text = {
 								type = 'toggle',
@@ -387,192 +585,77 @@ function BrokerXPBar:SetupOptions()
 								step = 1,
 								order = 4,
 							},
+							togo = {
+								type = 'toggle',
+								name = L["XP/Rep to go"],
+								desc = L["Show XP/Rep to go in bar text"],
+								get  = function() return self:GetSetting("BarToGo") end,
+								set  = function()
+									self:ToggleSetting("BarToGo") 
+								end,
+								order = 5,
+							},
+							faction = {
+								type = 'toggle',
+								name = L["Show faction name"],
+								desc = L["Show faction name in bar text."],
+								get  = function() return self:GetSetting("BarShowFactionName") end,
+								set  = function()
+									self:ToggleSetting("BarShowFactionName") 
+								end,
+								order = 6,
+							},
+							values = {
+								type = 'toggle',
+								name = L["Show Values"],
+								desc = L["Show values in bar text"],
+								get  = function() return self:GetSetting("BarShowValues") end,
+								set  = function()
+									self:ToggleSetting("BarShowValues") 
+								end,
+								order = 7,
+							},
+							perc = {
+								type = 'toggle',
+								name = L["Show Percentage"],
+								desc = L["Show percentage in bar text"],
+								get  = function() return self:GetSetting("BarShowPercentage") end,
+								set  = function()
+									self:ToggleSetting("BarShowPercentage") 
+								end,
+								order = 8,
+							},
+							rested = {
+								type = 'toggle',
+								name = L["Show Rested"],
+								desc = L["Show rested value in bar text"],
+								get  = function() return self:GetSetting("BarShowRestedValue") end,
+								set  = function()
+									self:ToggleSetting("BarShowRestedValue") 
+								end,
+								order = 9,
+							},
+							restperc = {
+								type = 'toggle',
+								name = L["Show Rested %"],
+								desc = L["Show rested percentage in bar text"],
+								get  = function() return self:GetSetting("BarShowRestedPerc") end,
+								set  = function()
+									self:ToggleSetting("BarShowRestedPerc") 
+								end,
+								order = 10,
+							},
+							abbreviations = {
+								type = 'toggle',
+								name = L["Abbreviations"],
+								desc = L["Use abbreviations to shorten numbers"],
+								get  = function() return self:GetSetting("BarAbbreviations") end,
+								set  = function()
+									self:ToggleSetting("BarAbbreviations") 
+								end,
+								order = 11,
+							},
 						},
-					},
-				},
-			},
-			frame = {
-				type = 'group',
-				name = L["Frame"],
-				desc = L["Frame Connection Properties"],
-				args = {
-					attached = {
-						type = "input",
-						name = L["Frame to attach to"],
-						desc = L["The exact name of the frame to attach to"],
-						get = function()
-								return self:GetSetting("Frame")
-							end,
-						set = function(info, value)
-							self:SetSetting("Frame", value)
-						end,
-						order = 1,
-					},
-					attach = {
-						type = "execute",
-						name = L["Select by Mouse"],
-						desc = L["Click to activate the frame selector (Left-Click to select frame, Right-Click do deactivate selector)"],
-						func = function() mousehook:Start() end,
-						order = 2,
-					},
-					location = {
-						type = "select", 
-						name = L["Attach to side"],
-						desc = L["Select side to attach the bars to"],
-						get = function()
-								return self:GetSetting("Location")
-							end,
-						set = function(info, value)
-							self:SetSetting("Location", value)
-						end,
-						values = { Top = L["Top"], Bottom = L["Bottom"], Left = L["Left"], Right = L["Right"] },
-						order = 3,
-					},
-					strata = {
-						type = "select", 
-						name = L["Strata"],
-						desc = L["Select the strata of the bars"],
-						get = function() return strata.val2opt[self:GetSetting("Strata")] end,
-						set = function(info, value)
-							self:SetSetting("Strata", strata.opt2val[value] or "BACKGROUND")
-						end,
-						values = strata.opt2val,
-						order = 4,
-					},
-					xoffset = {
-						type = 'range',
-						name = L["X-Offset"],
-						desc = L["Set x-Offset of the bars"],
-						get = function() return self:GetSetting("xOffset") end,
-						set = function(info, value)
-							self:SetSetting("xOffset", value)
-						end,
-						min = -250,
-						max =  250,
-						step = 1,
-						order = 5,
-					},
-					yoffset = {
-						type = 'range',
-						name = L["Y-Offset"],
-						desc = L["Set y-Offset of the bars"],
-						get = function() return self:GetSetting("yOffset") end,
-						set = function(info, value)
-							self:SetSetting("yOffset", value)
-						end,
-						min = -250,
-						max =  250,
-						step = 1,
-						order = 6,
-					},
-					inside = {
-						type = 'toggle',
-						name = L["Inside"],
-						desc = L["Attach bars to the inside of the frame"],
-						get = function() return self:GetSetting("Inside") end,
-						set = function()
-							self:ToggleSetting("Inside")
-						end,
-						order = 7,
-					},
-					jostle = {
-						type = 'toggle',
-						name = L["Jostle"],
-						desc = L["Jostle Blizzard Frames"],
-						get = function() return self:GetSetting("Jostle") end,
-						set = function()
-							self:ToggleSetting("Jostle")
-						end,
-						order = 8,
-					},
-					refresh = {
-						type = 'execute',
-						name = L["Refresh"],
-						desc = L["Refresh Bar Position"],
-						func = function() self.Bar:Reanchor() end,
-						order = 9,
-					},
-				},
-			},
-			colors = {
-				type = 'group',
-				name = L["Colors"],
-				desc = L["Set the Bar Colors"],
-				args = {
-					currentXP = {
-						type = "color",
-						name = L["Current XP"],
-						desc = L["Set the color of the XP Bar"],
-						hasAlpha = true,
-						get = function ()
-							return self:GetColor("XP")
-						end,
-						set = function (info, r, g, b, a)
-							self:SetColor("XP", r, g, b, a)
-						end,
-						order = 1,
-					},
-					restedXP = {
-						type = 'color',
-						name = L["Rested XP"],
-						desc = L["Set the color of the Rested Bar"],
-						hasAlpha = true,
-						get = function ()
-							return self:GetColor("Rest")
-						end,
-						set = function (info, r, g, b, a)
-							self:SetColor("Rest", r, g, b, a)
-						end,
-						order = 2,
-					},
-					noxp = {
-						type = 'color',
-						name = L["No XP"],
-						desc = L["Set the empty color of the XP Bar"],
-						hasAlpha = true,
-						get = function ()
-							return self:GetColor("None")
-						end,
-						set = function (info, r, g, b, a)
-							self:SetColor("None", r, g, b, a)
-						end,
-						order = 3,
-					},
-					rep = {
-						type = 'color',
-						name = L["Reputation"],
-						desc = L["Set the color of the Rep Bar"],
-						hasAlpha = true,
-						get = function ()
-							return self:GetColor("Rep")
-						end,
-						set = function (info, r, g, b, a)
-							self:SetColor("Rep", r, g, b, a)
-						end,
-						order = 4,
-					},
-					norep = {
-						type = 'color',
-						name = L["No Rep"],
-						desc = L["Set the empty color of the Reputation Bar"],
-						hasAlpha = true,
-						get = function ()
-							return self:GetColor("NoRep")
-						end,
-						set = function (info, r, g, b, a)
-							self:SetColor("NoRep", r, g, b, a)
-						end,
-						order = 5,
-					},
-					blizzrep = {
-						type = 'toggle',
-						name = L["Blizzard Rep Colors"],
-						desc = L["Toggle Blizzard Reputation Colors"],
-						get = function() return self:GetSetting("BlizzRep") end,
-						set = function()
-							self:ToggleSetting("BlizzRep")
-						end,
-						order = 6,
 					},
 				},
 			},
@@ -580,6 +663,7 @@ function BrokerXPBar:SetupOptions()
 				type = 'group',
 				name = L["Broker Label"],
 				desc = L["Broker Label Properties"],
+				order = 2,
 				args = {
 					showtext = {
 						type = "select", 
@@ -634,6 +718,26 @@ function BrokerXPBar:SetupOptions()
 						end,
 						order = 5,
 					},
+					rested = {
+						type = 'toggle',
+						name = L["Show Rested"],
+						desc = L["Show rested value in label text"],
+						get  = function() return self:GetSetting("ShowRestedValue") end,
+						set  = function()
+							self:ToggleSetting("ShowRestedValue") 
+						end,
+						order = 6,
+					},
+					restperc = {
+						type = 'toggle',
+						name = L["Show Rested %"],
+						desc = L["Show rested percentage in label text"],
+						get  = function() return self:GetSetting("ShowRestedPerc") end,
+						set  = function()
+							self:ToggleSetting("ShowRestedPerc") 
+						end,
+						order = 7,
+					},
 					colored = {
 						type = 'toggle',
 						name = L["Colored Label"],
@@ -642,17 +746,7 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("ColoredText") 
 						end,
-						order = 6,
-					},
-					separators = {
-						type = 'toggle',
-						name = L["Separators"],
-						desc = L["Use separators for numbers to improve readability"],
-						get  = function() return self:GetSetting("Separators") end,
-						set  = function()
-							self:ToggleSetting("Separators") 
-						end,
-						order = 7,
+						order = 8,
 					},
 					abbreviations = {
 						type = 'toggle',
@@ -662,17 +756,43 @@ function BrokerXPBar:SetupOptions()
 						set  = function()
 							self:ToggleSetting("Abbreviations") 
 						end,
-						order = 8,
+						order = 10,
 					},
+				},
+			},
+			tooltip = {
+				type = 'group',
+				name = L["Tooltip"],
+				desc = L["Tooltip Properties"],
+				order = 3,
+				args = {
 					tooltipabbrev = {
 						type = 'toggle',
-						name = L["Tip Abbreviations"],
-						desc = L["Use abbreviations in tooltip"],
+						name = L["Abbreviations"],
+						desc = L["Use abbreviations to shorten numbers"],
 						get  = function() return self:GetSetting("TTAbbreviations") end,
 						set  = function()
 							self:ToggleSetting("TTAbbreviations")
 						end,
-						order = 9,
+						order = 1,
+					},
+				},
+			},
+			numbers = {
+				type = 'group',
+				name = L["Numbers"],
+				desc = L["General settings for number formatting"],
+				order = 4,
+				args = {
+					separators = {
+						type = 'toggle',
+						name = L["Separators"],
+						desc = L["Use separators for numbers to improve readability"],
+						get  = function() return self:GetSetting("Separators") end,
+						set  = function()
+							self:ToggleSetting("Separators") 
+						end,
+						order = 1,
 					},
 					decimalplaces = {
 						type = 'select',
@@ -683,7 +803,7 @@ function BrokerXPBar:SetupOptions()
 							self:SetSetting("DecimalPlaces", value) 
 						end,
 						values = { [0] = "0", [1] = "1", [2] = "2", [3] = "3" },
-						order = 10,
+						order = 2,
 					},
 				},
 			},
@@ -691,6 +811,7 @@ function BrokerXPBar:SetupOptions()
 				type = 'group',
 				name = L["Faction Tracking"],
 				desc = L["Auto-switch watched faction on reputation gains/losses."],
+				order = 5,
 				args = {
 					gain = {
 						type = 'toggle',
@@ -718,6 +839,7 @@ function BrokerXPBar:SetupOptions()
 				type = 'group',
 				name = L["Leveling"],
 				desc = L["Leveling Properties"],
+				order = 6,
 				args = {
 					timeframe = {
 						type = 'range',
@@ -751,6 +873,7 @@ function BrokerXPBar:SetupOptions()
 				type = 'group',
 				name = L["Max. XP/Rep"],
 				desc = L["Display settings at maximum level/reputation"],
+				order = 7,
 				args = {
 					hidexptxt = {
 						type = 'toggle',
@@ -942,8 +1065,8 @@ end
 
 function BrokerXPBar:UpdateHistorySetting(option)
 	if option == "TimeFrame" then
-		self.History:SetTimeFrame(self:GetSetting(option))
-		self.ReputationHistory:SetTimeFrame(self:GetSetting(option))
+		self.History:SetTimeFrame(self:GetSetting(option) * 60)
+		self.ReputationHistory:SetTimeFrame(self:GetSetting(option) * 60)
 	elseif option == "Weight" then
 		self.History:SetWeight(self:GetSetting(option))
 		self.ReputationHistory:SetWeight(self:GetSetting(option))

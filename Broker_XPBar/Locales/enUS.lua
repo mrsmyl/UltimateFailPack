@@ -35,6 +35,27 @@ L["per Tick"] = true
 L["Ticks"] = true
 L["Set number of ticks shown on the bar."] = true
 
+L["Bar Text"] = true
+L["Display settings for bar text."] = true
+
+L["Show Bar Text"] = true
+L["Show current progress values on bar."] = true
+L["Mouse-Over"] = true
+L["Show text only on mouse over bar."] = true
+L["Font"] = true
+L["Font of the bar text."] = true
+L["If you want more fonts, you should install the addon 'SharedMedia'."] = true
+L["Font Size"] = true
+L["The font size of the text."] = true
+L["Show XP/Rep to go in bar text"] = true
+L["Show faction name in bar text."] = true
+L["Show values in bar text"] = true
+L["Show percentage in bar text"] = true
+L["Show rested value in bar text"] = true
+L["Show rested percentage in bar text"] = true
+L["Abbreviations"] = true
+L["Use abbreviations to shorten numbers"] = true
+
 L["Frame"] = true
 L["Frame Connection Properties"] = true
 
@@ -76,6 +97,14 @@ L["Set the empty color of the Reputation Bar"] = true
 L["Blizzard Rep Colors"] = true
 L["Toggle Blizzard Reputation Colors"] = true
 
+L["Numbers"] = true
+L["General settings for number formatting"] = true
+
+L["Separators"] = true
+L["Use separators for numbers to improve readability"] = true
+L["Decimal Places"] = true
+L["Number of decimal places when using abbreviations"] = true
+
 L["Broker Label"] = true
 L["Broker Label Properties"] = true
 
@@ -91,20 +120,21 @@ L["Select label text for Broker display"] = [[Select label text for Broker displ
 
 L["XP/Rep to go"] = true
 L["Show XP/Rep to go in label"] = true
-L["Percentage only"] = true
-L["Show percentage only"] = true
 L["Show faction name"] = true
 L["Show faction name when reputation is selected as label text."] = true
+L["Show Values"] = true
+L["Show values in label text"] = true
+L["Show Percentage"] = true
+L["Show percentage in label text"] = true
+L["Show Rested"] = true
+L["Show rested value in label text"] = true
+L["Show Rested %"] = true
+L["Show rested percentage in label text"] = true
 L["Colored Label"] = true
 L["Color label text based on percentages"] = true
-L["Separators"] = true
-L["Use separators for numbers to improve readability"] = true
-L["Abbreviations"] = true
-L["Use abbreviations to shorten numbers"] = true
-L["Tip Abbreviations"] = true
-L["Use abbreviations in tooltip"] = true
-L["Decimal Places"] = true
-L["Number of decimal places when using abbreviations"] = true
+
+L["Tooltip"] = true
+L["Tooltip Properties"] = true 
 
 L["Faction Tracking"] = true
 L["Auto-switch watched faction on reputation gains/losses."] = true
