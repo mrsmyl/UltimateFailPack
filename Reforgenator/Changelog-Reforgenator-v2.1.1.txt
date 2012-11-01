@@ -1,0 +1,14 @@
+tag v2.1.1
+a76b4562740c503de28bd3c2c97764a690fea9f7
+dnewell <newell.donald@gmail.com>
+2012-11-01 10:02:31 -0400
+
+Tagging as v2.1.1
+
+
+--------------------
+
+dnewell:
+	- updated revision for 2.1.1 bug fix release
+	- updated resto druid model statweights and haste 1sGCD
+	- removed agility from mistwalker monk

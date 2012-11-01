@@ -346,9 +346,9 @@ function Reforgenator:RestoDruidModel()
     model.readOnly = true
     model.statWeights = 
 	{
-        ["ITEM_MOD_SPIRIT_SHORT"] = 0.75,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.65,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.60,
+        ["ITEM_MOD_SPIRIT_SHORT"] = 2.75,
+        ["ITEM_MOD_HASTE_RATING_SHORT"] = 2,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.25,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.50,
     }
 
@@ -362,8 +362,8 @@ function Reforgenator:RestoDruidModel()
         },
 		{
             rating = CR_HASTE_SPELL,
-            cap = "Fixed",
-            userdata = { 916, 3043 },
+            cap = "1SecGCD",
+            --userdata = { 916, 3043 },
         },
         {
             rating = CR_MASTERY,
@@ -1494,11 +1494,6 @@ function Reforgenator:WindWalkerMonkModel()
             rating = CR_HIT_MELEE,
             cap = "MeleeHitCap"
         },
-		{
-			rating = CR_AGILITY,
-			cap = "MaximumPossible",
-		},
-		
         {
             rating = CR_EXPERTISE,
             cap = "ExpertiseSoftCap"
