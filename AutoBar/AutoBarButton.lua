@@ -1797,11 +1797,13 @@ function AutoBarButtonFood.prototype:init(parentBar, buttonDB)
 		self:AddCategory("Consumable.Food.Conjure")
 	end
 	self:AddCategory("AutoBar.Food.Health.Basic")
-	self:AddCategory("AutoBar.Food.Combo.Basic")
+	
+	--DEPRECATE
+	--self:AddCategory("AutoBar.Food.Combo.Basic")
 
 	self:AddCategory("Consumable.Food.Percent.Basic")
-	self:AddCategory("Consumable.Food.Edible.Basic.Non-Conjured")
-	self:AddCategory("Consumable.Food.Edible.Combo.Conjured")
+	--self:AddCategory("Consumable.Food.Edible.Basic.Non-Conjured")
+	--self:AddCategory("Consumable.Food.Edible.Combo.Conjured")
 end
 
 local function SetDisableConjure(info, value)
@@ -2987,7 +2989,7 @@ function AutoBarButtonWater.prototype:init(parentBar, buttonDB)
 		self:AddCategory("Consumable.Water.Percentage")
 		self:AddCategory("Consumable.Water.Basic")
 
-		self:AddCategory("AutoBar.Drink.Basic")
+		self:AddCategory("AutoBar.Food.Mana.Basic")
 	end
 end
 

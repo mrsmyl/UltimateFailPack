@@ -1082,9 +1082,9 @@ function AutoBarCategory:Initialize()
 	AutoBarCategoryList["Consumable.Water.Basic"]:SetNonCombat(true)
 	AutoBarCategoryList["Consumable.Water.Basic"]:SetCastList(AutoBarCategory:FilterClass({"MAGE", spellConjureWater,}))
 
-	AutoBarCategoryList["AutoBar.Drink.Basic"] = AutoBarItems:new(
-			"AutoBar.Drink.Basic", "INV_Drink_10", "AutoBar.Drink.Basic")
-	AutoBarCategoryList["AutoBar.Drink.Basic"]:SetNonCombat(true)
+	AutoBarCategoryList["AutoBar.Food.Mana.Basic"] = AutoBarItems:new(
+			"AutoBar.Food.Mana.Basic", "INV_Drink_10", "AutoBar.Food.Mana.Basic")
+	AutoBarCategoryList["AutoBar.Food.Mana.Basic"]:SetNonCombat(true)
 
 
 	AutoBarCategoryList["Consumable.Water.Conjure"] = AutoBarSpells:new(
@@ -1339,6 +1339,7 @@ function AutoBarCategory:Initialize()
 			"WARLOCK", spellNameList["Dark Intent"],
 			"WARLOCK", spellNameList["Unending Breath"],
 			"WARLOCK", spellNameList["Soulstone"],
+			"WARLOCK", spellNameList["Soul Link"],
 			"WARRIOR", spellNameList["Battle Shout"],
 			"WARRIOR", spellNameList["Commanding Shout"],
 			"WARRIOR", spellNameList["Demoralizing Shout"],
@@ -1507,7 +1508,6 @@ function AutoBarCategory:Initialize()
 			"SHAMAN", spellNameList["Lightning Shield"], spellNameList["Lightning Shield"],
 			"SHAMAN", spellNameList["Water Shield"], spellNameList["Water Shield"],
 			"WARLOCK", spellNameList["Twilight Ward"], spellNameList["Twilight Ward"],
-			"WARLOCK", spellNameList["Soul Link"], spellNameList["Soul Link"],
 			"WARLOCK", spellNameList["Sacrificial Pact"], spellNameList["Sacrificial Pact"],
 			"WARLOCK", spellNameList["Dark Bargain"], spellNameList["Dark Bargain"],
 			"WARLOCK", spellNameList["Unending Resolve"], spellNameList["Unending Resolve"],

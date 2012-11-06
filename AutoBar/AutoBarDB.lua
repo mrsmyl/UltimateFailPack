@@ -144,6 +144,8 @@ function AutoBar:InitializeDefaults()
 	AutoBar.Class.Button:OptionsUpgrade()
 	
 	AutoBar.db.account.stupidlog = ""
+	
+	AutoBar.in_pet_battle = false
 
 
 	-- Simply ascend by 1 so each session produces non-conflicting keys.

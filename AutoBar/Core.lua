@@ -293,6 +293,12 @@ function AutoBar:OnEnable(first)
 	AutoBar.frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
 	AutoBar.frame:RegisterEvent("SPELLS_CHANGED")
 	AutoBar.frame:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
+	
+	--Pet Battle Events
+	AutoBar.frame:RegisterEvent("PET_BATTLE_OPENING_START")
+	AutoBar.frame:RegisterEvent("PET_BATTLE_CLOSE")
+
+
 
 	-- For item use restrictions
 	AutoBar.frame:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
@@ -547,7 +553,11 @@ end
 
 function AutoBar.events:BAG_UPDATE_COOLDOWN(arg1)
 	AutoBar:LogEvent("BAG_UPDATE_COOLDOWN", arg1)
---print("   BAG_UPDATE_COOLDOWN arg1 " .. tostring(arg1))
+
+	if(AutoBar.in_pet_battle) then
+		return
+	end
+
 	if (not InCombatLockdown()) then
 		AutoBar.delay["UpdateScan"]:Start(arg1)
 	end
@@ -559,16 +569,49 @@ end
 
 function AutoBar.events:SPELL_UPDATE_COOLDOWN(arg1)
 	AutoBar:LogEvent("SPELL_UPDATE_COOLDOWN", arg1)
---print("   SPELL_UPDATE_COOLDOWN arg1 " .. tostring(arg1))
+	if(AutoBar.in_pet_battle) then
+		return
+	end
+
 	for buttonName, button in pairs(AutoBar.buttonList) do
 		button:UpdateCooldown()
 	end
 end
 
 
+function AutoBar.events:PET_BATTLE_OPENING_START(arg1)
+	AutoBar:LogEvent("PET_BATTLE_OPENING_START", arg1)
+	
+	for barKey, bar in pairs(AutoBar.barList) do
+		if(AutoBar.barList[barKey]) then
+			AutoBar.barList[barKey].frame:Hide()
+		end
+	end
+
+	AutoBar.in_pet_battle = true
+
+end
+
+function AutoBar.events:PET_BATTLE_CLOSE(arg1)
+	AutoBar:LogEvent("PET_BATTLE_CLOSE", arg1)
+	
+	for barKey, bar in pairs(AutoBar.barList) do
+		if(AutoBar.barList[barKey]) then
+			AutoBar.barList[barKey].frame:Show()
+		end
+	end
+
+	AutoBar.in_pet_battle = false
+
+end
+
+
+
+
+
 function AutoBar.events:ACTIONBAR_UPDATE_USABLE(arg1)
 	AutoBar:LogEvent("ACTIONBAR_UPDATE_USABLE", arg1)
-	if (AutoBar.inWorld) then
+	if (AutoBar.inWorld and not AutoBar.in_pet_battle) then
 		if (InCombatLockdown()) then
 			for buttonName, button in pairs(AutoBar.buttonList) do
 				button:UpdateUsable()
@@ -732,7 +775,7 @@ end
 
 function AutoBar.events:PLAYER_CONTROL_GAINED()
 	AutoBar:LogEvent("PLAYER_CONTROL_GAINED", arg1)
-	if (not InCombatLockdown()) then
+	if (not InCombatLockdown() and not AutoBar.in_pet_battle) then
 		AutoBar.delay["UpdateButtons"]:Start()
 	end
 end
