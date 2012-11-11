@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(686, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7946 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8030 $"):sub(12, -3))
 mod:SetCreatureID(56884)
 mod:SetModelID(41121)
 mod:SetZone()
@@ -17,9 +17,11 @@ mod:RegisterEventsInCombat(
 local warnRingofMalice		= mod:NewSpellAnnounce(131521, 3)
 local warnGrippingHatred	= mod:NewSpellAnnounce(115002, 2)
 local warnHazeofHate		= mod:NewTargetAnnounce(107087, 4)
+local warnRisingHate		= mod:NewCastAnnounce(107356, 4, 5)
 
 local specWarnGrippingHatred= mod:NewSpecialWarningSwitch("ej5817")
 local specWarnHazeofHate	= mod:NewSpecialWarningYou(107087)
+local specWarnRisingHate	= mod:NewSpecialWarningInterrupt(107356)
 
 local timerRingofMalice		= mod:NewBuffActiveTimer(15, 131521)
 
@@ -50,6 +52,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnHazeofHate:Show()
 		end
+	elseif args:IsSpellID(107356) then
+		warnRisingHate:Show()
+		specWarnRisingHate:Show(args.destName)
 	end
 end
 

@@ -17,7 +17,7 @@
 ## X-DBM-Mod-Name-zhCN: 场景战役 (熊猫人之谜)
 ## X-DBM-Mod-Sort: 35
 ## X-DBM-Mod-LoadZoneID: 906, 851, 899
-## X-Curse-Packaged-Version: 4.11.4
+## X-Curse-Packaged-Version: 4.11.5
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

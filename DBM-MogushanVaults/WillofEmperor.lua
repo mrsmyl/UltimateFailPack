@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(677, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7956 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8064 $"):sub(12, -3))
 mod:SetCreatureID(60399, 60400)--60396 (Rage), 60397 (Strength), 60398 (Courage), 60480 (Titan Spark), 60399 (Qin-xi), 60400 (Jan-xi)
 mod:SetModelID(41391)
 mod:SetZone()
@@ -36,10 +36,10 @@ local warnFocusedDefense		= mod:NewTargetAnnounce(116778, 4)
 local warnFocusedEnergy			= mod:NewTargetAnnounce(116829, 4)
 --Jan-xi and Qin-xi
 local warnBossesActivated		= mod:NewSpellAnnounce("ej5726", 3, 116815)
-local warnArcLeft				= mod:NewCountAnnounce(116968, 4, nil, mod:IsMelee())--Mostly informative, we cannot detect cast starts, only cast finishes, which is basically when it's going off.
-local warnArcRight				= mod:NewCountAnnounce(116971, 4, nil, mod:IsMelee())
-local warnArcCenter				= mod:NewCountAnnounce(116972, 4, nil, mod:IsMelee())
-local warnStomp					= mod:NewCountAnnounce(116969, 4, nil, mod:IsMelee())
+local warnArcLeft				= mod:NewCountAnnounce(116968, 4, 89570, mod:IsMelee())--This is a pre warn, gives you time to move
+local warnArcRight				= mod:NewCountAnnounce(116971, 4, 87219, mod:IsMelee())--This is a pre warn, gives you time to move
+local warnArcCenter				= mod:NewCountAnnounce(116972, 4, 74922, mod:IsMelee())--This is a pre warn, gives you time to move
+local warnStomp					= mod:NewCountAnnounce(116969, 4, nil, mod:IsMelee())--This is NOT a pre warn, only fires when stomp ends cast. :(
 local warnTitanGas				= mod:NewCountAnnounce(116779, 4)
 
 --Rage
@@ -69,6 +69,7 @@ local timerTitanGas				= mod:NewBuffActiveTimer(30, 116779)
 local timerTitanGasCD			= mod:NewNextCountTimer(150, 116779)
 
 mod:AddBoolOption("InfoFrame", false)
+mod:AddBoolOption("ArrowOnCombo", false)
 
 local comboWarned = false
 local sparkCount = 0
@@ -83,7 +84,6 @@ function mod:OnCombatStart(delay)
 	titanGasCast = 0
 	timerBossesActivates:Start(-delay)--Still start here to give perspective
 	timerCourageActivates:Start(75-delay)
-	timerTitanGasCD:Start(221-delay, 1)
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(focusedAssault)
 		DBM.InfoFrame:Show(10, "playerbaddebuff", 116525)
@@ -93,6 +93,9 @@ end
 function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
+	end
+	if self.Options.ArrowOnCombo then
+		DBM.Arrow:Hide()
 	end
 end
 
@@ -139,6 +142,9 @@ function mod:RAID_BOSS_EMOTE(msg)
 		warnBossesActivated:Schedule(10)
 		specWarnBossesActivated:Schedule(10)
 		timerBossesActivates:Update(99, 109)
+		if not self:IsDifficulty("heroic10", "heroic25") then
+			timerTitanGasCD:Start(123, 1)
+		end
 	elseif msg:find("spell:116779") then
 		timerCourageActivates:Start(105)--Resets timer
 		if self:IsDifficulty("heroic10", "heroic25") then--On heroic the boss activates this perminantly on pull and it's always present
@@ -164,12 +170,31 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	elseif spellId == 116968 then--Arc Left
 		comboCount = comboCount + 1
 		warnArcLeft:Show(comboCount)
+		if self.Options.ArrowOnCombo then
+			if self:IsTank() then--Assume tank is in front of the boss
+				DBM.Arrow:ShowStatic(90, 3)
+			else--Assume anyone else is behind the boss
+				DBM.Arrow:ShowStatic(270, 3)
+			end
+		end
 	elseif spellId == 116971 then--Arc Right
 		comboCount = comboCount + 1
 		warnArcRight:Show(comboCount)
+		if self.Options.ArrowOnCombo then
+			if self:IsTank() then--Assume tank is in front of the boss
+				DBM.Arrow:ShowStatic(270, 3)
+			else--Assume anyone else is behind the boss
+				DBM.Arrow:ShowStatic(90, 3)
+			end
+		end
 	elseif spellId == 116972 then--Arc Center
 		comboCount = comboCount + 1
 		warnArcCenter:Show(comboCount)
+		if self.Options.ArrowOnCombo then
+			if self:IsTank() then--Assume tank is in front of the boss
+				DBM.Arrow:ShowStatic(0, 3)
+			end
+		end
 	elseif (spellId == 116969 or spellId == 132425) then--Stomp
 		comboCount = comboCount + 1
 		warnStomp:Show(comboCount)
@@ -214,10 +239,11 @@ end--]]
 -- also timerComboCD is not be fixed. their mana increases 1 or 2 randomly every boss's melee attacks.
 -- 
 function mod:UNIT_POWER(uId)
-	if (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 18 and not comboWarned then
+	if uId ~= "target" then return end
+	if UnitPower(uId) == 18 and not comboWarned then
 		comboWarned = true
 		specWarnCombo:Show()
-	elseif (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 1 then
+	elseif UnitPower(uId) == 1 then
 		comboWarned = false
 		comboCount = 0
 --		timerComboCD:Start()

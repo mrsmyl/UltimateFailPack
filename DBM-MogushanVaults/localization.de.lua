@@ -7,15 +7,19 @@ local L
 L= DBM:GetModLocalization(679)
 
 L:SetWarningLocalization({
-	SpecWarnOverloadSoon	= "%s wirkbar in 7 Sek!"
+	SpecWarnOverloadSoon		= "%s wirkbar in 7 Sek!",
+	specWarnBreakJasperChains	= "Sprenge Jaspisketten!"
 })
 
 L:SetOptionLocalization({
-	SpecWarnOverloadSoon	= "Zeige Spezialwarnung bevor eine Überladung gewirkt werden kann",
+	SpecWarnOverloadSoon		= "Zeige Spezialwarnung bevor eine Überladung gewirkt werden kann",
+	specWarnBreakJasperChains	= "Zeige Spezialwarnung, wenn es sicher ist die $spell:130395 zu sprengen",
+	ArrowOnJasperChains			= "Zeige DBM-Pfeil, wenn du von $spell:130395 betroffen bist",
+	InfoFrame					= "Zeige Infofenster für Bossenergie, Spielerversteinerung und welcher Boss Versteinerung wirkt"
 })
 
 L:SetMiscLocalization({
-	Overload	= "%s is about to Overload!" --translate (trigger)
+	Overload	= "%s überlädt sich gleich!"
 })
 
 
@@ -29,7 +33,8 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	WarnPhase	= "Verkünde Phasenwechsel"
+	WarnPhase	= "Verkünde Phasenwechsel",
+	RangeFrame	= "Zeige Abstandsfenster (6m) während Arkanphase"
 })
 
 L:SetMiscLocalization({
@@ -71,16 +76,17 @@ L:SetOptionLocalization({
 L = DBM:GetModLocalization(726)
 
 L:SetWarningLocalization({
-	specWarnDespawnFloor		= "Paß auf, wo du hintrittst!"
+	specWarnDespawnFloor	= "Paß auf, wo du hintrittst!"
 })
 
 L:SetTimerLocalization({
-	timerDespawnFloor			= "Paß auf, wo du hintrittst!"
+	timerDespawnFloor		= "Paß auf, wo du hintrittst!"
 })
 
 L:SetOptionLocalization({
-	specWarnDespawnFloor		= "Zeige Spezialwarnung bevor der Boden (Energievortex) verschwindet",
-	timerDespawnFloor			= "Zeige Zeit bis der Boden (Energievortex) verschwindet"
+	specWarnDespawnFloor	= "Zeige Spezialwarnung bevor der Boden (Energievortex) verschwindet",
+	timerDespawnFloor		= "Zeige Zeit bis der Boden (Energievortex) verschwindet",
+	SetIconOnDestabilized	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(132226)
 })
 
 
@@ -90,14 +96,15 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(677)
 
 L:SetOptionLocalization({
-	InfoFrame		= "Zeige Infofenster für Spieler, welche von $spell:116525 betroffen sind"
+	InfoFrame		= "Zeige Infofenster für Spieler, welche von $spell:116525 betroffen sind",
+	ArrowOnCombo	= "Zeige DBM-Pfeil während $journal:5673  HINWEIS: Nimmt an,\ndass sich der Tank vor dem Boss befindet und alle anderen dahinter."
 })
 
 L:SetMiscLocalization({
-	Pull		= "The machine hums to life!  Get to the lower level!", --translate (trigger)
-	Rage		= "The Emperor's Rage echoes through the hills.", --translate (trigger)
-	Strength	= "The Emperor's Strength appears in the alcoves!", --translate (trigger)
-	Courage		= "The Emperor's Courage appears in the alcoves!", --translate (trigger)
-	Boss		= "Two titanic constructs appear in the large alcoves!" --translate (trigger)
+	Pull		= "Die Maschine brummt und erwacht zu Leben! Geht zur unteren Ebene!",
+	Rage		= "Der Zorn des Kaisers schallt durch die Berge.",
+	Strength	= "Die Stärke des Kaisers erscheint in den Erkern!",
+	Courage		= "Der Mut des Kaisers erscheint in den Erkern!",
+	Boss		= "In den riesigen Erkern erscheinen zwei Titanenkonstrukte!"
 })
 

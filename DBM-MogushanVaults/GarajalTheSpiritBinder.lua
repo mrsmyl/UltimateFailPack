@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(682, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7955 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8052 $"):sub(12, -3))
 mod:SetCreatureID(60143)
 mod:SetModelID(41256)
 mod:SetZone()
@@ -9,10 +9,7 @@ mod:SetUsedIcons(5, 6, 7, 8)
 mod:SetMinSyncRevision(7751)
 
 -- Sometimes it fails combat detection on "combat". Use yell instead until the problem being founded.
---I'd REALLY like to see some transcriptor logs that prove your bug, i pulled this boss like 20 times, on 25 man, 100% functional engage trigger, not once did this mod fail to start, on 25 man or 10 man.
 --seems that combat detection fails only in lfr. (like DS Zonozz Void of Unmaking summon event.)
---"<102.8> [INSTANCE_ENCOUNTER_ENGAGE_UNIT] Fake Args:#1#1#Gara'jal the Spiritbinder#0xF150EAEF00000F5A#elit
---"<103.1> [CHAT_MSG_MONSTER_YELL] CHAT_MSG_MONSTER_YELL#It be dyin' time, now!#Gara'jal the Spiritbinder#####0#0##0#862##0#false#false", -- [291]
 mod:RegisterCombat("yell", L.Pull)
 
 mod:RegisterEventsInCombat(
@@ -26,7 +23,7 @@ mod:RegisterEventsInCombat(
 --Syncing is used for all warnings because the realms don't share combat events. You won't get warnings for other realm any other way.
 --Voodoo dolls do not have a CD, they are linked to banishment (or player deaths), when he banishes current tank, he reapplies voodoo dolls to new tank and new players. If tank dies, he just recasts voodoo on a new current threat target.
 --Latency checks are used for good reason (to prevent lagging users from sending late events and making our warnings go off again incorrectly). if you play with high latency and want to bypass latency check, do so with in game GUI option.
-local warnTotem						= mod:NewSpellAnnounce(116174, 2)
+local warnTotem						= mod:NewCountAnnounce(116174, 2)
 local warnVoodooDolls				= mod:NewTargetAnnounce(122151, 3)
 local warnCrossedOver				= mod:NewTargetAnnounce(116161, 3)
 local warnBanishment				= mod:NewTargetAnnounce(116272, 3)
@@ -36,24 +33,25 @@ local specWarnTotem					= mod:NewSpecialWarningSpell(116174, false)
 local specWarnBanishment			= mod:NewSpecialWarningYou(116272)
 local specWarnBanishmentOther		= mod:NewSpecialWarningTarget(116272, mod:IsTank())
 local specWarnVoodooDolls			= mod:NewSpecialWarningSpell(122151, false)
-local specWarnVoodooDollsMe			= mod:NewSpecialWarningYou(122151, false)
+local specWarnVoodooDollsYou		= mod:NewSpecialWarningYou(122151, false)
 
-local timerTotemCD					= mod:NewNextTimer(36, 116174)
-local timerBanishmentCD				= mod:NewNextTimer(65, 116272)
+local timerTotemCD					= mod:NewNextCountTimer(20, 116174)
+local timerBanishmentCD				= mod:NewCDTimer(65, 116272)
 local timerSoulSever				= mod:NewBuffFadesTimer(30, 116278)--Tank version of spirit realm
 local timerCrossedOver				= mod:NewBuffFadesTimer(30, 116161)--Dps version of spirit realm
 local timerShadowyAttackCD			= mod:NewCDTimer(8, "ej6698", nil, nil, nil, 117222)
 
-local countdownCrossedOver			= mod:NewCountdown(30, 116161)
 local berserkTimer					= mod:NewBerserkTimer(360)
+
+local countdownCrossedOver			= mod:NewCountdown(29, 116161)
 
 mod:AddBoolOption("SetIconOnVoodoo", true)
 
+local totemCount = 0
 local voodooDollTargets = {}
 local crossedOverTargets = {}
 local voodooDollTargetIcons = {}
 local guids = {}
-local voodooDollWarned = false
 local guidTableBuilt = false--Entirely for DCs, so we don't need to reset between pulls cause it doesn't effect building table on combat start and after a DC then it will be reset to false always
 local function buildGuidTable()
 	table.wipe(guids)
@@ -64,10 +62,7 @@ end
 
 local function warnVoodooDollTargets()
 	warnVoodooDolls:Show(table.concat(voodooDollTargets, "<, >"))
-	if not voodooDollWarned then
-		specWarnVoodooDolls:Show()
-	end
-	voodooDollWarned = false
+	specWarnVoodooDolls:Show()
 	table.wipe(voodooDollTargets)
 end
 
@@ -110,13 +105,19 @@ do
 end
 
 function mod:OnCombatStart(delay)
-	voodooDollWarned = false
+	totemCount = 0
 	buildGuidTable()
 	table.wipe(voodooDollTargets)
 	table.wipe(crossedOverTargets)
 	table.wipe(voodooDollTargetIcons)
 	timerShadowyAttackCD:Start(7-delay)
-	timerTotemCD:Start(-delay)
+	if self:IsDifficulty("normal25", "heroic25") then
+		timerTotemCD:Start(20-delay, totemCount+1)
+	elseif self:IsDifficulty("lfr25") then
+		timerTotemCD:Start(30-delay, totemCount+1)
+	else
+		timerTotemCD:Start(36-delay, totemCount+1)
+	end
 	timerBanishmentCD:Start(-delay)
 	if not self:IsDifficulty("lfr25") then -- lfr seems not berserks.
 		berserkTimer:Start(-delay)
@@ -126,8 +127,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actual debuff on >player< warnings since it has a chance to be resisted.
 	if args:IsSpellID(122151) then
 		if args:IsPlayer() then
-			specWarnVoodooDollsMe:Show()
-			voodooDollWarned = true
+			specWarnVoodooDollsYou:Show()
 		end
 		if self:LatencyCheck() then
 			self:SendSync("VoodooTargets", args.destGUID)
@@ -135,8 +135,8 @@ function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actua
 	elseif args:IsSpellID(116161, 116160) then -- 116161 is normal and heroic, 116160 is lfr.
 		if args:IsPlayer() then
 			warnSuicide:Schedule(25)
-			countdownCrossedOver:Start(30)
-			timerCrossedOver:Start(30)
+			countdownCrossedOver:Start(29)
+			timerCrossedOver:Start(29)
 		end
 		if not self:IsDifficulty("lfr25") then -- lfr totems not breakable, instead totems can click. so lfr warns can be spam, not needed to warn. also CLEU fires all players, no need to use sync.
 			crossedOverTargets[#crossedOverTargets + 1] = args.destName
@@ -146,6 +146,7 @@ function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actua
 	elseif args:IsSpellID(116278) then--this is tank spell, no delays?
 		if args:IsPlayer() then--no latency check for personal notice you aren't syncing.
 			timerSoulSever:Start()
+			countdownCrossedOver:Start(29)
 			warnSuicide:Schedule(25)
 		end
 	end
@@ -159,6 +160,7 @@ function mod:SPELL_AURA_REMOVED(args)--We don't use spell cast success for actua
 	elseif args:IsSpellID(116278) and args:IsPlayer() then
 		timerSoulSever:Cancel()
 		warnSuicide:Cancel()
+		countdownCrossedOver:Cancel()
 	elseif args:IsSpellID(122151) then
 		self:SendSync("VoodooGoneTargets", args.destGUID)
 	end
@@ -184,12 +186,15 @@ function mod:OnSync(msg, guid)
 		guidTableBuilt = true
 	end
 	if msg == "SummonTotem" then
-		warnTotem:Show()
+		totemCount = totemCount + 1
+		warnTotem:Show(totemCount)
 		specWarnTotem:Show()
-		if self:IsDifficulty("lfr25") then
-			timerTotemCD:Start(20.5)
+		if self:IsDifficulty("normal25", "heroic25") then
+			timerTotemCD:Start(20, totemCount+1)
+		elseif self:IsDifficulty("lfr25") then
+			timerTotemCD:Start(30, totemCount+1)
 		else
-			timerTotemCD:Start()
+			timerTotemCD:Start(36, totemCount+1)
 		end
 	elseif msg == "VoodooTargets" and guids[guid] then
 		voodooDollTargets[#voodooDollTargets + 1] = guids[guid]

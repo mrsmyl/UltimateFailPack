@@ -8,7 +8,7 @@ local L
 L= DBM:GetModLocalization(679)
 
 L:SetWarningLocalization({
-	SpecWarnOverloadSoon	= "%s utilizzabile in 7s!"
+	SpecWarnOverloadSoon	= "%s tra 7s!"
 })
 
 L:SetOptionLocalization({
@@ -16,7 +16,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Overload	= "%s sta per Sovraccaricare!"
+	Overload	= "%s sta per Sovraccaricarsi!"
 })
 
 
@@ -34,9 +34,9 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Fire		= "Oh, potente! Attraverso me scioglierai la carne dalle ossa!", -- Need Review
-	Arcane		= "Oh, saggio delle ere! Concedimi la tua saggezza arcana!",-- Need Review
-	Nature		= "Oh, grande spirito ... concedimi il potere della terra!",---- Need Review
+	Fire		= "Oh, potente! Attraverso me scioglierai la carne dalle ossa!", -- Copied from ChatLog
+	Arcane		= "Oh, saggio delle ere! Concedimi la tua saggezza arcana!",-- Copied from ChatLog
+	Nature		= "Oh, grande spirito... concedimi il potere della terra!",---- Copied from ChatLog
 	Shadow		= "Grande spirito dei campioni del passato! concedimi il tuo scudo!"-- Need Review
 })
 
@@ -52,7 +52,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull		= "E' ora di morire, ora!" -- NEED REVIEW
+	Pull		= "È giunta l'ora di schiattare!" -- ChatLog
 })
 
 
@@ -95,10 +95,10 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull		= "The machine hums to life!  Get to the lower level!",--Emote
-	Rage		= "Rabbia dell'Imperatore echeggia tra le colline.",--Yell
-	Strength	= "Forza dell'Imperatore appare nelle alcove!",--Emote
-	Courage		= "Coraggio dell'Imperatore appare nelle alcove!",--Emote
-	Boss		= "Due costrutti titanici appaiono nelle grandi alcove!"--Emote
+	Pull		= "La macchina si mette in moto! Raggiungi il piano inferiore!",--Emote (ChatLog)
+	Rage		= "La Rabbia dell'Imperatore risuona tra le colline.",--Yell (ChatLog)
+	Strength	= "La Forza dell'Imperatore appare nelle volte!",--Emote (ChatLog)
+	Courage		= "Il Coraggio dell'Imperatore appare nelle volte!",--Emote (ChatLog)
+	Boss		= "Due Costrutti Titanici appaiono nelle alcove più grandi!"--Emote (ChatLog)
 })
 

@@ -44,9 +44,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 7956 $"):sub(12, -3)),
-	DisplayVersion = "4.11.4", -- the string that is shown as version
-	ReleaseRevision = 7956 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 8086 $"):sub(12, -3)),
+	DisplayVersion = "4.11.5", -- the string that is shown as version
+	ReleaseRevision = 8086 -- the revision of the latest stable version that is available
 }
 
 -- Legacy crap; that stupid "Version" field was never a good idea.
@@ -73,6 +73,7 @@ DBM.DefaultOptions = {
 	SpecialWarningSound2 = "Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.wav",
 	ModelSoundValue = "Short",
 	CountdownVoice = "Corsica",
+	CountdownPullTimer = true,
 	RaidWarningPosition = {
 		Point = "TOP",
 		X = 0,
@@ -91,11 +92,11 @@ DBM.DefaultOptions = {
 	ShowRecoveryMessage = true,
 	AutoRespond = true,
 	StatusEnabled = true,
-	WhisperStats = true,
+	WhisperStats = false,
 	HideBossEmoteFrame = false,
 	SpamBlockRaidWarning = true,
 	SpamBlockBossWhispers = false,
-	ShowMinimapButton = true,
+	ShowMinimapButton = false,
 	BlockVersionUpdateNotice = false,
 	ShowSpecialWarnings = true,
 	ShowLHFrame = true,
@@ -854,12 +855,13 @@ SlashCmdList["DEADLYBOSSMODS"] = function(msg)
 		DBM:CreatePizzaTimer(timer, DBM_CORE_TIMER_PULL, true)
 		DBM:Unschedule(SendChatMessage)
 		SendChatMessage(DBM_CORE_ANNOUNCE_PULL:format(timer), channel)
-		if timer > 7 then DBM:Schedule(timer - 7, SendChatMessage, DBM_CORE_ANNOUNCE_PULL:format(7), channel) end
-		if timer > 5 then DBM:Schedule(timer - 5, SendChatMessage, DBM_CORE_ANNOUNCE_PULL:format(5), channel) end
-		if timer > 3 then DBM:Schedule(timer - 3, SendChatMessage, DBM_CORE_ANNOUNCE_PULL:format(3), channel) end
-		if timer > 2 then DBM:Schedule(timer - 2, SendChatMessage, DBM_CORE_ANNOUNCE_PULL:format(2), channel) end
-		if timer > 1 then DBM:Schedule(timer - 1, SendChatMessage, DBM_CORE_ANNOUNCE_PULL:format(1), channel) end
+		for i = 1, 5 do
+			if timer > i then
+				DBM:Schedule(timer - i, SendChatMessage, DBM_CORE_ANNOUNCE_PULL:format(i), channel) 
+			end
+		end
 		DBM:Schedule(timer, SendChatMessage, DBM_CORE_ANNOUNCE_PULL_NOW, channel)
+		sendSync("PT", timer)
 	elseif cmd:sub(1, 5) == "arrow" then
 		if not DBM:IsInRaid() then
 			DBM:AddMsg(DBM_ARROW_NO_RAIDGROUP)
@@ -1797,6 +1799,7 @@ do
 	-- H = Hi!
 	-- V = Incoming version information
 	-- U = User Timer
+	-- PT = Pull Timer (for sound effects, the timer itself is still sent as a normal timer)
 	-- RT = Request Timers
 	-- CI = Combat Info
 	-- TI = Timer Info
@@ -1804,11 +1807,11 @@ do
 	-- IRE = Instance Info Requested Ended/Canceled
 	-- II = Instance Info
 	
-	syncHandlers["M"] = function(sender, mod, revision, event, arg)
+	syncHandlers["M"] = function(sender, mod, revision, event, ...)
 		mod = DBM:GetModByName(mod or "")
-		if mod and event and arg and revision then
+		if mod and event and revision then
 			revision = tonumber(revision) or 0
-			mod:ReceiveSync(event, arg, sender, revision)
+			mod:ReceiveSync(event, sender, revision, ...)
 		end
 	end
 
@@ -1827,6 +1830,22 @@ do
 		if select(2, IsInInstance()) == "pvp" then return end
 		cId = tonumber(cId or "")
 		if cId then DBM:OnMobKill(cId, true) end
+	end
+	
+	local dummyMod -- dummy mod for the pull sound effect
+	syncHandlers["PT"] = function(sender, timer)
+		if not DBM.Options.CountdownPullTimer or select(2, IsInInstance()) == "pvp" or DBM:GetRaidRank(sender) == 0 then
+			return
+		end
+		timer = tonumber(timer or 0)
+		if timer < 2 or timer > 60 then
+			return
+		end
+		if not dummyMod then
+			dummyMod = DBM:NewMod("PullTimerCountdownDummy")
+			dummyMod.countdown = dummyMod:NewCountdown(0, 0)
+		end
+		dummyMod.countdown:Start(timer)
 	end
 	
 	-- TODO: is there a good reason that version information is broadcasted and not unicasted?
@@ -2515,9 +2534,6 @@ function DBM:StartCombat(mod, delay, synced)
 		elseif mod:IsDifficulty("heroic25") then
 			mod.stats.heroic25Pulls = mod.stats.heroic25Pulls + 1
 			difficultyText = PLAYER_DIFFICULTY2.." (25) - "
-		else--Unknown, just treat it as normal for stat purposes.
-			mod.stats.normalPulls = mod.stats.normalPulls + 1--Treat it as normal for kill stats.
-			difficultyText = ""--So lets just return no difficulty :)
 		end
 		if DBM.Options.ShowEngageMessage then
 			self:AddMsg(DBM_CORE_COMBAT_STARTED:format(difficultyText..mod.combatInfo.name))
@@ -2756,12 +2772,6 @@ function DBM:EndCombat(mod, wipe)
 				else
 					mod.stats.heroic25BestTime = math.min(bestTime or math.huge, thisTime)
 				end
-			else -- for field bosses.
-				if not mod.stats.normalKills or mod.stats.normalKills < 0 then mod.stats.normalKills = 0 end
-				if mod.stats.normalKills > mod.stats.normalPulls then mod.stats.normalKills = mod.stats.normalPulls end
-				mod.stats.normalKills = mod.stats.normalKills + 1
-				mod.stats.normalLastTime = thisTime
-				mod.stats.normalBestTime = math.min(bestTime or math.huge, thisTime)
 			end
 			local totalKills = (savedDifficulty == "lfr25" and mod.stats.lfr25Kills) or ((savedDifficulty == "heroic5" or savedDifficulty == "heroic10") and mod.stats.heroicKills) or (savedDifficulty == "challenge5" and mod.stats.challengeKills) or (savedDifficulty == "normal25" and mod.stats.normal25Kills) or (savedDifficulty == "heroic25" and mod.stats.heroic25Kills) or mod.stats.normalKills
 			if DBM.Options.ShowKillMessage then
@@ -2844,7 +2854,7 @@ function DBM:GetCurrentInstanceDifficulty()
 	elseif difficulty == 9 then--40 man raids have their own difficulty now, no longer returned as normal 10man raids
 		return "normal10"--Just use normal10 anyways, since that's where we been saving 40 man stuff for so long anyways, no reason to change it now, not like any 40 mans can be toggled between 10 and 40 where we NEED to tell the difference.
 	else
-		return "unknown"
+		return "normal5"
 	end
 end
 
@@ -3935,7 +3945,7 @@ do
 	function countdownProtoType:Start(timer)
 		if not self.option or self.mod.Options[self.option] then
 			timer = timer or self.timer or 10
-			timer = timer < 3 and self.timer or timer
+			timer = timer < 2 and self.timer or timer
 			if timer >= 5 then
 				if DBM.Options.CountdownVoice == "Mosh" then
 					self.sound5:Schedule(timer-5, "Interface\\AddOns\\DBM-Core\\Sounds\\Mosh\\5.ogg")
@@ -5038,24 +5048,35 @@ end
 -----------------------
 --  Synchronization  --
 -----------------------
-function bossModPrototype:SendSync(event, arg)
+function bossModPrototype:SendSync(event, ...)
 	event = event or ""
-	arg = arg or ""
+	local arg = select("#", ...) > 0 and strjoin("\t", tostringall(...)) or ""
 	local str = ("%s\t%s\t%s\t%s"):format(self.id, self.revision or 0, event, arg)
-	local spamId = self.id..event..arg
+	local spamId = self.id .. event .. arg -- *not* the same as the sync string, as it doesn't use the revision information
 	local time = GetTime()
 	if not modSyncSpam[spamId] or (time - modSyncSpam[spamId]) > 2.5 then
-		self:ReceiveSync(event, arg, nil, self.revision or 0)
+		self:ReceiveSync(event, nil, self.revision or 0, tostringall(...))
 		sendSync("M", str)
 	end
 end
 
-function bossModPrototype:ReceiveSync(event, arg, sender, revision)
-	local spamId = self.id..event..arg
+function bossModPrototype:ReceiveSync(event, sender, revision, ...)
+	local spamId = self.id .. event .. strjoin("\t", ...)
 	local time = GetTime()
 	if (not modSyncSpam[spamId] or (time - modSyncSpam[spamId]) > 2.5) and self.OnSync and (not (self.blockSyncs and sender)) and (not sender or (not self.minSyncRevision or revision >= self.minSyncRevision)) then
 		modSyncSpam[spamId] = time
-		self:OnSync(event, arg, sender)
+		-- we have to use the sender as last argument for compatibility reasons (stupid old API...)
+		-- avoid table allocations for frequently used number of arguments
+		if select("#", ...) <= 1 then
+			-- syncs with no arguments have an empty argument (also for compatibility reasons)
+			self:OnSync(event, ... or "", sender)
+		elseif select("#", ...) == 2 then
+			self:OnSync(event, ..., select(2, ...), sender)
+		else
+			local tmp = { ... }
+			tmp[#tmp + 1] = sender
+			self:OnSync(event, unpack(tmp))
+		end
 	end
 end
 

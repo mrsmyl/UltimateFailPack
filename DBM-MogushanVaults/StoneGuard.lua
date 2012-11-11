@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7943 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8086 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
 mod:SetModelID(41892)
 mod:SetZone()
@@ -22,9 +22,10 @@ local warnJadeOverload				= mod:NewSpellAnnounce(115842, 4)
 local warnJasperOverload			= mod:NewSpellAnnounce(115843, 4)
 local warnAmethystOverload			= mod:NewSpellAnnounce(115844, 4)
 local warnCobaltMine				= mod:NewTargetAnnounce(129424, 4)
-local warnJadeShards				= mod:NewSpellAnnounce(116223, 3)
+local warnJadeShards				= mod:NewSpellAnnounce(116223, 3, nil, false)
 local warnJasperChains				= mod:NewTargetAnnounce(130395, 4)
-local warnAmethystPool				= mod:NewTargetAnnounce(130774, 3)
+local warnAmethystPool				= mod:NewTargetAnnounce(130774, 3, nil, false)
+local warnPowerDown					= mod:NewSpellAnnounce(116529, 4, nil, not mod:IsTank())
 
 local specWarnOverloadSoon			= mod:NewSpecialWarning("SpecWarnOverloadSoon", nil, nil, nil, true)
 local specWarnJasperChains			= mod:NewSpecialWarningYou(130395)
@@ -35,12 +36,13 @@ local specWarnCobaltMineNear		= mod:NewSpecialWarningClose(129424)
 local yellCobaltMine				= mod:NewYell(129424)
 local specWarnAmethystPool			= mod:NewSpecialWarningMove(130774)
 local yellAmethystPool				= mod:NewYell(130774, nil, false)
+local specWarnPowerDown				= mod:NewSpecialWarningSpell(116529, not mod:IsTank())
 
-local timerCobaltMineCD				= mod:NewNextTimer(10.5, 129424)--12-15second variations
+local timerCobaltMineCD				= mod:NewNextTimer(8.5, 129424)--12-15second variations
 local timerPetrification			= mod:NewNextTimer(76, 125091)
-local timerJadeShardsCD				= mod:NewNextTimer(20.5, 116223)--Always 20.5 seconds
+local timerJadeShardsCD				= mod:NewNextTimer(20.5, 116223, nil, false)--Always 20.5 seconds
 local timerJasperChainsCD			= mod:NewCDTimer(12, 130395)--11-13
-local timerAmethystPoolCD			= mod:NewCDTimer(6, 130774)
+local timerAmethystPoolCD			= mod:NewCDTimer(6, 130774, nil, false)
 
 local berserkTimer					= mod:NewBerserkTimer(420)
 
@@ -247,21 +249,25 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if activePetrification == "Cobalt" then
 			timerPetrification:Cancel()
 		end
+		activePetrification = nil
 	elseif args:IsSpellID(115842) then -- Jade
 		warnJadeOverload:Show()
 		if activePetrification == "Jade" then
 			timerPetrification:Cancel()
 		end
+		activePetrification = nil
 	elseif args:IsSpellID(115843) then -- Jasper
 		warnJasperOverload:Show()
 		if activePetrification == "Jasper" then
 			timerPetrification:Cancel()
 		end
+		activePetrification = nil
 	elseif args:IsSpellID(115844) then -- Amethyst
 		warnAmethystOverload:Show()
 		if activePetrification == "Amethyst" then
 			timerPetrification:Cancel()
 		end
+		activePetrification = nil
 	elseif args:IsSpellID(116223) then
 		warnJadeShards:Show()
 		timerJadeShardsCD:Start()
@@ -277,12 +283,15 @@ end
 function mod:RAID_BOSS_EMOTE(msg, boss)
 	if msg == L.Overload or msg:find(L.Overload) then--Cast trigger is an emote 7 seconds before, CLEU only shows explosion. Just like nefs electrocute
 		self:SendSync("Overload", boss == Cobalt and "Cobalt" or boss == Jade and "Jade" or boss == Jasper and "Jasper" or boss == Amethyst and "Amethyst" or "Unknown")
+	elseif msg:find("spell:116529") then
+		warnPowerDown:Show()
+		specWarnPowerDown:Show()
 	end
 end
 
 function mod:OnSync(msg, boss)
 	-- if boss aprats from 10 yard and get Solid Stone, power no longer increase. If this, overlord not casts. So timer can be confusing. Disabled for find better way. 
-	if msg == "Overload" then
+	if msg == "Overload" and boss ~= activePetrification then
 		specWarnOverloadSoon:Show(Overload[boss])
 	end
 end

@@ -33,7 +33,8 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	WarnPhase	= "Anunciar transición de fase"
+	WarnPhase	= "Anunciar transición de fase",
+	RangeFrame	= "Mostrar distancia (6) durante la fase arcana"
 })
 
 L:SetMiscLocalization({
@@ -55,7 +56,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull		= "It be dyin' time, now!"--translate
+	Pull		= "¡Ya es hora de morir!"
 })
 
 
@@ -75,16 +76,17 @@ L:SetOptionLocalization({
 L = DBM:GetModLocalization(726)
 
 L:SetWarningLocalization({
-	specWarnDespawnFloor		= "¡Cuidado!"
+	specWarnDespawnFloor		= "¡Evacúen la Pista!"
 })
 
 L:SetTimerLocalization({
-	timerDespawnFloor			= "¡Cuidado!"
+	timerDespawnFloor			= "¡Evacúen la Pista!"
 })
 
 L:SetOptionLocalization({
 	specWarnDespawnFloor		= "Mostrar aviso especial antes de que el suelo se desaparezca",
-	timerDespawnFloor			= "Mostrar tiempo para que el suelo desaparezca"
+	timerDespawnFloor			= "Mostrar tiempo para que el suelo desaparezca",
+	SetIconOnDestabilized	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(132226)
 })
 
 
@@ -94,14 +96,15 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(677)
 
 L:SetOptionLocalization({
-	InfoFrame		= "Mostrar información de jugadores a los que les afecta $spell:116525"
+	InfoFrame		= "Mostrar información de jugadores a los que les afecta $spell:116525",
+	ArrowOnCombo	= "Mostrar flecha durante $journal:5673\nNOTA: Esto asume que el tanque está delante del boss y todos los demás detrás."
 })
 
 L:SetMiscLocalization({
-	Pull		= "The machine hums to life!  Get to the lower level!",--translate
-	Rage		= "The Emperor's Rage echoes through the hills.",--translate
-	Strength	= "The Emperor's Strength appears in the alcoves!",--translate
-	Courage		= "The Emperor's Courage appears in the alcoves!",--translate
-	Boss		= "Two titanic constructs appear in the large alcoves!"--translate
+	Pull		= "¡La máquina vuelve a la vida! ¡Baja el nivel inferior!",
+	Rage		= "La ira del Emperador resuena por las colinas.",
+	Strength	= "¡La fuerza del Emperador aparece en la habitación!",
+	Courage		= "¡El coraje del Emperador aparece en la habitación!",
+	Boss		= "¡Aparecen dos construcciones titánicas en las enormes habitaciones!"
 })
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(689, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7949 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8083 $"):sub(12, -3))
 mod:SetCreatureID(60009)--60781 Soul Fragment
 mod:SetModelID(41192)
 mod:SetZone()
@@ -52,26 +52,26 @@ local warnReversalLightningFists	= mod:NewTargetAnnounce(118302, 2)--this spell 
 local warnNullBarrior				= mod:NewSpellAnnounce(115817, 2)
 
 --Nature/Fist
-local specWarnLightningLash			= mod:NewSpecialWarningStack(131788, mod:IsTank(), 3)
+local specWarnLightningLash			= mod:NewSpecialWarningStack(131788, mod:IsTank(), 2)
 local specWarnLightningLashOther	= mod:NewSpecialWarningTarget(131788, mod:IsTank())
 local specWarnEpicenter				= mod:NewSpecialWarningRun(116018, nil, nil, nil, true)
 
 --Fire/Spear
-local specWarnFlamingSpear			= mod:NewSpecialWarningStack(116942, mod:IsTank(), 3)
+local specWarnFlamingSpear			= mod:NewSpecialWarningStack(116942, mod:IsTank(), 2)
 local specWarnFlamingSpearOther		= mod:NewSpecialWarningTarget(116942, mod:IsTank())
 local specWarnWildSpark				= mod:NewSpecialWarningYou(116784)
 local specWarnWildfire				= mod:NewSpecialWarningMove(116793)
 local specWarnDrawFlame				= mod:NewSpecialWarningSpell(116711, nil, nil, nil, true)
 
 --Arcane/Staff
-local specWarnArcaneShock			= mod:NewSpecialWarningStack(131790, mod:IsTank(), 3)
+local specWarnArcaneShock			= mod:NewSpecialWarningStack(131790, mod:IsTank(), 2)
 local specWarnArcaneShockOther		= mod:NewSpecialWarningTarget(131790, mod:IsTank())
 local specWarnArcaneResonance		= mod:NewSpecialWarningYou(116417)
 local yellArcaneResonance			= mod:NewYell(116417)
 local specWarnArcaneVelocity		= mod:NewSpecialWarningSpell(116364, nil, nil, nil, true)
 
 --Shadow/Shield (Heroic Only)
-local specWarnShadowBurn			= mod:NewSpecialWarningStack(131792, mod:IsTank(), 3)
+local specWarnShadowBurn			= mod:NewSpecialWarningStack(131792, mod:IsTank(), 2)
 local specWarnShadowBurnOther		= mod:NewSpecialWarningTarget(131792, mod:IsTank())
 local specWarnSiphoningShield		= mod:NewSpecialWarningSpell(117203)
 
@@ -103,15 +103,17 @@ local timerArcaneVelocity			= mod:NewCastTimer(8, 116364)
 local timerShadowBurn				= mod:NewTargetTimer(20, 131792, nil, mod:IsTank())
 local timerShadowBurnCD				= mod:NewCDTimer(9, 131792, nil, mod:IsTank())
 local timerChainsOfShadowCD			= mod:NewCDTimer(6, 118783, nil, false)--6-10sec variation noted
-local timerSiphoningShieldCD		= mod:NewCDCountTimer(45, 117203)--45-50sec variation noted
+local timerSiphoningShieldCD		= mod:NewCDCountTimer(35, 117203)--35-38sec variation noted
 
 --Tank Abilities
 local timerReversalLightningFists	= mod:NewBuffFadesTimer(20, 118302)
 local timerNullBarrior				= mod:NewBuffFadesTimer(6, 115817)
 local timerNullBarriorCD			= mod:NewCDTimer(55, 115817)
 
-
 local soundEpicenter				= mod:NewSound(116018)
+local soundWildSpark				= mod:NewSound(116784)
+
+mod:AddBoolOption("RangeFrame", mod:IsRanged())
 
 local phase = 0
 local wildfireCount = 0
@@ -136,6 +138,12 @@ function mod:OnCombatStart(delay)
 	sparkCount = 0
 	specialCount = 0
 	table.wipe(arcaneResonanceTargets)
+end
+
+function mod:OnCombatEnd()
+	if self.Options.RangeFrame then
+		DBM.RangeCheck:Hide()
+	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
@@ -164,6 +172,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerWildSpark:Start(args.destName)
 		if args:IsPlayer() then
 			specWarnWildSpark:Show()
+			soundWildSpark:Play()
 			yellWildSpark:Yell()
 		end
 	elseif args:IsSpellID(116711) then
@@ -198,10 +207,10 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 		warnLightningLash:Show(args.destName, args.amount or 1)
 		timerLightningLash:Start(args.destName)
 		timerLightningLashCD:Start()
-		if args:IsPlayer() and (args.amount or 1) >= 3 then
+		if args:IsPlayer() and (args.amount or 1) >= 2 then
 			specWarnLightningLash:Show(args.amount)
 		else
-			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(131788)) and not UnitIsDeadOrGhost("player") then
+			if (args.amount or 1) >= 2 and not UnitIsDeadOrGhost("player") or not UnitDebuff("player", GetSpellInfo(131788)) then
 				specWarnLightningLashOther:Show(args.destName)
 			end
 		end
@@ -209,10 +218,10 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 		warnFlamingSpear:Show(args.destName, args.amount or 1)
 		timerFlamingSpear:Start(args.destName)
 		timerFlamingSpearCD:Start()
-		if args:IsPlayer() and (args.amount or 1) >= 3 then
+		if args:IsPlayer() and (args.amount or 1) >= 2 then
 			specWarnFlamingSpear:Show(args.amount)
 		else
-			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(116942)) and not UnitIsDeadOrGhost("player") then
+			if (args.amount or 1) >= 2 and not UnitIsDeadOrGhost("player") or not UnitDebuff("player", GetSpellInfo(116942)) then
 				specWarnFlamingSpearOther:Show(args.destName)
 			end
 		end
@@ -220,10 +229,10 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 		warnArcaneShock:Show(args.destName, args.amount or 1)
 		timerArcaneShock:Start(args.destName)
 		timerArcaneShockCD:Start()
-		if args:IsPlayer() and (args.amount or 1) >= 3 then
+		if args:IsPlayer() and (args.amount or 1) >= 2 then
 			specWarnArcaneShock:Show(args.amount)
 		else
-			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(131790)) and not UnitIsDeadOrGhost("player") then
+			if (args.amount or 1) >= 2 and not UnitIsDeadOrGhost("player") or not UnitDebuff("player", GetSpellInfo(131790)) then
 				specWarnArcaneShockOther:Show(args.destName)
 			end
 		end
@@ -231,10 +240,10 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 		warnShadowBurn:Show(args.destName, args.amount or 1)
 		timerShadowBurn:Start(args.destName)
 		timerShadowBurnCD:Start()
-		if args:IsPlayer() and (args.amount or 1) >= 3 then
+		if args:IsPlayer() and (args.amount or 1) >= 2 then
 			specWarnShadowBurn:Show(args.amount)
 		else
-			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(131792)) and not UnitIsDeadOrGhost("player") then
+			if (args.amount or 1) >= 2 and not UnitIsDeadOrGhost("player") or not UnitDebuff("player", GetSpellInfo(131792)) then
 				specWarnShadowBurnOther:Show(args.destName)
 			end
 		end
@@ -323,11 +332,17 @@ function mod:OnSync(msg)
 		timerLightningLashCD:Start(7)
 		timerLightningFistsCD:Start(12)
 		timerEpicenterCD:Start(18, 1)--It's either this, or this +10. Not yet sure what causes the +10
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 	elseif msg == "Flame" then
 		phase = phase + 1
 		warnPhase:Show(phase)
 		timerFlamingSpearCD:Start(5.5)
 		timerDrawFlameCD:Start(35, 1)--No variation, or not enough logs of fire phase.
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 	elseif msg == "Purple" then
 		phase = phase + 1
 		warnPhase:Show(phase)
@@ -335,13 +350,19 @@ function mod:OnSync(msg)
 		-- 10/13 01:11:24.437  YELL: Oh sage of the ages! Instill to me your arcane wisdom!
 		-- 10/13 01:11:36.671  SPELL_CAST_SUCCESS,0xF150EA690000478E,"",0x10a48,0x0,0x0000000000000000,nil,0x80000000,0x80000000,116417,"",0x40
 		timerArcaneResonanceCD:Start(12)
-		timerArcaneVelocityCD:Start(16.5, 1)--It's either this, or this +10. Not yet sure what causes the +10
+		timerArcaneVelocityCD:Start(14.5, 1)--It's either this, or this +10. Not yet sure what causes the +10
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Show(6)
+		end
 	elseif msg == "Dark" then
 		phase = phase + 1
 		warnPhase:Show(phase)
 		timerSiphoningShieldCD:Start(4, 1)--either this, or this +5. Not yet sure what causes the +5
 		timerChainsOfShadowCD:Start(6)
 		timerShadowBurnCD:Start(9)--9-11 variation
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 	end
 end
 
