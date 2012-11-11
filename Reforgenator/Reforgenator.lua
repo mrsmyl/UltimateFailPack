@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "2.1.1"
+local version = "2.2"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -1638,7 +1638,9 @@ function PlayerModel:UpdateStats(minusStat, plusStat, delta)
     for _,v in ipairs(self.statEffectMap[minusStat]) do
         if minusStat == "ITEM_MOD_SPIRIT" and v == CR_HIT_SPELL and self.spiritHitConversionRate then
             self.playerStats[v] = self.playerStats[v] - math.floor(delta * self.spiritHitConversionRate)
-        else
+        elseif minusStat == "ITEM_MOD_EXPERTISE" and v == CR_HIT_SPELL and self.expHitConversionRate then
+            self.playerStats[v] = self.playerStats[v] - math.floor(delta * self.expHitConversionRate)
+		else 
             self.playerStats[v] = self.playerStats[v] - delta
         end
     end
@@ -1646,22 +1648,9 @@ function PlayerModel:UpdateStats(minusStat, plusStat, delta)
     for _,v in ipairs(self.statEffectMap[plusStat]) do
         if plusStat == "ITEM_MOD_SPIRIT" and v == CR_HIT_SPELL and self.spiritHitConversionRate then
             self.playerStats[v] = self.playerStats[v] + math.floor(delta * self.spiritHitConversionRate)
-        else
-            self.playerStats[v] = self.playerStats[v] + delta
-        end
-    end
-	for _,v in ipairs(self.statEffectMap[minusStat]) do
-        if minusStat == "ITEM_MOD_EXPERTISE" and v == CR_HIT_SPELL and self.expHitConversionRate then
-            self.playerStats[v] = self.playerStats[v] - math.floor(delta * self.expHitConversionRate)
-        else
-            self.playerStats[v] = self.playerStats[v] - delta
-        end
-    end
-
-    for _,v in ipairs(self.statEffectMap[plusStat]) do
-        if plusStat == "ITEM_MOD_EXPERTISE" and v == CR_HIT_SPELL and self.expHitConversionRate then
+        elseif plusStat == "ITEM_MOD_EXPERTISE" and v == CR_HIT_SPELL and self.expHitConversionRate then
             self.playerStats[v] = self.playerStats[v] + math.floor(delta * self.expHitConversionRate)
-        else
+		else
             self.playerStats[v] = self.playerStats[v] + delta
         end
     end
@@ -1995,28 +1984,28 @@ function Reforgenator:ExpertiseMods(playerModel)
         if playerModel.mainHandWeaponType == "One-Handed Axes"
                 or playerModel.mainHandWeaponType == "Two-Handed Axes"
                 or playerModel.mainHandWeaponType == "Fist Weapons" then
-            self:Explain("+3 expertise for being Orc with axe or fist")
-            reduction = reduction + (3 * K)
+            self:Explain("+1 expertise for being Orc with axe or fist")
+            reduction = reduction + (1 * K)
         end
     elseif playerModel.race == "Dwarf" then
         if playerModel.mainHandWeaponType == "One-Handed Maces"
                 or playerModel.mainHandWeaponType == "Two-Handed Maces" then
-            self:Explain("+3 expertise for being Dwarf with mace")
-            reduction = reduction + (3 * K)
+            self:Explain("+1 expertise for being Dwarf with mace")
+            reduction = reduction + (1 * K)
         end
     elseif playerModel.race == "Human" then
         if playerModel.mainHandWeaponType == "One-Handed Swords"
                 or playerModel.mainHandWeaponType == "Two-Handed Swords"
                 or playerModel.mainHandWeaponType == "One-Handed Maces"
                 or playerModel.mainHandWeaponType == "Two-Handed Maces" then
-            self:Explain("+3 expertise for being Human with sword or mace")
-            reduction = reduction + (3 * K)
+            self:Explain("+1 expertise for being Human with sword or mace")
+            reduction = reduction + (1 * K)
         end
     elseif playerModel.race == "Gnome" then
         if playerModel.mainHandWeaponType == "One-Handed Swords"
                 or playerModel.mainHandWeaponType == "Daggers" then
-            self:Explain("+3 expertise for being Gnome with dagger or 1H sword")
-            reduction = reduction + (3 * K)
+            self:Explain("+1 expertise for being Gnome with dagger or 1H sword")
+            reduction = reduction + (1 * K)
         end
     end
 

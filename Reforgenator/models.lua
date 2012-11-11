@@ -1397,10 +1397,11 @@ function Reforgenator:BrewMasterMonkModel()
 	model.readOnly = true
 	model.statWeights =
 	{
-		["ITEM_MOD_SPIRIT_SHORT"] = 0.65,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.60,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.55,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.40,
+		["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.5,
+		["ITEM_MOD_HIT_RATING_SHORT"] = 2.45,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 1.75,
+		["ITEM_MOD_HASTE_RATING_SHORT"] = 1.7,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1,
 	}
 	
 	model.notes = 'http://www.noxxic.com/wow/pve/monk/brewmaster/reforging-gear'
@@ -1420,7 +1421,7 @@ function Reforgenator:BrewMasterMonkModel()
             cap = "MaximumPossible"
         },
         {
-            rating = CR_HASTE_SPELL,
+            rating = CR_HASTE_MELEE,
             cap = "MaximumPossible"
         },
 		{
@@ -1440,10 +1441,10 @@ function Reforgenator:MistWeaverMonkModel()
 	model.statWeights =
 	{
 	--add weights
-		["ITEM_MOD_SPIRIT_SHORT"] = 0.65,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.60,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.55,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.40,
+		["ITEM_MOD_SPIRIT_SHORT"] = 2.5,
+        ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.75,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.05,
 	}
 	
 	model.notes = 'http://www.noxxic.com/wow/pve/monk/mistweaver/reforging-gear'
@@ -1456,10 +1457,10 @@ function Reforgenator:MistWeaverMonkModel()
         },
         {
             rating = CR_HASTE_SPELL,
-            cap = "MaximumPossible"
+            cap = "1SecGCD"
         },
 		{
-            rating = CR_CRIT_MELEE,
+            rating = CR_CRIT_SPELL,
             cap = "MaximumPossible"
         },
  		{
@@ -1467,23 +1468,32 @@ function Reforgenator:MistWeaverMonkModel()
             cap = "MaximumPossible"
         },
 
-
-      
 	}
 	
 	return model
 
 
 end
+--[[
+        [1] = "ITEM_MOD_CRIT_RATING_SHORT",
+        [2] = "ITEM_MOD_DODGE_RATING_SHORT",
+        [3] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+        [4] = "ITEM_MOD_HASTE_RATING_SHORT",
+        [5] = "ITEM_MOD_HIT_RATING_SHORT",
+        [6] = "ITEM_MOD_MASTERY_RATING_SHORT",
+        [7] = "ITEM_MOD_PARRY_RATING_SHORT",
+        [8] = "ITEM_MOD_SPIRIT_SHORT",
+		]]
 function Reforgenator:WindWalkerMonkModel()
 	local model = ReforgeModel:new()
 	model.readOnly = true
 	model.statWeights =
 	{
-		["ITEM_MOD_SPIRIT_SHORT"] = 0.65,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.60,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 0.55,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.40,
+		["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
+        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.75,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 1.15,
+		["ITEM_MOD_HASTE_RATING_SHORT"] = 1.0,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = .75,
 	}
 	
 	model.notes = 'http://www.noxxic.com/wow/pve/monk/windwalker/reforging-gear'
@@ -1503,7 +1513,7 @@ function Reforgenator:WindWalkerMonkModel()
             cap = "MaximumPossible"
         },
         {
-            rating = CR_HASTE_SPELL,
+            rating = CR_HASTE_MELEE,
             cap = "MaximumPossible"
         },
 		{
