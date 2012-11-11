@@ -20,18 +20,20 @@
  IN THE SOFTWARE.
 ]]
 
-local MAJOR, MINOR = "LibPetJournal-2.0", 20
+local MAJOR, MINOR = "LibPetJournal-2.0", 24
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not lib then return end
+
+local is5_0 = select(4, GetBuildInfo()) < 50100
 
 --
 -- GLOBALS: PetJournal
 --
 
 local _G = _G
-local hooksecurefunc, tinsert, pairs, wipe = _G.hooksecurefunc, _G.table.insert, _G.pairs, _G.wipe
-local ipairs = _G.ipairs
+local assert, hooksecurefunc, ipairs, IsLoggedIn, pairs, tinsert, wipe
+    = assert, hooksecurefunc, ipairs, IsLoggedIn, pairs, tinsert, wipe
 local C_PetJournal = _G.C_PetJournal
 
 local start_background
@@ -230,11 +232,6 @@ function lib:LoadPets()
         return false
     end
     
-    lib._pj_ready = IsLoggedIn()
-    if not lib._pj_ready then
-        return false
-    end
-    
     lib._running = true
     self:ClearFilters()
     
@@ -257,7 +254,13 @@ function lib:LoadPets()
             -- PetJournal has some weird consistency issues when the UI is loading.
             -- GetPetInfoByPetID is not immediately ready, while GetPetInfoByIndex is.
             -- This check only seems to need to happen once.
-            local _, _, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
+            local _, name
+            if is5_0 then
+                _, _, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
+            else
+                _, _, _, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
+            end
+
             if not name then
                 self:RestoreFilters()
                 self._running = false
@@ -286,6 +289,9 @@ function lib:LoadPets()
     
     -- restore PJ filters
     self:RestoreFilters()
+
+    -- Signal, part 2
+    self.callbacks:Fire("PostPetListUpdated", self)
     
     self.event_frame:Hide()
     self._running = false
@@ -297,7 +303,7 @@ end
 -- @name LibPetJournal:IsLoaded()
 -- @return boolean indicating whether the pet list has been loaded.
 function lib:IsLoaded()
-    return self._pj_ready and (#self._petids > 0 or #self._speciesids > 0)
+    return #self._petids > 0 or #self._speciesids > 0
 end
 
 --- Determine how many pets the player owns.
@@ -316,8 +322,11 @@ end
 
 lib.event_frame:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 function lib.event_frame:PET_JOURNAL_LIST_UPDATE()
-    local total, owned = C_PetJournal.GetNumPets(false)
+    if not IsLoggedIn() then
+        return
+    end
     
+    local total, owned = C_PetJournal.GetNumPets(false)
     if lib._last_owned ~= owned then
         lib._last_owned = owned
         if not lib:LoadPets() then
@@ -334,6 +343,12 @@ end
 lib.event_frame:RegisterEvent("ADDON_LOADED")
 function lib.event_frame:ADDON_LOADED()
     lib.event_frame:UnregisterEvent("ADDON_LOADED")
+    
+    if not IsLoggedIn() then
+        -- PJLU will come later
+        return
+    end
+    
     if not lib:IsLoaded() then
         lib:LoadPets()
     end
@@ -349,7 +364,7 @@ lib.event_frame:SetScript("OnUpdate", function(frame, elapsed)
     timer = timer + elapsed
     if timer > 2 then        
         if lib:LoadPets() then
-            lib.callbacks:Fire("PetsUpdated", self)
+            lib.callbacks:Fire("PetsUpdated", lib)
         end
         timer = 0
     end

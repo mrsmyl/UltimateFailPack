@@ -35,7 +35,7 @@ if not L then return end
 	
 	
 --	location names
-	L["LOCATION_ALL"] = "Все"
+--	L["LOCATION_ACCOUNT"] = ""
 	L["LOCATION_BANK"] = "Банк"
 	L["LOCATION_WEARING"] = "Одето"
 	
@@ -142,8 +142,9 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_SLOT"] = "Ячейка"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "Тип"
 --	L["MENU_ITEM_DEBUG_PET_ID"] = ""
+--	L["MENU_ITEM_DEBUG_PET_SPECIES"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "Короткий ID"
-	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "ID кэша"
+	L["MENU_ITEM_DEBUG_CACHE"] = "ID кэша"
 --	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_CATEGORY"] = "Категория AI"
 	L["MENU_ITEM_DEBUG_LVL_ITEM"] = "Уровень предмета (парам)"
@@ -161,7 +162,6 @@ if not L then return end
 	
 --	bar menu
 	L["MENU_BAR_TITLE"] = "Настройки набора %1$s"
-	L["MENU_BAR_CATEGORY"] = "Категория"
 	L["MENU_BAR_CATEGORY_TEXT"] = "Закрепить категорию %1$s за этим набором"
 	L["MENU_BAR_CATEGORY_CURRENT"] = "текущее назначение"
 	L["MENU_BAR_CATEGORY_ASSIGN"] = "Возможные Категории"
@@ -223,6 +223,7 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
@@ -249,6 +250,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_INTERIM_TEXT"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL_TEXT"] = ""
+--	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = ""
+--	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = ""
 	
 	
 --	configuration options > auto
@@ -432,8 +435,6 @@ if not L then return end
 	
 	
 --	configuration options > categories
---	L["CONFIG_CATEGORY"] = ""
-	
 	L["CONFIG_CATEGORY_CUSTOM"] = "Пользовательские категории"
 --	L["CONFIG_CATEGORY_DELETED"] = ""
 	
@@ -515,10 +516,14 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Выполнен багфикс."
 	L["MISC_ALERT_FRAMELEVEL_2"] = "FrameLevel для окна %1$s был равен %2$s и сброшен до %3$s для уверенной работоспособности. Извините за небольшой лаг, вызванный этим фиксом."
 	
+--	L["BATTLEPET_CAPTURE_UNABLE"] = ""
+--	L["BATTLEPET_CAPACITY"] = ""
+	
 	
 --	item count tooltip
 --	L["TOOLTIP_COUNT_ME"] = ""
 --	L["TOOLTIP_VAULT_TABS"] = ""
+--	L["TOOLTIP_GOLD_AMOUNT"] = ""
 	
 	
 --	generic menu text
@@ -595,7 +600,9 @@ if not L then return end
 --	L["LDB_TRACKING_CURRENCY"] = ""
 --	L["LDB_PETS_SUMMON"] = ""
 --	L["LDB_MOUNTS_NOT_HERE"] = ""
---	L["LDB_MOUNTS_GROUND"] = ""
+--	L["LDB_MOUNTS_TYPE_L"] = ""
+--	L["LDB_MOUNTS_TYPE_U"] = ""
+--	L["LDB_MOUNTS_TYPE_S"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_TEXT"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""

@@ -1,6 +1,7 @@
 local _G = _G
 local select = _G.select
 local pairs = _G.pairs
+local ipairs = _G.ipairs
 local string = _G.string
 local type = _G.type
 local error = _G.error
@@ -628,11 +629,27 @@ function ArkInventory.ConfigInternal( )
 							type = "group",
 							inline = true,
 							args = {
+								enabled = {
+									order = 100,
+									name = ArkInventory.Localise["ENABLED"],
+									desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"],
+									type = "toggle",
+									get = function( info )
+										return ArkInventory.db.global.option.tooltip.battlepet.enable
+									end,
+									set = function( info, v )
+										ArkInventory.db.global.option.tooltip.battlepet.enable = v
+										ArkInventory.BlizzardAPIHookBattlepetTooltip( v )
+									end,
+								},
 								source = {
 									order = 100,
 									name = SOURCES,
 									desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"],
 									type = "toggle",
+									hidden = function( )
+										return not ArkInventory.db.global.option.tooltip.battlepet.enable
+									end,
 									get = function( info )
 										return ArkInventory.db.global.option.tooltip.battlepet.source
 									end,
@@ -645,6 +662,9 @@ function ArkInventory.ConfigInternal( )
 									name = ArkInventory.Localise["DESCRIPTION"],
 									desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"],
 									type = "toggle",
+									hidden = function( )
+										return not ArkInventory.db.global.option.tooltip.battlepet.enable
+									end,
 									get = function( info )
 										return ArkInventory.db.global.option.tooltip.battlepet.description
 									end,
@@ -885,6 +905,26 @@ function ArkInventory.ConfigInternal( )
 									end,
 									set = function( info, v )
 										ArkInventory.db.global.option.message.translation.final = v
+									end,
+								},
+							},
+						},
+						battlepet = {
+							order = 200,
+							name = PET_BATTLE_INFO,
+							type = "group",
+							inline = true,
+							args = {
+								opponent = {
+									order = 100,
+									name = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"],
+									desc = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"],
+									type = "toggle",
+									get = function( info )
+										return ArkInventory.db.global.option.message.battlepet.opponent
+									end,
+									set = function( info, v )
+										ArkInventory.db.global.option.message.battlepet.opponent = v
 									end,
 								},
 							},
@@ -1131,7 +1171,7 @@ function ArkInventory.ConfigInternal( )
 		categories = {
 			cmdHidden = true,
 			order = 800,
-			name = ArkInventory.Localise["CONFIG_CATEGORY"],
+			name = ArkInventory.Localise["CATEGORIES"],
 			type = "group",
 			childGroups = "tab",
 			args = { },
@@ -3923,23 +3963,23 @@ function ArkInventory.ConfigInternalLDBMounts( path )
 	local companionType = "MOUNT"
 	
 	local args3 = { }
-	for k, mountType in pairs( { "ground", "flying", "water" } ) do
+	for k, mountType in pairs( ArkInventory.Const.MountTypes ) do
 		
 		args3[mountType] = {
 			order = k,
-			name = ArkInventory.Localise[string.upper( string.format( "LDB_MOUNTS_%s", mountType ) )],
+			name = ArkInventory.Localise[string.upper( string.format( "LDB_MOUNTS_TYPE_%s", mountType ) )],
 			type = "select",
 			values = function( info )
 				
 				local companionIndex = ConfigGetNodeArg( info, #info - 2 )
 				local companionID, companionName, companionSpellID, texture, active = GetCompanionInfo( companionType, companionIndex )
-				local companionData = ArkInventory.Const.CompanionData[companionSpellID]
+				local companionData = ArkInventory.Global.Companion.MOUNT[companionSpellID]
 				
 				local t = { }
 				t[1] = ArkInventory.Localise["NO"]
 				t[2] = ArkInventory.Localise["YES"]
 				
-				if companionData.corrected and companionData.speed[mountType] then
+				if companionData.corrected and companionData.capable[mountType] then
 					t[3] = ArkInventory.Localise["DEFAULT"]
 				end
 				
@@ -3950,7 +3990,7 @@ function ArkInventory.ConfigInternalLDBMounts( path )
 				
 				local companionIndex = ConfigGetNodeArg( info, #info - 2 )
 				local companionID, companionName, companionSpellID, texture, active = GetCompanionInfo( companionType, companionIndex )
-				local companionData = ArkInventory.Const.CompanionData[companionSpellID]
+				local companionData = ArkInventory.Global.Companion.MOUNT[companionSpellID]
 				
 				if not not companionData.usable[mountType] then
 					return 2
@@ -3974,7 +4014,7 @@ function ArkInventory.ConfigInternalLDBMounts( path )
 				
 				ArkInventory.db.char.option.ldb.mounts[mountType].selected[companionSpellID] = nil
 				
-				ArkInventory.CompanionDataCorrect( )
+				ArkInventory.MountDataUpdate( )
 				
 				ArkInventory.LDB.Mounts:Update( )
 				
@@ -4007,13 +4047,13 @@ function ArkInventory.ConfigInternalLDBMounts( path )
 	
 	
 	
-	for k, mountType in pairs( { "ground", "flying", "water", "nodata" } ) do
+	for k, mountType in pairs( { "l", "a", "u", "x" } ) do
 		
 		path[mountType] = {
 			order = k,
 			cmdHidden = true,
 			type = "group",
-			name = ArkInventory.Localise[string.upper( string.format( "LDB_MOUNTS_%s", mountType ) )],
+			name = ArkInventory.Localise[string.upper( string.format( "LDB_MOUNTS_TYPE_%s", mountType ) )],
 			arg = mountType,
 		}
 		
@@ -4028,7 +4068,7 @@ function ArkInventory.ConfigInternalLDBMountsUpdate( path, args2 )
 	local companionType = "MOUNT"
 	
 	
-	for _, mountType in pairs( { "ground", "flying", "water", "nodata" } ) do
+	for _, mountType in pairs( { "l", "a", "u", "x" } ) do
 		
 		if not path[mountType].args then
 			path[mountType].args = { }
@@ -4039,16 +4079,16 @@ function ArkInventory.ConfigInternalLDBMountsUpdate( path, args2 )
 		for companionIndex = 1, n do
 			
 			local companionID, companionName, companionSpellID, texture, active = GetCompanionInfo( companionType, companionIndex )
-			local companionData = ArkInventory.Const.CompanionData[companionSpellID]
+			local companionData = ArkInventory.Global.Companion.MOUNT[companionSpellID]
 			local mountKey = tostring( companionIndex )
 			
 			local ok = false
 			
-			if ( not ok ) and ( mountType ~="nodata" ) and ( companionData.usable[mountType] ) then
+			if ( not ok ) and ( mountType == companionData.mt ) then
 				ok = true
 			end
 			
-			if ( not ok ) and ( mountType == "nodata" ) and ( companionData.unknown or companionData.corrected ) then
+			if ( not ok ) and ( mountType == "x" ) and ( companionData.unknown or companionData.corrected ) then
 				ok = true
 			end
 			

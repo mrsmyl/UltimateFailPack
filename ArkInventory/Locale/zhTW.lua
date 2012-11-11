@@ -35,7 +35,7 @@ if not L then return end
 	
 	
 --	location names
-	L["LOCATION_ALL"] = "全部"
+--	L["LOCATION_ACCOUNT"] = ""
 	L["LOCATION_BANK"] = "銀行"
 	L["LOCATION_WEARING"] = "裝備"
 	
@@ -142,8 +142,9 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_SLOT"] = "空格"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "背包類型"
 --	L["MENU_ITEM_DEBUG_PET_ID"] = ""
+--	L["MENU_ITEM_DEBUG_PET_SPECIES"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "簡短ID"
-	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "快取ID"
+	L["MENU_ITEM_DEBUG_CACHE"] = "快取ID"
 --	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_CATEGORY"] = "AI類別ID"
 	L["MENU_ITEM_DEBUG_LVL_ITEM"] = "物品等級 (Stat)"
@@ -161,7 +162,6 @@ if not L then return end
 	
 --	bar menu
 	L["MENU_BAR_TITLE"] = "分組 %1$s 選項"
-	L["MENU_BAR_CATEGORY"] = "類別"
 	L["MENU_BAR_CATEGORY_TEXT"] = "指定 %1$s 到此分組"
 	L["MENU_BAR_CATEGORY_CURRENT"] = "目前使用"
 	L["MENU_BAR_CATEGORY_ASSIGN"] = "可使用類別"
@@ -223,6 +223,7 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
 	
@@ -249,6 +250,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_INTERIM_TEXT"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL_TEXT"] = ""
+--	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = ""
+--	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = ""
 	
 	
 --	configuration options > auto
@@ -432,8 +435,6 @@ if not L then return end
 	
 	
 --	configuration options > categories
-	L["CONFIG_CATEGORY"] = "類別"
-	
 	L["CONFIG_CATEGORY_CUSTOM"] = "自訂類別"
 --	L["CONFIG_CATEGORY_DELETED"] = ""
 	
@@ -515,10 +516,14 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "除錯完成"
 	L["MISC_ALERT_FRAMELEVEL_2"] = "%1$s視窗的框架層級是%2$s，已經被設為%3$s以確保它能正常運作。除錯儀式會吸引雷格大神，抱歉。"
 	
+--	L["BATTLEPET_CAPTURE_UNABLE"] = ""
+--	L["BATTLEPET_CAPACITY"] = ""
+	
 	
 --	item count tooltip
 	L["TOOLTIP_COUNT_ME"] = " > "
 --	L["TOOLTIP_VAULT_TABS"] = ""
+--	L["TOOLTIP_GOLD_AMOUNT"] = ""
 	
 	
 --	generic menu text
@@ -595,7 +600,9 @@ if not L then return end
 	L["LDB_TRACKING_CURRENCY"] = "兌換通貨 / 徽章"
 	L["LDB_PETS_SUMMON"] = "召喚寵物"
 	L["LDB_MOUNTS_NOT_HERE"] = "不管你的坐騎在這裡是否可用"
---	L["LDB_MOUNTS_GROUND"] = ""
+--	L["LDB_MOUNTS_TYPE_L"] = ""
+--	L["LDB_MOUNTS_TYPE_U"] = ""
+--	L["LDB_MOUNTS_TYPE_S"] = ""
 	L["LDB_MOUNTS_FLYING_DISMOUNT"] = "在飛行中卸載"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_TEXT"] = "啟用 = 允許你在飛行中下坐騎。\n\n停用 = 你需要在地面上，才可以下坐騎"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "您目前正在飛行，請選擇一個降落地點"

@@ -1,6 +1,6 @@
 --[[
 Name: PeriodicTable-3.1
-Revision: $Rev: 386 $
+Revision: $Rev: 399 $
 Author: Nymbia (nymbia@gmail.com)
 Many thanks to Tekkub for writing PeriodicTable 1 and 2, and for permission to use the name PeriodicTable!
 Website: http://www.wowace.com/wiki/PeriodicTable-3.1
@@ -26,7 +26,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ]]
 
-local PT3, oldminor = LibStub:NewLibrary("LibPeriodicTable-3.1", tonumber(("$Revision: 386 $"):match("(%d+)")) + 90000)
+local PT3, oldminor = LibStub:NewLibrary("LibPeriodicTable-3.1", tonumber(("$Revision: 399 $"):match("(%d+)")) + 90000)
 if not PT3 then
 	return
 end

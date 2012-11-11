@@ -35,7 +35,7 @@ if not L then return end
 	
 	
 --	location names
-	L["LOCATION_ALL"] = "All"
+	L["LOCATION_ACCOUNT"] = "Account"
 	L["LOCATION_BANK"] = "Bank"
 	L["LOCATION_WEARING"] = "Wearing"
 	
@@ -142,8 +142,9 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_SLOT"] = "Slot"
 	L["MENU_ITEM_DEBUG_BAG_TYPE"] = "Type"
 	L["MENU_ITEM_DEBUG_PET_ID"] = "Pet ID"
+	L["MENU_ITEM_DEBUG_PET_SPECIES"] = "Pet Species"
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "Short ID"
-	L["MENU_ITEM_DEBUG_AI_ID_CACHE"] = "Cache ID"
+	L["MENU_ITEM_DEBUG_CACHE"] = "Cache ID"
 	L["MENU_ITEM_DEBUG_AI_ID_RULE"] = "Rule ID"
 	L["MENU_ITEM_DEBUG_AI_ID_CATEGORY"] = "Category ID"
 	L["MENU_ITEM_DEBUG_LVL_ITEM"] = "Item Level (Stat)"
@@ -161,7 +162,6 @@ if not L then return end
 	
 --	bar menu
 	L["MENU_BAR_TITLE"] = "Bar %1$s"
-	L["MENU_BAR_CATEGORY"] = "Category"
 	L["MENU_BAR_CATEGORY_TEXT"] = "assign category %1$s to this bar"
 	L["MENU_BAR_CATEGORY_CURRENT"] = "Categories assigned"
 	L["MENU_BAR_CATEGORY_ASSIGN"] = "Assignable Categories"
@@ -223,6 +223,7 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = "Faction only"
 	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = "only show data for the current faction"
 	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = "include data from %1$s" -- %1$s = vault
+	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = "replace the in-built battlepet tooltip with custom tooltip to allow for item counts"
 	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = "include source text in tooltip"
 	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = "include description text in tooltip"
 	
@@ -249,6 +250,8 @@ if not L then return end
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_INTERIM_TEXT"] = "Show message for each translation attempt"
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL"] = "Final"
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL_TEXT"] = "Show final message for successful translation"
+	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = "Opponent Details"
+	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = "Display Opponent Details upon entering a pet battle"
 	
 	
 --	configuration options > auto
@@ -434,8 +437,6 @@ if not L then return end
 	
 	
 --	configuration options > categories
-	L["CONFIG_CATEGORY"] = "Categories"
-	
 	L["CONFIG_CATEGORY_CUSTOM"] = "Custom Categories"
 	L["CONFIG_CATEGORY_DELETED"] = "**Deleted Category [%s]**"
 	
@@ -517,10 +518,14 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Bug fix complete."
 	L["MISC_ALERT_FRAMELEVEL_2"] = "The FrameLevel for the %1$s window is currently at %2$s and has been reset to %3$s to ensure that it remains functional.  Sorry for the lag spike caused by the fix."
 	
+	L["BATTLEPET_CAPTURE_UNABLE"] = "Cannot be Captured"
+	L["BATTLEPET_CAPACITY"] = "At Capacity"
+	
 	
 --	item count tooltip
 	L["TOOLTIP_COUNT_ME"] = ">"
 	L["TOOLTIP_VAULT_TABS"] = "Tab"
+	L["TOOLTIP_GOLD_AMOUNT"] = "Amount"
 	
 	
 --	generic text
@@ -597,7 +602,9 @@ if not L then return end
 	L["LDB_TRACKING_CURRENCY"] = "Currencies / Tokens"
 	L["LDB_PETS_SUMMON"] = "Summon Pet"
 	L["LDB_MOUNTS_NOT_HERE"] = "None of your mounts are usable here"
-	L["LDB_MOUNTS_GROUND"] = "Ground"
+	L["LDB_MOUNTS_TYPE_L"] = "Land"
+	L["LDB_MOUNTS_TYPE_U"] = "Underwater"
+	L["LDB_MOUNTS_TYPE_S"] = "Water Surface"
 	L["LDB_MOUNTS_FLYING_DISMOUNT"] = "Dismount in flight"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_TEXT"] = "Enabled = allows you to dismount while flying.\n\nDisabled = you need to land before you can dismount"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "You are currently flying, please land to select another mount"
