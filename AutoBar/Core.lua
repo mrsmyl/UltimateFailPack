@@ -741,26 +741,27 @@ end
 function AutoBar.events:MINIMAP_ZONE_CHANGED(arg1)
 	AutoBar:LogEvent("MINIMAP_ZONE_CHANGED", arg1)
 	AutoBar:UpdateZone("MINIMAP_ZONE_CHANGED")
-	if (not InCombatLockdown()) then
+--	if (not InCombatLockdown()) then
 --		AutoBar.delay["UpdateActive"]:Start()
-	end
+--	end
 end
 
 function AutoBar.events:ZONE_CHANGED(arg1)
 	AutoBar:LogEvent("ZONE_CHANGED", arg1)
 	AutoBar:UpdateZone("ZONE_CHANGED")
-	if (not InCombatLockdown()) then
+--	if (not InCombatLockdown()) then
 --		AutoBar.delay["UpdateActive"]:Start()
-	end
+--	end
 end
 
-function AutoBar.events:ZONE_CHANGED_INDOORS(arg1)
-	AutoBar:LogEvent("ZONE_CHANGED_INDOORS", arg1)
-	AutoBar:UpdateZone("ZONE_CHANGED_INDOORS")
-	if (not InCombatLockdown()) then
---		AutoBar.delay["UpdateActive"]:Start()
-	end
-end
+-- Apparently this is never used
+--function AutoBar.events:ZONE_CHANGED_INDOORS(arg1)
+--	AutoBar:LogEvent("ZONE_CHANGED_INDOORS", arg1)
+--	AutoBar:UpdateZone("ZONE_CHANGED_INDOORS")
+--	if (not InCombatLockdown()) then
+----		AutoBar.delay["UpdateActive"]:Start()
+--	end
+--end
 
 
 function AutoBar.events:ZONE_CHANGED_NEW_AREA(arg1)
@@ -1053,9 +1054,9 @@ end
 -- Update shared state
 function AutoBar:UpdateCustomBars()
 	self:LogEventStart("AutoBar:UpdateCustomBars")
+	self:UpdateCustomButtons()
 
 	self:LogEventEnd("AutoBar:UpdateCustomBars")
-	self:UpdateCustomButtons()
 end
 
 local DelayedUpdateCustomBars = AceOO.Class(Delayed)
