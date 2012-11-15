@@ -71,8 +71,6 @@ if not L then return end
 	
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "Kernmaterialien"
-	L["CATEGORY_SYSTEM_EQUIPMENT"] = "Ausr\195\188stung"
-	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "seelengebundene Ausr\195\188stung"
 	
 	
 --	consumable category descriptions
@@ -223,9 +221,10 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "Fehlerbehebungen / Workarounds"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "Schaltet die Fehlerbehebung f\195\188r diese Problem ein."
@@ -516,8 +515,11 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Fehlerbehebung abgeschlossen"
 	L["MISC_ALERT_FRAMELEVEL_2"] = "Der Rahmen des Fensters %1$s ist zurzeit bei %2$s und wurde auf %3$s zur\195\188ckgesetzt, um weiter verwendet werden zu k\195\182nnen.  Entschuldige bitte die Verz\195\182gerung, die dadurch verursacht wurde."
 	
---	L["BATTLEPET_CAPTURE_UNABLE"] = ""
---	L["BATTLEPET_CAPACITY"] = ""
+--	L["BATTLEPET_OPPONENT_IMMUNE"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN_MAX"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UNKNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UPGRADE"] = ""
 	
 	
 --	item count tooltip
@@ -586,6 +588,7 @@ if not L then return end
 --	L["CLICK_TO_DESELECT"] = ""
 --	L["CLICK_TO_IGNORE"] = ""	
 	L["ORDER"] = "Reihenfolge"
+--	L["MOUSEOVER"] = ""
 	
 	
 -- libdatabroker

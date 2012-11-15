@@ -71,8 +71,6 @@ if not L then return end
 	
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "原始材料"
-	L["CATEGORY_SYSTEM_EQUIPMENT"] = "裝備 (未綁定)"
-	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "裝備 (已綁定)"
 	
 	
 --	consumable category descriptions
@@ -223,9 +221,10 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "除錯/規避錯誤"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "切換除錯或規避錯誤的程式碼"
@@ -516,8 +515,11 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "除錯完成"
 	L["MISC_ALERT_FRAMELEVEL_2"] = "%1$s視窗的框架層級是%2$s，已經被設為%3$s以確保它能正常運作。除錯儀式會吸引雷格大神，抱歉。"
 	
---	L["BATTLEPET_CAPTURE_UNABLE"] = ""
---	L["BATTLEPET_CAPACITY"] = ""
+--	L["BATTLEPET_OPPONENT_IMMUNE"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN_MAX"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UNKNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UPGRADE"] = ""
 	
 	
 --	item count tooltip
@@ -587,6 +589,7 @@ if not L then return end
 	L["CLICK_TO_DESELECT"] = "單擊取消選擇"
 --	L["CLICK_TO_IGNORE"] = ""
 	L["ORDER"] = "順序"
+--	L["MOUSEOVER"] = ""
 	
 	
 -- libdatabroker

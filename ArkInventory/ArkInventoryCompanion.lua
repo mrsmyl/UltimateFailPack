@@ -827,7 +827,6 @@ end
 
 function ArkInventory.MountDataUpdate( )
 	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
 	if not ArkInventory.TranslationsLoaded then return end
 	
 	importMountCrossRefTable( )

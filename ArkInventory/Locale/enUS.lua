@@ -71,8 +71,6 @@ if not L then return end
 	
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "Core Mats"
-	L["CATEGORY_SYSTEM_EQUIPMENT"] = "Equipment (Not Soulbound)"
-	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "Equipment (Soulbound)"
 	
 	
 --	consumable category descriptions
@@ -223,9 +221,10 @@ if not L then return end
 	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = "Faction only"
 	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = "only show data for the current faction"
 	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = "include data from %1$s" -- %1$s = vault
-	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = "replace the in-built battlepet tooltip with custom tooltip to allow for item counts"
 	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = "include source text in tooltip"
 	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = "include description text in tooltip"
+	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"] = "replace the in-built battlepet tooltip with custom tooltip to allow for item counts"
+	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"] = "include extra text in mouseover tooltips for player, npc and wild battlepets"
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "Bug Fixes / Workarounds"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "toggle the code to fix or work around this issue"
@@ -474,7 +473,7 @@ if not L then return end
 	L["RULE_FAILED_FORMULA_NIL"] = "formula is missing"
 	L["RULE_FAILED_FORMULA_BAD"] = "invalid formula"
 	L["RULE_FAILED_ARGUMENT_IS_NIL"] = "%1$s( ... ), argument %2$i is nil"
-	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), argument %2$i is not a %3$s"
+	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), argument %2$i is not %3$s"
 	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = "%1$s( ... ), no arguments specified"
 	
 	
@@ -518,8 +517,11 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Bug fix complete."
 	L["MISC_ALERT_FRAMELEVEL_2"] = "The FrameLevel for the %1$s window is currently at %2$s and has been reset to %3$s to ensure that it remains functional.  Sorry for the lag spike caused by the fix."
 	
-	L["BATTLEPET_CAPTURE_UNABLE"] = "Cannot be Captured"
-	L["BATTLEPET_CAPACITY"] = "At Capacity"
+	L["BATTLEPET_OPPONENT_IMMUNE"] = "Cannot be Captured"
+	L["BATTLEPET_OPPONENT_KNOWN_MAX"] = "Limit Reached"
+	L["BATTLEPET_OPPONENT_KNOWN"] = "Owned"
+	L["BATTLEPET_OPPONENT_UNKNOWN"] = "Not Owned"
+	L["BATTLEPET_OPPONENT_UPGRADE"] = "Upgrade?"
 	
 	
 --	item count tooltip
@@ -589,6 +591,7 @@ if not L then return end
 	L["CLICK_TO_DESELECT"] = "Click to deselect"
 	L["CLICK_TO_IGNORE"] = "Click to ignore"
 	L["ORDER"] = "Order"
+	L["MOUSEOVER"] = "Mouse Over"
 	
 	
 --	libdatabroker

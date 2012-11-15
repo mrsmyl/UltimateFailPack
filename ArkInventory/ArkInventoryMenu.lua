@@ -665,7 +665,7 @@ function ArkInventory.MenuItemOpen( frame )
 			rp = "TOPRIGHT"
 		end
 		
-		local ic = string.format( "|c%s", select( 4, GetItemQualityColor( i.q ) ) )
+		local ic = select( 5, ArkInventory.GetItemQualityColor( i.q ) )
 		local cat0, cat1, cat2 = ArkInventory.ItemCategoryGet( i )
 		local bar_id = abs( ArkInventory.CategoryLocationGet( loc_id, cat0 ) )
 		
@@ -844,7 +844,9 @@ function ArkInventory.MenuItemOpen( frame )
 							
 							if ( class == "item" ) then
 								
-								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ITEM_SOULBOUND, LIGHTYELLOW_FONT_COLOR_CODE, ( i.sb and "True" ) or "False" ) )
+								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ITEM_ACCOUNTBOUND, LIGHTYELLOW_FONT_COLOR_CODE, ( i.ab and YES ) or NO ) )
+								
+								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ITEM_SOULBOUND, LIGHTYELLOW_FONT_COLOR_CODE, ( i.sb and YES ) or NO ) )
 								
 								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s (%s)", QUALITY, LIGHTYELLOW_FONT_COLOR_CODE, irar, _G[string.format( "ITEM_QUALITY%s_DESC", irar )] ) )
 								
@@ -2992,7 +2994,7 @@ function ArkInventory.MenuBattlePet( frame, petID )
 					
 					rarity = ( rarity and ( rarity - 1 ) ) or 1
 					
-					--name = string.format( "|c%s%s|r", select( 4, GetItemQualityColor( rarity ) ), name )
+					--name = string.format( "%s%s|r", select( 5, ArkInventory.GetItemQualityColor( rarity ) ), name )
 					if customName then
 						name = string.format( "%s (%s)", name, customName )
 					end
@@ -3075,13 +3077,13 @@ function ArkInventory.MenuBattlePet( frame, petID )
 								"func", function( info )
 									
 									local speciesID, customName, level, xp, maxXp, displayID, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
-									local health, maxHealth, attack, speed, quality = C_PetJournal.GetPetStats( petID )
+									local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
 									local qd = ""
 									
-									if isWild then
-										qd = _G["BATTLE_PET_BREED_QUALITY" .. quality]
-										quality = quality and ( quality - 1 )
-										qd = string.format( ", |c%s%s|r", select( 4, GetItemQualityColor( quality ) ), qd )
+									if isWild and canBattle then
+										qd = _G["BATTLE_PET_BREED_QUALITY" .. rarity]
+										rarity = ( rarity and ( rarity - 1 ) ) or 1
+										qd = string.format( ", %s%s|r", select( 5, ArkInventory.GetItemQualityColor( rarity ) ), qd )
 									end
 									
 									local release = string.format( "%s|r, %s %d%s", name, LEVEL, level, qd )

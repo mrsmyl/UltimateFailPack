@@ -629,48 +629,107 @@ function ArkInventory.ConfigInternal( )
 							type = "group",
 							inline = true,
 							args = {
-								enabled = {
+								custom = {
 									order = 100,
-									name = ArkInventory.Localise["ENABLED"],
-									desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"],
-									type = "toggle",
-									get = function( info )
-										return ArkInventory.db.global.option.tooltip.battlepet.enable
-									end,
-									set = function( info, v )
-										ArkInventory.db.global.option.tooltip.battlepet.enable = v
-										ArkInventory.BlizzardAPIHookBattlepetTooltip( v )
-									end,
+									name = ArkInventory.Localise["CUSTOM"],
+									type = "group",
+									inline = true,
+									args = {
+										enabled = {
+											order = 100,
+											name = ArkInventory.Localise["ENABLED"],
+											desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"],
+											type = "toggle",
+											get = function( info )
+												return ArkInventory.db.global.option.tooltip.battlepet.enable
+											end,
+											set = function( info, v )
+												
+												ArkInventory.db.global.option.tooltip.battlepet.enable = v
+												ArkInventory.BlizzardAPIHookBattlepetTooltip( v )
+											end,
+										},
+										source = {
+											order = 200,
+											name = SOURCES,
+											desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"],
+											type = "toggle",
+											hidden = function( )
+												return not ArkInventory.db.global.option.tooltip.battlepet.enable
+											end,
+											get = function( info )
+												return ArkInventory.db.global.option.tooltip.battlepet.source
+											end,
+											set = function( info, v )
+												ArkInventory.db.global.option.tooltip.battlepet.source = v
+											end,
+										},
+										description = {
+											order = 300,
+											name = ArkInventory.Localise["DESCRIPTION"],
+											desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"],
+											type = "toggle",
+											hidden = function( )
+												return not ArkInventory.db.global.option.tooltip.battlepet.enable
+											end,
+											get = function( info )
+												return ArkInventory.db.global.option.tooltip.battlepet.description
+											end,
+											set = function( info, v )
+												ArkInventory.db.global.option.tooltip.battlepet.description = v
+											end,
+										},
+									},
 								},
-								source = {
-									order = 100,
-									name = SOURCES,
-									desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"],
-									type = "toggle",
-									hidden = function( )
-										return not ArkInventory.db.global.option.tooltip.battlepet.enable
-									end,
-									get = function( info )
-										return ArkInventory.db.global.option.tooltip.battlepet.source
-									end,
-									set = function( info, v )
-										ArkInventory.db.global.option.tooltip.battlepet.source = v
-									end,
-								},
-								description = {
+								mouseover = {
 									order = 200,
-									name = ArkInventory.Localise["DESCRIPTION"],
-									desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"],
-									type = "toggle",
-									hidden = function( )
-										return not ArkInventory.db.global.option.tooltip.battlepet.enable
-									end,
-									get = function( info )
-										return ArkInventory.db.global.option.tooltip.battlepet.description
-									end,
-									set = function( info, v )
-										ArkInventory.db.global.option.tooltip.battlepet.description = v
-									end,
+									name = ArkInventory.Localise["MOUSEOVER"],
+									type = "group",
+									inline = true,
+									args = {
+										enabled = {
+											order = 100,
+											name = ArkInventory.Localise["ENABLED"],
+											desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"],
+											type = "toggle",
+											get = function( info )
+												return ArkInventory.db.global.option.tooltip.battlepet.mouseover.enable
+											end,
+											set = function( info, v )
+												ArkInventory.db.global.option.tooltip.battlepet.mouseover.enable = v
+											end,
+										},
+										source = {
+											order = 200,
+											name = SOURCES,
+											desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"],
+											type = "toggle",
+											hidden = function( )
+												return not ArkInventory.db.global.option.tooltip.battlepet.mouseover.enable
+											end,
+											get = function( info )
+												return ArkInventory.db.global.option.tooltip.battlepet.mouseover.source
+											end,
+											set = function( info, v )
+												ArkInventory.db.global.option.tooltip.battlepet.mouseover.source = v
+											end,
+										},
+										description = {
+											order = 300,
+											name = ArkInventory.Localise["DESCRIPTION"],
+											desc = ArkInventory.Localise["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"],
+											type = "toggle",
+											hidden = function( )
+												return not ArkInventory.db.global.option.tooltip.battlepet.mouseover.enable
+											end,
+											get = function( info )
+												return ArkInventory.db.global.option.tooltip.battlepet.mouseover.description
+											end,
+											set = function( info, v )
+												ArkInventory.db.global.option.tooltip.battlepet.mouseover.description = v
+											end,
+										},
+									},
 								},
 							},
 						},

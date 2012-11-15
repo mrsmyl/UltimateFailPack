@@ -71,8 +71,6 @@ if not L then return end
 	
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "原始材料"
-	L["CATEGORY_SYSTEM_EQUIPMENT"] = "装备 (未绑定)"
-	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "装备"
 	
 	
 --	consumable category descriptions
@@ -223,9 +221,10 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"] = ""
 	
 	L["CONFIG_SYSTEM_BUGFIX"] = "错误修正/绕开"
 	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = "切换代码修正或者绕开这个问题"
@@ -516,8 +515,11 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Bug 修正完毕."
 	L["MISC_ALERT_FRAMELEVEL_2"] = "当前 %1$s 窗口界面级别在 %2$s 并且被重置到 %3$s 以确保回收模式.  由于此 bug 修正带来的 lag 现象向您道歉."
 	
---	L["BATTLEPET_CAPTURE_UNABLE"] = ""
---	L["BATTLEPET_CAPACITY"] = ""
+--	L["BATTLEPET_OPPONENT_IMMUNE"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN_MAX"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UNKNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UPGRADE"] = ""
 	
 	
 --	item count tooltip
@@ -587,6 +589,7 @@ if not L then return end
 --	L["CLICK_TO_DESELECT"] = ""
 --	L["CLICK_TO_IGNORE"] = ""	
 	L["ORDER"] = "顺序"
+--	L["MOUSEOVER"] = ""
 	
 	
 --	libdatabroker

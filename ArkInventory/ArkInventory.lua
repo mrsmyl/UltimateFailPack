@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1037 $
--- $Date: 2012-11-08 20:53:33 +1100 (Thu, 08 Nov 2012) $
+-- $Revision: 1042 $
+-- $Date: 2012-11-15 21:15:32 +1100 (Thu, 15 Nov 2012) $
 
 
 local _G = _G
@@ -268,10 +268,7 @@ ArkInventory.Const = { -- constants
 					["id"] = "SYSTEM_CONTAINER",
 					["text"] = ArkInventory.Localise["WOW_AH_CONTAINER"],
 				},
---				[406] = {
---					["id"] = "SYSTEM_KEY",
---					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
---				},
+--				[406] = { keys },
 				[407] = {
 					["id"] = "SYSTEM_MISC",
 					["text"] = ArkInventory.Localise["WOW_AH_MISC"],
@@ -299,6 +296,12 @@ ArkInventory.Const = { -- constants
 				[416] = {
 					["id"] = "SYSTEM_EQUIPMENT_SOULBOUND",
 					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"],
+				},
+--				[421] = { arrows }
+--				[422] = { bullets }
+				[444] = {
+					["id"] = "SYSTEM_EQUIPMENT_ACCOUNTBOUND",
+					["text"] = ArkInventory.Localise["CATEGORY_SYSTEM_EQUIPMENT_ACCOUNTBOUND"],
 				},
 				[423] = {
 					["id"] = "SYSTEM_PET_COMPANION_BOUND",
@@ -574,10 +577,7 @@ ArkInventory.Const = { -- constants
 					["id"] = "EMPTY_BAG",
 					["text"] = ArkInventory.Localise["WOW_AH_CONTAINER_BAG"],
 				},
---				[303] = {
---					["id"] = "EMPTY_KEY",
---					["text"] = ArkInventory.Localise["WOW_ITEM_TYPE_KEY"],
---				},
+--				[303] = { empty key },
 				[305] = {
 					["id"] = "EMPTY_HERB",
 					["text"] = ArkInventory.Localise["WOW_SKILL_HERBALISM"],
@@ -610,10 +610,7 @@ ArkInventory.Const = { -- constants
 					["id"] = "EMPTY_TACKLE",
 					["text"] = ArkInventory.Localise["WOW_SKILL_FISHING"],
 				},
---				[315] = {
---					["id"] = "EMPTY_VOID",
---					["text"] = VOID_STORAGE,
---				},
+--				[315] = { empty void storage },
 			},
 			Other = { -- do NOT change the indicies - if you have to then see the ConvertOldOptions( ) function to remap it
 				[901] = {
@@ -910,9 +907,12 @@ ArkInventory.Const = { -- constants
 	
 	DatabaseDefaults = { },
 	
-	Soulbound = { ITEM_BIND_ON_PICKUP, ITEM_SOULBOUND, ITEM_BIND_TO_BNETACCOUNT, ITEM_BNETACCOUNTBOUND, ITEM_BIND_TO_ACCOUNT },
+	Soulbound = { ITEM_SOULBOUND, ITEM_BIND_ON_PICKUP },
+	Accountbound = { ITEM_ACCOUNTBOUND, ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT, ITEM_BNETACCOUNTBOUND },
 	
 	MountTypes = { "l", "a", "u" },
+	
+	booleantable = { true, false },
 	
 }
 
@@ -1624,6 +1624,10 @@ ArkInventory.Const.DatabaseDefaults.global = {
 				["enable"] = true,
 				["source"] = true,
 				["description"] = true,
+				["mouseover"] = {
+					["enable"] = true,
+					["detailed"] = true,
+				},
 			},
 		},
 		["tracking"] = {
@@ -3284,9 +3288,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	-- local debuginfo = { ["m"]=gcinfo( ), ["t"]=GetTime( ) }
 
 	-- pet journal pets
-	if i.loc_id == ArkInventory.Const.Location.Pet then
-		
-		if not C_PetJournal.IsJournalUnlocked( ) then return end
+	if ( i.loc_id == ArkInventory.Const.Location.Pet ) then
 		
 		if i.bp then
 			if i.sb then
@@ -3305,12 +3307,12 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	-- mounts
-	if i.loc_id == ArkInventory.Const.Location.Mount then
+	if ( i.loc_id == ArkInventory.Const.Location.Mount ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT" )
 	end
 	
 	-- tokens
-	if i.loc_id == ArkInventory.Const.Location.Token then
+	if ( i.loc_id == ArkInventory.Const.Location.Token ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_TOKEN" )
 	end
 	
@@ -3318,7 +3320,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	local class, _, itemName, _, itemRarity, _, _, itemType, itemSubType, _, equipSlot = ArkInventory.ObjectInfo( i.h )
 	
 	-- (caged) battle pets
-	if class == "battlepet" then
+	if ( class == "battlepet" ) then
 		if i.sb then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_BOUND" )
 		else
@@ -3334,28 +3336,30 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	--ArkInventory.Output( "bag[", i.bag_id, "], slot[", i.slot_id, "] = ", itemType )
 	
 	-- no item info
-	if itemName == nil then
+	if ( itemName == nil ) then
 		return nil
 	end
 	
 	-- trash
-	if itemRarity == 0 then
+	if ( itemRarity == 0 ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_TRASH" )
 	end
 	
 	-- quest items
-	if itemType == ArkInventory.Localise["WOW_AH_QUEST"] then
+	if ( itemType == ArkInventory.Localise["WOW_AH_QUEST"] ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_QUEST" )
 	end
 	
 	-- bags / containers
-	if equipSlot == "INVTYPE_BAG" or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_CONTAINER"] ) then	
+	if ( equipSlot == "INVTYPE_BAG" ) or ArkInventory.PT_ItemInSets( i.h, ArkInventory.Localise["PT_CATEGORY_CONTAINER"] ) then	
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_CONTAINER" )
 	end
 	
 	-- equipment
-	if itemType == ArkInventory.Localise["WOW_AH_WEAPON"] or itemType == ArkInventory.Localise["WOW_AH_ARMOR"] or equipSlot ~= "" then
-		if i.sb then
+	if ( itemType == ArkInventory.Localise["WOW_AH_WEAPON"] ) or ( itemType == ArkInventory.Localise["WOW_AH_ARMOR"] ) or ( equipSlot ~= "" ) then
+		if i.ab then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_ACCOUNTBOUND" )
+		elseif i.sb then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_SOULBOUND" )
 		else
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT" )
@@ -3363,7 +3367,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	-- gems
-	if itemType == ArkInventory.Localise["WOW_AH_GEM"] then
+	if ( itemType == ArkInventory.Localise["WOW_AH_GEM"] ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_GEM" )
 	end
 	
@@ -3836,7 +3840,7 @@ function ArkInventory.ItemCacheClear( h )
 		
 		for loc_id in pairs( ArkInventory.Global.Location ) do
 			for bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
-				for sb = 0, 1 do
+				for _, sb in ipairs( ArkInventory.Const.booleantable ) do
 					
 					id = ArkInventory.ObjectIDCacheRule( loc_id, bag_id, sb, h )
 					ArkInventory.Global.Cache.Rule[id] = nil
@@ -6248,7 +6252,7 @@ function ArkInventory.Frame_Item_Update_Texture( frame )
 		
 		-- item texture
 		local t = i.texture or ArkInventory.ObjectInfoTexture( i.h )
-		local r, g, b = GetItemQualityColor( 0 )
+		local r, g, b = ArkInventory.GetItemQualityColor( 0 )
 		ArkInventory.SetItemButtonTexture( frame, t, r, g, b )
 	
 	else
@@ -6382,9 +6386,9 @@ function ArkInventory.Frame_Item_Update_Count( frame )
 	
 	if i and i.h then
 		class, speciesID, level = ArkInventory.ObjectStringDecode( i.h )
-		if class == "battlepet" then
+		if ( class == "battlepet" ) then
 			count = level
-			if level == 1 and i.loc_id == ArkInventory.Const.Location.Pet then
+			if ( level == 1 ) and ( i.loc_id == ArkInventory.Const.Location.Pet ) then
 				level = nil
 			end
 		else
@@ -6475,14 +6479,14 @@ function ArkInventory.Frame_Item_Update_Border( frame )
 			-- border colour
 			local i = ArkInventory.Frame_Item_GetDB( frame )
 			
-			local r, g, b = GetItemQualityColor( 0 )
+			local r, g, b = ArkInventory.GetItemQualityColor( 0 )
 			local a = 0.6
 			
 			if i and i.h then
 				
 				if ArkInventory.LocationOptionGet( loc_id, "slot", "border", "rarity" ) then
 					if ( i.q or 0 ) >= ( ArkInventory.LocationOptionGet( loc_id, "slot", "border", "raritycutoff" ) or 0 ) then
-						r, g, b = GetItemQualityColor( i.q or 0 )
+						r, g, b = ArkInventory.GetItemQualityColor( i.q or 0 )
 						a = 1
 					end
 				end
@@ -7871,8 +7875,8 @@ end
 
 function ArkInventory.Frame_Changer_Battlepet_OnClick( frame )
 	
-	local type, petID = GetCursorInfo( )
-	if type == "battlepet" then
+	local objectType, petID = GetCursorInfo( )
+	if ( objectType == "battlepet" ) then
 		C_PetJournal.SetPetLoadOutInfo( frame:GetID( ), petID )
 		PetJournal_UpdatePetLoadOut( )
 		ClearCursor( )
@@ -7887,7 +7891,8 @@ end
 
 function ArkInventory.Frame_Changer_Battlepet_OnEnter( frame )
 	local petID = C_PetJournal.GetPetLoadOutInfo( frame:GetID( ) )
-	local h = ArkInventory.BattlepetBaseHyperlinkFromPetID( petID )
+	--local h = ArkInventory.BattlepetBaseHyperlinkFromPetID( petID )
+	local h = C_PetJournal.GetBattlePetLink( petID )
 	--ArkInventory.Output( h )
 	ArkInventory.GameTooltipSetPosition( frame )
 	ArkInventory.TooltipSetBattlepet( GameTooltip, h )
@@ -7936,33 +7941,25 @@ function ArkInventory.Frame_Changer_Battlepet_Update( )
 		i.bag_id = bag_id
 		i.slot_id = slot_id
 		
-		if C_PetJournal.IsJournalUnlocked( ) then
+		local petID, ability1ID, ability2ID, ability3ID, locked = C_PetJournal.GetPetLoadOutInfo( slot_id )
+		if petID and ( not locked ) then
 			
-			local petID, ability1ID, ability2ID, ability3ID, locked = C_PetJournal.GetPetLoadOutInfo( slot_id )
-			if petID and ( not locked ) then
-				
-				local speciesID, customName, level, xp, maxXp, displayID, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
-				local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
-				
-				if isWild then
-					i.q = rarity and ( rarity - 1 )
-				else	
-					i.q = 1
-				end
-				
-				i.h = C_PetJournal.GetBattlePetLink( petID )
-				i.sb = ( ( not tradable ) and true ) or nil
-				i.count = 1
-				i.pid = petID
-				i.bp = ( canBattle and true ) or nil
-				i.cn = customName
-				i.locked = locked
-				
+			local speciesID, customName, level, xp, maxXp, displayID, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
+			local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
+			
+			if isWild and canBattle then
+				i.q = ( rarity and ( rarity - 1 ) ) or 1
+			else
+				i.q = 1
 			end
 			
-		else
-			
-			i.texture = [[Interface\PetBattles\PetBattle-LockIcon]]
+			i.h = C_PetJournal.GetBattlePetLink( petID )
+			i.sb = ( ( not tradable ) and true ) or nil
+			i.count = 1
+			i.pid = petID
+			i.bp = ( canBattle and true ) or nil
+			i.cn = customName
+			i.locked = locked
 			
 		end
 		
@@ -8854,10 +8851,14 @@ function ArkInventory.BlizzardAPIHookBattlepetTooltip( disable )
 	
 	if disable or not ArkInventory.db.global.option.tooltip.battlepet.enable then
 		
+		ItemRefTooltip:Hide( )
+		
 		ArkInventory.MyUnhook( "FloatingBattlePet_Show", "HookFloatingBattlePet_Show" )
 		ArkInventory.MyUnhook( "BattlePetToolTip_Show", "HookBattlePetToolTip_Show" )
 		
 	else
+		
+		FloatingBattlePetTooltip:Hide( )
 		
 		ArkInventory.MySecureHook( "BattlePetToolTip_Show", ArkInventory.HookBattlePetToolTip_Show )
 		ArkInventory.MySecureHook( "FloatingBattlePet_Show", ArkInventory.HookFloatingBattlePet_Show )
@@ -9021,7 +9022,7 @@ function ArkInventory.GameTooltipSetHyperlink( frame, h )
 	
 	ArkInventory.GameTooltipSetPosition( frame )
 	
-	if class == "battlepet" then
+	if ( class == "battlepet" ) then
 		
 		ArkInventory.TooltipSetBattlepet( GameTooltip, h )
 		

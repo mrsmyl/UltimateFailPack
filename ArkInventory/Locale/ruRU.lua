@@ -71,8 +71,6 @@ if not L then return end
 	
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "Материалы"
-	L["CATEGORY_SYSTEM_EQUIPMENT"] = "Оснащение (не персональное)"
-	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "Оснащение (персональное)"
 	
 	
 --	consumable category descriptions
@@ -223,9 +221,10 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"] = ""
 	
 --	L["CONFIG_SYSTEM_BUGFIX"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = ""
@@ -516,8 +515,11 @@ if not L then return end
 	L["MISC_ALERT_FRAMELEVEL_1"] = "Выполнен багфикс."
 	L["MISC_ALERT_FRAMELEVEL_2"] = "FrameLevel для окна %1$s был равен %2$s и сброшен до %3$s для уверенной работоспособности. Извините за небольшой лаг, вызванный этим фиксом."
 	
---	L["BATTLEPET_CAPTURE_UNABLE"] = ""
---	L["BATTLEPET_CAPACITY"] = ""
+--	L["BATTLEPET_OPPONENT_IMMUNE"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN_MAX"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UNKNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UPGRADE"] = ""
 	
 	
 --	item count tooltip
@@ -587,6 +589,7 @@ if not L then return end
 --	L["CLICK_TO_DESELECT"] = ""
 --	L["CLICK_TO_IGNORE"] = ""	
 	L["ORDER"] = "Порядок"
+--	L["MOUSEOVER"] = ""
 	
 	
 -- libdatabroker

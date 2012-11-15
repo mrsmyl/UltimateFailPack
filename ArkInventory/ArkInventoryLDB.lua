@@ -227,8 +227,6 @@ end
 
 function ArkInventory.LDB.Pets:Update( )
 	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
-	
 	local companionType = "CRITTER"
 	
 	ArkInventory.LDB.Pets.Cleanup( )
@@ -266,8 +264,6 @@ function ArkInventory.LDB.Pets:Update( )
 end
 
 function ArkInventory.LDB.Pets:OnTooltipShow( )
-	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
 	
 	local companionType = "CRITTER"
 	
@@ -308,8 +304,6 @@ function ArkInventory.LDB.Pets:OnTooltipShow( )
 end
 
 function ArkInventory.LDB.Pets:OnClick( button )
-	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
 	
 	if IsModifiedClick( "CHATLINK" ) then
 		
@@ -355,8 +349,6 @@ end
 
 function ArkInventory.LDB.Pets.Cleanup( )
 	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
-	
 	local companionType = "CRITTER"
 	
 	-- check for an remove any selected companions we no longer have (theyve either been caged or released)
@@ -387,8 +379,6 @@ end
 
 
 function ArkInventory.LDB.Mounts:Update( useMapZone )
-	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
 	
 	local companionType = "MOUNT"
 	
@@ -442,7 +432,7 @@ function ArkInventory.LDB.Mounts:OnTooltipShow( ... )
 	
 	local companionType = "MOUNT"
 	
-	self:AddDoubleLine( ArkInventory.Localise["LDB_MOUNTS_TOOLTIP_MODE"], ArkInventory.Localise["LDB_MOUNTS_TOOLTIP_SELECTION"] )
+	self:AddDoubleLine( MODE, ArkInventory.Localise["LDB_MOUNTS_TOOLTIP_SELECTION"] )
 	
 	for _, mountType in ipairs( ArkInventory.Const.MountTypes ) do
 		
@@ -579,8 +569,6 @@ function ArkInventory.LDB.Mounts:OnClick( button )
 end
 
 function ArkInventory.LDB.Mounts.Cleanup( )
-	
-	if not C_PetJournal.IsJournalUnlocked( ) then return end
 	
 	local companionType = "MOUNT"
 	

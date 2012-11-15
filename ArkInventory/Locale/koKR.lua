@@ -71,8 +71,6 @@ if not L then return end
 	
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "중요 재료"
-	L["CATEGORY_SYSTEM_EQUIPMENT"] = "착용장비 (착용 시 귀속)"
-	L["CATEGORY_SYSTEM_EQUIPMENT_SOULBOUND"] = "착용장비(귀속 아이템)"
 	
 	
 --	consumable category descriptions
@@ -223,9 +221,10 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_VAULT_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_ENABLE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_SOURCE_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_DESCRIPTION_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_CUSTOM_ENABLE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_BATTLEPET_MOUSEOVER_ENABLE_TEXT"] = ""
 	
 --	L["CONFIG_SYSTEM_BUGFIX"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_TEXT"] = ""
@@ -516,8 +515,11 @@ if not L then return end
 --	L["MISC_ALERT_FRAMELEVEL_1"] = ""
 --	L["MISC_ALERT_FRAMELEVEL_2"] = ""
 	
---	L["BATTLEPET_CAPTURE_UNABLE"] = ""
---	L["BATTLEPET_CAPACITY"] = ""
+--	L["BATTLEPET_OPPONENT_IMMUNE"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN_MAX"] = ""
+--	L["BATTLEPET_OPPONENT_KNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UNKNOWN"] = ""
+--	L["BATTLEPET_OPPONENT_UPGRADE"] = ""
 	
 	
 --	item count tooltip
@@ -587,6 +589,7 @@ if not L then return end
 --	L["CLICK_TO_DESELECT"] = ""
 --	L["CLICK_TO_IGNORE"] = ""	
 	L["ORDER"] = "순서"
+--	L["MOUSEOVER"] = ""
 	
 	
 -- libdatabroker
