@@ -87,10 +87,12 @@ HealBot_ConfigDefaults = {
   EnabledSpellTarget={},
   EnabledSpellTrinket1={},
   EnabledSpellTrinket2={},
+  EnabledAvoidBlueCursor={},
   DisabledKeyCombo = nil,
   DisabledSpellTarget={},
   DisabledSpellTrinket1={},
   DisabledSpellTrinket2={},
+  DisabledAvoidBlueCursor={},
   EnableHealthy = 1,
   ActionVisible = 0,
   HealBotDebuffText={},
@@ -451,10 +453,13 @@ HealBot_GlobalsDefaults = {
     },
 };
 
+local defaultAuthor = "Monti of Terenas"
 HealBot_Config_SkinsDefaults = {
   Skin_ID = 1,
   Current_Skin = HEALBOT_SKINS_STD,
   Skins = {HEALBOT_SKINS_STD, HEALBOT_OPTIONS_GROUPHEALS, HEALBOT_OPTIONS_EMERGENCYHEALS, HEALBOT_ZONE_AV},
+  Author = {[HEALBOT_SKINS_STD] = defaultAuthor, [HEALBOT_OPTIONS_GROUPHEALS] = defaultAuthor, 
+              [HEALBOT_OPTIONS_EMERGENCYHEALS] = defaultAuthor, [HEALBOT_ZONE_AV] = defaultAuthor,},
   numcols = {[HEALBOT_SKINS_STD] = 2, [HEALBOT_OPTIONS_GROUPHEALS] = 3, [HEALBOT_OPTIONS_EMERGENCYHEALS] = 4, [HEALBOT_ZONE_AV] = 3,},
   btexture = {[HEALBOT_SKINS_STD] = HealBot_Default_Textures[8].name, [HEALBOT_OPTIONS_GROUPHEALS] = HealBot_Default_Textures[16].name, 
               [HEALBOT_OPTIONS_EMERGENCYHEALS] = HealBot_Default_Textures[7].name, [HEALBOT_ZONE_AV] = HealBot_Default_Textures[9].name,},

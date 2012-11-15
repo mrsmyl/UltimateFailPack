@@ -907,4 +907,8 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "You are monitoring for missing buffs 
                                   [18]  = HEALBOT_ABOUT_FAQ_SPELLS_ANSWER01,
                               }
 
+HEALBOT_OPTIONS_SKINAUTHOR              = "Skin Author:"
+HEALBOT_OPTIONS_AVOIDBLUECURSOR         = "Avoid\nBlue Cursor"
+HEALBOT_PLAYER_OF_REALM                 = "of"
+
 end

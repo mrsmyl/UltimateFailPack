@@ -915,5 +915,8 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
                                   [18]  = HEALBOT_ABOUT_FAQ_SPELLS_ANSWER01,
                               }
 
+HEALBOT_OPTIONS_SKINAUTHOR              = "Auteur du Skin :"
+HEALBOT_OPTIONS_AVOIDBLUECURSOR         = "Eviter\nCurseur bleu"
+HEALBOT_PLAYER_OF_REALM                 = "de"
 
 end
