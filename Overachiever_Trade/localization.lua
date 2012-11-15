@@ -71,4 +71,9 @@ elseif (locale == "ptBR") then  -- Brazilian Portuguese
 -- L["TRADE_SKILLET_ACHSORT"] = ""
 
 
+elseif (locale == "itIT") then  -- Italian
+-- L["TRADE_COOKING_OBJRENAME"] = ""
+L["TRADE_SKILLET_ACHSORT"] = "Per Impresa"
+
+
 end

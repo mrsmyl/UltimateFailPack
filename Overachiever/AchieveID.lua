@@ -136,8 +136,16 @@ OVERACHIEVER_EXPLOREZONEID = {
 	["Sholazar Basin"] = 1268,
 	["The Storm Peaks"] = 1269,
 	["Zul'Drak"] = 1267,
--- Other (Cataclysm):
+-- Other Cataclysm-related:
 	["Deepholm"] = 4864,
+-- Pandaria:
+	["The Jade Forest"] = 6351,
+	["Krasarang Wilds"] = 6975,
+	["Kun-Lai Summit"] = 6976,
+	["Valley of the Four Winds"] = 6969,
+	["Townlong Steppes"] = 6977,
+	["Dread Wastes"] = 6978,
+	["Vale of Eternal Blossoms"] = 6979,
 };
 -- "Explore Cataclysm": 4868
 

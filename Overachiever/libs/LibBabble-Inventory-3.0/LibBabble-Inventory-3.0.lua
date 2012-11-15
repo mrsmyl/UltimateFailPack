@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Inventory-3.0
-Revision: $Rev: 159 $
+Revision: $Rev: 161 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-inventory-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Inventory-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 159 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 161 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -281,7 +281,7 @@ elseif GAME_LOCALE == "deDE" then
 	Mining = "Bergbau",
 	["Mining Bag"] = "Bergbautasche",
 	Miscellaneous = "Verschiedenes",
-	-- Money = "",
+	Money = "Geld",
 	Mount = "Reittier",
 	Mounts = "Reittiere",
 	Neck = "Hals",
@@ -446,7 +446,7 @@ elseif GAME_LOCALE == "frFR" then
 	Mining = "Minage",
 	["Mining Bag"] = "Sac de mineur",
 	Miscellaneous = "Divers",
-	-- Money = "",
+	Money = "Argent", -- Needs review
 	Mount = "Monture",
 	Mounts = "Montures",
 	Neck = "Cou",
@@ -1272,7 +1272,7 @@ elseif GAME_LOCALE == "itIT" then
 	Mining = "Estrazione",
 	["Mining Bag"] = "Sacca da Minatore",
 	Miscellaneous = "Varie",
-	-- Money = "",
+	Money = "Denaro",
 	Mount = "Cavalcatura",
 	Mounts = "Cavalcature",
 	Neck = "Collo",
@@ -1767,7 +1767,7 @@ elseif GAME_LOCALE == "zhTW" then
 	Mining = "採礦",
 	["Mining Bag"] = "礦石包",
 	Miscellaneous = "其他",
-	Money = "金錢", -- Needs review
+	Money = "金錢",
 	Mount = "座騎",
 	Mounts = "座騎",
 	Neck = "頸部",

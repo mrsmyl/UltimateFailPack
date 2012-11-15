@@ -1,5 +1,5 @@
 
-Overachiever v0.67
+Overachiever v0.68
 ==============================
 
 Author: Tuhljin
@@ -106,6 +106,23 @@ Change log
 ==========
 
 The change log lists changes of particular note to users, not every change made.
+
+v0.68
+- Tabs module: Improved performance when switching tabs and scrolling through achievement lists.
+- Suggestions Tab:
+-- Instance difficulty and raid size override options added. Use them to see suggestions that have particular
+   difficulty and/or raid size requirements without having to change your actual instance/group settings.
+-- Numerous suggestions added for Mists of Pandaria zones, battlegrounds, and dungeons.
+-- Now suggests "Big City Pet Brawlin' - Alliance" and "Big City Pet Brawlin' - Horde" when in an Alliance or Horde
+   capital city, respectively.
+-- The "Complete X quests" achievements for Loch Modan and Wetlands were merged into one achievement. Likewise,
+   those for Westfall and Duskwood were merged. Suggestions updated to reflect this.
+-- Several Horde-specific achievements were merged into their Alliance-specific counterparts. (For instance, "Hail to
+   the Chef" had a Horde version and an Alliance version with separate IDs. The ID used by Alliance characters is now
+   also used by Horde characters.) Suggestions updated to reflect this.
+- Italian localization (itIT) is now supported.
+- Remember, translations are provided by users like you. Thanks for your generosity! Please help contribute if you are
+  able: http://wow.curseforge.com/projects/overachiever/localization/
 
 v0.67
 - "To All the Squirrels I Once Caressed?" (new): Critters' /loved status for this achievement is now part of the option

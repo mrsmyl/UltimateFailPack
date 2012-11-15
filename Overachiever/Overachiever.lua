@@ -5,7 +5,8 @@
 --
 
 
--- Overachiever_Debug = true
+--Overachiever_Debug = true
+
 
 local THIS_VERSION = GetAddOnMetadata("Overachiever", "Version")
 local THIS_TITLE = GetAddOnMetadata("Overachiever", "Title")
@@ -112,6 +113,8 @@ end
 
 local function isAchievementInUI(id, checkNext)
 -- Return true if the achievement should be found in the standard UI
+  local StartTime
+  if (Overachiever_Debug) then  StartTime = debugprofilestop();  end
   if (checkNext) then
     local nextID, completed = GetNextAchievement(id)
     if (nextID and completed) then
@@ -127,8 +130,13 @@ local function isAchievementInUI(id, checkNext)
   end
   local cat = GetAchievementCategory(id)
   for i=1,GetCategoryNumAchievements(cat) do
-    if (GetAchievementInfo(cat, i) == id) then  return true;  end
+    if (GetAchievementInfo(cat, i) == id) then
+      if (Overachiever_Debug) then  print("- isAchievementInUI:"..(id or "nil")..": TRUE. Took "..(debugprofilestop() - StartTime) .." ms.");  end
+      return true
+    end
   end
+  if (Overachiever_Debug) then  print("- isAchievementInUI:"..(id or "nil")..": FALSE. Took "..(debugprofilestop() - StartTime) .." ms.");  end
+  return false
 end
 
 local function openToAchievement(id, canToggleTracking)
@@ -941,20 +949,20 @@ function Overachiever.OnEvent(self, event, arg1, ...)
     hooksecurefunc(GameTooltip, "SetHyperlink", Overachiever.ExamineAchievementTip)
     
     local StartTime
-    if (Overachiever_Debug) then  StartTime = GetTime();  end
+    if (Overachiever_Debug) then  StartTime = debugprofilestop();  end
     
     Overachiever.BuildItemLookupTab(THIS_VERSION)
     Overachiever.BuildItemLookupTab = nil
 
     if (Overachiever_Debug) then
       local prev = StartTime
-      StartTime = GetTime()
-      chatprint("Building/retrieving food/drink lookup tables took "..(StartTime - prev).." seconds.")
+      StartTime = debugprofilestop()
+      chatprint("Building/retrieving food/drink lookup tables took "..(StartTime - prev)/1000 .." seconds.")
     end
 
     BuildCriteriaLookupTab_check()
     if (Overachiever_Debug) then
-      chatprint("Building other criteria lookup tables took "..(GetTime() - StartTime).." seconds.")
+      chatprint("Building other criteria lookup tables took "..(debugprofilestop() - StartTime)/1000 .." seconds.")
     end
 
   elseif (event == "ZONE_CHANGED_NEW_AREA") then
