@@ -1,9 +1,15 @@
 ------------------------------------------------------------------------
-r1223 | elsia | 2012-11-08 06:50:06 +0000 (Thu, 08 Nov 2012) | 1 line
+r1225 | elsia | 2012-11-28 14:11:30 +0000 (Wed, 28 Nov 2012) | 1 line
 Changed paths:
-   A /tags/v5.0.5b release (from /trunk:1222)
+   A /tags/v5.1.0 release (from /trunk:1224)
 
-Tagging as v5.0.5b release
+Tagging as v5.1.0 release
+------------------------------------------------------------------------
+r1224 | elsia | 2012-11-28 14:02:27 +0000 (Wed, 28 Nov 2012) | 1 line
+Changed paths:
+   M /trunk/Recount.toc
+
+- TOC bump
 ------------------------------------------------------------------------
 r1222 | elsia | 2012-11-04 02:10:30 +0000 (Sun, 04 Nov 2012) | 3 lines
 Changed paths:
