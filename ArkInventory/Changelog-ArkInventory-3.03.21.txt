@@ -1,10 +1,42 @@
 ------------------------------------------------------------------------
-r384 | arkayenro | 2012-11-16 10:11:51 +0000 (Fri, 16 Nov 2012) | 3 lines
+r386 | arkayenro | 2012-11-28 09:27:13 +0000 (Wed, 28 Nov 2012) | 7 lines
 Changed paths:
-   A /tags/3.03.20 (from /trunk:383)
+   A /tags/3.03.21 (from /trunk:385)
 
-*3.03.20 (16-NOV-2012)*
- * fixed - code error
+*3.03.21 (28-NOV-2012)*
+ * changed - toc updated to 50100
+ * fixed - issue with item tracking object not updating
+ * fixed - issue with battlepet opponent detail output not linking all your pets
+ * fixed - issue with normaltexture going green
+ * added - new sort key - internal id (class:itemid:soulbound)
+
+------------------------------------------------------------------------
+r385 | arkayenro | 2012-11-28 09:20:03 +0000 (Wed, 28 Nov 2012) | 7 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryLDB.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/Locale/deDE.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Locale/esES.lua
+   M /trunk/Locale/esMX.lua
+   M /trunk/Locale/frFR.lua
+   M /trunk/Locale/koKR.lua
+   M /trunk/Locale/ruRU.lua
+   M /trunk/Locale/zhCN.lua
+   M /trunk/Locale/zhTW.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.toc
+   M /trunk/Modules/ArkInventoryRulesExample/ArkInventoryRulesExample.toc
+   M /trunk/VersionHistory.txt
+
+*3.03.21 (28-NOV-2012)*
+ * changed - toc updated to 50100
+ * fixed - issue with item tracking object not updating
+ * fixed - issue with battlepet opponent detail output not linking all your pets
+ * fixed - issue with normaltexture going green
+ * added - new sort key - internal id (class:itemid:soulbound)
 
 ------------------------------------------------------------------------
 r383 | arkayenro | 2012-11-16 10:09:00 +0000 (Fri, 16 Nov 2012) | 3 lines
