@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.7: new autogemming functionality
+-- Version 1.7.1: fix cogwheel bug
 ------------------------------------------------------------
 
 
-PawnVersion = 1.7
+PawnVersion = 1.701
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -2270,7 +2270,7 @@ function PawnGetBestSingleGemForScale(ScaleName, Color, ItemLevel)
 		if Color == "RedSocket" or Color == "YellowSocket" or Color == "BlueSocket" then
 			GemQuality = PawnGetGemQualityForItem(PawnGemQualityLevels, ItemLevel)
 		elseif Color == "CogwheelSocket" then
-			GemQuality = PawnGetGemQualityForItem(PawnGemCogwheelQualityLevels, ItemLevel)
+			GemQuality = PawnGetGemQualityForItem(PawnCogwheelQualityLevels, ItemLevel)
 		elseif Color == "MetaSocket" then
 			GemQuality = PawnGetGemQualityForItem(PawnMetaGemQualityLevels, ItemLevel)
 		elseif Color == "ShaTouchedSocket" then
