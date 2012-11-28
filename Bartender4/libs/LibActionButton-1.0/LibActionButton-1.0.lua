@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ]]
 local MAJOR_VERSION = "LibActionButton-1.0"
-local MINOR_VERSION = 33
+local MINOR_VERSION = 35
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -1219,13 +1219,6 @@ function UpdateOverlayGlow(self)
 	local spellId = self:GetSpellId()
 	if spellId and IsSpellOverlayed(spellId) then
 		ShowOverlayGlow(self)
-	elseif self._state_type == "action" then
-		local actionType, id = GetActionInfo(self._state_action)
-		if actionType == "flyout" and FlyoutHasSpell(id, arg1) then
-			ShowOverlayGlow(self)
-		else
-			HideOverlayGlow(self)
-		end
 	else
 		HideOverlayGlow(self)
 	end
@@ -1344,7 +1337,7 @@ Action.GetSpellId              = function(self)
 		return spellId
 	end
 end
-Generic.GetLossOfControlCooldown = function(self) return GetActionLossOfControlCooldown(self._state_action) end
+Action.GetLossOfControlCooldown = function(self) return GetActionLossOfControlCooldown(self._state_action) end
 
 -----------------------------------------------------------
 --- Spell Button
