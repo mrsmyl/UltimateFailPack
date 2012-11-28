@@ -1,9 +1,27 @@
 ------------------------------------------------------------------------
-r103 | tuhljin | 2012-11-14 10:48:59 +0000 (Wed, 14 Nov 2012) | 1 line
+r106 | tuhljin | 2012-11-22 02:57:03 +0000 (Thu, 22 Nov 2012) | 1 line
 Changed paths:
-   A /tags/v0.68 (from /trunk:102)
+   A /tags/v0.69 (from /trunk:105)
 
-Tagging as v0.68
+Tagging as v0.69
+------------------------------------------------------------------------
+r105 | tuhljin | 2012-11-22 02:54:08 +0000 (Thu, 22 Nov 2012) | 1 line
+Changed paths:
+   M /trunk/readme.txt
+
+- Update readme.txt.
+------------------------------------------------------------------------
+r104 | tuhljin | 2012-11-21 03:29:02 +0000 (Wed, 21 Nov 2012) | 2 lines
+Changed paths:
+   M /trunk/GameTip.lua
+   M /trunk/Overachiever.toc
+   M /trunk/Overachiever_Tabs/Overachiever_Tabs.toc
+   M /trunk/Overachiever_Trade/Overachiever_Trade.toc
+   M /trunk/localization.lua
+   M /trunk/readme.txt
+
+- Fixed an issue where critters that were reclassified as wild pets wouldn't trigger achievement reminders.
+- "Turkey Lurkey": Fixed an issue where the proper tooltip reminder wouldn't be displayed in some cases.
 ------------------------------------------------------------------------
 r102 | tuhljin | 2012-11-14 10:32:33 +0000 (Wed, 14 Nov 2012) | 8 lines
 Changed paths:

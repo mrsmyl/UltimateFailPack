@@ -170,7 +170,7 @@ local RaceClassAch = {
     { "BloodElf", "Draenei", "Dwarf", "Gnome", "Goblin", "Human", "NightElf", "Orc", "Tauren", "Troll", "Scourge", "Worgen" }, true
   },
   TurkeyLurkey = { "TurkeyLurkey_feathered", L.ACH_TURKEYLURKEY_COMPLETE, L.ACH_TURKEYLURKEY_INCOMPLETE,
-    { "BloodElf ROGUE", "Dwarf ROGUE", "Gnome ROGUE", "Human ROGUE", "NightElf ROGUE", "Orc ROGUE", "Troll ROGUE", "Scourge ROGUE" }
+    { "BloodElf ROGUE", "Dwarf ROGUE", "Gnome ROGUE", "Goblin ROGUE", "Human ROGUE", "NightElf ROGUE", "Orc ROGUE", "Troll ROGUE", "Scourge ROGUE", "Worgen ROGUE" }
   },
   BunnyMaker = { "BunnyMaker_eared", L.ACH_BUNNYMAKER_COMPLETE, L.ACH_BUNNYMAKER_INCOMPLETE,
     { "BloodElf", "Draenei", "Dwarf", "Gnome", "Goblin", "Human", "NightElf", "Orc", "Tauren", "Troll", "Scourge", "Worgen" }, true,
@@ -262,7 +262,8 @@ function Overachiever.ExamineSetUnit(tooltip)
     end
 
   elseif (name) then
-    if (UnitCreatureType(unit) == L.CRITTER) then
+    local type = UnitCreatureType(unit)
+    if (type == L.CRITTER or type == L.WILDPET) then
       for key,tab in pairs(CritterAch) do
         if (Overachiever_Settings[ tab[1] ]) then
           id, text, complete = CritterCheck(key, name)

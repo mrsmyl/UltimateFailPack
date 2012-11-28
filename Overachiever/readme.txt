@@ -1,5 +1,5 @@
 
-Overachiever v0.68
+Overachiever v0.69
 ==============================
 
 Author: Tuhljin
@@ -106,6 +106,10 @@ Change log
 ==========
 
 The change log lists changes of particular note to users, not every change made.
+
+v0.69
+- Fixed an issue where critters that were reclassified as wild pets wouldn't trigger achievement reminders.
+- "Turkey Lurkey": Fixed an issue where the proper tooltip reminder wouldn't be displayed in some cases.
 
 v0.68
 - Tabs module: Improved performance when switching tabs and scrolling through achievement lists.
