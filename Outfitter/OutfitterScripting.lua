@@ -806,9 +806,9 @@ end
 
 local zoneText = GetRealZoneText()
 if setting.DisableVashjir
-and (zoneText == Outfitter.LZ["Abyssal Depths"]
-or zoneText == Outfitter.LZ["Kelp'thar Forest"]
-or zoneText == Outfitter.LZ["Shimmering Expanse"]) then
+and (zoneText == GetMapNameByID(614) -- Abyssal Depths
+or zoneText == GetMapNameByID(610) -- Kelp'thar Forest
+or zoneText == GetMapNameByID(615)) then -- Shimmering Expanse
     return
 end
 
@@ -1240,7 +1240,7 @@ and GetNumGroupMembers() == 0 then
     equip = true
 elseif setting.EquipGroup
 and GetNumGroupMembers() ~= 0
-and !IsInRaid() then
+and not IsInRaid() then
     equip = true
 elseif setting.EquipRaid
 and IsInRaid() then
@@ -1553,7 +1553,7 @@ end
 -- $EVENTS QUEST_LOG_UPDATE ZONE_CHANGED ZONE_CHANGED_NEW_AREA ZONE_CHANGED_INDOORS
 -- $DESC Equips the outfit when you're on the Multiphase Survey quest and enter Nagrand, unequips when you complete the quest or leave Nagrand
 
-if GetZoneText() == Outfitter.LZ["Nagrand"] then
+if GetZoneText() == GetMapNameByID(477) then -- Nagrand
 	local vOnQuest, vCompleted = Outfitter:PlayerIsOnQuestID(11880)
 	
     if vOnQuest and not vCompleted then
@@ -1642,14 +1642,14 @@ elseif event == "TRADE_SKILL_UPDATE" then
         equip = false
     end
 end
-if setting.Ragnaros and equip ~= nil and not IsFlying() then
+if setting.Ragnaros and equip ~= nil then
     if equip then
         self.savedCompanionID = Outfitter:GetSummonedCompanionID()
-        Outfitter:SummonCompanionByID(234441, 0.2)
+        Outfitter:SummonCompanionByGUID("0x00000000000393c9", 0.2)
     elseif self.savedCompanionID then
-        Outfitter:SummonCompanionByID(self.savedCompanionID, 0.2)
+        Outfitter:SummonCompanionByGUID(self.savedCompanionID, 0.2)
     else
-        Outfitter:DismissCompanionByID(234441)
+        Outfitter:DismissCompanionByGUID("0x00000000000393c9")
     end
 end
 ]],
@@ -1663,38 +1663,39 @@ end
 -- $EVENTS PLAYER_ENTERING_WORLD
 -- $DESC Equips the outfit when you're in a 5 player level 80 instance
 
-local name, type, difficulty, difficultyName = GetInstanceInfo()
-
+local name, instanceType, difficultyIndex, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, mapID = GetInstanceInfo()
+Outfitter:TestMessage("mapID = %s", tostring(mapID))
 if type == "party"
-and (name == Outfitter.LZ["Trial of the Champion"]
-or name == Outfitter.LZ["The Culling of Stratholme"]
-or name == Outfitter.LZ["Halls of Lightning"]
-or name == Outfitter.LZ["The Oculus"]
-or name == Outfitter.LZ["Utgarde Pinnacle"]
-or name == Outfitter.LZ["The Forge of Souls"]
-or name == Outfitter.LZ["Pit of Saron"]
-or name == Outfitter.LZ["Halls of Reflection"]
-or name == Outfitter.LZ["The Stonecore"]
-or name == Outfitter.LZ["The Vortex Pinnacle"]
-or name == Outfitter.LZ["Grim Batol"]
-or name == Outfitter.LZ["Halls of Origination"]
-or name == Outfitter.LZ["Lost City of the Tol'vir"]
-or name == Outfitter.LZ["End Time"]
-or name == Outfitter.LZ["Well of Eternity"]
-or name == Outfitter.LZ["Hour of Twilight"]
+and (name == GetMapNameByID(542) -- Trial of the Champion
+or name == GetMapNameByID(521) -- The Culling of Stratholme
+or name == GetMapNameByID(525) -- Halls of Lightning
+or name == GetMapNameByID(528) -- The Oculus
+or name == GetMapNameByID(524) -- Utgarde Pinnacle
+or name == GetMapNameByID(601) -- The Forge of Souls
+or name == GetMapNameByID(602) -- Pit of Saron
+or name == GetMapNameByID(603) -- Halls of Reflection
+or name == GetMapNameByID(768) -- The Stonecore
+or name == GetMapNameByID(769) -- The Vortex Pinnacle
+or name == GetMapNameByID(757) -- Grim Batol
+or name == GetMapNameByID(759) -- Halls of Origination
+or name == GetMapNameByID(747) -- Lost City of the Tol'vir
+or name == GetMapNameByID(820) -- End Time
+or name == GetMapNameByID(816) -- Well of Eternity
+or name == GetMapNameByID(819) -- Hour of Twilight
 or (difficulty == 2
-    and (name == Outfitter.LZ["Ahn'kahet: The Old Kingdom"]
-      or name == Outfitter.LZ["Azjol-Nerub"]
-      or name == Outfitter.LZ["Drak'Tharon Keep"]
-      or name == Outfitter.LZ["Gundrak"]
-      or name == Outfitter.LZ["Halls of Stone"]
-      or name == Outfitter.LZ["The Nexus"]
-      or name == Outfitter.LZ["Utgarde Keep"]
-      or name == Outfitter.LZ["Violet Hold"]
-      or name == Outfitter.LZ["Blackrock Caverns"]
-      or name == Outfitter.LZ["Deadmines"]
-      or name == Outfitter.LZ["Shadowfang Keep"]
-      or name == Outfitter.LZ["Throne of the Tides"]))) then
+    and (name == GetMapNameByID(522) -- Ahn'kahet: The Old Kingdom
+      or name == GetMapNameByID(533) -- Azjol-Nerub
+      or name == GetMapNameByID(534) -- Drak'Tharon Keep
+      or name == GetMapNameByID(530) -- Gundrak
+      or name == GetMapNameByID(526) -- Halls of Stone
+      or name == GetMapNameByID(520) -- The Nexus
+      or name == GetMapNameByID(523) -- Utgarde Keep
+      or name == GetMapNameByID(536) -- Violet Hold
+      or name == GetMapNameByID(753) -- Blackrock Caverns
+      or name == GetMapNameByID(756) -- Deadmines
+      or name == GetMapNameByID(764) -- Shadowfang Keep
+      or name == GetMapNameByID(767) -- Throne of the Tides
+      ))) then
     equip = true
 else
     equip = false
@@ -1744,18 +1745,18 @@ Outfitter.cScriptPrefix = [[
 		local didEquip, didUnequip, isEquipped = outfit.didEquip, outfit.didUnequip, Outfitter:WearingOutfit(outfit)
 		local time, setting = GetTime(), outfit.ScriptSettings
 		local run = Outfitter.Run
-		if true then
+		if true then -- wrap the user's code in a block to help ensure clearer error messages
 ]]
-
-Outfitter.cScriptPrefixNumLines = string.gsub(Outfitter.cScriptPrefix, "[^\n]+", ""):len()
-
+-- ...
 -- User's script will be inserted here
-
+-- ...
 Outfitter.cScriptSuffix = [[
-		end -- This 'if true then end' just makes for clearer error messages
+		end
 		self:PostProcess(equip, immediate, layer, delay, interrupt, time)
 	end
 ]]
+
+Outfitter.cScriptPrefixNumLines = string.gsub(Outfitter.cScriptPrefix, "[^\n]+", ""):len()
 
 Outfitter.cInputPrefix = "return {"
 Outfitter.cInputSuffix = "}"
