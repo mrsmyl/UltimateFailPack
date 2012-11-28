@@ -1,0 +1,16 @@
+tag v2.3
+be5750b3c9f6fbf5fb6357e41d2332c1e82b5487
+dnewell <newell.donald@gmail.com>
+2012-11-28 11:44:14 -0500
+
+Tagging as v2.3
+
+
+--------------------
+
+dnewell:
+	- updated version to 2.3
+	updated toc build for wow 5.1
+	- set shadoe priests to prefer spirit
+	- updated haste cap for resto druids
+	- updated feral model to ma out expertise and hit before other stats
