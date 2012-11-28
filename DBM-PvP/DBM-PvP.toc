@@ -1,5 +1,5 @@
-﻿## Interface: 50001
-## X-Min-Interface: 50000
+﻿## Interface: 50100
+## X-Min-Interface: 50001
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0PvP|r
 ## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0PvP|r
 ## Title-ruRU:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Поля Боя|r
@@ -37,7 +37,7 @@
 ## X-DBM-Mod-Name-ptBR: JxJ
 ## X-DBM-Mod-Sort: 75
 ## X-DBM-Mod-LoadZoneID: 461,443,401,540,482
-## X-Curse-Packaged-Version: 4.11.5
+## X-Curse-Packaged-Version: 4.11.6
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

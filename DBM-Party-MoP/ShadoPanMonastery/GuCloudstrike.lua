@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(673, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7882 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8106 $"):sub(12, -3))
 mod:SetCreatureID(56747)--56747 (Gu Cloudstrike), 56754 (Azure Serpent)
 mod:SetModelID(39489)
 mod:SetZone()
@@ -57,7 +57,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnInvokeLightning:Cancel()
 		timerStaticFieldCD:Cancel()
 		timerLightningBreathCD:Start()
-		timerMagneticShroudCD:Start(24)
+		timerMagneticShroudCD:Start(20)
 	elseif args:IsSpellID(110852) then
 		warnOverchargedSoul:Show()
 	end

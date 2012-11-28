@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(687, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8081 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8143 $"):sub(12, -3))
 mod:SetCreatureID(60701, 60708, 60709, 60710)--Adds: 60731 Undying Shadow, 60958 Pinning Arrow
 mod:SetModelID(41813)
 mod:SetZone()
@@ -32,11 +32,11 @@ local warnUndyingShadows		= mod:NewSpellAnnounce(117506, 3)--Target scanning?
 local warnFixate				= mod:NewTargetAnnounce(118303, 4)--Maybe spammy late fight, if zian is first boss you get? (adds are immortal, could be many up)
 local warnShieldOfDarkness		= mod:NewTargetAnnounce(117697, 4)
 --Meng
-local warnCrazyThought			= mod:NewCastAnnounce(117833, 2, nil, false)--Just doesn't seem all that important right now.
+local warnCrazyThought			= mod:NewCastAnnounce(117833, 2, nil, nil, false)--Just doesn't seem all that important right now.
 local warnMaddeningShout		= mod:NewSpellAnnounce(117708, 4)
 local warnCrazed				= mod:NewTargetAnnounce(117737, 3)--Basically stance change
 local warnCowardice				= mod:NewTargetAnnounce(117756, 3)--^^
-local warnDelirious				= mod:NewTargetAnnounce(117837, 3, nil, mod:CanRemoveEnrage())--Heroic Ability
+local warnDelirious				= mod:NewTargetAnnounce(117837, 4, nil, mod:CanRemoveEnrage() or mod:IsTank())--Heroic Ability
 --Qiang
 local warnAnnihilate			= mod:NewCastAnnounce(117948, 4)
 local warnFlankingOrders		= mod:NewSpellAnnounce(117910, 4)
@@ -54,13 +54,13 @@ local specWarnUndyingShadow		= mod:NewSpecialWarningSwitch("ej5854", mod:IsDps()
 local specWarnFixate			= mod:NewSpecialWarningYou(118303)
 local yellFixate				= mod:NewYell(118303)
 local specWarnCoalescingShadows	= mod:NewSpecialWarningMove(117558)
-local specWarnShadowBlast		= mod:NewSpecialWarningInterrupt(117628, mod:IsMelee())
+local specWarnShadowBlast		= mod:NewSpecialWarningInterrupt(117628, false)--very spammy. better to optional use
 local specWarnShieldOfDarkness	= mod:NewSpecialWarningTarget(117697, nil, nil, nil, true)--Heroic Ability
 local specWarnShieldOfDarknessD	= mod:NewSpecialWarningDispel(117697, isDispeller)--Heroic Ability
 --Meng
 local specWarnMaddeningShout	= mod:NewSpecialWarningSpell(117708, nil, nil, nil, true)
 local specWarnCrazyThought		= mod:NewSpecialWarningInterrupt(117833, false)--At discretion of whoever to enable. depending on strat, you may NOT want to interrupt these (or at least not all of them)
-local specWarnDelirious			= mod:NewSpecialWarningDispel(117837, mod:CanRemoveEnrage())--Heroic Ability
+local specWarnDelirious			= mod:NewSpecialWarningDispel(117837, mod:CanRemoveEnrage() or mod:IsTank())--Heroic Ability
 --Qiang
 local specWarnAnnihilate		= mod:NewSpecialWarningSpell(117948)--Maybe tweak options later or add a bool for it, cause on heroic, it's not likely ranged will be in front of Qiang if Zian or Subetai are up.
 local specWarnFlankingOrders	= mod:NewSpecialWarningSpell(117910, nil, nil, nil, true)
@@ -81,6 +81,7 @@ local timerShieldOfDarknessCD  	= mod:NewNextTimer(42.5, 117697)
 local timerMaddeningShoutCD		= mod:NewCDTimer(47, 117708)--47-50 sec variation. So a CD timer instead of next.
 local timerDeliriousCD			= mod:NewCDTimer(20.5, 117837, nil, mod:CanRemoveEnrage())
 --Qiang
+local timerMassiveAttackCD		= mod:NewCDTimer(5, 117921, nil, mod:IsTank())
 local timerAnnihilateCD			= mod:NewNextTimer(39, 117948)
 local timerFlankingOrdersCD		= mod:NewCDTimer(40, 117910)--Every 40 seconds on normal, but on heroic it has a 40-50 second variation so has to be a CD bar instead of next
 local timerImperviousShieldCD	= mod:NewCDTimer(42, 117961)
@@ -92,6 +93,8 @@ local timerSleightOfHandCD		= mod:NewCDTimer(42, 118162)
 local timerSleightOfHand		= mod:NewBuffActiveTimer(11, 118162)--2+9 (cast+duration)
 
 local berserkTimer				= mod:NewBerserkTimer(600)
+
+local soundFixate				= mod:NewSound(118303)
 
 local countdownImperviousShield	= mod:NewCountdown(42, 117961)
 local countdownShieldOfDarkness	= mod:NewCountdown(42.5, 117697)
@@ -117,14 +120,20 @@ local function warnPinnedDownTargets()
 end
 
 function mod:OnCombatStart(delay)
-	zianActive = false
-	mengActive = false
-	qiangActive = false
-	subetaiActive = false
 	table.wipe(bossesActivated)
 	table.wipe(pinnedTargets)
 	table.wipe(diedShadow)
+	zianActive = false
+	mengActive = false
+	subetaiActive = false
+	qiangActive = true
 	berserkTimer:Start(-delay)
+	timerAnnihilateCD:Start(10.5)
+	timerFlankingOrdersCD:Start(25)
+	if self:IsDifficulty("heroic10", "heroic25") then
+		timerImperviousShieldCD:Start(40.7)
+		countdownImperviousShield:Start(40.7)
+	end
 end
 
 function mod:OnCombatEnd()
@@ -153,6 +162,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnFixate:Show()
 			yellFixate:Yell()
+			soundFixate:Play()
 		end
 	elseif args:IsSpellID(118135) then
 		pinnedTargets[#pinnedTargets + 1] = args.destName
@@ -228,6 +238,7 @@ function mod:SPELL_CAST_START(args)
 		warnImperviousShield:Show(args.sourceName)
 		specWarnImperviousShield:Show(args.sourceName)
 		timerImperviousShieldCD:Start()
+		countdownImperviousShield:Cancel()
 		countdownImperviousShield:Start(42)
 	end
 end
@@ -235,6 +246,8 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 117558 and destGUID == UnitGUID("player") and self:AntiSpam(3, 4) then
 		specWarnCoalescingShadows:Show()
+	elseif spellId == 117921 and self:AntiSpam(3, 5) then
+		timerMassiveAttackCD:Start()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -264,6 +277,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerMaddeningShoutCD:Start(30)--This boss retains Maddening Shout
 		elseif UnitName(uId) == Qiang then
 			qiangActive = false
+			timerMassiveAttackCD:Cancel()
 			timerAnnihilateCD:Cancel()
 			timerImperviousShieldCD:Cancel()
 			countdownImperviousShield:Cancel()
@@ -310,8 +324,6 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 end
 
 --Phase change controller. Even for pull.
---Using bossname is better then localizing their yells because each boss has 2 or 3 engage yells.
---Besides, if they ever get the dang EJ to match the game, we won't even need to localize boss names even.
 function mod:CHAT_MSG_MONSTER_YELL(msg, boss)
 	if not self:IsInCombat() or bossesActivated[boss] then return end--Ignore yells out of combat or from bosses we already activated.
 	if not bossesActivated[boss] then bossesActivated[boss] = true end--Once we activate off bosses first yell, add them to ignore.
@@ -329,25 +341,23 @@ function mod:CHAT_MSG_MONSTER_YELL(msg, boss)
 		end
 	elseif boss == Meng then
 		mengActive = true
-		timerMaddeningShoutCD:Start(20.5)
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerDeliriousCD:Start()
+			timerMaddeningShoutCD:Start(40)--On heroic, he skips first cast as a failsafe unless you manage to kill it within 20 seconds. otherwise, first cast will actually be after about 40-45 seconds. Since this is VERY hard to do right now, lets just automatically skip it for now. Maybe find a better way to fix it later if it becomes a problem this expansion
+		else
+			timerMaddeningShoutCD:Start(20.5)
 		end
-	elseif boss == Qiang then
-		qiangActive = true
-		timerAnnihilateCD:Start(10.5)
-		timerFlankingOrdersCD:Start(25)
-		if self:IsDifficulty("heroic10", "heroic25") then
-			timerImperviousShieldCD:Start(40.7)
-			countdownImperviousShield:Start(40.7)
-		end
+--	elseif boss == Qiang then
+
 	elseif boss == Subetai then
 		subetaiActive = true
 		timerVolleyCD:Start(5)
-		timerRainOfArrowsCD:Start(15)
 		timerPillageCD:Start(25)
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerSleightOfHandCD:Start(40.7)
+			timerRainOfArrowsCD:Start(40)
+		else
+			timerRainOfArrowsCD:Start(15)
 		end
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(8)

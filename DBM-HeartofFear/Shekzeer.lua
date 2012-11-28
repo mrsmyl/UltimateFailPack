@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(743, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8084 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8160 $"):sub(12, -3))
 mod:SetCreatureID(62837)--62847 Dissonance Field, 63591 Kor'thik Reaver, 63589 Set'thik Windblade
 mod:SetModelID(42730)
 mod:SetZone()
@@ -24,7 +24,7 @@ local warnCryOfTerror			= mod:NewTargetAnnounce(123788, 3, nil, mod:IsHealer())
 local warnEyes					= mod:NewStackAnnounce(123707, 2, nil, mod:IsTank())
 local warnSonicDischarge		= mod:NewSoonAnnounce(123504, 4)--Iffy reliability but better then nothing i suppose.
 local warnRetreat				= mod:NewSpellAnnounce(125098, 4)
-local warnAmberTrap				= mod:NewSpellAnnounce(125826, 3)--Trap ready
+local warnAmberTrap				= mod:NewAnnounce("warnAmberTrap", 2, 125826)
 local warnTrapped				= mod:NewTargetAnnounce(125822, 1)--Trap used
 local warnStickyResin			= mod:NewTargetAnnounce(124097, 3)
 local warnFixate				= mod:NewTargetAnnounce(125390, 3, nil, false)--Spammy
@@ -123,6 +123,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specwarnCryOfTerror:Show()
 		end
+	elseif args:IsSpellID(124748) then
+		warnAmberTrap:Show(args.amount or 1)
 	elseif args:IsSpellID(125822) then
 		warnTrapped:Show(args.destName)
 	elseif args:IsSpellID(125390) then
@@ -152,6 +154,10 @@ function mod:SPELL_AURA_APPLIED(args)
 				resinIcon = 2
 			end
 		end
+	elseif args:IsSpellID(124077) then
+		if args.sourceGUID == UnitGUID("target") then--Only show warning for your own target.
+			specWarnDispatch:Show(args.sourceName)
+		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -171,7 +177,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnScreech:Show()
 		timerScreechCD:Start()
 	elseif args:IsSpellID(125826) then
-		warnAmberTrap:Show()
 		specwarnAmberTrap:Show()
 	elseif args:IsSpellID(124845) then
 		warnCalamity:Show()
@@ -182,6 +187,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(125451) and not phase3Started then
 		phase3Started = true
 		self:UnregisterShortTermEvents()
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 		timerPhase2:Cancel()
 		timerConsumingTerrorCD:Cancel()
 		timerScreechCD:Cancel()
@@ -193,11 +201,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(124077) then
-		if args.sourceGUID == UnitGUID("target") then--Only show warning for your own target.
-			specWarnDispatch:Show(args.sourceName)
-		end
-	elseif args:IsSpellID(124849) then
+	if args:IsSpellID(124849) then
 		warnConsumingTerror:Show()
 		specWarnConsumingTerror:Show()
 		timerConsumingTerrorCD:Start()
@@ -212,6 +216,9 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if (msg == L.YellPhase3 or msg:find(L.YellPhase3)) and not phase3Started then
 		phase3Started = true
 		self:UnregisterShortTermEvents()
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 		timerPhase2:Cancel()
 		timerConsumingTerrorCD:Cancel()
 		timerScreechCD:Cancel()

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(713, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8072 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8164 $"):sub(12, -3))
 mod:SetCreatureID(63191)--Also has CID 62164. He has 2 CIDs for a single target, wtf? It seems 63191 is one players attack though so i'll try just it.
 mod:SetModelID(42368)
 mod:SetZone()
@@ -41,6 +41,7 @@ local specwarnLeg				= mod:NewSpecialWarningSwitch("ej6270", mod:IsMelee())--If 
 local specwarnPheromoneTrail	= mod:NewSpecialWarningMove(123120)--Because this starts doing damage BEFORE the visual is there.
 
 local timerCrush				= mod:NewCastTimer(3.5, 122774)--Was 3 second, hotfix went live after my kill log, don't know what new hotfixed cast time is, 3.5, 4? Needs verification.
+local timerCrushCD				= mod:NewNextTimer(36, 122774)--unconfirmed, assumed by video
 local timerFuriousSwipeCD		= mod:NewCDTimer(8, 122735)
 local timerMendLegCD			= mod:NewCDTimer(30, 123495)
 local timerFury					= mod:NewBuffActiveTimer(30, 122754)
@@ -56,6 +57,9 @@ local brokenLegs = 0
 function mod:OnCombatStart(delay)
 	brokenLegs = 0
 	timerFuriousSwipeCD:Start(-delay)--8-11 sec on pull
+	if self:IsDifficulty("heroic10", "heroic25") then
+		timerCrushCD:Start(28-delay)--unconfirmed, assumed by video
+	end
 	if not self:IsDifficulty("lfr25") then
 		berserkTimer:Start(-delay)
 	end
@@ -64,7 +68,11 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(122754) and args:GetDestCreatureID() == 63191 then--It applies to both creatureids, so we antispam it
 		warnFury:Show(args.destName, args.amount or 1)
-		timerFury:Start()
+		if self:IsDifficulty("lfr25") then
+			timerFury:Start(15)
+		else
+			timerFury:Start()
+		end
 	elseif args:IsSpellID(122786) and args:GetDestCreatureID() == 63191 then--This one also hits both the leg and the boss, so filter second one here as well.
 		-- this warn seems not works? needs review.
 		warnBrokenLeg:Show(args.destName, args.amount or 1)
@@ -146,6 +154,9 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 		warnCrush:Show()
 		specwarnCrush:Show()
 		timerCrush:Start()
+		if self:IsDifficulty("heroic10", "heroic25") and not msg:find(L.UnderHim) then--unconfirmed
+			timerCrushCD:Start()--unconfirmed, assumed by video
+		end
 		if msg:find(L.UnderHim) and target == UnitName("player") then
 			specwarnUnder:Show()--it's a bit of a too little too late warning, but hopefully it'll help people in LFR understand it's not place to be and less likely to repeat it, eventually thining out LFR failure rate to this.
 		end

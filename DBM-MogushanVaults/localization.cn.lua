@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 10/31/2012
+-- Last update: 11/14/2012
 
 if GetLocale() ~= "zhCN" then return end
 local L
@@ -10,12 +10,12 @@ local L
 L= DBM:GetModLocalization(679)
 
 L:SetWarningLocalization({
-	SpecWarnOverloadSoon	= "%s: 7秒后可施放",
+	SpecWarnOverloadSoon		= "%s: 即将施放", -- prepare survival ablility or move boss. need more specific message.
 	specWarnBreakJasperChains	= "扯断红玉锁链！"
 })
 
 L:SetOptionLocalization({
-	SpecWarnOverloadSoon	= "特殊警报：过载预警",
+	SpecWarnOverloadSoon		= "特殊警报：过载预警", -- need to change this, i can not translate this with good grammer. please help.
 	specWarnBreakJasperChains	= "特殊惊爆：可扯断$spell:130395",
 	ArrowOnJasperChains			= "DBM箭头：当你受到$spell:130395效果影响时",
 	InfoFrame					= "信息框：石像能量及激活情况"
@@ -79,16 +79,17 @@ L:SetOptionLocalization({
 L = DBM:GetModLocalization(726)
 
 L:SetWarningLocalization({
-	specWarnDespawnFloor		= "注意脚下！"
+	specWarnDespawnFloor	= "6秒后地板消失！"
 })
 
 L:SetTimerLocalization({
-	timerDespawnFloor			= "注意脚下！"
+	timerDespawnFloor		= "地板消失"
 })
 
 L:SetOptionLocalization({
-	specWarnDespawnFloor		= "特殊警报：平台消失预警",
-	timerDespawnFloor			= "计时条：平台消失",
+	specWarnDespawnFloor	= "特殊警报：平台消失预警",
+	timerDespawnFloor		= "计时条：平台消失",
+	SetIconOnCreature		= "为$journal:6193的目标添加团队标记",
 	SetIconOnDestabilized	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(132226)
 })
 

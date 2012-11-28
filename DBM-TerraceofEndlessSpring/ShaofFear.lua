@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(709, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7839 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8165 $"):sub(12, -3))
 mod:SetCreatureID(60999)--61042 Cheng Kang, 61046 Jinlun Kun, 61038 Yang Guoshi, 61034 Terror Spawn
 mod:SetModelID(41772)
 
@@ -16,26 +16,28 @@ mod:RegisterEventsInCombat(
 
 local warnThrash						= mod:NewSpellAnnounce(131996, 4, nil, mod:IsTank() or mod:IsHealer())
 local warnConjureTerrorSpawns			= mod:NewSpellAnnounce(119108, 3)
-local warnBreathOfFearSoon				= mod:NewPreWarnAnnounce(119414, 3, 10)
+local warnBreathOfFearSoon				= mod:NewPreWarnAnnounce(119414, 10, 3)
 local warnBreathOfFear					= mod:NewSpellAnnounce(119414, 3)
 local warnOminousCackle					= mod:NewTargetAnnounce(129147, 4)--129147 is debuff, 119693 is cast. We do not reg warn cast cause we reg warn the actual targets instead. We special warn cast to give a little advanced heads up though.
 
 local specWarnThrash					= mod:NewSpecialWarningSpell(131996, mod:IsTank())
 local specWarnBreathOfFear				= mod:NewSpecialWarningSpell(119414, nil, nil, nil, true)
-local specWarnOminousCackle				= mod:NewSpecialWarningSpell(119693, nil, nil, nil, true)--Cast, warns the entire raid.
+--local specWarnOminousCackle				= mod:NewSpecialWarningSpell(119693, nil, nil, nil, true)--Cast, warns the entire raid.
 local specWarnOminousCackleYou			= mod:NewSpecialWarningYou(129147)--You have debuff, just warns you.
 local specWarnTerrorSpawn				= mod:NewSpecialWarningSwitch("ej6088",  mod:IsDps())
 local specWarnDreadSpray				= mod:NewSpecialWarningSpell(120047, nil, nil, nil, true)--Platform ability, particularly nasty damage, and fear.
 local specWarnDeathBlossom				= mod:NewSpecialWarningSpell(119888, nil, nil, nil, true)--Cast, warns the entire raid.
 
 local timerThrashCD						= mod:NewCDTimer(7, 131996, nil, mod:IsTank() or mod:IsHealer())--Every 7-12 seconds.
-local timerBreathOfFearCD				= mod:NewNextTimer(33.5, 119414)--Based off bosses energy, he casts at 100 energy, and gains about 3 energy per second, so every 33-34 seconds is a breath.
-local timerOminousCackleCD				= mod:NewNextTimer(55, 119693)
+local timerBreathOfFearCD				= mod:NewNextTimer(33.3, 119414)--Based off bosses energy, he casts at 100 energy, and gains about 3 energy per second, so every 33-34 seconds is a breath.
+local timerOminousCackleCD				= mod:NewNextTimer(45.5, 119693)
 local timerDreadSpray					= mod:NewBuffActiveTimer(8, 120047)
 local timerDreadSprayCD					= mod:NewNextTimer(20.5, 120047)
 --local timerTerrorSpawnCD				= mod:NewNextTimer(60, 119108)--every 60 or so seconds, maybe a little more maybe a little less, not sure. this is just based on instinct after seeing where 30 fit.
 
 local berserkTimer						= mod:NewBerserkTimer(900)
+
+local countdownBreathOfFear			= mod:NewCountdown(33.3, 119414, nil, nil, 10)
 
 local ominousCackleTargets = {}
 local platformGUIDs = {}
@@ -49,7 +51,7 @@ end
 
 function mod:OnCombatStart(delay)
 	warnBreathOfFearSoon:Schedule(23.4-delay)
-	if self:IsDifficulty("lfr25") then
+	if self:IsDifficulty("normal10", "heroic10", "lfr25") then
 		timerOminousCackleCD:Start(40-delay)
 	else
 		timerOminousCackleCD:Start(25.5-delay)
@@ -57,6 +59,7 @@ function mod:OnCombatStart(delay)
 --	timerTerrorSpawnCD:Start(25.5-delay)--still not perfect, it's hard to do yells when you're always the tank sent out of range of them. I need someone else to do /yell when they spawn and give me timing
 --	self:ScheduleMethod(25.5-delay, "TerrorSpawns")
 	timerBreathOfFearCD:Start(-delay)
+	countdownBreathOfFear:Start(33.3-delay)
 	onPlatform = false
 	platformMob = nil
 	table.wipe(ominousCackleTargets)
@@ -78,14 +81,17 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnBreathOfFear:Show()
 		if not onPlatform then--not in middle, not your problem
 			specWarnBreathOfFear:Show()
+			timerBreathOfFearCD:Start()
+			countdownBreathOfFear:Start(33.3)
 		end
 		warnBreathOfFearSoon:Schedule(23.4)
-		timerBreathOfFearCD:Start()--we still start this for EVERYONE though because you can't blindly leave platform and walk into a breath cause you didn't know it was soon.
 	elseif args:IsSpellID(129147) then
 		ominousCackleTargets[#ominousCackleTargets + 1] = args.destName
 		if args:IsPlayer() then
 			onPlatform = true
 			specWarnOminousCackleYou:Show()
+			countdownBreathOfFear:Cancel()
+			timerBreathOfFearCD:Cancel()
 		end
 		self:Unschedule(warnOminousCackleTargets)
 		self:Schedule(2, warnOminousCackleTargets)--this actually staggers a bit, so wait the full 2 seconds to get em all in one table
@@ -112,9 +118,9 @@ end
 
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(119593, 119692, 119693) then--This seems to have multiple spellids, depending on which platform he's going to send you to. TODO, figure out which is which platform and add additional warnings
-		specWarnOminousCackle:Show()
-		if self:IsDifficulty("lfr25") then
-			timerOminousCackleCD:Start(90)--Far less often on LFR
+--		specWarnOminousCackle:Show()
+		if self:IsDifficulty("normal10", "heroic10", "lfr25") then
+			timerOminousCackleCD:Start(90.5)--Far less often on LFR
 		else
 			timerOminousCackleCD:Start()
 		end

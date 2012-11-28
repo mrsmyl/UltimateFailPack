@@ -1,0 +1,111 @@
+tag 4.11.6
+18a9511da22a32efbd0d3faad41aa209e31f51f2
+subversion <svn@deadlybossmods.com>
+2012-11-28 14:37:15 +0100
+
+Tagging as 4.11.6
+
+
+--------------------
+
+subversion:
+	- increment version number to 4.11.6
+	- Omega via svn r8186: Tsulong doesn't need a yell trigger for victory.
+	- Omega via svn r8185: it's confirmed, battlegrounds do need to use INSTANCE_CHAT as well
+	- Omega via svn r8184: fix an amber shaper bug
+	- Omega via svn r8183: revert a change, 5.1 did NOT fix the mac 64 bit client bug, not completely anyways, so we can't reliably filter using BossN
+	- Omega via svn r8182: tweak last so it'll still default to RAID or PARTY if are in an instance group but not actually in instance (my guild kills sha or galleon in between queues still in instance group for example.
+	- Omega via svn r8181: fix syncing in LFR
+	- Omega via svn r8180: remove debug, it's actually working now
+	- Omega via svn r8179: actually, assume it's still BATTLEGROUND for now until someone reports it broken
+	- Omega via svn r8178: based on diffs, BATTLEGROUND chat type is just gone. so change all references to the replacement 5.1 has which is INSTANCE_CHAT
+	- Omega via svn r8177: comment out debug for release tag
+	- Omega via svn r8176: ignore unit power events if they aren't from boss1 or boss2 (bossN is now usable again since 5.1 FINALLY fixes the damn bug where boss1-5 was nil in 64 bit mac client)
+	- Omega via svn r8175: Also, bump toc's for 5.1 which is going live in a few hours
+	- Omega via svn r8174: additional tweeks. fixing the yell timing and adjusting the other timers this should be a lot closer now. verified up to 12, 13 is just huh? need to confirm beyond that point.
+	- Omega via svn r8173: some rage tweaks, drycoded til i do more logging later, but it seems 30 is too fast
+	- Omega via svn r8172: fix a bug
+	- Omega via svn r8171: Better, less spammy, option defaults for amber shaper Improved nameplate code. now it turns normal name plates b ack on when you leave construct so you once again have name plates for OTHER constructs when you aren't one. Still no way to show nameplates for constructs when you ARE one without also showing nameplates for all 9/24 raid members so this is best it can get really.
+	- Omega via svn r8170: It'll probably work better with this though. oops
+	- nbluewiz via svn r8169: # Tsulong : Fix in lfr combat re-starts after killed.
+	- Omega via svn r8168: Experimental rage timers based on unverified data. if these timers prove wrong please provide logs that show right ones (note, combat log and transcriptor logs are worthless for rages, it'd pretty much have to be a chat log where you go "/yell zomg more rages" every time they spawn for entirety of 13 min fight to verify this data. Maybe some good videos help verify too?
+	- Omega via svn r8167: NO MORE SPAM. that is all
+	- Omega via svn r8166: small logic fix to unsok. if constructs were > 0 but no interrupts were available, it wasn't doing a special warning. so now handle it diff. it'll just always check interrupts available vs counting contructs at all, then the logic in the warn function will handle whether we interrupt special warning no interrupts or warn interrupts available.
+	- nbluewiz via svn r8165: # Sha of Fear : fix Ominous Cackle CD.
+	- nbluewiz via svn r8164: # Garalon : Initial heroic Crush bar support.
+	- ebmor via svn r8163: deDE update
+	- ultrashining via svn r8162: zhTW update(Party/ToES)
+	- nbluewiz via svn r8161: # Core : Fix for ToES LFR Tsulong combat detection bug.
+	- Omega via svn r8160: Fix range frames properly (by fixing the bad spellid in the paladin check in "IsRanged()" check
+	- nbluewiz via svn r8159: # Shekzeer, Tayak : Change Range Frame defaults for paladin healer. # Lei Shi : Remove first special timer. / Heroic berserk timer. # Protector of Endless : Change Cleansing Waters special warning. Now only warns your target or focus. (not to warn pet, or not dpsing boss) # koKR update
+	- Omega via svn r8158: comment out some of the debug on unsok, those areas are ruled out. still need more info from other spots. i need debug from someone who isn't bad at constructs and actually doesn't have amber strike on CD when monstrosity casts amber explosion. :\
+	- Omega via svn r8157: Remove debug from zorlok, found the problem. the GUID's do not match. combat log report a completely different GUID than UnitGUID(uId) returns. fortunately on this mod i guess it won't kill us to not filter it. we'll just show unnecessary arrows on heroic mode when the caster isn't the boss on our side. (guess it works out in end for healers anyways, probably wouldn't be targeting the boss).
+	- Omega via svn r8156: make both icon options true. because if it's off by default, it doesn't really work well. more icon setters the better. still have to figure out why the elegon one absolutely doesn't work at all (guid mismatch perhaps?). Haven't really tested lei shi yet
+	- Omega via svn r8155: Fix a local bug
+	- nbluewiz via svn r8154: # Core : Improve audio countdown. Now audio countdown can set 2~10 counts individually. Still, default is 5. # Sha of Fear : Set countdown audio to 10 sec. (sometimes 5 sec is not enough) # Lei Shi : Added missing event.
+	- Omega via svn r8153: update debug statements to use print instead, since addmsg wasn't showing the args properly Fix a bug on protectors. Reduce phase 2 spam on tayak by only warning Intensify every 3 stacks.
+	- DiabloHu via svn r8152: zhCN update
+	- Omega via svn r8151: fix it even better. just make check for all spray warnings
+	- Omega via svn r8150: Fix bar spam on lei shi
+	- Omega via svn r8149: Fix a missing unregistered event on protectors
+	- Omega via svn r8148: Small berserk timer tweaks
+	- Omega via svn r8147: i'm a dumb fuck, why didn't i catch this problem leaving debug in to verify it but i bet this was the probelm
+	- ultrashining via svn r8146: zhTW update (Core/ToES)
+	- Omega via svn r8145: kills --> victories to better fit all boss fights (including the ones you don't actually kill)
+	- Omega via svn r8144: disable berserk timer in LFR on wind lord (no idea what it is, but it's not same as normal)
+	- nbluewiz via svn r8143: # Spirit Kings : Tweak option defaults.
+	- Omega via svn r8142: *Add a massive attack swing timer to qiang. helps time moves better. *Add a "you got hit in the face by a whirling blade" type message so you are less likely to die to the return path (disabled in LFR)
+	- Omega via svn r8141: *Recoded strength and courage timers to be more accurate on both heroic (and hopefully still on normal). It seems despite heroic not having a titan gas phase, it still acts like it does and when those phases normally would have been still delays the add spawns of strengths and courages by 50 seconds and rages by 30 seconds. *Make them count warnings too since once you learn when the delays will happen on heroic you'll be able to predict your boss burn phases even with absense of a titan gas phase.
+	- Omega via svn r8140: add hard berserk to will of emperor, which is 13 minutes
+	- Omega via svn r8139: Oops, fix some redundancy on spirit kings pull
+	- Omega via svn r8138: Better fix for spirit kings pull bugs, it's always qiang first so spam resetting will be more reliable doing pulls this way
+	- nbluewiz via svn r8137: # Core : Fix very rare scheduler error(hopefully) (6x DBM-Core\DBM-Core.lua:729: attempt to call field "func" (a nil value) # Shekzeer : Fix 1/5 progress double warns. # Lei Shi : Add icon option to Guards. (maybe useful for cc) # Sha of Fear : Fix 10 man Ominous Cackle timer.
+	- Omega via svn r8136: LOTS of debug. May be quite annoying but i'll be damned if i'm gonna let these two features not work for no reason.
+	- Omega via svn r8135: remove obsolete comments or code not needed in core. Remove last years april fools code.
+	- DiabloHu via svn r8134: zhCN update
+	- Omega via svn r8133: Fix a rare error when receiving a status whisper on a pull that didn't fire a startcombat event while at it, just redo the difficulty stuff to be less shitty and cleaner. This should even save some start combat cpu by eliminating some redundancy
+	- Omega via svn r8132: Comment out non functional things that for some reason don't work despite perfect coding. both functions have been tested and simulated working just fine when faking triggers, but both fail in a real raid situation with real triggers. Nothing is wrong with syncing either (beyond the fact they are NEVER sent by anyone in raid including myself). Fortunately neither function is a make it or break it.
+	- DiabloHu via svn r8131: zhCN update
+	- Omega via svn r8130: Some heroic fixes for spirit kings
+	- Omega via svn r8129: Try to fix a small bug with countdown when you chain reset spirit kings to get right combo.
+	- ultrashining via svn r8128: zhTW update (MV/HOF/Party)
+	- nbluewiz via svn r8127: # Sorry, also fix bad range check hide.
+	- Omega via svn r8126: oops missed one, same thing on this one.
+	- Omega via svn r8125: don't hide range frame unless the user is using automated one. I know of some that turn it off and prefer dbm leave it alone.
+	- nbluewiz via svn r8124: # koKR update (sorry for missed)
+	- nbluewiz via svn r8123: # Protectors of Endless : Oops, removed berserkTimer on merging diffs, :) Also, updated Touch of Sha CD on 10 man.
+	- nbluewiz via svn r8122: # Protectors of Endless : Added berserk timer. # Lei Shi : Fix first special timer. # Shekzeer : Hide range frame on phase 3. Also fix Dispatch interrupt warning not works. # Tayak : Hide range frame on phase 2. # koKR update.
+	- Omega via svn r8121: Verified and updated timer data accordingly for protectors Added an audio countdown for the phase 3 special for Kaolan ("Elite" mode)
+	- Omega via svn r8120: Remove debug, and fix class colors in the interrupt warning.
+	- Omega via svn r8119: Fix the remaining construct bugs. the Constructs and PlayerIsConstruct variables were broken because wrong spellid was used in spell aura removed event. the spell id used in removed event was the stun one that only lasts 2 seconds. oops.
+	- Omega via svn r8118: More unsok updates. make sure sending the sync is highest priority. Make sure aoe warning is lowest priority. We don't want to aoe warn unless we actually know no interrupts are available. We need to know about interrupts asap. Also fixed a logic fail in original code. warnAmberExplosionCast was only scheduled if internets WERE available so if none actually where it NEVER fired aoe warning. the aoe warnings were only coming from contructs == 0. This should make sure we get aoe warning still if constructs > 0 but interrupts aren't.
+	- Omega via svn r8117: Oops, anti spam was meant for Tsulong, not protectors. Also, fix special warning on breath on Tsulong while at it.
+	- Omega via svn r8116: Some fixes to zorlok too
+	- Omega via svn r8115: Actually found the problem, the syncing was broken when blue changed it. sender is automatically handled by core, putting it in mod made it expect another arg that wasn't sent by sync itslf, so it never did anything (because sender was nil since the mod was locally overwriting it). It would have worked with tandanu's code before it was changed. This should still work and be GUID friendly for LFR
+	- Omega via svn r8114: fix logic failure in nameplates code
+	- Omega via svn r8113: On second thought. you do gain fearless when leaving platform. so lets go ahead and cancel timer and countdown on platform for breaths, you'll get em back when you return and by time fearless ends. ALso, disable interrupt warning, it flat out does not work, not even remotely. My debug on syncing determiend one thing. the syncing is broken. no sync, no functionality, so lets not let people see an option thinking it does anything.
+	- Omega via svn r8112: ALso, reduce spam on protectors Add countdown for breath of fear. (for now, i leave it enabled when you go to platform, because you still need to know when it is when you're returning)
+	- Omega via svn r8111: fix some spam, and fix a bug, more to do later
+	- Omega via svn r8110: arrows were backwards i think. I don't really remember seeing them, but looking at logs they were probably backwards. i just need to do more LFR debugging
+	- Omega via svn r8109: print debug didn't work, change it to dbm:addmsg instead. Interrupt warnings still useless and completely non functional
+	- Omega via svn r8108: english local update
+	- DiabloHu via svn r8107: zhCN update
+	- nbluewiz via svn r8106: # Shekzeer : Improve Amber Trap warning (with progress) # Zorlok : Move Force and Verve special warning. # Shado Pan Monastery Update. (Sha of Violence sometimes fails to kill detection.)
+	- Omega via svn r8105: fix error on unsok
+	- ebmor via svn r8104: deDE update (HoF)
+	- ebmor via svn r8103: deDE update (MV, HoF)
+	- Omega via svn r8102: Change the pre warn warning to a soon warning instead since pre warns are for exact timing, soon is for approximations
+	- Omega via svn r8101: add timer and countdown for first amber explosion player casts after becoming construct.
+	- Omega via svn r8100: Drycode some very basic amber glob warnings and personal warnings
+	- Omega via svn r8099: Add some well needed nameplate control features to unsok to make automation much smoother for managing the clusterfuck the nameplates become when in a construct.
+	- Omega via svn r8098: also fix a bug where stun icons weren't resetting either
+	- Omega via svn r8097: clear stun icons on remove for elegon, oops
+	- tandanu via svn r8096: add icons to the boss health frame
+	- tandanu via svn r8095: deDE update
+	- nbluewiz via svn r8094: # Elegon : journal ID update. # koKR update.
+	- nbluewiz via svn r8093: # Meljarak : Fix and add shit warning.
+	- Omega via svn r8092: Add option to auto put icons on Pillars on elegon, this makes identifying them much easier on boss health when coordinating which one is ahead/behind. (this update will make more sense when boss health frame shows raid icons update goes in)
+	- nbluewiz via svn r8091: # Unsok : Fix audio countdown bug. # Zorlok : Fix typo. # koKR update.
+	- Omega via svn r8090: Release was tagged, so re-enable some debug to start collecting data for unsok interrupt syncs, hopefully before next week from user reports
+	- DiabloHu via svn r8089: zhCN update
+	- tandanu via svn r8088: increment alpha version number

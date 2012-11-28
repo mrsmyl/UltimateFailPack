@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(741, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8086 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8144 $"):sub(12, -3))
 mod:SetCreatureID(62397)
 mod:SetModelID(42645)
 mod:SetZone()
@@ -20,6 +20,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_DAMAGE",
 	"SPELL_MISSED",
+	"SPELL_PERIODIC_DAMAGE",
+	"SPELL_PERIODIC_MISSED",
 	"RAID_BOSS_EMOTE",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED",
@@ -53,11 +55,12 @@ local specWarnKorthikStrike				= mod:NewSpecialWarningYou(123963)
 local specWarnKorthikStrikeOther		= mod:NewSpecialWarningTarget(123963, mod:IsHealer())
 local yellKorthikStrike					= mod:NewYell(123963)
 local specWarnWindBomb					= mod:NewSpecialWarningMove(131830)
+local specWarnWhirlingBladeMove			= mod:NewSpecialWarningMove(121898)
 local yellWindBomb						= mod:NewYell(131830)
 
 --local timerWhirlingBladeCD				= mod:NewCDTimer(30, 121896)--30~60 sec. very large variable. timer useless?
 local timerRainOfBladesCD				= mod:NewCDTimer(48, 122406)--48-64 sec variation now. so much for it being a precise timer.
-local timerRecklessness					= mod:NewBuffActiveTimer(30, 125873)
+local timerRecklessness					= mod:NewBuffActiveTimer(30, 125873)--Heroic recklessness
 local timerReinforcementsCD				= mod:NewNextCountTimer(50, "ej6554")--EJ says it's 45 seconds after adds die but it's actually 50 in logs. EJ is not updated for current tuning.
 local timerImpalingSpear				= mod:NewTargetTimer(50, 122224)--Filtered to only show your own target, may change to a popup option later that lets you pick whether you show ALL of them or your own (all will be spammy)
 local timerAmberPrisonCD				= mod:NewNextTimer(36, 121876)--each add has their own CD. This is on by default since it concerns everyone.
@@ -107,7 +110,9 @@ function mod:OnCombatStart(delay)
 	table.wipe(windBombTargets)
 	--timerWhirlingBladeCD:Start(35.5-delay)
 	timerRainOfBladesCD:Start(60-delay)
-	berserkTimer:Start(-delay)
+	if not self:IsDifficulty("lfr25") then
+		berserkTimer:Start(-delay)
+	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
@@ -136,12 +141,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args:IsSpellID(122064) then
 		warnCorrosiveResin:Show(args.destName)
-		if args:IsPlayer() then
+		if args:IsPlayer() and self:AntiSpam(3, 5) then
 			specWarnCorrosiveResin:Show()
 			yellCorrosiveResin:Yell()
 		end
-	elseif args:IsSpellID(122125) and args:IsPlayer() then
-		specWarnCorrosiveResinPool:Show()
 	elseif args:IsSpellID(125873) then
 		addsCount = addsCount + 1
 		warnRecklessness:Show(args.destName)
@@ -173,10 +176,10 @@ function mod:SPELL_CAST_START(args)
 		timerCorrosiveResinCD:Start(36, args.sourceGUID)
 	elseif args:IsSpellID(122193) then
 		warnMending:Show()
+		timerMendingCD:Start(36, args.sourceGUID)
 		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
 			specWarnMending:Show(args.sourceName)
 		end
-		timerMendingCD:Start(36, args.sourceGUID)
 	elseif args:IsSpellID(122149) then
 		warnQuickening:Show()
 		specWarnQuickening:Show(args.sourceName)
@@ -193,9 +196,17 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 			specWarnWindBomb:Show()
 			yellWindBomb:Yell()
 		end
+	elseif spellId == 122125 and destGUID == UnitGUID("player") and self:AntiSpam(3, 4) then
+		specWarnCorrosiveResinPool:Show()
+	elseif spellId == 122064 and destGUID == UnitGUID("player") and self:AntiSpam(3, 5) then
+		specWarnCorrosiveResin:Show()
+	elseif spellId == 121898 and destGUID == UnitGUID("player") and not self:IsDifficulty("lfr25") and self:AntiSpam(3, 6) then
+		specWarnWhirlingBladeMove:Show()
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
+mod.SPELL_PERIODIC_DAMAGE = mod.SPELL_DAMAGE
+mod.SPELL_PERIODIC_MISSED = mod.SPELL_DAMAGE
 
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.Reinforcements or msg:find(L.Reinforcements) then

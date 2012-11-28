@@ -12,12 +12,13 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	specwarnPlatform	= "Zeige Spezialwarnung bei Plattformwechsel des Bosses",
+	ArrowOnAttenuation	= "Zeige DBM-Pfeil während $spell:127834 zur Anzeige der Ausweichrichtung",
 	MindControlIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122740)
 })
 
 L:SetMiscLocalization({
-	Platform	= "%s fliegt zu einer seiner Plattformen!",
-	Defeat		= "We will not give in to the despair of the dark void. If Her will for us is to perish, then it shall be so." --translate (trigger)
+	Platform			= "%s fliegt zu einer seiner Plattformen!",
+	Defeat				= "Wir werden der Verzweiflung der dunklen Leere nicht nachgeben. Wenn es Ihr Wille ist, dass wir dahinscheiden, dann soll es so sein."
 })
 
 
@@ -37,8 +38,17 @@ L:SetOptionLocalization({
 -------------------------------
 L= DBM:GetModLocalization(713)
 
+L:SetWarningLocalization({
+	specwarnUnder	= "Raus aus dem violetten Kreis!"
+})
+
 L:SetOptionLocalization({
+	specwarnUnder	= "Zeige Spezialwarnung, wenn du dich unter dem Boss befindest",
 	PheromonesIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122835)
+})
+
+L:SetMiscLocalization({
+	UnderHim	= "Unter ihm"
 })
 
 ----------------------
@@ -60,6 +70,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
+	warnReshapeLifeTutor		= "1: Unterbreche/Debuffe Ziel, 2: Unterbreche dich selbst, 3: Regeneriere Gesundheit/Willenskraft, 4: Verlasse Konstrukt",
 	warnAmberExplosion			= ">%s< wirkt %s",
 	warnInterruptsAvailable		= "Unterbrechungen verfügbar für %s: %s",
 	specwarnWillPower			= "Geringe Willenskraft!",
@@ -73,6 +84,7 @@ L:SetTimerLocalization{
 }
 
 L:SetOptionLocalization({
+	warnReshapeLifeTutor		= "Zeige Überblick über den Zweck der Fähigkeiten Mutierter Konstrukte",
 	warnAmberExplosion			= "Zeige Warnung (mit Quelle), wenn $spell:122398 gewirkt wird",
 	warnInterruptsAvailable		= "Verkünde bei wem Amberstoß-Unterbrechungen für $spell:122402\nverfügbar sind",
 	specwarnWillPower			= "Zeige Spezialwarnung bei geringer Willenskraft als Mutiertes Konstrukt",
@@ -80,7 +92,8 @@ L:SetOptionLocalization({
 	specwarnAmberExplosionAM	= "Zeige Spezialwarnung zum Unterbrechen der $spell:122402\nder Ambermonstrosität",
 	specwarnAmberExplosionOther	= "Zeige Spezialwarnung zum Unterbrechen der $spell:122402\nunkontrollierter Mutierter Konstrukte",
 	timerAmberExplosionAMCD		= "Zeige Zeit bis nächste $spell:122402 der Ambermonstrosität",
-	InfoFrame					= "Zeige Infofenster für Willenskraft der Spieler (IN ENTWICKLUNG)"
+	InfoFrame					= "Zeige Infofenster für Willenskraft der Spieler",
+	FixNameplates				= "Automatische Deaktivierung störender Namensplaketten bei Kampfbeginn\n(wird nach dem Kampfende auf die vorherige Einstellung zurückgesetzt)"
 })
 
 L:SetMiscLocalization({
@@ -92,7 +105,12 @@ L:SetMiscLocalization({
 ------------
 L= DBM:GetModLocalization(743)
 
+L:SetWarningLocalization({
+	warnAmberTrap		= "Amberfallenbau: %d/5",
+})
+
 L:SetOptionLocalization({
+	warnAmberTrap		= "Verkünde den Fortschritt beim Bau einer $spell:125826",
 	InfoFrame			= "Zeige Infofenster für Spieler, welche von $spell:125390 betroffen sind",
 	RangeFrame			= "Zeige Abstandsfenster (5m) für $spell:123735",
 	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097)
@@ -100,5 +118,5 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	PlayerDebuffs		= "Fixiert",
-	YellPhase3			= "No more excuses, Empress! Eliminate these cretins or I will kill you myself!" --translate (trigger)
+	YellPhase3			= "KEINE AUSREDEN MEHR, KAISERIN! Tötet diese Idioten oder ich selbst mache Euch den Garaus!"
 })

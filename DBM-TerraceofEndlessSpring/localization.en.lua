@@ -16,10 +16,6 @@ L:SetOptionLocalization({
 ------------
 L= DBM:GetModLocalization(742)
 
-L:SetMiscLocalization{
-	Victory	= "I thank you, strangers. I have been freed."
-}
-
 
 -------------------------------
 -- Lei Shi --
@@ -36,7 +32,8 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	warnHideOver			= "Show warning when $spell:123244 has ended",
-	timerSpecialCD			= "Show timer for when next special ability will be cast."
+	timerSpecialCD			= "Show timer for when next special ability will be cast.",
+	SetIconOnGuard			= "Set icons on $journal:6224"
 })
 
 L:SetMiscLocalization{

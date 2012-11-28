@@ -12,12 +12,13 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	specwarnPlatform	= "보스가 단상 이동시 특수 경고 보기",
+	ArrowOnAttenuation	= "$spell:127834 시전 중에 이동해야 될 방향을 DBM 화살표로 표시",
 	MindControlIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122740)
 })
 
 L:SetMiscLocalization({
-	Platform	= "황실 장로 조르로크가 단상으로 날아갑니다!",
-	Defeat		= "우리는 어두운 공허의 절망에 지지 않으리라. 우리가 죽는 것이 그분의 뜻이라면, 그대로 따르리라."
+	Platform			= "황실 장로 조르로크가 단상으로 날아갑니다!",
+	Defeat				= "우리는 어두운 공허의 절망에 지지 않으리라. 우리가 죽는 것이 그분의 뜻이라면, 그대로 따르리라."
 })
 
 ------------
@@ -27,7 +28,7 @@ L= DBM:GetModLocalization(744)
 
 L:SetOptionLocalization({
 	UnseenStrikeArrow	= "$spell:122949 주문의 영향을 누군가 받은 경우 DBM 화살표 보기",
-	RangeFrame			= "$spell:123175 주문의 영향을 받은 경우 거리 프레임 표시(8m)"
+	RangeFrame			= "$spell:123175 주문에 대한 거리 프레임 표시(8m)"
 })
 
 -------------------------------
@@ -58,7 +59,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Reinforcements		= "지원"
+	Reinforcements		= "원군"
 })
 
 ------------
@@ -68,8 +69,8 @@ L= DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
 	warnReshapeLifeTutor		= "1: 대상 차단/공격, 2: 본인 차단, 3: 체력/의지력 회복, 4: 피조물에서 탈출",
-	warnAmberExplosion			= ">%s< 주문시전: %s",
-	warnInterruptsAvailable		= "%s의 호박석 폭발 차단 가능: %s",
+	warnAmberExplosion			= "주문시전 %2$s : >%1$s<",
+	warnInterruptsAvailable		= "%s의 호박석 폭발 차단 가능: >%s<",
 	specwarnWillPower			= "의지력 낮음!",
 	specwarnAmberExplosionYou	= "당신에게 %s 사용 - 2번으로 차단!",
 	specwarnAmberExplosionAM	= "%s 시전: %s - 1번으로 차단!",
@@ -89,7 +90,8 @@ L:SetOptionLocalization({
 	specwarnAmberExplosionAM	= "호박석 괴수가 $spell:122402 주문을 시전할때 특수 경고 보기(차단)",
 	specwarnAmberExplosionOther	= "탑승자가 없는 피조물이 $spell:122398 주문을 시전할때 특수 경고 보기(차단)",
 	timerAmberExplosionAMCD		= "호박석 괴수의 다음 $spell:122402 바 표시",
-	InfoFrame					= "의지력 정보 프레임 보기"
+	InfoFrame					= "의지력 정보 프레임 보기",
+	FixNameplates				= "전투 시작시 이름표 겹침 기능 끄기\n(전투 종료시에 원래 설정대로 돌아감)"
 })
 
 L:SetMiscLocalization({
@@ -101,9 +103,14 @@ L:SetMiscLocalization({
 ------------
 L= DBM:GetModLocalization(743)
 
+L:SetWarningLocalization({
+	warnAmberTrap		= "호박석 덪 생성중 (%d/5)",
+})
+
 L:SetOptionLocalization({
+	warnAmberTrap		= "$spell:125826 생성 과정 알림 보기", 
 	InfoFrame			= "$spell:125390 주문의 영향을 받은 플레이어를 정보 프레임에 표시",
-	RangeFrame			= "$spell:123735 주문의 영향을 받은 경우 거리 프레임 표시(5m)",
+	RangeFrame			= "$spell:123735 주문에 대한 거리 프레임 표시(5m)",
 	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097)
 })
 

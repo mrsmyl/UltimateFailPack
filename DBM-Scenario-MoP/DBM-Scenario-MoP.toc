@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## X-Min-Interface: 50001
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Scenario-MoP|r
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0시나리오-판다리아의 안개|r
@@ -17,7 +17,7 @@
 ## X-DBM-Mod-Name-zhCN: 场景战役 (熊猫人之谜)
 ## X-DBM-Mod-Sort: 35
 ## X-DBM-Mod-LoadZoneID: 906, 851, 899
-## X-Curse-Packaged-Version: 4.11.5
+## X-Curse-Packaged-Version: 4.11.6
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
