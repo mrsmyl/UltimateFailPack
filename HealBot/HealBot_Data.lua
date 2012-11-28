@@ -380,6 +380,7 @@ HealBot_GlobalsDefaults = {
         },
         ["PRIE"] = {
             [HEALBOT_GUARDIAN_SPIRIT]=3,
+            [HEALBOT_HOLY_WORD_SERENITY]=2,
             [HEALBOT_PAIN_SUPPRESSION]=3,
             [HEALBOT_POWER_INFUSION]=3,
             [HEALBOT_RENEW]=2,

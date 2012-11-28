@@ -323,6 +323,7 @@ local function HealBot_cpSaveAll()
     end
     HBmsg=HEALBOT_CP_MACRO_SAVE.."   "..date("%H:%M:%S", time())
     HealBot_Options_cpMacroSave:SetText(HBmsg)
+    HealBot_Options_SetcpMacroSave(HBmsg)
 end
 
 function HealBot_cpSave(mName, mBody)
@@ -732,8 +733,8 @@ function HealBot_SlashCmd(HBcmd)
         HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - Count = "..hbcaliCount)
         HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - Reset = "..hbcaliReset)
         HealBot_AddChat(HEALBOT_CHAT_ADDONID.."Range calibration - %Calibrated = "..hbcaliPtc)
-    elseif (HBcmd=="test") then
-        HealBot_Comms_SendAddonMsg("HealBot", "R", HealBot_AddonMsgType, HealBot_PlayerName)
+    elseif (HBcmd=="lang" and x) then
+        HealBot_Options_Lang(x)
     else
         if x then HBcmd=HBcmd.." "..x end
         if y then HBcmd=HBcmd.." "..y end
@@ -1651,7 +1652,6 @@ function HealBot_OnEvent(self, event, ...)
 end
 
 function HealBot_OnEvent_VariablesLoaded(self)
-    HealBot_globalVars()
     table.foreach(HealBot_ConfigDefaults, function (key,val)
         if not HealBot_Config[key] then
             HealBot_Config[key] = val;
@@ -1672,6 +1672,11 @@ function HealBot_OnEvent_VariablesLoaded(self)
         HealBot_Action:SetScript("OnMouseWheel", function(self, delta)
             HealBot_Action_HealUnit_Wheel(delta)
         end)
+    end
+    if HealBot_Globals.localLang then
+        HealBot_Options_Lang(HealBot_Globals.localLang)
+    elseif strsub(GetLocale(),1,2)~="en" then
+        HealBot_Options_Lang(GetLocale())
     end
     RegisterAddonMessagePrefix("HealBot")
     HealBot_Globals.scaleCaliStats["Resets"]=0
@@ -1710,8 +1715,10 @@ function HealBot_OnEvent_VariablesLoaded(self)
                                 [HEALBOT_DEVOTION_AURA] = HEALBOT_STONEKIN_TOTEM}
         HealBot_BuffNameSwap2 = {[HEALBOT_BLESSING_OF_KINGS] = HEALBOT_LEGACY_EMPEROR}
     elseif HealBot_PlayerClassTrim==HealBot_Class_En[HEALBOT_MONK] then
-        HealBot_BuffNameSwap = {[HEALBOT_LEGACY_EMPEROR] = HEALBOT_MARK_OF_THE_WILD}
-        HealBot_BuffNameSwap2 = {[HEALBOT_LEGACY_EMPEROR] = HEALBOT_BLESSING_OF_KINGS}
+        HealBot_BuffNameSwap = {[HEALBOT_LEGACY_EMPEROR] = HEALBOT_MARK_OF_THE_WILD,
+                                [HEALBOT_LEGACY_WHITETIGER] = HEALBOT_ARCANE_BRILLIANCE}
+        HealBot_BuffNameSwap2 = {[HEALBOT_LEGACY_EMPEROR] = HEALBOT_BLESSING_OF_KINGS,
+                                 [HEALBOT_LEGACY_WHITETIGER] = HEALBOT_DALARAN_BRILLIANCE}
     elseif HealBot_PlayerClassTrim==HealBot_Class_En[HEALBOT_WARRIOR] then
       --  HealBot_HoT_Texture[HEALBOT_VIGILANCE] = "Interface\\Icons\\Ability_Warrior_Vigilance";
         HealBot_ShortBuffs[HEALBOT_BATTLE_SHOUT]=true
@@ -1747,9 +1754,6 @@ function HealBot_OnEvent_VariablesLoaded(self)
     bar.txt = _G[bar:GetName().."_text"];
     bar.txt:SetTextColor(0.8,0.8,0.2,0.85);
     bar.txt:SetText(HEALBOT_ACTION_OPTIONS);
-    HealBot_EnTextColorpickt:SetText(HEALBOT_SKIN_ENTEXT);
-    HealBot_DisTextColorpickt:SetText(HEALBOT_SKIN_DISTEXT);
-    HealBot_DebTextColorpickt:SetText(HEALBOT_SKIN_DEBTEXT);
     HealBot_Loaded=1;
     HealBot_CheckFrame()
     HealBot_CheckMyBuffs(HealBot_PlayerGUID)
@@ -1757,7 +1761,6 @@ function HealBot_OnEvent_VariablesLoaded(self)
     HealBot_Action_SetHightlightAggroCols()
     HealBot_Action_SetAggroCols()
     HealBot_Panel_SetNumBars(HealBot_Globals.noTestBars)
-    HealBot_Options_Class_HoTctlText:SetText(HealBot_PlayerClass.." "..HEALBOT_ACTION_OPTIONS);
   --  HealBot_Action_sethbNumberFormat()
     HealBot_Panel_SethbTopRole(HealBot_Globals.TopRole)
     HealBot_CureFrameSelectWarningFrame:GetStatusBarTexture():SetHorizTile(false)

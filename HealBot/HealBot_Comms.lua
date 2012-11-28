@@ -59,7 +59,11 @@ function HealBot_Comms_About()
     end
 
     HealBot_Error_Clientx:SetText(HEALBOT_WORD_CLIENT.."="..GetLocale())
-    HealBot_Error_Versionx:SetText(HEALBOT_WORD_VERSION.."="..HEALBOT_VERSION)
+    if HealBot_Globals.localLang then
+        HealBot_Error_Versionx:SetText(HEALBOT_OPTIONS_LANG.."="..HealBot_Globals.localLang)
+    else
+        HealBot_Error_Versionx:SetText(HEALBOT_OPTIONS_LANG.."="..GetLocale())
+    end
     HealBot_Error_Classx:SetText(HEALBOT_SORTBY_CLASS.."="..HealBot_PlayerClassEN)
     HealBot_Comms_AcceptSkins()
     HealBot_Comms_MacroSuppressError()
