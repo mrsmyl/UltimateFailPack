@@ -95,6 +95,9 @@ function TomTom:SetCrazyArrow(uid, dist, title)
 	if self.profile.arrow.enable then
 		wayframe.title:SetText(title or L["Unknown waypoint"])
 		wayframe:Show()
+		if wayframe.crazyFeedFrame then
+			wayframe.crazyFeedFrame:Show()
+		end
 	end
 end
 
@@ -435,6 +438,7 @@ local function wayframe_OnEvent(self, event, arg1, ...)
 				throttle = TomTom.db.profile.feeds.arrow_throttle
 			end
 
+			wayframe.crazyFeedFrame = crazyFeedFrame
 			crazyFeedFrame:SetScript("OnUpdate", function(self, elapsed)
 				counter = counter + elapsed
 				if counter < throttle then
@@ -442,7 +446,9 @@ local function wayframe_OnEvent(self, event, arg1, ...)
 				end
 
 				counter = 0
-
+				if not active_point then
+					self:Hide()
+				end
 				local angle = TomTom:GetDirectionToWaypoint(active_point)
 				local player = GetPlayerFacing()
 				if not angle or not player then
