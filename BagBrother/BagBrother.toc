@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 50100
 ## Title: BagBrother
 ## Notes: Stores your characters inventory, bank, and vault, so that you may view them from anywhere.
 ## Author: Jaliborc (João Cardoso)

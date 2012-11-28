@@ -49,7 +49,7 @@ L.TipDoubleClickSearch = '<Alt-Двигать> - переместить.\n<Пр�
 L.Total = 'Всего'
 
 --itemcount tooltips
-L.TipCount1 = 'Одето: %d'
+L.TipCount1 = 'Надето: %d'
 L.TipCount2 = 'Сумки: %d'
 L.TipCount3 = 'Банк: %d'
 L.TipCount4 = 'Бездна: %d'
