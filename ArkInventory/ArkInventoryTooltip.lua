@@ -453,7 +453,7 @@ function ArkInventory.TooltipHookSetUnit( ... )
 		
 		local _, unit = tooltip:GetUnit( )
 		
-		if unit and UnitIsWildBattlePet( unit ) or UnitIsOtherPlayersBattlePet( unit ) or UnitIsBattlePetCompanion( unit ) then
+		if ( unit ) and ( UnitIsWildBattlePet( unit ) or UnitIsOtherPlayersBattlePet( unit ) or UnitIsBattlePetCompanion( unit ) ) then
 			
 			local guid = UnitGUID( unit )
 			
@@ -480,7 +480,7 @@ function ArkInventory.TooltipHookSetUnit( ... )
 						tooltip:AddLine( description, nil, nil, nil, true )
 					end
 					
-					if not ArkInventory.db.global.option.tooltip.add.count then
+					if ( not ArkInventory.db.global.option.tooltip.add.count ) then
 						return
 					end
 					
