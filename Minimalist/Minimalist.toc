@@ -18,6 +18,10 @@
 ## X-Curse-Project-Name: Minimalist
 ## X-Curse-Project-ID: minimalist
 ## X-Curse-Repository-ID: wow/minimalist/mainline
+## X-Curse-Packaged-Version: r124
+## X-Curse-Project-Name: Minimalist
+## X-Curse-Project-ID: minimalist
+## X-Curse-Repository-ID: wow/minimalist/mainline
 
 #@no-lib-strip@
 libs\LibStub\LibStub.lua

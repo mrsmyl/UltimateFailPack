@@ -138,7 +138,7 @@ local ui_options = {
 				db.QUESTLEVEL = switch
 				if switch then
 					mod:SecureHook('QuestLog_Update')
-					mod:SecureHook('WatchFrame_Update')
+					--mod:SecureHook('WatchFrame_Update')
 					mod:RegisterEvent("QUEST_GREETING")
 					if not mod.Gossip_Show then
 						mod:RegisterEvent("GOSSIP_SHOW")
@@ -146,7 +146,7 @@ local ui_options = {
 					end
 				else
 					mod:Unhook('QuestLog_Update')
-					mod:Unhook('WatchFrame_Update')
+					--mod:Unhook('WatchFrame_Update')
 					mod:UnregisterEvent("QUEST_GREETING")
 					if not db.GOSSIPSKIP and not db.QUESTLEVEL then
 						mod:UnregisterEvent("GOSSIP_SHOW")
