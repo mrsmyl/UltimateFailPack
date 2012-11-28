@@ -119,6 +119,7 @@ L["Importing_Desc"] = "L'importation permet à GatherMate d'obtenir de nouveau n
 L["Import Options"] = "Options d'importation"
 L["Import Style"] = "Type d'importation"
 L["Keybind to toggle Minimap Icons"] = "Raccourci pour afficher/masquer les icônes"
+-- L["Keybind to toggle Worldmap Icons"] = "Keybind to toggle Worldmap Icons"
 L["Load GatherMate2Data and import the data to your database."] = "Charge GatherMate2Data et importe les données dans votre base de données."
 L["Load GatherMateData and import the data to your database."] = "Charge GatherMate_Data et importe ses données dans votre base de données."
 L["Merge"] = "Fusionner"

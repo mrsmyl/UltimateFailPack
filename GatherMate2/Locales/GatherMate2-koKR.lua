@@ -119,6 +119,7 @@ L["Importing_Desc"] = "기존에 저장되어 있는 GatherMate용 데이터를 
 L["Import Options"] = "데이터 추가 설정"
 L["Import Style"] = "추가 방법"
 L["Keybind to toggle Minimap Icons"] = "미니맵 아이콘에 단축키를 지정합니다."
+-- L["Keybind to toggle Worldmap Icons"] = "Keybind to toggle Worldmap Icons"
 L["Load GatherMate2Data and import the data to your database."] = "GatherMate2 데이터를 불러와 현재 데이터에 추가합니다."
 L["Load GatherMateData and import the data to your database."] = "GatherMate 데이터를 불러와 현재 데이터에 추가합니다."
 L["Merge"] = "합치기"

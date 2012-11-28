@@ -48,7 +48,7 @@ local node_ids = {
 		[NL["Musselback Sculpin School"]]		= 130,
 		[NL["Nettlefish School"]]				= 131,
 		[NL["Strange Pool"]]					= 132,
-		[NL["Schooner Wreckage Pool"]]			= 133,
+		[NL["Schooner Wreckage"]]			    = 133,
 		[NL["Waterlogged Wreckage Pool"]]		= 134,
 		[NL["Bloodsail Wreckage Pool"]]			= 135,
 		-- Begin tediuous prefix mapping
@@ -132,8 +132,8 @@ local node_ids = {
 		[NL["Rich Pyrite Deposit"]] 			= 240,
 		[NL["Ghost Iron Deposit"]] 				= 241,
 		[NL["Rich Ghost Iron Deposit"]] 		= 242,
-		[NL["Black Trillium Deposit"]]			= 243,
-		[NL["White Trillium Deposit"]]			= 244,
+		--[NL["Black Trillium Deposit"]]			= 243,
+		--[NL["White Trillium Deposit"]]			= 244,
 		[NL["Kyparite Deposit"]]				= 245,
 		[NL["Rich Kyparite Deposit"]]			= 246,
 		[NL["Trillium Vein"]]					= 247,
@@ -315,26 +315,15 @@ local rare_spawns = {
 	[232] = {[231]=true}, -- rich saronite node
 	[230] = {[231]=true}, -- titanium node
 	[441] = {[440]=true}, --flame cap
-	--[136] = {[108]=true}, -- sage fish
-	--[137] = {[107]=true}, --oily
-	--[138] = {[107]=true}, --oily
-	--[139] = {[107]=true}, --oily
-	--[140] = {[107]=true}, --oily
-	--[141] = {[105]=true}, --snapper
-	--[142] = {[105]=true}, --snapper
-	--[143] = {[105]=true}, --snapper
-	--[144] = {[105]=true}, --snapper
-	--[145] = {[103]=true}, --debris
-	--[146] = {[133]=true}, --schooner
-	--[147] = {[135]=true}, --bloodsail
-	--[148] = {[101]=true}, -- floating wreckage
 	[239] = {[233]=true}, -- obsidian
 	[237] = {[236]=true}, -- rich elementium
 	[238] = {[236]=true}, -- pyrtite
 	[240] = {[236]=true}, -- rich pyrite
-	[243] = {[242]=true,[241]=true}, -- black trillium ore
-	[244] = {[242]=true,[241]=true}, -- white trillium ore
 	[462] = {[462]=true,[463]=true,[464]=true,[465]=true,[466]=true,[467]=true,[468]=true}, -- golden lotus
+	[246] = {[245]=true}, -- rich kyparite
+	[242] = {[241]=true}, -- rich ghost iron
+	[247] = {[242]=true,[241]=true}, -- trillium
+	[248] = {[242]=true,[241]=true}, -- rich trillium
 }
 Collector.rareNodes = rare_spawns
 -- Format zone = { "Database", "new node id"}
@@ -481,8 +470,8 @@ local node_textures = {
 		[240] = icon_path.."Mine\\pyrite.tga",
 		[241] = icon_path.."Mine\\ghostiron.tga",
 		[242] = icon_path.."Mine\\ghostiron.tga",
-		[243] = icon_path.."Mine\\black_trillium.tga",
-		[244] = icon_path.."Mine\\white_trillium.tga",
+		--[243] = icon_path.."Mine\\black_trillium.tga",
+		--[244] = icon_path.."Mine\\white_trillium.tga",
 		[245] = icon_path.."Mine\\kyparite.tga",
 		[246] = icon_path.."Mine\\kyparite.tga",
 		[247] = icon_path.."Mine\\white_trillium.tga",
@@ -680,8 +669,8 @@ local node_minharvest = {
 		[240] = 525,
 		[241] = 515,
 		[242] = 550,
-		[243] = 550,
-		[244] = 550,
+		--[243] = 550,
+		--[244] = 550,
 		[245] = 550,
 		[246] = 575,
 		[247] = 600,

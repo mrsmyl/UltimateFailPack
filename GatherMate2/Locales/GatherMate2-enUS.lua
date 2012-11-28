@@ -123,6 +123,7 @@ L["Importing_Desc"] = "Importing allows GatherMate to get node data from other s
 L["Import Options"] = true
 L["Import Style"] = true
 L["Keybind to toggle Minimap Icons"] = true
+L["Keybind to toggle Worldmap Icons"] = true
 L["Load GatherMate2Data and import the data to your database."] = true
 L["Load GatherMateData and import the data to your database."] = true
 L["Merge"] = true
