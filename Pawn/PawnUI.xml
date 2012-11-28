@@ -270,7 +270,7 @@
 		<Scripts>
 			<OnEnter function="PawnUI_SocketingPawnButton_OnEnter" />
 			<OnLeave function="PawnUIFrame_TooltipOff" />
-			<OnClick>PawnUIShowTab(PawnUIGemsTabPage, true)</OnClick>
+			<OnClick function="PawnUI_SocketingPawnButton_OnClick" />
 		</Scripts>
 	</Button>
 	
@@ -810,33 +810,6 @@
 						<Scripts><OnClick function="PawnUIFrame_FollowSpecializationCheck_OnClick" /></Scripts>
 					</CheckButton>
 
-					<Frame name="PawnUIFrame_ScaleSocketOptionsList" hidden="true">
-						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="275" y="-290" /></Offset></Anchor></Anchors>
-						<Size><AbsDimension x="225" y="45" /></Size>
-						<Layers><Layer level="ARTWORK">
-							<FontString name="PawnUIFrame_ScaleSocketOptionsHeaderLabel" inherits="PawnUIRadioButtonLabelTemplate" justifyH="LEFT" justifyV="MIDDLE" text="PawnUIFrame_ScaleSocketOptionsHeaderLabel_Text">
-								<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="0" y="0" /></Offset></Anchor></Anchors>
-								<Size><AbsDimension x="250" y="15" /></Size>
-							</FontString>
-						</Layer></Layers>
-						<Frames>
-							<CheckButton name="PawnUIFrame_ScaleSocketBestRadio" inherits="PawnUIRadioButtonTemplate">
-								<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="0" y="-15" /></Offset></Anchor></Anchors>
-								<Layers><Layer level="ARTWORK">
-									<FontString name="$parent_Label" inherits="PawnUIRadioButtonLabelTemplate" text="PawnUIFrame_ScaleSocketBestRadio_Text" />
-								</Layer></Layers>
-								<Scripts><OnClick>PawnUIFrame_ScaleSocketOptionsList_SetSelection(true)</OnClick></Scripts>
-							</CheckButton>
-							<CheckButton name="PawnUIFrame_ScaleSocketCorrectRadio" inherits="PawnUIRadioButtonTemplate">
-								<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="0" y="-30" /></Offset></Anchor></Anchors>
-								<Layers><Layer level="ARTWORK">
-									<FontString name="$parent_Label" inherits="PawnUIRadioButtonLabelTemplate" text="PawnUIFrame_ScaleSocketCorrectRadio_Text" />
-								</Layer></Layers>
-								<Scripts><OnClick>PawnUIFrame_ScaleSocketOptionsList_SetSelection(false)</OnClick></Scripts>
-							</CheckButton>
-						</Frames>
-					</Frame>
-
 					<CheckButton name="PawnUIFrame_NormalizeValuesCheck" inherits="PawnUICheckboxTemplate">
 						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="30" y="-430" /></Offset></Anchor></Anchors>
 						<Layers><Layer level="ARTWORK">
@@ -1113,25 +1086,15 @@
 						<!-- The header area -->
 						<FontString name="PawnUIFrame_GemsHeaderLabel" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP" text="PawnUIFrame_GemsHeaderLabel_Text">
 							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-30" /></Offset></Anchor></Anchors>
-							<Size><AbsDimension x="550" y="30" /></Size>
-						</FontString>
-
-						<FontString name="PawnUIFrame_GemQualityDropDown_Label" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE" text="PawnUIFrame_GemQualityDropDown_Label_Text"><!-- Colored gems: -->
-							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-70"/></Offset></Anchor></Anchors>
-							<Size><AbsDimension x="110" y="25" /></Size>
-						</FontString>
-
-						<FontString name="PawnUIFrame_MetaGemQualityDropDown_Label" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE" text="PawnUIFrame_MetaGemQualityDropDown_Label_Text"><!-- Meta gems: -->
-							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="305" y="-70"/></Offset></Anchor></Anchors>
-							<Size><AbsDimension x="110" y="25" /></Size>
+							<Size><AbsDimension x="550" y="15" /></Size>
 						</FontString>
 
 						<Texture file="Interface\AddOns\Pawn\Textures\HorizontalBar">
-							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="10" y="-104" /></Offset></Anchor></Anchors>
+							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="10" y="-95" /></Offset></Anchor></Anchors>
 							<Size><AbsDimension x="580" y="1" /></Size>
 						</Texture>
 						<Texture file="Interface\AddOns\Pawn\Textures\HorizontalBar">
-							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="10" y="-429" /></Offset></Anchor></Anchors>
+							<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="10" y="-430" /></Offset></Anchor></Anchors>
 							<Size><AbsDimension x="580" y="1" /></Size>
 						</Texture>
 
@@ -1144,29 +1107,41 @@
 					
 					<!-- The header area -->
 					
-					<Button name="PawnUIFrame_GemQualityDropDown" hidden="false" inherits="UIDropDownMenuTemplate" text="PawnUIFrame_GemQualityDropDown_Text">
-						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="125" y="-70"/></Offset></Anchor></Anchors>
+					<CheckButton name="PawnUIFrame_BestGemsRadio" inherits="PawnUIRadioButtonTemplate" checked="true">
+						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="50" y="-50" /></Offset></Anchor></Anchors>
+						<HitRectInsets><AbsInset left="0" right="-275" top="0" bottom="0"/></HitRectInsets>
+						<Layers><Layer level="ARTWORK">
+							<FontString name="$parent_Label" inherits="PawnUIRadioButtonLabelTemplate" text="PawnUIFrame_BestGemsRadio_Text">
+								<Size><AbsDimension x="300" y="15" /></Size>
+							</FontString>
+						</Layer></Layers>
+						<Scripts><OnClick function="PawnUIFrame_BestGemsRadio_Click" /></Scripts>
+					</CheckButton>
+					<CheckButton name="PawnUIFrame_GemsForItemLevelRadio" inherits="PawnUIRadioButtonTemplate">
+						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="50" y="-70" /></Offset></Anchor></Anchors>
+						<HitRectInsets><AbsInset left="0" right="-275" top="0" bottom="0"/></HitRectInsets>
+						<Layers><Layer level="ARTWORK">
+							<FontString name="$parent_Label" inherits="PawnUIRadioButtonLabelTemplate" text="PawnUIFrame_GemsForItemLevel_Text">
+								<Size><AbsDimension x="300" y="15" /></Size>
+							</FontString>
+						</Layer></Layers>
+						<Scripts><OnClick function="PawnUIFrame_GemsForItemLevelRadio_Click" /></Scripts>
+					</CheckButton>
+					<EditBox name="PawnUIFrame_GemQualityLevelBox" inherits="InputBoxTemplate" numeric="true" letters="3" autoFocus="false">
+						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="350" y="-65"/></Offset></Anchor></Anchors>
+						<Size><AbsDimension x="40" y="25" /></Size>
 						<Scripts>
 							<OnEnter function="PawnUIFrame_TooltipOn" />
 							<OnLeave function="PawnUIFrame_TooltipOff" />
-							<OnShow function="PawnUIFrame_GemQualityDropDown_OnShow" />
+							<OnTextChanged function="PawnUIFrame_GemQualityLevelBox_OnTextChanged" />
 						</Scripts>
-					</Button>
-					
-					<Button name="PawnUIFrame_MetaGemQualityDropDown" hidden="false" inherits="UIDropDownMenuTemplate" text="PawnUIFrame_MetaGemQualityDropDown_Text">
-						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="405" y="-70"/></Offset></Anchor></Anchors>
-						<Scripts>
-							<OnEnter function="PawnUIFrame_TooltipOn" />
-							<OnLeave function="PawnUIFrame_TooltipOff" />
-							<OnShow function="PawnUIFrame_MetaGemQualityDropDown_OnShow" />
-						</Scripts>
-					</Button>
+					</EditBox>
 					
 					<!-- The scrolling gem list -->
 
 					<ScrollFrame name="PawnUIGemScrollFrame" inherits="UIPanelScrollFrameTemplate">
-						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-107" /></Offset></Anchor></Anchors>
-						<Size><AbsDimension x="535" y="319" /></Size>
+						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-98" /></Offset></Anchor></Anchors>
+						<Size><AbsDimension x="535" y="329" /></Size>
 						<ScrollChild>
 							<Frame name="PawnUIGemScrollContent" frameStrata="HIGH">
 								<Anchors><Anchor point="TOPLEFT" /></Anchors>
@@ -1559,11 +1534,10 @@
 			<OnLoad>
 				tinsert(UISpecialFrames, self:GetName()) -- closes when you press Escape
 				self:RegisterEvent("ADDON_LOADED")
-				self:RegisterEvent("PLAYER_ENTERING_WORLD")
+				self:RegisterEvent("PLAYER_LOGIN")
 				self:RegisterEvent("PLAYER_LOGOUT")
 				self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 				self:RegisterEvent("ITEM_LOCKED")
-				self:RegisterEvent("VARIABLES_LOADED")
 				PawnUITabList = { PawnUIScalesTabPage, PawnUIValuesTabPage, PawnUICompareTabPage, PawnUIGemsTabPage, PawnUIOptionsTabPage, PawnUIAboutTabPage, PawnUIHelpTabPage }
 				PanelTemplates_SetNumTabs(PawnUIFrame, #PawnUITabList)
 			</OnLoad>

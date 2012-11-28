@@ -12,9 +12,7 @@
 -- "Constants"
 ------------------------------------------------------------
 
-PawnQuestionTexture = "|TInterface\\AddOns\\Pawn\\Textures\\Question:0|t" -- Texture string that represents a (?).  Don't need to localize this.
-PawnUpgradeTexture = "|TInterface\\AddOns\\Pawn\\Textures\\UpgradeArrow:0|t" -- Texture string that represents an upgrade arrow.  Don't need to localize this.
-PawnNewFeatureTexture = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0:0:0:-1|t" -- Texture string that represents a new feature (!) icon.  Don't need to localize this.
+PawnLocalizedLanguages = { "enUS", "enGB" } -- The language that Pawn is currently translated into (http://www.wowpedia.org/API_GetLocale)
 PawnUINoScale = "(none)" -- The name that shows up in lists of scales if you have no scales
 
 ------------------------------------------------------------
@@ -45,7 +43,7 @@ PawnStats =
 	{"Crit", "CritRating", "Critical strike.  Affects melee attacks, ranged attacks, and spells."},
 	{"Haste", "HasteRating", "Haste.  Affects melee attacks, ranged attacks, and spells."},
 	{"Hit", "HitRating", "Hit.  Affects melee attacks, ranged attacks, and spells."},
-	{"Mastery", "MasteryRating", "Mastery.  Improves the unique bonus of your primary talent tree."},
+	{"Mastery", "MasteryRating", "Mastery.  Improves the unique bonus of your class specialization."},
 	
 	{"Offensive physical stats"},
 	{"Attack power", "Ap", "Attack power.  Not present on most items directly.  Does not include attack power that you will receive from Strength or Agility."},
@@ -64,13 +62,7 @@ PawnStats =
 	{"PvP resilience", "ResilienceRating", "PvP resilience.  Reduces the damage you take from other players' attacks.  Only effective versus other players."},
 	
 	{"Sockets"},
-	{"Red", "RedSocket", "An empty red socket.  Only counts for an item's base value.", true},
-	{"Yellow", "YellowSocket", "An empty yellow socket.  Only counts for an item's base value.", true},
-	{"Blue", "BlueSocket", "An empty blue socket.  Only counts for an item's base value.", true},
-	{"Prismatic", "PrismaticSocket", "An empty prismatic socket.  Only counts for an item's base value.", true},
-	{"Cogwheel", "CogwheelSocket", "An empty cogwheel socket, found on high-level crafted engineering goggles.  Only counts for an item's base value.", true},
-	{"Meta: stats", "MetaSocket", "An empty meta socket.  Only counts the stat bonus of a meta gem, not the additional effect.  The item's value will be the same whether or not the meta gem requirements are met.", true},
-	{"Meta: effect", "MetaSocketEffect", "A meta socket, whether empty or full.  Only counts the additional effect of a meta gem, not its stat bonus.", true},
+	{"Meta socket", "MetaSocketEffect", "A meta socket, whether empty or full.  Assign extra points to helms that have a meta socket here to compensate for the special effects on meta gems.", true},
 	
 	{"Weapon types"},
 	{"Axe: 1H", "IsAxe", "Points to be assigned if the item is a one-handed axe."},
@@ -205,12 +197,6 @@ PawnUIFrame_NoUpgradesCheck_Tooltip = "Enable this option to hide upgrades of th
 PawnUIFrame_FollowSpecializationCheck_Text = "Only show upgrades for my best armor type after level 50"
 PawnUIFrame_FollowSpecializationCheck_Tooltip = "Enable this option to hide upgrades for armor that your class does not specialize in after level 50.  For example, at level 50 holy paladins learn Plate Specialization, which increases their intellect by 5% when wearing only plate armor.  When this option is chosen Pawn will never consider cloth, leather, or mail to be upgrades for level 50+ holy paladins."
 
-PawnUIFrame_ScaleSocketOptionsHeaderLabel_Text = "When calculating a value for this scale:"
-PawnUIFrame_ScaleSocketBestRadio_Text = "Automatically handle sockets for me"
-PawnUIFrame_ScaleSocketBestRadio_Tooltip = "Pawn will calculate a value for this scale assuming that you would socket the item with the gems that would maximize the value of the item."
-PawnUIFrame_ScaleSocketCorrectRadio_Text = "Let me manually pick a socket value"
-PawnUIFrame_ScaleSocketCorrectRadio_Tooltip = "Pawn will calculate a value for this scale based on the number you specify."
-
 PawnUIFrame_NormalizeValuesCheck_Text = "Normalize values (like Wowhead)"
 PawnUIFrame_NormalizeValuesCheck_Tooltip = "Enable this option to divide the final calculated value for an item by the sum of all stat values in your scale, like Wowhead and Lootzor do.  This helps to even out situations like where one scale has stat values around 1 and another has values around 5.  It also helps to keep numbers manageably small.\n\nFor more information on this setting, see the readme file."
 
@@ -223,12 +209,17 @@ PawnUIFrame_VersusHeader_NoItem = "(no item)" -- Text displayed next to empty it
 PawnUIFrame_CompareMissingItemInfo_TextLeft = "First, pick a scale from the list on the left."
 PawnUIFrame_CompareMissingItemInfo_TextRight = "Then, drop an item in this box.\n\nYou can compare it versus your existing items using the icons in the lower-left corner."
 
-PawnUIFrame_CompareSocketBonusHeader_Text = "Socket bonus" -- Heading that appears above the item socket bonuses.
-
+PawnUIFrame_CompareGemHeader_Text = "Sockets" -- Heading that appears above the item sockets and socket bonuses.
+PawnUIFrame_CompareColoredSockets_Text = "Colored sockets"
+PawnUIFrame_CompareSocketBonus_Text = "Socket bonus"
+PawnUIFrame_CompareMetaSockets_Text = "Meta sockets"
+PawnUIFrame_CompareCogwheelSockets_Text = "Cogwheel sockets"
+PawnUIFrame_CompareShaTouchedSockets_Text = "Sha-Touched"
+PawnUIFrame_CompareGemTotalValue_Text = "Value of gems" -- Appears at the bottom of the Sockets header to sum the value of all of the sockets on the item
 PawnUIFrame_CompareOtherInfoHeader_Text = "Other" -- Heading that appears above the item's level and the following stats:
 PawnUIFrame_CompareReforgePotential = "Reforging potential"
 PawnUIFrame_CompareAsterisk = "Special effects " .. PawnQuestionTexture
-PawnUIFrame_CompareAsterisk_Yes = "Yes" -- Appears on the Compare tab when an item has special effects (?).
+PawnUIFrame_Compare_Yes = "Yes" -- Appears on the Compare tab when an item has special effects (?).
 
 PawnUIFrame_ClearItemsButton_Label = "Clear"
 PawnUIFrame_ClearItemsButton_Tooltip = "Remove both comparison items."
@@ -240,20 +231,17 @@ PawnUIFrame_CompareSwapButton_Tooltip = "Swap the item on the left side with the
 
 -- Configuration UI, Gems tab
 PawnUIFrame_GemsTab_Text = "Gems"
-PawnUIFrame_GemsHeaderLabel_Text = "Choose a scale and what quality of gems you use, and Pawn will determine the best gems for that scale."
+PawnUIFrame_GemsHeaderLabel_Text = "Select a scale on the left to see the gems that Pawn recommends."
 
-PawnUIFrame_CurrentGemsScaleDropDown_Label_Text = "Find the best gems for:"
-PawnUIFrame_CurrentGemsScaleDropDown_Tooltip = "Select a scale for which to calculate gem values."
+PawnUIFrame_BestGemsRadio_Text = "Show the best gems available"
+PawnUIFrame_BestGemsRadio_Tooltip = "Shows the absolute best gems that are available for the scale that is currently selected.  Some of these gems will be too powerful to socket into older and lower-quality items."
+PawnUIFrame_GemsForItemLevel_Text = "Show the gems recommended for an item of level:"
+PawnUIFrame_GemsForItemLevel_Tooltip = "Shows the gems that Pawn recommends for the scale that is currently selected and an item of a specific level."
+PawnUIFrame_GemQualityLevelBox_Label = "Gem quality level"
+PawnUIFrame_GemQualityLevelBox_Tooltip = "The level of items for which to suggest gems.\n\nFor example, if \"463\", then Pawn will show gems that are appropriate for use in items of level 463: Mists of Pandaria heroic dungeon loot."
 
-PawnUIFrame_GemQualityDropDown_Label_Text = "Colored gems:"
-PawnUIFrame_GemQualityDropDown_Tooltip = "Select the quality of colored gems for Pawn to consider."
-
-PawnUIFrame_MetaGemQualityDropDown_Label_Text = "Meta gems:"
-PawnUIFrame_MetaGemQualityDropDown_Tooltip = "Select the quality of meta gems for Pawn to consider."
-
-PawnUIFrame_FindGemColorHeader_Text = "%s gems" -- Red
-PawnUIFrame_FindGemColorHeader_Meta_Text = "Meta gems (ignoring effects)"
-PawnUIFrame_FindGemNoGemsHeader_Text = "No gems found."
+PawnUIFrame_FindGemColorHeader_Text = "%s gems" -- Red gems
+PawnUIFrame_FindGemNoGemsHeader_Text = "No appropriate gems were found."
 
 -- Configuration UI, Options tab
 PawnUIFrame_OptionsTab_Text = "Options"
@@ -345,7 +333,7 @@ PawnUI_InventoryPawnButton_Tooltip = "Click to show the Pawn UI."
 PawnUI_InventoryPawnButton_Subheader = "Totals for all equipped items:"
 
 -- Socketing button
-PawnUI_SocketingPawnButton_Tooltip = "Click to show Pawn's Gems tab, where you can see the gems that Pawn recommends for each scale and change to higher or lower quality gems."
+PawnUI_SocketingPawnButton_Tooltip = "Click to show Pawn's Gems tab, where you can more informationa bout the gems that Pawn recommends."
 
 -- Socketing Advisor
 PawnUI_ItemSocketingDescription_Title = "Pawn Socketing Advisor suggests:"
@@ -374,6 +362,7 @@ PawnLocal =
 
 	-- General messages
 	["NeedNewerVgerCoreMessage"] = "Pawn needs a newer version of VgerCore.  Please use the version of VgerCore that came with Pawn.",
+	["WrongLocaleMessage"] = VgerCore.Color.Salmon .. "This version of Pawn is for English only.  Please visit vgermods.com for links to translated versions. ", -- Shown when the current language is not in PawnLocalizedLanguages
 	
 	-- Scale management dialog messages
 	["NewScaleEnterName"] = "Enter a name for your scale:",
@@ -415,10 +404,11 @@ PawnLocal =
 	
 	["ValueCalculationMessage"] = "   %g %s x %g each = %g", -- 25 Stamina x 1 each = 25
 	["UnusableStatMessage"] = "   -- %s is unusable, so stopping.", -- IsPlate is unusable, so stopping
-	["SocketBonusValueCalculationMessage"] = "   -- Socket bonus would be worth:",
+	["CorrectGemsValueCalculationMessage"] = "   -- Correct gems would be worth: %g", -- Correct gems would be worth: 396.7
+	["SocketBonusValueCalculationMessage"] = "   -- Socket bonus would be worth: %g", -- Socket bonus would be worth: 120.4
 	["MissocketWorthwhileMessage"] = "   -- But it's better to use only %s gems:", -- Better to use only Red/Blue gems:
-	["NormalizationMessage"] = "   ---- Normalized by dividing by %g", -- Normalized by dividing by 3.5
-	["ReforgeDebugMessage"] = "   ---- Reforge item to gain +%g", -- Reforge item to gain +122.83
+	["NormalizationMessage"] = "   -- Normalized by dividing by %g", -- Normalized by dividing by 3.5
+	["ReforgeDebugMessage"] = "   -- Reforge item to gain +%g", -- Reforge item to gain +122.83
 	["TotalValueMessage"] = "   ---- Total: %g", -- Total: 25
 	
 	-- Tooltip annotations
@@ -427,14 +417,14 @@ PawnLocal =
 	["AverageItemLevelIgnoringRarityTooltipLine"] = "Average item level",
 	["BaseValueWord"] = "base", -- 123.45 (98.76 base)
 	["AsteriskTooltipLine"] = "|TInterface\\AddOns\\Pawn\\Textures\\Question:0|t Special effects not included in the value.",
-	["TooltipAnyUpgradeLine"] = VgerCore.Color.Blue .. "This item is an upgrade.",
-	["TooltipAnyBestItemLine"] = VgerCore.Color.Blue .. "This is one of your best items.",
 	["TooltipUpgradeAnnotation"] = "%s  |TInterface\\AddOns\\Pawn\\Textures\\UpgradeArrow:0|t|cff00ff00+%.0f%% upgrade%s|r", -- +24% upgrade for 2H
 	["TooltipBigUpgradeAnnotation"] = "%s  |TInterface\\AddOns\\Pawn\\Textures\\UpgradeArrow:0|t|cff00ff00 upgrade%s|r", -- upgrade for 2H
 	["TooltipUpgradeFor1H"] = " for 1H set",
 	["TooltipUpgradeFor2H"] = " for 2H",
 	["TooltipBestAnnotation"] = "%s  " .. VgerCore.Color.Blue .. "(best)",
+	["TooltipBestAnnotationSimple"] = "%s  best in slot", -- used when item values are hidden
 	["TooltipSecondBestAnnotation"] = "%s  " .. VgerCore.Color.Blue .. "(second best)",
+	["TooltipSecondBestAnnotationSimple"] = "%s  second best in slot", -- used when item values are hidden
 	["TooltipVersusLine"] = "%s|n  vs. |c%s%s|r", -- vs. Relentless Gladiator's Mail Helm
 	
 	-- Loot Upgrade Advisor
@@ -453,25 +443,8 @@ PawnLocal =
 	["GemColorList2"] = "%d %s or %s", -- 3 Red or Yellow
 	["GemColorList3"] = "%d of any color", -- 1 of any color
 	["CogwheelName"] = "Cogwheel", -- ...because there's no built-in constant COGWHEEL_GEM like there is for the other types of gems
+	["CrystalOfFearName"] = "Crystal of Fear", -- ...because there's no built-in constant HYDRAULIC_GEM like there is for the other types of gems
 	["EngineeringName"] = "Engineering", -- must exactly match the name of the engineering skill or cogwheels won't show up on the Gems tab
-	
-	["GemQualityLevel60Common"] = "Level 60 vendor",
-	["GemQualityLevel70Uncommon"] = "Level 70 uncommon",
-	["GemQualityLevel70Rare"] = "Level 70 rare",
-	["GemQualityLevel70Epic"] = "Level 70 epic",
-	["MetaGemQualityLevel70Rare"] = "Level 70 crafted",
-	["GemQualityLevel80Uncommon"] = "Level 80 uncommon",
-	["GemQualityLevel80Rare"] = "Level 80 rare",
-	["GemQualityLevel80Epic"] = "Level 80 epic",
-	["MetaGemQualityLevel80Rare"] = "Level 80 crafted",
-	["GemQualityLevel85Uncommon"] = "Level 85 uncommon",
-	["GemQualityLevel85Rare"] = "Level 85 rare",
-	["GemQualityLevel85Epic"] = "Level 85 epic",
-	["MetaGemQualityLevel85Rare"] = "Level 85 crafted",
-	["GemQualityLevel90Uncommon"] = "Level 90 uncommon",
-	["GemQualityLevel90Rare"] = "Level 90 rare",
-	["GemQualityLevel90Epic"] = "Level 90 epic",
-	["MetaGemQualityLevel90Rare"] = "Level 90 crafted",
 	
 	-- Slash commands
 	["DebugOnCommand"] = "debug on",
@@ -524,28 +497,17 @@ PawnWowheadScale_MageFrost = "Mage: frost"
 PawnWowheadScale_WarlockAffliction = "Warlock: affliction"
 PawnWowheadScale_WarlockDemonology = "Warlock: demonology"
 PawnWowheadScale_WarlockDestruction = "Warlock: destruction"
+PawnWowheadScale_MonkBrewmaster = "Monk: brewmaster"
+PawnWowheadScale_MonkMistweaver = "Monk: mistweaver"
+PawnWowheadScale_MonkWindwalker = "Monk: windwalker"
 PawnWowheadScale_DruidBalance = "Druid: balance"
 PawnWowheadScale_DruidFeralDps = "Druid: feral"
 PawnWowheadScale_DruidFeralTank = "Druid: guardian"
 PawnWowheadScale_DruidRestoration = "Druid: restoration"
 
-PawnPlaceholderScale_Provider = "• Placeholder scales" -- The dot makes these scales sort to the bottom of the list.
-PawnPlaceholderScale_MonkBrewmaster = "Monk: brewmaster"
-PawnPlaceholderScale_MonkMistweaver = "Monk: mistweaver"
-PawnPlaceholderScale_MonkWindwalker = "Monk: windwalker"
-
 ------------------------------------------------------------
 -- Tooltip parsing expressions
 ------------------------------------------------------------
-
--- Turns a game constant into a regular expression.
-function PawnGameConstant(Text)
-	return "^" .. PawnGameConstantUnwrapped(Text) .. "$"
-end
-function PawnGameConstantUnwrapped(Text)
-	-- REVIEW: This function seems stupid.
-	return gsub(gsub(Text, "%%", "%%%%"), "%-", "%%-")
-end
 
 -- These strings indicate that a given line might contain multiple stats, such as complex enchantments
 -- (ZG, AQ) and gems.  These are sorted in priority order.  If a string earlier in the table is present, any
@@ -596,6 +558,8 @@ PawnNormalizationRegexes =
 {
 	{"^([%w%s%.]+) %+(%d+)$", "+%2 %1"}, -- "Stamina +5" --> "+5 Stamina"
 	{"^(.-)|r.*", "%1"}, -- For removing meta gem requirements
+	{"^(.*) %(Reforged from (.*)%)$", "%1"}, -- "+123 Spirit (Reforged from Hit)" --> "+123 Spirit" (REFORGE_TOOLTIP_LINE)
+	{"^Enchanted: (.*)$", "%1"}, -- "Enchanted: +50 Strength" --> "+50 Strength" (ENCHANTED_TOOLTIP_LINE)
 }
 
 -- These regular expressions are used to parse item tooltips.
@@ -609,9 +573,6 @@ PawnNormalizationRegexes =
 -- Note that certain strings don't need to be translated: for example, the game defines
 -- ITEM_BIND_ON_PICKUP to be "Binds when picked up" in English, and the correct string
 -- in other languages automatically.
-PawnSingleStatMultiplier = "_SingleMultiplier"
-PawnMultipleStatsFixed = "_MultipleFixed"
-PawnMultipleStatsExtract = "_MultipleExtract"
 PawnRegexes =
 {
 	-- ========================================
@@ -633,6 +594,7 @@ PawnRegexes =
 	{"^" .. PawnGameConstantUnwrapped(ITEM_HEROIC)}, -- Heroic (Thrall's Chestguard of Triumph, level 258 version) (can be followed with a rarity in colorblind mode, or "Elite")
 	{PawnGameConstant(RAID_FINDER)}, -- Raid Finder
 	{"^" .. ITEM_LEVEL}, -- Item Level 200
+	{"^Upgrade Level:"}, -- Upgrade Level 0/2 (ITEM_UPGRADE_TOOLTIP_FORMAT)
 	{PawnGameConstant(ITEM_UNSELLABLE)}, -- No sell price
 	{PawnGameConstant(ITEM_SOULBOUND)}, -- Soulbound
 	{PawnGameConstant(ITEM_BIND_ON_EQUIP)}, -- Binds when equipped
@@ -711,8 +673,7 @@ PawnRegexes =
 	{"^Equip: %+?([%d%.,]+) Weapon Damage%.$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Braided Eternium Chain
 	{"^%+?([%d%.,]+) Damage$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapons with no damage range: Crossbow of the Albatross
 	{"^Scope %(%+([%d%.,]+) Damage%)$", "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Ranged weapon scopes
-	{"^%+?([%d%.,]+) [Aa]ll [Ss]tats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract},
-	{"^%+?([%d%.,]+) to All Stats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract}, -- Enchanted Pearl, Enchanted Tear
+	{"^%+?([%d%.,]+) [Aa]ll [Ss]tats$", "Strength", 1, PawnMultipleStatsExtract, "Agility", 1, PawnMultipleStatsExtract, "Stamina", 1, PawnMultipleStatsExtract, "Intellect", 1, PawnMultipleStatsExtract, "Spirit", 1, PawnMultipleStatsExtract}, -- Enchanted Pearl, Enchanted Tear, chest enchantments
 	{"^%+?([-%d%.,]+) Strength$", "Strength"},
 	{"^Potency$", "Strength", 20, PawnMultipleStatsFixed}, -- weapon enchantment (untested)
 	{"^%+?([-%d%.,]+) Agility$", "Agility"},
@@ -721,53 +682,39 @@ PawnRegexes =
 	{"^%+?([-%d%.,]+) Spirit$", "Spirit"},
 	{"^Titanium Weapon Chain$", "HitRating", 28, PawnMultipleStatsFixed}, -- Weapon enchantment; has additional effects
 	{"^%+?([%d%.,]+) Dodge$", "DodgeRating"}, -- Uppercase: Subtle Alicite, Arctic Ring of Eluding, Cata head enchantment for tanks
-	{"^Equip: Increases your dodge by ([%d%.,]+)%.$", "DodgeRating"}, -- Frostwolf Insignia Rank 6
-	{"^Equip: Increases your parry by ([%d%.,]+)%.$", "ParryRating"}, -- Draconic Avenger
 	{"^%+?([%d%.,]+) Parry$", "ParryRating"},
 	{"^%(([%d%.,]+) damage per second%)$"}, -- Ignore this; DPS is calculated manually
 	{"^Adds ([%d%.,]+) damage per second$", "Dps"},
 	{"^Fiery Weapon$", "Dps", 4, PawnMultipleStatsFixed}, -- weapon enchantment, 
-	{"^Equip: Increases your expertise by ([%d%.,]+)%.$", "ExpertiseRating"}, -- Earthwarden
 	{"^%+?([%d%.,]+) Expertise$", "ExpertiseRating"}, -- Guardian's Shadow Crystal
-	{"^Equip: Increases your critical strike by ([%d%.,]+)%.$", "CritRating"},
 	{"^%+?([%d%.,]+) Critical [Ss]trike%.?$", "CritRating"},
 	{"^Scope %(%+([%d%.,]+) Critical Strike%)$", "CritRating"},
 	{"^%+?([%d%.,]+) Ranged Critical Strike$", "CritRating"}, -- Heartseeker Scope (untested); Pawn doesn't distinguish between ranged and hybrid crit
-	{"^Equip: Increases your hit by ([%d%.,]+)%.$", "HitRating"}, -- Don Julio's Band
 	{"^%+?([%d%.,]+) Hit$", "HitRating"}, -- 3% hit scope
 	{"^Surefooted$", "HitRating", 10, PawnMultipleStatsFixed}, -- Enchantment (untested); has additional effects
-	{"^Accuracy$", "HitRating", 25, PawnMultipleStatsFixed, "CritRating", 25, PawnMultipleStatsFixed}, -- weapon enchantment
-	{"^Equip: Increases your pvp resilience by ([%d%.,]+)%.$", "ResilienceRating"},
+	{"^Accuracy$", "HitRating", 25, PawnMultipleStatsFixed, "CritRating", 25, PawnMultipleStatsFixed}, -- weapon enchantment (untested as of 5.1)
 	{"^%+?([%d%.,]+) PvP Resilience$", "ResilienceRating"}, -- Mystic Dawnstone
-	{"^Equip: Increases your pvp power by ([%d%.,]+)%.$", "SpellPenetration"}, -- Bloodthirsty Gladiator's Ringmail Gauntlets
 	{"^%+?([%d%.,]+) PvP Power$", "SpellPenetration"}, -- Stormy Chalcedony
 	{"^Counterweight %(%+([%d%.,]+) Haste%)", "HasteRating"},
-	{"^Equip: Increases your haste by ([%d%.,]+)%.$", "HasteRating"}, -- Swiftsteel Shoulders
 	{"^%+?([%d%.,]+) Haste$", "HasteRating"}, -- Leggings of the Betrayed
-	{"^Equip: Increases your mastery by ([%d%.,]+)%.$", "MasteryRating"}, -- Elementium Poleaxe
 	{"^%+?([%d%.,]+) Mastery$", "MasteryRating"}, -- Zen Dream Emerald
-	{"^Equip: Increases attack power by ([%d%.,]+)%.$", "Ap"},
 	{"^%+?([%d%.,]+) Attack Power$", "Ap"},
 	{"^%+?([%d%.,]+) [mM]ana [pP]er 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- Lesser Sledgemace of the Elder (counting 1 MP5 = 2 Spirit)
 	{"^%+?([%d%.,]+) [mM]ana [eE]very 5 [sS]ec%.?$", "Spirit", 2, PawnSingleStatMultiplier},  -- ? (counting 1 MP5 = 2 Spirit)
 	{"^%+?([%d%.,]+) [mM]ana [pP]er 5 [sS]econds$", "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
 	{"^%+?([%d%.,]+) [mM]ana [eE]very 5 [sS]econds$", "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
 	{"^%Mana Regen ([%d%.,]+) per 5 sec%.$", "Spirit", 2, PawnSingleStatMultiplier}, -- Classic-era bracers enchantment (counting 1 MP5 = 2 Spirit)
-	{"^Equip: Restores ([%d%.,]+) health every 5 sec%.$", "Stamina"}, -- (counting HP5 = Stamina)
-	{"^Equip: Restores ([%d%.,]+) health per 5 sec%.$", "Stamina", 2, PawnSingleStatMultiplier}, -- Demon's Blood (counting HP5 = Stamina)
-	{"^%+?([%d%.,]+) [hH]ealth [eE]very 5 [sS]ec%.?$", "Stamina"}, -- Aquamarine Signet of Regeneration
-	{"^%+?([%d%.,]+) [hH]ealth [pP]er 5 [sS]ec%.?$", "Stamina"}, -- Anglesite Choker of Regeneration
+	{"^Equip: Restores ([%d%.,]+) health every 5 sec%.$", "Stamina", 3, PawnSingleStatMultiplier}, -- (counting 1 HP5 = 3 Stamina)
+	{"^Equip: Restores ([%d%.,]+) health per 5 sec%.$", "Stamina", 3, PawnSingleStatMultiplier}, -- Demon's Blood (counting 1 HP5 = 3 Stamina)
+	{"^%+?([%d%.,]+) [hH]ealth [eE]very 5 [sS]ec%.?$", "Stamina", 3, PawnSingleStatMultiplier}, -- Aquamarine Signet of Regeneration
+	{"^%+?([%d%.,]+) [hH]ealth [pP]er 5 [sS]ec%.?$", "Stamina", 3, PawnSingleStatMultiplier}, -- Anglesite Choker of Regeneration
 	{"^%+([%d%.,]+) Health and Mana every 5 sec$", "Spirit", 2, PawnSingleStatMultiplier}, -- Greater Vitality boots enchantment; ignores the HP5
 	{"^%+([%d%.,]+) Mana$", "Intellect", 1/20, PawnSingleStatMultiplier}, -- +150 mana enchantment (counting 1 Mana = 1/20 Intellect)
 	{"^%+([%d%.,]+) HP$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +100 health head/leg enchantment (counting 1 HP = 1/12.5 Stamina)
 	{"^%+([%d%.,]+) Health$", "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +150 health enchantment (counting 1 HP = 1/12.5 Stamin)
-	{"^([%d%.,]+) Armor$", "Armor"}, -- normal armor
-	{"^%+([%d%.,]+) Armor$", "Armor"}, -- cloak armor enchantments
+	{"^%+?([%d%.,]+) Armor$", "Armor"}, -- normal armor and cloak armor enchantments
 	{"^Reinforced %(%+([%d%.,]+) Armor%)$", "Armor"}, -- armor kits
-	{"^Equip: %+([%d%.,]+) Armor%.$", "Armor"}, -- paladin Royal Seal of Eldre'Thalas
-	{"^Equip: Increases spell power by ([%d%.,]+)%.$", "SpellPower"}, -- Overlaid Chain Spaulders
-	{"^%+?([%d%.,]+) Spell Power$", "SpellPower"}, -- Reckless Monarch Topaz; enchantments
-	{"^Equip: Increases spell penetration by ([%d%.,]+)%.$", "SpellPenetration"}, -- Frostfire Robe, Wrathful Gladiator's Grimoire
+	{"^%+?([%d%.,]+) Spell Power$", "SpellPower"}, -- enchantments
 	{"^%+([%d%.,]+) Arcane Spell Damage$", "SpellPower"}, -- ...of Arcane Wrath
 	{"^%+([%d%.,]+) Fire Spell Damage$", "SpellPower"}, -- ...of Fiery Wrath
 	{"^%+([%d%.,]+) Frost Spell Damage$", "SpellPower"}, -- ...of Frozen Wrath
@@ -777,10 +724,10 @@ PawnRegexes =
 	{PawnGameConstant(EMPTY_SOCKET_YELLOW), "YellowSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_BLUE), "BlueSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_PRISMATIC), "PrismaticSocket", 1, PawnMultipleStatsFixed},
-	{PawnGameConstant(EMPTY_SOCKET_NO_COLOR), "PrismaticSocket", 1, PawnMultipleStatsFixed}, -- maybe unused?
+	{PawnGameConstant(EMPTY_SOCKET_NO_COLOR), "PrismaticSocket", 1, PawnMultipleStatsFixed}, -- unused
 	{PawnGameConstant(EMPTY_SOCKET_META), "MetaSocket", 1, PawnMultipleStatsFixed},
-	{PawnGameConstant(EMPTY_SOCKET_COGWHEEL), "CogwheelSocket", 1, PawnMultipleStatsFixed}, -- level 85 epic Engineering crafted helms
-	--{PawnGameConstant(EMPTY_SOCKET_HYDRAULIC), "ShaTouchedSocket", 1, PawnMultipleStatsFixed}, -- Sha-Touched items (not yet supported)
+	{PawnGameConstant(EMPTY_SOCKET_COGWHEEL), "CogwheelSocket", 1, PawnMultipleStatsFixed}, -- level 85+ epic Engineering crafted helms (Retinal Armor)
+	{PawnGameConstant(EMPTY_SOCKET_HYDRAULIC), "ShaTouchedSocket", 1, PawnMultipleStatsFixed}, -- Sha-Touched items (Kri'tak)
 	{"^\"Only fits in a meta gem slot%.\"$", "MetaSocketEffect", 1, PawnMultipleStatsFixed}, -- Actual meta gems, not the socket
 
 	-- ========================================

@@ -2,8 +2,8 @@
 -- www.vgermods.com
 -- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
--- Version 1.0.8: FormatShortDecimal and FormatInteger
-local VgerCoreThisVersion = 1.08
+-- Version 1.0.9 -- FormatCompactDecimal
+local VgerCoreThisVersion = 1.09
 -- 
 -- VgerCore contains functionality that is shared by Vger's mods.
 -- It can be used as a standalone add-on, or embedded within other mods.
@@ -277,6 +277,26 @@ end
 function VgerCore.FormatShortDecimal(Number)
 	if Number == nil then
 		return nil
+	elseif Number >= 1000 then
+		return BreakUpLargeNumbers(floor(Number + .5))
+	elseif abs(Number - floor(Number)) < .0001 then
+		return tostring(Number)
+	else
+		return format("%.1f", Number)
+	end
+end
+
+-- Returns a string representation of a number to a maximum of one decimal place.  If the number is long, it is shortened using
+-- an abbreviation like "12.3k" so that it fits in a small space.   If the number passed is nil, nil is returned.
+function VgerCore.FormatCompactDecimal(Number)
+	if Number == nil then
+		return nil
+	elseif Number >= 1000000000 then
+		return format("%.1fb", Number / 1000000000)
+	elseif Number >= 1000000 then
+		return format("%.1fm", Number / 1000000)
+	elseif Number >= 10000 then
+		return format("%.1fk", Number / 1000)
 	elseif Number >= 1000 then
 		return BreakUpLargeNumbers(floor(Number + .5))
 	elseif abs(Number - floor(Number)) < .0001 then

@@ -15,48 +15,14 @@
 -- 	Blue: Is this gem blue?
 --	"Stat": The stat that this gem gives.
 --	Quantity: How much of the stat that the gem gives.
-
-
---========================================
--- Colored level 60 common-quality vendor gems
---========================================
-PawnGemData60Common =
-{
-
-
-------------------------------------------------------------
--- Red gems
-------------------------------------------------------------
-
-{ 28458, true, false, false, "Strength", 4 }, -- Bold Tourmaline
-{ 28459, true, false, false, "Agility", 4 }, -- Delicate Tourmaline
-{ 28460, true, false, false, "Intellect", 4 }, -- Brilliant Tourmaline
-
-
-------------------------------------------------------------
--- Yellow gems
-------------------------------------------------------------
-
-{ 28467, false, true, false, "CritRating", 4 }, -- Smooth Amber
-{ 28470, false, true, false, "DodgeRating", 4 }, -- Subtle Amber
-
-
-------------------------------------------------------------
--- Blue gems
-------------------------------------------------------------
-
-{ 28463, false, false, true, "Stamina", 6 }, -- Solid Zircon
-{ 28464, false, false, true, "Spirit", 4 }, -- Sparkling Zircon
-{ 28468, false, false, true, "HitRating", 4 }, -- Rigid Zircon
-
-
-}
+--	("Stat", Quantity can be repeated again...)
+--	Pawn will use the 9th slot for storing a cache of scale values.
 
 
 --========================================
 -- Colored level 70 uncommon-quality gems
 --========================================
-PawnGemData70Uncommon =
+local PawnGemData70Uncommon =
 {
 
 
@@ -124,7 +90,7 @@ PawnGemData70Uncommon =
 --========================================
 -- Colored level 70 rare-quality gems
 --========================================
-PawnGemData70Rare =
+local PawnGemData70Rare =
 {
 
 
@@ -197,7 +163,7 @@ PawnGemData70Rare =
 --========================================
 -- Colored level 70 epic-quality gems
 --========================================
-PawnGemData70Epic =
+local PawnGemData70Epic =
 {
 
 
@@ -270,7 +236,7 @@ PawnGemData70Epic =
 --========================================
 -- Level 70 crafted meta gems
 --========================================
-PawnMetaGemData70Rare =
+local PawnMetaGemData70Rare =
 {
 
 
@@ -306,7 +272,7 @@ PawnMetaGemData70Rare =
 --========================================
 -- Colored level 80 uncommon-quality gems
 --========================================
-PawnGemData80Uncommon =
+local PawnGemData80Uncommon =
 {
 
 
@@ -399,7 +365,7 @@ PawnGemData80Uncommon =
 --========================================
 -- Colored level 80 rare-quality gems
 --========================================
-PawnGemData80Rare =
+local PawnGemData80Rare =
 {
 
 
@@ -492,7 +458,7 @@ PawnGemData80Rare =
 --========================================
 -- Colored level 80 epic-quality gems
 --========================================
-PawnGemData80Epic =
+local PawnGemData80Epic =
 {
 
 
@@ -585,7 +551,7 @@ PawnGemData80Epic =
 --========================================
 -- Level 80 crafted meta gems
 --========================================
-PawnMetaGemData80Rare =
+local PawnMetaGemData80Rare =
 {
 
 
@@ -628,7 +594,7 @@ PawnMetaGemData80Rare =
 --========================================
 -- Colored level 85 uncommon-quality gems
 --========================================
-PawnGemData85Uncommon =
+local PawnGemData85Uncommon =
 {
 
 
@@ -722,7 +688,7 @@ PawnGemData85Uncommon =
 --========================================
 -- Colored level 85 rare-quality gems
 --========================================
-PawnGemData85Rare =
+local PawnGemData85Rare =
 {
 
 
@@ -819,7 +785,7 @@ PawnGemData85Rare =
 --========================================
 -- Colored level 85 epic-quality gems
 --========================================
-PawnGemData85Epic =
+local PawnGemData85Epic =
 {
 
 ------------------------------------------------------------
@@ -929,7 +895,7 @@ PawnGemData85Epic =
 --========================================
 -- Level 85 rare-quality cogwheels
 --========================================
-PawnCogwheelData85Rare =
+local PawnCogwheelData85Rare =
 {
 
 
@@ -954,7 +920,7 @@ PawnCogwheelData85Rare =
 --========================================
 -- Level 85 crafted meta gems
 --========================================
-PawnMetaGemData85Rare =
+local PawnMetaGemData85Rare =
 {
 
 
@@ -986,7 +952,7 @@ PawnMetaGemData85Rare =
 --========================================
 -- Colored level 90 uncommon-quality gems
 --========================================
-PawnGemData90Uncommon =
+local PawnGemData90Uncommon =
 {
 
 
@@ -1100,7 +1066,7 @@ PawnGemData90Uncommon =
 --========================================
 -- Colored level 90 rare-quality gems
 --========================================
-PawnGemData90Rare =
+local PawnGemData90Rare =
 {
 
 
@@ -1212,7 +1178,7 @@ PawnGemData90Rare =
 --========================================
 -- Level 90 rare-quality cogwheels
 --========================================
-PawnCogwheelData90Rare =
+local PawnCogwheelData90Rare =
 {
 
 
@@ -1236,12 +1202,12 @@ PawnCogwheelData90Rare =
 --========================================
 -- Level 90 legendary-quality crystals of fear
 --========================================
-PawnCrystalOfFearData90Legendary =
+local PawnCrystalOfFearData90Legendary =
 {
 
 
 ------------------------------------------------------------
--- Crystals of Fear
+-- Crystals of Fear (5.0)
 ------------------------------------------------------------
 
 { 89873, false, false, false, "Agility", 500 }, -- Crystallized Dread
@@ -1255,7 +1221,7 @@ PawnCrystalOfFearData90Legendary =
 --========================================
 -- Level 90 crafted meta gems
 --========================================
-PawnMetaGemData90Rare =
+local PawnMetaGemData90Rare =
 {
 
 
@@ -1286,72 +1252,44 @@ PawnMetaGemData90Rare =
 
 -- The master list of all tables of Pawn gem data
 
+-- Gem data metatable row format:
+-- { MinItemLevel, GemData }
+-- 	MinItemLevel: Minimum item level required to use that gem quality level (inclusive)
+-- 	GemData: The table of gem data (as specified above)
+
+-- The rows must be specified in descending MinItemLevel order, with the last row
+-- in each table having MinItemLevel 0.
+
 PawnGemQualityLevels =
 {
-	{ 60, PawnLocal.GemQualityLevel60Common },
-	{ 70, PawnLocal.GemQualityLevel70Uncommon },
-	{ 71, PawnLocal.GemQualityLevel70Rare },
-	{ 72, PawnLocal.GemQualityLevel70Epic },
-	{ 80, PawnLocal.GemQualityLevel80Uncommon },
-	{ 81, PawnLocal.GemQualityLevel80Rare },
-	{ 82, PawnLocal.GemQualityLevel80Epic },
-	{ 85, PawnLocal.GemQualityLevel85Uncommon },
-	{ 86, PawnLocal.GemQualityLevel85Rare },
-	{ 87, PawnLocal.GemQualityLevel85Epic },
-	{ 90, PawnLocal.GemQualityLevel90Uncommon },
-	{ 91, PawnLocal.GemQualityLevel90Rare },
+	{ 463, PawnGemData90Rare }, -- Mists of Pandaria heroics
+	{ 417, PawnGemData90Uncommon }, -- Actual gem requirement
+	{ 397, PawnGemData85Epic }, -- Dragon Soul normal mode
+	{ 346, PawnGemData85Rare }, -- Wrath heroics
+	{ 308, PawnGemData85Uncommon }, -- Wrath of the Lich King dungeons
+	{ 232, PawnGemData80Epic }, -- Tier 9 epics
+	{ 200, PawnGemData80Rare }, -- Wrath of the Lich King heroics
+	{ 145, PawnGemData80Uncommon }, -- Sea King's Crown, worst Wrath socketed green
+	{ 141, PawnGemData70Epic }, -- Tier 5 epics
+	{ 112, PawnGemData70Rare }, -- Burning Crusade level 70 non-heroics
+	{ 0, PawnGemData70Uncommon },
 }
-PawnGemQualityTables =
-{
-	[60] = PawnGemData60Common,
-	[70] = PawnGemData70Uncommon,
-	[71] = PawnGemData70Rare,
-	[72] = PawnGemData70Epic,
-	[80] = PawnGemData80Uncommon,
-	[81] = PawnGemData80Rare,
-	[82] = PawnGemData80Epic,
-	[85] = PawnGemData85Uncommon,
-	[86] = PawnGemData85Rare,
-	[87] = PawnGemData85Epic,
-	[90] = PawnGemData90Uncommon,
-	[91] = PawnGemData90Rare,
-}
-PawnDefaultGemQualityLevel = 86
 
 PawnMetaGemQualityLevels =
 {
-	{ 71, PawnLocal.MetaGemQualityLevel70Rare },
-	{ 81, PawnLocal.MetaGemQualityLevel80Rare },
-	{ 86, PawnLocal.MetaGemQualityLevel85Rare },
-	{ 91, PawnLocal.MetaGemQualityLevel90Rare },
+	{ 417, PawnMetaGemData90Rare }, -- Actual gem requirement
+	{ 333, PawnMetaGemData85Rare }, -- Helm of the Skyborne
+	{ 200, PawnMetaGemData80Rare }, -- Helmet of the Shrine
+	{ 0, PawnMetaGemData70Rare }, -- Exorcist's
 }
-PawnMetaGemQualityTables =
-{
-	[71] = PawnMetaGemData70Rare,
-	[81] = PawnMetaGemData80Rare,
-	[86] = PawnMetaGemData85Rare,
-	[91] = PawnMetaGemData90Rare,
-}
-PawnDefaultMetaGemQualityLevel = 86
 
 PawnCogwheelQualityLevels =
 {
-	{ 86, PawnLocal.CogwheelQualityLevel85Rare },
-	{ 91, PawnLocal.CogwheelQualityLevel90Rare },
+	{ 476, PawnCogwheelData90Rare }, -- Retinal Armor
+	{ 0, PawnCogwheelData85Rare }, -- Bio-Optic Killshades
 }
-PawnCogwheelQualityTables =
-{
-	[86] = PawnCogwheelData85Rare,
-	[91] = PawnCogwheelData90Rare,
-}
-PawnDefaultCogwheelGemQualityLevel = 86
 
 PawnCrystalOfFearQualityLevels =
 {
-	{ 93, EMPTY_SOCKET_HYDRAULIC }
+	{ 0, PawnCrystalOfFearData90Legendary }, -- Kri'tak
 }
-PawnCrystalOfFearQualityTables =
-{
-	[93] = PawnCrystalOfFearData90Legendary,
-}
-PawnDefaultCrystalOfFearGemQualityLevel = 93

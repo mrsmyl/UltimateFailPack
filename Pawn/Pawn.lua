@@ -4,17 +4,20 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.6.9: updated Wowhead scales
+-- Version 1.7: new autogemming functionality
 ------------------------------------------------------------
 
 
-PawnVersion = 1.609
+PawnVersion = 1.7
 
 -- Pawn requires this version of VgerCore:
-local PawnVgerCoreVersionRequired = 1.08
+local PawnVgerCoreVersionRequired = 1.09
 
 -- Floating point math
 local PawnEpsilon = 0.0000000001
+
+-- Set to true once initialization completes
+local PawnIsInitialized
 
 -- Caching
 -- 	An item in the cache has the following properties: Name, NumLines, UnknownLines, Stats, SocketBonusStats, UnenchantedStats, UnenchantedSocketBonusStats, Values, Link, PrettyLink, Level, Rarity, ID, InvType, Texture, ShouldUseGems
@@ -25,17 +28,29 @@ local PawnItemCache = nil
 local PawnItemCacheMaxSize = 50
 
 local PawnScaleTotals = { }
+
+
+-- Best gem data
+--	Best gem data is broken down first by scale name, then by socket, then by minimum item level.  "Gem info" is yet another table.
 -- PawnScaleBestGems["Scale name"] = {
--- 	["RedSocket"] = { gem info, gem info },
---	["YellowSocket"] = { gem info },
---	["BlueSocket"] = { gem info },
---	["PrismaticSocket"] = { gem info },
---	["MetaSocket"] = { gem info },
---	["BestGems"] = { ["Value"] = 123.0, ["String"] = "Red/Yellow", ["RedSocket"] = true, ["YellowSocket"] = true, ["BlueSocket"] = false } }
+-- 	["RedSocket"] = { [463] = { gem info, gem info }, [0] = { gem info }, },
+--	["RedSocketValue"] = { [463] = 123.45, [0] = 12.34 },
+--	["YellowSocket"] = { [0] = { gem info }, },
+--	["YellowSocketValue"] = { [0] = 234.56, },
+--	["BlueSocket"] = { [0] = { gem info }, },
+--	["BlueSocketValue" = { [0] = 34.56, },
+--	["PrismaticSocket"] = { [0] = { gem info }, },
+--	["PrismaticSocketValue"] = { [0] = 234.56, },
+--	["CogwheelSocket"] = { [0] = { gem info }, },
+--	["CogwheelSocketValue"] = { [0] = 10000, },
+--	["ShaTouchedSocket"] = { [0] = { gem info }, },
+--	["ShaTouchedSocketValue"] = { [0] = 50000, },
+--	["MetaSocket"] = { [0] = { gem info }, },
+--	["MetaSocketValue"] = { [0] = 10000, },
+--	["BestGems"] = { [0] = { ["Value"] = 123.0, ["String"] = "Red/Yellow", ["RedSocket"] = true, ["YellowSocket"] = true, ["BlueSocket"] = false } } }
 PawnScaleBestGems = { }
 
 PawnPlayerFullName = nil
-local PawnPlayerEnteredWorld
 
 -- Formatting
 local PawnEnchantedAnnotationFormat = nil
@@ -133,26 +148,20 @@ function PawnOnEvent(Event, arg1, arg2, ...)
 	elseif Event == "ITEM_LOCKED" then
 		PawnOnItemLocked(arg1, arg2)
 	elseif Event == "ADDON_LOADED" then
-		if arg1 == "Pawn" then PawnInitialize() end
-		PawnOnAddonLoaded(arg1, ...)
-	elseif Event == "PLAYER_ENTERING_WORLD" then -- was UPDATE_BINDINGS
-		if not PawnPlayerEnteredWorld then
-			PawnSetDefaultKeybindings()
-			PawnPlayerEnteredWorld = true
-		end
+		PawnOnAddonLoaded(arg1)
+	elseif Event == "PLAYER_LOGIN" then
+		PawnInitialize()
 	elseif Event == "PLAYER_LOGOUT" then
 		PawnOnLogout()
-	elseif Event == "VARIABLES_LOADED" then
-		-- LinkWrangler compatibility
-		if LinkWrangler then
-			LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refresh")
-			LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refreshcomp")
-		end
 	end 
 end
 
 -- Initializes Pawn after all saved variables have been loaded.
 function PawnInitialize()
+	-- This only needs to happen once.  If it's ever triggered again for any reason, bail out now.
+	if PawnIsInitialized then return end
+
+	local _
 
 	-- Check the current version of VgerCore.
 	if (not VgerCore) or (not VgerCore.Version) or (VgerCore.Version < PawnVgerCoreVersionRequired) then
@@ -161,13 +170,31 @@ function PawnInitialize()
 		return
 	end
 
+	-- Check the user's current locale, and show a message if it isn't the right one for this version of Pawn.
+	local CurrentLocale = GetLocale()
+	local CurrentLocaleIsSupported
+	local SupportedLocale
+	for _, SupportedLocale in pairs(PawnLocalizedLanguages) do
+		if CurrentLocale == SupportedLocale then
+			CurrentLocaleIsSupported = true
+			break
+		end
+	end
+	if not CurrentLocaleIsSupported then
+		VgerCore.Message(PawnLocal.WrongLocaleMessage)
+		message(PawnLocal.WrongLocaleMessage)
+	end
+
 	SLASH_PAWN1 = "/pawn"
 	SlashCmdList["PAWN"] = PawnCommand
 	
 	-- Set any unset options to their default values.  If the user is a new Pawn user, all options
 	-- will be set to default values.  If upgrading, only missing options will be set to default values.
 	PawnInitializeOptions()
-	
+
+	-- Check for and set default keybindings.
+	PawnSetDefaultKeybindings()
+
 	-- Now, load any plugins that are ready to be loaded.
 	PawnInitializePlugins()
 	
@@ -326,6 +353,20 @@ function PawnInitialize()
 	if AtlasLootTooltip then
 		VgerCore.HookInsecureFunction(AtlasLootTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("AtlasLootTooltip", "SetHyperlink", ...) end)
 	end
+
+	-- LinkWrangler compatibility -- hook the Link Wrangler item link tooltips.
+	if LinkWrangler then
+		LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refresh")
+		LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refreshcomp")
+	end
+
+	-- If any of our dependencies have already loaded, pretend that they just loaded now.
+	if IsAddOnLoaded("Blizzard_InspectUI") then PawnOnAddonLoaded("Blizzard_InspectUI") end
+	if IsAddOnLoaded("Blizzard_ItemSocketingUI") then PawnOnAddonLoaded("Blizzard_ItemSocketingUI") end
+	if IsAddOnLoaded("Blizzard_ReforgingUI") then PawnOnAddonLoaded("Blizzard_ReforgingUI") end
+
+	-- We're ready!
+	PawnIsInitialized = true
 	
 end
 
@@ -459,6 +500,11 @@ function PawnInitializeOptions()
 		-- When upgrading to 1.5.7, invalidate all best item data.
 		PawnInvalidateBestItems()
 	end
+	if (not PawnCommon.LastVersion) or (PawnCommon.LastVersion < 1.7) then
+		-- When upgrading to 1.7, turn on the "show extra space" option and invalidate best item data again.
+		PawnCommon.ShowSpace = true
+		PawnInvalidateBestItems()
+	end
 	PawnCommon.LastVersion = PawnVersion
 
 	-- Finally, this stuff needs to get done after options are changed.
@@ -530,11 +576,6 @@ end
 function PawnGetEmptyScale()
 	return
 	{
-		["SmartGemSocketing"] = true,
-		["GemQualityLevel"] = PawnDefaultGemQualityLevel,
-		["SmartMetaGemSocketing"] = true,
-		["MetaGemQualityLevel"] = PawnDefaultMetaGemQualityLevel,
-		["CogwheelQualityLevel"] = PawnDefaultCogwheelGemQualityLevel,
 		["UpgradesFollowSpecialization"] = true,
 		["PerCharacterOptions"] = { },
 		["Values"] = { },
@@ -545,11 +586,6 @@ end
 function PawnGetDefaultScale()
 	return 
 	{
-		["SmartGemSocketing"] = true,
-		["GemQualityLevel"] = PawnDefaultGemQualityLevel,
-		["SmartMetaGemSocketing"] = true,
-		["MetaGemQualityLevel"] = PawnDefaultMetaGemQualityLevel,
-		["CogwheelQualityLevel"] = PawnDefaultCogwheelGemQualityLevel,
 		["UpgradesFollowSpecialization"] = true,
 		["PerCharacterOptions"] = { },
 		["Values"] =
@@ -580,13 +616,14 @@ function PawnGetDefaultScale()
 			["NatureResist"] = 1,
 			["ArcaneResist"] = 1,
 			["FrostResist"] = 1,
-			["MetaSocketEffect"] = 72,
+			["MetaSocketEffect"] = 160,
 		},
 	}
 end
 
 -- LinkWrangler compatibility
 function PawnLinkWranglerOnTooltip(Tooltip, ItemLink)
+	if not PawnIsInitialized then return end
 	if not Tooltip then return end
 	PawnUpdateTooltip(Tooltip:GetName(), "SetHyperlink", ItemLink)
 	PawnAttachIconToTooltip(Tooltip, false, ItemLink)
@@ -681,20 +718,26 @@ function PawnClearCacheValuesOnly()
 			CachedItem.Values = nil
 		end
 	end
-	-- Then, the gem cache.
+	-- Then, the gem caches.  For each gem meta-table, look at the gem table (which is in
+	-- column 3) and then clear out the contents of column 9 of that table.
 	local GemTable
-	for _, GemTable in pairs(PawnGemQualityTables) do
-		for _, CachedItem in pairs(GemTable) do
+	for _, GemTable in pairs(PawnGemQualityLevels) do
+		for _, CachedItem in pairs(GemTable[2]) do
 			CachedItem[9] = nil
 		end
 	end
-	for _, GemTable in pairs(PawnMetaGemQualityTables) do
-		for _, CachedItem in pairs(GemTable) do
+	for _, GemTable in pairs(PawnMetaGemQualityLevels) do
+		for _, CachedItem in pairs(GemTable[2]) do
 			CachedItem[9] = nil
 		end
 	end
-	for _, GemTable in pairs(PawnCogwheelQualityTables) do
-		for _, CachedItem in pairs(GemTable) do
+	for _, GemTable in pairs(PawnCogwheelQualityLevels) do
+		for _, CachedItem in pairs(GemTable[2]) do
+			CachedItem[9] = nil
+		end
+	end
+	for _, GemTable in pairs(PawnCrystalOfFearQualityLevels) do
+		for _, CachedItem in pairs(GemTable[2]) do
 			CachedItem[9] = nil
 		end
 	end
@@ -733,8 +776,10 @@ function PawnResetTooltip(TooltipName)
 	return true
 end
 
--- Recalculates the total value of all stats in a scale, as well as the socket values if smart gem socketing is enabled.
+-- Recalculates the total value of all stats in a scale, as well as all of the best gems for that scale.
 function PawnRecalculateScaleTotal(ScaleName)
+	local _
+
 	-- Find the appropriate scale.
 	local ThisScale = PawnCommon.Scales[ScaleName]
 	local ThisScaleValues
@@ -749,69 +794,144 @@ function PawnRecalculateScaleTotal(ScaleName)
 	-- Calculate the total.  When calculating the total value for a scale, ignore sockets.
 	local Total = 0
 	for StatName, Value in pairs(ThisScaleValues) do
-		if Value and Value > 0 and StatName ~= "RedSocket" and StatName ~= "YellowSocket" and StatName ~= "BlueSocket" and StatName ~= "MetaSocket" and StatName ~= "MetaSocketEffect" and StatName ~= "PrismaticSocket" and StatName ~= "CogwheelSocket" then
-			Total = Total + Value
+		if Value and Value > 0 then
+			if StatName ~= "RedSocket" and StatName ~= "YellowSocket" and StatName ~= "BlueSocket" and StatName ~= "MetaSocket" and StatName ~= "MetaSocketEffect" and StatName ~= "PrismaticSocket" and StatName ~= "CogwheelSocket" and StatName ~= "ShaTouchedSocket" then
+				Total = Total + Value
+			else
+				VgerCore.Assert(StatName == "MetaSocketEffect", "Socket values should always be zero, but " .. StatName .. " is " .. Value .. ".")
+			end
 		end
 	end
 	PawnScaleTotals[ScaleName] = Total
 	
-	-- If this scale has smart gem socketing enabled, also recalculate socket values.
-	-- Even if smart gem socketing is disabled, still calculate gem info, because we will need it elsewhere in the UI.
-	local BestPrismatic, BestRed, BestYellow, BestBlue, BestCogwheel, BestMeta
-	if not PawnScaleBestGems[ScaleName] then PawnScaleBestGems[ScaleName] = { } end
-	BestPrismatic, PawnScaleBestGems[ScaleName].PrismaticSocket = PawnFindBestGems(ScaleName, true, true, true)
-	BestRed, PawnScaleBestGems[ScaleName].RedSocket = PawnFindBestGems(ScaleName, true, false, false)
-	BestYellow, PawnScaleBestGems[ScaleName].YellowSocket = PawnFindBestGems(ScaleName, false, true, false)
-	BestBlue, PawnScaleBestGems[ScaleName].BlueSocket = PawnFindBestGems(ScaleName, false, false, true)
-	BestCogwheel, PawnScaleBestGems[ScaleName].CogwheelSocket = PawnFindBestGems(ScaleName, false, false, false, false, true)
-	BestMeta, PawnScaleBestGems[ScaleName].MetaSocket = PawnFindBestGems(ScaleName, false, false, false, true, false)
-	if ThisScale.SmartGemSocketing then
-		ThisScale.Values.RedSocket = BestRed
-		ThisScale.Values.YellowSocket = BestYellow
-		ThisScale.Values.BlueSocket = BestBlue
-		ThisScale.Values.PrismaticSocket = BestPrismatic
-		ThisScale.Values.CogwheelSocket = BestCogwheel
+	-- Now recalculate all of the best gems for this scale.
+	if not PawnScaleBestGems[ScaleName] then
+		PawnScaleBestGems[ScaleName] =
+		{
+			["BestGems"] = { },
+			["PrismaticSocket"] = { },
+			["PrismaticSocketValue"] = { },
+			["RedSocket"] = { },
+			["RedSocketValue"] = { },
+			["YellowSocket"] = { },
+			["YellowSocketValue"] = { },
+			["BlueSocket"] = { },
+			["BlueSocketValue"] = { },
+			["MetaSocket"] = { },
+			["MetaSocketValue"] = { },
+			["CogwheelSocket"] = { },
+			["CogwheelSocketValue"] = { },
+			["ShaTouchedSocket"] = { },
+			["ShaTouchedSocketValue"] = { },
+		}
 	end
-	if ThisScale.SmartMetaGemSocketing then
-		ThisScale.Values.MetaSocket = BestMeta - (ThisScale.Values.MetaSocketEffect or 0)
+	local ThisScaleBestGems = PawnScaleBestGems[ScaleName]
+
+	local QualityLevelData
+	for _, QualityLevelData in pairs(PawnGemQualityLevels) do
+		local ItemLevel = QualityLevelData[1]
+		local GemData = QualityLevelData[2]
+
+		if PawnCommon.Debug then
+			VgerCore.Message("")
+			VgerCore.Message("GEMS FOR ITEM LEVEL " .. tostring(ItemLevel))
+			VgerCore.Message("")
+		end
+
+		local BestPrismatic, BestRed, BestYellow, BestBlue
+		BestPrismatic, ThisScaleBestGems.PrismaticSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData, true, true, true)
+		BestRed, ThisScaleBestGems.RedSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData, true, false, false)
+		BestYellow, ThisScaleBestGems.YellowSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData, false, true, false)
+		BestBlue, ThisScaleBestGems.BlueSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData, false, false, true)
+		ThisScaleBestGems.PrismaticSocketValue[ItemLevel] = BestPrismatic
+		ThisScaleBestGems.RedSocketValue[ItemLevel] = BestRed
+		ThisScaleBestGems.YellowSocketValue[ItemLevel] = BestYellow
+		ThisScaleBestGems.BlueSocketValue[ItemLevel] = BestBlue
+		
+		-- Finally, find which gem colors have the highest raw values.
+		local BestGemValue = 0
+		local BestGemString = ""
+		local BestGemIsRed, BestGemIsYellow, BestGemIsBlue = false, false, false
+		if BestRed and BestRed > BestGemValue then
+			BestGemValue = BestRed
+			BestGemString = RED_GEM
+			BestGemIsRed, BestGemIsYellow, BestGemIsBlue = true, false, false
+		elseif BestRed == BestGemValue then
+			BestGemString = BestGemString .. "/" .. RED_GEM
+			BestGemIsRed = true
+		end
+		if BestYellow and BestYellow > BestGemValue then
+			BestGemValue = BestYellow
+			BestGemString = YELLOW_GEM
+			BestGemIsRed, BestGemIsYellow, BestGemIsBlue = false, true, false
+		elseif BestYellow == BestGemValue then
+			BestGemString = BestGemString .. "/" .. YELLOW_GEM
+			BestGemIsYellow = true
+		end
+		if BestBlue and BestBlue > BestGemValue then
+			BestGemValue = BestBlue
+			BestGemString = BLUE_GEM
+			BestGemIsRed, BestGemIsYellow, BestGemIsBlue = false, false, true
+		elseif BestBlue == BestGemValue then
+			BestGemString = BestGemString .. "/" .. BLUE_GEM
+			BestGemIsBlue = true
+		end
+		VgerCore.Assert(BestPrismatic == BestGemValue, "BestGemValue should have been equal to the value of the best prismatic gem.  Calculation error?")
+		PawnScaleBestGems[ScaleName].BestGems[ItemLevel] =
+		{
+			["Value"] = BestGemValue,
+			["String"] = BestGemString,
+			["RedSocket"] = BestGemIsRed,
+			["YellowSocket"] = BestGemIsYellow,
+			["BlueSocket"] = BestGemIsBlue,
+		}
 	end
-	
-	-- Finally, find which gem colors have the highest raw values.
-	local BestGemValue = 0
-	local BestGemString = ""
-	local BestGemRed, BestGemYellow, BestGemBlue = false, false, false
-	if ThisScaleValues.RedSocket and ThisScaleValues.RedSocket > BestGemValue then
-		BestGemValue = ThisScaleValues.RedSocket
-		BestGemString = RED_GEM
-		BestGemRed, BestGemYellow, BestGemBlue = true, false, false
-	elseif ThisScaleValues.RedSocket == BestGemValue then
-		BestGemString = BestGemString .. "/" .. RED_GEM
-		BestGemRed = true
+
+	local QualityLevelData
+	for _, QualityLevelData in pairs(PawnMetaGemQualityLevels) do
+		local ItemLevel = QualityLevelData[1]
+		local GemData = QualityLevelData[2]
+
+		if PawnCommon.Debug then
+			VgerCore.Message("")
+			VgerCore.Message("META GEMS FOR ITEM LEVEL " .. tostring(ItemLevel))
+			VgerCore.Message("")
+		end
+
+		ThisScaleBestGems.MetaSocketValue[ItemLevel], ThisScaleBestGems.MetaSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData)
 	end
-	if ThisScaleValues.YellowSocket and ThisScaleValues.YellowSocket > BestGemValue then
-		BestGemValue = ThisScaleValues.YellowSocket
-		BestGemString = YELLOW_GEM
-		BestGemRed, BestGemYellow, BestGemBlue = false, true, false
-	elseif ThisScaleValues.YellowSocket == BestGemValue then
-		BestGemString = BestGemString .. "/" .. YELLOW_GEM
-		BestGemYellow = true
+
+	local QualityLevelData
+	for _, QualityLevelData in pairs(PawnCogwheelQualityLevels) do
+		local ItemLevel = QualityLevelData[1]
+		local GemData = QualityLevelData[2]
+
+		if PawnCommon.Debug then
+			VgerCore.Message("")
+			VgerCore.Message("COGWHEELS FOR ITEM LEVEL " .. tostring(ItemLevel))
+			VgerCore.Message("")
+		end
+
+		-- BUG: *** Cogwheels work differently; we need to keep a minimum of 3-4 best cogwheels, not just 1, because they're
+		-- unique-equipped.  (That means that the cogwheel socket value will be incorrect for items with more than one cogwheel
+		-- socket...)
+		ThisScaleBestGems.CogwheelSocketValue[ItemLevel], ThisScaleBestGems.CogwheelSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData)
 	end
-	if ThisScaleValues.BlueSocket and ThisScaleValues.BlueSocket > BestGemValue then
-		BestGemValue = ThisScaleValues.BlueSocket
-		BestGemString = BLUE_GEM
-		BestGemRed, BestGemYellow, BestGemBlue = false, false, true
-	elseif ThisScaleValues.BlueSocket == BestGemValue then
-		BestGemString = BestGemString .. "/" .. BLUE_GEM
-		BestGemBlue = true
+
+	local QualityLevelData
+	for _, QualityLevelData in pairs(PawnCrystalOfFearQualityLevels) do
+		local ItemLevel = QualityLevelData[1]
+		local GemData = QualityLevelData[2]
+
+		if PawnCommon.Debug then
+			VgerCore.Message("")
+			VgerCore.Message("CRYSTALS OF FEAR FOR ITEM LEVEL " .. tostring(ItemLevel))
+			VgerCore.Message("")
+		end
+
+		ThisScaleBestGems.ShaTouchedSocketValue[ItemLevel], ThisScaleBestGems.ShaTouchedSocket[ItemLevel] = PawnFindBestGems(ScaleName, GemData)
 	end
-	PawnScaleBestGems[ScaleName].BestGems =
-	{
-		["Value"] = BestGemValue,
-		["String"] = BestGemString,
-		["RedSocket"] = BestGemRed,
-		["YellowSocket"] = BestGemYellow,
-		["BlueSocket"] = BestGemBlue,
-	}
+
 end
 
 -- Recreates the tooltip annotation format strings.
@@ -909,14 +1029,14 @@ function PawnGetItemData(ItemLink)
 			Item.UnenchantedSocketBonusStats = TableCopy
 		end
 		
-		-- MetaSocketEffect is special: if it's present in the unenchanted version of an item it should appear
-		-- in the enchanted version too, if the enchanted version's socket is full.
-		if Item.UnenchantedStats and Item.Stats and Item.UnenchantedStats.MetaSocketEffect and not Item.Stats.MetaSocketEffect and not Item.Stats.MetaSocket then
-			Item.Stats.MetaSocketEffect = Item.UnenchantedStats.MetaSocketEffect
+		-- MetaSocketEffect is special: if the unenchanted version of an item has a meta socket, add the effect to the enchanted version IF the
+		-- enchanted version's socket is full.
+		if Item.UnenchantedStats and Item.Stats and Item.UnenchantedStats.MetaSocket and not Item.Stats.MetaSocketEffect and not Item.Stats.MetaSocket then
+			Item.Stats.MetaSocketEffect = Item.UnenchantedStats.MetaSocket
 		end
 		
 		-- Enchanted items should not get points for empty sockets, nor do they get socket bonuses if there are any empty sockets.
-		if Item.Stats and (Item.Stats.PrismaticSocket or Item.Stats.RedSocket or Item.Stats.YellowSocket or Item.Stats.BlueSocket or Item.Stats.MetaSocket or Item.Stats.CogwheelSocket) then
+		if Item.Stats and (Item.Stats.PrismaticSocket or Item.Stats.RedSocket or Item.Stats.YellowSocket or Item.Stats.BlueSocket or Item.Stats.MetaSocket or Item.Stats.CogwheelSocket or Item.Stats.ShaTouchedSocket) then
 			Item.SocketBonusStats = {}
 			Item.Stats.PrismaticSocket = nil
 			Item.Stats.RedSocket = nil
@@ -924,6 +1044,7 @@ function PawnGetItemData(ItemLink)
 			Item.Stats.BlueSocket = nil
 			Item.Stats.MetaSocket = nil
 			Item.Stats.CogwheelSocket = nil
+			Item.Stats.ShaTouchedSocket = nil
 		end
 		
 		-- Cache this item so we don't have to re-parse next time.
@@ -1213,15 +1334,6 @@ function PawnAddValuesToTooltip(Tooltip, ItemValues, UpgradeInfo, BestItemFor, S
 	end
 	if not ItemValues then return end
 	
-	-- In the simplified upgrades-only mode, show some simple messages.
-	if PawnCommon.ShowValuesForUpgradesOnly then
-		if UpgradeInfo then
-			Tooltip:AddLine(PawnLocal.TooltipAnyUpgradeLine)
-		elseif BestItemFor or SecondBestItemFor then
-			Tooltip:AddLine(PawnLocal.TooltipAnyBestItemLine)
-		end
-	end
-
 	-- Loop through all of the item value subtables.
 	local Entry, _
 	for _, Entry in pairs(ItemValues) do
@@ -1251,8 +1363,9 @@ function PawnAddValuesToTooltip(Tooltip, ItemValues, UpgradeInfo, BestItemFor, S
 				TooltipText = format(PawnUnenchantedAnnotationFormat, TextColor, LocalizedName, tostring(UnenchantedValue))
 			end
 			
-			-- Add upgrade info to the tooltip if this item is an upgrade.
-			local ThisUpgrade, WasUpgrade, _
+			-- Add info to the tooltip if this item is an upgrade or best-in-slot.
+			local ThisUpgrade, _
+			WasUpgradeOrBest = false
 			if UpgradeInfo then
 				for _, ThisUpgrade in pairs(UpgradeInfo) do
 					if ThisUpgrade.ScaleName == ScaleName then
@@ -1268,16 +1381,26 @@ function PawnAddValuesToTooltip(Tooltip, ItemValues, UpgradeInfo, BestItemFor, S
 						else
 							TooltipText = format(PawnLocal.TooltipUpgradeAnnotation, TooltipText, 100 * ThisUpgrade.PercentUpgrade, SetAnnotation)
 						end
-						WasUpgrade = true
+						WasUpgradeOrBest = true
 						break
 					end
 				end
-			elseif not PawnCommon.ShowValuesForUpgradesOnly and BestItemFor and BestItemFor[ScaleName] then
-				TooltipText = format(PawnLocal.TooltipBestAnnotation, TooltipText)
-			elseif not PawnCommon.ShowValuesForUpgradesOnly and SecondBestItemFor and SecondBestItemFor[ScaleName] then
-				TooltipText = format(PawnLocal.TooltipSecondBestAnnotation, TooltipText)
+			elseif BestItemFor and BestItemFor[ScaleName] then
+				WasUpgradeOrBest = true
+				if PawnCommon.ShowValuesForUpgradesOnly then
+					TooltipText = format(PawnLocal.TooltipBestAnnotationSimple, TooltipText)
+				else
+					TooltipText = format(PawnLocal.TooltipBestAnnotation, TooltipText)
+				end
+			elseif SecondBestItemFor and SecondBestItemFor[ScaleName] then
+				WasUpgradeOrBest = true
+				if PawnCommon.ShowValuesForUpgradesOnly then
+					TooltipText = format(PawnLocal.TooltipSecondBestAnnotationSimple, TooltipText)
+				else
+					TooltipText = format(PawnLocal.TooltipSecondBestAnnotation, TooltipText)
+				end
 			end
-			if not WasUpgrade and PawnCommon.ShowValuesForUpgradesOnly then TooltipText = nil end
+			if not WasUpgradeOrBest and PawnCommon.ShowValuesForUpgradesOnly then TooltipText = nil end
 			
 			-- Add the line to the tooltip.
 			if TooltipText then
@@ -1734,12 +1857,6 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 		Stats["IsRanged"] = nil
 	end
 	
-	if Stats["MetaSocket"] then
-		-- For each meta socket, add credit for meta socket effects.
-		-- Enchanted items will get the benefit of meta sockets on their unenchanted version later.
-		PawnAddStatToTable(Stats, "MetaSocketEffect", Stats["MetaSocket"])
-	end
-	
 	-- Now, socket bonuses require special handling.
 	if SocketBonusIsValid then
 		-- If the socket bonus is valid (green), then just add those stats directly to the main stats table and be done with it.
@@ -1747,7 +1864,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 		SocketBonusStats = {}
 	else
 		-- If the socket bonus is not valid, then we need to check for sockets.
-		if Stats["PrismaticSocket"] or Stats["RedSocket"] or Stats["YellowSocket"] or Stats["BlueSocket"] or Stats["MetaSocket"] or Stats["CogwheelSocket"] then
+		if Stats["PrismaticSocket"] or Stats["RedSocket"] or Stats["YellowSocket"] or Stats["BlueSocket"] or Stats["MetaSocket"] or Stats["CogwheelSocket"] or Stats["ShaTouchedSocket"] then
 			-- There are sockets left, so the player could still meet the requirements.
 		else
 			-- There are no sockets left and the socket bonus requirements were not met.  Ignore the
@@ -1934,10 +2051,11 @@ function PawnFindStringInRegexTable(String, RegexTable)
 end
 
 -- Calculates the value of an item.
---	Parameters: Item, SocketBonus, ScaleName, DebugMessages, NoNormalization, NoReforging
+--	Parameters: Item, ItemLevel, SocketBonus, ScaleName, DebugMessages, NoNormalization, NoReforging
 --		Item: Item stats in the format returned by GetStatsFromTooltip.
 --		ItemLevel: The item's level.
 --		SocketBonus: Socket bonus stats in the format returned by GetStatsFromTooltip.
+--		ScaleName: The scale to use.
 --		DebugMessages: If true, debug messages will be shown if appropriate.
 --		NoNormalization: If true, the user's normalization factor will be ignored.
 --		NoReforging: If true, reforging calculations will be skipped.
@@ -1946,6 +2064,7 @@ end
 --		ShouldUseRed: If true, the player should socket this item with red gems.
 --		ShouldUseYellow: If true, the player should socket this item with yellow gems.
 --		ShouldUseBlue: If true, the player should socket this item with blue gems.
+--		TotalSocketValue: The total value of just sockets and socket bonuses.  (This is already factored into the total value.)
 function PawnGetItemValue(Item, ItemLevel, SocketBonus, ScaleName, DebugMessages, NoNormalization, NoReforging)
 	-- If either the item or scale is empty, exit now.
 	if (not Item) or (not ScaleName) then return end
@@ -1956,6 +2075,7 @@ function PawnGetItemValue(Item, ItemLevel, SocketBonus, ScaleName, DebugMessages
 	
 	-- Calculate the value.
 	local Total = 0
+	local TotalSocketValue = 0
 	local IsUnusable
 	local ThisValue, Stat, Quantity
 	for Stat, Quantity in pairs(Item) do
@@ -1967,9 +2087,8 @@ function PawnGetItemValue(Item, ItemLevel, SocketBonus, ScaleName, DebugMessages
 			if DebugMessages then PawnDebugMessage(format(PawnLocal.UnusableStatMessage, Stat)) end
 			break
 		end
-		-- Colored sockets are considered separately.  You can't mismatch prismatic or cogwheel sockets, so treat those just
-		-- like any other stat.
-		if Stat ~= "RedSocket" and Stat ~= "YellowSocket" and Stat ~= "BlueSocket" then
+		-- Sockets need to be considered separately since their value depends on the item's level.  (MetaSocketEffect is just a regular stat though.)
+		if Stat ~= "RedSocket" and Stat ~= "YellowSocket" and Stat ~= "BlueSocket" and Stat ~= "PrismaticSocket" and Stat ~= "CogwheelSocket" and Stat ~= "MetaSocket" and Stat ~= "ShaTouchedSocket" then
 			if ThisValue then
 				-- This stat has a value; add it to the running total.
 				if ScaleValues.SpeedBaseline and (
@@ -1984,68 +2103,119 @@ function PawnGetItemValue(Item, ItemLevel, SocketBonus, ScaleName, DebugMessages
 					-- Speed is a special case; subtract SpeedBaseline from the speed value.
 					Quantity = Quantity - ScaleValues.SpeedBaseline
 				end
-				Total = Total + ThisValue * Quantity
+				Total = Total + Quantity * ThisValue
+				if Stat == "MetaSocketEffect" then
+					TotalSocketValue = TotalSocketValue + Quantity * ThisValue
+				end
 				if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
 			end
 		end
 	end
-	
-	-- Decide what to do with socket bonuses.
+
 	local BestGemRed, BestGemYellow, BestGemBlue = false, false, false
-	if SocketBonus and not IsUnusable then
-		-- Start by counting the sockets; if there are no sockets, we can quit.
-		local TotalColoredSockets = 0
-		if Item["RedSocket"] then TotalColoredSockets = TotalColoredSockets + Item["RedSocket"] end
-		if Item["YellowSocket"] then TotalColoredSockets = TotalColoredSockets + Item["YellowSocket"] end
-		if Item["BlueSocket"] then TotalColoredSockets = TotalColoredSockets + Item["BlueSocket"] end
-		if TotalColoredSockets > 0 then
-			-- Find the value of the sockets if they are socketed properly.
-			if DebugMessages then PawnDebugMessage(PawnLocal.SocketBonusValueCalculationMessage) end
-			local ProperSocketValue = 0
-			Stat = "RedSocket" Quantity = Item[Stat] ThisValue = ScaleValues[Stat]
-			if Quantity and ThisValue then
-				ProperSocketValue = ProperSocketValue + Quantity * ThisValue
-				if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
-			end
-			Stat = "YellowSocket" Quantity = Item[Stat] ThisValue = ScaleValues[Stat]
-			if Quantity and ThisValue then
-				ProperSocketValue = ProperSocketValue + Quantity * ThisValue
-				if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
-			end
-			Stat = "BlueSocket" Quantity = Item[Stat] ThisValue = ScaleValues[Stat]
-			if Quantity and ThisValue then
-				ProperSocketValue = ProperSocketValue + Quantity * ThisValue
-				if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
-			end
-			for Stat, Quantity in pairs(SocketBonus) do
-				ThisValue = ScaleValues[Stat]
+	local ThisScaleBestGems = PawnScaleBestGems[ScaleName]
+	if not IsUnusable then
+		if ThisScaleBestGems then
+
+			local GemQualityLevel
+
+			-- Decide what to do with the non-colored sockets.
+			Stat = "MetaSocket" Quantity = Item[Stat]
+			if Quantity then
+				GemQualityLevel = PawnGetGemQualityForItem(PawnMetaGemQualityLevels, ItemLevel)
+				ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
 				if ThisValue then
-					ProperSocketValue = ProperSocketValue + ThisValue * Quantity
+					TotalSocketValue = TotalSocketValue + Quantity * ThisValue
+					Total = Total + Quantity * ThisValue
 					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
 				end
 			end
-			-- Then, find the value of the sockets if they are socketed with the best gem, ignoring the socket bonus.
-			local BestGemValue = 0
-			local BestGemName = ""
-			local MissocketedValue = 0
-			if ScaleOptions.SmartGemSocketing then
-				BestGemRed, BestGemYellow, BestGemBlue, BestGemValue, BestGemName = PawnGetBestGemColorsForScale(ScaleName)
+			Stat = "CogwheelSocket" Quantity = Item[Stat]
+			if Quantity then
+				GemQualityLevel = PawnGetGemQualityForItem(PawnCogwheelQualityLevels, ItemLevel)
+				ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
+				if ThisValue then
+					TotalSocketValue = TotalSocketValue + Quantity * ThisValue
+					Total = Total + Quantity * ThisValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+				end
+			end
+			Stat = "ShaTouchedSocket" Quantity = Item[Stat]
+			if Quantity then
+				GemQualityLevel = PawnGetGemQualityForItem(PawnCrystalOfFearQualityLevels, ItemLevel)
+				ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
+				if ThisValue then
+					TotalSocketValue = TotalSocketValue + Quantity * ThisValue
+					Total = Total + Quantity * ThisValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+				end
+			end
+			
+			-- Decide what to do with colored sockets and socket bonuses.
+			-- Start by counting the sockets; if there are no colored sockets, we can skip the rest of this part.
+			local TotalColoredSockets = 0
+			if Item["RedSocket"] then TotalColoredSockets = TotalColoredSockets + Item["RedSocket"] end
+			if Item["YellowSocket"] then TotalColoredSockets = TotalColoredSockets + Item["YellowSocket"] end
+			if Item["BlueSocket"] then TotalColoredSockets = TotalColoredSockets + Item["BlueSocket"] end
+			if TotalColoredSockets > 0 then
+				-- Find the appropriate gem quality level for this item.
+				GemQualityLevel = PawnGetGemQualityForItem(PawnGemQualityLevels, ItemLevel)
+				-- Find the value of the sockets if they are socketed properly.
+				local ProperSocketValue = 0
+				Stat = "RedSocket" Quantity = Item[Stat] ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
+				if Quantity and ThisValue then
+					ProperSocketValue = ProperSocketValue + Quantity * ThisValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+				end
+				Stat = "YellowSocket" Quantity = Item[Stat] ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
+				if Quantity and ThisValue then
+					ProperSocketValue = ProperSocketValue + Quantity * ThisValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+				end
+				Stat = "BlueSocket" Quantity = Item[Stat] ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
+				if Quantity and ThisValue then
+					ProperSocketValue = ProperSocketValue + Quantity * ThisValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+				end
+				local SocketBonusValue = 0
+				for Stat, Quantity in pairs(SocketBonus) do
+					ThisValue = ScaleValues[Stat]
+					if ThisValue then
+						SocketBonusValue = SocketBonusValue + ThisValue * Quantity
+						if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+					end
+				end
+				if DebugMessages then
+					PawnDebugMessage(format(PawnLocal.CorrectGemsValueCalculationMessage, ProperSocketValue))
+					PawnDebugMessage(format(PawnLocal.SocketBonusValueCalculationMessage, SocketBonusValue))
+				end
+				ProperSocketValue = ProperSocketValue + SocketBonusValue
+				-- Then, find the value of the sockets if they are socketed with the best gem, ignoring the socket bonus.
+				local BestGemValue = 0
+				local BestGemName = ""
+				local MissocketedValue = 0
+				BestGemRed, BestGemYellow, BestGemBlue, BestGemValue, BestGemName = PawnGetBestGemColorsForScale(ScaleName, ItemLevel)
 				if BestGemValue and BestGemValue > 0 then MissocketedValue = TotalColoredSockets * BestGemValue end
+				-- So, which one should we use?
+				if MissocketedValue > ProperSocketValue then
+					-- It's better to mis-socket and ignore the socket bonus.
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.MissocketWorthwhileMessage, BestGemName)) end
+					Total = Total + MissocketedValue
+					TotalSocketValue = TotalSocketValue + MissocketedValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, TotalColoredSockets, BestGemName, BestGemValue, MissocketedValue)) end
+				else
+					-- It's better to socket this item normally.
+					Total = Total + ProperSocketValue
+					TotalSocketValue = TotalSocketValue + ProperSocketValue
+					-- If it's not worthwhile to mis-socket, clear out the best-gem fields.
+					BestGemRed, BestGemYellow, BestGemBlue = false, false, false
+				end
 			end
-			-- So, which one should we use?
-			if MissocketedValue <= ProperSocketValue then
-				-- If it's not worthwhile to mis-socket, clear out the best-gem fields.
-				BestGemRed, BestGemYellow, BestGemBlue = false, false, false
-			end
-			if ScaleOptions.SmartGemSocketing and MissocketedValue > ProperSocketValue then
-				-- It's better to mis-socket and ignore the socket bonus.
-				if DebugMessages then PawnDebugMessage(format(PawnLocal.MissocketWorthwhileMessage, BestGemName)) end
-				Total = Total + MissocketedValue
-				if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, TotalColoredSockets, BestGemName, BestGemValue, MissocketedValue)) end
-			else
-				-- It's better to socket this item normally.
-				Total = Total + ProperSocketValue
-			end
+
+		else
+			-- This error case is acceptable if we're calculating data FOR the gems themselves.  (In that case, normalization and reforging will be off.)
+			-- If it happens at any other time, we'd want to know about it.
+			VgerCore.Assert(NoNormalization and NoReforging, "Item value calculation will be incomplete because we don't have best gem data and thus can't calculate values for sockets.")
 		end
 	end
 	
@@ -2068,12 +2238,12 @@ function PawnGetItemValue(Item, ItemLevel, SocketBonus, ScaleName, DebugMessages
 
 	if DebugMessages then PawnDebugMessage(format(PawnLocal.TotalValueMessage, Total)) end
 	
-	return Total, BestGemRed, BestGemYellow, BestGemBlue
+	return Total, BestGemRed, BestGemYellow, BestGemBlue, TotalSocketValue
 end
 
 -- Finds which gem colors are best for a given scale.
 -- Returns: BestGemRed, BestGemYellow, BestGemBlue, BestGemValue, BestGemString
-function PawnGetBestGemColorsForScale(ScaleName)
+function PawnGetBestGemColorsForScale(ScaleName, ItemLevel)
 	local Best = PawnScaleBestGems[ScaleName]
 	if not Best then
 		VgerCore.Fail("The best gem colors for this scale should have already been calculated; we don't have any info on it.")
@@ -2084,22 +2254,38 @@ function PawnGetBestGemColorsForScale(ScaleName)
 		VgerCore.Fail("The list of best gems for this scale is missing, so we can't find which colors are best.")
 		return
 	end
+	local GemQuality = PawnGetGemQualityForItem(PawnGemQualityLevels, ItemLevel)
+	BestGems = BestGems[GemQuality]
 	
 	return BestGems.RedSocket, BestGems.YellowSocket, BestGems.BlueSocket, BestGems.Value, BestGems.String
 end
 
 -- Given a scale name and a socket color (like RedSocket), return the name of the single best gem of that color, or the name of
 -- the color if there's no single best gem.
-function PawnGetBestSingleGemForScale(ScaleName, Color)
+function PawnGetBestSingleGemForScale(ScaleName, Color, ItemLevel)
 	local GemName
 	local Gems = PawnScaleBestGems[ScaleName]
-	if Gems and Gems[Color] and #(Gems[Color]) == 1 then
-		-- There's exactly one best gem of this color, so return its name.
-		-- If it's in the Pawn cache, use its name from there.  Otherwise,
-		-- return the color name; that's much more useful than (Gem 1234).
-		local Item = PawnGetItemData("item:" .. Gems[Color][1].ID)
-		if Item and Item.Name then
-			return Item.Name
+	if Gems and Gems[Color] then
+		local GemQuality
+		if Color == "RedSocket" or Color == "YellowSocket" or Color == "BlueSocket" then
+			GemQuality = PawnGetGemQualityForItem(PawnGemQualityLevels, ItemLevel)
+		elseif Color == "CogwheelSocket" then
+			GemQuality = PawnGetGemQualityForItem(PawnGemCogwheelQualityLevels, ItemLevel)
+		elseif Color == "MetaSocket" then
+			GemQuality = PawnGetGemQualityForItem(PawnMetaGemQualityLevels, ItemLevel)
+		elseif Color == "ShaTouchedSocket" then
+			GemQuality = PawnGetGemQualityForItem(PawnCrystalOfFearQualityLevels, ItemLevel)
+		end
+		local GemTable = Gems[Color][GemQuality]
+
+		if #GemTable == 1 then
+			-- There's exactly one best gem of this color, so return its name.
+			-- If it's in the Pawn cache, use its name from there.  Otherwise,
+			-- return the color name; that's much more useful than (Gem 1234).
+			local Item = PawnGetItemData("item:" .. GemTable[1].ID)
+			if Item and Item.Name then
+				return Item.Name
+			end
 		end
 	end
 	
@@ -2114,13 +2300,15 @@ function PawnGetBestSingleGemForScale(ScaleName, Color)
 		return PawnLocal.CogwheelName
 	elseif Color == "MetaSocket" then
 		return META_GEM
+	elseif Color == "ShaTouchedSocket" then
+		return PawnLocal.CrystalOfFearName
 	else
-		VgerCore.Fail("Improper color value passed to PawnGetBestSingleGemForScale.")
+		VgerCore.Fail("Unknown socket color " .. tostring(Color) .. " passed to PawnGetBestSingleGemForScale.")
 	end
 end
 
 -- Returns a string of gems and a number, such as "2 Runed Scarlet Ruby" or "3 Yellow or Blue".
-function PawnGetGemListString(GemCount, UseRed, UseYellow, UseBlue, ScaleName)
+function PawnGetGemListString(GemCount, UseRed, UseYellow, UseBlue, ScaleName, ItemLevel)
 	if UseRed and UseYellow and UseBlue then
 		return format(PawnLocal.GemColorList3, GemCount)
 	elseif UseRed and UseYellow and not UseBlue then
@@ -2130,11 +2318,11 @@ function PawnGetGemListString(GemCount, UseRed, UseYellow, UseBlue, ScaleName)
 	elseif UseRed and UseBlue and not UseYellow then
 		return format(PawnLocal.GemColorList2, GemCount, RED_GEM, BLUE_GEM)
 	elseif UseRed then
-		return format(PawnLocal.GemColorList1, GemCount, PawnGetBestSingleGemForScale(ScaleName, "RedSocket"))
+		return format(PawnLocal.GemColorList1, GemCount, PawnGetBestSingleGemForScale(ScaleName, "RedSocket", ItemLevel))
 	elseif UseYellow then
-		return format(PawnLocal.GemColorList1, GemCount, PawnGetBestSingleGemForScale(ScaleName, "YellowSocket"))
+		return format(PawnLocal.GemColorList1, GemCount, PawnGetBestSingleGemForScale(ScaleName, "YellowSocket", ItemLevel))
 	elseif UseBlue then
-		return format(PawnLocal.GemColorList1, GemCount, PawnGetBestSingleGemForScale(ScaleName, "BlueSocket"))
+		return format(PawnLocal.GemColorList1, GemCount, PawnGetBestSingleGemForScale(ScaleName, "BlueSocket", ItemLevel))
 	else
 		return format(PawnLocal.GemColorList3, GemCount)
 	end
@@ -2261,15 +2449,6 @@ function PawnCorrectScaleErrors(ScaleName)
 	if ThisScaleOptions.PerCharacterOptions == nil then ThisScaleOptions.PerCharacterOptions = {} end
 	if ThisScaleOptions.PerCharacterOptions[PawnPlayerFullName] == nil then ThisScaleOptions.PerCharacterOptions[PawnPlayerFullName] = {} end
 	
-	-- Pawn 1.0.1 adds a per-scale setting for smart gem socketing that defaults to on.
-	-- Pawn 1.2 adds another setting for meta gems that defaults to whatever the colored gem setting was, or on.
-	-- Pawn 1.5.5 adds cogwheel support.
-	if ThisScaleOptions.SmartGemSocketing == nil then ThisScaleOptions.SmartGemSocketing = true end
-	if ThisScaleOptions.GemQualityLevel == nil then ThisScaleOptions.GemQualityLevel = PawnDefaultGemQualityLevel end
-	if ThisScaleOptions.CogwheelQualityLevel == nil then ThisScaleOptions.CogwheelQualityLevel = PawnDefaultCogwheelGemQualityLevel end
-	if ThisScaleOptions.SmartMetaGemSocketing == nil then ThisScaleOptions.SmartMetaGemSocketing = ThisScaleOptions.SmartGemSocketing end
-	if ThisScaleOptions.MetaGemQualityLevel == nil then ThisScaleOptions.MetaGemQualityLevel = PawnDefaultMetaGemQualityLevel end
-	
 	-- Some versions of Pawn call resilience rating Resilience and some call it ResilienceRating.
 	PawnReplaceStat(ThisScale, "Resilience", "ResilienceRating")
 	
@@ -2348,6 +2527,19 @@ function PawnCorrectScaleErrors(ScaleName)
 	-- Pawn 1.6.1 removed IsRelic and IsThrown
 	ThisScale.IsRelic = nil
 	ThisScale.IsThrown = nil
+
+	-- Pawn 1.7 makes smart gem socketing mandatory.
+	ThisScaleOptions.SmartGemSocketing = nil
+	ThisScaleOptions.SmartMetaGemSocketing = nil
+	ThisScale.PrismaticSocket = nil
+	ThisScale.RedSocket = nil
+	ThisScale.YellowSocket = nil
+	ThisScale.BlueSocket = nil
+	ThisScale.MetaSocket = nil
+	ThisScale.CogwheelSocket = nil
+	ThisScale.GemQualityLevel = nil
+	ThisScale.MetaGemQualityLevel = nil
+	ThisScale.CogwheelQualityLevel = nil
 end
 
 -- Replaces one incorrect stat with a correct stat.
@@ -2513,48 +2705,44 @@ function PawnGetEpicEquivalentItemLevel(ItemLevel, Rarity)
 	end
 end
 
+-- Given a particular item level and a list of gem tables, return the appropriate gem quality level for an item of the given level.
+-- If ItemLevel is nil, then the highest gem quality is assumed.
+function PawnGetGemQualityForItem(GemQualityLevels, ItemLevel)
+	if not ItemLevel then return GemQualityLevels[1][1] end
+
+	local _, GemData, GemLevel
+	for _, GemData in pairs(GemQualityLevels) do
+		GemLevel = GemData[1]
+		if ItemLevel >= GemLevel then return GemLevel end
+	end
+	VgerCore.Fail("Couldn't find an appropriate gem quality level for an item of level " .. tostring(ItemLevel) .. " in the specified item table.")
+	return GemLevel
+end
+
 -- Finds the best gems for a particular scale in one or more colors.
 -- 	Parameters: ScaleName, FindRed, FindYellow, FindBlue
 --		ScaleName: The name of the scale for which to find gems.
+--		GemTable: The gem table to search through.
 --		FindRed: If true, consider red gems as a possibility.
 --		FindYellow: If true, consider yellow gems as a possibility.
 --		FindBlue: If true, consider blue gems as a possibility.
---		FindMeta: If true, consider meta gems only.  Cannot be used with FindRed/Yellow/Blue/Cogwheel.
---		FindCogwheel: If true, consider cogwheels only.  Cannot be used with FindRed/Yellow/Blue/Meta.
 --	Return value: Value, GemList
 --		Value: The value of the best gem or gems for the chosen colors.
 --		GemList: A table of gems of that value.  Each item in the list is in the standard Pawn item table format, and
 --			the list is sorted alphabetically by name.
-function PawnFindBestGems(ScaleName, FindRed, FindYellow, FindBlue, FindMeta, FindCogwheel)
+function PawnFindBestGems(ScaleName, GemTable, FindRed, FindYellow, FindBlue)
 	local BestScore = 0
 	local BestItems = { }
 
-	if (not FindRed) and (not FindYellow) and (not FindBlue) and (not FindMeta) and (not FindCogwheel) then
-		VgerCore.Fail("PawnFindBestGems must be given a color of gem to search for.")
-		return
-	elseif
-		(FindMeta and (FindRed or FindYellow or FindBlue or FindCogwheel)) or
-		(FindCogwheel and (FindRed or FindYellow or FindBlue))
-	then
-		VgerCore.Fail("PawnFindBestGems can find colored gems, meta gems, OR cogwheels, but not simultaneously.")
-		return 
+	local IgnoreColor = false
+	if (not FindRed) and (not FindYellow) and (not FindBlue) then
+		IgnoreColor = true
 	end
 	
 	-- Go through the list of gems, checking each item that matches one of the find criteria.
-	local GemTable, GemData, ThisGem, _
-	if FindMeta then
-		GemTable = PawnMetaGemQualityTables[PawnCommon.Scales[ScaleName].MetaGemQualityLevel]
-	elseif FindCogwheel then
-		GemTable = PawnCogwheelQualityTables[PawnCommon.Scales[ScaleName].CogwheelQualityLevel]
-	else
-		GemTable = PawnGemQualityTables[PawnCommon.Scales[ScaleName].GemQualityLevel]
-	end
-	if not GemTable then
-		VgerCore.Fail("Couldn't find gems for this scale because no gem quality level was selected.")
-		return
-	end
+	local GemData, ThisGem, _
 	for _, GemData in pairs(GemTable) do
-		if FindMeta or FindCogwheel or (FindRed and GemData[2]) or (FindYellow and GemData[3]) or (FindBlue and GemData[4]) then
+		if IgnoreColor or (FindRed and GemData[2]) or (FindYellow and GemData[3]) or (FindBlue and GemData[4]) then
 			-- This gem is of a color we care about, so let's check it out.
 			ThisGem = PawnGetGemData(GemData)
 			if ThisGem then
@@ -2580,11 +2768,11 @@ function PawnFindBestGems(ScaleName, FindRed, FindYellow, FindBlue, FindMeta, Fi
 	-- In debug mode, display them.
 	if PawnCommon.Debug then
 		local Header = "=== Best "
-		if FindRed then Header = Header .. "Red " end
-		if FindYellow then Header = Header .. "Yellow " end
-		if FindBlue then Header = Header .. "Blue " end
-		if FindMeta then Header = Header .. "Meta " end
-		if FindCogwheel then Header = Header .. "Cogwheel " end
+		if not IgnoreColor then
+			if FindRed then Header = Header .. "Red " end
+			if FindYellow then Header = Header .. "Yellow " end
+			if FindBlue then Header = Header .. "Blue " end
+		end
 		Header = Header .. "gems for " .. PawnGetScaleLocalizedName(ScaleName) .. ": ==="
 		VgerCore.Message(Header)
 		for _, ThisGem in pairs(BestItems) do
@@ -3106,6 +3294,7 @@ end
 
 -- Called whenever the player's inventory changed.  We need to check their currently-equipped items whenever this happens.
 function PawnOnInventoryChanged()
+	if not PawnIsInitialized then return end
 	-- Ignore equipment change events when the player is in combat: they're unlikely to equip a NEW item in combat,
 	-- and we wouldn't want this procedure to slow them down even a little.
 	if InCombatLockdown() then return end
@@ -3337,7 +3526,7 @@ function PawnFindOptimalReforgingCore(ScaleName, Scale, Values, Stats, NoInstruc
 	local SuggestedCappedStat = false
 	for _, Stat in pairs(PawnReforgeableStats) do
 		local Value = Values[Stat]
-		if not Value or Value < 0 then Value = 0 end -- This would be a great: reforging away a stat with no value at all!
+		if not Value or Value < 0 then Value = 0 end -- This would be great: reforging away a stat with no value at all!
 		local Quantity = Stats[Stat]
 		if Quantity and Value < BestValue then
 			local Quantity = Stats[Stat]
@@ -3435,6 +3624,7 @@ function PawnGetMaxLevelItemIsUsefulHeirloom(Item)
 		return 0
 	end
 end
+
 
 ------------------------------------------------------------
 -- Pawn API
@@ -3564,11 +3754,6 @@ function PawnDuplicateScale(OldScaleName, NewScaleName)
 	-- Create the copy.
 	PawnCommon.Scales[NewScaleName] = {}
 	PawnCommon.Scales[NewScaleName].Color = PawnCommon.Scales[OldScaleName].Color
-	PawnCommon.Scales[NewScaleName].SmartGemSocketing = PawnCommon.Scales[OldScaleName].SmartGemSocketing
-	PawnCommon.Scales[NewScaleName].GemQualityLevel = PawnCommon.Scales[OldScaleName].GemQualityLevel
-	PawnCommon.Scales[NewScaleName].SmartMetaGemSocketing = PawnCommon.Scales[OldScaleName].SmartMetaGemSocketing
-	PawnCommon.Scales[NewScaleName].MetaGemQualityLevel = PawnCommon.Scales[OldScaleName].MetaGemQualityLevel
-	PawnCommon.Scales[NewScaleName].CogwheelQualityLevel = PawnCommon.Scales[OldScaleName].CogwheelQualityLevel
 	PawnCommon.Scales[NewScaleName].NormalizationFactor = PawnCommon.Scales[OldScaleName].NormalizationFactor
 	PawnCommon.Scales[NewScaleName].PerCharacterOptions = {}
 	PawnCommon.Scales[NewScaleName].PerCharacterOptions[PawnPlayerFullName] = {}
@@ -3735,120 +3920,6 @@ function PawnGetAllScalesExComparer(a, b)
 	return strlower(a.LocalizedName) < strlower(b.LocalizedName)
 end
 
--- Gets the preferred gem quality level for a scale.  (See Gems.lua.)
-function PawnGetGemQualityLevel(ScaleName)
-	if (not ScaleName) or (ScaleName == "") then
-		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnGetGemQualityLevel(\"ScaleName\")")
-		return false
-	elseif not PawnCommon.Scales[ScaleName] then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	end
-	
-	return PawnCommon.Scales[ScaleName].GemQualityLevel
-end
-
--- Gets the preferred meta gem quality level for a scale.  (See Gems.lua.)
-function PawnGetMetaGemQualityLevel(ScaleName)
-	if (not ScaleName) or (ScaleName == "") then
-		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnGetMetaGemQualityLevel(\"ScaleName\")")
-		return false
-	elseif not PawnCommon.Scales[ScaleName] then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	end
-	
-	return PawnCommon.Scales[ScaleName].MetaGemQualityLevel
-end
-
--- Sets the preferred gem quality level for a scale.  (See Gems.lua.)
-function PawnSetGemQualityLevel(ScaleName, QualityLevel)
-	if (not ScaleName) or (ScaleName == "") or (not QualityLevel) or (not PawnGemQualityTables[QualityLevel]) then
-		VgerCore.Fail("ScaleName and QualityLevel cannot be empty.  Usage: PawnSetGemQualityLevel(\"ScaleName\", QualityLevel)")
-		return false
-	elseif not PawnCommon.Scales[ScaleName] then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	end
-	
-	PawnCommon.Scales[ScaleName].GemQualityLevel = QualityLevel
-	PawnRecalculateScaleTotal(ScaleName) -- also recalculates socket values
-	PawnInvalidateBestItemsForScale(ScaleName)
-	PawnResetTooltips()
-	return true
-end
-
--- Sets the preferred metagem quality level for a scale.  (See Gems.lua.)
-function PawnSetMetaGemQualityLevel(ScaleName, QualityLevel)
-	if (not ScaleName) or (ScaleName == "") or (not QualityLevel) or (not PawnMetaGemQualityTables[QualityLevel]) then
-		VgerCore.Fail("ScaleName and QualityLevel cannot be empty.  Usage: PawnSetMetaGemQualityLevel(\"ScaleName\", QualityLevel)")
-		return false
-	elseif not PawnCommon.Scales[ScaleName] then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	end
-	
-	PawnCommon.Scales[ScaleName].MetaGemQualityLevel = QualityLevel
-	PawnRecalculateScaleTotal(ScaleName) -- also recalculates socket values
-	PawnInvalidateBestItemsForScale(ScaleName)
-	PawnResetTooltips()
-	return true
-end
-
--- Enables or disables smart gem socketing for a scale.
-function PawnSetSmartGemSocketing(ScaleName, Value)
-	local Scale = PawnCommon.Scales[ScaleName]
-	if not ScaleName or ScaleName == "" or not Scale then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	elseif PawnScaleIsReadOnly(ScaleName) then
-		VgerCore.Fail("Can't change a read-only scale.")
-		return false
-	end
-	
-	Scale.SmartGemSocketing = Value
-	PawnRecalculateScaleTotal(PawnUICurrentScale)
-	PawnInvalidateBestItemsForScale(PawnUICurrentScale)
-	PawnResetTooltips()
-	return true
-end
-
--- Enables or disables smart meta gem socketing for a scale.
-function PawnSetSmartMetaGemSocketing(ScaleName, Value)
-	local Scale = PawnCommon.Scales[ScaleName]
-	if not ScaleName or ScaleName == "" or not Scale then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	elseif PawnScaleIsReadOnly(ScaleName) then
-		VgerCore.Fail("Can't change a read-only scale.")
-		return false
-	end
-	
-	Scale.SmartMetaGemSocketing = Value
-	PawnRecalculateScaleTotal(PawnUICurrentScale)
-	PawnInvalidateBestItemsForScale(PawnUICurrentScale)
-	PawnResetTooltips()
-	return true
-end
-
--- Changes the normalization factor for a scale.  (Expected values are 1/true and 0/false/nil.)
-function PawnSetScaleNormalizationFactor(ScaleName, Value)
-	local Scale = PawnCommon.Scales[ScaleName]
-	if not ScaleName or ScaleName == "" or not Scale then
-		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
-		return false
-	elseif PawnScaleIsReadOnly(ScaleName) then
-		VgerCore.Fail("Can't change a read-only scale.")
-		return false
-	end
-	
-	if Value == true then Value = 1 elseif Value == 0 or Value == false then Value = nil end
-	Scale.NormalizationFactor = Value
-	PawnInvalidateBestItemsForScale(PawnUICurrentScale) -- it'll be the same items as before, but with new values
-	PawnResetTooltips()
-	return true
-end
-
 -- Creates a Pawn scale tag for a scale.
 --	Parameters: ScaleName
 --		ScaleName: The name of a Pawn scale.
@@ -3870,24 +3941,14 @@ function PawnGetScaleTag(ScaleName)
 	local ScaleTag = "( Pawn: v" .. PawnCurrentScaleVersion .. ": \"" .. ScaleFriendlyName .. "\": "
 	local AddComma = false
 	local IncludeThis
-	local SmartGemSocketing = PawnCommon.Scales[ScaleName].SmartGemSocketing
-	local SmartMetaGemSocketing = PawnCommon.Scales[ScaleName].SmartMetaGemSocketing
 	for StatName, Value in pairs(PawnCommon.Scales[ScaleName].Values) do
 		local IncludeThis = (Value and Value ~= 0)
-		 -- If smart gem socketing is enabled, don't include socket stats.
-		if IncludeThis and (StatName == "PrismaticSocket" or StatName == "CogwheelSocket") then IncludeThis = false end
-		if IncludeThis and SmartGemSocketing and (StatName == "RedSocket" or StatName == "YellowSocket" or StatName == "BlueSocket") then IncludeThis = false end
-		if IncludeThis and SmartMetaGemSocketing and (StatName == "MetaSocket") then IncludeThis = false end
 		if IncludeThis then
 			if AddComma then ScaleTag = ScaleTag .. ", " end
 			ScaleTag = ScaleTag .. StatName .. "=" .. tostring(Value)
 			AddComma = true
 		end
 	end
-	-- Add gem quality levels.
-	if AddComma then ScaleTag = ScaleTag .. ", " end
-	ScaleTag = ScaleTag .. "GemQualityLevel=" .. tostring(PawnCommon.Scales[ScaleName].GemQualityLevel)
-	ScaleTag = ScaleTag .. ", MetaGemQualityLevel=" .. tostring(PawnCommon.Scales[ScaleName].MetaGemQualityLevel)
 	
 	ScaleTag = ScaleTag .. " )"
 	return ScaleTag
@@ -3925,28 +3986,6 @@ function PawnImportScale(ScaleTag, Overwrite)
 	end
 	PawnCommon.Scales[ScaleName].Values = Values	
 	PawnCorrectScaleErrors(ScaleName)
-	
-	-- Gem quality levels are included as if they're a stat, but they're not.  Move them to a scale setting.  (If this property
-	-- isn't set it will be added later.)
-	if Values.GemQualityLevel then
-		PawnCommon.Scales[ScaleName].GemQualityLevel = Values.GemQualityLevel
-		Values.GemQualityLevel = nil
-	end
-	if Values.MetaGemQualityLevel then
-		PawnCommon.Scales[ScaleName].MetaGemQualityLevel = Values.MetaGemQualityLevel
-		Values.MetaGemQualityLevel = nil
-	end
-	
-	-- Determine whether to automatically set socket values based on whether or not socket values were specified
-	-- in the scale.
-	if not AlreadyExists then
-		if (not Values.RedSocket) and (not Values.YellowSocket) and (not Values.BlueSocket) then
-			PawnCommon.Scales[ScaleName].SmartGemSocketing = true
-		end
-		if (not Values.MetaSocket) then
-			PawnCommon.Scales[ScaleName].SmartMetaGemSocketing = true
-		end
-	end
 	
 	PawnRecalculateScaleTotal(ScaleName)
 	if AlreadyExists then PawnInvalidateBestItemsForScale(ScaleName) end
