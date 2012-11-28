@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 770 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 789 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%.0f"..PERCENT_SYMBOL
 
@@ -431,7 +431,7 @@ local function XPerl_Player_UpdatePVP(self)
 		XPerl_ColourFriendlyUnit(nf.text, "player")
 	end
 
-	local pvp = pconf.pvpIcon and (UnitIsPVPFreeForAll("player") and "FFA") or (UnitIsPVP("player") and (UnitFactionGroup("player") ~= "Neutral") and UnitFactionGroup("player"))
+	local pvp = pconf.pvpIcon and ((UnitIsPVPFreeForAll("player") and "FFA") or (UnitIsPVP("player") and (UnitFactionGroup("player") ~= "Neutral") and UnitFactionGroup("player")))
 	if (pvp) then
 		nf.pvp.icon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..pvp)
 		nf.pvp:Show()
@@ -968,7 +968,6 @@ end
 -- PLAYER_TALENT_UPDATE
 function XPerl_Player_Events:PLAYER_TALENT_UPDATE()
 	XPerl_Player_UpdateMana(self)
-	XPerl_Player_InitMoonkin(self)
 	
 	if(playerClass == "PRIEST" and PriestBarFrame) then
 		PriestBarFrame_CheckAndShow(PriestBarFrame);
@@ -980,6 +979,9 @@ function XPerl_Player_Events:UPDATE_SHAPESHIFT_FORM()
 	if (playerClass == "DRUID") then
 		XPerl_Player_DruidBarUpdate(self)
 		XPerl_Unit_UpdatePortrait(self)--Maybe fix portraits not updating when shifting forms?
+		if GetSpecialization() == 1 then
+			XPerl_Player_InitMoonkin(self)
+		end
 	end
 end
 
@@ -1475,7 +1477,10 @@ end
 function XPerl_Player_InitMonk(self)
 	if ( select(2,UnitClass("player")) == "MONK") then
 
-
+		if (not MonkHarmonyBar or MonkHarmonyBar:GetParent() ~= PlayerFrame or not MonkHarmonyBar:IsShown() or not pconf.showRunes ) then
+			-- Only hijack runes if not already done so by another mod
+			return
+		end
 		
 		self.runes = CreateFrame("Frame", "XPerl_Runes", self)
 		self.runes:SetPoint("TOPLEFT", self.portraitFrame, "BOTTOMLEFT", 0, 2)

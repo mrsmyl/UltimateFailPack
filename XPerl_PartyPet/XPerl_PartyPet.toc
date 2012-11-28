@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: X-Perl |cffeda55fParty Pet|r by |cFFFF8080Zek|r
 ## Title-ruRU: X-Perl |cffeda55fПитомцы группы|r
 ## Title-deDE: X-Perl |cffeda55fGruppenbegleiter|r
@@ -12,7 +12,7 @@
 ## X-License: GNU GPL v3, 29 June 2007
 ## RequiredDeps: XPerl, XPerl_Party
 ## OptionalDeps: XPerl_ArcaneBar
-## X-Curse-Packaged-Version: r777
+## X-Curse-Packaged-Version: r793
 ## X-Curse-Project-Name: X-Perl UnitFrames
 ## X-Curse-Project-ID: xperl
 ## X-Curse-Repository-ID: wow/xperl/mainline

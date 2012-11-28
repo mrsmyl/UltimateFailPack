@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 760 $")
+		end, "$Revision: 788 $")
 local XPerl_Player_Pet_HighlightCallback
 
 -- XPerl_Player_Pet_OnLoad
@@ -299,13 +299,13 @@ function XPerl_Player_Pet_Events:UNIT_PET()
 end
 
 function XPerl_Player_Pet_Events:PET_BATTLE_OPENING_START()
-	if(self) then
+	if(UnitExists("pet")) then
 		self:Hide()
 	end
 end
 
 function XPerl_Player_Pet_Events:PET_BATTLE_CLOSE()
-	if(self) then
+	if(UnitExists("pet")) then
 		self:Show()
 	end
 end

@@ -13,7 +13,7 @@ XPerl_RequestConfig(function(new)
 			for k,v in pairs(PartyFrames) do
 				v.conf = pconf
 			end
-		end, "$Revision: 760 $")
+		end, "$Revision: 779 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -722,7 +722,7 @@ local function CheckRaid()
 		--print("called");
 		local singleGroup = XPerl_Party_SingleGroup()
 		
-		if (not pconf or (pconf.inRaid or (pconf.smallRaid and singleGroup)  or (GetNumGroupMembers() > 0 and not IsInRaid() ))) then -- or GetNumGroupMembers() > 0
+		if (not pconf or (pconf.inRaid or (pconf.smallRaid and singleGroup)  or (GetNumSubgroupMembers() > 0 and not IsInRaid() ))) then -- or GetNumGroupMembers() > 0
 			if (not partyHeader:IsShown()) then
 				partyHeader:Show()
 			end

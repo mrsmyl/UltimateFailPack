@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 775 $")
+			end, "$Revision: 787 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -1090,13 +1090,13 @@ function XPerl_Target_Events:PET_BATTLE_OPENING_START()
 		XPerl_Focus:Hide()
 	end
 	if(XPerl_PetTarget) then
-		XPerl_Target:Hide()
+		XPerl_PetTarget:Hide()
 	end
 	if(XPerl_TargetTarget) then
-		XPerl_Focus:Hide()
+		XPerl_TargetTarget:Hide()
 	end
 	if(XPerl_FocusTarget) then
-		XPerl_Target:Hide()
+		XPerl_FocusTarget:Hide()
 	end
 end
 
@@ -1104,17 +1104,17 @@ function XPerl_Target_Events:PET_BATTLE_CLOSE()
 	if(XPerl_Target and UnitExists("target")) then
 		XPerl_Target:Show()
 	end
-	if(XPerl_Focus and self.conf.enable and UnitExists("focus")) then
+	if(XPerl_Focus and XPerl_Focus.conf.enable and UnitExists("focus")) then
 		XPerl_Focus:Show()
 	end
 	if(XPerl_PetTarget and UnitExists("pettarget")) then
-		XPerl_Target:Show()
+		XPerl_PetTarget:Show()
 	end
-	if(XPerl_TargetTarget and self.conf.enable and UnitExists("targettarget")) then
-		XPerl_Focus:Show()
+	if(XPerl_TargetTarget and XPerl_TargetTarget.conf.enable and UnitExists("targettarget")) then
+		XPerl_TargetTarget:Show()
 	end
-	if(XPerl_FocusTarget and self.conf.enable and UnitExists("focustarget")) then
-		XPerl_Target:Show()
+	if(XPerl_FocusTarget and XPerl_FocusTarget.conf.enable and UnitExists("focustarget")) then
+		XPerl_FocusTarget:Show()
 	end
 end
 
