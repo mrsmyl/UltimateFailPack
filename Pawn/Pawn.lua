@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.7.1: fix cogwheel bug
+-- Version 1.7.2: restore accidentally deleted normalization code
 ------------------------------------------------------------
 
 
-PawnVersion = 1.701
+PawnVersion = 1.702
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -3918,6 +3918,24 @@ function PawnGetAllScalesExComparer(a, b)
 	end
 	-- If both scales are from the same provider, then just sort by display name, case-insensitive.
 	return strlower(a.LocalizedName) < strlower(b.LocalizedName)
+end
+
+-- Changes the normalization factor for a scale.  (Expected values are 1/true and 0/false/nil.)
+function PawnSetScaleNormalizationFactor(ScaleName, Value)
+	local Scale = PawnCommon.Scales[ScaleName]
+	if not ScaleName or ScaleName == "" or not Scale then
+		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
+		return false
+	elseif PawnScaleIsReadOnly(ScaleName) then
+		VgerCore.Fail("Can't change a read-only scale.")
+		return false
+	end
+	
+	if Value == true then Value = 1 elseif Value == 0 or Value == false then Value = nil end
+	Scale.NormalizationFactor = Value
+	PawnInvalidateBestItemsForScale(PawnUICurrentScale) -- it'll be the same items as before, but with new values
+	PawnResetTooltips()
+	return true
 end
 
 -- Creates a Pawn scale tag for a scale.
