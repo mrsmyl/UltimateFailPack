@@ -524,7 +524,7 @@ function ArkInventory.TooltipAddBattlepetDetail( tooltip, speciesID, i )
 			info = string.format( "%s:  ", ArkInventory.Localise["BATTLEPET_OPPONENT_KNOWN"] )
 			
 			local level = select( 3, C_PetJournal.GetPetInfoByPetID( petID ) )
-			local isWild, canBattle = select( 13, C_PetJournal.GetPetInfoByPetID( petID ) )
+			local isWild, canBattle = select( 14, C_PetJournal.GetPetInfoByPetID( petID ) )
 			
 			local rarity = select( 5, C_PetJournal.GetPetStats( petID ) )
 			if isWild and canBattle then

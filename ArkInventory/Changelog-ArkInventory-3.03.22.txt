@@ -1,14 +1,27 @@
 ------------------------------------------------------------------------
-r386 | arkayenro | 2012-11-28 09:27:13 +0000 (Wed, 28 Nov 2012) | 7 lines
+r388 | arkayenro | 2012-11-29 11:14:34 +0000 (Thu, 29 Nov 2012) | 4 lines
 Changed paths:
-   A /tags/3.03.21 (from /trunk:385)
+   A /tags/3.03.22 (from /trunk:387)
 
-*3.03.21 (28-NOV-2012)*
- * changed - toc updated to 50100
- * fixed - issue with item tracking object not updating
- * fixed - issue with battlepet opponent detail output not linking all your pets
- * fixed - issue with normaltexture going green
- * added - new sort key - internal id (class:itemid:soulbound)
+*3.03.22 (29-NOV-2012)*
+ * fixed - updated for pet api changes (petid is now a guid string, not a number)
+ * fixed - issue where pets and mounts submenus were showing up under the action menu
+
+------------------------------------------------------------------------
+r387 | arkayenro | 2012-11-29 11:09:40 +0000 (Thu, 29 Nov 2012) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryLDB.lua
+   M /trunk/ArkInventoryMenu.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryTooltip.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.22 (29-NOV-2012)*
+ * fixed - updated for pet api changes (petid is now a guid string, not a number)
+ * fixed - issue where pets and mounts submenus were showing up under the action menu
 
 ------------------------------------------------------------------------
 r385 | arkayenro | 2012-11-28 09:20:03 +0000 (Wed, 28 Nov 2012) | 7 lines

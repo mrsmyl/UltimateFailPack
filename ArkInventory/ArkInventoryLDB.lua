@@ -256,7 +256,7 @@ function ArkInventory.LDB.Pets:Update( )
 	-- just one
 	for k, v in pairs( selected ) do
 		if v then
-			self.icon = select( 8, C_PetJournal.GetPetInfoByPetID( k ) )
+			self.icon = select( 9, C_PetJournal.GetPetInfoByPetID( k ) )
 			return
 		end
 	end
@@ -292,7 +292,7 @@ function ArkInventory.LDB.Pets:OnTooltipShow( )
 	-- just the one
 	for k, v in pairs( selected ) do
 		if v then
-			local _, customName, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID( k )
+			local _, customName, _, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID( k )
 			if customName and customName ~= "" then
 				name = string.format( "%s (%s)", name, customName )
 			end
@@ -309,9 +309,9 @@ function ArkInventory.LDB.Pets:OnClick( button )
 		
 		-- dismiss current pet
 		
-		local petID = C_PetJournal.GetSummonedPetID( )
+		local petID = C_PetJournal.GetSummonedPetGUID( )
 		if petID then
-			C_PetJournal.SummonPetByID( petID )
+			C_PetJournal.SummonPetByGUID( petID )
 		end
 		
 		return
@@ -322,7 +322,7 @@ function ArkInventory.LDB.Pets:OnClick( button )
 	
 	if button == "RightButton" then
 		
-		ArkInventory.MenuPetsOpen( self )
+		ArkInventory.MenuLDBPetsOpen( self )
 		
 	else
 		
@@ -338,9 +338,9 @@ function ArkInventory.LDB.Pets:OnClick( button )
 		if #companionTable == 0 then
 			-- no usable pets
 		elseif #companionTable == 1 then
-			C_PetJournal.SummonPetByID( companionTable[1] )
+			C_PetJournal.SummonPetByGUID( companionTable[1] )
 		else
-			C_PetJournal.SummonPetByID( companionTable[random( 1, #companionTable )] )
+			C_PetJournal.SummonPetByGUID( companionTable[random( 1, #companionTable )] )
 		end
 		
 	end
@@ -484,7 +484,7 @@ function ArkInventory.LDB.Mounts:OnClick( button )
 	
 	if button == "RightButton" then
 		
-		ArkInventory.MenuMountsOpen( self )
+		ArkInventory.MenuLDBMountsOpen( self )
 		
 	else
 		
@@ -867,7 +867,7 @@ function ArkInventory.LDB.Pets:GetAvailable( companionType, ignoreActive )
 	--ArkInventory.Output( "selected[", selectedCount, "] = ", selected )
 	
 	local count = 0
-	local activePet = C_PetJournal.GetSummonedPetID( )
+	local activePet = C_PetJournal.GetSummonedPetGUID( )
 	local activeSpecies = activePet and C_PetJournal.GetPetInfoByPetID( activePet )
 	
 	for _, petID in ArkInventory.Lib.Pet:IteratePetIDs( ) do

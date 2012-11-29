@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1046 $
--- $Date: 2012-11-28 20:15:56 +1100 (Wed, 28 Nov 2012) $
+-- $Revision: 1053 $
+-- $Date: 2012-11-29 22:08:17 +1100 (Thu, 29 Nov 2012) $
 
 
 local _G = _G
@@ -6316,13 +6316,13 @@ end
 
 function ArkInventory.SetItemButtonTexture( frame, texture, r, g, b )
 	
-	if not frame then
+	if ( not frame ) then
 		return
 	end
 	
-	local obj = _G[string.format( "%s%s", frame:GetName( ), "IconTexture" )]
+	local obj = frame.icon
 	
-	if not obj then
+	if ( not obj ) then
 		return
 	end
 	
@@ -6347,7 +6347,7 @@ function ArkInventory.SetItemButtonDesaturate( frame, desaturate, r, g, b )
 		return
 	end
 	
-	local obj = _G[string.format( "%s%s", frame:GetName( ), "IconTexture" )]
+	local obj = frame.icon
 	
 	if not obj then
 		return
@@ -6876,7 +6876,7 @@ function ArkInventory.Frame_Item_Battlepet_Update( frame )
 	
 	if i and i.pid then
 		
-		frame.active:SetShown( i.pid == C_PetJournal.GetSummonedPetID( ) )
+		frame.active:SetShown( i.pid == C_PetJournal.GetSummonedPetGUID( ) )
 		frame.slotted:SetShown( C_PetJournal.PetIsSlotted( i.pid ) )
 		frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pid ) ) <= 0 )
 		frame.favorite:SetShown( C_PetJournal.PetIsFavorite( i.pid ) )
@@ -6910,7 +6910,7 @@ function ArkInventory.Frame_Item_Mount_Update( frame )
 	
 	if i and i.h then
 		
-		--frame.active:SetShown( i.pid == C_PetJournal.GetSummonedPetID( ) )
+		--frame.active:SetShown( i.pid == C_PetJournal.GetSummonedPetGUID( ) )
 		
 	end
 
@@ -7065,7 +7065,7 @@ function ArkInventory.Frame_Item_Battlepet_OnClick( frame, button )
 		if ( button == "LeftButton" ) then
 			
 			if C_PetJournal.PetIsSummonable( i.pid ) then
-				C_PetJournal.SummonPetByID( i.pid )
+				C_PetJournal.SummonPetByGUID( i.pid )
 			end
 			
 		elseif ( button == "RightButton" ) then
@@ -7893,7 +7893,6 @@ function ArkInventory.Frame_Changer_Battlepet_OnClick( frame )
 end
 
 function ArkInventory.Frame_Changer_Battlepet_OnDragStart( frame )
-	
 	C_PetJournal.PickupPet( i.pid, true )
 end
 
@@ -7952,7 +7951,7 @@ function ArkInventory.Frame_Changer_Battlepet_Update( )
 		local petID, ability1ID, ability2ID, ability3ID, locked = C_PetJournal.GetPetLoadOutInfo( slot_id )
 		if petID and ( not locked ) then
 			
-			local speciesID, customName, level, xp, maxXp, displayID, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
+			local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
 			local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
 			
 			if isWild and canBattle then

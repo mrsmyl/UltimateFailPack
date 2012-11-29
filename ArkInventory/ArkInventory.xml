@@ -563,13 +563,13 @@
 	</Button>
 	
 	<Button virtual="true" name="ArkInventory_ChangerPlayerMainTemplate" inherits="PaperDollItemSlotButtonTemplate">
-	
+		
 		<Frames>
 			<Frame name="$parentArkBorder" inherits="ARKINV_Border" />
 		</Frames>
-	
+		
 		<Scripts>
-
+			
 			<OnLoad>
 				ArkInventory.Frame_Changer_Primary_OnLoad( self )
 			</OnLoad>
