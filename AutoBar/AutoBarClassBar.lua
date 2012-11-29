@@ -520,6 +520,8 @@ function AutoBar.Class.Bar.prototype:RefreshLayout()
 	self:RefreshScale()
 	self:RefreshButtonLayout()
 	self:RefreshAlpha()
+	
+	--If it's in stickyMode or movebuttonsMode, show it regardless of whether it's hidden or not
 	if ((AutoBar.stickyMode or AutoBar.moveButtonsMode)) then
 		self.frame:Show()
 	elseif (self.sharedLayoutDB.hide or not self.sharedLayoutDB.enabled) then

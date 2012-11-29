@@ -1,7 +1,7 @@
-## Interface: 50001
+## Interface: 50100
 ## Title: AutoBar
 ## Author: MuffinManKen, Maggz,  Toadkiller (Original code)
-## Version: v5.0.4.11
+## Version: v5.1.0.0
 ## X-Website: http://www.MuffinManGames.com
 ## Notes: Dynamic bars with buttons that automatically add potions, water, food and other items you specify into a button for use. Does not use action slots.
 ## Notes-ruRU: Динамические панели с кнопками, которые автоматически добавляют зелья, воду, пищу и другие предметы для котрых вы определяете кнопки для использования. Не использует слоты на панеле команд.
