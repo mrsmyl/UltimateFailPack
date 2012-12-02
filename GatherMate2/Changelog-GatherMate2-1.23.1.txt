@@ -1,0 +1,12 @@
+tag 1.23.1
+9396c6438b07764fb21e72a31975b6789bda6d50
+Hendrik Leppkes <h.leppkes@gmail.com>
+2012-11-30 15:20:24 +0100
+
+Tag as 1.23.1
+
+
+--------------------
+
+Sal Scotto:
+	- touched for reload

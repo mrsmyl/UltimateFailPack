@@ -3,7 +3,7 @@
 	it also has a few functions to help determine distance and directions.
 --]]
 local MAJOR = "LibMapData-1.0"
-local MINOR = 1000 + tonumber(("$Revision: 122 $"):match("%d+"))
+local MINOR = 1000 + tonumber(("$Revision: 124 $"):match("%d+"))
 assert(LibStub, MAJOR.." requires LibStub")
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
@@ -215,6 +215,7 @@ do
 			[1] = {4897.91650390625,3264.5830078125,-2137.5,-3941.66650390625,2760.41650390625,-7206.24951171875},
 			['micro'] = {
 				[6] = { 330.0,220.0,85.0,-6240.0,-245.0,-6020.0 },
+				[7] = { 505.5,337.0,472.75,-5650.0,-32.75,-5313.0 },
 				[8] = { 195.0,130.0,-584.0,-5600.0,-779.0,-5470.0 },
 				[9] = { 266.490234375,177.66015625,-241.7548828125,-6623.330078125,-508.2451171875,-6445.669921875 },
 				[10] = { 570.0,380.0,-500.0,-5242.5,-1070.0,-4862.5 },
@@ -2085,6 +2086,77 @@ do
 	
 			},	
 		}
+		mapData[910] = { 
+			['floors'] = 0, ['name'] = "Krasarang_terrain1", ['rzti'] = 870, ['map_type'] = 0, ['continent'] = 6, ['transform'] = 0,
+			[1] = {4687.5009765625,3124.9999923706055,-2947.9169921875,-110.41602325439453,1739.583984375,-3235.416015625},
+			['micro'] = {
+	
+			},	
+		}
+		mapData[911] = { 
+			['floors'] = 0, ['name'] = "KrasarangAlliance", ['rzti'] = 1103, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = {1118.75,745.833984375,314.583984375,-587.5,1433.333984375,-1333.333984375},
+			['micro'] = {
+	
+			},	
+		}
+		mapData[912] = { 
+			['floors'] = 0, ['name'] = "KrasarangPatience", ['rzti'] = 1104, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = {1845.833984375,1229.16796875,-1931.25,-891.666015625,-85.416015625,-2120.833984375},
+			['micro'] = {
+	
+			},	
+		}
+		mapData[914] = { 
+			['floors'] = 0, ['name'] = "VoljinScenario", ['rzti'] = 1095, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = { 892.5,595.0,413.75,1140.0,-478.75,1735.0 },
+			['micro'] = {
+	
+			},	
+		}
+		mapData[919] = { 
+			['floors'] = 7, ['name'] = "BlackTempleScenario", ['rzti'] = 1112, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = { 1252.2494945526123,834.8330078125,-23.870500564575195,-240.0,-1276.1199951171875,594.8330078125 },
+			[2] = { 975.0,650.0,176.0,380.0,-799.0,1030.0 },
+			[3] = { 1005.0,670.0,191.0,400.0,-814.0,1070.0 },
+			[4] = { 440.0009765625,293.333984375,-134.99951171875,343.3330078125,-575.00048828125,636.6669921875 },
+			[5] = { 670.0,446.66668701171875,70.0,664.1636352539062,-600.0,1110.830322265625 },
+			[6] = { 705.0,470.0,67.5,450.0,-637.5,920.0 },
+			[7] = { 355.0,236.6666259765625,-137.5,606.6666870117188,-492.5,843.3333129882812 },
+			['micro'] = {
+	
+			},	
+		}
+		mapData[920] = { 
+			['floors'] = 0, ['name'] = "KrasarangHorde", ['rzti'] = 1102, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = {2331.25,1554.166015625,-3125.0,-1352.083984375,-793.75,-2906.25},
+			['micro'] = {
+	
+			},	
+		}
+		mapData[922] = { 
+			['floors'] = 2, ['name'] = "DeeprunTram", ['rzti'] = 369, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = { 312.0,208.0,-2311.5,-112.5,-2623.5,95.5 },
+			[2] = { 185.0,123.33332824707031,-2408.5,-172.9580078125,-2593.5,-49.62467956542969 },
+			['micro'] = {
+	
+			},	
+		}
+		mapData[924] = { 
+			['floors'] = 2, ['name'] = "DalaranCity", ['rzti'] = 1106, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = { 830.0150146484375,553.34375,-222.4949951171875,5513.328125,-1052.510009765625,6066.671875 },
+			[2] = { 563.234619140625,375.48974609375,-352.64068603515625,5599.85009765625,-915.8753051757812,5975.33984375 },
+			['micro'] = {
+	
+			},	
+		}
+		mapData[925] = { 
+			['floors'] = 0, ['name'] = "BrawlgarArena", ['rzti'] = 1043, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
+			[1] = { 215.009765625,143.3399658203125,4857.5048828125,1963.3299560546875,4642.4951171875,2106.669921875 },
+			['micro'] = {
+	
+			},	
+		}
 	-- Dustwallow Transition patch for client that havent been patched
 	SetMapByID(141)
 	local dwMap = GetMapInfo()
@@ -2334,7 +2406,7 @@ function lib:Distance(mapfile,floor, srcX,srcY,dstX,dstY)
 	local fl = data[floor]
 	if floor and floor <= data['floors'] and floor > 0 then
 		width, height  = fl[1],fl[2] 
-	elseif floor and floor > 0 and data['micro'][floor] then
+	elseif floor and floor > 0 and data['micro'] and data['micro'][floor] then
 		width, height  = data['micro'][floor][1],data['micro'][floor][2] 
 	else
 		fl = data[1]
@@ -2463,7 +2535,7 @@ function lib:PointToYards(mapfile,floor, x, y)
 	local fl = data[floor]
 	if floor and floor <= data['floors'] and floor > 0 then
 		width, height  = fl[1],fl[2] 
-	elseif floor and floor > 0 and data['micro'][floor] then
+	elseif floor and floor > 0 and data['micro'] and data['micro'][floor] then
 		width, height  = data['micro'][floor][1],data['micro'][floor][2] 
 	else
 		fl = data[1]
@@ -2490,7 +2562,7 @@ function lib:YardsToPoint(mapfile,floor,x,y)
 	local fl = data[floor]
 	if floor and floor <= data['floors'] and floor > 0 then
 		width, height  = fl[1],fl[2] 
-	elseif floor and floor > 0 and data['micro'][floor] then
+	elseif floor and floor > 0 and data['micro'] and data['micro'][floor] then
 		width, height  = data['micro'][floor][1],data['micro'][floor][floor][2] 
 	else
 		fl = data[1]
@@ -2552,7 +2624,7 @@ function lib:MapArea(mapfile,floor)
 	local fl = data[floor]
 	if floor and floor <= data['floors'] and floor > 0 then
 		return fl[1],fl[2] 	
-	elseif floor and floor > 0 and data['micro'][floor] then
+	elseif floor and floor > 0 and data['micro'] and data['micro'][floor] then
 		return data['micro'][floor][1],data['micro'][floor][2] 
 	else
 		if floor and floor > 0 then
@@ -2579,7 +2651,7 @@ function lib:GetMapUpperLeft(mapfile, floor)
 	local fl = data[floor + 1]
 	if floor and floor <= data['floors'] then
 		return fl[3],fl[4]
-	elseif floor and floor > 0 and data['micro'][floor] then
+	elseif floor and floor > 0 and data['micro'] and data['micro'][floor] then
 		return data['micro'][floor][3],data['micro'][floor][4]
 	else
 		if floor and floor > 0 then
@@ -2605,7 +2677,7 @@ function lib:GetMapLowerRight(mapfile, floor)
 	local fl = data[floor + 1]
 	if floor and floor <= data['floors'] then
 		return fl[5],fl[6]
-	elseif floor and floor > 0 and data['micro'][floor] then
+	elseif floor and floor > 0 and data['micro'] and data['micro'][floor] then
 		return data['micro'][floor][5],data['micro'][floor][6]
 	else
 		if floor and floor > 0 then
