@@ -183,3 +183,31 @@ L["top"] = "頂部"
 
 end
 
+L = AL:NewLocale(AppName, "ptBR")
+if L then
+L["Bar"] = "Barra"
+L["Bar#%d"] = "Barra#%d"
+L["bottom"] = "Baixo"
+L["center"] = "Centro"
+L["|cffeda55fDrag|r to move the frame"] = "|cffeda55fArraste|r para mover o quadro"
+L["|cffeda55fLeft Click|r to lock/unlock frames"] = "|cffeda55fBotão Esquerdo do Mouse|r Para travar/destravar quadros"
+L["|cffeda55fRight Click|r to open the configuration window"] = "|cffeda55fBotão Direito do Mouse|r Para abrir a janela de configuração"
+L["cleft"] = "Centro-Esquerda"
+L["cright"] = "Centro-Direita"
+L["Disable %s plugin?"] = "Desativar Plugin %s?"
+L["Force Hide Tooltip"] = "Forçar esconder dica"
+L["Icon Border Clip"] = "Ícone corta borda" -- Needs review
+L["left"] = "Esquerda"
+L["none"] = "Nenhum"
+L["Override Tooltip Scale"] = "Substituir escala da dica" -- Needs review
+L["right"] = "Direita"
+L["Tooltip Scale"] = "Escala da dica"
+L["top"] = "Cima"
+
+end
+
+L = AL:NewLocale(AppName, "itIT")
+if L then
+
+end
+
