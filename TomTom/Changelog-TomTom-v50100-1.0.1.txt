@@ -1,0 +1,12 @@
+tag v50100-1.0.1
+224a68507967d6dc80f880262f7813cb66436b50
+James Whitehead II <jnwhiteh@gmail.com>
+2012-11-30 06:23:42 +0100
+
+Tagging v50100-1.0.1
+
+
+--------------------
+
+James Whitehead II:
+	- Update libmapdata
