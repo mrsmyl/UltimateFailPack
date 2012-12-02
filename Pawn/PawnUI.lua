@@ -1636,7 +1636,7 @@ function PawnUI_ShowBestGems()
 	end
 	
 	-- Only show cogwheels if the player is a high-level engineer.
-	GemQualityLevel = PawnGetGemQualityForItem(PawnMetaGemQualityLevels, PawnUIGemQualityLevel)
+	GemQualityLevel = PawnGetGemQualityForItem(PawnCogwheelQualityLevels, PawnUIGemQualityLevel)
 	if PawnPlayerUsesCogwheels() and #(PawnScaleBestGems[PawnUICurrentScale].CogwheelSocket[GemQualityLevel]) > 0 then
 		PawnUI_AddGemHeaderLine(format(PawnUIFrame_FindGemColorHeader_Text, PawnLocal.CogwheelName))
 		for _, GemData in pairs(PawnScaleBestGems[PawnUICurrentScale].CogwheelSocket[GemQualityLevel]) do

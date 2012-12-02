@@ -58,15 +58,31 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 	<li>Pawn will suggest that you fill engineering helms with the same type of cogwheel,
 	but the cogwheels are unique-equipped, so Pawn should really suggest a best two or
 	three.  (Engineers always gotta make things more complicated...)</li>
-	<li>Pawn has reported compatibility problems with the mod BagSync.  I'll look into it.</li>
 	<li>The item upgrade features work just on item IDs, but that means they 
 	don't work well with random stat items since most of those have no stats on 
 	the base version of the item and the "of the Beast" part is basically an 
 	enchantment.&nbsp; 
 	(I should probably store what Pawn calls unenchanted item links, which would still have the 
 	random stat component.)</li>
+	<li>Once Pawn has a concept of "sets of items," I could add an option so 
+	that upgrade percentages shown are relative to the total value of your gear 
+	instead of relative to your old best item for that slot.&nbsp; This would 
+	help you find the best use of your valor points, for example, without 
+	needing to see raw Pawn scores.&nbsp; (Instead of showing (NewItem - 
+	OldItem) / OldItem, instead show (NewItem - OldItem) / 
+	TotalValueOfOldItem'sGearSet.)&nbsp; This would be also useful for helping 
+	you know how to best spend your valor points for item level upgrades.<ul>
+		<li>I don't <i>necessarily</i> have to complete the work to teach Pawn 
+		about the concept of a set of items before I could do this, though; it 
+		already knows what your best items for each of your scales is.</li>
+	</ul>
+	</li>
+	<li>Pawn has reported compatibility problems with the mod BagSync.  I'll look into it.</li>
 	<li>Another possible source for up-to-date example scales is
-	<a href="http://www.askmrrobot.com/">Ask Mr. Robot</a>.</li>
+	<a href="http://www.askmrrobot.com/">Ask Mr. Robot</a>.<ul>
+		<li>Apparently that's where Wowhead's scales come from now anyway...?</li>
+	</ul>
+	</li>
 	<li>I could add the upgrade arrow icon to the inventory icon that Pawn adds 
 	to the left of item link windows.</li>
 	<li>I should add a feature so that warriors with Titan&#39;s Grip can have their 
@@ -136,13 +152,6 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 	items at once.&nbsp; For example, an entire gear set versus another person&#39;s 
 	entire gear set.&nbsp; Or, at the very least, a dagger and an off-hand 
 	versus a staff.</li>
-	<li>Once Pawn has a concept of "sets of items," I could add an option so 
-	that upgrade percentages shown are relative to the total value of your gear 
-	instead of relative to your old best item for that slot.&nbsp; This would 
-	help you find the best use of your valor points, for example, without 
-	needing to see raw Pawn scores.&nbsp; (Instead of showing (NewItem - 
-	OldItem) / OldItem, instead show (NewItem - OldItem) / 
-	TotalValueOfOldItem'sGearSet.)</li>
 	<li>I could make it so that Pawn could generate Wowhead/LootRank item search URLs from your 
 	scales.</li>
 	<li>There could be a way to automatically share Pawn scale 

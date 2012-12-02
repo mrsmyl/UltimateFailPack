@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.7.2: restore accidentally deleted normalization code
+-- Version 1.7.3: best in slot terminology change
 ------------------------------------------------------------
 
 
-PawnVersion = 1.702
+PawnVersion = 1.703
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -143,7 +143,7 @@ local _
 -- Called when an event that Pawn cares about is fired.
 function PawnOnEvent(Event, arg1, arg2, ...)
 	if Event == "UNIT_INVENTORY_CHANGED" and arg1 == "player" then
-		-- REVIEW: This fires a TON every time you change zones. ***
+		-- REVIEW: This fires a TON every time you change zones.
 		PawnOnInventoryChanged()
 	elseif Event == "ITEM_LOCKED" then
 		PawnOnItemLocked(arg1, arg2)

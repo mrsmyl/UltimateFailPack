@@ -224,7 +224,7 @@ PawnUIFrame_Compare_Yes = "Yes" -- Appears on the Compare tab when an item has s
 PawnUIFrame_ClearItemsButton_Label = "Clear"
 PawnUIFrame_ClearItemsButton_Tooltip = "Remove both comparison items."
 PawnUIFrame_EquippedItemsHeader_Text = "Equipped"
-PawnUIFrame_BestItemsHeader_Text = "Best in slot"
+PawnUIFrame_BestItemsHeader_Text = "Your best"
 
 PawnUIFrame_CompareSwapButton_Text = "< Swap >"
 PawnUIFrame_CompareSwapButton_Tooltip = "Swap the item on the left side with the one on the right."
@@ -422,9 +422,9 @@ PawnLocal =
 	["TooltipUpgradeFor1H"] = " for 1H set",
 	["TooltipUpgradeFor2H"] = " for 2H",
 	["TooltipBestAnnotation"] = "%s  " .. VgerCore.Color.Blue .. "(best)",
-	["TooltipBestAnnotationSimple"] = "%s  best in slot", -- used when item values are hidden
+	["TooltipBestAnnotationSimple"] = "%s  your best", -- used when item values are hidden
 	["TooltipSecondBestAnnotation"] = "%s  " .. VgerCore.Color.Blue .. "(second best)",
-	["TooltipSecondBestAnnotationSimple"] = "%s  second best in slot", -- used when item values are hidden
+	["TooltipSecondBestAnnotationSimple"] = "%s  your second best", -- used when item values are hidden
 	["TooltipVersusLine"] = "%s|n  vs. |c%s%s|r", -- vs. Relentless Gladiator's Mail Helm
 	
 	-- Loot Upgrade Advisor
