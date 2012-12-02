@@ -1423,6 +1423,8 @@ function ArkInventory.BagType( blizzard_id )
 					return ArkInventory.Const.Slot.Type.Mining
 				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_TACKLE"] then
 					return ArkInventory.Const.Slot.Type.Tackle
+				elseif s == ArkInventory.Localise["WOW_AH_CONTAINER_COOKING"] then
+					return ArkInventory.Const.Slot.Type.Cooking
 				end
 				
 			end

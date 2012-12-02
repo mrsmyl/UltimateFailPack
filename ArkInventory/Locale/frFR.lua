@@ -97,6 +97,7 @@ if not L then return end
 	L["STATUS_NAME_MOUNT"] = "Monture"
 	L["STATUS_NAME_TOKEN"] = "Insigne"
 --	L["STATUS_NAME_TACKLE"] = ""
+--	L["STATUS_NAME_COOKING"] = ""
 	
 	
 --	main menu

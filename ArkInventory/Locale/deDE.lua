@@ -97,6 +97,7 @@ if not L then return end
 	L["STATUS_NAME_MOUNT"] = "Reittier"
 	L["STATUS_NAME_TOKEN"] = "Abzeichen"
 --	L["STATUS_NAME_TACKLE"] = ""
+--	L["STATUS_NAME_COOKING"] = ""
 	
 	
 --	main menu

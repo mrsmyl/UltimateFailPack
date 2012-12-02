@@ -28,7 +28,7 @@ if not lib then return end
 local is5_0 = select(4, GetBuildInfo()) < 50100
 
 --
--- GLOBALS: PetJournal
+--
 --
 
 local _G = _G
@@ -97,8 +97,8 @@ do
         assert(not lib._filters_cleared, "ClearFilters() already called")
         lib._filters_cleared = true
         
-        if PetJournal then
-            PetJournal:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
+        if _G.PetJournal then
+            _G.PetJournal:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
         end
         lib.event_frame:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
 
@@ -177,8 +177,8 @@ do
             end
         end
     
-        if PetJournal then
-            PetJournal:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+        if _G.PetJournal then
+            _G.PetJournal:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
         end
         lib.event_frame:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
     end

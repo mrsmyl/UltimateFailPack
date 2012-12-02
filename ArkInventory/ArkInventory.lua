@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1053 $
--- $Date: 2012-11-29 22:08:17 +1100 (Thu, 29 Nov 2012) $
+-- $Revision: 1055 $
+-- $Date: 2012-11-30 21:43:33 +1100 (Fri, 30 Nov 2012) $
 
 
 local _G = _G
@@ -173,6 +173,7 @@ ArkInventory.Const = { -- constants
 			Tradeskill = 22,
 			Tackle = 23,
 			Void = 24,
+			Cooking = 25,
 		},
 
 		New = {
@@ -611,6 +612,10 @@ ArkInventory.Const = { -- constants
 					["text"] = ArkInventory.Localise["WOW_SKILL_FISHING"],
 				},
 --				[315] = { empty void storage },
+				[316] = {
+					["id"] = "EMPTY_COOKING",
+					["text"] = ArkInventory.Localise["WOW_SKILL_COOKING"],
+				},
 			},
 			Other = { -- do NOT change the indicies - if you have to then see the ConvertOldOptions( ) function to remap it
 				[901] = {
@@ -1050,6 +1055,13 @@ ArkInventory.Const.Slot.Data = {
 		["colour"] = ArkInventory.Const.Slot.DefaultColour,
 		["texture"] = [[Interface\AddOns\ArkInventory\Images\VoidStorageSlot.tga]],
 		["emptycolour"] = GREEN_FONT_COLOR_CODE,
+	},
+	[ArkInventory.Const.Slot.Type.Cooking] = {
+		["name"] = ArkInventory.Localise["STATUS_NAME_COOKING"],
+		["long"] = ArkInventory.Localise["WOW_SKILL_COOKING"],
+		["type"] = ArkInventory.Localise["WOW_SKILL_COOKING"],
+		["colour"] = ArkInventory.Const.Slot.DefaultColour,
+--		["texture"] = [[Interface\AddOns\ArkInventory\Images\VoidStorageSlot.tga]],
 	},
 }
 
@@ -3680,6 +3692,14 @@ function ArkInventory.ItemCategoryGetDefaultEmpty( loc_id, bag_id )
 			return ArkInventory.CategoryGetSystemID( "SKILL_FISHING" )
 		else
 			return ArkInventory.CategoryGetSystemID( "EMPTY_TACKLE" )
+		end
+	end
+	
+	if bt == ArkInventory.Const.Slot.Type.Cooking then
+		if clump then
+			return ArkInventory.CategoryGetSystemID( "SKILL_COOKING" )
+		else
+			return ArkInventory.CategoryGetSystemID( "EMPTY_COOKING" )
 		end
 	end
 	
