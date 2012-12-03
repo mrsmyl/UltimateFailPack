@@ -55,7 +55,8 @@ local auctionator_savedvars_defaults =
 	["_2000"]				= 100;
 	["_500"]				= 5;
 	["STARTING_DISCOUNT"]	= 5;	-- PERCENT
-	["LOG_DE_DATA"]			= nil;
+	["LOG_DE_DATA"]			= nil;	-- obsolete
+	["LOG_DE_DATA_X"]		= true;
 	};
 
 
@@ -118,6 +119,7 @@ local ATR_CACT_READY						= 1;
 local ATR_CACT_PROCESSING					= 2;
 local ATR_CACT_WAITING_ON_CANCEL_CONFIRM	= 3;
 
+local gBattlePetIconCache = {};
 
 local gItemPostingInProgress = false;
 
@@ -435,13 +437,7 @@ local function Atr_DumpDElog()
 
 	zc.msg_anm ("Disenchant data cleared.");
 	
-	Atr_LUA_explanation:SetText ("Thanks for helping me collect disenchant info. "
-						.." Please send this data to |cffaaffffzircologs@gmail.com|r"
-						.."|n|nIn order to minimize duplicate data, all the data below has been"
-						.."|ndeleted, so be sure to copy it and paste it into an email message."
-						.."|n|nIf for some reason you are unable to do so at this time, type"
-						.."|n|cffffffcc/atr derestore|r in the chat window to restore the data."
-						)
+	Atr_LUA_explanation:SetText ("");
 
 
 	local n
@@ -547,18 +543,6 @@ local function Atr_SlashCmdFunction(msg)
 		
 		Atr_ShpList_Validate()
 
-	elseif (cmd == "dehelp") then
-		
-		zc.msg_anm ("------------------");
-		zc.msg_anm ("You can help Zirco refine the disenchanting probability tables");
-		zc.msg_anm ("by enabling the logging of disenchanting events.  To do so");
-		zc.msg_anm ("type |cff00ffff/atr delog|r.  Only explict DE'ing is logged. Items");
-		zc.msg_anm ("auto-DE'ed when looting in an group are not logged.");
-		zc.msg_anm ("Once you've collected a fair amount of data (say 30 or 40 entries)")
-		zc.msg_anm ("type |cff00ffff/atr dedump|r to get the data so that you can")
-		zc.msg_anm ("mail it in.  Thanks!")
-		zc.msg_anm ("------------------");
-
 	elseif (cmd == "eac") then
 		gAtr_echoAddonChat = not gAtr_echoAddonChat
 		zz ("gAtr_echoAddonChat is now", gAtr_echoAddonChat)
@@ -569,9 +553,9 @@ local function Atr_SlashCmdFunction(msg)
 
 	elseif (cmd == "delog") then
 	
-		AUCTIONATOR_SAVEDVARS.LOG_DE_DATA = zc.Negate (AUCTIONATOR_SAVEDVARS.LOG_DE_DATA)
+		AUCTIONATOR_SAVEDVARS.LOG_DE_DATA_X = zc.Negate (AUCTIONATOR_SAVEDVARS.LOG_DE_DATA_X)
 
-		EnableDisableDElogging (true)
+		EnableDisableDElogging ()
 
 	elseif (cmd == "dedump") then
 	
@@ -581,7 +565,7 @@ local function Atr_SlashCmdFunction(msg)
 	
 		Atr_RestoreDElog()
 
-	elseif (cmd == "declear") then
+		elseif (cmd == "declear") then
 	
 		AUCTIONATOR_DE_DATA		= nil
 		AUCTIONATOR_DE_DATA_BAK	= nil
@@ -610,26 +594,16 @@ local function Atr_SlashCmdFunction(msg)
 	
 end
 
+
 -----------------------------------------
 
-function Atr_Announce_DEmsg ()
+function EnableDisableDElogging ()
 
-	local num = AUCTIONATOR_DE_DATA and #AUCTIONATOR_DE_DATA or 0
-
-	if (IsCataEnchanter()) then
-		zc.msg_anm ("Disenchanting info is being logged.  Current number of entries:", num)
-		zc.msg_anm ("Once you've collected a fair amount of data (say 30 or 40 entries)")
-		zc.msg_anm ("type |cff00ffff/atr dedump|r to get the data so that you can mail it in.  Thanks!")
+	if (not IsCataEnchanter()) then
+		return
 	end
-end
 
------------------------------------------
-
-function EnableDisableDElogging (verbose, delay)
-
-
-	if (false) then
---	if (AUCTIONATOR_SAVEDVARS and AUCTIONATOR_SAVEDVARS.LOG_DE_DATA) then		-- turn back on for 5.0?
+	if (AUCTIONATOR_SAVEDVARS and (AUCTIONATOR_SAVEDVARS.LOG_DE_DATA_X or AUCTIONATOR_SAVEDVARS.LOG_DE_DATA_X == nil)) then
 	
 		Atr_core:RegisterEvent("UNIT_SPELLCAST_START");
 		Atr_core:RegisterEvent("UNIT_SPELLCAST_SENT");
@@ -637,11 +611,9 @@ function EnableDisableDElogging (verbose, delay)
 		Atr_core:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
 		Atr_core:RegisterEvent("BAG_UPDATE");
 
-		if (type(delay) == 'number') then
-			zc.AddDeferredCall (delay, "Atr_Announce_DEmsg")
-		else
-			Atr_Announce_DEmsg ()
-		end
+		local num = AUCTIONATOR_DE_DATA and #AUCTIONATOR_DE_DATA or 0
+		
+		zz ("Disenchanting info is being logged.  Current number of entries:", num)
 		
 	else
 
@@ -651,9 +623,7 @@ function EnableDisableDElogging (verbose, delay)
 		Atr_core:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED");
 		Atr_core:UnregisterEvent("BAG_UPDATE");
 
-		if (verbose) then
-			zc.msg_anm ("disenchanting info is no longer being logged")
-		end
+		zz ("disenchanting info is NOT being logged")
 	end
 end
 
@@ -924,16 +894,12 @@ function Atr_OnLoad()
 
 	Atr_InitDETable()
 
-	EnableDisableDElogging (false, 15)
-
 	Atr_ShoppingListsInit();
 
 	zc.msg_anm ("Read the FAQ at |cFF4499FFhttp://auctionatoraddon.com/faq")
-
---	if (not AUCTIONATOR_SAVEDVARS.LOG_DE_DATA and IsCataEnchanter()) then
---		zc.msg_anm ("Help improve the disenchanting info in Auctionator.  Type |cff00ffff/atr dehelp|r for more info.")
---	end
 	
+	EnableDisableDElogging ()
+
 	if ( IsAddOnLoaded("Blizzard_AuctionUI") ) then		-- need this for AH_QuickSearch since that mod forces Blizzard_AuctionUI to load at a startup
 		Atr_Init();
 	end
@@ -1246,7 +1212,9 @@ end
 
 function Atr_GetSellItemInfo ()
 
-	local auctionItemName, auctionTexture, auctionCount = GetAuctionSellItemInfo();
+	local auctionItemName, auctionTexture, auctionCount, auctionQuality = GetAuctionSellItemInfo();
+
+--zz ("GetAuctionSellItemInfo: ", GetAuctionSellItemInfo());
 
 	if (auctionItemName == nil) then
 		auctionItemName = "";
@@ -1258,15 +1226,32 @@ function Atr_GetSellItemInfo ()
 	-- only way to get sell itemlink that I can figure
 
 	if (auctionItemName ~= "") then
-		AtrScanningTooltip:SetAuctionSellItem();
-		local name;
-		name, auctionItemLink = AtrScanningTooltip:GetItem();
---zz ("returned from AtrScanningTooltip:GetItem(): ", name, auctionItemLink);
 
-		if (auctionItemLink == nil) then
-			return "",0,nil;
+		-- in 5.0 GameTooltip:SetAuctionSellItem was changed to RETURN values if the auction item is a Battle Pet.  Go figure.
+	
+		local hasCooldown, speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetAuctionSellItem();
+
+		if (speciesID and speciesID > 0) then		-- if it's a battle pet, construct a fake battlepet link
+					
+			local battlePetID = 0		-- unofortunately we don't know it
+			
+			auctionItemLink = "|cffcccccc|Hbattlepet:"..speciesID..":"..level..":"..breedQuality..":"..maxHealth..":"..power..":"..speed..":"..battlePetID.."|h["..name.."]|h|r";
+		
+			gBattlePetIconCache[auctionItemLink] = auctionTexture;
+			
+			--zz ((auctionItemLink));
+		
+		else
+			AtrScanningTooltip:SetAuctionSellItem();
+			
+			local name;
+			name, auctionItemLink = AtrScanningTooltip:GetItem();
+			
+			if (auctionItemLink == nil) then
+				return "",0,nil;
+			end
 		end
-
+		
 	end
 
 --zz (auctionItemName, auctionCount, auctionItemLink);
@@ -2542,6 +2527,10 @@ function Atr_SetTextureButton (elementName, count, itemlink)
 
 	local texture = GetItemIcon (itemlink)
 
+	if (texture == nil) then
+		texture = gBattlePetIconCache[itemlink];
+	end
+	
 	Atr_SetTextureButtonByTexture (elementName, count, texture)
 
 end
@@ -2592,12 +2581,22 @@ function Atr_ShowRecTooltip ()
 	
 	if (link) then
 		if (num < 1) then num = 1; end;
-		
-		GameTooltip:SetOwner(Atr_RecommendItem_Tex, "ANCHOR_RIGHT");
-		GameTooltip:SetHyperlink (link, num);
-		gCurrentPane.tooltipvisible = true;
-	end
 
+		if (zc.IsBattlePetLink (link)) then
+			local speciesID, level, breedQuality, maxHealth, power, speed, battlePetID, name = zc.ParseBattlePetLink(link)
+
+			BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name)
+
+			BattlePetTooltip:ClearAllPoints();
+			BattlePetTooltip:SetPoint("BOTTOMLEFT", Atr_RecommendItem_Tex, "BOTTOMRIGHT", 10, 0)
+			
+		else
+			GameTooltip:SetOwner(Atr_RecommendItem_Tex, "ANCHOR_RIGHT");
+			GameTooltip:SetHyperlink (link, num);
+			gCurrentPane.tooltipvisible = true;
+		end
+	end
+	
 end
 
 -----------------------------------------
@@ -2606,6 +2605,7 @@ function Atr_HideRecTooltip ()
 	
 	gCurrentPane.tooltipvisible = nil;
 	GameTooltip:Hide();
+	BattlePetTooltip:Hide();
 
 end
 
@@ -2801,8 +2801,6 @@ local gPrevSellItemLink;
 
 function Atr_OnNewAuctionUpdate()
 	
---	zz ("gAtr_ClickAuctionSell:", gAtr_ClickAuctionSell);
-	
 	if (not gAtr_ClickAuctionSell) then
 		gPrevSellItemLink = nil;
 		return;
@@ -2828,12 +2826,14 @@ function Atr_OnNewAuctionUpdate()
 		
 		if (gJustPosted.ItemName == nil) then
 			local IDstring = zc.ItemIDStrfromLink (auctionLink)
-		
+			
 			local cacheHit = gSellPane:DoSearch (auctionItemName, IDstring, auctionLink, 20);
 			
-			gSellPane.totalItems	= Atr_GetNumItemInBags (auctionItemName);
+			gSellPane.totalItems	= Atr_GetNumItemInBags (auctionLink);
 			gSellPane.fullStackSize = auctionLink and (select (8, GetItemInfo (auctionLink))) or 0;
 
+		--zz (auctionItemName, IDstring, auctionLink, "totalItems ", gSellPane.totalItems)
+		
 			local prefNumStacks, prefStackSize = Atr_GetSellStacking (auctionLink, auctionCount, gSellPane.totalItems);
 			
 			if (time() - gAutoSingleton < 5) then
@@ -3409,20 +3409,36 @@ function Atr_ShowLineTooltip (self)
 
 	local itemLink = self.itemLink;
 
-	local fname = self:GetName()
-	local ftname = fname.."_EntryText"
-	local textPart = _G[ftname]
+	if (zc.IsBattlePetLink (itemLink)) then
+	
+		local speciesID, level, breedQuality, maxHealth, power, speed, battlePetID, name = zc.ParseBattlePetLink(itemLink)
+
+		BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name)
+
+		BattlePetTooltip:ClearAllPoints();
+		BattlePetTooltip:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 10, 0)
 		
-	if (itemLink) then
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -280)
-		GameTooltip:SetHyperlink (itemLink, 1)
+	else   -- normal case
+	
+		local fname = self:GetName()
+		local ftname = fname.."_EntryText"
+		local textPart = _G[ftname]
+			
+		if (itemLink) then
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -280)
+			GameTooltip:SetHyperlink (itemLink, 1)
+		end
 	end
 end
+
+
+
 
 -----------------------------------------
 
 function Atr_HideLineTooltip (self)
 	GameTooltip:Hide();
+	BattlePetTooltip:Hide();
 end
 
 
@@ -3926,10 +3942,15 @@ end
 
 -----------------------------------------
 
-function Atr_GetNumItemInBags (theItemName)
+function Atr_GetNumItemInBags (targItemLink)
 
 	local numItems = 0;
 	local b, bagID, slotID, numslots;
+	
+	local targItemName, targIsBattlePet = zc.ItemNamefromLink (targItemLink)
+	
+	zz (zc.printableLink(targItemLink))
+	zz (zc.printableLink(targItemName), targIsBattlePet)
 	
 	for b = 1, #kBagIDs do
 		bagID = kBagIDs[b];
@@ -3938,10 +3959,11 @@ function Atr_GetNumItemInBags (theItemName)
 		for slotID = 1,numslots do
 			local itemLink = GetContainerItemLink(bagID, slotID);
 			if (itemLink) then
-				local itemName				= GetItemInfo(itemLink);
-				local texture, itemCount	= GetContainerItemInfo(bagID, slotID);
+				local itemName, isBattlePet = zc.ItemNamefromLink (itemLink)
 
-				if (itemName == theItemName) then
+				if (itemName == targItemName and isBattlePet == targIsBattlePet) then
+
+					local _, itemCount	= GetContainerItemInfo(bagID, slotID)
 					numItems = numItems + itemCount;
 				end
 			end

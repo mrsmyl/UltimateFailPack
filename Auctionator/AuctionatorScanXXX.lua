@@ -188,6 +188,15 @@ function AtrScan:Init (IDstring, itemName)
 	
 end
 
+-----------------------------------------
+
+function GetBattlePetLinkInfo (battlePetLink)
+
+	local _, speciesID, iLevel, quality, health, power, speed, battlepetID = strsplit(":", zc.printableLink(battlePetLink))
+
+	return speciesID, iLevel, quality, battlepetID;
+
+end
 
 -----------------------------------------
 
@@ -201,10 +210,9 @@ function AtrScan:UpdateItemLink (itemLink)
 
 		if (zc.IsBattlePetLink (itemLink)) then
 			
-			local speciesID, level, breedQuality = zc.ParseBattlePetLink (itemLink)
+			local speciesID, battlepetID;
 			
-			iLevel	= level;
-			quality	= breedQuality;
+			speciesID, iLevel, quality, battlepetID = GetBattlePetLinkInfo (itemLink);
 			
 			self.itemClass		= AUCTION_CLASS_BATTLEPET;
 			self.itemSubclass	= 0;
@@ -229,7 +237,6 @@ function AtrScan:UpdateItemLink (itemLink)
 	end
 
 end
-
 
 
 -----------------------------------------
@@ -431,13 +438,16 @@ function AtrSearch:AnalyzeResultsPage()
 
 		for x = 1, numBatchAuctions do
 
-			local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner = GetAuctionItemInfo("list", x);
+			local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus, itemID, hasAllInfo = GetAuctionItemInfo("list", x);
 
 			local itemLink = GetAuctionItemLink("list", x);
-			
+	
+		
 			if (itemLink) then
 				local IDstring = zc.ItemIDStrfromLink (itemLink);
 				
+				
+
 				if (Atr_ILevelHist_Update) then
 					Atr_ILevelHist_Update(itemLink)
 				end
@@ -859,7 +869,7 @@ function AtrSearch:Finish()
 				zc.msg_anm ("|cffff0000Error: scn.itemQuality == nil, scn.itemName: ", scn.itemName);
 			end
 			
-			if (scn.itemQuality ~= nil and (scn.itemQuality + 1 >= AUCTIONATOR_SCAN_MINLEVEL or scn.quality == -1)) then		--  battle pets can be UNKNOWN (-1) quality
+			if (scn.itemQuality ~= nil and scn.itemQuality + 1 >= AUCTIONATOR_SCAN_MINLEVEL) then
 								
 				Atr_UpdateScanDBprice		(scn.itemName, scn.lowprice);
 				Atr_UpdateScanDBclassInfo	(scn.itemName, scn.itemClass, scn.itemSubclass);
