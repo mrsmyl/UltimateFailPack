@@ -406,3 +406,6 @@ v0.9.0:
 
 v0.10.1:
 - changed  ATSW updated for patch 5.0
+
+v0.10.2:
+- added:   itIT localization provided by TyrusPrime

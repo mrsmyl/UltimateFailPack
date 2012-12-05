@@ -1,0 +1,20 @@
+------------------------------------------------------------------------
+r30 | slartibartfast | 2012-12-04 00:33:34 +0000 (Tue, 04 Dec 2012) | 1 line
+Changed paths:
+   A /tags/v0.10.2 (from /trunk:29)
+
+added itIT locale
+------------------------------------------------------------------------
+r29 | slartibartfast | 2012-12-04 00:33:17 +0000 (Tue, 04 Dec 2012) | 1 line
+Changed paths:
+   M /trunk/README.txt
+   M /trunk/atsw_language.lua
+
+added itIT locale
+------------------------------------------------------------------------
+r27 | slartibartfast | 2012-12-04 00:21:59 +0000 (Tue, 04 Dec 2012) | 1 line
+Changed paths:
+   M /trunk/AdvancedTradeSkillWindow.toc
+
+WoW 5.1.0 compatibility
+------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 -- Español por Jsr1976-Fili
 -- zhCN and zhTW by Diablohu@è½»é£Žä¹‹è¯­ http://www.dreamgen.cn
 
-ATSW_VERSION = "ATSW v0.10.0";
+ATSW_VERSION = "ATSW v0.10.2";
 
 if(GetLocale()=="deDE") then
 	ATSW_SORTBYHEADERS = "nach Kategorien sortieren";
@@ -476,6 +476,101 @@ elseif (GetLocale()=="zhTW") then
 	ATSW_SCAN_DELAY_FRAME_ABORT = "æ”¾æ£„";
 
 	ATSW_ONLYCREATABLE = "materials available";
+
+elseif (GetLocale()=="itIT") then
+-- by TyrusPrime
+	ATSW_SORTBYHEADERS = "Ordina per Categorie";
+	ATSW_SORTBYNAMES = "Ordina per Nome";
+	ATSW_SORTBYDIFFICULTY = "Ordina per Difficoltà";
+	ATSW_CUSTOMSORTING = "Ordine Personlizzato";
+	ATSW_QUEUE = "Coda";
+	ATSW_QUEUEALL = "Accoda Tutto";
+	ATSW_DELETELETTER = "D";
+	ATSW_STARTQUEUE = "Processa Coda";
+	ATSW_STOPQUEUE = "Ferma Processo";
+	ATSW_DELETEQUEUE = "Svuota coda";
+	ATSW_ITEMSMISSING1 = "Ti servono i seguenti oggetti per produrre ";
+	ATSW_ITEMSMISSING2 = ":";
+	ATSW_FILTERLABEL = "Foltro:";
+	ATSW_REAGENTLIST1 = "Per produrre 1x ";
+	ATSW_REAGENTLIST2 = " i seguenti reagenti sono necessari:";
+	ATSW_REAGENTFRAMETITLE = "I seguenti reagenti sono necessari per processare la coda:";
+	ATSW_REAGENTBUTTON = "Reagenti";
+	ATSW_REAGENTFRAME_CH1 = "Inv.";
+	ATSW_REAGENTFRAME_CH2 = "Banca";
+	ATSW_REAGENTFRAME_CH3 = "Alt";
+	ATSW_REAGENTFRAME_CH4 = "Mercante";
+	ATSW_ALTLIST1 = "I seguenti alt possiedono '";
+	ATSW_ALTLIST2 = "':";
+	ATSW_ALTLIST3 = " nell'inventario di ";
+	ATSW_ALTLIST4 = " nella banca di ";
+	ATSW_OPTIONS_TITLE = "ATSW Opzioni";
+	ATSWOFIB_TEXT = "Considera gli oggetti nella banca quando calcola il numero\ndegli oggetti producibili";
+	ATSWOFIA_TEXT = "Considera gli oggetti nell'inventario e nella banca\ndegli alt quando calcola il numero\ndi oggetti producibili";
+	ATSWOFIM_TEXT = "Considera gli oggetti acquistabili quando calcola il numero\ndi oggetti producibili";
+	ATSWOFUCB_TEXT = "Mostra solo un totale di oggetti producibili considerando\nle seguenti opzioni";
+	ATSWOFSCB_TEXT = "Mostra il numero di oggetti producibili con il contenuto\ndell'inventario e il\nle seguenti opzioni";
+	ATSWOFTB_TEXT = "Attiva informazioni ricetta";
+	ATSW_OPTIONSBUTTON = "Opzioni";
+	ATSW_BUYREAGENTBUTTON = "Compra i reagenti dal mercante selezionato";
+	ATSWOFAB_TEXT = "Automaticamente compra tutto il possibile e il necessario\nper la corrente coda quando si parla con un mercante";
+	ATSW_AUTOBUYMESSAGE = "ATSW ha automaticamente comprato i seguenti oggetti:";
+	ATSW_TOOLTIP_PRODUCABLE = " può essere prodotto con i reagenti in inventario"
+	ATSW_TOOLTIP_NECESSARY = "Per produrre uno di questi oggetti, i seguenti reagenti sono necessari:";
+	ATSW_TOOLTIP_BUYABLE = " (comprapile)";
+	ATSW_TOOLTIP_LEGEND = "(oggetti in inventario / oggetti in banca / oggetti su alts)";
+	ATSW_CONTINUEQUEUE = "Continua coda";
+	ATSW_ABORTQUEUE = "Annulla";
+	ATSWCF_TITLE = "Continuare a processare la coda?";
+	ATSWCF_TEXT = "Dalla patch 1.10, una pressione di bottone è necessario per produrre gli oggetti. Cliccando su 'Continua', si provvede a questa azione e la coda può continuare.";
+	ATSWCF_TITLE2 = "Il prossimo oggetto in coda è:";
+	ATSW_CSBUTTON = "Modifica";
+	ATSW_AUTOBUYBUTTON_TOPTEXT = "Questo mercante vende reagenti che ti servono!";
+	ATSW_AUTOBUYBUTTON_TEXT = "Compra Reagenti";
+	ATSW_SHOPPINGLISTFRAMETITLE = "Lista della spesa di reagenti che ti servono per produrre gli oggetti in tutte le cde salvate di ATSW:";
+	ATSWOFSLB_TEXT = "Mostra la lista della spesa alla Casa D'Aste";
+	ATSW_ENCHANT = "Incanta";
+	ATSW_ACTIVATIONMESSAGE = "ATSW è stato";
+	ATSW_ACTIVATED = "attivato per la professione corrente";
+	ATSW_DEACTIVATED = "disattivato per la professione corrente";
+	ATSW_SCAN_MINLEVEL = "^Livello Richiesto (%d+)";
+	ATSW_QUEUESDELETED = "tutti le code salvato sono state cancellate";
+	ATSW_SHOPPINGLIST_HIDE_HELP = "Premi questo bottone per nascondere la lista della spesa. Premi con il tasto shift per pulire tutte le code su tutti i personaggi.";
+
+	ATSW_ALLREAGENTLISTFRAMETITLE = "ATSW - Reagenti per le code";
+	ATSW_ALLREAGENTLISTFRAMETITLE2 = "I seguenti personaggi hanno questi oggetti accodati:";
+	ATSW_ALLREAGENTLISTCHARDROPDOWNEMPTY = "nessuna coda trovata";
+	ATSW_ALLREAGENTLISTFRAME_CH1 = "su ";
+	ATSW_ALLREAGENTLISTFRAME_CH3 = "su altri alts";
+	ATSW_ALLREAGENTLISTFRAME_CH4 = "dal mercante";
+	ATSW_GETFROMBANK = "Prendi i reagenti dalla banca";
+	ATSWOFRLB_TEXT = "Automaticamente apri la lista dei reagenti alla banca se ci sono\ncode salvate su qualsiasi personaggio.";
+	ATSWOFNRLB_TEXT = "Usa collegamenti compatti per le ricette invece che collegamenti multi-linea";
+
+	atsw_blacklist = {
+		[1] = "Light Leather",
+		[2] = "Medium Leather",
+		[3] = "Heavy Leather",
+		[4] = "Thick Leather",
+		[5] = "Rugged Leather",
+		[6] = "Knothide Leather",
+	};
+
+	ATSWCS_TITLE = "Advanced Trade Skill Window - Modificatore di Elencazione";
+	ATSWCS_TRADESKILLISTTITLE = "Ricette senza Categoria";
+	ATSWCS_CATEGORYLISTTITLE = "Ricette con Categoria";
+	ATSWCS_ADDCATEGORY = "Nuova Categoria";
+	ATSWCS_NOTHINGINCATEGORY = "< vuoto	>";
+	ATSWCS_UNCATEGORIZED = "Senza Categoria";
+
+	ATSW_SCAN_DELAY_FRAME_TITLE = "ATSW scansione ricette";
+	ATSW_SCAN_DELAY_FRAME_SUBTITLE = "ATSW sta ora scansionando le ricette per averle dal server nella memoria locale";
+	ATSW_SCAN_DELAY_FRAME_INITIALIZING = "inizializzazione...";
+	ATSW_SCAN_DELAY_FRAME_SKIP = "Salta questo";
+	ATSW_SCAN_DELAY_FRAME_ABORT = "Annulla";
+
+	ATSW_ONLYCREATABLE = "materiali disponibili";
+
 else
 	ATSW_SORTBYHEADERS = "Order by Categories";
 	ATSW_SORTBYNAMES = "Order by Names";
