@@ -53,16 +53,13 @@ function HealBot_Tooltip_Clear_CheckBuffs()
     for x,_ in pairs(HealBot_CheckBuffs) do
         HealBot_CheckBuffs[x]=nil;
     end
-    HealBot_Clear_CheckBuffs()
 end
 
 function HealBot_Tooltip_CheckBuffs(buff)
     HealBot_CheckBuffs[buff]=buff;
-    HealBot_Set_CheckBuffs(buff)
     z=HealBot_AltBuffNames(buff)
     if z then 
         HealBot_CheckBuffs[z]=buff; 
-        HealBot_Set_CheckBuffs(z)
     end
 end
 

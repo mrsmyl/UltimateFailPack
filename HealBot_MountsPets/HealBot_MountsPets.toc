@@ -1,0 +1,9 @@
+## Interface: 50100
+## Title: HealBot Mounts and Pets
+## Author: Strife
+## Notes: HealBot Mounts and Pets, used with Random Mount or Random Pet options on the Mouse Wheel tab
+## RequiredDeps: HealBot
+## LoadOnDemand: 1
+## Version: 5.1.0.1
+
+HealBot_MountsPets.lua

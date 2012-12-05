@@ -1,0 +1,9 @@
+## Interface: 50100
+## Title: HealBot Taiwanese Localization
+## Author: Strife
+## Notes: HealBot Localization for zhTW
+## RequiredDeps: HealBot
+## LoadOnDemand: 1
+## Version: 5.1.0.1
+
+HealBot_Localization.tw.lua

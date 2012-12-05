@@ -1,0 +1,9 @@
+## Interface: 50100
+## Title: HealBot Chinese Localization
+## Author: Strife
+## Notes: HealBot Localization for zhCN
+## RequiredDeps: HealBot
+## LoadOnDemand: 1
+## Version: 5.1.0.1
+
+HealBot_Localization.cn.lua

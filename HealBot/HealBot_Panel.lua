@@ -1916,7 +1916,7 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                         HealBot_HoT_Active_Button[xGUID]=xButton  
                     end
                 end
-                HealBot_talentSpam(xGUID,"insert",nil)
+                if HealBot_useTips then HealBot_talentSpam(xGUID,"insert",nil) end
             else
                 if xUnit~="target" then 
                     HealBot_Action_InsButtonStore(xButton)

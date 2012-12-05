@@ -4,10 +4,10 @@
     
 ]]
 
+local HealBot_Loaded=nil
 local HealBot_IamRessing = nil;
 local HealBot_RequestVer=nil;
 local HealBot_BarCheck = {};
-local HealBot_Loaded=nil;
 local HealBot_CheckTalents=GetTime()
 local HealBot_Player_HoT={};
 local HealBot_Player_HoT_Icons={};
@@ -706,7 +706,7 @@ function HealBot_SlashCmd(HBcmd)
         end
         HealBot_Options_idleInitMod()
     elseif (HBcmd=="dm") then
-        HealBot_Action_DislikeMount()
+        if HealBot_Action_retFuncUse()=="YES" then HealBot_MountsPets_DislikeMount() end
     elseif (HBcmd=="afr") then
         HealBot_AddChat("qaFR="..HealBot_luVars["qaFR"])
     elseif (HBcmd=="aggro" and x and y) then
@@ -1312,7 +1312,7 @@ function HealBot_OnUpdate(self)
                         HealBot_Action_InitFuncUse()
                     elseif  HealBot_Options_Timer[410] then
                         HealBot_Options_Timer[410]=nil
-                        if HealBot_Action_retFuncUse()=="YES" then HealBot_Action_InitMount() end
+                        if HealBot_Action_retFuncUse()=="YES" then HealBot_MountsPets_InitMount() end
                     elseif  HealBot_Options_Timer[420] then
                         HealBot_Options_Timer[420]=nil
                         HealBot_OnEvent_RaidRosterUpdate();
@@ -1495,7 +1495,7 @@ function HealBot_OnUpdate(self)
             elseif aSwitch<5 and Healbot_Config_Skins.ShowAggro[Healbot_Config_Skins.Current_Skin]==1 then 
                 HealBot_Action_CheckAggro()
                 aSwitch=4
-            elseif aSwitch<6 and HealBot_Globals.TooltipUpdate==1 then  
+            elseif aSwitch<6 and HealBot_useTips and HealBot_Globals.TooltipUpdate==1 and (HealBot_Action_TooltipUnit or HealBot_Action_DisableTooltipUnit) then  
                 if HealBot_Action_TooltipUnit then
                     HealBot_Action_RefreshTooltip(HealBot_Action_TooltipUnit,"Enabled");
                 elseif HealBot_Action_DisableTooltipUnit then
@@ -1844,6 +1844,9 @@ function HealBot_Load(hbCaller)
         HealBot_OnEvent_PlayerEnteringWorld()
     end
     HealBot_setOptions_Timer(140)
+    if HealBot_Globals.ShowTooltip==1 then
+        HealBot_Options_LoadTips()
+    end
 end
 
 
@@ -2453,7 +2456,7 @@ function HealBot_OnEvent_UnitHealth(self,unit,health,healthMax)
         HealBot_unitHealthMax[hGUID]=-1
     end
     if HealBot_unitHealth[hGUID]~=health or HealBot_unitHealthMax[hGUID]~=healthMax then
-        if HealBot_unitHealthMax[hGUID]~=healthMax then 
+        if HealBot_useTips and HealBot_unitHealthMax[hGUID]~=healthMax then 
             HealBot_talentSpam(hGUID,"update",1)
         end
         HealBot_unitHealth[hGUID]=health
@@ -2572,7 +2575,7 @@ end
 function HealBot_OnEvent_UnitMana(self,unit,pType,maxpower)
     xUnit, xGUID = HealBot_validUnit(unit)
     if not xUnit then return end
-    if maxpower then 
+    if maxpower and HealBot_useTips then 
         HealBot_talentSpam(xGUID,"update",1) 
     else
         if hbCurLowMana[xGUID] then 
@@ -2597,10 +2600,12 @@ function HealBot_OnEvent_UnitCombat(self,unit)
 end
 
 function HealBot_OnEvent_ModifierStateChange(self,arg1,arg2)
-    if HealBot_Action_TooltipUnit then
-        HealBot_Action_RefreshTooltip(HealBot_Action_TooltipUnit,"Enabled");
-    elseif HealBot_Action_DisableTooltipUnit then
-        HealBot_Action_RefreshTooltip(HealBot_Action_DisableTooltipUnit,"Disabled");
+    if HealBot_useTips then
+        if HealBot_Action_TooltipUnit then
+            HealBot_Action_RefreshTooltip(HealBot_Action_TooltipUnit,"Enabled");
+        elseif HealBot_Action_DisableTooltipUnit then
+            HealBot_Action_RefreshTooltip(HealBot_Action_DisableTooltipUnit,"Disabled");
+        end
     end
 end
 
@@ -4253,7 +4258,7 @@ function HealBot_GetTalentInfo(hbGUID, unit)
             elseif s=="TANK" or s=="HEALER" or s=="DAMAGER" then
                 HealBot_UnitRole[hbGUID] = s
             end
-            HealBot_talentSpam(hbGUID,"update",0)
+            if HealBot_useTips then HealBot_talentSpam(hbGUID,"update",0) end
         end
     end
   --  ClearInspectPlayer()
@@ -5168,7 +5173,7 @@ function HealBot_ClearLocalArr(hbGUID, getTime)
         if HealBot_PetGUID[hbGUID] then HealBot_PetGUID[hbGUID]=nil end
         if hbManaPlayers[hbGUID] then hbManaPlayers[hbGUID]=nil end
         HealBot_UnitTime[hbGUID]=nil
-        HealBot_talentSpam(hbGUID,"remove",nil)
+        if HealBot_useTips then HealBot_talentSpam(hbGUID,"remove",nil) end
         HealBot_Action_ClearLocalArr(hbGUID)
         HealBot_IncHeals_ClearLocalArr(hbGUID)
     end
@@ -5199,7 +5204,7 @@ function HealBot_Update_Skins()
 	if not HealBot_Globals.CDCBarColour[HEALBOT_CUSTOM_en] then
 		HealBot_Globals.CDCBarColour[HEALBOT_CUSTOM_en] = { R = 0.45, G = 0, B = 0.26, }
     end
-    
+
     if not HealBot_Config.SkinDefault then HealBot_Config.SkinDefault={} end
     
     local _,class=UnitClass("player")
@@ -5220,6 +5225,7 @@ function HealBot_Update_Skins()
         end
 		HealBot_Globals.UpdateMsg=true
         HealBot_Config.hbMountsReported={}
+        HealBot_Globals.VersionWarnings={}
         
         if HEALBOT_VERSION=="5.0.5.5" and HealBot_Globals.RangeCheckFreq and HealBot_Globals.RangeCheckFreq>0.2 then
             HealBot_Globals.RangeCheckFreq=HealBot_Comm_round(HealBot_Globals.RangeCheckFreq/2, 1)

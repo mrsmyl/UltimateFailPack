@@ -178,6 +178,7 @@ HealBot_GlobalsDefaults = {
     aggro3pct=100,
     QueryTalents=1,
     EnLibQuickHealth=1,
+    VersionWarnings={},
     HealBot_MouseWheelIndex={ ["AltUp"]=2, ["AltDown"]=3 },
     HealBot_MouseWheelTxt={ ["AltUp"]=HEALBOT_BLIZZARD_MENU, ["AltDown"]=HEALBOT_HB_MENU },
     EmergIncRange = {
@@ -670,6 +671,7 @@ HealBot_Spells = {};
 HealBot_DebuffSpell = {};
 HealBot_IsFighting = nil;
 
+HealBot_useTips=nil;
 HealBot_Action_TooltipUnit=nil;
 Delay_RecalcParty=0;
 HealBot_PlayerClass=nil;
@@ -687,3 +689,5 @@ HealBot_UnitTime={}
 HealBot_Unit_Button={};
 HealBot_HoT_Active_Button={};
 HealBot_InspectUnit=false
+
+

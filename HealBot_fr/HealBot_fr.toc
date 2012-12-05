@@ -1,0 +1,9 @@
+## Interface: 50100
+## Title: HealBot French Localization
+## Author: Strife
+## Notes: HealBot Localization for frFR
+## RequiredDeps: HealBot
+## LoadOnDemand: 1
+## Version: 5.1.0.1
+
+HealBot_Localization.fr.lua

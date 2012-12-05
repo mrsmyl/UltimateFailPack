@@ -1,4 +1,4 @@
-HEALBOT_VERSION   = "5.1.0.0";
+HEALBOT_VERSION   = "5.1.0.1";
 HEALBOT_ABOUT_URL = "http://www.healbot.info/"
 
 function HealBot_globalVars()
