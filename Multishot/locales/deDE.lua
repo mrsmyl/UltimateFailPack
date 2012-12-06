@@ -8,6 +8,7 @@ L["bosskillsraid"] = "10/25/40er Instanzen"
 L["BOTTOMLEFT"] = "Bottom Left" -- Requires localization
 L["BOTTOMRIGHT"] = "Bottom Right" -- Requires localization
 L["capture"] = "Aufnahmeeinstellungen"
+L["challengemode"] = "challenge mode medals" -- Requires localization
 L["charpane"] = "Charakterfenster anzeigen"
 L["clear the text and press Enter to restore defaults."] = "clear the text and press Enter to restore defaults." -- Requires localization
 L["close"] = "offene Fenster schließen"

@@ -8,6 +8,7 @@ L["bosskillsraid"] = "10/25/40-man raids"
 L["BOTTOMLEFT"] = "Bottom Left"
 L["BOTTOMRIGHT"] = "Bottom Right"
 L["capture"] = "capture settings"
+L["challengemode"] = "challenge mode medals"
 L["charpane"] = "show character window"
 L["clear the text and press Enter to restore defaults."] = true
 L["close"] = "close open windows"

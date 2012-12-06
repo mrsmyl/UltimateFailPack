@@ -8,6 +8,7 @@ L["bosskillsraid"] = "Raides de 10/25/40 jogadores" -- Needs review
 L["BOTTOMLEFT"] = "Bottom Left" -- Requires localization
 L["BOTTOMRIGHT"] = "Bottom Right" -- Requires localization
 L["capture"] = "definições de captura" -- Needs review
+L["challengemode"] = "challenge mode medals" -- Requires localization
 L["charpane"] = "mostrar janela de jogador" -- Needs review
 L["clear the text and press Enter to restore defaults."] = "clear the text and press Enter to restore defaults." -- Requires localization
 L["close"] = "fechar janelas abertas" -- Needs review

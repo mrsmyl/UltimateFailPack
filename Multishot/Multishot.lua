@@ -18,6 +18,7 @@ function Multishot:OnEnable()
   self:RegisterEvent("PLAYER_LEVEL_UP")
   self:RegisterEvent("UNIT_GUILD_LEVEL")
   self:RegisterEvent("ACHIEVEMENT_EARNED")
+  self:RegisterEvent("CHALLENGE_MODE_COMPLETED")
   self:RegisterEvent("TRADE_ACCEPT_UPDATE")
   self:RegisterEvent("CHAT_MSG_SYSTEM")
   self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -55,6 +56,14 @@ function Multishot:TRADE_ACCEPT_UPDATE(strEvent, strPlayer, strTarget)
   end
 end
 
+function Multishot:CHALLENGE_MODE_COMPLETED(strEvent)
+	if not MultishotConfig.challengemode then return end
+	local mapID, medal, completionTime, moneyAmount, numRewards = GetChallengeModeCompletionInfo()
+	if (medal) and CHALLENGE_MEDAL_TEXTURES[medal] then -- only take screenshot for bronze and up for now
+		self:ScheduleTimer("CustomScreenshot", MultishotConfig.delay1, strEvent)
+	end
+end
+
 function Multishot:CHAT_MSG_SYSTEM(strEvent, strMessage)
   if MultishotConfig.repchange then
     if string.match(strMessage, strMatch) then
@@ -71,7 +80,7 @@ end
 
 function Multishot:COMBAT_LOG_EVENT_UNFILTERED(strEvent, ...)
   local strType, _, sourceGuid, _, _, _, destGuid = select(2, ...) -- 4.1 compat, 4.2 compat
-  local currentId = tonumber("0x" .. string.sub(destGuid, 7, 10))
+  local currentId = tonumber("0x" .. string.sub(destGuid, 6, 10))
   if strType == "UNIT_DIED" or strType == "PARTY_KILL" then
     local inInstance, instanceType = IsInInstance()
     if not (sourceGuid == UnitGUID("player") and MultishotConfig.rares and Multishot.RareID[currentId]) and strType == "PARTY_KILL" then return end
@@ -182,7 +191,8 @@ function Multishot:CustomScreenshot(strDebug)
   if MultishotConfig.uihide and 
   (string.find(strDebug, "PLAYER_REGEN_ENABLED") 
   or string.find(strDebug, "UNIT_DIED") 
-  or string.find(strDebug, "PARTY_KILL") 
+  or string.find(strDebug, "PARTY_KILL")
+  or string.find(strDebug, "CHALLENGE_MODE_COMPLETED") 
   or string.find(strDebug, "PLAYER_LEVEL_UP") 
   or string.find(strDebug, L["timeline"])
   or string.find(strDebug, KEY_BINDING)) then

@@ -1,0 +1,17 @@
+tag 3.0.8
+3cb3c83d9fd08322d7b9dffc634eefbf9223e5e2
+Dridzt <dridzt.addons@hotmail.com>
+2012-12-03 02:54:50 +0200
+
+Tag as 3.0.8
+
+
+--------------------
+
+Dridzt:
+	- Add challenge mode medal option
+	- Update mobid extraction for changes to GUID in 5.1
+	- Watermark default: off
+	- Timeline mode delays adjusted (5' to 60')
+	- Update included LibRareIDs-1.0 for MoP rares
+	- .toc update, compatible with WoW 5.1 "Landfall"

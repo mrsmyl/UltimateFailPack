@@ -8,6 +8,7 @@ L["bosskillsraid"] = "raids 10/25/40" -- Needs review
 L["BOTTOMLEFT"] = "Bottom Left" -- Requires localization
 L["BOTTOMRIGHT"] = "Bottom Right" -- Requires localization
 L["capture"] = "paramètres de capture" -- Needs review
+L["challengemode"] = "challenge mode medals" -- Requires localization
 L["charpane"] = "show character window" -- Requires localization
 L["clear the text and press Enter to restore defaults."] = "clear the text and press Enter to restore defaults." -- Requires localization
 L["close"] = "fermé les fenêtres ouvertes" -- Needs review
