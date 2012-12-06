@@ -271,7 +271,7 @@ PatternLocale.enUS = { -- {{{
 		[" \n"] = true,
 		["Binds"] = true,
 		
-		 -- The following can't directly use the constant from GlobalStrings.lua because of placeholder patterns.
+		 -- The following can't directly use the constants from GlobalStrings.lua because of placeholder patterns.
 		["Disen"] = true, -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)";
 		["Durat"] = true, -- ITEM_DURATION_DAYS = "Duration: %d |4day:days;";
 		["<Made"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r";
@@ -283,6 +283,7 @@ PatternLocale.enUS = { -- {{{
 		["Class"] = true, -- ITEM_CLASSES_ALLOWED = "Classes: %s";
 		["Races"] = true, -- ITEM_RACES_ALLOWED = "Races: %s";
 		["Item "] = true, -- ITEM_LEVEL = "Item Level %d";
+		["Upgra"] = true, -- 5.1.0: ITEM_UPGRADE_TOOLTIP_FORMAT = "Upgrade Level: %d/%d"; e.g.: "Upgrade Level: 0/2"
 		["Set: "] = true, -- ITEM_SET_BONUS = "Set: %s";
 		["(2) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
 		["(3) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
@@ -292,7 +293,7 @@ PatternLocale.enUS = { -- {{{
 		["(7) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
 		["(8) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
 		
-		-- The following can't directly use the constant from GlobalStrings.lua because they are just the beginning of the line.
+		-- The following can't directly use the constants from GlobalStrings.lua because they are just the beginning of the line.
 		["Use: "] = true, -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
 		["Chanc"] = true, -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
 		
@@ -321,11 +322,15 @@ PatternLocale.enUS = { -- {{{
 		["Superior Wizard Oil"] = {["SPELL_DMG"] = 42, ["HEAL"] = 42}, -- ID: 22522
 		["Blessed Wizard Oil"] = {["SPELL_DMG_UNDEAD"] = 60}, -- ID: 23123
 		
-		["Heartsong"] = false, -- Enchant 4084
-		["Power Torrent"] = false, --20120915 Enchant 4907  /dump StatLogic:GetSum("item:77196:4097:0:0:0:0:0:0")
-		["Windwalk"] = false, --Enchant 4098    Windwalk: Permanently enchant a weapon to sometimes increase dodge rating by 600 and movement speed by 15% for 10 sec
-		["Landslide"] = false, --20120915 EnchantID 4099   /dump StatLogic:GetSum("item:77196:4099:0:0:0:0:0:0")
-		["Berserking"] = false,
+		["Enchanted: Heartsong"] = false, -- Enchant 4084
+		["Enchanted: Power Torrent"] = false, --20120915 Enchant 4907  /dump StatLogic:GetSum("item:77196:4097:0:0:0:0:0:0")
+		["Enchanted: Windwalk"] = false, --Enchant 4098    Windwalk: Permanently enchant a weapon to sometimes increase dodge rating by 600 and movement speed by 15% for 10 sec
+		["Enchanted: Landslide"] = false, --20120915 EnchantID 4099   /dump StatLogic:GetSum("item:77196:4099:0:0:0:0:0:0")
+		["Enchanted: Berserking"] = false,
+		["Enchanted: Windsong"] = false,
+		["Enchanted: Jade Spirit"] = false,
+		["Enchanted: Dancing Steel"] = false,
+		["Enchanted: Elemental Force"] = false,
 		["Flintlocke's Woodchucker"] = false, --ItemID: 70139  Flintlocke's Woodchucker
 
 		["Minor Mana Oil"] = {["COMBAT_MANA_REGEN"] = 4}, -- ID: 20745
@@ -411,7 +416,16 @@ PatternLocale.enUS = { -- {{{
 	-- +19 耐力 = "^%+(patNumber) (.-)%.?$"
 	-- Some have a "." at the end of string like:
 	-- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec. "
-	["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+	--["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+
+	-- 5.1 Landfall added "(Reforged from Xxx)" next to the +Stat items, e.g.:
+	--		+384 Strength (Reforged from Parry)
+	--		+1,234 Stamina (Reforged from Critical Strike)
+	-- 5.1 also changed enchantments to "Enchanted: %s" (e.g. "Enchanted: +170 Strength"),
+	-- therefore this pattern should not be limited to the start of the line (start with "^") to also match enchants.
+	--["SinglePlusStatCheck"] = "(([%+%-][%d]+)%s([%s%a]+[%a]+)%s*(%(?[%a%s]*%)?))%s?",  --from http://stackoverflow.com/questions/13619193/greed-non-greedy-pattern-matching-and-optional-suffixes-in-lua#13619193
+	--["SinglePlusStatCheck"] = "(([%+%-]"..patNumber..")%s([%s%a]+[%a]+)%s*(%(?[%a%s]*%)?))%s?",
+	["SinglePlusStatCheck"] =   "(([%+%-]"..patNumber..")%s([%s%a%d]+[%a]+)%.?%s*(%(?[%a%s]*%)?))%s?",
 
 	-----------------------------
 	-- Single Equip Stat Check --
@@ -436,6 +450,8 @@ PatternLocale.enUS = { -- {{{
 		["Mana Regen (%d+) per 5 sec%.$"] = "COMBAT_MANA_REGEN",
 		["^%+?"..patDecimal.." %- ("..patDecimal..") .-Damage$"] = "MAX_DAMAGE",  --e.g. "763.04 - 1,144 Damage", "221.34 - 411.06 Damage"
 		["^%(("..patDecimal..") damage per second%)$"] = "DPS", --e.g. "(1,103 damage per second)"
+
+		["^%+("..patDecimal..")%% Mount Speed$"] = "MOD_MOUNT_SPEED", --e.g. "+4% Mount Speed"
 
 		-- Exclude
 		["^(%d+) Slot"] = false, -- Bags
@@ -520,6 +536,7 @@ PatternLocale.enUS = { -- {{{
 		["Herbalism"] = {"HERBALISM",}, -- Herbalism enchant ID:845
 		["Herbalism; does not need to be equipped"] = {"HERBALISM",}, -- ID:85663 Herbalist's Spade
 		["Skinning"] = {"SKINNING",}, -- Skinning enchant ID:865
+		["Skinning; does not need to be equipped"] = {"SKINNING",}, -- ID:7005 Skinning Knife
 		["Skinning skill increased"] = {"SKINNING",}, --20120915 ID: 12709  Finkle's Skinner
 		
 		["Attack Power when fighting Undead"] = {"AP_UNDEAD",},
@@ -582,6 +599,8 @@ PatternLocale.enUS = { -- {{{
 		["Increases healing done"] = {"HEAL",}, -- 2.3.0
 		["damage donefor all magical spells"] = {"SPELL_DMG",}, -- 2.3.0
 		["Increases healing done by magical spells and effects of all party members within 30 yards"] = {"HEAL",}, -- Atiesh
+
+		["Cooking skill increased"] = {"COOKING",}, --"Cooking skill increased by 10". For use with SingleEquipStatCheck
 		
 		-- Exclude
 		["sec"] = false,

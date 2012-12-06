@@ -39,7 +39,7 @@ PatternLocale.deDE = { -- {{{
 		[""] = true,
 		[" \n"] = true,
 		
-		 -- The following can't directly use the constant from GlobalStrings.lua because of placeholder patterns.
+		 -- The following can't directly use the constants from GlobalStrings.lua because of placeholder patterns.
 		["Entza"] = true, -- ITEM_DISENCHANT_MIN_SKILL = "Disenchanting requires %s (%d)";
 		["Dauer"] = true, -- ITEM_DURATION_DAYS = "Duration: %d |4day:days;";
 		["<Herg"] = true, -- ITEM_CREATED_BY = "|cff00ff00<Made by %s>|r";
@@ -51,6 +51,7 @@ PatternLocale.deDE = { -- {{{
 		["Klass"] = true, -- ITEM_CLASSES_ALLOWED = "Classes: %s";
 		["Völke"] = true, -- ITEM_RACES_ALLOWED = "Races: %s";
 		["Gegen"] = true, -- ITEM_LEVEL = "Item Level %d";
+		["Aufwe"] = true, -- 5.1.0: ITEM_UPGRADE_TOOLTIP_FORMAT = "Upgrade Level: %d/%d"; e.g.: "Upgrade Level: 0/2"
 		["Set: "] = true, -- ITEM_SET_BONUS = "Set: %s";
 		["(2) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
 		["(3) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
@@ -60,7 +61,7 @@ PatternLocale.deDE = { -- {{{
 		["(7) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
 		["(8) S"] = true, -- ITEM_SET_BONUS_GRAY = "(%d) Set: %s";
 		
-		-- The following can't directly use the constant from GlobalStrings.lua because they are just the beginning of the line.
+		-- The following can't directly use the constants from GlobalStrings.lua because they are just the beginning of the line.
 		["Benut"] = true, -- ITEM_SPELL_TRIGGER_ONUSE = "Use:";
 		["Treff"] = true, -- ITEM_SPELL_TRIGGER_ONPROC = "Chance on hit:";
 		
@@ -89,11 +90,15 @@ PatternLocale.deDE = { -- {{{
 		["Überragendes Zauberöl"] = {["SPELL_DMG"] = 42, ["HEAL"] = 42}, -- ID: 22522
 		["Gesegnetes Zauberöl"] = {["SPELL_DMG_UNDEAD"] = 60}, -- ID: 23123
 		
-		["Gesang des Herzens"] = false, -- Enchant 4084
-		["Machtstrom"] = false, --20120915 Enchant 4907  /dump StatLogic:GetSum("item:77196:4097:0:0:0:0:0:0")
-		["Windwandler"] = false, --ID: 74244  Windwalk: Permanently enchant a weapon to sometimes increase dodge rating by 600 and movement speed by 15% for 10 sec
-		["Erdrutsch"] = false,
-		["Berserker"] = false,
+		["Verzaubert: Gesang des Herzens"] = false, -- Enchant 4084
+		["Verzaubert: Machtstrom"] = false, --20120915 Enchant 4907  /dump StatLogic:GetSum("item:77196:4097:0:0:0:0:0:0")
+		["Verzaubert: Windwandler"] = false, --ID: 74244  Windwalk: Permanently enchant a weapon to sometimes increase dodge rating by 600 and movement speed by 15% for 10 sec
+		["Verzaubert: Erdrutsch"] = false,
+		["Verzaubert: Berserker"] = false,
+		["Verzaubert: Windweise"] = false,
+		["Verzaubert: Jadegeist"] = false,
+		["Verzaubert: Tanzender Stahl"] = false,
+		["Verzaubert: Elementarkraft"] = false,
 		["Flintlockes Holzhacker"] = false, --ItemID: 70139  Flintlocke's Woodchucker
 
 		["Schwaches Manaöl"] = {["COMBAT_MANA_REGEN"] = 4}, --
@@ -170,7 +175,14 @@ PatternLocale.deDE = { -- {{{
 	-- +19 耐力 = "^%+(patNumber) (.-)%.?$"
 	-- Some have a "." at the end of string like:
 	-- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec. "
-	["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+	--["SinglePlusStatCheck"] = "^([%+%-]"..patNumber..") (.-)%.?$",
+
+	-- 5.1 Landfall added "(Reforged from Xxx)" next to the +Stat items
+	-- 5.1 also changed enchantments to "Enchanted: %s" (e.g. "Enchanted: +170 Strength"),
+	-- therefore this pattern should not be limited to the start of the line (start with "^") to also match enchants.
+	-- Pattern is from http://stackoverflow.com/questions/13619193/greed-non-greedy-pattern-matching-and-optional-suffixes-in-lua/13620190#13620190
+	-- The pattern used in enUS.lua doesn't match umlauts, e.g. it won't match "+100 Stärke".
+	["SinglePlusStatCheck"] = "(([%+%-]"..patNumber..")%s*([%a]+[^%(^%)]+[%a]+)%s*(%(?[%a%s]*%)?))",
   
 	-----------------------------
 	-- Single Equip Stat Check --
@@ -277,6 +289,7 @@ PatternLocale.deDE = { -- {{{
 		["Kräuterkunde"] = {"HERBALISM",}, -- Herbalism enchant ID:845
 		["Kräuterkunde; muss nicht ausgerüstet sein"] = {"HERBALISM",}, -- ID:85663 Herbalist's Spade
 		["Kürschnerei"] = {"SKINNING",}, -- Skinning enchant ID:865
+		["Kürschnern; muss nicht ausgerüstet sein"] = {"SKINNING",}, -- ID:7005 Skinning Knife
 		["Erhöht die Kürschnereifertigkeit. Ist mit anderen Fertigkeitsboni, die die Kürschnereifertigkeit erhöhen, nicht stapelbar"] = {"SKINNING",}, --20120915 ID: 12709  Finkle's Skinner
 
 		["Erhöht die Angriffskraft im Kampf gegen Untote"] = {"AP_UNDEAD",}, -- [Wristwraps of Undead Slaying] ID:23093
@@ -327,6 +340,8 @@ PatternLocale.deDE = { -- {{{
 		["Heilzauber"] = {"HEAL",}, -- [Royal Nightseye] ID: 24057
 
 		["Erhöht durch Zauber und magische Effekte zugefügte Heilung aller Gruppenmitglieder, die sich im Umkreis von 30 befinden,"] = {"HEAL",}, -- Atiesh
+
+		["Kochfertigkeit umerhöht"] = {"COOKING",}, --"Cooking skill increased by 10". For use with SingleEquipStatCheck
 
 		-- Exclude
 		["Sek"] = false,

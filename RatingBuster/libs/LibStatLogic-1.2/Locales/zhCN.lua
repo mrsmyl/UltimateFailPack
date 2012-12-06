@@ -604,6 +604,12 @@ PatternLocale.zhCN = { -- {{{
     ["精准等级"] = {"EXPERTISE_RATING",},
     ["提高精准等级"] = {"EXPERTISE_RATING",},
     ["精准等级提高"] = {"EXPERTISE_RATING",},
+
+    ['急速'] = {'MELEE_HASTE_RATING', 'SPELL_HASTE_RATING'},
+    ['使你的急速提高'] = {'MELEE_HASTE_RATING', 'SPELL_HASTE_RATING'},
+
+    ["精通"] = {"MASTERY_RATING",},
+    ["使你的精通提高"] = {"MASTERY_RATING",},
 ---
     ["使你的精准提高"] = {"EXPERTISE_RATING"},
     ["精准"] = {"EXPERTISE_RATING",},
@@ -815,6 +821,7 @@ DisplayLocale.zhCN = { -- {{{
     ["STAFF_WEAPON_RATING"] = {"法杖技能", "法杖"}, -- Leggings of the Fang ID:10410
     ["EXPERTISE"] = {"精准", "精准"},
     ["ARMOR_PENETRATION"] = {"护甲穿透(%)", "护甲穿透(%)"},
+    ["MASTERY"] = {"精通", "精通"},
 
     ---------------------------------------------------------------------------
     -- Tier3 Stats - Stats that only show up when broken down from a Tier2 stat

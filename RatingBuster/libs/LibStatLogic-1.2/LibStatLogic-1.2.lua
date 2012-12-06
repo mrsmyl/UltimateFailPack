@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 183 $
+Revision: $Revision: 191 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2012-10-18 01:01:46 +0000 (Thu, 18 Oct 2012) $
+Last Update: $Date: 2012-12-01 11:46:50 +0000 (Sat, 01 Dec 2012) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 183 $";
+local MINOR = "$Revision: 191 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -92,10 +92,12 @@ StatLogic.ItemsNotRecognized = {}; --list of all text that we were unable to par
 	5.0.4		15983  --Mists of Pandaria Beta	GetBuildInfo() -> "5.0.4", "15983", "Aug 14 2012", 50001
 	
 	--Mists of Pandaria 
-	5.0.4		16016  --Mists of Pandaria	GetBuildInfo() -> "5.0.4", "16016", "Aug 21 2012", 50001  Released to live 8/28/2012
-	5.0.5		16048  --Mists of Panderia  GetBuildInfo() -> "5.0.5", "16048", "Sep 5 2012",  50001  Released to live 9/11/2012
-	5.0.5a		16057  --Mists of Panderia  GetBuildInfo() -> "5.0.5", "16057", "Sep 10 2012", 50001  Released to live 9/11/2012
-	5.0.5b		16135  --Mists of Panearia  GetBuildInfo() -> "5.0.5", "16135", "Oct 8 2012",  50001  Released to live 10/10/2012
+	5.0.4		16016  --Mists of Pandaria	GetBuildInfo() -> "5.0.4", "16016", "Aug 21 2012",  50001  Released to live 8/28/2012
+	5.0.5		16048  --Mists of Panderia  GetBuildInfo() -> "5.0.5", "16048", "Sep 5 2012",   50001  Released to live 9/11/2012
+	5.0.5a		16057  --Mists of Panderia  GetBuildInfo() -> "5.0.5", "16057", "Sep 10 2012",  50001  Released to live 9/11/2012
+	5.0.5b		16135  --Mists of Panearia  GetBuildInfo() -> "5.0.5", "16135", "Oct 8 2012",   50001  Released to live 10/10/2012
+	5.1.0		16309  --Landfall           GetBuildInfo() -> "5.1.0", "16309", "Nov 13 2012",  50100  Released to live 11/27/2012
+	
 --]]
 
 -- Our localization information
@@ -1002,8 +1004,8 @@ local RatingNameToID = {
 	[CR_HIT_TAKEN_MELEE] = "MELEE_HIT_AVOID_RATING",
 	[CR_HIT_TAKEN_RANGED] = "RANGED_HIT_AVOID_RATING",
 	[CR_HIT_TAKEN_SPELL] = "SPELL_HIT_AVOID_RATING",
-	[COMBAT_RATING_RESILIENCE_CRIT_TAKEN] = "MELEE_CRIT_AVOID_RATING",
-	[COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN] = "RANGED_CRIT_AVOID_RATING",
+	[COMBAT_RATING_RESILIENCE_CRIT_TAKEN] = "MELEE_CRIT_AVOID_RATING", --"PvP Resilience" = damage reduction from players. Both combat ratings (melee and ranged) return same value.
+	[COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN] = "RANGED_CRIT_AVOID_RATING", --"PvP Resilience" = damage reduction from players. Both combat ratings (melee and ranged) return same value.
 	[CR_CRIT_TAKEN_SPELL] = "SPELL_CRIT_AVOID_RATING",
 	[CR_HASTE_MELEE] = "MELEE_HASTE_RATING",
 	[CR_HASTE_RANGED] = "RANGED_HASTE_RATING",
@@ -3199,10 +3201,19 @@ elseif playerClass == "WARRIOR" then
     },
   }
 elseif playerClass == "MONK" then
-	print("TODO: LibStatLogic:Building StatModTable. Player is MONK; i have no idea what stats that means for their stats. Someone needs to figure out all their numbers and add them to LibStatLogc's StatModTable");
+	print("TODO: LibStatLogic:Building StatModTable. Player is MONK; i have no idea what stats that means for their stats. Someone needs to figure out all their talents, what they do, and add them to LibStatLogc's StatModTable");
 
 	StatModTable["MONK"] = {
-		--20120810: TODO: Add all the stuff a monk gets that affects tankpoints
+		--20120810: TODO: Add all the stuff a monk gets that affects tankpoints 
+		--(Well, not *just* tankpoints. But TankPoints is all i care about; i don't use RatingBuster)
+		
+    -- Healers: Mana Meditation: Allows 50% of your mana regeneration from Spirit to continue while you are in combat.
+    ["ADD_COMBAT_MANA_REGEN_MOD_MANA_REGEN"] = {
+		{
+			["rank"] = {0.5,},
+			["known"] = 121278,
+		}
+	},
 	}
 else
 	print("A new "..playerClass.." class was added to the game! :D i have no idea what their stats are. :(  Adding empty entry to LibStatLogic's StatModTable");
@@ -4630,7 +4641,7 @@ function StatLogic:GetDodgeChance(dodgeRating, agility, class)
 	local dodgeBeforeDR = freeDodge + bonusDodge; --combination of free Dodge, Dodge from Dodge Rating, and Dodge from bonus Agility
 
 	--print(string.format("Cp = %s, k=%s, Q=%s, strength=%s, baseStr=%s, dodgeRating=%s, freeDodge=%s, bonusDodge=%s, dodgeBeforeDR=%s", 
-	--		Cp, k, Q, strength, baseStr, dodgeRating, freeDodge, bonusDodge, dodgeBeforeDR));
+		--	Cp, k, Q, strength, baseStr, dodgeRating, freeDodge, bonusDodge, dodgeBeforeDR));
 	
 	local dodgeChance;
 	if (bonusDodge ~= 0) then
@@ -5260,7 +5271,7 @@ Level34Ratings = {
 	[CR_CRIT_TAKEN_SPELL] = true,
 }
 
--- 80-90 H data - Combat ratings adjustment factors; we start with level 60 values, then divide by these constants
+-- 80-85 H data - Combat ratings adjustment factors; we start with level 60 values, then divide by these constants
 local H = {
   [80] = 3.2789989471436,
   [81] = 4.3056015014648,
@@ -5439,8 +5450,8 @@ local combatRatingBonus = {
 	},	
 	[90] = {
 		--comes from linear regressions of Rating -> Bonus
-		[CR_PARRY] =       nil, --Parry Rating / Parry Chance %
-		[CR_DODGE] =       nil, --Dodge Rating / Dodge Chance %
+		[CR_PARRY] =       885.00000, --Parry Rating / Parry Chance %
+		[CR_DODGE] =       885.00000, --Dodge Rating / Dodge Chance %
 		[CR_MASTERY] =     600.00000, --Mastery Rating / Mastery   10/6/2012
 		[CR_CRIT_MELEE] =  600.00000, --Crit Rating / Crit Chance %
 			[CR_CRIT_SPELL] = 600,   --10/6/2012  From a level 90 hunter, but i assume it's the same per class
@@ -5659,7 +5670,7 @@ local APPerStr = {
 	1, --SHAMAN
 	2, --MAGE
 	2, --WARLOCK
-	1, --MONK   todo: 20120811: Figure out Monk's Attack Power per Strength. (Does AP/Str even vary by class anymore?)
+	1, --MONK   TODO: 20120811: Figure out Monk's Attack Power per Strength. (Does AP/Str even vary by class anymore?)
 	1, --DRUID
 }
 if wowBuildNo < 14333 then --4.2.0
@@ -5742,7 +5753,7 @@ local APPerAgi = {
 	2, --SHAMAN
 	0, --MAGE
 	0, --WARLOCK
-	0, --MONK  TODO: 20120811: Figure out Monk's AP per AGI (do they even have any? Does AP/Agi ever vary by class anymore?)
+	2, --MONK  20121108: "I did some informal testing on my monk (lvl90), and it does appear that 1 agil = 2 attack pwr, at least for WindWalker." 20121107: "likely be changed to 2 to fall in like with other classes"  20120811: Figure out Monk's AP per AGI (do they even have any? Does AP/Agi ever vary by class anymore?)
 	0, --DRUID
 }
 
@@ -7284,7 +7295,7 @@ function StatLogic:ParseLine(table, text, r,g,b)
 			text = strsub(text, 11)
 		end
 		
-		--If a color was not specified, then force a color that will not be ignored
+		--If a color was not specified, then force a color that won't be ignored
 		if (r == nil) then r = 1; end;
 		if (g == nil) then g = 1; end;
 		if (b == nil) then b = 1; end;
@@ -7341,7 +7352,16 @@ function StatLogic:ParseLine(table, text, r,g,b)
 			-- Stamina +19 = "^([%a ]+%a) %+(%d+)$"
 			-- +19 耐力 = "^%+(%d+) (.-)$"
 			if not found then
-				local _, _, value, statText = strfind(strutf8lower(text), L.SinglePlusStatCheck)
+				--With 5.1 adding reforge stats, we have to use captures 2 and 3, rather than 1 and 2.
+				--local _, _, value, statText = strfind(strutf8lower(text), L.SinglePlusStatCheck)
+				local firstMatch, value, statText = strmatch(strutf8lower(text), L.SinglePlusStatCheck);
+				
+				-- But because not all locales are using an updated SinglePlusStatCheck pattern yet we should do some compatibility check.
+				if not statText then
+					statText = value
+					value = firstMatch
+				end
+				
 				--print(strutf8lower(text))
 				--print (L.SinglePlusStatCheck)
 				--print(statText)
@@ -7742,7 +7762,7 @@ function StatLogic:ParseLine(table, text, r,g,b)
 			return true, false; --found, not excluded
 		else
 			--line was fast excluded
-			--debugPrint("   Excluded: "..text); --it's helpful when debugging to see if an item's property was ignored - even if it is spammy
+			debugPrint("   Excluded: "..text); --it's helpful when debugging to see if an item's property was ignored - even if it is spammy
 			return true, true; --found, excluded
 		end
 end
@@ -8356,20 +8376,20 @@ local LibStatLogicTests = {
 		-- Enchant Chest - Restore Mana Prime "+6 mana every 5 sec. "
 		local text = "+1,234 Stamina";
 		
-		local _, _, value, statText = strfind(text, L.SinglePlusStatCheck);
+		local _, value, statText, reforgedFrom = string.match(strutf8lower(text), L.SinglePlusStatCheck);
 		
 		checkEquals("+1,234", value, L.SinglePlusStatCheck);
-		checkEquals("Stamina", statText, L.SinglePlusStatCheck);
+		checkEquals("stamina", statText, L.SinglePlusStatCheck);
 		checkEquals(1234, CNumber(value), L.SinglePlusStatCheck);
 
 		text = "+6 mana every 5 sec."
-		local _, _, value, statText = strfind(strutf8lower(text), L.SinglePlusStatCheck);
+		local _, value, statText, reforgedFrom = string.match(strutf8lower(text), L.SinglePlusStatCheck);
 		
 		checkEquals("+6", value, text);
 		checkEquals("mana every 5 sec", statText, text);
 		checkEquals(6, CNumber(value), text);
 	end;
-	
+
 	testSingleEquipStatCheck = function()
 		-- "^Equip: (.-) by u?p? ?t?o? ?("..patNumber..") ?(.-)%.?$"
 		--Equip: Increases your dodge by 172.
@@ -8700,19 +8720,19 @@ local LibStatLogicTests = {
 
 			if (stat1) then
 				if (table[stat1] == nil) then dumper(table); end;
-				checkEquals(value1, table[stat1], "Stat "..stat1);
+				checkEquals(value1, table[stat1], "Stat1 "..stat1);
 			end
 			if (stat2) then
 				if (table[stat2] == nil) then dumper(table); end;
-				checkEquals(value2, table[stat2], "Stat "..stat2);
+				checkEquals(value2, table[stat2], "Stat2 "..stat2);
 			end
 			if (stat3) then
 				if (table[stat3] == nil) then dumper(table); end;
-				checkEquals(value3, table[stat3], "Stat "..stat3);
+				checkEquals(value3, table[stat3], "Stat3 "..stat3);
 			end
 			if (stat4) then
 				if (table[stat4] == nil) then dumper(table); end;
-				checkEquals(value4, table[stat4], "Stat "..stat4);
+				checkEquals(value4, table[stat4], "Stat4 "..stat4);
 			end
 		end;		
 
@@ -8724,6 +8744,10 @@ local LibStatLogicTests = {
 		testExcluded("Equip: Experience gained is increased by 10%.");
 		testExcluded("Equip: You champion the causes of your guild. All guild reputation gains are increased by 50%.");
 		testExcluded("Equip: Experience gained from killing monsters and completing quests increased by 5%.");
+		testExcluded("Upgrade Level: 0/1");
+		testExcluded("Upgrade Level: 0/2");
+		testExcluded("Upgrade Level: 1/2");
+		testExcluded("Upgrade Level: 2/2");
 
 		testStats("+384 Strength", "STR", 384);
 		testStats("+1,234 Stamina", "STA", 1234);
@@ -8732,6 +8756,13 @@ local LibStatLogicTests = {
 		testStats("(251.00 damage per second)", "DPS", 251.00);
 		testStats("Equip: Increases spell power by 2,783.", "SPELL_DMG", 2783, "HEAL", 2783);
 		testStats("+4% Mount Speed", "MOD_MOUNT_SPEED", 4);
+		testStats("Equip: Cooking skill increased by 10.", "COOKING", 10);
+
+		--5.1.0 Landfall, they now include the reforging
+		testStats("+384 Strength (Reforged from Critical Strike)", "STR", 384);
+		testStats("+1,234 Stamina (Reforged from Dodge)", "STA", 1234);
+		testStats("+140 Expertise (Reforged from Parry)", "EXPERTISE_RATING", 140);
+		testStats("+210 Critical Strike (Reforged from Hit Chance)", "MELEE_CRIT_RATING", 210);		
 	end;
 	
 	testGetStrPerParry = function()

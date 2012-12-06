@@ -1,0 +1,32 @@
+------------------------------------------------------------------------
+r395 | cremor | 2012-12-02 10:19:11 +0000 (Sun, 02 Dec 2012) | 1 line
+Changed paths:
+   M /trunk/RatingBuster.toc
+
+- Toc cleanup.
+------------------------------------------------------------------------
+r394 | cremor | 2012-12-02 09:17:09 +0000 (Sun, 02 Dec 2012) | 1 line
+Changed paths:
+   M /trunk/RatingBuster.lua
+
+- Touch to start packager.
+------------------------------------------------------------------------
+r393 | cremor | 2012-12-01 11:54:25 +0000 (Sat, 01 Dec 2012) | 1 line
+Changed paths:
+   M /trunk/RatingBuster.lua
+
+- Packager failed, next try to build package.
+------------------------------------------------------------------------
+r392 | cremor | 2012-12-01 11:50:32 +0000 (Sat, 01 Dec 2012) | 2 lines
+Changed paths:
+   M /trunk/RatingBuster.toc
+
+- Pulling latest LibStatLogic for 5.1 fixes.
+- Interface version bump.
+------------------------------------------------------------------------
+r391 | cremor | 2012-10-19 15:00:40 +0000 (Fri, 19 Oct 2012) | 1 line
+Changed paths:
+   M /trunk/locales/zhCN.lua
+
+- zhCN update by yleaf.
+------------------------------------------------------------------------
