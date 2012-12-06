@@ -2,6 +2,7 @@
 local addonName, addonTable = ...
 local zc = addonTable.zc
 local zz = zc.md
+local _
 
 local ATR_BUY_NULL						= 0;
 local ATR_BUY_QUERY_SENT				= 1;

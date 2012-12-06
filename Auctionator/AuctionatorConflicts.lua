@@ -1,7 +1,7 @@
 
 local addonName, addonTable = ...; 
 local zc = addonTable.zc;
-
+local _
 
 local Atr_orig_RecipeKnown_EventScan;
 local Atr_orig_LootLink_OnEvent;

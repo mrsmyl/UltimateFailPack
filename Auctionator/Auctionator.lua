@@ -8,6 +8,7 @@ AuctionatorInited = false;
 local addonName, addonTable = ...; 
 local zc = addonTable.zc;
 local zz = zc.md;
+local _
 
 gAtrZC = addonTable.zc;		-- share with AuctionatorDev
 

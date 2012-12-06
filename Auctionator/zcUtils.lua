@@ -6,6 +6,7 @@
 
 local addonName, addonTable = ...; 
 local zc = {};
+local _
 
 addonTable.zc = zc;
 

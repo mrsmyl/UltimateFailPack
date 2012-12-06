@@ -1,6 +1,7 @@
 local addonName, addonTable = ...; 
 local zc = addonTable.zc;
 local zz = zc.md;
+local _
 
 ATR_CAN_BE_AUCTIONED	= 0
 ATR_BIND_ON_PICKUP		= 1

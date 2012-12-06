@@ -2,6 +2,7 @@
 local addonName, addonTable = ...
 local zc = addonTable.zc
 local zz = zc.md
+local _
 
 KM_NULL_STATE	= 0;
 KM_PREQUERY		= 1;

@@ -1,6 +1,6 @@
 ## Interface: 50100
 ## Title: Auctionator
-## Version: 3.0.7
+## Version: 3.0.9
 ## Author: Zirco
 ## X-Website: http://auctionator-addon.com
 ## X-Localizations: enUS, deDE, ruRU, svSE, frFR, esES, zhTW
