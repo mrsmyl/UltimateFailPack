@@ -1,0 +1,19 @@
+------------------------------------------------------------------------
+r1228 | elsia | 2012-12-20 14:32:50 +0000 (Thu, 20 Dec 2012) | 1 line
+Changed paths:
+   A /tags/v5.1.0b release (from /trunk:1227)
+
+Tagging as v5.1.0b release
+------------------------------------------------------------------------
+r1226 | elsia | 2012-12-20 01:43:44 +0000 (Thu, 20 Dec 2012) | 1 line
+Changed paths:
+   M /trunk/GUI_Report.lua
+
+- Fixed that reporting to the instance chat was not possible.
+------------------------------------------------------------------------
+r1224 | elsia | 2012-11-28 14:02:27 +0000 (Wed, 28 Nov 2012) | 1 line
+Changed paths:
+   M /trunk/Recount.toc
+
+- TOC bump
+------------------------------------------------------------------------
