@@ -1,7 +1,7 @@
 --[[
 Name: Astrolabe
-Revision: $Rev: 150 $
-$Date: 2012-09-02 21:31:15 +0000 (Sun, 02 Sep 2012) $
+Revision: $Rev: 154 $
+$Date: 2012-10-02 03:08:43 +0000 (Tue, 02 Oct 2012) $
 Author(s): Esamynn (esamynn at wowinterface.com)
 Inspired By: Gatherer by Norganna
              MapLibrary by Kristofer Karlsson (krka at kth.se)
@@ -42,7 +42,7 @@ Note:
 -- DO NOT MAKE CHANGES TO THIS LIBRARY WITHOUT FIRST CHANGING THE LIBRARY_VERSION_MAJOR
 -- STRING (to something unique) OR ELSE YOU MAY BREAK OTHER ADDONS THAT USE THIS LIBRARY!!!
 local LIBRARY_VERSION_MAJOR = "Astrolabe-1.0"
-local LIBRARY_VERSION_MINOR = tonumber(string.match("$Revision: 150 $", "(%d+)") or 1)
+local LIBRARY_VERSION_MINOR = tonumber(string.match("$Revision: 154 $", "(%d+)") or 1)
 
 if not DongleStub then error(LIBRARY_VERSION_MAJOR .. " requires DongleStub.") end
 if not DongleStub:IsNewerVersion(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR) then return end
@@ -319,7 +319,14 @@ function Astrolabe:GetUnitPosition( unit, noMapChange )
 		SetMapToCurrentZone();
 		x, y = GetPlayerMapPosition(unit);
 		if ( x <= 0 and y <= 0 ) then
-			WorldMapZoomOutButton_OnClick();
+			-- attempt to zoom out once - logic copied from WorldMapZoomOutButton_OnClick()
+				if ( ZoomOut() ) then
+					-- do nothing
+				elseif ( GetCurrentMapZone() ~= WORLDMAP_WORLD_ID ) then
+					SetMapZoom(GetCurrentMapContinent());
+				else
+					SetMapZoom(WORLDMAP_WORLD_ID);
+				end
 			x, y = GetPlayerMapPosition(unit);
 			if ( x <= 0 and y <= 0 ) then
 				-- we are in an instance without a map or otherwise off map
@@ -356,7 +363,14 @@ function Astrolabe:GetCurrentPlayerPosition()
 		SetMapToCurrentZone();
 		x, y = GetPlayerMapPosition("player");
 		if ( x <= 0 and y <= 0 ) then
-			WorldMapZoomOutButton_OnClick();
+			-- attempt to zoom out once - logic copied from WorldMapZoomOutButton_OnClick()
+				if ( ZoomOut() ) then
+					-- do nothing
+				elseif ( GetCurrentMapZone() ~= WORLDMAP_WORLD_ID ) then
+					SetMapZoom(GetCurrentMapContinent());
+				else
+					SetMapZoom(WORLDMAP_WORLD_ID);
+				end
 			x, y = GetPlayerMapPosition("player");
 			if ( x <= 0 and y <= 0 ) then
 				-- we are in an instance without a map or otherwise off map
@@ -994,10 +1008,7 @@ function Astrolabe:OnShow( frame )
 		SetMapToCurrentZone();
 	end
 	local M, F = Astrolabe:GetCurrentPlayerPosition();
-	if ( M and M >= 0 ) then
-		SetMapByID(M);
-		SetDungeonMapLevel(F);
-	else
+	if not ( M and M >= 0 ) then
 		frame:Hide();
 		return
 	end
