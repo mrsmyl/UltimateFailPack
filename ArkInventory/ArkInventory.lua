@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1055 $
--- $Date: 2012-11-30 21:43:33 +1100 (Fri, 30 Nov 2012) $
+-- $Revision: 1057 $
+-- $Date: 2012-12-16 01:28:41 +1100 (Sun, 16 Dec 2012) $
 
 
 local _G = _G
@@ -1380,7 +1380,7 @@ ArkInventory.Global = { -- globals
 	},
 	
 	Thread = {
-		WhileInCombat = true,
+		WhileInCombat = false,
 		Restack = { },
 		Window = { },
 		WindowState = { },
@@ -1913,6 +1913,14 @@ ArkInventory.Const.DatabaseDefaults.profile = {
 						["combat"] = true,
 					},
 					["scale"] = 1,
+					["itemlevel"] = {
+						["show"] = false,
+						["colour"] = {
+							["r"] = 0,
+							["g"] = 1.0,
+							["b"] = 0,
+						},
+					},
 				},
 				["sort"] = {
 					["open"] = true,
@@ -3375,8 +3383,8 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_CONTAINER" )
 	end
 	
-	-- equipment
-	if ( itemType == ArkInventory.Localise["WOW_AH_WEAPON"] ) or ( itemType == ArkInventory.Localise["WOW_AH_ARMOR"] ) or ( equipSlot ~= "" ) then
+	-- equipable items
+	if ( equipSlot ~= "" ) then -- or ( itemType == ArkInventory.Localise["WOW_AH_WEAPON"] ) or ( itemType == ArkInventory.Localise["WOW_AH_ARMOR"] )
 		if i.ab then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_ACCOUNTBOUND" )
 		elseif i.sb then
@@ -3991,6 +3999,7 @@ function ArkInventory.SetItemButtonStock( frame, count, status )
 	
 	obj:SetText( "" )
 	obj.numInStock = 0
+	obj:Hide( )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -4024,7 +4033,11 @@ function ArkInventory.SetItemButtonStock( frame, count, status )
 		
 	else
 		
-		obj:Hide( )
+		if count > 0 then
+			obj:SetText( count )
+			obj.numInStock = count
+			obj:Show( )
+		end
 		
 	end
 	
@@ -5971,6 +5984,7 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 				ArkInventory.Frame_Item_Update_Fade( obj )
 				
 				ArkInventory.Frame_Item_Update_Count( obj )
+				ArkInventory.Frame_Item_Update_Stock( obj )
 				
 				ArkInventory.Frame_Item_Update_Texture( obj )
 				
@@ -6405,33 +6419,69 @@ function ArkInventory.Frame_Item_Update_Count( frame )
 	
 	local i = ArkInventory.Frame_Item_GetDB( frame )
 	
-	local obj = _G[frame:GetName().."Count"]
+	local obj = _G[string.format( "%s%s", frame:GetName( ), "Count" )]
+	if not obj then return end
 	
 	local count = ( i and i.count ) or 0
-	local class, speciesID, level
-	
 	frame.count = count
 	
+	local class, _, level
+	
 	if i and i.h then
-		class, speciesID, level = ArkInventory.ObjectStringDecode( i.h )
+		class, _, level = ArkInventory.ObjectStringDecode( i.h )
 		if ( class == "battlepet" ) then
-			count = level
-			if ( level == 1 ) and ( i.loc_id == ArkInventory.Const.Location.Pet ) then
-				level = nil
-			end
-		else
-			level = nil
+			count = level or 1
 		end
 	end
 	
-	if level or ( count > 1 or ( frame.isBag and count > 0 ) ) then
+	if ( class == "battlepet" ) or ( count > 1 ) or ( frame.isBag and count > 0 ) then
 		
 		if ( count > ( frame.maxDisplayCount or 9999 ) ) then
 			count = "*"
 		end
 		
-		if level then
-			count = string.format( "%s%s|r", GREEN_FONT_COLOR_CODE, level )
+		obj:SetText( count )
+		obj:Show( )
+		
+	else
+		
+		obj:Hide( )
+		
+	end
+	
+end
+
+function ArkInventory.Frame_Item_Update_Stock( frame )
+	
+	local obj = _G[string.format( "%s%s", frame:GetName( ), "Stock" )]
+	if not obj then return end
+	
+	local i = ArkInventory.Frame_Item_GetDB( frame )
+	local count = 0
+	
+	if i and i.h then
+		
+		if ArkInventory.LocationOptionGet( i.loc_id, "slot", "itemlevel", "show" ) then
+			
+			local class, ilnk, inam, itxt, irar, ilvl, imin, ityp, isub, icount, iloc = ArkInventory.ObjectInfo( i.h )
+			
+			if ( class == "item" ) then
+				
+				if ( iloc ~= "" ) and ( iloc ~= "INVTYPE_BAG" ) then
+					count = ilvl
+				end
+				
+			end
+			
+		end
+		
+	end
+	
+	
+	if ( count > 0 ) then
+		
+		if ( count > ( frame.maxDisplayCount or 9999 ) ) then
+			count = "*"
 		end
 		
 		obj:SetText( count )
@@ -6870,12 +6920,33 @@ function ArkInventory.Frame_Item_Update_Lock( frame )
 		local r, g, b
 		
 		if ArkInventory.LocationOptionGet( loc_id, "slot", "unusable", "tint" ) then
-			ArkInventory.TooltipSetHyperlink( ArkInventory.Global.Tooltip.Vendor, i.h )
-			if not ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Vendor ) then
-				r = 1.0
-				g = 0.1
-				b = 0.1
+			
+			local class, _, level = ArkInventory.ObjectStringDecode( i.h )
+			
+			if ( class == "battlepet" ) then
+				
+				level = level or 1
+				local player_id = ArkInventory.PlayerIDAccount( )
+				local cp = ArkInventory.PlayerInfoGet( player_id )
+				
+				if cp and cp.info and cp.info.level and cp.info.level < level then
+					r = 1.0
+					g = 0.1
+					b = 0.1
+				end
+				
+			else
+				
+				ArkInventory.TooltipSetHyperlink( ArkInventory.Global.Tooltip.Vendor, i.h )
+				
+				if not ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Vendor ) then
+					r = 1.0
+					g = 0.1
+					b = 0.1
+				end
+			
 			end
+			
 		end
 		
 		ArkInventory.SetItemButtonDesaturate( frame, locked, r, g, b )
@@ -7174,6 +7245,7 @@ function ArkInventory.Frame_Item_Update( loc_id, bag_id, slot_id )
 		ArkInventory.Frame_Item_Update_Fade( obj )
 		
 		ArkInventory.Frame_Item_Update_Count( obj )
+		ArkInventory.Frame_Item_Update_Stock( obj )
 		
 		ArkInventory.Frame_Item_Update_Texture( obj )
 		
@@ -7995,7 +8067,8 @@ function ArkInventory.Frame_Changer_Battlepet_Update( )
 			
 			ArkInventory.Frame_Item_Update_Texture( frame )
 			ArkInventory.Frame_Item_Update_Border( frame )
-			ArkInventory.Frame_Item_Update_Count( frame )
+			--ArkInventory.Frame_Item_Update_Count( frame )
+			ArkInventory.Frame_Item_Update_Stock( frame )
 
 			if i.pid then
 				frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pid ) ) <= 0 )
@@ -8876,7 +8949,7 @@ end
 
 function ArkInventory.BlizzardAPIHookBattlepetTooltip( disable )
 	
-	if disable or not ArkInventory.db.global.option.tooltip.battlepet.enable then
+	if disable or ( not ArkInventory.db.global.option.tooltip.battlepet.enable ) then
 		
 		ItemRefTooltip:Hide( )
 		
@@ -8896,7 +8969,7 @@ end
 
 function ArkInventory.BlizzardAPIHookBattlepetFunctions( disable )
 	
-	if disable or not ArkInventory.LocationIsMonitored( ArkInventory.Const.Location.Pet ) then
+	if disable or ( not ArkInventory.LocationIsMonitored( ArkInventory.Const.Location.Pet ) ) then
 		
 		ArkInventory.MyUnhook( "C_PetJournal", "SetCustomName" )
 		ArkInventory.MyUnhook( "C_PetJournal", "SetFavorite" )

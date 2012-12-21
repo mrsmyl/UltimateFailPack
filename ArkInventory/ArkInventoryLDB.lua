@@ -761,12 +761,13 @@ function ArkInventory.LDB.Mounts:GetAvailable( companionType, ignoreActive, moun
 		if ( not active or ignoreActive ) and ( ( selectedCount == 0 and selected[spellID] ~= false ) or ( selectedCount > 0 and selected[spellID] == true ) ) then
 			
 			--ArkInventory.Output( idx, " / ", name, " / ", limitZone )
+			
 			local mountEntry = mountData[spellID]
 			
 			local ok = IsUsableSpell( spellID )
 			
 			if ok and mountType then
-				ok = ( mountEntry.mt == mountType )
+				ok = ( mountEntry.mt == mountType ) and ( mountEntry.usable[mountType] )
 			end
 			
 			if ok and limitZone and ( not mountEntry.r or not mountEntry.r.zone ) then

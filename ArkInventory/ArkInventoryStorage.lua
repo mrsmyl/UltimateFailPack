@@ -2442,16 +2442,20 @@ function ArkInventory.ScanBattlePet( )
 	local old_level
 	local rarity, speciesID, customName, level, isWild, canBattle, tradable
 	
+	cp.info.level = 1
+	
 	for _, petID in ArkInventory.Lib.Pet:IteratePetIDs( ) do
-		
-		rarity = select( 5, C_PetJournal.GetPetStats( petID ) )
-		speciesID, customName, level, _, _, _, _, _, _, _, _, _, _, isWild, canBattle, tradable = C_PetJournal.GetPetInfoByPetID( petID )
-		
-		h = C_PetJournal.GetBattlePetLink( petID )
 		
 		companionData[petID] = true
 		
-		if ( cp.info ) and ( ( cp.info.level or 1 ) < level ) then
+		local h = C_PetJournal.GetBattlePetLink( petID )
+		
+		rarity = select( 5, C_PetJournal.GetPetStats( petID ) )
+		
+		speciesID, customName, level, _, _, _, _, _, _, _, _, _, _, isWild, canBattle, tradable = C_PetJournal.GetPetInfoByPetID( petID )
+		level = level or 1
+		
+		if cp.info.level < level then
 			-- save highest pet level for tint unusable
 			cp.info.level = level
 		end

@@ -348,6 +348,8 @@ if not L then return end
 	L["CONFIG_SETTINGS_ITEMS_FADE_TEXT"] = "Assombrir les objets inaccessibles"
 	L["CONFIG_SETTINGS_ITEMS_TINT_USABLE"] = "Teinter inutilisable"
 	L["CONFIG_SETTINGS_ITEMS_TINT_USABLE_TEXT"] = "Teinter les objets inutilisables en rouge"
+--	L["CONFIG_SETTINGS_ITEMS_ITEMLEVEL_SHOW"] = ""
+--	L["CONFIG_SETTINGS_ITEMS_ITEMLEVEL_SHOW_TEXT"] = ""
 	L["CONFIG_SETTINGS_ITEMS_BORDER_SHOW_TEXT"] = "Montrer une bordure autour des objets"
 	L["CONFIG_SETTINGS_ITEMS_BORDER_STYLE_TEXT"] = "Définir le style de bordure des objets"
 	L["CONFIG_SETTINGS_ITEMS_BORDER_RARITY"] = "Couleur de rareté"
