@@ -1356,7 +1356,7 @@ function AutoBar:CreateOptionsAce3()
 							desc = L["Popup while Shift key is pressed for %s"]:format(name),
 							arg = passValue,
 							tristate = true,
-							disabled = true,
+							--disabled = true,
 						},
 						fadeOutSpacer = {
 							type = "header",
@@ -2265,7 +2265,7 @@ function AutoBar:CreateBarButtonOptions(barKey, buttonIndex, buttonKey, existing
 					name = L["Popup on Shift Key"],
 					desc = L["Popup while Shift key is pressed for %s"]:format(name),
 					arg = passValue,
-					disabled = true, --getCombatLockdown,
+					disabled = getCombatLockdown,
 				},
 				noPopup = {
 					type = "toggle",

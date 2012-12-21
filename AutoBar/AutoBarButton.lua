@@ -505,7 +505,7 @@ function AutoBarButton.prototype:SetupButton()
 				end
 			end
 		else
-			local popupOnModifier = false --self:GetHierarchicalSetting("popupOnShift")
+			local popupOnModifier = self:GetHierarchicalSetting("popupOnShift")
 			local alwaysPopup = self.buttonDB.alwaysPopup
 			local buttonIndex = self.buttonDB.order
 
