@@ -77,7 +77,7 @@ function Atr_SetupOptionsFrame()
 	local expText = "<html><body>"
 					.."<p>"..ZT("The latest information on Auctionator can be found at").." auctionator-addon.com.".."</p>"
 					.."<p><br/>"
-					.."MoP disenchanting data courtesy of the Auctioneer folks"
+					.."MoP disenchanting data courtesy of the Norganna's AddOns (the Auctioneer folks)"
 					.."</p>"
 					.."<p><br/>"
 					.."|cffaaaaaa"..string.format (ZT("German translation courtesy of %s"),  "|rCkaotik").."<br/>"

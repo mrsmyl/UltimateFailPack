@@ -1580,9 +1580,15 @@ function Atr_CreateAuction_OnClick ()
 	gJustPosted.ItemName			= gCurrentPane.activeScan.itemName;
 	gJustPosted.ItemLink			= gCurrentPane.activeScan.itemLink;
 	gJustPosted.BuyoutPrice			= MoneyInputFrame_GetCopper(Atr_StackPrice);
-	gJustPosted.StackSize			= Atr_StackSize();
-	gJustPosted.NumStacks			= Atr_Batch_NumAuctions:GetNumber();
 
+	if (zc.IsBattlePetLink (gJustPosted.ItemLink)) then
+		gJustPosted.StackSize			= 1;
+		gJustPosted.NumStacks			= 1;
+	else
+		gJustPosted.StackSize			= Atr_StackSize();
+		gJustPosted.NumStacks			= Atr_Batch_NumAuctions:GetNumber();
+	end
+	
 	local duration				= UIDropDownMenu_GetSelectedValue(Atr_Duration);
 	local stackStartingPrice	= MoneyInputFrame_GetCopper(Atr_StartingPrice);
 	local stackBuyoutPrice		= MoneyInputFrame_GetCopper(Atr_StackPrice);
@@ -2832,6 +2838,11 @@ function Atr_OnNewAuctionUpdate()
 			
 			gSellPane.totalItems	= Atr_GetNumItemInBags (auctionLink);
 			gSellPane.fullStackSize = auctionLink and (select (8, GetItemInfo (auctionLink))) or 0;
+
+			if (zc.IsBattlePetLink (auctionLink)) then    -- multi sell doesn't work with Battle Pets.  Even in Blizzard UI
+				gSellPane.totalItems = 1;
+				gSellPane.fullStackSize = 1;
+			end
 
 		--zz (auctionItemName, IDstring, auctionLink, "totalItems ", gSellPane.totalItems)
 		
