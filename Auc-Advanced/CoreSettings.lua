@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreSettings.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreSettings.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	Settings GUI
@@ -128,7 +128,7 @@ local settingDefaults = {
 	['scancommit.targetFPS'] = 25,
 --	['scancommit.speed'] = 50,
 	['scancommit.progressbar'] = true,
-	['scancommit.ttl'] = 20,
+	['scancommit.ttl'] = 5,
 	['core.general.alwaysHomeFaction'] = true,
 	['printwindow'] = 1,
 	["core.marketvalue.tolerance"] = .08,
@@ -138,10 +138,14 @@ local settingDefaults = {
 	["post.clearonclose"] = true,
 	["post.confirmonclose"] = true,
 	["core.scan.sellernamedelay"] = true,
---	["core.scan.unresolvedtolerance"] = 0,
+	["core.scan.unresolvedtolerance"] = 0,
 	["core.scan.scanallqueries"] = true,
 	["core.scan.hybridscans"] = true,
+	["core.scan.pregetalldelay"] = 0,
 	["core.tooltip.altchatlink_leftclick"] = false,
+	["core.tooltip.enableincombat"] = false,
+	["core.tooltip.depositcost"] = true,
+	["core.tooltip.depositduration"] = 48,
 }
 
 local function getDefault(setting)
@@ -443,7 +447,7 @@ function lib.MakeGuiConfig()
 
 	gui:AddControl(id, "Header",     0,    _TRANS('ADV_Interface_SetupProfile')) --"Setup, Configure and Edit Profiles"
 	gui:AddControl(id, "Subhead",    0,    _TRANS('ADV_Interface_ActivateProfile')) --"Activate a current profile"
-	gui:AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile", "Switch to the given profile")
+	gui:AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile")
 	gui:AddTip(id, _TRANS('ADV_Help_ActivateProfile')) --"Select the profile that you wish to use for this character"
 
 	gui:AddControl(id, "Button",     0, 1, "profile.delete", _TRANS('ADV_Interface_Delete')) --"Delete"
@@ -550,20 +554,17 @@ function lib.MakeGuiConfig()
 --	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ProcessPriority')) --"Sets the processing priority of the scan data. Higher values take less time, but cause more lag"
 	gui:AddControl(id, "Slider",	0, 1, "scancommit.targetFPS", 5, 100, 5, _TRANS('ADV_Interface_ProcessingTargetFPS')) --"Desired FPS during scan: %d"
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ProcessingTargetFPS')) --"Sets the target frame rate during the scan. Higher values will be smoother, but will take more time overall."
-	gui:AddControl(id, "Slider",	0, 1, "scancommit.ttl", 0, 300, 1, _TRANS('ADV_Interface_ScanRetrieveTTL').." %d ".._TRANS('ADV_Interface_seconds'))--Scan Retrieval Time-to-Live
+	gui:AddControl(id, "Slider",	0, 1, "scancommit.ttl", 1, 70, 1, _TRANS('ADV_Interface_ScanRetrieveTTL').." %d ".._TRANS('ADV_Interface_seconds'))--Scan Retrieval Time-to-Live
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanRetrieveTTL') )--The number of seconds Auctioneer will spend trying to get data that was missing from the scan initially.
 
-	gui:AddControl(id, "Checkbox",	0, 1, "core.scan.hybridscans", "Enable Hybrid scanning for very large Auction Houses")
-	gui:AddTip(id, "For very large Auction Houses, a GetAll scan will not be able to retrieve all the auctions.\nA Hybrid scan will start Normal scanning to retrive the auctions missed by the GetAll.")
-	gui:AddControl(id, "Checkbox",	0, 1, "core.scan.sellernamedelay", _TRANS('ADV_Interface_ScanSellerNames'))--"Additional scanning to retrieve more Seller names"
-	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanSellerNames')) --"Perform additional scanning to retrieve more data about the names of Sellers. If this option is disabled scans will finish sooner but some filters and searchers will not work"
-	gui:AddControl(id, "Checkbox",	0, 1, "core.scan.scanallqueries", _TRANS('ADV_Interface_ScanAllQueries')) --"Scan manual searches and searches by other Addons"
-	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanAllQueries')) --"Enable to perform scanning of every Auctionhouse search. Disable to only scan Auctioneer's own searches.\nYou may need to disable this option if you have compatibility problems with other AddOns"
-
-	--[[ temporarily disabled
-	gui:AddControl(id, "Slider",	0, 1, "core.scan.unresolvedtolerance", 0, 100, 1, "Unresolved auctions tolerance: %d")
-	gui:AddTip(id, "Maximum number of unresolvable auctions allowed for a full scan to still be treated as Complete. A lower tolerance is used for smaller scans.")
-	--]]
+	gui:AddControl(id, "Checkbox",	0, 1, "core.scan.hybridscans", _TRANS("ADV_Interface_HybridScanning")) --Enable Hybrid scanning for very large Auction Houses
+	gui:AddTip(id, _TRANS("ADV_HelpTooltip_HybridScanning")) --For very large Auction Houses, a GetAll scan will not be able to retrieve all the auctions. A Hybrid scan will start Normal scanning to retrive the auctions missed by the GetAll
+	gui:AddControl(id, "Checkbox",	0, 1, "core.scan.sellernamedelay", _TRANS('ADV_Interface_ScanSellerNames'))--Additional scanning to retrieve more Seller names
+	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanSellerNames')) --Perform additional scanning to retrieve more data about the names of Sellers. If this option is disabled scans will finish sooner but some filters and searchers will not work
+	gui:AddControl(id, "Checkbox",	0, 1, "core.scan.scanallqueries", _TRANS('ADV_Interface_ScanAllQueries')) --Scan manual searches and searches by other Addons
+	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ScanAllQueries')) --Enable to perform scanning of every Auctionhouse search. Disable to only scan Auctioneer's own searches.\nYou may need to disable this option if you have compatibility problems with other AddOns
+	gui:AddControl(id, "Slider",	0, 1, "core.scan.unresolvedtolerance", 0, 100, 1, _TRANS("ADV_Interface_UnresolvedAuctionsTolerance").." %d") --Unresolved Auctions Tolerance
+	gui:AddTip(id, _TRANS("ADV_HelpTooltip_UnresolvedAuctionsTolerance")) --Maximum number of unresolvable auctions allowed for a full scan to still be treated as Complete
 
 	gui:AddHelp(id, "why show summation",
 		_TRANS('ADV_Help_WhyShowSummation'), --"What is the post scan summary?",
@@ -576,6 +577,9 @@ function lib.MakeGuiConfig()
 	gui:AddHelp(id, "what is ttl",
 		_TRANS('ADV_Interface_ScanRetrieveTTL'), --Scan Retrieval Time-to-Live,
 		_TRANS('ADV_Help_ScanRetrieveTTL'))--After a fast (GetAll) scan, there are usually many items for which we did not receive data. We can try to get a complete scan by rechecking the items for new information.  This slider sets the time, in seconds, we will wait before giving up if we're unable to get new data.
+	gui:AddHelp(id, "what is unresolved tolerance",
+		_TRANS("ADV_Interface_UnresolvedAuctionsTolerance"), --Unresolved Auctions Tolerance
+		_TRANS("ADV_Help_UnresolvedAuctionsTolerance")) --Auctioneer is sometimes unable to resolve a number of auctions during a scan, causing the scan to be incomplete. Unresolved Auctions Tolerance allows Auctioneer to still mark as scan as complete if the number of these errors is very small. May be useful when the server is unstable, particularly after major patches.
 
 
 	-- Data Maintenance tab under development - do not localize yet
@@ -616,6 +620,8 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Subhead",     0,	_TRANS('ADV_Interface_ModTTShow')) --"Show Tooltip:"
 	gui:AddControl(id, "Selectbox", 0, 1, { { "always", _TRANS('ADV_Interface_mts_always') }, {"alt", _TRANS('ADV_Interface_mts_alt') }, { "noalt", _TRANS('ADV_Interface_mts_noalt') }, {"shift", _TRANS('ADV_Interface_mts_shift') }, {"noshift", _TRANS('ADV_Interface_mts_noshift')}, {"ctrl", _TRANS('ADV_Interface_mts_ctrl')},{"noctrl", _TRANS('ADV_Interface_mts_noctrl')}, { "never", _TRANS('ADV_Interface_mts_never')} }, "ModTTShow")
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_ModTTShow')) --"Determines Tooltip behavior. Always: Show Auctioneer's Tooltip every time. When <mod> is pressed: Only show Auctioneer's tooltip if the specified modifier is pressed. When <mod> is not pressed: Only show Auctioneer's tooltip if the specified modifier is not pressed. Never: Never show Auctioneer's tooltip."
+	gui:AddControl(id, "Checkbox",   0, 1, "core.tooltip.enableincombat", _TRANS("ADV_Interface_ShowTooltipInCombat")) --Show Auctioneer's tooltip when in combat
+	gui:AddTip(id, _TRANS("ADV_HelpTooltip_ShowTooltipInCombat")) --Enable the display of Auctioneer's extended tooltips while in combat. Auctioneer tooltips can occasionally cause brief screen freezes so they are best left disabled during combat.
 	gui:AddControl(id, "Checkbox",   0, 1, "core.tooltip.altchatlink_leftclick", _TRANS('ADV_Interface_AltChatLinkLeft')) --"Open tooltips from chat links with Alt left-clicks"
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_AltChatLinkLeft')) --"Enables opening a tooltip by left-clicking on an item link in chat while the Alt key is pressed."
 	gui:AddControl(id, "Checkbox",   0, 1, "scandata.tooltip.display", _TRANS('ADV_Interface_ScanDataDisplay')) --"Display scan data tooltip"
@@ -629,6 +635,8 @@ function lib.MakeGuiConfig()
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_MktPrice')) --"Enables the display of Marketprice in the tooltip.  Holding down Shift will also show the prices that went into marketprice"
 	gui:AddControl(id, "Checkbox",   0, 2, "tooltip.marketprice.stacksize", _TRANS('ADV_Interface_MultiplyStack')) --"Multiply by Stack Size"
 	gui:AddTip(id, _TRANS('ADV_HelpTooltip_MultiplyStack')) --"Multiplies by current stack size if enabled"
+	gui:AddControl(id, "Checkbox",   0, 1, "core.tooltip.depositcost", _TRANS('ADV_Interface_ShowDepositInTooltip')) --Show deposit cost in tooltip
+	gui:AddControl(id, "Selectbox", 0, 1, AucAdvanced.selectorAuctionLength, "core.tooltip.depositduration", _TRANS("ADV_Interface_DepositDuration")) --Auction duration for deposit cost
 	gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
 
 	gui:AddHelp(id, "what is scandata",
@@ -741,4 +749,4 @@ function private.CheckObsolete()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreSettings.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreSettings.lua $", "$Rev: 5381 $")

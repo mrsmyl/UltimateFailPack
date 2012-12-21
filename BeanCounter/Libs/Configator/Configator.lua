@@ -1,7 +1,7 @@
 --[[
 	Configator - A library to help you create a gui config
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: Configator.lua 330 2012-08-27 05:57:03Z Esamynn $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: Configator.lua 344 2012-10-06 15:56:26Z Esamynn $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -54,11 +54,11 @@ USAGE:
 ]]
 
 local LIBRARY_VERSION_MAJOR = "Configator"
-local LIBRARY_VERSION_MINOR = 27
+local LIBRARY_VERSION_MINOR = 29
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/Configator.lua $","$Rev: 330 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/Configator.lua $","$Rev: 344 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local kit = {}
 
@@ -1187,7 +1187,10 @@ function kit:AddControl(id, cType, column, ...)
 	local kids = ctrl.kids
 	local kpos = 0
 
-	local framewidth = frame:GetWidth() - 20
+	local framewidth = frame:GetWidth() - 25
+	if ( self.tabs[id].scroll ) then
+		framewidth = framewidth - 14
+	end
 	column = (column or 0) * framewidth
 	local colwidth = nil
 	if (self.scalewidth) then
@@ -1295,7 +1298,7 @@ function kit:AddControl(id, cType, column, ...)
 		control = el
 		last = el
 	elseif (cType == "Selectbox") then
-		local level, list, setting, text = ...
+		local level, list, setting, text, maxLabelLength = ...
 		local indent = 10 * (level or 1)
 		-- Selectbox
 		local tmpName = lib.CreateAnonName()
@@ -1316,11 +1319,21 @@ function kit:AddControl(id, cType, column, ...)
 		el.list = list
 		el.setting = setting
 		el.stype = "SelectBox";
-		el.clearance = 10
+		el.clearance = 3
 		self.elements[setting] = el
 		self:GetSetting(el)
 		control = el
-		last = el
+		if ( type(text) == "string" ) then
+			-- FontString
+			el = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+			el:SetJustifyH("LEFT")
+			kpos = kpos+1 kids[kpos] = el
+			if (colwidth) then colwidth = colwidth - 15 end
+			anchorPoint(content, el, last, (colwidth or 140)+35+column+indent, (colwidth or maxLabelLength), 14, -3)
+			el:SetText(text)
+			control.textEl = el
+		end
+		last = control
 	elseif (cType == "Button") then
 		local level, setting, text = ...
 		local indent = 10 * (level or 1)
@@ -1844,7 +1857,9 @@ function kit:ColumnCheckboxes(id, cols, options)
 	for pos, option in ipairs(options) do
 		setting, text = unpack(option)
 		col = math.floor(row / rows)
-		el = self:AddControl(id, "Checkbox", col/cols, 1, setting, text, true, 1/cols)
+		-- the last agrument (text length) divides by a special factor to improve spacing
+		-- a hard coded number would be better, but I'm doing this as a quick fix for now
+		el = self:AddControl(id, "Checkbox", col/cols, 1, setting, text, true, 1/cols/1.03)
 		row = row + 1
 		if (row % rows == 0) then
 			if (col == 0) then

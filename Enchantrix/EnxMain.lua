@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: EnxMain.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: EnxMain.lua 5317 2012-08-03 05:11:38Z ccox $
 	URL: http://enchantrix.org/
 
 	This is an addon for World of Warcraft that add a list of what an item
@@ -30,7 +30,7 @@
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxMain.lua $", "$Rev: 5335 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Enchantrix/EnxMain.lua $", "$Rev: 5317 $")
 
 -- Local functions
 local addonLoaded
@@ -41,7 +41,7 @@ local spellTargetItemHook
 local useItemByNameHook
 local onEvent
 
-Enchantrix.Version = "5.14.5335"
+Enchantrix.Version = "5.15.5383"
 if (Enchantrix.Version == "<".."%version%>") then
 	Enchantrix.Version = "4.0.DEV"
 end
@@ -87,7 +87,7 @@ function addonLoaded(hookArgs, event, addOnName)
 	Enchantrix.AutoDisenchant.AddonLoaded()
 	Enchantrix.MiniIcon.Reposition()
 
-	Enchantrix.Revision = Enchantrix.Util.GetRevision("$Revision: 5335 $")
+	Enchantrix.Revision = Enchantrix.Util.GetRevision("$Revision: 5317 $")
 	for name, obj in pairs(Enchantrix) do
 		if type(obj) == "table" then
 			Enchantrix.Revision = math.max(Enchantrix.Revision, Enchantrix.Util.GetRevision(obj.Revision))

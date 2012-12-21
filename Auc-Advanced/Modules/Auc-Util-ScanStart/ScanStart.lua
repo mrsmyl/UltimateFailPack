@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Start module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: ScanStart.lua 5153 2011-05-13 19:01:25Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: ScanStart.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a few event functionalities
@@ -165,12 +165,12 @@ function private.SetupConfigGui(gui)
 		gui:AddControl(id, "Checkbox",   0, 1, "util.scanstart."..scantype..".activated", 
 			"Allow the execution of the events below when a "..scantypename.." scan starts")
 		gui:AddTip(id, "Selecting this option will enable Auctioneer to perform the selected events once Auctioneer has started a "..scantypename.." AH scan. \n\nUncheck this to disable events for a "..scantypename.." scan.")
-		gui:AddControl(id, "Selectbox",  0, 3, emoteList, "util.scanstart."..scantype..".emote", "Pick the Emote to perform")
+		gui:AddControl(id, "Selectbox",  0, 3, emoteList, "util.scanstart."..scantype..".emote")
 		gui:AddTip(id, "Selecting one of these emotes will cause your character to perform the selected emote once Auctioneer has started a scan successfully.\n\nBy selecting None, no emote will be performed.")
 
 		gui:AddControl(id, "Text",	   0, 1, "util.scanstart."..scantype..".message.text", "Message text:")
 		gui:AddTip(id, "Enter the message text of what you wish your character to say as well as choosing a channel below. \n\nThis will not execute slash commands.")
-		gui:AddControl(id, "Selectbox",  0, 3, talkTypes, "util.scanstart."..scantype..".message.channel", "Pick the channel to send your message to")
+		gui:AddControl(id, "Selectbox",  0, 3, talkTypes, "util.scanstart."..scantype..".message.channel")
 		gui:AddTip(id, "Selecting one of these channels will cause your character to say the message text into the selected channel once Auctioneer has completed a scan successfully. \n\nBy choosing Emote, your character will use the text above as a custom emote. \n\nBy selecting None, no message will be sent.")
 
 
@@ -214,4 +214,4 @@ function private.ConfigChanged()
 	if AucAdvanced.Settings.GetSetting("util.scanstart.debug") then blnDebug = true end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-ScanStart/ScanStart.lua $", "$Rev: 5153 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-ScanStart/ScanStart.lua $", "$Rev: 5381 $")

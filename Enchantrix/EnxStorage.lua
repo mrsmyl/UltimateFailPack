@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: EnxStorage.lua 5268 2012-01-22 23:15:00Z Nechckn $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: EnxStorage.lua 5264 2012-01-08 22:30:41Z ccox $
 	URL: http://enchantrix.org/
 
 	Database functions and saved variables.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxStorage.lua $", "$Rev: 5268 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Enchantrix/EnxStorage.lua $", "$Rev: 5264 $")
 
 --[[
 Usages:

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - EasyBuyout Utility Module
 	Version: 1.2.5 (GhostfromTexas)
-	Revision: $Id: EasyBuyout.lua 5238 2011-11-30 11:44:21Z brykrys $
+	Revision: $Id: EasyBuyout.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This Auctioneer module allows for the ability to purchase items from
@@ -149,7 +149,7 @@ function private.SetupConfigGui(gui)
 		{0, "Shift"},
 		{1, "Alt"},
 		{2, "Shift+Alt"}
-	}, "util.EasyBuyout.modifier.select", "testing here")
+	}, "util.EasyBuyout.modifier.select")
     gui:AddTip(id, "Select your key modifier for EasyBuyout")
 
  	-- EasyCancel
@@ -164,7 +164,7 @@ function private.SetupConfigGui(gui)
 		{0, "Shift"},
 		{1, "Alt"},
 		{2, "Shift+Alt"}
-	}, "util.EasyBuyout.EC.modifier.select", "testing here")
+	}, "util.EasyBuyout.EC.modifier.select")
     gui:AddTip(id, "Select your key modifier for EasyCancel")
 
 	-- EasyBid
@@ -434,4 +434,4 @@ function private.EBMessage(messageString)
 	print(messageString)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-EasyBuyout/EasyBuyout.lua $", "$Rev: 5238 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-EasyBuyout/EasyBuyout.lua $", "$Rev: 5381 $")

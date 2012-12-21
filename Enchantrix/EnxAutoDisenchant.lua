@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: EnxAutoDisenchant.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: EnxAutoDisenchant.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://enchantrix.org/
 
 	Automatic disenchant scanner.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5335 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5381 $")
 
 local auto_de_session_ignore_list = {}
 local auto_de_frame
@@ -103,11 +103,11 @@ local function isAutoDisenchantAllowed(link, count)
 	if (quality == 3) and (not Enchantrix.Settings.GetSetting('AutoDeRareItems')) then
 		return false
 	end
-	
+
 	if (quality == 4) and (not Enchantrix.Settings.GetSetting('AutoDeEpicItems')) then
 		return false
 	end
-	
+
 	-- this WILL NOT WORK for milling or prospecting
 	-- because changing the stack size in any way will change the reason returned by beancounter
 	if Enchantrix.Settings.GetSetting('AutoDeOnlyIfBoughtForDE') then
@@ -124,7 +124,7 @@ local function isAutoDisenchantAllowed(link, count)
 			Enchantrix.Settings.SetSetting('AutoDeOnlyIfBoughtForDE', false)
 		end
 	end
-	
+
 	return true
 end
 
@@ -171,9 +171,9 @@ local function getDisenchantOrProspectValue(link, count)
 			end
 		end
 	end
-	
+
 	-- some quality 2 ores are now prospectable
-	
+
 	if count >= 5 then
 
 -- TODO - ccox - these could share some code
@@ -264,13 +264,13 @@ end
 
 local function beginScan(bag)
 	setState("scan")
-	
+
 	-- do not scan while in combat
 	if InCombatLockdown() or UnitAffectingCombat("player") then
 		debugSpam("aborting scan during combat")
 		return
 	end
-	
+
 	hidePrompt()		-- we can't hide the UI during combat
 
 	local link, outBag, slot, value, spell
@@ -302,14 +302,14 @@ local function onEvent(...)
 			-- see if the user wants to auto-loot their manual disenchants
 			if (Enchantrix.Settings.GetSetting('autoLootDE')) then
 				eventSpam(...)
-				
+
 				-- make sure all results are DE/prospect/milling results
 				for slot = 1, GetNumLootItems() do
 					if (GetLootSlotType(slot) ~= LOOT_SLOT_ITEM) then return end
 					local link = GetLootSlotLink(slot)
-					local _, itemID = auto_de_tooltip:DecodeLink(link)
-					if (not itemID) then return end
-					
+					local linkType, itemID = auto_de_tooltip:DecodeLink(link)
+					if linkType ~= "item" or not itemID then return end
+
 					if ( not
 						(Enchantrix.Constants.ReverseDisenchantLevelList[itemID]
 						 or Enchantrix.Constants.ReverseProspectingSources[itemID]
@@ -318,11 +318,11 @@ local function onEvent(...)
 						return		-- this is not a DE,prospect, or milling result
 					end
 				end
-				
+
 				for slot = 1, GetNumLootItems() do
 					LootSlot(slot)
 				end
-				
+
 			end
 		end
 	elseif event == "LOOT_CLOSED" then
@@ -482,12 +482,12 @@ end
 -- declared local at top
 function showPrompt(link, bag, slot, value, spell)
 	clearPrompt()		-- safety
-	
+
 	-- avoid taint, don't hide or show while in combat
 	if InCombatLockdown() or UnitAffectingCombat("player") then
 		return
 	end
-	
+
 	debugSpam(link ..",".. bag ..",".. slot ..",".. value ..",".. spell)
 
 	local _, count = GetContainerItemInfo(bag, slot)
@@ -515,14 +515,14 @@ function showPrompt(link, bag, slot, value, spell)
 	-- clear the lines, just in case
 	auto_de_prompt.Lines[4]:SetText( nil );
 	auto_de_prompt.Lines[5]:SetText( nil );
-	
+
 	if (BeanCounter and BeanCounter.API) then
 		local reason = BeanCounter.API.getBidReason(link, count)
 		if (reason) then
 			auto_de_prompt.Lines[4]:SetText( format( _ENCH("GuiAutoDEPurchaseReason"), reason ) );
 		end
 	end
-	
+
 	if (AucAdvanced and AucAdvanced.Modules and AucAdvanced.Modules.Util
 		and AucAdvanced.Modules.Util.ItemSuggest) then
 		local suggestion = AucAdvanced.Modules.Util.ItemSuggest.itemsuggest( link, count )
@@ -530,7 +530,7 @@ function showPrompt(link, bag, slot, value, spell)
 			auto_de_prompt.Lines[5]:SetText( format( _ENCH("GuiAutoDESuggestion"), suggestion)  );
 		end
 	end
-	
+
 	auto_de_prompt:Show()
 end
 
@@ -571,16 +571,16 @@ end
 
 local function showTooltip()
 	GameTooltip:SetOwner(auto_de_prompt, "ANCHOR_NONE")
-	
+
 	local count = 1
 	local spellName = auto_de_prompt.Yes:GetAttribute("spell")
 	if spellName == _ENCH('ArgSpellProspectingName')
 		or spellName == _ENCH('ArgSpellMillingName') then
 		count = 5
 	end
-	
+
 	auto_de_tooltip:ShowItemLink(GameTooltip, auto_de_prompt.link, count)
-	
+
 	GameTooltip:ClearAllPoints()
 	GameTooltip:SetPoint("TOPRIGHT", "AutoDisenchantPromptItem", "TOPLEFT", -10, -20)
 	GameTooltip:Show()
@@ -656,15 +656,15 @@ local function initUI()
 	-- SecureActionButton (auto_de_prompt.Yes) to perform the spellcast
 
 	local function copyButtonVisuals(dest, source)
-		
+
 		dest:ClearAllPoints()
 		dest:SetPoint("TOPLEFT", source, "TOPLEFT")
 		dest:SetPoint("BOTTOMRIGHT", source, "BOTTOMRIGHT")
-		
+
 --		local tex = source:GetNormalTexture()		-- this is returning NIL in 5.0.4
 		local tex = dest:CreateTexture(nil, nil, "UIPanelButtonUpTexture")
 		dest:SetNormalTexture(tex)
-		
+
 		dest:SetHighlightTexture(source:GetHighlightTexture())
 		dest:SetPushedTexture(source:GetPushedTexture())
 		dest:SetText(source:GetText())
@@ -679,11 +679,11 @@ local function initUI()
 	auto_de_prompt.DummyYes:SetPoint("BOTTOMRIGHT", auto_de_prompt, "BOTTOMRIGHT", -10, 10)
 	auto_de_prompt.DummyYes:Hide()
 
-	auto_de_prompt.Yes = CreateFrame("Button", "AutoDEPromptYes", auto_de_prompt, "SecureActionButtonTemplate")	
+	auto_de_prompt.Yes = CreateFrame("Button", "AutoDEPromptYes", auto_de_prompt, "SecureActionButtonTemplate")
 	copyButtonVisuals(auto_de_prompt.Yes, auto_de_prompt.DummyYes)
 	auto_de_prompt.Yes:SetAttribute("unit", "none")
 	auto_de_prompt.Yes:SetAttribute("type", "spell")
-	
+
 	auto_de_prompt.No = CreateFrame("Button", "AutoDEPromptNo", auto_de_prompt, "OptionsButtonTemplate")
 	auto_de_prompt.No:SetText(_ENCH("GuiNo"))
 	auto_de_prompt.No:SetPoint("BOTTOMRIGHT", auto_de_prompt.Yes, "BOTTOMLEFT", -5, 0)

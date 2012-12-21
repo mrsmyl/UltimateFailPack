@@ -1,7 +1,7 @@
 --[[
 	Norganna's Tooltip Helper class
-	Version: 1,3
-	Revision: $Id: nTipHelper.lua 315 2011-07-18 11:53:36Z brykrys $
+	Version: 1,4
+	Revision: $Id: nTipHelper.lua 343 2012-09-21 16:49:14Z brykrys $
 	URL: http://norganna.org/tthelp
 
 	This is a slide-in helper class for the Norganna's AddOns family of AddOns
@@ -43,13 +43,16 @@
 if not LibStub then -- LibStub is included in LibExtraTip
 	error("TipHelper cannot load because LibExtraTip is not loaded (LibStub missing)")
 end
-local MAJOR,MINOR,REVISION = "nTipHelper", 1, 3
+local MAJOR,MINOR,REVISION = "nTipHelper", 1, 5
 local LIBSTRING = MAJOR..":"..MINOR
 local lib = LibStub:NewLibrary(LIBSTRING,REVISION)
 if not lib then return end
 
 local type = type
 local gsub = gsub
+local tonumber = tonumber
+local strsplit = strsplit
+local bitand = bit.band
 
 do -- tooltip class definition
 	local libTT = LibStub("LibExtraTip-1", true)
@@ -110,6 +113,7 @@ do -- tooltip class definition
 		end
 	end
 
+	-- Deprecated; a slightly obscure function that used to be used by DecodeLink
 	local function breakHyperlink(match, matchlen, ...)
 		local v
 		local n = select("#", ...)
@@ -120,14 +124,13 @@ do -- tooltip class definition
 			end
 		end
 	end
-
 	function lib:BreakHyperlink(...)
 		return breakHyperlink(...)
 	end
 
 	function lib:GetFactor(suffix, seed)
 		if (suffix < 0 and seed) then
-			return bit.band(seed, 65535)
+			return bitand(seed, 65535)
 		end
 		return 0
 	end
@@ -153,54 +156,139 @@ do -- tooltip class definition
 		return lastSaneLink
 	end
 
+	-- DecodeLink last item cache
+	-- the return values have different meanings for different link type, so they are just numbered
+	-- where they are assigned values, comments will show what each one represents
+	local lastDecodeLink
+	local linkType,ret1,ret2,ret3,ret4,ret5,ret6,ret7,ret8,ret9,ret10
 	function lib:DecodeLink(link, info)
-		local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed,factor,ulevel,reforge
-		local vartype = type(link)
-		if (vartype == "string") then
-			lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed,ulevel,reforge = strsplit(":", link)
-			lType = lType:sub(-4)
-			if (lType ~= "item") then return end
-			id = tonumber(id) or 0
-			enchant = tonumber(enchant) or 0
-			suffix = tonumber(suffix) or 0
-			seed = tonumber(seed) or 0
-			factor = lib:GetFactor(suffix, seed)
-			gem1 = tonumber(gem1) or 0
-			gem2 = tonumber(gem2) or 0
-			gem3 = tonumber(gem3) or 0
-			gemBonus = tonumber(gemBonus) or 0
-			if reforge then
-				reforge = tonumber((strsplit("|", reforge))) or 0
-			else
-				reforge = 0
+		if not link then
+			return
+		end
+		if type(info) ~= "table" then
+			info = nil
+		end
+
+		if link ~= lastDecodeLink then
+			-- not in last item cache
+			linkType = nil
+			local vartype = type(link)
+			if (vartype == "string") then
+				local header,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10 = strsplit(":", link)
+				lType = header:sub(-4) -- get last 4 letters of link type
+				if lType == "item" then
+					ret1 = tonumber(s1) -- itemId
+					if ret1 and ret1 ~= 0 then
+						ret4 = tonumber(s2) or 0 -- enchant
+						ret6 = tonumber(s3) or 0 -- gem 1
+						ret7 = tonumber(s4) or 0 -- gem 2
+						ret8 = tonumber(s5) or 0 -- gem 3
+						ret9 = tonumber(s6) or 0 -- gem 4 (gem bonus)
+						ret2 = tonumber(s7) or 0 -- suffix
+						ret5 = tonumber(s8) or 0 -- seed
+						-- s9 uLevel is not used
+						if s10 then
+							ret10 = tonumber((strsplit("|", s10))) or 0 -- reforge
+						else
+							ret10 = 0 -- reforge
+						end
+						ret3 = lib:GetFactor(ret2, ret5) -- factor
+						linkType = "item"
+					end
+				elseif lType == "epet" then -- last 4 letters of "battlepet"
+					ret1 = tonumber(s1) -- speciesID
+					if ret1 and ret1 ~= 0 then
+						ret2 = tonumber(s2) or 0 -- level (0 signifies unknown level)
+						ret3 = tonumber(s3) or -1 -- quality (-1 signifies unknown quality)
+						ret4 = tonumber(s4) or 0 -- health
+						ret5 = tonumber(s5) or 0 -- power
+						ret6 = tonumber(s6) or 0 -- speed
+						if s7 then
+							ret7 = tonumber((strsplit("|", s7))) or 0 -- battlepetID (journal ID. usually 0 for caged pets)
+						else
+							ret7 = 0
+						end
+						linkType = "battlepet"
+					end
+				elseif lType == "pell" then -- last 4 letters of "spell"
+					if s1 then
+						ret1 = tonumber((strsplit("|", s1))) -- spellId
+						if ret1 and ret1 ~= 0 then
+							linkType = "spell"
+						end
+					end
+				elseif lType == "hant" then -- last 4 letters of "enchant"
+					if s1 then
+						ret1 = tonumber((strsplit("|", s1))) -- spellId
+						if ret1 and ret1 ~= 0 then
+							linkType = "enchant"
+						end
+					end
+				end
+			elseif (vartype == "number") then
+				-- link is the itemId
+				-- linkType,itemId, suffix,factor,enchant,seed, gem1,gem2,gem3,gemBonus, reforge
+				linkType,ret1, ret2,ret3,ret4,ret5, ret6,ret7,ret8,ret9, ret10 =
+					"item",link, 0,0,0,0, 0,0,0,0, 0
+				if info then
+					-- only need to create a proper link if it will be needed for the info table
+					local _, newlink = GetItemInfo(link)
+					link = newlink
+				end
 			end
-		elseif (vartype == "number") then
-			lType,id, suffix,factor,enchant,seed, gem1,gem2,gem3,gemBonus,reforge =
-				"item",link, 0,0,0,0, 0,0,0,0, 0
 		end
-		if info and type(info) == "table" then
-			info.itemLink      = link
-			info.itemType      = lType
-			info.itemId        = id
-			info.itemSuffix    = suffix
-			info.itemFactor    = factor
-			info.itemEnchant   = enchant
-			info.itemSeed      = seed
-			info.itemGem1      = gem1
-			info.itemGem2      = gem2
-			info.itemGem3      = gem3
-			info.itemGemBonus  = gemBonus
-			info.itemReforge   = reforge
+		lastDecodeLink = link
+
+		if linkType == "item" then
+			if info then
+				info.linkType = linkType
+				info.link = link
+				info.itemLink = link -- deprecated; for compatibility
+				info.itemType = linkType -- deprecated; for compatibility
+				info.itemId = ret1
+				info.itemSuffix = ret2
+				info.itemFactor = ret3
+				info.itemEnchant = ret4
+				info.itemSeed = ret5
+				info.itemGem1 = ret6
+				info.itemGem2 = ret7
+				info.itemGem3 = ret8
+				info.itemGemBonus = ret9
+				info.itemReforge = ret10
+			end
+			-- linkType,itemId, suffix,factor,enchant,seed, gem1,gem2,gem3,gemBonus, reforge
+			 return linkType,ret1, ret2,ret3,ret4,ret5, ret6,ret7,ret8,ret9, ret10
+		elseif linkType == "battlepet" then
+			if info then
+				info.linkType = linkType
+				info.link = link
+				info.petSpeciesID = ret1
+				info.petLevel = ret2
+				info.petQuality = ret3
+				info.petHealth = ret4
+				info.petPower = ret5
+				info.petSpeed = ret6
+				info.battlepetID = ret7
+			end
+			-- linkType,speciesID, level,quality, health,power,speed, battlepetID
+			return linkType,ret1, ret2,ret3, ret4,ret5,ret6, ret7
+		elseif linkType == "spell" or linkType == "enchant" then
+			if info then
+				info.linkType = linkType
+				info.link = link
+				info.spellId = ret1
+			end
+			-- linktype,spellId
+			return linkType,ret1
 		end
-		return lType,id,suffix,factor,enchant,seed,gem1,gem2,gem3,gemBonus,reforge
 	end
 
 	function lib:GetLinkQuality(link)
 		if not link or type(link) ~= "string" then return end
-		local color = link:match("(|c%x+)|Hitem:")
+		local color = link:match("|c(%x+)|H")
 		if color then
 			local _, hex
-			for i = 0, 6 do
+			for i = 0, NUM_ITEM_QUALITIES do
 				_,_,_, hex = GetItemQualityColor(i)
 				if color == hex then return i end
 			end
@@ -210,7 +298,12 @@ do -- tooltip class definition
 
 	-- Call the given frame's SetHyperlink call
 	function lib:ShowItemLink(frame, link, count, additional)
-		libTT:SetHyperlinkAndCount(frame, link, count, additional)
+		return libTT:SetHyperlinkAndCount(frame, link, count, additional)
+	end
+
+	-- Load a battlepet link into a BattlePetTooltip frame
+	function lib:ShowPetLink(frame, link, count, additional)
+		return libTT:SetBattlePetAndCount(frame, link, count, additional)
 	end
 
 	-- Activation function. All client addons should call this when they get ADDON_LOADED
@@ -218,6 +311,8 @@ do -- tooltip class definition
 		if activated then return end
 		libTT:RegisterTooltip(GameTooltip)
 		libTT:RegisterTooltip(ItemRefTooltip)
+		libTT:RegisterTooltip(BattlePetTooltip)
+		libTT:RegisterTooltip(FloatingBattlePetTooltip)
 		activated = true
 	end
 
@@ -374,4 +469,4 @@ do -- tooltip class definition
 
 end -- tooltip class definition
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/TipHelper/nTipHelper.lua $","$Rev: 315 $","5.12.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/TipHelper/nTipHelper.lua $","$Rev: 343 $","5.12.DEV.", 'auctioneer', 'libs')

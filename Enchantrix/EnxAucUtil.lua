@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: EnxAucUtil.lua 5283 2012-03-26 20:54:26Z Nechckn $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: EnxAucUtil.lua 5278 2012-03-05 13:09:29Z brykrys $
 	URL: http://enchantrix.org/
 
 	This is an addon for World of Warcraft that add a list of what an item
@@ -30,7 +30,7 @@
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix/EnxAucUtil.lua $","$Rev: 5283 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Enchantrix/EnxAucUtil.lua $","$Rev: 5278 $")
 
 -- Provide fixed price data by registering ourselves as a bonafide legitimate Auctioneer module.
 if not AucAdvanced then return end

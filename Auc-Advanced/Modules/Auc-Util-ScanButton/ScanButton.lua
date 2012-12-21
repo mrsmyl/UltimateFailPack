@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Button module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: ScanButton.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: ScanButton.lua 5320 2012-08-08 12:07:37Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a textual scan progress
@@ -546,4 +546,4 @@ function private.AuctionFrameFilters_UpdateClasses()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-ScanButton/ScanButton.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-ScanButton/ScanButton.lua $", "$Rev: 5320 $")

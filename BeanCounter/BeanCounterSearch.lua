@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: BeanCounterSearch.lua 5204 2011-07-16 22:07:44Z kandoko $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: BeanCounterSearch.lua 5381 2012-11-27 19:42:13Z mentalpower $
 
 	BeanCounterSearch - Search routines for BeanCounter data
 	URL: http://auctioneeraddon.com/
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/BeanCounterSearch.lua $","$Rev: 5204 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.15/BeanCounter/BeanCounterSearch.lua $","$Rev: 5381 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local lib = BeanCounter
 local private, print, get, set, _BC = lib.getLocals()
@@ -152,7 +152,11 @@ function private.searchByItemID(id, settings, queryReturn, count, itemTexture, c
 	
 	--store profit for this item, need to do this before we reduce number of results for display
 	local player = private.frame.SelectBoxSetting[2]
-	profit, low, high = lib.API.getAHProfit(player, data)
+	if get("util.beancounter.ButtonuseDateCheck") and (settings.dateFilterLow or settings.dateFilterHigh) then
+		profit, low, high = lib.API.getAHProfit(player, data, settings.dateFilterLow, settings.dateFilterHigh)
+	else
+		profit, low, high = lib.API.getAHProfit(player, data)
+	end
 	
 	--filter by dates
 	if settings.dateFilterLow or settings.dateFilterHigh then

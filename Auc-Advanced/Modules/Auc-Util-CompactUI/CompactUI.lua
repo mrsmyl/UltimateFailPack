@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer - Price Level Utility module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CompactUI.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CompactUI.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a price level indicator
@@ -300,12 +300,10 @@ function private.HookAH()
 				dir = true
 			end
 			if (col ~= "") then
-				SortAuctionSetSort("list", col, dir)
 				local pagesize=GetNumAuctionItems("list")
-				if pagesize <= 50 then
+				if pagesize <= 50 then -- don't try to sort a getall
+					SortAuctionSetSort("list", col, dir)
 					SortAuctionApplySort("list")
-				elseif pagesize > 50 then
-					pagesize = 0
 				end
 			end
 		end
@@ -481,6 +479,7 @@ function private.IconLeave(this)
 	button.Icon:SetWidth(16)
 	button.Icon:SetHeight(16)
 	GameTooltip:Hide()
+	BattlePetTooltip:Hide()
 	ResetCursor()
 end
 
@@ -743,12 +742,7 @@ function private.MyAuctionFrameUpdate()
 	end
 
 	private.RetrievePage()
-	local pagesize = GetNumAuctionItems("list")
-	if pagesize < 50 then
-		pagesize = 50
-	elseif pagesize > 50 then
-		pagesize = 0
-	end
+	local pagesize = NUM_AUCTION_ITEMS_PER_PAGE
 	for i=1, NUM_BROWSE_TO_DISPLAY do
 		index = offset + i + (pagesize * AuctionFrameBrowse.page)
 		button = private.buttons[i]
@@ -793,11 +787,7 @@ function private.MyAuctionFrameUpdate()
 		BrowseSearchCountText:Hide()
 	end
 
-	if pagesize > 0 then -- temp hotfix {COMP-30}
-		private.PageNum:SetText(("%d/%d"):format(AuctionFrameBrowse.page+1, ceil(totalAuctions/pagesize)))
-	else
-		private.PageNum:SetText("1")
-	end
+	private.PageNum:SetText(("%d/%d"):format(AuctionFrameBrowse.page+1, ceil(totalAuctions/pagesize)))
 	FauxScrollFrame_Update(BrowseScrollFrame, numBatchAuctions, NUM_BROWSE_TO_DISPLAY, AUCTIONS_BUTTON_HEIGHT)
 	BrowseScrollFrame:Show()
 	AucAdvanced.API.ListUpdate()
@@ -869,4 +859,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5381 $")

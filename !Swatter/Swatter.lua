@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: Swatter.lua 328 2012-08-16 15:33:18Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: Swatter.lua 338 2012-09-19 17:27:22Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -19,6 +19,8 @@
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ]]
+
+local DEBUG_LEVEL = 4
 
 -- Check to see if another debugging aid has been loaded.
 for addon, name in pairs({
@@ -41,7 +43,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="5.14.5335"
+Swatter.Version="5.15.5383"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "5.1.DEV"
 end
@@ -74,7 +76,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 328 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 338 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -162,12 +164,9 @@ local function OnError(msg, frame, stack, etype, ...)
 		frame = Swatter.nilFrame
 	end
 	if type(stack) ~= "string" or stack == "" then
-		stack = debugstack(3, 20, 20)
+		stack = debugstack(DEBUG_LEVEL, 20, 20)
 	end
-	local locals = debuglocals(4)
-	if locals == "" then
-		locals = nil
-	end
+	local locals = debuglocals(DEBUG_LEVEL)
 
 	local context
 	if (not frame.Swatter) then frame.Swatter = {} end
@@ -489,7 +488,6 @@ function Swatter.ErrorDisplay(id)
 	local errPos = id - Swatter.loadCount
 	if errPos <= 0 then errPos = errPos - 1 end
 
-	--Swatter.Error.curError = "|cffff5533Date:|r "..timestamp.."\n|cffff5533ID:|r "..errPos.."\n|cffff5533Error occured in:|r "..context.."\n|cffff5533Count:|r "..count.."\n|cffff5533Message:|r "..message.."\n|cffff5533Debug:|r\n"..trace.."\n|cffff5533Locals:|r\n"..locals.."\n|cffff5533AddOns:|r\n"..addlist.."\n"
 	Swatter.Error.curError = ERROR_FORMAT:format(timestamp, errPos, context, count, message, trace, locals, addlist)
 	Swatter.Error.selected = false
 	Swatter.ErrorUpdate()

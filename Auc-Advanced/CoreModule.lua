@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreModule.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreModule.lua 5313 2012-07-27 13:29:49Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -154,4 +154,4 @@ function lib.CoreModuleOnLoad(addon)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreModule.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreModule.lua $", "$Rev: 5313 $")

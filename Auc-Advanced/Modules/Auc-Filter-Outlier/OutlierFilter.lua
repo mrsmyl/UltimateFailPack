@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Outlier Filter
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: OutlierFilter.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: OutlierFilter.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -156,7 +156,7 @@ function private.SetupConfigGui(gui)
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_EnableOutlierFilter') )--Ticking this box will enable the outlier filter to perform filtering of your auction scans
 
 	gui:AddControl(id, "Subhead",    0,    _TRANS('OUTL_Interface_PriceMethod') )--Price valuation method:
-	gui:AddControl(id, "Selectbox",  0, 1, parent.selectorPriceModels, "filter.outlier.model", _TRANS('OUTL_Interface_PricingModel') )--Pricing model to use for the valuation
+	gui:AddControl(id, "Selectbox",  0, 1, parent.selectorPriceModels, "filter.outlier.model" )--Pricing model to use for the valuation
 	gui:AddTip(id, _TRANS('OUTL_HelpTooltip_PricingModel') )--The pricing model that will be used to determine the base pricing level
 
 	gui:AddControl(id, "WideSlider", 0, 1, "filter.outlier.minseen", 1, 50, 1, _TRANS('OUTL_Interface_MinimumSeen') )--Minimum seen: %d
@@ -208,4 +208,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Filter-Outlier/OutlierFilter.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Filter-Outlier/OutlierFilter.lua $", "$Rev: 5381 $")

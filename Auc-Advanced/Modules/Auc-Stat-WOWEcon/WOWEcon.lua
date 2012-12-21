@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - WoWEcon price statistics module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: WOWEcon.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: WOWEcon.lua 5323 2012-08-16 15:31:03Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer statistic module that returns a price based on
@@ -226,4 +226,4 @@ function lib.ProcessTooltip(tooltip, name, hyperlink, quality, quantity, cost, .
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Stat-WOWEcon/WOWEcon.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Stat-WOWEcon/WOWEcon.lua $", "$Rev: 5323 $")

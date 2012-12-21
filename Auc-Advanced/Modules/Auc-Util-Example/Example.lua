@@ -18,8 +18,8 @@ end
 
 --[[
 	Auctioneer - Price Level Utility module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: Example.lua 5207 2011-07-18 20:16:04Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: Example.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that does something nifty.
@@ -155,8 +155,8 @@ function private.SetupConfigGui(gui)
 		{7, "Seven"},
 		{8, "Eight"},
 		{9, "Nine"}
-	}, "util.example.hardselectbox", "Statically, by hardcoding the values...")
-	gui:AddControl(id, "Selectbox",  0, 1, private.GetNumbers, "util.example.dynamicselectbox", "Or dynamically by specifying a function instead of a table...")
+	}, "util.example.hardselectbox")
+	gui:AddControl(id, "Selectbox",  0, 1, private.GetNumbers, "util.example.dynamicselectbox")
 
 	gui:AddControl(id, "Subhead",    0,    "There are also a few ways to add text:\n  The Headers and SubHeaders that you've already seen...")
 	gui:AddControl(id, "Note",       0, 1, nil, nil, "Notes...")
@@ -187,4 +187,4 @@ end
 function private.Baz()
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/Modules/Auc-Util-Example/Example.lua $", "$Rev: 5207 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/Modules/Auc-Util-Example/Example.lua $", "$Rev: 5381 $")

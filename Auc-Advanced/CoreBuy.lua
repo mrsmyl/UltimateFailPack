@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreBuy.lua 5236 2011-11-30 11:22:08Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreBuy.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -66,6 +66,7 @@ local ErrorText = {
 	InvalidMinbid = "Minimum bid is invalid",
 	InvalidBuyout = "Buyout is invalid",
 	NoItem = "Unable to retrieve info for this item",
+	NoPet = "Unable to retrieve info for this pet",
 }
 -- lib.GetErrorText shall be expected to always return a string
 function lib.GetErrorText(code)
@@ -212,16 +213,39 @@ function lib.QueueBuy(link, seller, count, minbid, buyout, price, reason, nosear
 		request.nosearch = true
 	else
 		-- calculate and store values needed for searching
-		local name, _, quality, _, minlevel, classname, subclassname = GetItemInfo(link)
-		if not name then return QueueBuyErrorHelper(link, "NoItem")
+		if strmatch(link, "|Hitem:") then
+			local name, _, quality, _, minlevel, classname, subclassname = GetItemInfo(link)
+			if not name then
+				return QueueBuyErrorHelper(link, "NoItem")
+			end
+			request.itemname = name:lower()
+			request.uselevel = minlevel or 0
+			request.classindex = AucAdvanced.Const.CLASSESREV[classname]
+			if request.classindex then
+				request.subclassindex = AucAdvanced.Const.SUBCLASSESREV[classname][subclassname]
+			end
+			request.quality = quality or 0
+		else
+			local lType, speciesID, _, petQuality = strsplit(":", link)
+			lType = lType:sub(-9)
+			if lType == "battlepet" and speciesID then
+				-- it's a pet
+				local _,_,_,_,iMin, iType = GetItemInfo(82800) -- Pet Cage
+				-- all caged pets should have the default pet name (custom names are removed when caging)
+				local petName, _, petType = C_PetJournal.GetPetInfoBySpeciesID(tonumber(speciesID))
+				if not petType then
+					-- indicates it's not a recognized Pet species
+					return QueueBuyErrorHelper(link, "NoPet")
+				end
+				request.itemname = petName:lower()
+				request.uselevel = iMin or 0
+				request.classindex = AucAdvanced.Const.CLASSESREV[iType]
+				request.subclassindex = petType
+				request.quality = tonumber(petQuality) or 0
+			else
+				return QueueBuyErrorHelper(link, "NoItem")
+			end
 		end
-		request.itemname = name:lower()
-		request.uselevel = minlevel or 0
-		request.classindex = AucAdvanced.Const.CLASSESREV[classname]
-		if request.classindex then
-			request.subclassindex = AucAdvanced.Const.SUBCLASSESREV[classname][subclassname]
-		end
-		request.quality = quality or 0
 	end
 
 	private.QueueInsert(request)
@@ -599,7 +623,7 @@ coremodule.Processors = {
 	scanfinish = function(event, scansize, querysig, queryinfo, complete, query, scanstats)
 		private.FinishedSearch(complete, querysig, query)
 	end,
-}	
+}
 
 --[[ Prompt Frame ]]--
 
@@ -630,13 +654,24 @@ private.Prompt.Frame:SetBackdropColor(0,0,0,0.8)
 
 -- Helper functions
 local function ShowTooltip()
-	GameTooltip:SetOwner(AuctionFrameCloseButton, "ANCHOR_NONE")
-	GameTooltip:SetHyperlink(private.CurRequest.link)
-	GameTooltip:ClearAllPoints()
-	GameTooltip:SetPoint("TOPRIGHT", private.Prompt.Item, "TOPLEFT", -10, -20)
+	local link = private.CurRequest.link
+	if not link then return end
+	if strmatch(link, "|Hitem:") then
+		GameTooltip:SetOwner(AuctionFrameCloseButton, "ANCHOR_NONE")
+		GameTooltip:SetHyperlink(link)
+		GameTooltip:ClearAllPoints()
+		GameTooltip:SetPoint("TOPRIGHT", private.Prompt.Item, "TOPLEFT", -10, -20)
+	elseif strmatch(link, "|Hbattlepet:") then
+		local _, speciesID, level, breedQuality, maxHealth, power, speed, battlePetID = strsplit(":", link)
+		BattlePetToolTip_Show(tonumber(speciesID), tonumber(level), tonumber(breedQuality), tonumber(maxHealth), tonumber(power), tonumber(speed), string.gsub(string.gsub(link, "^(.*)%[", ""), "%](.*)$", ""))
+		-- somewhat hacky - BattlePetToolTip_Show anchors to GameTooltip's anchor point, but we want to specify our own anchor
+		BattlePetTooltip:ClearAllPoints()
+		BattlePetTooltip:SetPoint("TOPRIGHT", private.Prompt.Item, "TOPLEFT", -10, -20)
+	end
 end
 local function HideTooltip()
 	GameTooltip:Hide()
+	BattlePetTooltip:Hide()
 end
 local function ClearReasonFocus()
 	private.Prompt.Reason:ClearFocus()
@@ -708,4 +743,4 @@ private.Prompt.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-Frien
 private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreBuy.lua $", "$Rev: 5236 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreBuy.lua $", "$Rev: 5381 $")

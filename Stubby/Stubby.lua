@@ -1,6 +1,6 @@
 --[[
 	Stubby AddOn for World of Watcraft (tm)
-	Version: 5.14.5335 (KowariOnCrutches)
+	Version: 5.15.5383 (LikeableLyrebird)
 	Revision: $Id: Stubby.lua 275 2010-10-03 14:00:39Z kandoko $
 	URL: http://auctioneeraddon.com/dl/Stubby/
 

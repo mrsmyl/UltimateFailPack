@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreConst.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreConst.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -177,15 +177,6 @@ end
 
 CompileInvTypes(GetAuctionInvTypes(2, 1))
 
---[ Hybrid code for transition from WoW4.3 to WoW5.0 - remove after 5.0 goes live
-local _,_,_,tocVersion = GetBuildInfo()
-if tocVersion < 50001 then
-	lib.MAXSKILLLEVEL = 525
-	lib.MAXUSERLEVEL = 85
-	lib.MAXITEMLEVEL = 416
-end
---]]
-
 AucAdvanced.Const = lib
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreConst.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreConst.lua $", "$Rev: 5381 $")

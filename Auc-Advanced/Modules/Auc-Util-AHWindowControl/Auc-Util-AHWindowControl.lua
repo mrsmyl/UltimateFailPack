@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AH-WindowControl
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: Auc-Util-AHWindowControl.lua 5133 2011-04-29 04:10:49Z Hirsute $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: Auc-Util-AHWindowControl.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds the abilty to drag and reposition the Auction House Frame.
@@ -148,7 +148,7 @@ function private.SetupConfigGui(gui)
 	gui:AddControl(id, "Selectbox", 0, 1, {
 		{1, _TRANS("AHWC_Interface_Never") }, --Never
 		{2, _TRANS("AHWC_Interface_Always") }, --Always
-	}, "util.protectwindow.protectwindow", _TRANS("AHWC_Interface_PreventClosingAuctionHouse") ) --"Prevent other windows from closing the Auction House window."
+	}, "util.protectwindow.protectwindow" ) --"Prevent other windows from closing the Auction House window."
 	gui:AddTip(id, _TRANS("AHWC_HelpToolTip_PreventClosingAuctionHouse") ) --This will prevent other windows from closing the Auction House window when you open them, according to your settings.
 	gui:AddHelp(id, "What is ProtectWindow",
 		_TRANS("AHWC_Help_ProtectWindow"), --What does Protecting the AH Window do?
@@ -329,4 +329,4 @@ function lib.ToggleDebug()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AHWindowControl/Auc-Util-AHWindowControl.lua $", "$Rev: 5133 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-AHWindowControl/Auc-Util-AHWindowControl.lua $", "$Rev: 5381 $")

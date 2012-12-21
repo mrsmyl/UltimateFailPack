@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Advanced
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreAPI.lua 5231 2011-11-18 22:01:36Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreAPI.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -47,7 +47,6 @@ lib.Print = AucAdvanced.Print
 local Const = AucAdvanced.Const
 local GetFaction = AucAdvanced.GetFaction
 local GetSetting = AucAdvanced.Settings.GetSetting
-local DecodeLink = AucAdvanced.DecodeLink
 local SanitizeLink = AucAdvanced.SanitizeLink
 local debugPrint = AucAdvanced.Debug.DebugPrint
 
@@ -891,125 +890,180 @@ function lib.GetMatcherValue(matcher, itemLink, price, serverKey, originalPrice)
 end
 
 
--- Signature conversion functions
+-- Auctioneer Signature (sig) functions
 
--- Creates an AucAdvanced signature from an item link
+-- Creates an AucAdvanced signature from an item or battlepet link
 function lib.GetSigFromLink(link)
 	local ptype = type(link)
 	if ptype == "number" then
-		return ("%d"):format(link)
+		return ("%d"):format(link), "item"
 	elseif ptype ~= "string" then
 		return
 	end
-	local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed = strsplit(":", link)
-	if not id or lType:sub(-4) ~= "item" then
+	local header,s1,s2,s3,s4,s5,s6,s7,s8 = strsplit(":", link)
+	if not s1 then
 		return
 	end
-
-	if suffix and suffix ~= "0" then
-		local factor = "0"
-		if suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
-			local nseed = tonumber(seed)
-			if nseed then
-				factor = ("%d"):format(bitand(nseed, 65535)) -- here format is faster than tostring
+	local lType = header:sub(-4)
+	if lType == "item" then
+		-- itemId = s1, enchant = s2, gems s3,s4,s5,s6 (not used), suffix = s7
+		local sig
+		if s7 and s7 ~= "0" then -- suffix
+			local factor = "0"
+			if s7:byte(1) == 45 then -- look for '-' to see if it is a negative number
+				local nseed = tonumber(s8) -- seed
+				if nseed then
+					factor = ("%d"):format(bitand(nseed, 65535)) -- here format is faster than tostring
+				end
+			end
+			if s2 and s2 ~= "0" then -- enchant
+				-- concat is slightly faster than using strjoin with this many parameters, and far faster than format
+				sig = s1..":"..s7..":"..factor..":"..s2
+			elseif factor ~= "0" then
+				sig = s1..":"..s7..":"..factor
+			else
+				sig = s1..":"..s7
+			end
+		else
+			if s2 and s2 ~= "0" then
+				sig = s1..":0:0:"..s2
+			else
+				sig = s1
 			end
 		end
-		if enchant and enchant ~= "0" then
-			-- concat is slightly faster than using strjoin with this many parameters, and far faster than format
-			return id..":"..suffix..":"..factor..":"..enchant
-		elseif factor ~= "0" then
-			return id..":"..suffix..":"..factor
-		else
-			return id..":"..suffix
-		end
-	else
-		if enchant and enchant ~= "0" then
-			return id..":0:0:"..enchant
-		else
-			return id
+		return sig, "item"
+	elseif lType == "epet" then -- last 4 characters of battlepet
+		-- speciesID = s1, level = s2, breedQuality = s3, maxHealth = s4, power = s5, speed = s6
+		-- if any are missing then the link is broken - check that the last one exists
+		-- all should always be non-zero, so just rebuild with the battlepet sig "P" marker
+		if s7 then -- although s7 is not used, it should exist (contains battlepetID and tail)
+			-- strjoin starts to become efficient with this many parameters
+			return strjoin(":", "P", s1, s2, s3, s4, s5, s6), "battlepet"
 		end
 	end
 end
 
--- Creates an item link from an AucAdvanced signature
+-- Creates an item or battlepet link from an AucAdvanced signature
+-- Due to the lossy nature of sigs, the link created will not be exactly the same as the link originally used to generate the sig
 function lib.GetLinkFromSig(sig)
-	local id, suffix, factor, enchant = strsplit(":", sig)
-	local itemstring = format("item:%s:%s:0:0:0:0:%s:%s:80:0", id, enchant or "0", suffix or "0", factor or "0")
-	local name, link = GetItemInfo(itemstring)
-	if link then
-		return SanitizeLink(link), name -- name is ignored by most calls
+	local s1, s2, s3, s4, s5, s6, s7 = strsplit(":", sig)
+	if s1 == "P" then -- battlepet link
+		-- speciesID = s2, level = s3, breedQuality = s4, maxHealth = s5, power = s6, speed = s7
+		if not s7 then return end -- incomplete link
+		local speciesID = tonumber(s2)
+		if not speciesID then return end
+		local qual = tonumber(s4)
+		local qual_col
+		if qual == -1 then
+			qual_col = NORMAL_FONT_COLOR_CODE
+		else
+			qual_col = ITEM_QUALITY_COLORS[tonumber(s4)] -- "|cffxxxxxx"
+		end
+		if not qual_col then return end
+		local name = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+		if not name then return end
+		local petlink = format("%s|Hbattlepet:%s:%s:%s:%s:%s:%s:0|h[%s]|h|r", qual_col.hex, s2, s3, s4, s5, s6, s7, name)
+		return petlink, name, "battlepet"
+	else
+		-- id = s1, suffix = s2, factor = s3, enchant = s4
+		local itemstring = format("item:%s:%s:0:0:0:0:%s:%s:80:0", s1, s4 or "0", s2 or "0", s3 or "0")
+		local name, link = GetItemInfo(itemstring)
+		if link then
+			return SanitizeLink(link), name, "item" -- name is ignored by most calls
+		end
 	end
 end
 
 -- Decodes an AucAdvanced signature into numerical values
 -- Can be compared to the return values from DecodeLink
+-- The first return value is the linkType
+-- Subsequent return values have different meanings depending on the linkType
 function lib.DecodeSig(sig)
 	if type(sig) ~= "string" then return end
-	local id, suffix, factor, enchant = strsplit(":", sig)
-	id = tonumber(id)
-	if not id or id == 0 then return end
-	suffix = tonumber(suffix) or 0
-	factor = tonumber(factor) or 0
-	enchant = tonumber(enchant) or 0
-	return id, suffix, factor, enchant
+
+	local s1,s2,s3,s4,s5,s6,s7 = strsplit(":", sig)
+	if s1 == "P" then
+		-- battlepet sig
+		s2 = tonumber(s2) -- speciesID
+		if not s2 or s2 == 0 then return end
+		s3 = tonumber(s3) or 0 -- level : 0 signifies unknown level
+		s4 = tonumber(s4) or -1 -- quality : -1 signifies unknown quality
+		s5 = tonumber(s5) or 0 -- health
+		s6 = tonumber(s6) or 0 -- power
+		s7 = tonumber(s7) or 0 -- speed
+		return "battlepet", s2,s3,s4,s5,s6,s7
+	else
+		-- should be an item sig
+		s1 = tonumber(s1) -- itemId
+		if not s1 or s1 == 0 then return end
+		s2 = tonumber(s2) or 0 -- suffix
+		s3 = tonumber(s3) or 0 -- factor
+		s4 = tonumber(s4) or 0 -- enchant
+		return "item", s1,s2,s3,s4
+	end
 end
 
--- A Short Sig is the same format as a normal Sig, but contains at most 3 fields - ID:Suffix:Factor
--- the functions GetLinkFromSig and DecodeSig will still work on a SSig
--- Used by Stat modules for storage/packing of saved data
--- for speed we assume that link has already been verified as a valid item link
-function lib.GetShortSigFromLink(link)
-	local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed = strsplit(":", link)
-	if suffix and suffix ~= "0" then
-		if suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
-			local nseed = tonumber(seed)
-			if nseed then
-				local nfactor = bitand(nseed, 65535)
-				if nfactor ~= 0 then
-					-- the following construction appears to be faster
-					-- than just using a single, more complicated, format call
-					return id..":"..suffix..":"..format("%d", nfactor)
+-- Auctioneer StoreKey functions
+
+-- Store keys are for use in saved variable storage structures
+-- returns id, property, linktype (all strings)
+-- note that id will be a string containing a plain number for all link types
+-- the property string contains different internal markers for different link types
+-- most Stat modules pack all properties for the same id into a single string
+-- if petBand is a number it will be used to compress the petLevel such that pets of a similar level get the same key
+function lib.GetStoreKeyFromLink(link, petBand)
+	local header,s1,s2,s3,s4,s5,s6,s7,s8 = strsplit(":", link)
+	local lType = header:sub(-4)
+	if lType == "item" then
+		if s7 and s7 ~= "0" then -- s7 = suffix
+			if s7:byte(1) == 45 then -- look for '-' to see if it is a negative number
+				local factor = tonumber(s8) -- s8 = seed
+				if factor then
+					factor = bitand(factor, 65535)
+					if factor ~= 0 then
+						-- the following construction appears to be faster than just using a single, more complicated, format call
+						return s1, s7.."x"..format("%d", factor), "item" -- "itemId", "suffix..x..factor", linktype
+					end
 				end
 			end
+			return s1, s7, "item" -- "itemId", "suffix", linktype
 		end
-		return id..":"..suffix
-	end
-	return id
-end
-
-function lib.SigToShortSig(sig)
-	-- strip off enchant field, then strip off any trailing "0"
-	local id, suffix, factor, enchant = strsplit(sig)
-	if not enchant then -- already in ssig format
-		return sig
-	end
-	if factor and factor ~= "0" then
-		return id..":"..suffix..":"..factor
-	elseif suffix and suffix ~= "0" then
-		return id..":"..suffix
-	end
-	return id
-end
-
--- Returns id (number), property (string)
--- Used by Stat modules for storage/packing of saved data
--- for speed we assume that link has already been verified as a valid item link
-function lib.GetPropertyFromLink(link)
-	local lType,id,enchant,gem1,gem2,gem3,gemBonus,suffix,seed = strsplit(":", link)
-	id = tonumber(id)
-	if suffix and suffix ~= "0" then
-		if suffix:byte(1) == 45 then -- look for '-' to see if it is a negative number
-			local nseed = tonumber(seed)
-			if nseed then
-				local nfactor = bitand(nseed, 65535)
-				if nfactor ~= 0 then
-					return id, suffix.."x"..format("%d", nfactor)
-				end
+		return s1, "0", "item" -- "itemId", "suffix", linktype
+	elseif lType == "epet" then -- last 4 characters of "battlepet"
+		-- check that caller wants pet keys
+		-- also check valid quality (-1 represents 'unknown' and so is not valid for store key)
+		if petBand and s3 and s3 ~= "-1" then
+			local level = tonumber(s2) -- level
+			if not level or level < 1 then return end
+			if petBand > 1 then
+				level = ceil(level / petBand)
 			end
+			return s1, format("%d", level).."p"..s3, "battlepet" -- "speciesID", "compressedLevel..p..quality", linktype
 		end
-		return id, suffix
 	end
-	return id, "0"
+end
+
+-- Generate Store Key as above, but from a sig
+function lib.GetStoreKeyFromSig(sig, petBand)
+	local s1,s2,s3,s4 = strsplit(":", sig)
+	if s1 == "P" then -- battlepet sig
+		if petBand and s4 and s4 ~= "-1" then
+			local level = tonumber(s3) -- level
+			if not level or level < 1 then return end
+			if petBand > 1 then
+				level = ceil(level / petBand)
+			end
+			return s2, format("%d", level).."p"..s4, "battlepet" -- "speciesID", "compressedLevel..p..quality", linktype
+		end
+	else -- item sig
+		if s3 and s3 ~= "0" then -- factor
+			return s1, s2.."x"..s3, "item" -- "itemId", "suffix..x..factor", linktype
+		elseif s2 then
+			return s1, s2, "item" -- "itemId", "suffix", linktype
+		else
+			return s1, "0", "item" -- "itemId", "suffix", linktype
+		end
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -1129,4 +1183,4 @@ do
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreAPI.lua $", "$Rev: 5231 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreAPI.lua $", "$Rev: 5381 $")

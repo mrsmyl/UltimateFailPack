@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: SearchRealTime.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: SearchRealTime.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This Auctioneer module allows the user to search the current Browse tab
@@ -32,6 +32,8 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 --]]
+
+if not AucSearchUI then return end
 
 local AddOnName = ...
 local embedpath
@@ -99,7 +101,7 @@ function private.MakeGuiConfig(gui)
 		{"AuctionWindowClose", "AuctionHouse Close"},
 		{"RaidWarning", "Raid Warning"},
 		{"DoorBell", "DoorBell (BottomScan-style)"},
-	}, "realtime.alert.sound", "Pick the sound to play")
+	}, "realtime.alert.sound")
 	gui:AddTip(id, "The selected sound will play whenever a bargain is found")
 	gui:AddControl(id, "Subhead",       0,    "Power-user setting: One-Click Buying")
 	gui:AddControl(id, "Checkbox",      0, 1, "realtime.skipresults", "Skip results and go straight to purchase confirmation !Power-user setting!")
@@ -311,73 +313,22 @@ function lib.ScanPage()
 	end
 	local skipresults = get("realtime.skipresults")
 	for i = 1, batch do
-		local link = GetAuctionItemLink("list", i)
-		if link then
-			local linkType, id, suffix, factor, enchant, seed = AucAdvanced.DecodeLink(link)
-			if linkType == "item" then -- temp fix: ignore battlepets
-				local name, _, count, quality, canUse, level, levelColHeader, minBid, minInc, buyout, curBid, isHigh, owner = GetAuctionItemInfo("list", i)
-				local _, _, quality, iLevel, _, iType, iSubType, stack, iEquip = GetItemInfo(link)
-				iEquip = Const.EquipEncode[iEquip]
-				local timeleft = GetAuctionItemTimeLeft("list", i)
-				owner = owner or ""
-				count = count or 1
-
-				local price
-				if curBid > 0 then
-					price = curBid + minInc
-					if buyout > 0 and price > buyout then
-						price = buyout
-					end
-				elseif minBid > 0 then
-					price = minBid
-				else
-					price = 1
-				end
-				if not level or levelColHeader ~= "REQ_LEVEL_ABBR" then
-					level = 1
-				end
-
-				-- put the data into a table laid out the same way as the AAdv Scandata, as that's what the searchers need
-				private.ItemTable[Const.LINK]    = link
-				private.ItemTable[Const.ILEVEL]  = iLevel
-				private.ItemTable[Const.ITYPE]   = iType
-				private.ItemTable[Const.ISUB]    = iSubType
-				private.ItemTable[Const.IEQUIP]  = iEquip
-				private.ItemTable[Const.PRICE]   = price
-				private.ItemTable[Const.TLEFT]   = timeleft
-				private.ItemTable[Const.NAME]    = name
-				private.ItemTable[Const.COUNT]   = count
-				private.ItemTable[Const.QUALITY] = quality
-				private.ItemTable[Const.CANUSE]  = canUse
-				private.ItemTable[Const.ULEVEL]  = level
-				private.ItemTable[Const.MINBID]  = minBid
-				private.ItemTable[Const.MININC]  = minInc
-				private.ItemTable[Const.BUYOUT]  = buyout
-				private.ItemTable[Const.CURBID]  = curBid
-				private.ItemTable[Const.AMHIGH]  = isHigh
-				private.ItemTable[Const.SELLER]  = owner
-				private.ItemTable[Const.ITEMID]  = id
-				private.ItemTable[Const.SUFFIX]  = suffix
-				private.ItemTable[Const.FACTOR]  = factor
-				private.ItemTable[Const.ENCHANT]  = enchant
-				private.ItemTable[Const.SEED]  = seed
-
-				for i, searcher in pairs(private.searchertable) do
-					if AucSearchUI.SearchItem(searcher.name, private.ItemTable, false, skipresults) then
-						private.alert(private.ItemTable[Const.LINK], private.ItemTable["cost"], private.ItemTable["reason"])
-						if skipresults then
-							AucAdvanced.Buy.QueueBuy(private.ItemTable[Const.LINK],
-								private.ItemTable[Const.SELLER],
-								private.ItemTable[Const.COUNT],
-								private.ItemTable[Const.MINBID],
-								private.ItemTable[Const.BUYOUT],
-								private.ItemTable["cost"],
-								AucSearchUI.Private.cropreason(private.ItemTable["reason"]),
-								true -- do not trigger a search if CoreBuy is unable to find this auction
-								)
-						else
-							AucSearchUI.Private.repaintSheet()
-						end
+		if AucAdvanced.Scan.GetAuctionItem("list", i, private.ItemTable) then
+			for i, searcher in pairs(private.searchertable) do
+				if AucSearchUI.SearchItem(searcher.name, private.ItemTable, false, skipresults) then
+					private.alert(private.ItemTable[Const.LINK], private.ItemTable["cost"], private.ItemTable["reason"])
+					if skipresults then
+						AucAdvanced.Buy.QueueBuy(private.ItemTable[Const.LINK],
+							private.ItemTable[Const.SELLER],
+							private.ItemTable[Const.COUNT],
+							private.ItemTable[Const.MINBID],
+							private.ItemTable[Const.BUYOUT],
+							private.ItemTable["cost"],
+							AucSearchUI.Private.cropreason(private.ItemTable["reason"]),
+							true -- do not trigger a search if CoreBuy is unable to find this auction
+							)
+					else
+						AucSearchUI.Private.repaintSheet()
 					end
 				end
 			end
@@ -583,4 +534,4 @@ function private.HookAH()
 	BrowseRTSButton:SetPoint("TOPRIGHT", AuctionFrameBrowse, "TOPLEFT", 310, -15)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5381 $")

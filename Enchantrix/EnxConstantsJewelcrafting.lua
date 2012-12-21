@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
+	Version: 5.15.5383 (LikeableLyrebird)
 	Revision: $Id: EnxConstants.lua 4632 2010-01-24 02:33:54Z ccox $
 	URL: http://enchantrix.org/
 
@@ -354,8 +354,8 @@ const.ProspectableItems = {
 			},
 
 	[GHOST_IRON_ORE] = {
--- ccox - tested in beta August 25, 2012
-			[SPARKLING_SHARD] = 1.1,
+-- ccox - tested in beta Sept 23, 2012
+			[SPARKLING_SHARD] = 1.14,
 			
 			[TIGEROPAL] = 0.25,
 			[LAPISLAZULI] = 0.25,
@@ -373,8 +373,8 @@ const.ProspectableItems = {
 			},
 	
 	[KYPARITE_ORE] = {
--- ccox - tested in beta August 25, 2012
-			[SPARKLING_SHARD] = 1.4,
+-- ccox - tested in beta Sept 23, 2012
+			[SPARKLING_SHARD] = 1.46,
 			
 			[TIGEROPAL] = 0.25,
 			[LAPISLAZULI] = 0.25,
@@ -392,8 +392,9 @@ const.ProspectableItems = {
 			},
 	
 	[WHITE_TRILLIUM_ORE] = {
+-- ccox - tested in beta Sept 23, 2012
 -- ccox - wild guess, needs update	
-			[SPARKLING_SHARD] = 1.7,
+			[SPARKLING_SHARD] = 1.65,
 			
 			[TIGEROPAL] = 0.18,
 			[LAPISLAZULI] = 0.18,
@@ -402,17 +403,18 @@ const.ProspectableItems = {
 			[PANDARIANGARNET] = 0.18,
 			[ALEXANDRITE] = 0.18,
 			
-			[PRIMORDIALRUBY] = 0.15,
-			[RIVERSHEART] = 0.15,
-			[WILDJADE] = 0.15,
-			[VERMILIONONYX] = 0.15,
-			[IMPERIALAMETHYST] = 0.15,
-			[SUNSRADIANCE] = 0.15,
+			[PRIMORDIALRUBY] = 0.10,
+			[RIVERSHEART] = 0.10,
+			[WILDJADE] = 0.10,
+			[VERMILIONONYX] = 0.10,
+			[IMPERIALAMETHYST] = 0.10,
+			[SUNSRADIANCE] = 0.10,
 			},
 
 	[BLACK_TRILLIUM_ORE] = {
+-- ccox - tested in beta Sept 23, 2012
 -- ccox - wild guess, needs update
-			[SPARKLING_SHARD] = 1.7,
+			[SPARKLING_SHARD] = 1.65,
 			
 			[TIGEROPAL] = 0.18,
 			[LAPISLAZULI] = 0.18,
@@ -421,12 +423,12 @@ const.ProspectableItems = {
 			[PANDARIANGARNET] = 0.18,
 			[ALEXANDRITE] = 0.18,
 			
-			[PRIMORDIALRUBY] = 0.15,
-			[RIVERSHEART] = 0.15,
-			[WILDJADE] = 0.15,
-			[VERMILIONONYX] = 0.15,
-			[IMPERIALAMETHYST] = 0.15,
-			[SUNSRADIANCE] = 0.15,
+			[PRIMORDIALRUBY] = 0.10,
+			[RIVERSHEART] = 0.10,
+			[WILDJADE] = 0.10,
+			[VERMILIONONYX] = 0.10,
+			[IMPERIALAMETHYST] = 0.10,
+			[SUNSRADIANCE] = 0.10,
 			},
 
 }

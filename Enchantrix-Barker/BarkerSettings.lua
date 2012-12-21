@@ -1,7 +1,7 @@
 --[[
 	Enchantrix:Barker Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: BarkerSettings.lua 4935 2010-10-14 04:06:42Z ccox $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: BarkerSettings.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://enchantrix.org/
 
 	Settings GUI
@@ -62,7 +62,7 @@ Usage:
 	Barker.Settings.SetSetting('counts', true );
 
 ]]
-EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Enchantrix-Barker/BarkerSettings.lua $", "$Rev: 4935 $")
+EnchantrixBarker_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Enchantrix-Barker/BarkerSettings.lua $", "$Rev: 5381 $")
 
 local lib = {}
 Barker.Settings = lib
@@ -417,7 +417,7 @@ function lib.MakeGuiConfig()
 	id = gui.AddTab("Profiles")
 	gui.AddControl(id, "Header",     0,    "Setup, configure and edit profiles")
 	gui.AddControl(id, "Subhead",    0,    "Activate a current profile")
-	gui.AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile", "Switch to given profile")
+	gui.AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile")
 	gui.AddControl(id, "Button",     0, 1, "profile.delete", "Delete")
 	gui.AddControl(id, "Subhead",    0,    "Create or replace a profile")
 	gui.AddControl(id, "Text",       0, 1, "profile.name", "New profile name:")

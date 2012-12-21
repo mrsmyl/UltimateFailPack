@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreScan.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreScan.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -146,10 +146,14 @@ if (not _G.AucAdvanced.Scan) then _G.AucAdvanced.Scan = {} end
 
 local SCANDATA_VERSION = "A" -- must match Auc-ScanData INTERFACE_VERSION
 
+local TOLERANCE_LOWERLIMIT = 250
+local TOLERANCE_TAPERLIMIT = 10000
+
 local lib = _G.AucAdvanced.Scan
 local private = {}
 
 local Const = _G.AucAdvanced.Const
+local Resources = AucAdvanced.Resources
 local _print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill, _TRANS = _G.AucAdvanced.GetModuleLocals()
 local GetFaction = _G.AucAdvanced.GetFaction
 local EquipCodeToInvIndex = _G.AucAdvanced.Const.EquipCodeToInvIndex
@@ -721,16 +725,19 @@ private.prevQuery = {}
 -- private.queryResults is nil initially
 -- private.prevQueryServerKey is nil initially
 
-function private.clearImageCaches(scanstats)
-	local serverKey = scanstats and scanstats.serverKey
-	if serverKey then
-		local cache = private.scandataIndex[serverKey]
-		if cache then
-			wipe(cache)
-		end
-	else -- no serverKey provided: affects multiple serverKeys (or unknown source), clear all caches
-		for _, cache in pairs(private.scandataIndex) do
-			wipe(cache)
+function private.clearImageCaches(event, scanstats)
+	if event == "factionselect" then
+		-- if cache for home serverKey exists at this point it is a weak table - just dump the cache and let it rebuild
+		private.scandataIndex[Resources.ServerKeyHome] = nil
+	else
+		local serverKey = scanstats and scanstats.serverKey
+		if serverKey then
+			local cache = private.scandataIndex[serverKey]
+			if cache then
+				wipe(cache)
+			end
+		else -- no serverKey provided: affects multiple serverKeys (or unknown source), dump all caches
+			wipe(private.scandataIndex)
 		end
 	end
 
@@ -738,16 +745,16 @@ function private.clearImageCaches(scanstats)
 	private.queryResults = nil -- not required but frees some memory
 end
 
--- ensure home and neutral factions for current realm are always present
--- unlike the tables for other serverKeys, these tables are *not* weak
-private.scandataIndex[GetRealmName().."-"..UnitFactionGroup("player")] = {}
-private.scandataIndex[GetRealmName().."-Neutral"] = {}
 local weaktablemeta = {__mode="kv"}
 function private.SubImageCache(itemId, serverKey)
 	local indexResults = private.scandataIndex[serverKey]
 	if not indexResults then
 		if not _G.AucAdvanced.SplitServerKey(serverKey) then return end -- valid serverKey format?
-		indexResults = setmetatable({}, weaktablemeta) -- use weak tables for other serverKeys
+		indexResults = {}
+		if serverKey ~= Resources.ServerKeyHome and serverKey ~= Resources.ServerKeyNeutral then
+			-- use weak tables for other serverKeys
+			indexResults = setmetatable(indexResults, weaktablemeta)
+		end
 		private.scandataIndex[serverKey] = indexResults
 	end
 
@@ -802,9 +809,34 @@ function lib.QueryImage(query, serverKey, reserved, ...)
 	private.prevQueryServerKey = serverKey
 
 	-- get image to search - may be the whole snapshot or a subset
+	local itemId = tonumber(query.itemId)
+	local stringSpeciesID
+	if query.speciesID then
+		-- looking for a battlepet
+		-- we will need to split the link for each data item, resulting in a _string contaning the speciesID_
+		-- make sure the test value is also a string
+		stringSpeciesID = tostring(query.speciesID)
+		-- also, all battlepets have the same itemId
+		if not itemId then
+			itemId = 82800
+		elseif itemId ~= 82800 then
+			-- wrong itemId! return empty results table
+			return queryResults
+		end
+	end
+	local saneQueryLink
+	if query.link then
+		saneQueryLink = SanitizeLink(query.link)
+		if not itemId then
+			-- it should be more efficient to extract itemId from the link
+			-- so we can use SubImageCache
+			local header, id = strsplit(":", saneQueryLink)
+			itemId = tonumber(id)
+		end
+	end
 	local image
-	if query.itemId then
-		image = private.SubImageCache(query.itemId, serverKey)
+	if itemId then
+		image = private.SubImageCache(itemId, serverKey)
 	else
 		local scandata = private.GetScanData(serverKey)
 		if scandata then
@@ -812,11 +844,6 @@ function lib.QueryImage(query, serverKey, reserved, ...)
 		end
 	end
 	if not image then return queryResults end -- return empty results table
-
-	local saneQueryLink
-	if query.link then
-		saneQueryLink = SanitizeLink(query.link)
-	end
 
 	local lowerName
 	if query.name then
@@ -847,6 +874,12 @@ function lib.QueryImage(query, serverKey, reserved, ...)
 			if lowerName then
 				local name = data[Const.NAME]
 				if not (name and name:lower():find(lowerName, 1, true)) then break end
+			end
+			if stringSpeciesID then
+				local _, id = strsplit(":", data[Const.LINK])
+				if id ~= stringSpeciesID then
+					break
+				end
 			end
 
 			local stack = data[Const.COUNT]
@@ -1017,7 +1050,14 @@ local Commitfunction = function()
 		end
 		pos = pos -1
 	end
-	if unresolvedCount > 0 then
+	local tolerance = 0
+	if scanCount > TOLERANCE_LOWERLIMIT then -- don't use tolerance for tiny scans
+		tolerance = get("core.scan.unresolvedtolerance")
+		if scanCount < TOLERANCE_TAPERLIMIT then -- taper tolerance for smaller scans
+			tolerance = tolerance * scanCount / TOLERANCE_TAPERLIMIT
+		end
+	end
+	if unresolvedCount > tolerance then
 		hadGetError = true
 		wasIncomplete = true
 	end
@@ -1296,16 +1336,14 @@ local Commitfunction = function()
 
 		if (wasEndPagesOnly) then
 			summaryLine = (_TRANS("PSS_TailScan")):format(scanCount, scanTime)
---			summaryLine = _TRANS("PSS_TailScan_1").." {{"..scanCount.."}} ".._TRANS("PSS_TailScan_2").."{{"..scanTime.."}}:"
 		elseif (wasEarlyTerm) then
-			summaryLine = (_TRANS("PSS_Incomplete")):format(scanCount, scanTime)
---			summaryLine = _TRANS("PSS_Incomplete_1").." {{"..scanCount.."}} ".._TRANS("PSS_Incomplete_2").."{{"..scanTime.."}}".._TRANS("PSS_Incomplete_3")
+			summaryLine = (_TRANS("PSS_Incomplete")):format(scanCount, scanTime) --Auctioneer finished scanning {{%d}} auctions over {{%s}} before being stopped
 		elseif (hadGetError) then
-			summaryLine = (_TRANS("PSS_ScanError")):format(scanCount, scanTime)
---			summaryLine = _TRANS("PSS_ScanError_1").." {{"..scanCount.."}} ".._TRANS("PSS_ScanError_2").."{{"..scanTime.."}}".._TRANS("PSS_ScanError_3")
+			summaryLine = (_TRANS("PSS_GetError")):format(scanCount, scanTime) --Auctioneer finished scanning {{%d}} auctions over {{%s}} but was not able to retrieve some auctions
+		elseif wasIncomplete then -- any other incomplete (unknown reason)
+			summaryLine = (_TRANS("PSS_Incomplete")):format(scanCount, scanTime) --Auctioneer finished scanning {{%d}} auctions over {{%s}} before being stopped
 		else
-			summaryLine = (_TRANS("PSS_Complete")):format(scanCount, scanTime)
---			summaryLine = _TRANS("PSS_Complete_1").." {{"..scanCount.."}} ".._TRANS("PSS_Complete_2").."{{"..scanTime.."}}:"
+			summaryLine = (_TRANS("PSS_Complete")):format(scanCount, scanTime) --Auctioneer finished scanning {{%d}} auctions over {{%s}}
 		end
 		if (printSummary) then _print(summaryLine) end
 		summary = summaryLine
@@ -1439,14 +1477,6 @@ local Commitfunction = function()
 		private.ResetAll()
 	end
 	_G.AucAdvanced.SendProcessorMessage("scanfinish", scanSize, TempcurQuery.qryinfo.sig, TempcurQuery.qryinfo, not wasIncomplete, TempcurQuery, TempcurScanStats)
-
-	-- Report warning for Blizzard bug {ADV-595}
-	if private.warningCanSendBug then
-		private.warningCanSendBug = nil
-		if not CanSendAuctionQuery() then
-			_G.message("The Server is not responding correctly.\nClosing and reopening the Auctionhouse may fix this problem.")
-		end
-	end
 end
 
 local CoCommit, CoStore
@@ -1609,13 +1639,15 @@ end
 		Note: this function does not replace a missing seller with ""
 --]]
 function private.GetAuctionItem(list, page, index, itemLinksTried, itemData)
-	local isLogging = nLog and page and list == "list"
 	if not itemData then
 		itemData = {}
+	elseif itemData.NORETRY then
+		return itemData
 	end
 	itemData[Const.FLAG] = itemData[Const.FLAG] or 0
 	itemData[Const.ID] = itemData[Const.ID] or -1
 
+	local isLogging = nLog and page and list == "list"
 	if isLogging then
 		if not itemData.PAGE then
 			itemData.PAGE = page
@@ -1638,8 +1670,10 @@ function private.GetAuctionItem(list, page, index, itemLinksTried, itemData)
 			-- Log and abort so we don't corrupt it
 			if isLogging then
 				nLog.AddMessage("Auctioneer", "Scan", N_ERROR, "GetAuctionItem ItemLink does not match link found previously at this index",
-					("Page %d, Index %d\nOld link %s\nNew link %s"):format(page, index, itemData[Const.LINK], itemLink))
+					("Page %d, Index %d\nOld link %s\nNew link %s\nOld ITEMID %s, MINBID %s, TLEFT %s, SELLER %s"):format(page, index, itemData[Const.LINK], itemLink,
+						tostringall(itemData[Const.ITEMID], itemData[Const.MINBID], itemData[Const.TLEFT], itemData[Const.SELLER]))) -- one of these must be missing for us to need to retry
 			end
+			itemData.NORETRY = "Link changed"
 			return itemData
 		end
 		itemData[Const.LINK] = itemLink
@@ -1659,6 +1693,7 @@ function private.GetAuctionItem(list, page, index, itemLinksTried, itemData)
 				("Page %d, Index %d\nLink %s\nminBid old %s, new %s\nAll returns from GetAuctionItemInfo:\n%s"):format(page, index, itemLink, itemData[Const.MINBID], minBid,
 				strjoin(",", tostringall(name, texture, count, quality, canUse, level, levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus, itemId))))
 		end
+		itemData.NORETRY = "MinBid changed"
 		return itemData
 	end
 
@@ -1820,19 +1855,21 @@ function lib.GetAuctionSellItem(minBid, buyoutPrice, runTime)
 	local name, texture, count, quality, canUse, price = GetAuctionSellItemInfo();
 
 	if name and itemLink then
-		itemLink = _G.AucAdvanced.SanitizeLink(itemLink)
-		local _,_,_,itemLevel,level,itemType,itemSubType,_,itemEquipLoc = GetItemInfo(itemLink)
-		local _, itemId, itemSuffix, itemFactor, itemEnchant, itemSeed = _G.AucAdvanced.DecodeLink(itemLink)
-		local timeLeft = 4
-		if runTime <= 12*60 then timeLeft = 3 end
-		local curTime = time()
+		local linkType, itemId, itemSuffix, itemFactor, itemEnchant, itemSeed = _G.AucAdvanced.DecodeLink(itemLink)
+		if linkType == "item" then
+			itemLink = _G.AucAdvanced.SanitizeLink(itemLink)
+			local _,_,_,itemLevel,level,itemType,itemSubType,_,itemEquipLoc = GetItemInfo(itemLink)
+			local timeLeft = 4
+			if runTime <= 12*60 then timeLeft = 3 end
+			local curTime = time()
 
-		return {
-			itemLink, itemLevel, itemType, itemSubType, nil, minBid,
-			timeLeft, curTime, name, texture, count, quality, canUse, level,
-			minBid, 0, buyoutPrice, 0, nil, UnitName("player"),
-			0, -1, itemId, itemSuffix, itemFactor, itemEnchant, itemSeed
-		}, price
+			return {
+				itemLink, itemLevel, itemType, itemSubType, nil, minBid,
+				timeLeft, curTime, name, texture, count, quality, canUse, level,
+				minBid, 0, buyoutPrice, 0, nil, Const.PlayerName,
+				0, -1, itemId, itemSuffix, itemFactor, itemEnchant, itemSeed
+			}, price
+		end
 	end
 end
 
@@ -1868,6 +1905,17 @@ local StorePageFunction = function()
 
 	if (_G.nLog) then
 		_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, ("StorePage For Page %d Started %fs after Query Start"):format(page, retrievalStarted - queryStarted), ("StorePage (Page %d) Called\n%f seconds have elapsed since scan start"):format(page, retrievalStarted - queryStarted))
+	end
+
+	if private.isGetAll then
+		--[[
+			pre-store delay before starting to store a getall query to give the client a bit of time to sort itself out
+			we want to call it before GetNumAuctionItems, so we must use private.isGetAll for detection
+		--]]
+		coroutine.yield()
+		if private.warningCanSendBug and CanSendAuctionQuery() then -- check it again after delay
+			private.warningCanSendBug = nil
+		end
 	end
 
 	local curQuery, curScan, curPages = private.curQuery, private.curScan, private.curPages
@@ -1992,7 +2040,9 @@ local StorePageFunction = function()
 
 		local newRetries = { }
 		local readCount = 1
-		while (#retries > 0 and tryCount < maxTries and ((not sellerOnly) or get("core.scan.sellernamedelay")) and not private.breakStorePage) do
+		local needsRetries = #retries > 0
+		while (needsRetries and tryCount < maxTries and ((not sellerOnly) or get("core.scan.sellernamedelay")) and not private.breakStorePage) do
+			needsRetries = false
 			sellerOnly = true
 			itemLinksTried = {}
 			tryCount = tryCount + 1
@@ -2031,6 +2081,9 @@ local StorePageFunction = function()
 							remissedCounts[mc] = remissedCounts[mc] + ((itemData[mc] and 0) or 1)
 						end
 						sellerOnly = sellerOnly and completeMinusSeller
+						if not itemData.NORETRY then
+							needsRetries = true
+						end
 						tinsert(newRetries, { i[1], itemData })
 					end
 				else
@@ -2075,6 +2128,7 @@ local StorePageFunction = function()
 			retries = newRetries
 			newRetries = { }
 		end
+
 
 		local names_missed, all_missed, ld_and_names_missed, links_missed, link_data_missed = 0,0,0,0,0
 		nextPause = debugprofilestop() + processingTime
@@ -2211,6 +2265,15 @@ local StorePageFunction = function()
 		_G.nLog.AddMessage("Auctioneer", "Scan", _G.N_INFO, ("StorePage Page %d Complete"):format(page),
 --		("Query Elapsed: %fs\nThis Page Store Elapsed: %fs\nThis Page Code Execution Time: %fs"):format(endTime-queryStarted, endTime-retrievalStarted, RunTime))
 		("Query Elapsed: %fs\nThis Page Store Elapsed: %fs"):format(endTime-queryStarted, endTime-retrievalStarted))
+	end
+
+	-- Report warning for Blizzard bug {ADV-595}
+	-- (we wait til we're finished storing as much as we can, before asking the user to close the AH)
+	if private.warningCanSendBug then
+		private.warningCanSendBug = nil
+		if not CanSendAuctionQuery() then
+			_G.message("The Server is not responding correctly.\nClosing and reopening the Auctionhouse may fix this problem.")
+		end
 	end
 end
 
@@ -2823,6 +2886,7 @@ local ItemUsableCached = {
 			-- battlepet : assume anyone can use it
 			-- todo: do we need to check if user has enabled battlepets?
 			-- I think you can still "use" the Pet Cage to learn the pet, even if you haven't enabled battlepets yet
+			-- todo: what if the user has reached the max pet limit?
 			return true
 		elseif linkType ~= "item" then
 			return
@@ -2880,13 +2944,20 @@ end
 
 
 coremodule.Processors = {}
-function coremodule.Processors.scanstats(event, ...)
-	private.clearImageCaches(...)
+function coremodule.Processors.scanstats(event, scanstats)
+	private.clearImageCaches(event, scanstats)
 end
 
-function coremodule.Processors.auctionclose()
+function coremodule.Processors.auctionclose(event)
 	-- clearup memory usage when AH closed
 	private.ResetItemInfoCache()
+	private.clearImageCaches(event)
+end
+
+if Resources.PlayerFaction == "Neutral" then
+	coremodule.Processors.factionselect = function(event)
+		private.clearImageCaches(event)
+	end
 end
 
 
@@ -2915,4 +2986,4 @@ end
 internal.Scan.Logout = lib.Logout
 internal.Scan.AHClosed = lib.AHClosed
 
-_G.AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreScan.lua $", "$Rev: 5335 $")
+_G.AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreScan.lua $", "$Rev: 5381 $")

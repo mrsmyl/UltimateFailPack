@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CoreUtil.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CoreUtil.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -237,8 +237,9 @@ function lib.SanitizeLink(...) return tooltip:SanitizeLink(...) end
 function lib.DecodeLink(...) return tooltip:DecodeLink(...) end
 function lib.GetLinkQuality(...) return tooltip:GetLinkQuality(...) end
 function lib.ShowItemLink(...) return tooltip:ShowItemLink(...) end
-function lib.BreakHyperlink(...) return tooltip:BreakHyperlink(...) end
-lib.breakHyperlink = lib.BreakHyperlink
+function lib.ShowPetLink(...) return tooltip:ShowPetLink(...) end
+function lib.BreakHyperlink(...) return tooltip:BreakHyperlink(...) end -- Deprecated
+lib.breakHyperlink = lib.BreakHyperlink -- Deprecated
 
 do -- Faction and ServerKey related functions
 	local splitcache = {}
@@ -921,4 +922,4 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CoreUtil.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreUtil.lua $", "$Rev: 5381 $")

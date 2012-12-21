@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: EnchantrixBarker
-	Revision: $Id: BarkerStrings.lua 5335 2012-08-28 03:40:54Z mentalpower $
-	Version: 5.14.5335 (KowariOnCrutches)
+	Revision: $Id: BarkerStrings.lua 5325 2012-08-17 15:56:13Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
 
 	License:
 		This program is free software; you can redistribute it and/or

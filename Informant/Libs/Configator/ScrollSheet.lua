@@ -1,7 +1,7 @@
 --[[
 	ScrollSheet
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: ScrollSheet.lua 323 2012-06-22 18:56:38Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: ScrollSheet.lua 335 2012-09-05 06:08:16Z Esamynn $
 	URL: http://auctioneeraddon.com/dl/
 
 	License:
@@ -26,11 +26,11 @@
 --]]
 
 local LIBRARY_VERSION_MAJOR = "ScrollSheet"
-local LIBRARY_VERSION_MINOR = 20
+local LIBRARY_VERSION_MINOR = 21
 local lib = LibStub:NewLibrary(LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/ScrollSheet.lua $","$Rev: 323 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/Configator/ScrollSheet.lua $","$Rev: 335 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local GSC_GOLD="ffd100"
 local GSC_SILVER="e6e6e6"
@@ -708,6 +708,7 @@ function lib:Create(frame, layout, onEnter, onLeave, onClick, onResize, onSelect
 	panel.callback = function() sheet:Render() end
 	panel.sheet = sheet -- panel needs access to sheet values, particularly for vSize calculations
 	panel:SetScript("OnSizeChanged", calculateMaxScroll)
+	panel:ScrollSync()
 
 	_G[name] = sheet
 

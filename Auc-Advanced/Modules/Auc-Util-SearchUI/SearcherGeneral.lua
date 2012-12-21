@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher General
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: SearcherGeneral.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: SearcherGeneral.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -29,6 +29,7 @@
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 --]]
 -- Create a new instance of our lib with our parent
+if not AucSearchUI then return end
 local lib, parent, private = AucSearchUI.NewSearcher("General")
 if not lib then return end
 local print,decode,_,_,replicate,empty,_,_,_,debugPrint,fill = AucAdvanced.GetModuleLocals()
@@ -140,16 +141,16 @@ function lib:MakeGuiConfig(gui)
 	last = cont
 
 	gui:AddControl(id, "Note",       0.0, 1, 100, 14, "Type:")
-	gui:AddControl(id, "Selectbox",   0.0, 1, private.getTypes, "general.type", "ItemType")
+	gui:AddControl(id, "Selectbox",   0.0, 1, private.getTypes, "general.type")
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Note",       0.3, 1, 100, 14, "SubType:")
-	gui:AddControl(id, "Selectbox",   0.3, 1, private.getSubTypes, "general.subtype", "ItemSubType")
+	gui:AddControl(id, "Selectbox",   0.3, 1, private.getSubTypes, "general.subtype")
 	gui:SetLast(id, last)
 	gui:AddControl(id, "Note",       0.7, 1, 100, 14, "TimeLeft:")
-	gui:AddControl(id, "Selectbox",  0.7, 1, private.getTimeLeft(), "general.timeleft", "TimeLeft")
+	gui:AddControl(id, "Selectbox",  0.7, 1, private.getTimeLeft(), "general.timeleft")
 
 	gui:AddControl(id, "Note",       0.0, 1, 100, 14, "Quality:")
-	gui:AddControl(id, "Selectbox",   0.0, 1, private.getQuality(), "general.quality", "ItemQuality")
+	gui:AddControl(id, "Selectbox",   0.0, 1, private.getQuality(), "general.quality")
 
 	last = gui:GetLast(id)
 	gui:SetControlWidth(0.37)
@@ -216,18 +217,10 @@ function lib.Rescan()
 	local searchtype = get("general.type")
 	local searchsubtype = get("general.subtype")
 
-	local classIndex, subclassIndex
-	for catId, catName in pairs(AucAdvanced.Const.CLASSES) do
-		if catName == searchtype then
-			classIndex = catId
-			for subId, subName in pairs(AucAdvanced.Const.SUBCLASSES[catId]) do
-				if subName == searchsubtype then
-					subclassIndex = subId
-					break
-				end
-			end
-			break
-		end
+	local classIndex = AucAdvanced.Const.CLASSESREV[searchtype]
+	local subclassIndex
+	if classIndex then
+		subclassIndex = AucAdvanced.Const.SUBCLASSESREV[searchtype][searchsubtype]
 	end
 
 	if name then
@@ -361,4 +354,4 @@ function private.PriceSearch(buybid, price)
 	end
 	return false
 end
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-SearchUI/SearcherGeneral.lua $", "$Rev: 5381 $")

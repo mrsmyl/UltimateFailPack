@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: CorePost.lua 5292 2012-04-27 00:01:28Z Nechckn $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: CorePost.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -85,13 +85,13 @@ local MINIMUM_DEPOSIT = 100 -- 1 silver minimum deposit
 local PROMPT_HEIGHT = 120
 local PROMPT_MIN_WIDTH = 400
 
+-- Used to check for bound items in bags - only checks for strings indicating item is already bound
+-- In particular we do not check for ITEM_BIND_ON_PICKUP, as for our tests,
+-- that could only occur on an *unbound* recipe that creates a BoP item
 local BindTypes = {
 	[ITEM_SOULBOUND] = "Bound",
 	[ITEM_BIND_QUEST] = "Quest",
---	[ITEM_BIND_ON_PICKUP] = "Bound", -- {ADV-641}
 	[ITEM_CONJURED] = "Conjured",
---	[ITEM_BIND_TO_ACCOUNT] = "Accountbound",
---	[ITEM_BIND_TO_BNETACCOUNT] = "Accountbound",
 	[ITEM_BNETACCOUNTBOUND] = "Accountbound",
 }
 if ITEM_ACCOUNTBOUND then
@@ -143,7 +143,6 @@ local ErrorText = {
 	InvalidBid = "Bid value is invalid",
 	InvalidBuyout = "Buyout value is invalid",
 	InvalidDuration = "Duration value is invalid",
-	InvalidSig = "Function requires a valid item sig",
 	InvalidSize = "Size value is invalid",
 	InvalidMultiple = "Multiple stack value is invalid",
 	UnknownItem = "Item is unknown",
@@ -170,40 +169,6 @@ function lib.GetErrorText(code)
 	code = tostring(code)
 	debugPrint("Error code without matching ErrorText: "..code, "CorePost", "Unknown Errorcode", "Warning")
 	return "Unknown Errorcode ("..code..")"
-end
-
--- local constants to index the posting request tables (deprecated)
-local REQ_SIG = 1
-local REQ_COUNT = 2
-local REQ_BID = 3
-local REQ_BUYOUT = 4
-local REQ_DURATION = 5
-local REQ_NUMSTACKS = 6
--- function to create a new posting request table; keep sync'd with the above constants
--- todo: when we stop using these deprecated constants, remove private.NewRequestTable and streamline into queueing function
-private.lastPostId = 0
-function private.NewRequestTable(sig, count, bid, buyout, duration, numStacks)
-	local postId = private.lastPostId + 1
-	private.lastPostId = postId
-	local request = {
-		-- backward compatibility indexed values (deprecated)
-		sig, --REQ_SIG
-		count, --REQ_COUNT
-		bid, --REQ_BID
-		buyout, --REQ_BUYOUT
-		duration, --REQ_DURATION
-		numStacks, --REQ_NUMSTACKS
-		-- new style values
-		sig = sig,
-		count = count,
-		bid = bid,
-		buy = buyout,
-		duration = duration,
-		stacks = numStacks,
-		id = postId,
-		posted = 0,
-	}
-	return request
 end
 
 do
@@ -306,29 +271,67 @@ do
 	end
 end --of Post Request Queue section
 
-local AuctionDurationCode = {
-	1, --[1]
-	2, --[2]
-	3, --[3]
-	[12] = 1, -- hours
-	[24] = 2,
-	[48] = 3,
-	[720] = 1, -- minutes
-	[1440] = 2,
-	[2880] = 3,
-}
-function lib.ValidateAuctionDuration(duration)
-	return AuctionDurationCode[duration]
-end
-local LookupDurationHours = {12, 24, 48} -- convert duration code to hours, for display
-function lib.AuctionDurationHours(duration)
-	return LookupDurationHours[AuctionDurationCode[duration]]
+do
+	local AuctionDurationCode = {
+		1, --[1]
+		2, --[2]
+		3, --[3]
+		[12] = 1, -- hours
+		[24] = 2,
+		[48] = 3,
+		[720] = 1, -- minutes
+		[1440] = 2,
+		[2880] = 3,
+	}
+	function lib.ValidateAuctionDuration(duration)
+		return AuctionDurationCode[duration]
+	end
+	local LookupDurationHours = {12, 24, 48} -- convert duration code to hours, for display
+	function lib.AuctionDurationHours(duration)
+		return LookupDurationHours[AuctionDurationCode[duration]]
+	end
 end
 
-function private.GetRequest(sig, size, bid, buyout, duration, multiple)
-	local id = DecodeSig(sig)
-	if not id then
-		return nil, "InvalidSig"
+-- Check if 'item' is a valid parameter for PostAuction
+-- returns sig, id, linkType, exactLink
+local function AnalyzeItem(item)
+	local iType = type(item)
+	if iType == "string" then
+		if strfind(item, "|H") then
+			-- looks like a link
+			local sig, linkType = GetSigFromLink(item)
+			if sig then
+				if linkType == "battlepet" then
+					return sig, 82800, "battlepet", item
+				else
+					local sigType, id = DecodeSig(sig)
+					if sigType == "item" then
+						return sig, id, "item", item
+					end
+				end
+			end
+
+		else -- check it it's a sig
+			local sigType, id = DecodeSig(item)
+			if sigType == "battlepet" then
+				return item, 82800, "battlepet"
+
+			elseif sigType == "item" then
+				return item, id, "item"
+			end
+		end
+	elseif iType == "number" then
+		if item ~= 82800 then
+			return tostring(item), item, "item"
+		end
+	end
+end
+
+local lastPostId = 0
+function private.GetRequest(item, size, bid, buyout, duration, multiple)
+	local sig, id, linkType, exactLink = AnalyzeItem(item)
+	if not (sig and id) then
+		return nil, "InvalidItem"
 	elseif type(size) ~= "number" or size < 1 then
 		return nil, "InvalidSize"
 	elseif type(bid) ~= "number" or bid < 1 then
@@ -336,13 +339,13 @@ function private.GetRequest(sig, size, bid, buyout, duration, multiple)
 	elseif type(buyout) ~= "number" or (buyout < bid and buyout ~= 0) then
 		return nil, "InvalidBuyout"
 	end
-	duration = AuctionDurationCode[duration]
+	duration = lib.ValidateAuctionDuration(duration)
 	if not duration then
 		return nil, "InvalidDuration"
 	end
 
-	local name, link,_,_,_,_,_, maxSize,_, texture = GetItemInfo(id)
-	if not name then
+	local _,_,_,_,_,_,_, maxSize = GetItemInfo(id)
+	if not maxSize then
 		return nil, "UnknownItem"
 	elseif size > maxSize then
 		return nil, "MaxSize"
@@ -361,9 +364,48 @@ function private.GetRequest(sig, size, bid, buyout, duration, multiple)
 		return nil, "NotEnough"
 	end
 
-	local request = private.NewRequestTable(sig, size, bid, buyout, duration, multiple)
+	lastPostId = lastPostId + 1
+	local request = {
+		sig = sig,
+		count = size,
+		bid = bid,
+		buy = buyout,
+		duration = duration,
+		stacks = multiple,
+		id = lastPostId,
+		posted = 0,
+		linkType = linkType, -- for battlepet special handling
+		exactLink = exactLink, -- for future: will be used to post item with exact matching link
+	}
 
-	return request
+	--[[ Temporary fix {ADV-665}
+		Multisell API is currently not working for battlepets
+		handle if the user requests to post multiple of the same pet, by generating multiple individual requests of size 1 each
+		patch intended to be easily removed assuming Blizzard fixes the API
+		also changes in PostAuction and PostAuctionClick, and a related fix in LoadAuctionSlot
+	--]]
+	local petextrarequests = nil
+	if linkType == "battlepet" and multiple > 1 then
+		request.stacks = 1 -- only post 1 pet in the primary request
+		petextrarequests = {}
+		for i = 1, multiple-1 do
+				lastPostId = lastPostId + 1
+				tinsert(petextrarequests, {
+				sig = sig,
+				count = size,
+				bid = bid,
+				buy = buyout,
+				duration = duration,
+				stacks = 1, -- 1 pet per extra request
+				id = lastPostId,
+				posted = 0,
+				linkType = linkType,
+				--exactLink = exactLink, -- planned implementation of exactLink will only be for single item
+			})
+		end
+	end
+
+	return request, nil, petextrarequests
 end
 
 --[[
@@ -382,12 +424,21 @@ end
 		reason is an internal short text code; it can be converted to a displayable text message using lib.GetErrorText(reason)
 ]]
 function lib.PostAuction(sig, size, bid, buyout, duration, multiple)
-	local request, reason = private.GetRequest(sig, size, bid, buyout, duration, multiple)
+	local request, reason, extra = private.GetRequest(sig, size, bid, buyout, duration, multiple)
 	if not request then
 		return nil, reason
 	end
 	private.QueueInsert(request)
 	private.Wait(0) -- delay until next OnUpdate
+
+	-- temp fix {ADV-665} as above
+	if extra then
+		for _, xrequest in ipairs(extra) do
+			private.QueueInsert(xrequest)
+		end
+	end
+	-- be aware that we currently only return the id for the *first* request
+
 	return request.id
 end
 
@@ -396,7 +447,7 @@ end
 	May only be called from an OnClick handler
 --]]
 function lib.PostAuctionClick(sig, size, bid, buyout, duration, multiple)
-	local request, failure = private.GetRequest(sig, size, bid, buyout, duration, multiple)
+	local request, failure, extra = private.GetRequest(sig, size, bid, buyout, duration, multiple)
 	if not request then
 		return nil, failure
 	end
@@ -414,6 +465,13 @@ function lib.PostAuctionClick(sig, size, bid, buyout, duration, multiple)
 	end
 	private.QueueInsert(request)
 	local id = request.id
+
+	-- temp fix {ADV-665} as above
+	if extra and not noqueue then
+		for _, xrequest in ipairs(extra) do
+			private.QueueInsert(xrequest)
+		end
+	end
 
 	if postNow then
 		local success, reason, special
@@ -443,26 +501,6 @@ function lib.PostAuctionClick(sig, size, bid, buyout, duration, multiple)
 end
 
 --[[
-    DecodeSig(sig)
-    DecodeSig(itemid, suffix, factor, enchant)
-    Returns: itemid, suffix, factor, enchant
-	Deprecated. Retained for library compatibility
-	Real function moved to AucAdvanced.API, with the other sig functions
-]]
-function lib.DecodeSig(matchId, matchSuffix, matchFactor, matchEnchant)
-	if (type(matchId) == "string") then
-		return DecodeSig(matchId)
-	end
-	matchId = tonumber(matchId)
-	if not matchId or matchId == 0 then return end
-	matchSuffix = tonumber(matchSuffix) or 0
-	matchFactor = tonumber(matchFactor) or 0
-	matchEnchant = tonumber(matchEnchant) or 0
-
-	return matchId, matchSuffix, matchFactor, matchEnchant
-end
-
---[[
     IsAuctionable(bag, slot)
     Returns:
 		true : if the item is (probably) auctionable.
@@ -473,6 +511,12 @@ end
     then the item is definately not auctionable.
 ]]
 function lib.IsAuctionable(bag, slot)
+	if GetContainerItemID(bag, slot) == 82800 then
+		-- battlepet cage always sellable
+		-- we test for it specially, as battlepets may break the other tests :(
+		return true
+	end
+
 	local _,_,_,_,_,lootable = GetContainerItemInfo(bag, slot)
 	if lootable then
 		return false, "Lootable"
@@ -536,71 +580,6 @@ function lib.CountAvailableItems(sig)
 	return (totalCount - unpostableCount - queuedCount - siglockCount), totalCount, unpostableCount, queuedCount, siglockCount, unpostableError
 end
 
---[[
-    FindMatchesInBags(sig)
-    FindMatchesInBags(itemId, [suffix, [factor, [enchant, [seed] ] ] ])
-    Returns: { {bag, slot, count}, ... }, itemCount, blankBagId, blankSlotNumber, foundLink, foundLocked
-	Library wrapper for the internal version, to check parameters (and to support anticipated future changes)
-	Deprecated
-]]
-function lib.FindMatchesInBags(...)
-	return private.FindMatchesInBags(lib.DecodeSig(...))
-end
--- Internal implementation of FindMatchesInBags
--- Deprecated: This is no longer used by ProcessPosts
-function private.FindMatchesInBags(matchId, matchSuffix, matchFactor, matchEnchant)
-	if not matchId then return end
-	local matches = {}
-	local total = 0
-	local blankBag, blankSlot, foundLink, foundLocked
-
-	local itemtype = GetItemFamily(matchId) or 0
-	if itemtype > 0 then
-		-- check to see if item is itself a bag
-		local _,_,_,_,_,_,_,_,equiploc = GetItemInfo(matchId)
-		if equiploc == "INVTYPE_BAG" then
-			itemtype = 0 -- can only be placed in general-purpose bags
-		end
-	end
-
-	for bag = 0, 4 do
-		local slots = GetContainerNumSlots(bag)
-		if slots > 0 then
-			local _, bagtype = GetContainerNumFreeSlots(bag)
-			-- can this bag contain the item we're looking for?
-			if bagtype == 0 or bit.band(bagtype, itemtype) ~= 0 then
-				for slot = 1, slots do
-					local link = GetContainerItemLink(bag,slot)
-					if link then
-						local texture, itemCount, locked, quality, readable = GetContainerItemInfo(bag,slot)
-						local itype, itemId, suffix, factor, enchant = AucAdvanced.DecodeLink(link)
-						if itype == "item"
-						and itemId == matchId
-						and suffix == matchSuffix
-						and factor == matchFactor
-						and enchant == matchEnchant
-						and lib.IsAuctionable(bag, slot) then
-							if not itemCount or itemCount < 1 then itemCount = 1 end
-							tinsert(matches, {bag, slot, itemCount})
-							total = total + itemCount
-							foundLink = link
-							if locked then
-								foundLocked = true
-							end
-						end
-					else -- blank slot
-						if not blankBag then
-							blankBag = bag
-							blankSlot = slot
-						end
-					end
-				end
-			end
-		end
-	end
-	return matches, total, blankBag, blankSlot, foundLink, foundLocked
-end
-
 -- lookup table used by GetDepositCost to avoid a large if/elseif block
 local depositDurationMultiplier = {
 	3,	--[1]
@@ -638,10 +617,14 @@ function GetDepositCost(item, duration, faction, count)
 	count = count or 1
 
 	local _,_,_,_,_,_,_,_,_,_,gsv = GetItemInfo(item)
-	if not gsv and GetSellValue then
-		-- if item is not in local cache, fallback to GetSellValue
-		-- some people may still be using a GetSellValue provider with a saved price database
-		gsv = GetSellValue(item)
+	if not gsv then
+		if type(item) == "string" and strmatch(item, "battlepet") then
+			gsv = 0
+		elseif GetSellValue then
+			-- if item is not in local cache, fallback to GetSellValue
+			-- some people may still be using a GetSellValue provider with a saved price database
+			gsv = GetSellValue(item)
+		end
 	end
 	if gsv then
 		local deposit = floor(faction * gsv * count) * duration
@@ -738,7 +721,7 @@ end -- SigLock
 	Generates a display string for use in printout
 --]]
 function private.RequestDisplayString(request, link)
-	local msg = link or request.link or AucAdvanced.API.GetLinkFromSig(request.sig) or "|cffff0000[Unknown]|r"
+	local msg = link or request.exactLink or request.link or AucAdvanced.API.GetLinkFromSig(request.sig) or "|cffff0000[Unknown]|r"
 	local count = request.count
 	local numstacks = request.stacks
 	if count > 1 then
@@ -908,8 +891,22 @@ function private.LoadAuctionSlot(request)
 	end
 
 	local link = GetContainerItemLink(bag, slot)
-	local checkname = GetItemInfo(link)
-	if not (link and checkname) then
+	local itemId = GetContainerItemID(bag, slot)
+	if not (link and itemId) then
+		private.QueueRemove()
+		return nil, "NotFound", nil
+	end
+	local checkname, checkquality
+	if itemId == 82800 then
+		-- battlepet special handling
+		local _, speciesID, _, breedQuality = strsplit(":", link)
+		checkname = C_PetJournal.GetPetInfoBySpeciesID(tonumber(speciesID))
+		checkquality = tonumber(breedQuality)
+	else
+		local na,_,qu = GetItemInfo(link)
+		checkname, checkquality = na, qu
+	end
+	if not (checkname and checkquality) then
 		private.QueueRemove()
 		return nil, "UnknownItem", nil
 	end
@@ -930,7 +927,7 @@ function private.LoadAuctionSlot(request)
 
 	-- verify that the contents of the Auction slot are what we expect
 	local name, texture, count, quality, canUse, price, pricePerUnit, stackCount, totalCount = GetAuctionSellItemInfo()
-	if name ~= checkname then
+	if name ~= checkname or quality ~= checkquality then
 		-- failed to drop item in auction slot, probably because item is not auctionable (but was missed by our checks)
 		private.ClearAuctionSlot()
 		private.QueueRemove()
@@ -939,11 +936,20 @@ function private.LoadAuctionSlot(request)
 	if private.lastUIError then
 		-- error can only have come from ClickAuctionSellItemButton or GetAuctionSellItemInfo
 		-- but item in slot appears to be correct
-		-- report for debugging  - ### consider if it should be removed or reduced in severity
+		-- report for debugging
 		private.ClearAuctionSlot() -- Put it back in the bags
 		private.QueueRemove()
 		return nil, "UnknownError", private.lastUIError
 	end
+	--[[ Temporary fix {ADV-655}
+		GetAuctionSellItemInfo returns incorrect totalCount for battlepets (always returns 1)
+		to be removed when Blizzard fixes the API (CountAvailableItems is not a particularly efficient or reliable way to do this)
+	--]]
+	if itemId == 82800 then
+		local _, tc = lib.CountAvailableItems(request.sig)
+		totalCount = tc
+	end
+
 	if totalCount < request.count * request.stacks then
 		-- not enough items to complete this request; abort whole request
 		private.ClearAuctionSlot() -- Put it back in the bags
@@ -961,6 +967,7 @@ function private.LoadAuctionSlot(request)
 	request.totalcount = totalCount -- this will be used by the SigLock mechanism
 	request.selectedcount = count -- used by the Prompt sanity checks
 	request.name = name -- used by the Prompt sanity checks
+	request.quality = quality
 	request.texture = texture -- displayed in the Prompt
 
 	return true
@@ -972,7 +979,7 @@ end
 --]]
 function private.VerifyAuctionSlot(request)
 	local name, texture, count, quality, canUse, price, pricePerUnit, stackCount, totalCount = GetAuctionSellItemInfo()
-	if name ~= request.name or count ~= request.selectedcount then
+	if name ~= request.name or quality ~= request.quality or count ~= request.selectedcount then
 		-- Either slot has been cleared, or has been replaced with something else
 		return nil, "FailSlot"
 	end
@@ -1296,14 +1303,21 @@ private.Prompt.Frame:SetBackdropColor(0,0,0,0.8)
 
 -- Helper functions
 local function ShowTooltip()
-	local link = private.promptRequest and private.promptRequest.link
-	if link then
-		GameTooltip:SetOwner(private.Prompt.Item, "ANCHOR_TOPRIGHT")
+	local link = private.promptRequest and (private.promptRequest.link or private.promptRequest.exactLink)
+	if not link then return end
+	local linkType = private.promptRequest.linkType
+	GameTooltip:SetOwner(private.Prompt.Item, "ANCHOR_TOPRIGHT")
+	if linkType == "item" then
 		GameTooltip:SetHyperlink(link)
+	elseif linkType == "battlepet" then
+		local _, speciesID, level, breedQuality, maxHealth, power, speed, battlePetID = strsplit(":", link)
+		-- BattlePetToolTip_Show gets the anchor point from GameTooltip
+		BattlePetToolTip_Show(tonumber(speciesID), tonumber(level), tonumber(breedQuality), tonumber(maxHealth), tonumber(power), tonumber(speed), string.gsub(string.gsub(link, "^(.*)%[", ""), "%](.*)$", ""))
 	end
 end
 local function HideTooltip()
 	GameTooltip:Hide()
+	BattlePetTooltip:Hide()
 end
 local function DragStart()
 	private.Prompt:StartMoving()
@@ -1362,4 +1376,4 @@ private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/CorePost.lua $", "$Rev: 5292 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CorePost.lua $", "$Rev: 5381 $")

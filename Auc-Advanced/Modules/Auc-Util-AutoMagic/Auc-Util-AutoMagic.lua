@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: Auc-Util-AutoMagic.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: Auc-Util-AutoMagic.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -34,7 +34,7 @@ if not AucAdvanced then return end
 local libName, libType = "AutoMagic", "Util"
 local lib,parent,private = AucAdvanced.NewModule(libType, libName)
 if not lib then return end
-local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
+local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill,_TRANS = AucAdvanced.GetModuleLocals()
 
 --Start Module Code
 local amBTMRule, itemName, itemID, _
@@ -50,23 +50,7 @@ if AucAdvanced.Modules.Util.Appraiser then
 end
 lib.autoSellList = {} -- default empty table in case of no saved data
 
-function lib.Processor(callbackType, ...)
-	if (callbackType == "tooltip") then lib.ProcessTooltip(...) --Called when the tooltip is being drawn.
-	elseif (callbackType == "config") then lib.SetupConfigGui(...) --Called when you should build your Configator tab.
-	elseif (callbackType == "listupdate") then --Called when the AH Browse screen receives an update.
-	elseif (callbackType == "configchanged") then --Called when your config options (if Configator) have been changed.
-		if (get("util.automagic.autosellgui")) then
-			lib.autoSellGUI()
-			set("util.automagic.autosellgui", false) -- Resetting our toggle switch
-		end
-
-	end
-end
-
 lib.Processors = {}
-function lib.Processors.tooltip(callbackType, ...)
-	lib.ProcessTooltip(...) --Called when the tooltip is being drawn.
-end
 
 function lib.Processors.config(callbackType, ...)
 	lib.SetupConfigGui(...) --Called when you should build your Configator tab.
@@ -79,26 +63,6 @@ function lib.Processors.configchanged(callbackType, ...)
 	end
 end
 
-function lib.ProcessTooltip(tooltip, name, hyperlink, quality, quantity, cost, additional)
-	if not (get("util.automagic.depositTT")) then
-		if hyperlink then
-			local ttdepcost = GetDepositCost(hyperlink, get("util.automagic.deplength"), nil, quantity)
-
-			if (ttdepcost == nil) then
-				tooltip:AddLine("|cff336699 Unknown deposit cost |r")
-			elseif (ttdepcost == 0) then
-				tooltip:AddLine("|cff336699 No deposit cost |r")
-			else
-				tooltip:AddLine("|cffCCFF99"..get("util.automagic.deplength").."hr Deposit : |r" , ttdepcost)
-			end
-		end
-	end
-end
-local ahdeplength = {
-	{12, "12 hour"},
-	{24, "24 hour"},
-	{48, "48 hour"},
-}
 function lib.OnLoad()
 	lib.slidebar()
 
@@ -109,7 +73,7 @@ function lib.OnLoad()
 	end
 
 	-- Sets defaults
-	print("AucAdvanced: {{"..libType..":"..libName.."}} loaded!")
+	--aucPrint("AucAdvanced: {{"..libType..":"..libName.."}} loaded!")
 
 	default("util.automagic.autovendor", false) -- DO NOT SET TRUE ALL AUTOMAGIC OPTIONS SHOULD BE TURNED ON MANUALLY BY END USER!!!!!!!
 	default("util.automagic.autostopafter12", true) --stops autovendor after 12 items are sold. Want it to be on
@@ -118,16 +82,14 @@ function lib.OnLoad()
 	default("util.automagic.showmailgui", false)
 	default("util.automagic.autosellgui", false) -- Acts as a button and reverts to false anyway
 	default("util.automagic.chatspam", true) --Supposed to default on has to be unchecked if you don't want the chat text.
-	default("util.automagic.depositTT", false) --Used for disabling the deposit costs TT
 	default("util.automagic.ammailguix", 100) --Used for storing mailgui location
 	default("util.automagic.ammailguiy", 100) --Used for storing mailgui location
 	default("util.automagic.uierrormsg", 0) --Keeps track of ui error msg's
-	default("util.automagic.deplength", 48)
 	default("util.automagic.overidebtmmail", false) -- Item AI for mail rule instead of BTM rule.
-	
+
 
 	default("util.automagic.displaybeginerTooltips", true)
-	
+
 	--create mail frames
 	lib.makeMailGUI()
 end
@@ -190,11 +152,6 @@ function lib.SetupConfigGui(gui)
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_Chatspam')) --'Display chat messages from AutoMagic.'
 
 		gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
-		gui:AddControl(id, "Checkbox",		0, 1, 	"util.automagic.depositTT", _TRANS('AAMU_Interface_DepositTooltip')) --"Disable deposit costs in the tooltip"
-		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_DepositTooltip')) --'Remove item deposit costs from the tooltip.'
-
-		gui:AddControl(id, "Selectbox",		0, 1, 	ahdeplength, "util.automagic.deplength", _TRANS('AAMU_Interface_DepositLength')) --"Base deposits on what length of auction."
-		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_DepositLength')) --'Select the auction length deposit cost you want to display in the tooltip.'
 
 		gui:AddControl(id, "Header",     0,    _TRANS('AAMU_Interface_VendorOptions')) --" Vendor Options"
 		gui:AddControl(id, "Checkbox",		0, 1, 	"util.automagic.autovendor", _TRANS('AAMU_Interface_Vendoring')) --"Enable AutoMagic vendoring (W A R N I N G: READ HELP!) "
@@ -218,19 +175,19 @@ function lib.SetupConfigGui(gui)
 		gui:AddControl(id, "Checkbox",		0, 4, "util.automagic.vendorunusablebop", _TRANS('AAMU_Interface_AutoSellBOP')) --"Auto-sell unusable soulbound gear"
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellBOP')) --'Auto-sell unusable soulbound gear'
 		gui:AddControl(id, "Checkbox",		0, 6, 	"util.automagic.autosellbopnoprompt", _TRANS('AAMU_Interface_AutoNoPrompt')) --"...without confirmation prompt"
-		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellBOPNoPrompt')) --'No confirmation window will be shown for selling soulbound items the players class cannot equip.'	
-		
+		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellBOPNoPrompt')) --'No confirmation window will be shown for selling soulbound items the players class cannot equip.'
+
 		gui:AddControl(id, "Checkbox",		0, 4, 	"util.automagic.autoselllist", _TRANS('AAMU_Interface_AutoSellListItems')) --"Auto-sell items on the always vendor list"
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellListItems')) --'Auto-sell items on the always vendor list.'
 		gui:AddControl(id, "Checkbox",		0, 6, 	"util.automagic.autoselllistnoprompt", _TRANS('AAMU_Interface_AutoNoPrompt')) --"...without confirmation prompt"
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellListNoPrompt')) --'No confirmation window will be shown for items on the always vendor list'
-		
+
 		--gui:AddControl(id, "Checkbox",		0, 1, 	"util.automagic.autoclosemerchant", "Auto Merchant Window Close(Power user feature READ HELP)")
 		gui:AddControl(id, "Note",       0, 1, nil, nil, " ")
 		gui:AddControl(id, "Button",     0, 1, "util.automagic.autosellgui", _TRANS('AAMU_Interface_AutoSellList')) --"Auto-Sell List"
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_AutoSellList')) --'Check the box to view the Auto-Sell configuration GUI.'
-		
-		
+
+
 		gui:AddControl(id, "Button",    0, 1, function() lib.CustomMailerFrame:Show() end, _TRANS('AAMU_Interface_MailButtons')) --
 		gui:AddTip(id, _TRANS('AAMU_HelpTooltip_MailButtons')) --'Check the box to view the Auto-Sell configuration GUI.'
 
@@ -263,7 +220,7 @@ function lib.merchantShow()
 --~ 		A better option is to auto close vendor when user hits confirm button window
 --~ 		if (get("util.automagic.autoclosemerchant")) then
 --~ 			if (get("util.automagic.chatspam")) then
---~ 				print("AutoMagic has closed the merchant window for you, to disable you must change this options in the settings.")
+--~ 				aucPrint("AutoMagic has closed the merchant window for you, to disable you must change this options in the settings.")
 --~ 			end
 --~ 			CloseMerchant()
 --~ 		end
@@ -331,12 +288,12 @@ function lib.slidebar()
 		local sideIcon, sideIconE
 		if embedded then
 			sideIcon = "Interface\\AddOns\\Auc-Advanced\\Modules\\Auc-Util-AutoMagic\\Images\\amagicIcon"
-			sideIconE = "Interface\\AddOns\\Auc-Advanced\\Modules\\Auc-Util-AutoMagic\\Images\\amagicIconE" 
+			sideIconE = "Interface\\AddOns\\Auc-Advanced\\Modules\\Auc-Util-AutoMagic\\Images\\amagicIconE"
 		else
 			sideIcon =  "Interface\\AddOns\\Auc-Util-AutoMagic\\Images\\amagicIcon"
 			sideIconE = "Interface\\AddOns\\Auc-Util-AutoMagic\\Images\\amagicIconE"
 		end
-		
+
 		local LibDataBroker = LibStub:GetLibrary("LibDataBroker-1.1", true)
 		if LibDataBroker then
 			private.LDBButton = LibDataBroker:NewDataObject("Auc-Util-AutoMagic", {
@@ -344,7 +301,7 @@ function lib.slidebar()
 						icon = sideIcon,
 						OnClick = function(self, button) lib.autosellslidebar(self, button) end,
 					})
-			
+
 			function private.LDBButton:OnTooltipShow()
 				self:AddLine("AutoMagic: Auto-Sell Config",  1,1,0.5, 1)
 				self:AddLine("|cff1fb3ff".."Left-Click|r to open the 'Auto-Sell' list.",  1,1,0.5, 1)
@@ -355,14 +312,14 @@ function lib.slidebar()
 				if self.icon and type(self.icon) == "table" then
 					self.icon:SetTexture(sideIconE)
 				end
-				
+
 				GameTooltip:SetOwner(self, "ANCHOR_NONE")
 				GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
 				GameTooltip:ClearLines()
 				private.LDBButton.OnTooltipShow(GameTooltip)
 				GameTooltip:Show()
 			end
-			
+
 			function private.LDBButton:OnLeave()
 				if self.icon and type(self.icon) == "table" then
 					self.icon:SetTexture(sideIcon)
@@ -372,12 +329,13 @@ function lib.slidebar()
 		end
 	end
 end
-	
+
 local myworkingtable = {}
 function lib.setWorkingItem(link)
 	if link == nil then return end
+	local linkType, id, _, _, _, _ = decode(link)
+	if linkType ~= "item" then return end
 	local name, _, _, _, _, _, _, _, _, texture = GetItemInfo(link)
-	local _, id, _, _, _, _ = decode(link)
 	autosellframe.workingname:SetText(name)
 	autosellframe.slot:SetTexture(texture)
 	myworkingtable = {}
@@ -469,23 +427,25 @@ function lib.populateDataSheet()
 			if (GetContainerItemLink(bag,slot)) then
 				local itemLink = GetContainerItemLink(bag,slot)
 				if (itemLink == nil) then return end
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local btmRule = "~"
-				if BtmScan then
-					local _,itemCount = GetContainerItemInfo(bag,slot)
-					local reason, bids
-					local id, suffix, enchant, seed = BtmScan.BreakLink(itemLink)
-					local sig = ("%d:%d:%d"):format(id, suffix, enchant)
-					local bidlist = BtmScan.Settings.GetSetting("bid.list")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local btmRule = "~"
+					if BtmScan then
+						local _,itemCount = GetContainerItemInfo(bag,slot)
+						local reason, bids
+						local id, suffix, enchant, seed = BtmScan.BreakLink(itemLink)
+						local sig = ("%d:%d:%d"):format(id, suffix, enchant)
+						local bidlist = BtmScan.Settings.GetSetting("bid.list")
 
-					if (bidlist) then
-						bids = bidlist[sig..":"..seed.."x"..itemCount]
-						if(bids and bids[1]) then
-							btmRule = bids[1]
+						if (bidlist) then
+							bids = bidlist[sig..":"..seed.."x"..itemCount]
+							if(bids and bids[1]) then
+								btmRule = bids[1]
+							end
 						end
 					end
+					bagcontents[itemID] = btmRule
 				end
-				bagcontents[itemID] = btmRule
 			end
 		end
 	end
@@ -505,9 +465,8 @@ end
 
 function autosell.OnBagListEnter(button, row, index)
 	if autosellframe.baglist.sheet.rows[row][index]:IsShown()then --Hide tooltip for hidden cells
-		local link
-		link = autosellframe.baglist.sheet.rows[row][index]:GetText()
-		if link:find("\124Hitem:%d") then
+		local link = autosellframe.baglist.sheet.rows[row][index]:GetText()
+		if link and link:find("|Hitem:%d") then
 			GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 			AucAdvanced.ShowItemLink(GameTooltip, link, 1)
 		end
@@ -516,9 +475,8 @@ end
 
 function autosell.OnEnter(button, row, index)
 	if autosellframe.resultlist.sheet.rows[row][index]:IsShown()then --Hide tooltip for hidden cells
-		local link
-		link = autosellframe.resultlist.sheet.rows[row][index]:GetText()
-		if link:find("\124Hitem:%d") then
+		local link = autosellframe.resultlist.sheet.rows[row][index]:GetText()
+		if link and link:find("|Hitem:%d") then
 			GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 			AucAdvanced.ShowItemLink(GameTooltip, link, 1)
 		end
@@ -532,7 +490,7 @@ end
 function autosell.OnClickAutoSellSheet(button, row, index)
 	for index = 1, 3 do
 		local link = autosellframe.resultlist.sheet.rows[row][index]:GetText()
-		if link:find("\124Hitem:%d") then
+		if link and link:find("|Hitem:%d") then
 			lib.setWorkingItem(link)
 			return
 		end
@@ -543,7 +501,7 @@ end
 function autosell.OnClickBagSheet(button, row, index)
 	for index = 1, 3 do
 		local link = autosellframe.baglist.sheet.rows[row][index]:GetText()
-		if link:find("\124Hitem:%d") then
+		if link and link:find("|Hitem:%d") then
 			lib.setWorkingItem(link)
 			return
 		end
@@ -752,4 +710,4 @@ function lib.ClientItemCacheRefresh(link)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5381 $")

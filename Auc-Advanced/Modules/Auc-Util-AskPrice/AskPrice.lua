@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: AskPrice.lua 5160 2011-05-14 20:01:15Z kandoko $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: AskPrice.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	Auctioneer AskPrice created by Mikezter and merged into
@@ -476,7 +476,7 @@ end
 
 --This function changed after AskPrice revision 2825 to include AucAdvanced's revision number in adition to AskPrice's
 function private.GetVersion()
-	return tonumber(("$Revision: 5160 $"):match("(%d+)")), (AucAdvanced.GetCurrentRevision()) --We just want the first return from GetCurrentRevision()
+	return tonumber(("$Revision: 5381 $"):match("(%d+)")), (AucAdvanced.GetCurrentRevision()) --We just want the first return from GetCurrentRevision()
 end
 
 --This function is used to check if the received request (which should be lowercased before the function is called) is a valid SmartWords request
@@ -586,7 +586,7 @@ function private.SetupConfigGui(gui)
 	gui:AddControl(id, "Selectbox",  0, 1, {
 		{1, "Either"},
 		{0, "Both"}
-	}, "util.askprice.smartOr", "Either or both SmartWords") --1/0 instead of true/false due to limitations in the Configator API
+	}, "util.askprice.smartOr") --1/0 instead of true/false due to limitations in the Configator API
 	gui:AddTip(id, _TRANS('ASKP_HelpTooltip_EitherBoth')) --"Both SmartWords are required to be present for just one or the other in order for it to trigger a query."
 
 	gui:AddControl(id, "Subhead",    0,    _TRANS('ASKP_Interface_Miscellaneous')) --"Miscellaneous:")
@@ -597,4 +597,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5160 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-AskPrice/AskPrice.lua $", "$Rev: 5381 $")

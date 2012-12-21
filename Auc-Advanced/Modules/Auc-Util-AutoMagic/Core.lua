@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: Core.lua 5335 2012-08-28 03:40:54Z mentalpower $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: Core.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -76,6 +76,10 @@ local isGem =
 	[36921] = true,--AUTUMNSGLOW
 	[24243] = true,--Adamantite Powder
 	[31079] = true,--Mercurial Adamantite
+	[41334] = true,--Earthsiege Diamond
+	[41266] = true,--Skyflare Diamond
+	[25867] = true,--Earthstorm Diamond
+	[25868] = true,--Skyfire Diamond
 	--EPIC 80
 	[36919] = true,--Cardinal Ruby
 	[36922] = true,--KING'S AMBER
@@ -100,11 +104,42 @@ local isGem =
 	[52182] = true,--Jasper
 	[52180] = true,--Nightstone
 	[52178] = true,--Zephyrite
+	--Catclysm Epic
+	[71805] = true,--Queen's Garnet
+	[71806] = true,--Lightstone
+	[71807] = true,--Deepholm Iolite
+	[71808] = true,--Lava Coral
+	[71809] = true,--Shadow Spinel
+	[71810] = true,--Elven Peridot
+	--Pandarian Uncommon
+	[76130] = true,--Tiger Opal
+	[76133] = true,--Lapis Lazuli
+	[76134] = true,--Sunstone
+	[76135] = true,--Roguestone
+	[76136] = true,--Pandarian Garnet
+	[76137] = true,--Alexandrite
+	--Padarian Rare
+	[76131] = true,--Primordial Ruby
+	[76138] = true,--River's Heart
+	[76139] = true,--Wild Jade
+	[76140] = true,--Vermilion Onyx
+	[76141] = true,--Imperial Amethyst
+	[76142] = true,--Sun's Radiance
+	--Pandarian Other
+	[76132] = true,--Primal Diamond
+	[76734] = true,--Serpent's Eye
+	[90407] = true,--Sparkling Shard
 }
 
 -- This table is validating that each ID within it is a mat from disenchanting.
 local isDEMats =
 	{
+	--Pandarian
+	[74248] = true,--Sha Crystal
+	[74247] = true,--Ethereal Shard
+	[74252] = true,--Small Ethereal Shard
+	[74250] = true,--Mysterious Essence
+	[74249] = true,--Spirit Dust
 	--Cataclysm
 	[52722] = true, --Maelstrom Crystal
 	[52721] = true, --Heavenly Shard
@@ -172,6 +207,9 @@ local isPigmentMats =
 	--Cataclysm
 	[61979] = true,-- ASHEN_PIGMENT
 	[61981] = true,-- BURNING_EMBERS
+	--Pandarian
+	[79251] = true,--Shadow Pigment
+	[79253] = true,--Misty Pigment
 }
 -- This table is validating that each ID within it is a herb. Data from informant. This allows locale independent herbs
 local isHerb =
@@ -238,6 +276,14 @@ local isHerb =
 	[52986] = true,-- HEART BLOSSOM
 	[52987] = true,-- TWILIGHT JASMINE
 	[52988] = true,-- WHIPTAIL
+	--Pandarian
+	[72234] = true,--Green Tea Leaf
+	[72235] = true,--Silkweed
+	[72237] = true,--Rain Poppy
+	[72238] = true,--Golden Lotus
+	[79010] = true,--Snow Lily
+	[79011] = true,--Fool's Cap
+	[89639] = true,--Desecrated Herb
 	}
 
 --what armor each class can use localized
@@ -248,6 +294,7 @@ local isClass = {
 	["PRIEST"] = CLOTH,
 	["WARLOCK"] = CLOTH,
 	["DRUID"] = LEATHER,
+	["MONK"] = LEATHER,
 	["ROGUE"] = LEATHER,
 	--lvl 40
 	["WARRIOR"] = PLATE,
@@ -381,50 +428,52 @@ function lib.vendorAction(autovendor)
 				local texture, itemCount, locked, _, lootable = GetContainerItemInfo(bag, slot) --items that have been vedored but are still in players bag (lag) will be locked by server.
 				if itemLink and not locked then
 					if not itemCount then itemCount = 1 end
-					local _, itemID, _, _, _, _ = decode(itemLink)
-					local itemSig = AucAdvanced.API.GetSigFromLink(itemLink) -- future plan is to use itemSig in place of itemID throughout - to eliminate problems for items with suffixes
-					local itemName, _, itemRarity, _, _, itemType, itemSubType = GetItemInfo(itemLink)
-					local key = bag..":"..slot -- key needs to be unique, but is not currently used for anything. future: rethink if this can be made useful
-					--tooltip checks soulbound status
-					ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
-					ScanTip:ClearLines()
-					ScanTip:SetBagItem(bag, slot)
-					local soulbound = lib.isSoulbound(bag, slot)
-					--item is ignored then skip it. Stops ignored items from showing on vedor list
---~ 					if not get("util.automagic.vidignored"..itemID) then
-						--autovendor  is used to sell without confirmation.
-						if autovendor then
-							if get("util.automagic.autoselllist") and get("util.automagic.autoselllistnoprompt") and lib.autoSellList[ itemID ] then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
-							elseif itemRarity == 0 and get("util.automagic.autosellgrey") and get("util.automagic.autosellgreynoprompt") then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
-							elseif soulbound and get("util.automagic.vendorunusablebop") and get("util.automagic.autosellbopnoprompt") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
-							elseif get("util.automagic.autosellreason") and get("util.automagic.autosellreasonnoprompt") then
-								local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
-								if reason and text then
-									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
+					local linkType, itemID, _, _, _, _ = decode(itemLink)
+					if linkType == "item" then
+						local itemSig = AucAdvanced.API.GetSigFromLink(itemLink) -- future plan is to use itemSig in place of itemID throughout - to eliminate problems for items with suffixes
+						local itemName, _, itemRarity, _, _, itemType, itemSubType = GetItemInfo(itemLink)
+						local key = bag..":"..slot -- key needs to be unique, but is not currently used for anything. future: rethink if this can be made useful
+						--tooltip checks soulbound status
+						ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+						ScanTip:ClearLines()
+						ScanTip:SetBagItem(bag, slot)
+						local soulbound = lib.isSoulbound(bag, slot)
+						--item is ignored then skip it. Stops ignored items from showing on vedor list
+	--~ 					if not get("util.automagic.vidignored"..itemID) then
+							--autovendor  is used to sell without confirmation.
+							if autovendor then
+								if get("util.automagic.autoselllist") and get("util.automagic.autoselllistnoprompt") and lib.autoSellList[ itemID ] then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
+								elseif itemRarity == 0 and get("util.automagic.autosellgrey") and get("util.automagic.autosellgreynoprompt") then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
+								elseif soulbound and get("util.automagic.vendorunusablebop") and get("util.automagic.autosellbopnoprompt") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
+								elseif get("util.automagic.autosellreason") and get("util.automagic.autosellreasonnoprompt") then
+									local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
+									if reason and text then
+										lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
+									end
+								end
+							else
+								if get("util.automagic.autoselllist") and lib.autoSellList[ itemID ] then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
+								elseif itemRarity == 0 and get("util.automagic.autosellgrey") then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
+								elseif soulbound and get("util.automagic.vendorunusablebop") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
+									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
+								elseif get("util.automagic.autosellreason") then
+									local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
+									if reason and text then
+										lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
+									end
 								end
 							end
-						else
-							if get("util.automagic.autoselllist") and lib.autoSellList[ itemID ] then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Sell List"}
-							elseif itemRarity == 0 and get("util.automagic.autosellgrey") then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Grey"}
-							elseif soulbound and get("util.automagic.vendorunusablebop") and IsEquippableItem(itemLink) and itemRarity < 3 and not lootable and lib.cannotUse(itemSubType) then
-								lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, "Unusable"}
-							elseif get("util.automagic.autosellreason") then
-								local reason, text = lib.getReason(itemLink, itemName, itemCount, "vendor")
-								if reason and text then
-									lib.vendorlist[key] = {itemLink, itemSig, itemCount, bag, slot, text}
-								end
-							end
-						end
---~ 					else
---~ 						ignoredItemsFound = true
---~ 					end
-					--clear tooltip for this loop
-					ScanTip:Hide()
+	--~ 					else
+	--~ 						ignoredItemsFound = true
+	--~ 					end
+						--clear tooltip for this loop
+						ScanTip:Hide()
+					end
 				end
 			end
 		end
@@ -450,24 +499,26 @@ function lib.disenchantAction()
 				if itemCount == nil then _, itemCount = GetContainerItemInfo(bag, slot) end
 				if itemCount == nil then itemCount = 1 end
 				runstop = 0
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
-				if (AucAdvanced.Modules.Util.ItemSuggest and get("util.automagic.overidebtmmail") == true) then
-					local aimethod = AucAdvanced.Modules.Util.ItemSuggest.itemsuggest(itemLink, itemCount)
-					if(aimethod == "Disenchant") then
-						if (get("util.automagic.chatspam")) then
-							print("AutoMagic has loaded", itemName, " due to Item Suggest(Disenchant)")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+					if (AucAdvanced.Modules.Util.ItemSuggest and get("util.automagic.overidebtmmail") == true) then
+						local aimethod = AucAdvanced.Modules.Util.ItemSuggest.itemsuggest(itemLink, itemCount)
+						if(aimethod == "Disenchant") then
+							if (get("util.automagic.chatspam")) then
+								print("AutoMagic has loaded", itemName, " due to Item Suggest(Disenchant)")
+							end
+							UseContainerItem(bag, slot)
+							runstop = 1
 						end
-						UseContainerItem(bag, slot)
-						runstop = 1
-					end
-				else --look for btmScan or SearchUI reason codes if above fails
-					local reason, text = lib.getReason(itemLink, itemName, itemCount, "disenchant")
-					if reason and text then
-						if (get("util.automagic.chatspam")) then
-							print("AutoMagic has loaded", itemName, " due to", text ,"Rule(Disenchant)")
+					else --look for btmScan or SearchUI reason codes if above fails
+						local reason, text = lib.getReason(itemLink, itemName, itemCount, "disenchant")
+						if reason and text then
+							if (get("util.automagic.chatspam")) then
+								print("AutoMagic has loaded", itemName, " due to", text ,"Rule(Disenchant)")
+							end
+							UseContainerItem(bag, slot)
 						end
-						UseContainerItem(bag, slot)
 					end
 				end
 			end
@@ -484,25 +535,27 @@ function lib.prospectAction()
 				if (itemLink == nil) then return end
 				if itemCount == nil then _, itemCount = GetContainerItemInfo(bag, slot) end
 				if itemCount == nil then itemCount = 1 end
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
-				runstop = 0
-				if (AucAdvanced.Modules.Util.ItemSuggest and get("util.automagic.overidebtmmail") == true) then
-					local aimethod = AucAdvanced.Modules.Util.ItemSuggest.itemsuggest(itemLink, itemCount)
-					if(aimethod == "Prospect") then
-						if (get("util.automagic.chatspam")) then
-							print("AutoMagic has loaded", itemName, " due to Item Suggest(Prospect)")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+					runstop = 0
+					if (AucAdvanced.Modules.Util.ItemSuggest and get("util.automagic.overidebtmmail") == true) then
+						local aimethod = AucAdvanced.Modules.Util.ItemSuggest.itemsuggest(itemLink, itemCount)
+						if(aimethod == "Prospect") then
+							if (get("util.automagic.chatspam")) then
+								print("AutoMagic has loaded", itemName, " due to Item Suggest(Prospect)")
+							end
+							UseContainerItem(bag, slot)
+							runstop = 1
 						end
-						UseContainerItem(bag, slot)
-						runstop = 1
-					end
-				else --look for btmScan or SearchUI reason codes if above fails
-					local reason, text = lib.getReason(itemLink, itemName, itemCount, "prospect")
-					if reason and text then
-						if (get("util.automagic.chatspam")) then
-							print("AutoMagic has loaded", itemName, " due to", text ,"Rule(Prospect)")
+					else --look for btmScan or SearchUI reason codes if above fails
+						local reason, text = lib.getReason(itemLink, itemName, itemCount, "prospect")
+						if reason and text then
+							if (get("util.automagic.chatspam")) then
+								print("AutoMagic has loaded", itemName, " due to", text ,"Rule(Prospect)")
+							end
+							UseContainerItem(bag, slot)
 						end
-						UseContainerItem(bag, slot)
 					end
 				end
 			end
@@ -519,13 +572,15 @@ function lib.gemAction()
 				if (itemLink == nil) then return end
 				if itemCount == nil then _, itemCount = GetContainerItemInfo(bag, slot) end
 				if itemCount == nil then itemCount = 1 end
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
-				if isGem[ itemID ] then
-					if (get("util.automagic.chatspam")) then
-						print("AutoMagic has loaded", itemName, " because it is a gem!")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+					if isGem[ itemID ] then
+						if (get("util.automagic.chatspam")) then
+							print("AutoMagic has loaded", itemName, " because it is a gem!")
+						end
+						UseContainerItem(bag, slot)
 					end
-					UseContainerItem(bag, slot)
 				end
 			end
 		end
@@ -541,13 +596,15 @@ function lib.dematAction()
 				if (itemLink == nil) then return end
 				if itemCount == nil then _, itemCount = GetContainerItemInfo(bag, slot) end
 				if itemCount == nil then itemCount = 1 end
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
-				if isDEMats[ itemID ] then
-					if (get("util.automagic.chatspam")) then
-						print("AutoMagic has loaded", itemName, " because it is a mat used for enchanting.")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+					if isDEMats[ itemID ] then
+						if (get("util.automagic.chatspam")) then
+							print("AutoMagic has loaded", itemName, " because it is a mat used for enchanting.")
+						end
+						UseContainerItem(bag, slot)
 					end
-					UseContainerItem(bag, slot)
 				end
 			end
 		end
@@ -563,13 +620,15 @@ function lib.pigmentAction()
 				if (itemLink == nil) then return end
 				if itemCount == nil then _, itemCount = GetContainerItemInfo(bag, slot) end
 				if itemCount == nil then itemCount = 1 end
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
-				if isPigmentMats[ itemID ] then
-					if (get("util.automagic.chatspam")) then
-						print("AutoMagic has loaded", itemName, " because it is a pigment used for milling.")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+					if isPigmentMats[ itemID ] then
+						if (get("util.automagic.chatspam")) then
+							print("AutoMagic has loaded", itemName, " because it is a pigment used for milling.")
+						end
+						UseContainerItem(bag, slot)
 					end
-					UseContainerItem(bag, slot)
 				end
 			end
 		end
@@ -585,13 +644,15 @@ function lib.herbAction()
 				if (itemLink == nil) then return end
 				if itemCount == nil then _, itemCount = GetContainerItemInfo(bag, slot) end
 				if itemCount == nil then itemCount = 1 end
-				local _, itemID, _, _, _, _ = decode(itemLink)
-				local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
-				if isHerb[ itemID ] then
-					if (get("util.automagic.chatspam")) then
-						print("AutoMagic has loaded", itemName, " because it is a herb.")
+				local linkType, itemID, _, _, _, _ = decode(itemLink)
+				if linkType == "item" then
+					local itemName, _, itemRarity, _, _, _, _, _, _, _ = GetItemInfo(itemLink)
+					if isHerb[ itemID ] then
+						if (get("util.automagic.chatspam")) then
+							print("AutoMagic has loaded", itemName, " because it is a herb.")
+						end
+						UseContainerItem(bag, slot)
 					end
-					UseContainerItem(bag, slot)
 				end
 			end
 		end
@@ -657,4 +718,4 @@ function lib.customAction(button)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5335 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5381 $")

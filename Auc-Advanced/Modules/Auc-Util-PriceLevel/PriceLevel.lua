@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Price Level Utility module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: PriceLevel.lua 5237 2011-11-30 11:29:51Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: PriceLevel.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a price level indicator
@@ -39,24 +39,11 @@ local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill = AucAdva
 
 local data
 
-function lib.Processor(callbackType, ...)
-	if (callbackType == "tooltip") then
-		lib.ProcessTooltip(...)
-	elseif (callbackType == "config") then
-		private.SetupConfigGui(...)
-	elseif (callbackType == "listupdate") then
-		private.ListUpdate(...)
-	elseif (callbackType == "configchanged") then
-		if (AuctionFrameBrowse_Update) then
-			AuctionFrameBrowse_Update()
-		end
-	end
-end
-
 lib.Processors = {}
-function lib.Processors.tooltip(callbackType, ...)
+function lib.Processors.itemtooltip(callbackType, ...)
 	lib.ProcessTooltip(...)
 end
+lib.Processors.battlepettooltip = lib.Processors.itemtooltip
 
 function lib.Processors.config(callbackType, ...)
 	private.SetupConfigGui(...)
@@ -73,15 +60,12 @@ function lib.Processors.configchanged(callbackType, ...)
 end
 
 
-function lib.ProcessTooltip(tooltip, name, hyperlink, quality, quantity, cost, additional)
-	-- In this function, you are afforded the opportunity to add data to the tooltip should you so
-	-- desire. You are passed a hyperlink, and it's up to you to determine whether or what you should
-	-- display in the tooltip.
+function lib.ProcessTooltip(tooltip, hyperlink, serverKey, quantity, decoded, additional, order)
 	if not  get("util.pricelevel.single") then return end
 
 	if not additional or not additional.buyoutPrice or not additional.minBid then return end
 
-	local priceLevel, perItem, r,g,b = lib.CalcLevel(hyperlink, quantity, additional.minBid, additional.buyoutPrice)
+	local priceLevel, perItem, r,g,b = lib.CalcLevel(hyperlink, quantity, additional.minBid, additional.buyoutPrice, nil, serverKey)
 	if (not priceLevel) then return end
 
 	tooltip:AddLine(("Price Level: %d%%"):format(priceLevel), perItem, r,g,b)
@@ -136,17 +120,17 @@ function private.SetupConfigGui(gui)
 		{"RIGHT", "Right"},
 		{"TOP", "Top"},
 		{"BOTTOM", "Bottom"},
-	}, "util.pricelevel.direction", "Pick the gradient direction")
+	}, "util.pricelevel.direction")
 	gui:AddTip(id, "This determines the direction that the above gradient is drawn in for the Auction Browse window (if enabled).")
 	gui:AddControl(id, "Subhead",    0,    "Price valuation method:")
-	gui:AddControl(id, "Selectbox",  0, 1, parent.selectorPriceModels, "util.pricelevel.model", "Pricing model to use for the valuation")
+	gui:AddControl(id, "Selectbox",  0, 1, parent.selectorPriceModels, "util.pricelevel.model")
 	gui:AddTip(id, "The pricing model that is used to work out the calculated value of items at the Auction House.")
 	gui:AddControl(id, "Subhead",    0,    "Price level basis:")
 	gui:AddControl(id, "Selectbox",  0, 1, {
 		{"cur", "Next bid price"},
 		{"buy", "Buyout only"},
 		{"try", "Buyout or bid"},
-	}, "util.pricelevel.basis", "Which price to use for the PriceLevel")
+	}, "util.pricelevel.basis")
 	gui:AddTip(id, "Selects which price to base the PriceLevel calculation off of.")
 
 	gui:AddHelp(id, "what is basis",
@@ -282,11 +266,10 @@ function private.ListUpdate()
 	end
 end
 
-function lib.CalcLevel(link, quantity, bidPrice, buyPrice, itemWorth)
+function lib.CalcLevel(link, quantity, bidPrice, buyPrice, itemWorth, serverKey)
 	if not quantity or quantity < 1 then quantity = 1 end
 
-	local priceModel = AucAdvanced.Settings.GetSetting("util.pricelevel.model")
-	local priceBasis = AucAdvanced.Settings.GetSetting("util.pricelevel.basis")
+	local priceBasis = get("util.pricelevel.basis")
 
 	local stackPrice
 	if (priceBasis == "cur") then
@@ -303,10 +286,11 @@ function lib.CalcLevel(link, quantity, bidPrice, buyPrice, itemWorth)
 	if not stackPrice then return end
 
 	if not itemWorth then
+		local priceModel = get("util.pricelevel.model")
 		if (priceModel == "market") then
-			itemWorth = AucAdvanced.API.GetMarketValue(link)
+			itemWorth = AucAdvanced.API.GetMarketValue(link, serverKey)
 		else
-			itemWorth = AucAdvanced.API.GetAlgorithmValue(priceModel, link)
+			itemWorth = AucAdvanced.API.GetAlgorithmValue(priceModel, link, serverKey)
 		end
 		if not itemWorth then return end
 	end
@@ -317,17 +301,17 @@ function lib.CalcLevel(link, quantity, bidPrice, buyPrice, itemWorth)
 	local r, g, b, lvl
 
 	r,g,b,lvl = 0.2,0.6,1.0, "blue"
-	if priceLevel > AucAdvanced.Settings.GetSetting("util.pricelevel.red") then
+	if priceLevel > get("util.pricelevel.red") then
 		r,g,b,lvl = 1.0,0.0,0.0, "red"
-	elseif priceLevel > AucAdvanced.Settings.GetSetting("util.pricelevel.orange") then
+	elseif priceLevel > get("util.pricelevel.orange") then
 		r,g,b,lvl = 1.0,0.6,0.1, "orange"
-	elseif priceLevel > AucAdvanced.Settings.GetSetting("util.pricelevel.yellow") then
+	elseif priceLevel > get("util.pricelevel.yellow") then
 		r,g,b,lvl = 1.0,1.0,0.0, "yellow"
-	elseif priceLevel > AucAdvanced.Settings.GetSetting("util.pricelevel.green") then
+	elseif priceLevel > get("util.pricelevel.green") then
 		r,g,b,lvl = 0.1,1.0,0.1, "green"
 	end
 
 	return priceLevel, perItem, r,g,b, lvl, itemWorth
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-PriceLevel/PriceLevel.lua $", "$Rev: 5237 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-PriceLevel/PriceLevel.lua $", "$Rev: 5381 $")

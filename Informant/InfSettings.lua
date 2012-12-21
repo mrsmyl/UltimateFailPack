@@ -1,8 +1,8 @@
 --[[
 	Informant - An addon for World of Warcraft that shows pertinent information about
 	an item in a tooltip when you hover over the item in the game.
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: InfSettings.lua 5202 2011-07-16 11:32:39Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: InfSettings.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/dl/Informant/
 
 	Command handler. Assumes responsibility for allowing the user to set the
@@ -63,7 +63,7 @@ Usage:
 
 
 ]]
-Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Informant/InfSettings.lua $", "$Rev: 5202 $")
+Informant_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Informant/InfSettings.lua $", "$Rev: 5381 $")
 
 local lib = {}
 Informant.Settings = lib
@@ -412,7 +412,7 @@ function lib.MakeGuiConfig()
 	gui:AddControl(id, "Header",     0,    _TRANS('INF_Interface_SetupProfile')) --"Setup, Configure and Edit Profiles"
 
 	gui:AddControl(id, "Subhead",    0,    _TRANS('INF_Interface_ActivateProfile')) --"Activate a current profile"
-	gui:AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile", "Switch to the given profile") --This string isn't shown?
+	gui:AddControl(id, "Selectbox",  0, 1, "profile.profiles", "profile")
 	gui:AddTip(id, _TRANS('INF_HelpTooltip_ActivateProfile')) --"Select the profile that you wish to use for this character"
 
 	gui:AddControl(id, "Button",     0, 1, "profile.delete", _TRANS('INF_Interface_Delete')) --"Delete"

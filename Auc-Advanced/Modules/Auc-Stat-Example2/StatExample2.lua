@@ -18,8 +18,8 @@ end
 
 --[[
 	Auctioneer - Stat's API Example module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: StatExample2.lua 5207 2011-07-18 20:16:04Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: StatExample2.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that does something nifty.
@@ -80,7 +80,7 @@ The following functions are part of the module's exposed methods:
 	GetPriceColumns() (optional) Returns the column names for GetPrice
 	OnLoad()          (optional) Receives load message for self, and for any modules specified by LoadTriggers table
 	OnUnload()        (optional) Called during logout, just before data gets saved
-	
+
 	GetPriceArray()   (*) Returns pricing and other statistical info in an array
 	GetItemPDF()      (**) Returns Probability Density Function for item link (see below)
 	AuctionFilter()   (##) Perform filtering on an auction entry
@@ -103,10 +103,11 @@ lib.Processors.bidcancelled = function(callbackType, cancelInfo) end
 -- Note, this returns a string of "<link>;<seller>;<count>;<price>;<reason>'
 --  it probably should be modified to in the future return callbackType, link, seller, count, price, reason
 lib.Processors.bidplaced = function(callbackType, bidInfo) end
--- Expected to be deprecated in the future.  A new processor message SKtooltip is in works, but not yet called.
+-- Deprecated tooltip message, still supported for legacy modules
 lib.Processors.tooltip = function(callbackType, tooltip, name, hyperlink, quality, quantity, cost, extra) end
--- Not yet in use.
-lib.Processors.SKtooltip = function(callbackType, serverKey, tooltip, name, hyperlink, quality, quantity, cost, extra) end
+-- Separate item and battlepet tooltip messages, with serverKey support
+lib.Processors.itemtooltip = function(callbackType, tooltip, hyperlink, serverKey, quantity, decoded, additional, order) end
+lib.Processors.battlepettooltip = function(callbackType, tooltip, hyperlink, serverKey, quantity, decoded, additional, order) end
 -- Blizzard_AuctionUI has loaded. Use to hook into Blizzard auction code (e.g. AuctionFrame, etc.)
 lib.Processors.auctionui = function(callbackType) end
 -- An auctioneer addon has been loaded.
@@ -156,7 +157,7 @@ function lib.OnLoad()
 
 	-- note: this sort of announcement can get annoying, so should usually be avoided
 	aucPrint("AucAdvanced: {{"..libType..":"..libName.."}} loaded!")
-	
+
 	-- setting strings should be of the form "libType.libName.settingName"
 	-- they should contain exactly 2 '.' characters
 	AucAdvanced.Settings.SetDefault("stat.example2.active", true)
@@ -222,8 +223,8 @@ function private.SetupConfigGui(gui)
 		{7, "Seven"},
 		{8, "Eight"},
 		{9, "Nine"}
-	}, "stat.example2.hardselectbox", "Statically, by hardcoding the values...")
-	gui:AddControl(id, "Selectbox",  0, 1, private.GetNumbers, "stat.example2.dynamicselectbox", "Or dynamically by specifying a function instead of a table...")
+	}, "stat.example2.hardselectbox")
+	gui:AddControl(id, "Selectbox",  0, 1, private.GetNumbers, "stat.example2.dynamicselectbox")
 
 	gui:AddControl(id, "Subhead",    0,    "There are also a few ways to add text:\n  The Headers and SubHeaders that you've already seen...")
 	gui:AddControl(id, "Note",       0, 1, nil, nil, "Notes...")
@@ -254,4 +255,4 @@ end
 function private.Baz()
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Advanced/Modules/Auc-Stat-Example2/StatExample2.lua $", "$Rev: 5207 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/Modules/Auc-Stat-Example2/StatExample2.lua $", "$Rev: 5381 $")

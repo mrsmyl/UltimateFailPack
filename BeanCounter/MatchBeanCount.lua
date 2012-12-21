@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - BeanCounter Matcher module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: MatchBeanCount.lua 5283 2012-03-26 20:54:26Z Nechckn $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: MatchBeanCount.lua 5279 2012-03-05 13:20:38Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer Matcher module which will modify the Appraiser
@@ -36,7 +36,7 @@
 --	AucAdvanced.Print("BeanCounter not loaded")
 --	return
 --end
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.14/BeanCounter/MatchBeanCount.lua $","$Rev: 5283 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.15/BeanCounter/MatchBeanCount.lua $","$Rev: 5279 $","5.1.DEV.", 'auctioneer', 'libs')
 
 if not AucAdvanced then return end
 

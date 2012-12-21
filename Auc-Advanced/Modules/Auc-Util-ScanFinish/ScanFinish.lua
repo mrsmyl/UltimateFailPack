@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Scan Finish module
-	Version: 5.14.5335 (KowariOnCrutches)
-	Revision: $Id: ScanFinish.lua 5153 2011-05-13 19:01:25Z brykrys $
+	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: ScanFinish.lua 5381 2012-11-27 19:42:13Z mentalpower $
 	URL: http://auctioneeraddon.com/
 
 	This is an Auctioneer module that adds a few event functionalities
@@ -205,7 +205,7 @@ function private.SetupConfigGui(gui)
 		{"ReadyCheck","Raid Ready Check"},
 		{"RaidWarning","Raid Warning"},
 		{"LOOTWINDOWCOINSOUND","Coin"},
-	}, "util.scanfinish.soundpath", "Pick the sound to play")
+	}, "util.scanfinish.soundpath")
 	gui:AddTip(id, "Selecting one of these sounds will cause Auctioneer to play that sound once Auctioneer has completed a scan successfully. \n\nBy selecting None, no sound will be played.")
 
 	gui:AddControl(id, "Selectbox",  0, 3, {
@@ -224,7 +224,7 @@ function private.SetupConfigGui(gui)
 		{"VICTORY"   , "Victory"},
 		{"YAWN"	  , "Yawn"},
 
-	}, "util.scanfinish.emote", "Pick the Emote to perform")
+	}, "util.scanfinish.emote")
 	gui:AddTip(id, "Selecting one of these emotes will cause your character to perform the selected emote once Auctioneer has completed a scan successfully.\n\nBy selecting None, no emote will be performed.")
 
 	gui:AddControl(id, "Subhead",	0,	"Message")
@@ -239,7 +239,7 @@ function private.SetupConfigGui(gui)
 		{"YELL","Yell (/y)"},
 		{"EMOTE","Emote (/em)"},
 		{"GENERAL","General"},
-	}, "util.scanfinish.messagechannel", "Pick the channel to send your message to")
+	}, "util.scanfinish.messagechannel")
 	gui:AddTip(id, "Selecting one of these channels will cause your character to say the message text into the selected channel once Auctioneer has completed a scan successfully. \n\nBy choosing Emote, your character will use the text above as a custom emote. \n\nBy selecting None, no message will be sent.")
 
 
@@ -292,4 +292,4 @@ function private.ConfigChanged()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.14/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5153 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5381 $")
