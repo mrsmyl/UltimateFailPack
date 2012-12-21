@@ -3867,6 +3867,7 @@ end
 
 HealBot_Options_StorePrev["FilterHoTctlName"]=HealBot_Options_FilterHoTctl_List[1]
 HealBot_Options_StorePrev["FilterHoTctlNameTrim"]=HealBot_Class_En[HealBot_Options_StorePrev["FilterHoTctlName"]]
+HealBot_Options_StorePrev["FilterHoTctlID"]=1
 
 function HealBot_Options_Class_HoTctlName_genList()
     local class=nil
@@ -3957,8 +3958,9 @@ function HealBot_Options_FilterHoTctl_DropDown()
         info.text = HealBot_Options_FilterHoTctl_List[j];
         info.func = function(self)
                         HealBot_Options_StorePrev["FilterHoTctlName"]=self.value
+                        HealBot_Options_StorePrev["FilterHoTctlID"]=self:GetID()
                         HealBot_Options_StorePrev["FilterHoTctlNameTrim"]=HealBot_Class_En[HealBot_Options_StorePrev["FilterHoTctlName"]]
-                        HealBot_AddDebug("trim = "..HealBot_Options_StorePrev["FilterHoTctlName"])
+                       -- HealBot_AddDebug("trim = "..HealBot_Options_StorePrev["FilterHoTctlName"])
                         UIDropDownMenu_SetText(HealBot_Options_FilterHoTctl,HealBot_Options_StorePrev["FilterHoTctlName"]) 
                         DoneInitTab[315]=nil
                         HealBot_Options_InitSub(315)
@@ -8086,6 +8088,7 @@ function HealBot_Options_InitSub1(subNo)
         end
     elseif subNo==314 then
         if not DoneInitTab[314] then
+            HealBot_Options_StorePrev["FilterHoTctlName"]=HealBot_Options_FilterHoTctl_List[HealBot_Options_StorePrev["FilterHoTctlID"]]
             HealBot_Options_FilterHoTctl.initialize = HealBot_Options_FilterHoTctl_DropDown
             UIDropDownMenu_SetText(HealBot_Options_FilterHoTctl, HealBot_Options_StorePrev["FilterHoTctlName"])
             DoneInitTab[314]=true
@@ -8229,8 +8232,8 @@ function HealBot_Options_InitSub1(subNo)
             HealBot_Options_SetText(HealBot_Options_CastNotify4,HEALBOT_OPTIONS_CASTNOTIFY4)
             HealBot_Options_SetText(HealBot_Options_CastNotify5,HEALBOT_OPTIONS_CASTNOTIFY5)
             HealBot_Options_SetText(HealBot_Options_CastNotify6,HEALBOT_OPTIONS_CASTNOTIFY6)
-            g=_G["HealBot_Options_NotifyOtherMsgText"]
-            g:SetText(HEALBOT_OPTIONS_NOTIFY_MSG)  
+            HealBot_Options_NotifyOtherMsgTxt:SetText(HEALBOT_OPTIONS_NOTIFY_MSG)
+            HealBot_HealButtons_ChatFrameTxt:SetText(HEALBOT_OPTIONS_HEAL_CHATOPT)
             DoneInitTab[328]=true
         end
     elseif subNo==329 then
@@ -8323,14 +8326,14 @@ function HealBot_Options_InitSub1(subNo)
             HealBot_Options_SetText(HealBot_BarButtonShowHoTonBar3,HEALBOT_OPTIONS_HOTBELOWBAR)
             HealBot_Options_SetText(HealBot_BarButtonShowHoTposBar1,HEALBOT_OPTIONS_HOTBARLEFT)
             HealBot_Options_SetText(HealBot_BarButtonShowHoTposBar2,HEALBOT_OPTIONS_HOTBARRIGHT)
-            HealBot_Options_Class_HoTctlText:SetText(HealBot_PlayerClass.." "..HEALBOT_ACTION_OPTIONS);
-            HealBot_Options_Class_HoTctlNameText:SetText(HEALBOT_OPTIONS_ALLSPELLS);
-            HealBot_Options_Class_HoTctlActionText:SetText(HEALBOT_OPTIONS_HOTSHOWICON);
-            g=_G["HealBot_Options_Skins_HoTs2Text"]
+            HealBot_Options_Class_HoTctlTxt:SetText(HealBot_PlayerClass.." "..HEALBOT_ACTION_OPTIONS);
+            HealBot_Options_Class_HoTctlNameTxt:SetText(HEALBOT_OPTIONS_ALLSPELLS);
+            HealBot_Options_Class_HoTctlActionTxt:SetText(HEALBOT_OPTIONS_HOTSHOWICON);
+            g=_G["HealBot_Options_Skins_HoTs2Txt"]
             g:SetText(HEALBOT_OPTIONS_ICONOPTTEXT)
             g=_G["HealBot_Options_Skins_HoTs2Text3"]
             g:SetText(HEALBOT_OPTIONS_HOTPOSITION)
-            g=_G["HealBot_Options_Class_HoTctlFilterNameText"]
+            g=_G["HealBot_Options_Class_HoTctlFilterNameTxt"]
             g:SetText(HEALBOT_WORD_FILTER)
             DoneInitTab[332]=true
         end
@@ -9189,7 +9192,7 @@ function HealBot_Options_InitSub2(subNo)
             g:SetText(HEALBOT_ABOUT_LOCALD)
             g=_G["HealBot_About_FAQH"] 
             g:SetText(HEALBOT_ABOUT_FAQH)
-            g=_G["HealBot_Options_FAQText"] 
+            g=_G["HealBot_Options_FAQTxt"] 
             g:SetText(HEALBOT_ABOUT_FAQ_QUESTION)
             g=_G["HealBot_Options_FAQAnswerTextH"] 
             g:SetText(HEALBOT_ABOUT_FAQ_ANSWER)
@@ -9696,12 +9699,21 @@ function HealBot_UpdateUsedMedia(event, mediatype, key)
 end
 
 function HealBot_Comms_SendAddonMsg(addon_id, msg, aType, pName)
-    if aType==1 then
-        SendAddonMessage(addon_id, msg, "BATTLEGROUND" );
+    local inInst=IsInInstance()
+    if aType==1 and inInst then
+        SendAddonMessage(addon_id, msg, "INSTANCE_CHAT" );
     elseif aType==2 then
-        SendAddonMessage(addon_id, msg, "RAID" );
+        if inInst then
+            SendAddonMessage(addon_id, msg, "INSTANCE_CHAT" );
+        else
+            SendAddonMessage(addon_id, msg, "RAID" );
+        end
     elseif aType==3 then
-        SendAddonMessage(addon_id, msg, "PARTY" );
+        if inInst then
+            SendAddonMessage(addon_id, msg, "INSTANCE_CHAT" );
+        else
+            SendAddonMessage(addon_id, msg, "PARTY" );
+        end
     elseif aType==4 and pName then
         SendAddonMessage(addon_id, msg, "WHISPER", pName );
     elseif aType==5 then

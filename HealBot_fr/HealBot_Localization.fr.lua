@@ -1,4 +1,4 @@
--- French version (by Kubik of Vol'Jin) 2012-10-21 / V. 5.0.5.5
+ï»¿-- French version (by Kubik of Vol'Jin) 2012-10-21 / V. 5.0.5.5
 -- à = \195\160
 -- â = \195\162
 -- ç = \195\167
@@ -923,14 +923,14 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
     HEALBOT_PLAYER_OF_REALM                 = "de"
     
     HEALBOT_OPTIONS_LANG                    = "Langue"
-    HEALBOT_OPTIONS_LANG_ZHCN               = "Chinois (zhCN - Recherche traducteur)"
+    HEALBOT_OPTIONS_LANG_ZHCN               = "Chinois (zhCN - par Ydzzs)"
     HEALBOT_OPTIONS_LANG_DEDE               = "Allemand (deDE - Recherche traducteur)"
     HEALBOT_OPTIONS_LANG_ENUK               = "Anglais (enUK - par Strife)"
     HEALBOT_OPTIONS_LANG_ENUS               = "Anglais (enUS - par Strife)"
     HEALBOT_OPTIONS_LANG_ESES               = "Espagnol (esES - Recherche traducteur)"
     HEALBOT_OPTIONS_LANG_FRFR               = "Fran\195\167ais (frFR - par Kubik)"
     HEALBOT_OPTIONS_LANG_HUHU               = "Hongrois (huHU - par Von)"
-    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - by Brezza)"
+    HEALBOT_OPTIONS_LANG_ITIT               = "Italien (itIT - Recherche traducteur)"
     HEALBOT_OPTIONS_LANG_KRKR               = "Kor\195\169en (krKR - Recherche traducteur)"
     HEALBOT_OPTIONS_LANG_PTBR               = "Portugais (ptBR - par aldetal)"
     HEALBOT_OPTIONS_LANG_RURU               = "Russe (ruRU - Recherche traducteur)"

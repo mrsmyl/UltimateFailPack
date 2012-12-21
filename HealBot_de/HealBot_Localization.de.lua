@@ -1,4 +1,4 @@
--- German translator required
+﻿-- German translator required
 ------------
 -- GERMAN --
 ------------
@@ -915,14 +915,14 @@ HEALBOT_OPTIONS_AVOIDBLUECURSOR         = "Avoid\nBlue Cursor"
 HEALBOT_PLAYER_OF_REALM                 = "of"
     
     HEALBOT_OPTIONS_LANG                    = "Language"
-    HEALBOT_OPTIONS_LANG_ZHCN               = "Chinese (zhCN - translator required)"
+    HEALBOT_OPTIONS_LANG_ZHCN               = "Chinese (zhCN - by Ydzzs)"
     HEALBOT_OPTIONS_LANG_ENUK               = "English (enUK - by Strife)"
     HEALBOT_OPTIONS_LANG_ENUS               = "English (enUS - by Strife)"
     HEALBOT_OPTIONS_LANG_FRFR               = "French (frFR - by Kubik)"
     HEALBOT_OPTIONS_LANG_DEDE               = "German (deDE - translator required)"
     HEALBOT_OPTIONS_LANG_HUHU               = "Hungarian (huHU - by Von)"
     HEALBOT_OPTIONS_LANG_KRKR               = "Korean (krKR - translator required)"
-    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - by Brezza)"
+    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - translator required)"
     HEALBOT_OPTIONS_LANG_PTBR               = "Portuguese (ptBR - by aldetal)"
     HEALBOT_OPTIONS_LANG_RURU               = "Russian (ruRU - translator required)"
     HEALBOT_OPTIONS_LANG_ESES               = "Spanish (esES - translator required)"

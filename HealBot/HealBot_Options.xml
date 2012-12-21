@@ -805,7 +805,7 @@
                   <Frame name="HealBot_Options_FAQ" inherits="UIDropDownMenuTemplate">
                     <Layers>
                       <Layer level="BACKGROUND">
-                        <FontString name="HealBot_Options_FAQText" text="HEALBOT_ABOUT_FAQ_QUESTION" inherits="GameFontNormalSmall">
+                        <FontString name="HealBot_Options_FAQTxt" text="HEALBOT_ABOUT_FAQ_QUESTION" inherits="GameFontNormalSmall">
                           <Anchors>
                             <Anchor point="RIGHT" relativeTo="HealBot_Options_FAQ" relativePoint="LEFT">
                               <Offset>
@@ -5174,7 +5174,7 @@
                 </Backdrop>
                 <Layers>
                   <Layer level="BACKGROUND">
-                    <FontString name="HealBot_HealButtons_ChatFrameText" text="HEALBOT_OPTIONS_HEAL_CHATOPT" inherits="GameFontNormalSmall">
+                    <FontString name="HealBot_HealButtons_ChatFrameTxt" text="HEALBOT_OPTIONS_HEAL_CHATOPT" inherits="GameFontNormalSmall">
                       <Anchors>
                         <Anchor point="TOP">
                           <Offset>
@@ -5296,11 +5296,11 @@
                     </Size>
                     <Layers>
                       <Layer level="BACKGROUND">
-                        <FontString name="HealBot_Options_NotifyOtherMsgText" inherits="GameFontNormalSmall">
+                        <FontString name="HealBot_Options_NotifyOtherMsgTxt" inherits="GameFontNormalSmall">
                           <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPLEFT">
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT">
                               <Offset>
-                                <AbsDimension x="-10" y="-5" />
+                                <AbsDimension x="5" y="14" />
                               </Offset>
                             </Anchor>
                           </Anchors>
@@ -6485,7 +6485,7 @@
                 </Backdrop>
                 <Layers>
                   <Layer level="BACKGROUND">
-                    <FontString name="HealBot_Options_Skins_HoTs2Text" text="HEALBOT_OPTIONS_ICONOPTTEXT" inherits="GameFontNormalSmall">
+                    <FontString name="HealBot_Options_Skins_HoTs2Txt" text="HEALBOT_OPTIONS_ICONOPTTEXT" inherits="GameFontNormalSmall">
                       <Anchors>
                         <Anchor point="TOP">
                           <Offset>
@@ -6745,7 +6745,7 @@
                   <Frame name="HealBot_Options_FilterHoTctl" inherits="UIDropDownMenuTemplate">
                     <Layers>
                       <Layer level="BACKGROUND">
-                        <FontString name="HealBot_Options_Class_HoTctlFilterNameText" text="HEALBOT_WORD_FILTER" inherits="GameFontNormalSmall">
+                        <FontString name="HealBot_Options_Class_HoTctlFilterNameTxt" text="HEALBOT_WORD_FILTER" inherits="GameFontNormalSmall">
                           <Anchors>
                             <Anchor point="TOP">
                               <Offset>
@@ -6770,7 +6770,7 @@
                   <Frame name="HealBot_Options_Class_HoTctlName" inherits="UIDropDownMenuTemplate">
                     <Layers>
                       <Layer level="BACKGROUND">
-                        <FontString name="HealBot_Options_Class_HoTctlText" text="HEALBOT_ACTION_OPTIONS" inherits="GameFontNormalSmall">
+                        <FontString name="HealBot_Options_Class_HoTctlTxt" text="HEALBOT_ACTION_OPTIONS" inherits="GameFontNormalSmall">
                           <Anchors>
                             <Anchor point="CENTER">
                               <Offset>
@@ -6779,7 +6779,7 @@
                             </Anchor>
                           </Anchors>
                         </FontString>
-                        <FontString name="HealBot_Options_Class_HoTctlNameText" text="HEALBOT_OPTIONS_ALLSPELLS" inherits="GameFontNormalSmall">
+                        <FontString name="HealBot_Options_Class_HoTctlNameTxt" text="HEALBOT_OPTIONS_ALLSPELLS" inherits="GameFontNormalSmall">
                           <Anchors>
                             <Anchor point="TOP">
                               <Offset>
@@ -6804,7 +6804,7 @@
                   <Frame name="HealBot_Options_Class_HoTctlAction" inherits="UIDropDownMenuTemplate">
                     <Layers>
                       <Layer level="BACKGROUND">
-                        <FontString name="HealBot_Options_Class_HoTctlActionText" text="HEALBOT_OPTIONS_HOTSHOWICON" inherits="GameFontNormalSmall">
+                        <FontString name="HealBot_Options_Class_HoTctlActionTxt" text="HEALBOT_OPTIONS_HOTSHOWICON" inherits="GameFontNormalSmall">
                           <Anchors>
                             <Anchor point="TOP">
                               <Offset>

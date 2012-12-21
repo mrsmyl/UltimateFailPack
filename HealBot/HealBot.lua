@@ -4475,16 +4475,25 @@ function HealBot_CastNotify(unitName,spell,unit)
         w=HealBot_Comms_GetChan(Healbot_Config_Skins.NotifyChan[Healbot_Config_Skins.Current_Skin]) 
         if not w then z=2 end
     end
-    if z==5 and GetNumGroupMembers()==(GetNumSubgroupMembers()+1) then z = 4 end
-    if z==4 and GetNumGroupMembers()==0 then z = 2 end
-    if z==3 and not (UnitPlayerControlled(HealBot_CastingTarget) and HealBot_CastingTarget~='player' and HealBot_CastingTarget~='pet') then z = 2 end
-    if z==3 then
+    if z==5 and not UnitInRaid("player") then z = 4 end
+    if z==4 and not UnitInParty("player") then z = 2 end
+    if z==3 and UnitIsPlayer(HealBot_CastingTarget) and UnitPlayerControlled(HealBot_CastingTarget) and HealBot_CastingTarget~="player" then
         s = gsub(s,unitName,HEALBOT_WORDS_YOU)
         SendChatMessage(s,"WHISPER",nil,unitName);
     elseif z==4 then
-        SendChatMessage(s,"PARTY",nil,nil);
+        local inInst=IsInInstance()
+        if inInst then
+            SendChatMessage(s,"INSTANCE_CHAT",nil,nil);
+        else
+            SendChatMessage(s,"PARTY",nil,nil);
+        end
     elseif z==5 then
-        SendChatMessage(s,"RAID",nil,nil);
+        local inInst=IsInInstance()
+        if inInst then
+            SendChatMessage(s,"INSTANCE_CHAT",nil,nil);
+        else
+            SendChatMessage(s,"RAID",nil,nil);
+        end
     elseif z==6 then
         SendChatMessage(s,"CHANNEL",nil,w);
     else
