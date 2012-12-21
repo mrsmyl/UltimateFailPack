@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(713, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8164 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8277 $"):sub(12, -3))
 mod:SetCreatureID(63191)--Also has CID 62164. He has 2 CIDs for a single target, wtf? It seems 63191 is one players attack though so i'll try just it.
 mod:SetModelID(42368)
 mod:SetZone()
@@ -30,6 +30,7 @@ local warnFury					= mod:NewStackAnnounce(122754, 3)
 local warnBrokenLeg				= mod:NewStackAnnounce(122786, 2)
 local warnMendLeg				= mod:NewSpellAnnounce(123495, 1)
 local warnCrush					= mod:NewSpellAnnounce(122774, 3)--On normal, only cast if you do fight wrong (be it on accident or actually on purpose. however, on heroic, this might have a CD)
+local warnPungency				= mod:NewStackAnnounce(123081, 4)
 
 local specwarnUnder				= mod:NewSpecialWarning("specwarnUnder")
 local specwarnPheromonesTarget	= mod:NewSpecialWarningTarget(122835, false)
@@ -41,7 +42,7 @@ local specwarnLeg				= mod:NewSpecialWarningSwitch("ej6270", mod:IsMelee())--If 
 local specwarnPheromoneTrail	= mod:NewSpecialWarningMove(123120)--Because this starts doing damage BEFORE the visual is there.
 
 local timerCrush				= mod:NewCastTimer(3.5, 122774)--Was 3 second, hotfix went live after my kill log, don't know what new hotfixed cast time is, 3.5, 4? Needs verification.
-local timerCrushCD				= mod:NewNextTimer(36, 122774)--unconfirmed, assumed by video
+local timerCrushCD				= mod:NewNextTimer(37, 122774)
 local timerFuriousSwipeCD		= mod:NewCDTimer(8, 122735)
 local timerMendLegCD			= mod:NewCDTimer(30, 123495)
 local timerFury					= mod:NewBuffActiveTimer(30, 122754)
@@ -58,10 +59,12 @@ function mod:OnCombatStart(delay)
 	brokenLegs = 0
 	timerFuriousSwipeCD:Start(-delay)--8-11 sec on pull
 	if self:IsDifficulty("heroic10", "heroic25") then
-		timerCrushCD:Start(28-delay)--unconfirmed, assumed by video
+		timerCrushCD:Start(30.5-delay)
 	end
 	if not self:IsDifficulty("lfr25") then
 		berserkTimer:Start(-delay)
+	else
+		berserkTimer:Start(720-delay)
 	end
 end
 
@@ -99,13 +102,18 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.PheromonesIcon then
 			self:SetIcon(args.destName, 2)
 		end
-	elseif args:IsSpellID(123081) and args:IsPlayer() then
-		if self:IsDifficulty("normal25", "heroic25") then--Is it also 4 min on LFR?
-			timerPungency:Start(240)
-		elseif self:IsDifficulty("lfr25") then
-			timerPungency:Start(20)
-		else
-			timerPungency:Start()
+	elseif args:IsSpellID(123081) and not self:IsDifficulty("lfr25") then
+		if (args.amount or 1) >= 9 and (args.amount or 1) % 3 == 0 then
+			warnPungency:Show(args.destName, args.amount)
+		end
+		if args:IsPlayer() then
+			if self:IsDifficulty("normal25", "heroic25") then--Is it also 4 min on LFR?
+				timerPungency:Start(240)
+			elseif self:IsDifficulty("lfr25") then
+				timerPungency:Start(20)
+			else
+				timerPungency:Start()
+			end
 		end
 	end
 end
@@ -143,7 +151,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 123120 and destGUID == UnitGUID("player") and self:AntiSpam(3) then
+	if spellId == 123120 and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then
 		specwarnPheromoneTrail:Show()
 	end
 end
@@ -151,8 +159,10 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 	if msg:find("spell:122774") then
-		warnCrush:Show()
-		specwarnCrush:Show()
+		if self:AntiSpam(3, 2) then
+			warnCrush:Show()
+			specwarnCrush:Show()
+		end
 		timerCrush:Start()
 		if self:IsDifficulty("heroic10", "heroic25") and not msg:find(L.UnderHim) then--unconfirmed
 			timerCrushCD:Start()--unconfirmed, assumed by video

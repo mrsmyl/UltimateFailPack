@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod(726, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8156 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8288 $"):sub(12, -3))
 mod:SetCreatureID(60410)--Energy Charge (60913), Emphyreal Focus (60776), Cosmic Spark (62618), Celestial Protector (60793)
 mod:SetModelID(41399)
 mod:SetZone()
-mod:SetUsedIcons(8, 7, 6, 5, 4, 3)
+mod:SetUsedIcons(8, 7, 6)
 
 mod:RegisterCombat("combat")
 
@@ -23,7 +23,7 @@ local warnProtector					= mod:NewCountAnnounce(117954, 3)
 local warnArcingEnergy				= mod:NewSpellAnnounce(117945, 2)--Cast randomly at 2 players, it is avoidable.
 local warnClosedCircuit				= mod:NewTargetAnnounce(117949, 3, nil, mod:IsHealer())--what happens if you fail to avoid the above
 local warnTotalAnnihilation			= mod:NewCastAnnounce(129711, 4)--Protector dying(exploding)
-local warnStunned					= mod:NewTargetAnnounce(132226, 3, nil, mod:IsHealer())--Heroic
+local warnStunned					= mod:NewTargetAnnounce(132222, 3, nil, mod:IsHealer())--Heroic / 132222 is stun debuff, 132226 is 2 min debuff. 
 local warnPhase2					= mod:NewPhaseAnnounce(2, 3)--124967 Draw Power
 local warnDrawPower					= mod:NewCountAnnounce(119387, 4)
 local warnPhase3					= mod:NewPhaseAnnounce(3, 3)--116994 Unstable Energy Starting
@@ -39,13 +39,14 @@ local specWarnRadiatingEnergies		= mod:NewSpecialWarningSpell(118310, nil, nil, 
 local timerBreathCD					= mod:NewCDTimer(18, 117960)
 local timerProtectorCD				= mod:NewCDTimer(35.5, 117954)
 local timerArcingEnergyCD			= mod:NewCDTimer(11.5, 117945)
+local timerTotalAnnihilation		= mod:NewCastTimer(4, 129711)
+local timerDestabilized				= mod:NewBuffActiveTimer(120, 132226)
 local timerFocusPower				= mod:NewCastTimer(16, 119358)
 local timerDespawnFloor				= mod:NewTimer(6.5, "timerDespawnFloor", 116994)--6.5-7.5 variation. 6.5 is safed to use so you don't fall and die.
 
 local berserkTimer					= mod:NewBerserkTimer(570)
 
 mod:AddBoolOption("SetIconOnDestabilized", true)
-mod:AddBoolOption("SetIconOnCreature", true)
 mod:AddBoolOption("HealthFrame", false)
 
 local phase2Started = false
@@ -114,6 +115,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnRadiatingEnergies:Show()
 		specWarnRadiatingEnergies:Show()--Give a good warning so people standing outside barrior don't die.
 	elseif args:IsSpellID(132226) then
+		if args:IsPlayer() then
+			timerDestabilized:Start()
+		end
+	elseif args:IsSpellID(132222) then
 		stunTargets[#stunTargets + 1] = args.destName
 		if self.Options.SetIconOnDestabilized then
 			self:SetIcon(args.destName, stunIcon)
@@ -129,25 +134,15 @@ function mod:SPELL_AURA_REMOVED(args)
 	if args:IsSpellID(116994) then--phase 3 end
 		warnPhase1:Show()
 	elseif args:IsSpellID(132226) then
+		if args:IsPlayer() then
+			timerDestabilized:Cancel()
+		end
+	elseif args:IsSpellID(132222) then
 		if self.Options.SetIconOnDestabilized then
 			self:SetIcon(args.destName, 0)
 		end
 	end
 end
-
-mod:RegisterOnUpdateHandler(function(self)
-	if self.Options.SetIconOnCreature and DBM:GetRaidRank() > 0 and not iconsSet == 6 then
-		for i = 1, DBM:GetGroupMembers() do
-			local uId = "raid"..i.."target"
-			local guid = UnitGUID(uId)
-			if creatureIcons[guid] then
-				SetRaidTarget(uId, creatureIcons[guid])
-				iconsSet = iconsSet + 1
-				creatureIcons[guid] = nil
-			end
-		end
-	end
-end, 1)
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(116598, 132265) then--Cast when these are activated
@@ -161,10 +156,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if focusActivated == 6 then
 			timerDespawnFloor:Start()
 			specWarnDespawnFloor:Show()
-		end
-		if self.Options.SetIconOnCreature and not creatureIcons[args.sourceGUID] then
-			creatureIcons[args.sourceGUID] = creatureIcon
-			creatureIcon = creatureIcon - 1
 		end
 	elseif args:IsSpellID(116989) then--Cast when defeated (or rathor 1 HP)
 		DBM.BossHealth:RemoveBoss(args.sourceGUID)
@@ -191,6 +182,7 @@ function mod:SPELL_CAST_START(args)
 		stunIcon = 8
 		warnTotalAnnihilation:Show()
 		specWarnTotalAnnihilation:Show()
+		timerTotalAnnihilation:Start()
 		timerArcingEnergyCD:Cancel(args.sourceGUID)--add is dying, so this add is done casting arcing Energy
 	elseif args:IsSpellID(117949) then
 		closedCircuitTargets[#closedCircuitTargets + 1] = args.destName

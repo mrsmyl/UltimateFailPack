@@ -26,7 +26,7 @@
 ## X-DBM-Mod-Name-zhCN: 5人副本 (熊猫人之谜)
 ## X-DBM-Mod-Sort: 25
 ## X-DBM-Mod-LoadZoneID: 867, 876, 877, 875, 885, 887, 898, 871, 874
-## X-Curse-Packaged-Version: 4.11.6
+## X-Curse-Packaged-Version: 4.11.7
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

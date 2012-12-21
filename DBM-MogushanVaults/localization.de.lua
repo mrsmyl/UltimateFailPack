@@ -65,7 +65,12 @@ L:SetMiscLocalization({
 ----------------------
 L = DBM:GetModLocalization(687)
 
+L:SetWarningLocalization({
+	DarknessSoon		= "Schild der Dunkelheit in %d Sekunden"
+})
+
 L:SetOptionLocalization({
+	DarknessSoon		= "Zeige Vorwarnungscountdown für $spell:117697 (5s zuvor)",
 	RangeFrame			= "Zeige Abstandsfenster (8m)"
 })
 
@@ -98,6 +103,7 @@ L= DBM:GetModLocalization(677)
 
 L:SetOptionLocalization({
 	InfoFrame		= "Zeige Infofenster für Spieler, welche von $spell:116525 betroffen sind",
+	CountOutCombo	= "Zähle akkustisch die Anzahl der $journal:5673 Wirkungen\nHINWEIS: Dafür ist derzeit nur die weibliche Stimme verfügbar.",
 	ArrowOnCombo	= "Zeige DBM-Pfeil während $journal:5673  HINWEIS: Nimmt an,\ndass sich der Tank vor dem Boss befindet und alle anderen dahinter."
 })
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(741, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8144 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8286 $"):sub(12, -3))
 mod:SetCreatureID(62397)
 mod:SetModelID(42645)
 mod:SetZone()
@@ -31,7 +31,7 @@ mod:RegisterEventsInCombat(
 local warnWhirlingBlade					= mod:NewTargetAnnounce(121896, 4)--Target scanning not tested
 local warnRainOfBlades					= mod:NewSpellAnnounce(122406, 4)
 local warnRecklessness					= mod:NewTargetAnnounce(125873, 3)
-local warnImpalingSpear					= mod:NewPreWarnAnnounce(122224, 5, 3)--Pre warn your CC is about to break. Maybe need to localize it later to better explain what option is for.
+local warnImpalingSpear					= mod:NewPreWarnAnnounce(122224, 10, 3)--Pre warn your CC is about to break. Maybe need to localize it later to better explain what option is for.
 local warnAmberPrison					= mod:NewTargetAnnounce(121881, 3)
 local warnCorrosiveResin				= mod:NewTargetAnnounce(122064, 3)
 local warnMending						= mod:NewCastAnnounce(122193, 4)
@@ -42,7 +42,7 @@ local warnWindBomb						= mod:NewTargetAnnounce(131830, 4)
 local specWarnWhirlingBlade				= mod:NewSpecialWarningSpell(121896, nil, nil, nil, true)
 local specWarnRainOfBlades				= mod:NewSpecialWarningSpell(122406, nil, nil, nil, true)
 local specWarnRecklessness				= mod:NewSpecialWarningTarget(125873)
-local specWarnReinforcements			= mod:NewSpecialWarningSpell("ej6554", mod:IsTank())
+local specWarnReinforcements			= mod:NewSpecialWarningSpell("ej6554", not mod:IsHealer())--Also important to dps. (Espcially CC classes)
 local specWarnAmberPrison				= mod:NewSpecialWarningYou(121881)
 local yellAmberPrison					= mod:NewYell(121881)
 local specWarnAmberPrisonOther			= mod:NewSpecialWarningSpell(121881, false)--Only people who are freeing these need to know this.
@@ -63,8 +63,8 @@ local timerRainOfBladesCD				= mod:NewCDTimer(48, 122406)--48-64 sec variation n
 local timerRecklessness					= mod:NewBuffActiveTimer(30, 125873)--Heroic recklessness
 local timerReinforcementsCD				= mod:NewNextCountTimer(50, "ej6554")--EJ says it's 45 seconds after adds die but it's actually 50 in logs. EJ is not updated for current tuning.
 local timerImpalingSpear				= mod:NewTargetTimer(50, 122224)--Filtered to only show your own target, may change to a popup option later that lets you pick whether you show ALL of them or your own (all will be spammy)
-local timerAmberPrisonCD				= mod:NewNextTimer(36, 121876)--each add has their own CD. This is on by default since it concerns everyone.
-local timerCorrosiveResinCD				= mod:NewNextTimer(36, 122064)--^^
+local timerAmberPrisonCD				= mod:NewCDTimer(36, 121876)--each add has their own CD. This is on by default since it concerns everyone.
+local timerCorrosiveResinCD				= mod:NewCDTimer(36, 122064)--^^
 local timerMendingCD					= mod:NewNextTimer(36, 122193, nil, false)--To reduce bar spam, only those dealing with this should turn CD bar on, off by default
 local timerQuickeningCD					= mod:NewNextTimer(36, 122149, nil, false)--^^
 local timerKorthikStrikeCD				= mod:NewCDTimer(32, 123963)--^^
@@ -72,7 +72,7 @@ local timerWindBombCD					= mod:NewCDTimer(6, 131830)--^^
 
 local berserkTimer						= mod:NewBerserkTimer(480)
 
-local countdownImpalingSpear			= mod:NewCountdown(49, 122224) -- like Crossed Over, warns 1 sec earlier.
+local countdownImpalingSpear			= mod:NewCountdown(49, 122224, nil, nil, 10) -- like Crossed Over, warns 1 sec earlier.
 
 mod:AddBoolOption("AmberPrisonIcons", true)
 
@@ -118,7 +118,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(122224) and args.sourceName == UnitName("player") then
 		warnImpalingSpear:Cancel()
-		warnImpalingSpear:Schedule(45)
+		warnImpalingSpear:Schedule(40)
 		countdownImpalingSpear:Cancel()
 		countdownImpalingSpear:Start()
 		timerImpalingSpear:Start(args.destName)

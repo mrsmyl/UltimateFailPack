@@ -16,6 +16,10 @@ L:SetOptionLocalization({
 ------------
 L= DBM:GetModLocalization(742)
 
+L:SetMiscLocalization{
+	Victory	= "I thank you, strangers. I have been freed."
+}
+ 
 
 -------------------------------
 -- Lei Shi --
@@ -46,3 +50,6 @@ L:SetMiscLocalization{
 ----------------------
 L= DBM:GetModLocalization(709)
 
+L:SetOptionLocalization({
+	RangeFrame			= "Show range frame (2) for $spell:119519"
+})

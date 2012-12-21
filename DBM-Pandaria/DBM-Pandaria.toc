@@ -20,7 +20,7 @@
 ## X-DBM-Mod-Name-zhTW: 潘達利亞
 ## X-DBM-Mod-Name-zhCN: 潘达利亚
 ## X-DBM-Mod-Sort: 4
-## X-Curse-Packaged-Version: 4.11.6
+## X-Curse-Packaged-Version: 4.11.7
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

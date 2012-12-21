@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(745, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8158 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8281 $"):sub(12, -3))
 mod:SetCreatureID(62980)--63554 (Special invisible Vizier that casts the direction based spellid versions of attenuation)
 mod:SetModelID(42807)
 mod:SetZone()
@@ -27,14 +27,14 @@ mod:RegisterEventsInCombat(
 local warnInhale			= mod:NewStackAnnounce(122852, 2)
 local warnExhale			= mod:NewTargetAnnounce(122761, 3)
 local warnForceandVerve		= mod:NewCastAnnounce(122713, 4, 4)
-local warnAttenuation		= mod:NewTargetAnnounce(127834, 4)
+local warnAttenuation		= mod:NewAnnounce("warnAttenuation", 4, 127834)
 local warnConvert			= mod:NewTargetAnnounce(122740, 4)
 
 local specwarnPlatform		= mod:NewSpecialWarning("specwarnPlatform")
 local specwarnForce			= mod:NewSpecialWarningSpell(122713)
 local specwarnConvert		= mod:NewSpecialWarningSwitch(122740, not mod:IsHealer())
 local specwarnExhale		= mod:NewSpecialWarningTarget(122761, mod:IsHealer() or mod:IsTank())
-local specwarnAttenuation	= mod:NewSpecialWarningTarget(127834, nil, nil, nil, true)
+local specwarnAttenuation	= mod:NewSpecialWarning("specwarnAttenuation", nil, nil, nil, true)
 
 --Timers aren't worth a crap, at all, this is a timerless fight and will probably stay that way unless blizz redesigns it.
 --http://us.battle.net/wow/en/forum/topic/7004456927 for more info on lack of timers.
@@ -63,7 +63,11 @@ end
 
 function mod:OnCombatStart(delay)
 	table.wipe(MCTargets)
-	berserkTimer:Start(-delay)
+	if self:IsDifficulty("heroic10", "heroic25") then
+		berserkTimer:Start(-delay)
+	else
+		berserkTimer:Start(600-delay)--still 10 min on normal. they only raised it to 11 minutes on heroic apparently.
+	end
 end
 
 function mod:OnCombatEnd()
@@ -105,15 +109,15 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(122713) then
 		timerForce:Start()
 	elseif args:IsSpellID(122474, 122496, 123721) then
-		warnAttenuation:Show(args.sourceName)
-		specwarnAttenuation:Show(args.sourceName)
+		warnAttenuation:Show(args.spellName, args.sourceName, L.Left)
+		specwarnAttenuation:Show(args.spellName, args.sourceName, L.Left)
 		timerAttenuation:Start()
 		if self.Options.ArrowOnAttenuation then
 			DBM.Arrow:ShowStatic(90, 12)
 		end
 	elseif args:IsSpellID(122479, 122497, 123722) then
-		warnAttenuation:Show(args.sourceName)
-		specwarnAttenuation:Show(args.sourceName)
+		warnAttenuation:Show(args.spellName, args.sourceName, L.Right)
+		specwarnAttenuation:Show(args.spellName, args.sourceName, L.Right)
 		timerAttenuation:Start()
 		if self.Options.ArrowOnAttenuation then
 			DBM.Arrow:ShowStatic(270, 12)

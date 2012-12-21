@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(656, "DBM-Party-MoP", 8, 311)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7834 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8284 $"):sub(12, -3))
 mod:SetCreatureID(59150)
 mod:SetModelID(40597)
 
@@ -33,10 +33,10 @@ local specWarnDragonsBreath		= mod:NewSpecialWarningSpell(113641, nil, nil, nil,
 
 local timerPyroblastCD			= mod:NewCDTimer(6, 113690, nil, false)
 --local timerQuickenedMindCD	= mod:NewCDTimer(30, 113682)--Needs more data. I see both 30 sec and 1 min cds, so I just need larger sample size.
-local timerFireballVolleyCD		= mod:NewNextTimer(30, 113691)
-local timerBookBurnerCD			= mod:NewNextTimer(30, 113364)
+local timerFireballVolleyCD		= mod:NewCDTimer(30, 113691)
+local timerBookBurnerCD			= mod:NewCDTimer(30, 113364)
 local timerDragonsBreath		= mod:NewBuffActiveTimer(10, 113641)
-local timerDragonsBreathCD		= mod:NewNextTimer(45.5, 113641)
+local timerDragonsBreathCD		= mod:NewCDTimer(45.5, 113641)
 
 function mod:OnCombatStart(delay)
 	timerPyroblastCD:Start(5-delay)

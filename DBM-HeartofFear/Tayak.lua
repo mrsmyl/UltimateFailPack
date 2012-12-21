@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(744, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8160 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8257 $"):sub(12, -3))
 mod:SetCreatureID(62543)
 mod:SetModelID(43141)
 mod:SetZone()
@@ -38,7 +38,7 @@ local timerOverwhelmingAssault			= mod:NewTargetTimer(45, 123474, nil, mod:IsTan
 local timerOverwhelmingAssaultCD		= mod:NewCDTimer(20.5, 123474, nil, mod:IsTank() or mod:IsHealer())--Only ability with a variation in 2 pulls so far. He will use every 20.5 seconds unless he's casting something else, then it can be delayed as much as an extra 15-20 seconds. TODO: See if there is a way to detect when variation is going to occur and call update timer.
 local timerWindStepCD					= mod:NewCDTimer(25, 123175)
 local timerUnseenStrike					= mod:NewCastTimer(5, 123017)
-local timerUnseenStrikeCD				= mod:NewCDTimer(55, 123017) -- this spell seems to have 2 cooldowns. some fight 55, some  61. 
+local timerUnseenStrikeCD				= mod:NewCDTimer(53, 123017) -- 53~61 cd.
 local timerIntensifyCD					= mod:NewNextTimer(60, 123471)
 local timerBladeTempest					= mod:NewBuffActiveTimer(9, 125310)
 local timerBladeTempestCD				= mod:NewNextTimer(60, 125310)--Always cast after immediately intensify since they essencially have same CD
@@ -140,7 +140,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerOverwhelmingAssaultCD:Start()--Start CD here, since this might miss.
 	elseif args:IsSpellID(123175) then
 		warnWindStep:Show(args.destName)
-		timerWindStepCD:Start()
+		if self:IsDifficulty("lfr25") then
+			timerWindStepCD:Start(30)
+		else
+			timerWindStepCD:Start()
+		end
 	end
 end
 
@@ -155,7 +159,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			yellUnseenStrike:Yell()
 		end
 		if self.Options.UnseenStrikeArrow then
-			DBM.Arrow:ShowRunTo(target, 5, 5)
+			DBM.Arrow:ShowRunTo(target, 2, 0, 5)
 		end
 		self:Schedule(5, function()
 			emoteFired = false
@@ -166,7 +170,11 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 122839 and self:AntiSpam(2, 1) then--Tempest Slash. DO NOT ADD OTHER SPELLID. 122839 is primary cast, 122842 is secondary cast 3 seconds later. We only need to warn for primary and start CD off it and it alone.
 		warnTempestSlash:Show()
-		timerTempestSlashCD:Start()
+		if self:IsDifficulty("lfr25") then
+			timerTempestSlashCD:Start(20)
+		else
+			timerTempestSlashCD:Start()
+		end
 	elseif spellId == 122949 and self:AntiSpam(2, 3) then-- sometimes Unseen Strike emote not fires. bliz bug.
 		self:Schedule(0.8, checkUnseenEmote)
 	elseif spellId == 123814 and self:AntiSpam(2, 2) then--Do not add other spellids here either. 123814 is only cast once, it starts the channel. everything else is cast every 1-2 seconds as periodic triggers.
