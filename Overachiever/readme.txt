@@ -1,5 +1,5 @@
 
-Overachiever v0.69
+Overachiever v0.70
 ==============================
 
 Author: Tuhljin
@@ -106,6 +106,22 @@ Change log
 ==========
 
 The change log lists changes of particular note to users, not every change made.
+
+v0.70
+- Updated for WoW patch 5.1.
+- "Pandaren Cuisine" and "Pandaren Delicacies" (new): Added to the consumed item tracking system.
+- "Pandarian Angler" (new): Added reminder tooltips for this achievement, expanding the existing option for "The
+  Scavenger," "Outland Angler," and "Northrend Angler."
+- Kill Creature Achievements: Fixed an issue where reminder tooltips weren't working. (This means you, "Glorious!")
+- Trade module: "The Pandaren Gourmet" is now considered when determining if you need to cook a recipe.
+- Suggestions Tab, Kill Creature Achievements: When a reminder that you need to kill one of these creatures is
+  triggered, the related achievement will temporarily be added to the suggestions list, as intended.
+- Suggestions Tab: Suggestions added for Mists of Pandaria raids.
+- Suggestions Tab: Fixed an issue where Cooking and Fishing achievements could "take over" the list, preventing you
+  from seeing other suggestions once you looked at the tab while the Cooking tradeskill window was open or your fishing
+  pole was equipped.
+- Switched to LibBabble-Subzone library for zone/subzone localizations. (Should correct some issues with suggestions,
+  among other things, for users with non-English clients.)
 
 v0.69
 - Fixed an issue where critters that were reclassified as wild pets wouldn't trigger achievement reminders.

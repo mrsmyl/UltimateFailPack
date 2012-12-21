@@ -67,8 +67,9 @@ L["TRADE_SKILLET_ACHSORT"] = "Por logro"
 	end
 
 elseif (locale == "ptBR") then  -- Brazilian Portuguese
--- L["TRADE_COOKING_OBJRENAME"] = ""
--- L["TRADE_SKILLET_ACHSORT"] = ""
+L["TRADE_COOKING_OBJRENAME"] = [=[<Sopa Névoa Rodopiante>=<Sopa Névoa Rodopiante>
+<Sopa Névoa Rodopiante>=<Sopa de Névoa Rodopiante>]=]
+L["TRADE_SKILLET_ACHSORT"] = "Por Conquista"
 
 
 elseif (locale == "itIT") then  -- Italian

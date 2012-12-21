@@ -4,9 +4,7 @@
 --    by Tuhljin
 --
 
-
 --Overachiever_Debug = true
-
 
 local THIS_VERSION = GetAddOnMetadata("Overachiever", "Version")
 local THIS_TITLE = GetAddOnMetadata("Overachiever", "Title")
@@ -397,7 +395,7 @@ local function BuildCriteriaLookupTab(...)
     i = 1
     repeat
       _, critType, _, _, _, _, _, assetID = GetAchievementCriteriaInfo(id, i)
-      if (critType and assetID) then
+      if (critType and assetID and assetID ~= 0) then
 
         for arg=1,num,3 do
           a, tab, savenum = select(arg, ...)
@@ -444,7 +442,6 @@ local function BuildCriteriaLookupTab_check()
     Overachiever.AchLookup_kill = AchLookup_kill
   end
 end
-
 
 -- DRAGGABLE FRAMES
 ---------------------

@@ -11,7 +11,8 @@ do
     Cooking = {
       GourmetOutland = true,
       GourmetNorthrend = true,
-      GourmetCataclysm = true
+      GourmetCataclysm = true,
+      GourmetPandaren = true
     }
   }
   local lookup, id, name, _, completed

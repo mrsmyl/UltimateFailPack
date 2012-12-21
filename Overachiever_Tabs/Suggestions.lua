@@ -11,8 +11,8 @@ local L = OVERACHIEVER_STRINGS
 local GetAchievementInfo = Overachiever.GetAchievementInfo
 local GetAchievementCriteriaInfo = Overachiever.GetAchievementCriteriaInfo
 
-local LBZ = LibStub("LibBabble-Zone-3.0"):GetUnstrictLookupTable()
-local LBZR = LibStub("LibBabble-Zone-3.0"):GetReverseLookupTable()
+local LBZ = LibStub("LibBabble-SubZone-3.0"):GetUnstrictLookupTable()
+local LBZR = LibStub("LibBabble-SubZone-3.0"):GetReverseLookupTable()
 local LBI = LibStub:GetLibrary("LibBabble-Inventory-3.0"):GetLookupTable()
 local LBIR = LibStub:GetLibrary("LibBabble-Inventory-3.0"):GetReverseLookupTable()
 
@@ -457,7 +457,11 @@ local ACHID_INSTANCES = {
 -- Pandaria Dungeons
 	["Gate of the Setting Sun"] = 6945, -- "Mantid Swarm"
 	["Stormstout Brewery"] = { 6400, 6402 }, -- "How Did He Get Up There?", "Ling-Ting's Herbal Journey"
-	["Scarlet Monastery"] = 6946,
+	["Scarlet Monastery"] = 6946, -- "Empowered Spiritualist"
+-- Pandaria Raids
+	["Heart of Fear"] = { 6718, 6845, 6936, 6518, 6683, 6553, 6937, 6922 }, -- "The Dread Approach", "Nightmare of Shek'zeer", "Candle in the Wind", "I Heard You Like Amber...", "Less Than Three", "Like An Arrow to the Face", "Overzealous", "Timing is Everything"
+	["Mogu'shan Vaults"] = { 6458, 6844, 6674, 6687, 6823, 6455, 7056, 6686 }, -- "Guardians of Mogu'shan", "The Vault of Mysteries", "Anything You Can Do, I Can Do Better...", "Getting Hot in Here", "Must Love Dogs", "Show Me Your Moves!", "Sorry, Were You Looking for This?", "Straight Six"
+	["Terrace of Endless Spring"] = { 6689, 6824, 6717, 6825, 6933 }, -- "Terrace of Endless Spring", "Face Clutchers", "Power Overwhelming", "The Mind-Killer", "Who's Got Two Green Thumbs?"
 }
 -- Battlegrounds
 ACHID_INSTANCES["The Battle for Gilneas"] = 5258
@@ -562,6 +566,10 @@ local ACHID_INSTANCES_HEROIC = {
 	["Scarlet Halls"] = { 6760, 6684, 6427 },
 	["Scarlet Monastery"] = { 6761, 6929, 6928 },
 	["Scholomance"] = { 6762, 6531, 6394, 6396, 6821 },
+-- Pandaria Raids
+	["Heart of Fear"] = { 6729, 6726, 6727, 6730, 6725, 6728 },
+	["Mogu'shan Vaults"] = { 6723, 6720, 6722, 6721, 6719, 6724 },
+	["Terrace of Endless Spring"] = { 6733, 6731, 6734, 6732 },
 }
 
 -- INSTANCES - 10-MAN ONLY (normal or heroic):
@@ -960,7 +968,7 @@ local function Refresh(self)
             Refresh_Add(ACHID_INSTANCES_NORMAL[CurrentSubzone] or ACHID_INSTANCES_NORMAL[zone], ach10, achN10)
           end
         end
-      -- Not a raid:
+      -- Not a raid (or at least no 10-man vs 25-man specific suggestions):
       elseif (heroicD) then
         Refresh_Add(ACHID_INSTANCES_HEROIC[CurrentSubzone] or ACHID_INSTANCES_HEROIC[zone])
       else
@@ -974,7 +982,6 @@ local function Refresh(self)
       suggested[id] = true
     end
 
-    Refresh_stoploop = nil
   end
 
   local list, count = frame.AchList, 0
@@ -997,6 +1004,7 @@ local function Refresh(self)
   end
   frame:ForceUpdate(true)
   Refresh_lastcount = count
+  Refresh_stoploop = nil
 end
 
 function frame.SetNumListed(num)
