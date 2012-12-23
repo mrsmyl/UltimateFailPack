@@ -6836,7 +6836,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="80" y="-25" />
+                      <AbsDimension x="80" y="-10" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -6854,6 +6854,18 @@
                 </Anchors>
                 <Scripts>
                   <OnClick>HealBot_Options_MonitorDebuffsInCombat_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
+              <CheckButton name="HealBot_Options_MonitorDebuffsWhenGrouped" inherits="SendMailRadioButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_MonitorDebuffs" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="40" y="0"/>
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick>HealBot_Options_MonitorDebuffsWhenGrouped_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
               <Frame name="HealBot_Options_CureFrameSelect">
@@ -8348,7 +8360,7 @@
                 <Anchors>
                   <Anchor point="TOPLEFT">
                     <Offset>
-                      <AbsDimension x="80" y="-25" />
+                      <AbsDimension x="80" y="-10" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -8366,6 +8378,18 @@
                 </Anchors>
                 <Scripts>
                   <OnClick>HealBot_Options_MonitorBuffsInCombat_OnClick(self)</OnClick>
+                </Scripts>
+              </CheckButton>
+              <CheckButton name="HealBot_Options_MonitorBuffsWhenGrouped" inherits="SendMailRadioButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="HealBot_Options_MonitorBuffs" relativePoint="BOTTOMLEFT">
+                    <Offset>
+                      <AbsDimension x="40" y="0"/>
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick>HealBot_Options_MonitorBuffsWhenGrouped_OnClick(self)</OnClick>
                 </Scripts>
               </CheckButton>
               <Frame name="HealBot_Options_BuffsPanel">

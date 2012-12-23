@@ -4,6 +4,6 @@
 ## Notes: HealBot Mounts and Pets, used with Random Mount or Random Pet options on the Mouse Wheel tab
 ## RequiredDeps: HealBot
 ## LoadOnDemand: 1
-## Version: 5.1.0.1
+## Version: 5.1.0.3
 
 HealBot_MountsPets.lua

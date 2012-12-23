@@ -629,5 +629,5 @@ function HealBot_MountsPets_Mount(mountName)
 end
 
 function HealBot_MountsPets_RandomPet()
-    SummonRandomCritter();
+    C_PetJournal.SummonRandomPet("CRITTER");
 end

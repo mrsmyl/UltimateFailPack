@@ -508,7 +508,7 @@ HEALBOT_INFO_CPUSECS                = "CPU Sec."
     HEALBOT_HBMENU                      = "menuHB"
     HEALBOT_ACTION_HBFOCUS              = "Bouton gauche\npour focus la cible"
     HEALBOT_WORD_CLEAR                  = "Effacer"
-    HEALBOT_WORD_SET                    = "R\195\169gler le"
+    HEALBOT_WORD_SET                    = "D\195\169terminer"
     HEALBOT_WORD_HBFOCUS                = "Focus HealBot"
     HEALBOT_WORD_OUTSIDE                    = "En ext\195\169rieur"
     HEALBOT_WORD_ALLZONE                    = "Toutes les zones"
@@ -758,9 +758,9 @@ HEALBOT_CUSTOM_DEBUFF_CATS = {
     HEALBOT_ABOUT_CATH                     = "Cat\195\169gorie :"
     HEALBOT_ABOUT_CATD                     = "Unit Frames, Buffs and Debuffs, Combat:Healer"
     HEALBOT_ABOUT_CREDITH                  = "Cr\195\169dits :"
-    HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, aldetal"  -- Anyone taking on translations (if required), feel free to add yourself here.
+    HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, Aldetal, Brezza"  -- Anyone taking on translations (if required), feel free to add yourself here.
     HEALBOT_ABOUT_LOCALH                   = "Traductions :"
-    HEALBOT_ABOUT_LOCALD                   = "deDE, enUK, esES, frFR, huHU, koKR, ruRU, poBR, zhCN, zhTW"
+    HEALBOT_ABOUT_LOCALD                   = "deDE, enUK, esES, frFR, huHU, itIT, koKR, ruRU, poBR, zhCN, zhTW"
     HEALBOT_ABOUT_FAQH                     = "FAQ"
 HEALBOT_ABOUT_FAQ_QUESTION             = "Question"
 HEALBOT_ABOUT_FAQ_ANSWER               = "R\195\169ponse"
@@ -930,9 +930,9 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
     HEALBOT_OPTIONS_LANG_ESES               = "Espagnol (esES - Recherche traducteur)"
     HEALBOT_OPTIONS_LANG_FRFR               = "Fran\195\167ais (frFR - par Kubik)"
     HEALBOT_OPTIONS_LANG_HUHU               = "Hongrois (huHU - par Von)"
-    HEALBOT_OPTIONS_LANG_ITIT               = "Italien (itIT - Recherche traducteur)"
+    HEALBOT_OPTIONS_LANG_ITIT               = "Italien (itIT - par Brezza)"
     HEALBOT_OPTIONS_LANG_KRKR               = "Kor\195\169en (krKR - Recherche traducteur)"
-    HEALBOT_OPTIONS_LANG_PTBR               = "Portugais (ptBR - par aldetal)"
+    HEALBOT_OPTIONS_LANG_PTBR               = "Portugais (ptBR - par Aldetal)"
     HEALBOT_OPTIONS_LANG_RURU               = "Russe (ruRU - Recherche traducteur)"
     HEALBOT_OPTIONS_LANG_TWTW               = "Ta\195\175wanais (twTW - Recherche traducteur)"
     
@@ -941,4 +941,6 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
     HEALBOT_OPTIONS_LANG_ADDON_FAIL3        = "Note de la version actuelle, c\'est le seul avertissement pour"
     
     HEALBOT_OPTIONS_ADDON_FAIL              = "Echec de chargement de Healbot"
+    
+    HEALBOT_OPTIONS_IN_A_GROUP              = "Seulement en groupe ou en raid"
 end

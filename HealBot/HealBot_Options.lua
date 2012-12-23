@@ -434,12 +434,14 @@ function HealBot_Options_setLists()
         [HEALBOT_WATER_SHIELD]=HEALBOT_SHAMAN,
         [HEALBOT_LAST_STAND]=HEALBOT_WARRIOR,
         [HEALBOT_SHIELD_WALL]=HEALBOT_WARRIOR,
+        [HEALBOT_SHIELD_BARRIER]=HEALBOT_WARRIOR,
         [HEALBOT_SHIELD_BLOCK]=HEALBOT_WARRIOR,
         [HEALBOT_ENRAGED_REGEN]=HEALBOT_WARRIOR,
         [HEALBOT_DIVINE_PROTECTION]=HEALBOT_PALADIN,
         [HEALBOT_BARKSKIN]=HEALBOT_DRUID,
         [HEALBOT_IRONBARK]=HEALBOT_DRUID,
         [HEALBOT_HARMONY]=HEALBOT_DRUID,
+        [HEALBOT_SAVAGE_DEFENCE]=HEALBOT_DRUID,
         [HEALBOT_SURVIVAL_INSTINCTS]=HEALBOT_DRUID,
         [HEALBOT_FRENZIED_REGEN]=HEALBOT_DRUID,
         [HEALBOT_NATURE_SWIFTNESS]=HEALBOT_DRUID,
@@ -450,6 +452,7 @@ function HealBot_Options_setLists()
         [HEALBOT_ANTIMAGIC_ZONE]=HEALBOT_DEATHKNIGHT,
         [HEALBOT_VAMPIRIC_BLOOD]=HEALBOT_DEATHKNIGHT,
         [HEALBOT_BONE_SHIELD]=HEALBOT_DEATHKNIGHT,
+        [HEALBOT_DANCING_RUNE_WEAPON]=HEALBOT_DEATHKNIGHT,
         [HEALBOT_NATURES_GRASP]=HEALBOT_DRUID,
         [HEALBOT_DRUID_CLEARCASTING]=HEALBOT_DRUID,
         [HEALBOT_CHAINHEALHOT]=HEALBOT_SHAMAN,
@@ -483,7 +486,6 @@ function HealBot_Options_InitBuffSpellsClassList(tClass)
         }
     elseif tClass=="HUNT" then
         HealBot_Buff_Spells_Class_List = {
-            HEALBOT_A_FOX,
             HEALBOT_A_HAWK,
             HEALBOT_A_CHEETAH,
             HEALBOT_A_PACK,
@@ -534,7 +536,7 @@ function HealBot_Options_InitBuffSpellsClassList(tClass)
             HEALBOT_PAIN_SUPPRESSION,
             HEALBOT_POWER_INFUSION,
             HEALBOT_LEVITATE,
-            HEALBOT_SHADOW_PROTECTION,
+            HEALBOT_HYMN_OF_HOPE,
             HEALBOT_SHADOWFORM,
             HEALBOT_VAMPIRIC_EMBRACE,
             HEALBOT_CHAKRA_SANCTUARY,
@@ -2053,12 +2055,11 @@ end
 function HealBot_Options_MonitorBuffs_Toggle()
     if HealBot_Config.BuffWatch==0 then
         HealBot_Options_MonitorBuffsInCombat:Disable();
+        HealBot_Options_MonitorBuffsWhenGrouped:Disable();
         HealBot_ClearAllBuffs()
-        for x,_ in pairs(HealBot_UnitBuff) do
-            HealBot_UnitBuff[x]=nil;
-        end
     else
         HealBot_Options_MonitorBuffsInCombat:Enable();
+        HealBot_Options_MonitorBuffsWhenGrouped:Enable();
         HealBot_setOptions_Timer(40)
     end
 end
@@ -2071,12 +2072,11 @@ end
 function HealBot_Options_MonitorDebuffs_Toggle()
     if HealBot_Config.DebuffWatch==0 then
         HealBot_Options_MonitorDebuffsInCombat:Disable();
+        HealBot_Options_MonitorDebuffsWhenGrouped:Disable();
         HealBot_ClearAllDebuffs()
-        for x,_ in pairs(HealBot_UnitDebuff) do
-            HealBot_UnitDebuff[x]=nil;
-        end
     else
         HealBot_Options_MonitorDebuffsInCombat:Enable();
+        HealBot_Options_MonitorDebuffsWhenGrouped:Enable();
         HealBot_setOptions_Timer(50)
     end
 end
@@ -2086,14 +2086,31 @@ function HealBot_Options_MonitorBuffsInCombat_OnClick(self)
     HealBot_setOptions_Timer(40)
 end
 
+function HealBot_Options_MonitorBuffsWhenGrouped_OnClick(self)
+    HealBot_Config.BuffWatchWhenGrouped = self:GetChecked() or 0;
+    if HealBot_Config.BuffWatchWhenGrouped==1 and GetNumGroupMembers()==0 then
+        HealBot_ClearAllBuffs()
+    else
+        HealBot_setOptions_Timer(40)
+    end
+end
+
 function HealBot_Options_ManaIndicatorInCombat_OnClick(self)
     Healbot_Config_Skins.LowManaIndIC[Healbot_Config_Skins.Current_Skin] = self:GetChecked() or 0;
 end
 
-
 function HealBot_Options_MonitorDebuffsInCombat_OnClick(self)
     HealBot_Config.DebuffWatchInCombat = self:GetChecked() or 0;
     HealBot_setOptions_Timer(50)
+end
+
+function HealBot_Options_MonitorDebuffsWhenGrouped_OnClick(self)
+    HealBot_Config.DebuffWatchWhenGrouped = self:GetChecked() or 0;
+    if HealBot_Config.DebuffWatchWhenGrouped==1 and GetNumGroupMembers()==0 then
+        HealBot_ClearAllDebuffs()
+    else
+        HealBot_setOptions_Timer(50)
+    end
 end
 
 function HealBot_Options_CDCCol_ShowOnHealthBar_OnClick(self)
@@ -2438,8 +2455,8 @@ function HealBot_Options_LoadTips()
     else
         HealBot_useTips=nil
         HealBot_AddChat("Unable to load addon HealBot_Tips - Reason: "..reason)
-        if not HealBot_Globals.VersionWarnings["Tips"] then
-            HealBot_Globals.VersionWarnings["Tips"]=true
+        if not HealBot_Globals.OneTimeMsg["Tips"] then
+            HealBot_Globals.OneTimeMsg["Tips"]=true
             local failreason = reason or HEALBOT_WORDS_UNKNOWN
             HealBot_Options_AddonFail(failreason, "HealBot_Tips")
         end
@@ -3527,7 +3544,6 @@ local function HealBot_Options_SelectOtherSpellsCombo_DDlist()
         HEALBOT_LIFE_TAP,
         HEALBOT_DIVINE_SHIELD,
         HEALBOT_DIVINE_PROTECTION,
-        HEALBOT_RIGHTEOUS_DEFENSE,
         HEALBOT_NATURE_SWIFTNESS,
         HEALBOT_INNER_FOCUS,
         HEALBOT_LEAP_OF_FAITH,
@@ -7407,8 +7423,8 @@ function HealBot_Options_Lang(region)
         HealBot_AddChat("Invalid Region code "..region)
     end
     if not validCode then
-        if region and not HealBot_Globals.VersionWarnings[region] then
-            HealBot_Globals.VersionWarnings[region]=true
+        if region and not HealBot_Globals.OneTimeMsg[region] then
+            HealBot_Globals.OneTimeMsg[region]=true
             local failreason = reason or HEALBOT_WORDS_UNKNOWN
             HealBot_Options_LangAddonFail(region, failreason)
         end
@@ -8766,6 +8782,8 @@ function HealBot_Options_InitSub2(subNo)
             HealBot_Options_SetText(HealBot_Options_IgnoreDebuffsFriend,HEALBOT_OPTIONS_IGNOREDEBUFFFRIEND)
             HealBot_Options_MonitorDebuffsInCombat:SetChecked(HealBot_Config.DebuffWatchInCombat)
             HealBot_Options_SetText(HealBot_Options_MonitorDebuffsInCombat,HEALBOT_OPTIONS_MONITORBUFFSC)
+            HealBot_Options_MonitorDebuffsWhenGrouped:SetChecked(HealBot_Config.DebuffWatchWhenGrouped)
+            HealBot_Options_SetText(HealBot_Options_MonitorDebuffsWhenGrouped,HEALBOT_OPTIONS_IN_A_GROUP)
             HealBot_Options_ShowDebuffWarning:SetChecked(HealBot_Config.ShowDebuffWarning)
             HealBot_Options_SetText(HealBot_Options_ShowDebuffWarning,HEALBOT_OPTIONS_SHOWDEBUFFWARNING)
             HealBot_Options_SoundDebuffWarning:SetChecked(HealBot_Config.SoundDebuffWarning)
@@ -8987,6 +9005,8 @@ function HealBot_Options_InitSub2(subNo)
         if not DoneInitTab[517] then
             HealBot_Options_MonitorBuffsInCombat:SetChecked(HealBot_Config.BuffWatchInCombat)
             HealBot_Options_SetText(HealBot_Options_MonitorBuffsInCombat,HEALBOT_OPTIONS_MONITORBUFFSC)
+            HealBot_Options_MonitorBuffsWhenGrouped:SetChecked(HealBot_Config.BuffWatchWhenGrouped)
+            HealBot_Options_SetText(HealBot_Options_MonitorBuffsWhenGrouped,HEALBOT_OPTIONS_IN_A_GROUP)
             HealBot_Options_valtime_OnLoad(HealBot_Options_LongBuffTimer,HEALBOT_OPTIONS_LONGBUFFTIMER,0,300,15)
             HealBot_Options_LongBuffTimer:SetValue(HealBot_Config.LongBuffTimer)
             HealBot_Options_BuffTimer_OnValueChanged(HealBot_Options_LongBuffTimer,"LONG")
@@ -9035,7 +9055,6 @@ function HealBot_Options_InitSub2(subNo)
           --  g=_G["HealBot_Options_TooltipPosTxt"]
           --  g:SetText(HEALBOT_OPTIONS_POSTOOLTIP)
             HealBot_Options_TooltipPosTxt:SetText(HEALBOT_OPTIONS_POSTOOLTIP)
-            HealBot_AddDebug("HEALBOT_OPTIONS_POSTOOLTIP="..HEALBOT_OPTIONS_POSTOOLTIP)
             DoneInitTab[601]=true
         end
     elseif subNo==701 then

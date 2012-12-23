@@ -2154,11 +2154,7 @@ function HealBot_Panel_SetupBars(showHeaders)
                     if h>cols then
                         if MaxOffsetY<OffsetY then MaxOffsetY = OffsetY; end
                         OffsetY = 4 + HealBot_AggroBarSize;
-                        if HealBot_BottomAnchors then 
-                            h=2
-                        else
-                            h=1
-                        end
+                        h=1
                         OffsetX = OffsetX + bwidth+bcspace; 
                         curcol=curcol+1
                     end
@@ -2175,7 +2171,11 @@ function HealBot_Panel_SetupBars(showHeaders)
         end
         
     elseif Healbot_Config_Skins.GroupsPerCol[Healbot_Config_Skins.Current_Skin]==1 then
-        h=0
+        if HealBot_BottomAnchors then 
+            h=1
+        else
+            h=0
+        end
         table.foreach(HealBot_Action_HealButtons, function (x,xButton)
             if UnitName(xButton.unit) then
                 uName=UnitName(xButton.unit);

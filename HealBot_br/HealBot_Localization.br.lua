@@ -765,9 +765,9 @@ function HealBot_Lang_ptBR()
     HEALBOT_ABOUT_CATH                     = "Categoria:"
     HEALBOT_ABOUT_CATD                     = "Quadros de Unidades, Buffs e Debuffs, Combate:Curador"
     HEALBOT_ABOUT_CREDITH                  = "Cr\195\169ditos:"
-    HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, aldetal"  -- Anyone taking on translations (if required), feel free to add yourself here.
+    HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, Aldetal, Brezza"  -- Anyone taking on translations (if required), feel free to add yourself here.
     HEALBOT_ABOUT_LOCALH                   = "Adapta\195\167\195\181es:"
-    HEALBOT_ABOUT_LOCALD                   = "deDE, enUK, esES, frFR, huHU, koKR, poBR, ruRU, zhCN, zhTW, ptBR"
+    HEALBOT_ABOUT_LOCALD                   = "deDE, enUK, esES, frFR, huHU, itIT, koKR, poBR, ruRU, zhCN, zhTW, ptBR"
     HEALBOT_ABOUT_FAQH                     = "Perguntas Frequentes"
     HEALBOT_ABOUT_FAQ_QUESTION             = "Pergunta"
     HEALBOT_ABOUT_FAQ_ANSWER               = "Resposta"
@@ -930,7 +930,7 @@ function HealBot_Lang_ptBR()
     HEALBOT_OPTIONS_LANG_FRFR               = "French (frFR - by Kubik)"
     HEALBOT_OPTIONS_LANG_DEDE               = "German (deDE - translator required)"
     HEALBOT_OPTIONS_LANG_HUHU               = "Hungarian (huHU - by Von)"
-    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - translator required)"
+    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - by Brezza)"
     HEALBOT_OPTIONS_LANG_KRKR               = "Korean (krKR - translator required)"
     HEALBOT_OPTIONS_LANG_PTBR               = "Portuguese (ptBR - by aldetal)"
     HEALBOT_OPTIONS_LANG_RURU               = "Russian (ruRU - translator required)"
@@ -942,5 +942,7 @@ function HealBot_Lang_ptBR()
     HEALBOT_OPTIONS_LANG_ADDON_FAIL3        = "Note in the current verison, this is the only warning for"
     
     HEALBOT_OPTIONS_ADDON_FAIL              = "Failed to load headbot addon"
+    
+    HEALBOT_OPTIONS_IN_A_GROUP              = "Apenas quando em grupo ou raide"
 
 end

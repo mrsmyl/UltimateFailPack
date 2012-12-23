@@ -766,7 +766,7 @@ function HealBot_Lang_enALL()
     HEALBOT_ABOUT_CATH                     = "Category:"
     HEALBOT_ABOUT_CATD                     = "Unit Frames, Buffs and Debuffs, Combat:Healer"
     HEALBOT_ABOUT_CREDITH                  = "Credits:"
-    HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, aldetal"  -- Anyone taking on translations (if required), feel free to add yourself here.
+    HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, Aldetal, Brezza"  -- Anyone taking on translations (if required), feel free to add yourself here.
     HEALBOT_ABOUT_LOCALH                   = "Localizations:"
     HEALBOT_ABOUT_LOCALD                   = "deDE, enUK, esES, frFR, huHU, itIT, koKR, poBR, ruRU, zhCN, zhTW"
     HEALBOT_ABOUT_FAQH                     = "Frequently Asked Questions"
@@ -931,8 +931,8 @@ function HealBot_Lang_enALL()
     HEALBOT_OPTIONS_LANG_DEDE               = "German (deDE - translator required)"
     HEALBOT_OPTIONS_LANG_HUHU               = "Hungarian (huHU - by Von)"
     HEALBOT_OPTIONS_LANG_KRKR               = "Korean (krKR - translator required)"
-    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - translator required)"
-    HEALBOT_OPTIONS_LANG_PTBR               = "Portuguese (ptBR - by aldetal)"
+    HEALBOT_OPTIONS_LANG_ITIT               = "Italian (itIT - by Brezza)"
+    HEALBOT_OPTIONS_LANG_PTBR               = "Portuguese (ptBR - by Aldetal)"
     HEALBOT_OPTIONS_LANG_RURU               = "Russian (ruRU - translator required)"
     HEALBOT_OPTIONS_LANG_ESES               = "Spanish (esES - translator required)"
     HEALBOT_OPTIONS_LANG_TWTW               = "Taiwanese (twTW - translator required)"
@@ -942,6 +942,8 @@ function HealBot_Lang_enALL()
     HEALBOT_OPTIONS_LANG_ADDON_FAIL3        = "Note in the current verison, this is the only warning for"
     
     HEALBOT_OPTIONS_ADDON_FAIL              = "Failed to load headbot addon"
+    
+    HEALBOT_OPTIONS_IN_A_GROUP              = "Only when in a Group or Raid"
 end
 
 if (GetLocale() == "enUK") then

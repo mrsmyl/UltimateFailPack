@@ -3681,8 +3681,8 @@ function HealBot_Action_InitFuncUse()
         else
             HealBot_mountDataFuncUsed="NO"
             HealBot_AddChat("Unable to load addon HealBot_MountsPets - Reason: "..reason)
-            if not HealBot_Globals.VersionWarnings["MountsPets"] then
-                HealBot_Globals.VersionWarnings["MountsPets"]=true
+            if not HealBot_Globals.OneTimeMsg["MountsPets"] then
+                HealBot_Globals.OneTimeMsg["MountsPets"]=true
                 local failreason = reason or HEALBOT_WORDS_UNKNOWN
                 HealBot_Options_AddonFail(failreason,"HealBot_MountsPets")
             end

@@ -219,10 +219,10 @@ function HealBot_Comms_CheckVer(userName, version)
             hbMinor=tMinor
             hbPatch=tPatch
             hbHealbot=tHealbot
-            if HealBot_Globals.UpdateMsg and not HealBot_MsgUpdateAvail then
+            if not HealBot_Globals.OneTimeMsg["VERSION"] then
                 HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_CHAT_NEWVERSION1)
                 HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_CHAT_NEWVERSION2)
-				HealBot_Globals.UpdateMsg=false
+				HealBot_Globals.OneTimeMsg["VERSION"]=true
             end
             HealBot_MsgUpdateAvail = hbMajor.."."..hbMinor.."."..hbPatch.."."..hbHealbot
         end
@@ -282,8 +282,8 @@ end
 
 local hbMountsReported={}
 function HealBot_ReportMissingMount(mountName, mountID)
-    if not HealBot_Config.hbMountsReported[mountID] then
-        HealBot_AddChat("HealBot: Missing Mount: "..mountName.." ("..mountID..")");
-        HealBot_Config.hbMountsReported[mountID]=mountName
+    if not HealBot_Config.hbMountsReported[mountID] and (strsub(GetLocale(),1,2)=="en") then
+        HealBot_AddChat("HealBot: Missing Mount: "..mountName.." ("..mountID..") - Please report to "..HEALBOT_ABOUT_URL);
     end
+    HealBot_Config.hbMountsReported[mountID]=mountName
 end
