@@ -80,14 +80,20 @@ L["LDB_MOUNTS_TYPE_X"] = VIDEO_QUALITY_LABEL6 or true -- calculated keyword
 -- generic words
 L["ACCEPT"] = ACCEPT or true
 L["ADD"] = ADD or true
+L["ALL"] = ALL or true
 L["AQUATIC"] = BATTLE_PET_NAME_9 or true
 L["BACKGROUND"] = EMBLEM_BACKGROUND or true
+L["BATTLEPET"] = TOOLTIP_BATTLE_PET or true
 L["BORDER"] = EMBLEM_BORDER or true
 L["CANCEL"] = CANCEL or true
+L["CATEGORIES"] = CATEGORIES or true
+L["CATEGORY"] = CATEGORY or true
+L["CHARACTER"] = CHARACTER or true
 L["CLOSE"] = CLOSE or true
 L["COLOUR"] = COLOR or true
 L["COMPLETE"] = COMPLETE or true
 L["CURRENCY"] = CURRENCY or true
+L["CUSTOM"] = CUSTOM or true
 L["DEFAULT"] = DEFAULT or true
 L["DELETE"] = DELETE or true
 L["DESCRIPTION"] = QUEST_DESCRIPTION or true
@@ -105,18 +111,13 @@ L["REMOVE"] = REMOVE or true
 L["RENAME"] = PET_RENAME or true
 L["REPUTATION"] = REPUTATION or true
 L["SEARCH"] = SEARCH or true
+L["SPECIAL"] = SPECIAL or true
 L["START"] = START or true
 L["STATUS"] = STATUS or true
 L["TOTAL"] = TOTAL or true
 L["TRACKING"] = TRACKING or true
 L["UNKNOWN"] = UNKNOWNOBJECT or true
 L["YES"] = YES or true
-L["BATTLEPET"] = TOOLTIP_BATTLE_PET or true
-L["ALL"] = ALL or true
-L["CATEGORY"] = CATEGORY or true
-L["CATEGORIES"] = CATEGORIES or true
-L["CHARACTER"] = CHARACTER or true
-L["CUSTOM"] = CUSTOM or true
 
 
 local function ConvertToCapture( text )

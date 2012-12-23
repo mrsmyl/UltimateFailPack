@@ -1791,6 +1791,23 @@ function ArkInventory.ConfigInternalControlSettings( path )
 				ArkInventory.LocationControlSet( loc_id, v )
 			end,
 		},
+		special = {
+			order = 450,
+			type = "toggle",
+			name = ArkInventory.Localise["SPECIAL"],
+			desc = function( info )
+				local loc_id = ConfigGetNodeArg( info, #info - 1 )
+				return string.format( ArkInventory.Localise["CONFIG_CONTROL_SPECIAL_TEXT"], ArkInventory.Const.Program.Name, ArkInventory.Global.Location[loc_id].Name )
+			end,
+			get = function( info )
+				local loc_id = ConfigGetNodeArg( info, #info - 1 )
+				return ArkInventory.Global.Me.location[loc_id].special
+			end,
+			set = function( info, v )
+				local loc_id = ConfigGetNodeArg( info, #info - 1 )
+				ArkInventory.Global.Me.location[loc_id].special = v
+			end,
+		},
 		anchor = {
 			order = 500,
 			name = ArkInventory.Localise["ANCHOR"],

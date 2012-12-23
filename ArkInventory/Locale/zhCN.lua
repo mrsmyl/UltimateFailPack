@@ -285,6 +285,7 @@ if not L then return end
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_TEXT"] = ""
 	L["CONFIG_CONTROL_OVERRIDE"] = "取代系统框架"
 	L["CONFIG_CONTROL_OVERRIDE_TEXT"] = "设定是否取代系统内建背包及银行\n\n停用此项功能的话，你只能在按键设定中设定，才能开启 %1$s"
+--	L["CONFIG_CONTROL_SPECIAL_TEXT"] = ""
 	L["CONFIG_CONTROL_ANCHOR_LOCK_TEXT"] = "锁定 %1$s 窗口到当前移动的位置"
 --	L["CONFIG_CONTROL_REPOSITION_NOW"] = ""
 --	L["CONFIG_CONTROL_REPOSITION_NOW_TEXT"] = ""

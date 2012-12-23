@@ -285,6 +285,7 @@ if not L then return end
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_TEXT"] = ""
 --	L["CONFIG_CONTROL_OVERRIDE"] = ""
 	L["CONFIG_CONTROL_OVERRIDE_TEXT"] = "скрыть стандартный интерфейс %2$s чтобы окно %1$s могло обрабатывать его действия.\n\nОтключение этой опции вернёт функционал стандартного %2$s.\n\nВы всё ещё сможете открыть %1$s %2$s когда эта опция выключена, но только используя специально назначенную клавишу"
+--	L["CONFIG_CONTROL_SPECIAL_TEXT"] = ""
 	L["CONFIG_CONTROL_ANCHOR_LOCK_TEXT"] = "фиксирует положение окна %1$s"
 --	L["CONFIG_CONTROL_REPOSITION_NOW"] = ""
 --	L["CONFIG_CONTROL_REPOSITION_NOW_TEXT"] = ""

@@ -273,7 +273,7 @@
 		</Frames>
 		
 		<Scripts>
-		
+			
 			<OnLoad>
 				ArkInventory.Frame_Item_OnLoad( self )
 			</OnLoad>

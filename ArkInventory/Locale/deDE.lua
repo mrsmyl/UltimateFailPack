@@ -285,6 +285,7 @@ if not L then return end
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_TEXT"] = ""
 	L["CONFIG_CONTROL_OVERRIDE"] = "Blizzard Interface austauschen"
 	L["CONFIG_CONTROL_OVERRIDE_TEXT"] = "Tauscht das original Blizzard %2$s Interface mit dem von %1$s.\n\nIn abgeschaltetem Zustand wird das standard Blizzard %2$s Interface verwendet.\n\nMan kann in abgeschaltetem Zustand trotzdem das %2$s Interface von %1$s verwenden, aber man muss dann daf\195\188r erst Tastenkombinationen einrichten."
+--	L["CONFIG_CONTROL_SPECIAL_TEXT"] = ""
 	L["CONFIG_CONTROL_ANCHOR_LOCK_TEXT"] = "verhindert, dass der %1$s Rahmen verschoben werden kann"
 --	L["CONFIG_CONTROL_REPOSITION_NOW"] = ""
 --	L["CONFIG_CONTROL_REPOSITION_NOW_TEXT"] = ""

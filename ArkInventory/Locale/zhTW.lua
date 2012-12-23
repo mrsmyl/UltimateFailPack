@@ -285,6 +285,7 @@ if not L then return end
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_TEXT"] = ""
 	L["CONFIG_CONTROL_OVERRIDE"] = "取代系統框架"
 	L["CONFIG_CONTROL_OVERRIDE_TEXT"] = "切換是否隱藏原本的暴風雪 %2$s 框架，如此一來可用 %1$s 取代。\n\n取消此選項將會使用標準暴風雪 %2$s 功能。\n\n當此選項取消，你仍舊可以設定熱鍵開啟 %1$s %2$s。"
+--	L["CONFIG_CONTROL_SPECIAL_TEXT"] = ""
 	L["CONFIG_CONTROL_ANCHOR_LOCK_TEXT"] = "鎖定 %1$s 框架以避免移動"
 --	L["CONFIG_CONTROL_REPOSITION_NOW"] = ""
 --	L["CONFIG_CONTROL_REPOSITION_NOW_TEXT"] = ""

@@ -287,6 +287,7 @@ if not L then return end
 	L["CONFIG_CONTROL_NOTIFY_ERASE_TEXT"] = "generate a notification when erasing %s data"
 	L["CONFIG_CONTROL_OVERRIDE"] = "Override"
 	L["CONFIG_CONTROL_OVERRIDE_TEXT"] = "override the original Blizzard %2$s so that %1$s controls it instead.\n\ndisabling this option will return the standard Blizzard %2$s functionality.\n\nyou will still be able to open the %1$s %2$s when this is disabled but you will need to configure and use a keybinding instead." -- %1$s = program, %2$s = location
+	L["CONFIG_CONTROL_SPECIAL_TEXT"] = "whether to treat the %2$s window as special or not.\n\nspecial windows are closed when the ESCAPE key is pressed.\n\nyou will need to reload the UI for this setting to take effect." -- %1$s = program, %2$s = location
 	L["CONFIG_CONTROL_ANCHOR_LOCK_TEXT"] = "lock the %1$s window so it can't be moved" -- %1$s = location name
 	L["CONFIG_CONTROL_REPOSITION_NOW"] = "Reposition Now"
 	L["CONFIG_CONTROL_REPOSITION_NOW_TEXT"] = "Repositions the %1$s window back onto the screen now" -- %1$s = location name

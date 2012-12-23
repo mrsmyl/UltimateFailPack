@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1057 $
--- $Date: 2012-12-16 01:28:41 +1100 (Sun, 16 Dec 2012) $
+-- $Revision: 1059 $
+-- $Date: 2012-12-21 21:34:13 +1100 (Fri, 21 Dec 2012) $
 
 
 local _G = _G
@@ -1704,6 +1704,7 @@ ArkInventory.Const.DatabaseDefaults.realm = {
 				["info"] = { },
 				["location"] = {
 					["*"] = {
+						["special"] = true,
 						["slot_count"] = 0,
 						["bag"] = {
 							["*"] = {
@@ -2142,6 +2143,16 @@ function ArkInventory.OnInitialize( )
 	
 	ArkInventory.PlayerInfoSet( )
 	ArkInventory.MediaRegister( )
+	
+	
+	for loc_id in pairs( ArkInventory.Global.Location ) do
+		if ArkInventory.Global.Me.location[loc_id].special then
+			local frame = ArkInventory.Frame_Main_Get( loc_id )
+--			if frame then
+				table.insert( UISpecialFrames, frame:GetName( ) )
+--			end
+		end
+	end
 	
 end
 
@@ -3988,6 +3999,8 @@ end
 
 function ArkInventory.SetItemButtonStock( frame, count, status )
 	
+	--used to show the number of empty slots on bags in the changer window
+	
 	if not frame then
 		return
 	end
@@ -3997,9 +4010,7 @@ function ArkInventory.SetItemButtonStock( frame, count, status )
 		return
 	end
 	
-	obj:SetText( "" )
-	obj.numInStock = 0
-	obj:Hide( )
+	local count = count or 0
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -4022,6 +4033,7 @@ function ArkInventory.SetItemButtonStock( frame, count, status )
 				obj.numInStock = count
 			else
 				obj:SetText( ArkInventory.Localise["STATUS_FULL"] )
+				obj.numInStock = 0
 			end
 			
 		end
@@ -4033,11 +4045,9 @@ function ArkInventory.SetItemButtonStock( frame, count, status )
 		
 	else
 		
-		if count > 0 then
-			obj:SetText( count )
-			obj.numInStock = count
-			obj:Show( )
-		end
+		obj:SetText( "" )
+		obj.numInStock = 0
+		obj:Hide( )
 		
 	end
 	
@@ -4088,9 +4098,7 @@ function ArkInventory.Frame_Main_Scale( loc_id )
 	
 	local frame = ArkInventory.Frame_Main_Get( loc_id )
 	
-	if ArkInventory.ValidFrame( frame ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 
@@ -4127,9 +4135,7 @@ function ArkInventory.Frame_Main_Reposition( loc_id )
 	
 	local frame = ArkInventory.Frame_Main_Get( loc_id )
 	
-	if ArkInventory.ValidFrame( frame ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame ) then return end
 	
 	if not frame.ARK_Data.loaded then
 		-- cant reposition it until its been built, the frame has no size
@@ -4349,9 +4355,7 @@ end
 
 function ArkInventory.Frame_Main_Anchor_Save( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -4364,9 +4368,7 @@ end
 
 function ArkInventory.Frame_Main_Paint( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -4447,9 +4449,7 @@ end
 
 function ArkInventory.Frame_Main_Update( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 
@@ -4979,9 +4979,9 @@ function ArkInventory.Frame_Main_OnHide( frame )
 end
 
 function ArkInventory.Frame_Main_OnLoad( frame )
-
+	
 	assert( frame, "frame is nil" )
-
+	
 	local framename = frame:GetName( )
 	local loc_id = string.match( framename, "^.-(%d+)" )
 	assert( loc_id ~= nil, string.format( "xml element '%s' is not an %s frame", framename, ArkInventory.Const.Program.Name ) )
@@ -4989,7 +4989,7 @@ function ArkInventory.Frame_Main_OnLoad( frame )
 	frame.ARK_Data = {
 		loc_id = tonumber( loc_id ),
 	}
-
+	
 	loc_id = tonumber( loc_id )
 	
 	local tex
@@ -5000,7 +5000,7 @@ function ArkInventory.Frame_Main_OnLoad( frame )
 	-- setup main icon
 	local obj = _G[string.format( "%s%s%s", frame:GetName( ), ArkInventory.Const.Frame.Title.Name, "Location0" )]
 	if obj then
-	
+		
 		tex = obj:GetNormalTexture( )
 		tex:SetTexture( ArkInventory.Global.Location[loc_id].Texture )
 		tex:SetTexCoord( 0.075, 0.925, 0.075, 0.925 )
@@ -5017,11 +5017,11 @@ function ArkInventory.Frame_Main_OnLoad( frame )
 	
 	-- setup action buttons
 	for k, v in pairs( ArkInventory.Const.Actions ) do
-	
+		
 		local obj = _G[string.format( "%s%s%s%s", frame:GetName( ), ArkInventory.Const.Frame.Title.Name, "ActionButton", k )]
 		
 		if obj then
-		
+			
 			tex = obj:GetNormalTexture( )
 			tex:SetTexture( v.Texture )
 			tex:SetTexCoord( 0.075, 0.925, 0.075, 0.925 )
@@ -5029,19 +5029,17 @@ function ArkInventory.Frame_Main_OnLoad( frame )
 			tex = obj:GetPushedTexture( )
 			tex:SetTexture( v.Texture )
 			tex:SetTexCoord( 0.075, 0.925, 0.075, 0.925 )
-
+			
 			tex = obj:GetHighlightTexture( )
 			tex:SetTexture( v.Texture )
 			tex:SetTexCoord( 0.075, 0.925, 0.075, 0.925 )
-
+			
 			for s, f in pairs( v.Scripts ) do
 				obj:SetScript( s, f )
 			end
 			
 		end
 	end
-	
-	table.insert( UISpecialFrames, framename )
 	
 end
 
@@ -6271,9 +6269,7 @@ end
 	
 function ArkInventory.Frame_Item_Update_Texture( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	local loc_id = frame.ARK_Data.loc_id
 	local i = ArkInventory.Frame_Item_GetDB( frame )
@@ -6313,9 +6309,7 @@ end
 
 function ArkInventory.Frame_Item_Update_Quest( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local questTexture = _G[string.format( "%s%s", frame:GetName( ), "IconQuestTexture" )]
 	questTexture:Hide( )
@@ -6497,9 +6491,7 @@ end
 
 function ArkInventory.Frame_Item_Update_Fade( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local action = false
@@ -6600,9 +6592,7 @@ end
 
 function ArkInventory.Frame_Item_Update_NewIndicator( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	local framename = frame:GetName( )
 	
@@ -6650,9 +6640,7 @@ end
 
 function ArkInventory.Frame_Item_Update_Empty( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local cp = ArkInventory.LocationPlayerInfoGet( loc_id )
@@ -6714,9 +6702,7 @@ end
 
 function ArkInventory.Frame_Item_OnEnter( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	if not ArkInventory.db.global.option.tooltip.show then
 		return
@@ -6787,9 +6773,7 @@ end
 
 function ArkInventory.Frame_Tainted_OnEnter( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	if not ArkInventory.db.global.option.tooltip.show then
 		return
@@ -6801,9 +6785,7 @@ end
 
 function ArkInventory.Frame_Item_OnDrag( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	local loc_id = frame.ARK_Data.loc_id
 	local usedmycode = false
@@ -6894,9 +6876,7 @@ end
 
 function ArkInventory.Frame_Item_Update_Lock( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline then
@@ -6985,9 +6965,7 @@ end
 
 function ArkInventory.Frame_Item_Mount_Update( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -7009,41 +6987,37 @@ end
 
 function ArkInventory.Frame_Item_Update_Clickable( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
-
-	local loc_id = frame.ARK_Data.loc_id
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
-	local action = false
-
-	if ArkInventory.Global.Mode.Edit
-	or ArkInventory.Global.Location[loc_id].isOffline then
+	local loc_id = frame.ARK_Data.loc_id
+	local click = true
+	
+	if ArkInventory.Global.Mode.Edit or ArkInventory.Global.Location[loc_id].isOffline then
 		
-		action = true
+		click = false
 		
 	else
 		
-		if frame.ARK_Data.loc_id == ArkInventory.Const.Location.Vault then
-		
+		if ( loc_id == ArkInventory.Const.Location.Vault ) then
+			
 			local bag_id = frame.ARK_Data.bag_id
 			local _, _, _, canDeposit, numWithdrawals = GetGuildBankTabInfo( bag_id )
-			if not canDeposit and numWithdrawals == 0 then
-				action = true
+			if ( not canDeposit ) and ( numWithdrawals == 0 ) then
+				click = false
 			end
-		
+			
 		end
-	
+		
 	end
 	
-
-	if action then
+	
+	if click then
+		frame:RegisterForClicks( "LeftButtonUp", "RightButtonUp" )
+		frame:RegisterForDrag( "LeftButton" )
+	else
 		-- disable clicks/drag when in edit mode or offline
 		frame:RegisterForClicks( )
 		frame:RegisterForDrag( )
-	else
-		frame:RegisterForClicks( "LeftButtonUp", "RightButtonUp" )
-		frame:RegisterForDrag( "LeftButton" )
 	end
 	
 end
@@ -7557,9 +7531,7 @@ end
 
 function ArkInventory.Frame_Changer_Primary_Update( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	local loc_id = frame.ARK_Data.loc_id
 	local bag_id = frame.ARK_Data.bag_id
@@ -7756,9 +7728,7 @@ end
 
 function ArkInventory.Frame_Changer_Vault_Tab_OnClick( frame, button, mode )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local mode = mode or GuildBankFrame.mode
 	
@@ -8128,9 +8098,7 @@ end
 
 function ArkInventory.Frame_Changer_Secondary_OnClick( frame, button )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -8201,9 +8169,7 @@ end
 
 function ArkInventory.Frame_Changer_Secondary_OnDragStart( frame )
 	
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -8220,9 +8186,7 @@ end
 
 function ArkInventory.Frame_Changer_Secondary_OnReceiveDrag( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 
 	local loc_id = frame.ARK_Data.loc_id
 	
@@ -8236,9 +8200,7 @@ end
 
 function ArkInventory.Frame_Changer_Secondary_OnEnter( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local cp = ArkInventory.LocationPlayerInfoGet( loc_id )
@@ -8281,9 +8243,7 @@ end
 
 function ArkInventory.Frame_Changer_Secondary_Update( frame )
 
-	if ArkInventory.ValidFrame( frame, true ) == false then
-		return
-	end
+	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local bag_id = frame.ARK_Data.bag_id
@@ -8333,10 +8293,7 @@ end
 function ArkInventory.Frame_Changer_Secondary_Update_Lock( loc_id, bag_id )
 
 	local frame = _G[string.format( "%s%s%sWindowBag%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, bag_id )]
-	if not frame then
-		return
-	end
-
+	
 	if not ArkInventory.ValidFrame( frame, true ) then return end
 	
 	if ArkInventory.Global.Location[loc_id].isOffline then return end
