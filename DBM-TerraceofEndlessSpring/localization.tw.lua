@@ -28,7 +28,8 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(729)
 
 L:SetWarningLocalization({
-	warnHideOver			= "%s結束"
+	warnHideOver			= "%s結束",
+	warnHideProgress		= "擊中:%s. 傷害:%s. 時間:%s"
 })
 
 L:SetTimerLocalization({
@@ -37,8 +38,12 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	warnHideOver			= "為$spell:123244結束顯示警告",
+	warnHideProgress		= "為$spell:123244進度顯示除錯警告",
+	timerSpecialCD			= "為下次特別技能顯示計時器",
 	timerSpecialCD			= "為下一次特別技能顯示計時器",
-	SetIconOnGuard			= "為$journal:6224標示團隊圖示"
+	SetIconOnGuard			= "為$journal:6224標示團隊圖示",
+	RangeFrame				= "為$spell:123121顯示距離框(3碼)(只有顯示坦)",
+	GWHealthFrame			= "為$spell:123461顯示需求血量框架\n(首領血量框架需要開啟)" -- maybe bad wording, needs review
 })
 
 L:SetMiscLocalization{
@@ -50,3 +55,6 @@ L:SetMiscLocalization{
 ----------------------
 L= DBM:GetModLocalization(709)
 
+L:SetOptionLocalization({
+	RangeFrame			= "為$spell:119519顯示距離框(8碼)"
+})

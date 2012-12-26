@@ -1,3 +1,7 @@
+﻿-- Last update: 12/20/2012 (20/12/2012 in french format)
+-- By Edoz (stephanelc35@msn.com)
+
+if GetLocale() ~= "frFR" then return end
 local L
 
 --------------
@@ -6,31 +10,31 @@ local L
 L= DBM:GetModLocalization("Brawlers")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: General"
+	name = "Bastonneurs : Options"
 })
 
 L:SetWarningLocalization({
-	specWarnYourTurn	= "You're up!"
+	specWarnYourTurn	= "C'est à votre tour !"
 })
 
 L:SetOptionLocalization({
-	specWarnYourTurn	= "Show special warning when it's your match",
-	SpectatorMode		= "Show warnings/timers when spectating fights\n(Personal 'Special Warning' messages not shown to spectators)"
+	specWarnYourTurn	= "Alerte spéciale quand c'est à vous de combattre",
+	SpectatorMode		= "Voir les alertes/délais lorsque vous êtes en mode spectateur\n(Les \"Alerte spécial\" personnelle, ne sont pas affichées aux spectateurs)"
 })
 
 L:SetMiscLocalization({
 	Bizmo			= "Bizmo",--Alliance
-	Bazzelflange	= "Boss Bazzelflange",--Horde
+	Bazzelflange	= "Chef Bazzelcol",--Horde
 	--I wish there was a better way to do this....so much localizing. :(
-	Rank1			= "Rank 1",
-	Rank2			= "Rank 2",
-	Rank3			= "Rank 3",
-	Rank4			= "Rank 4",
-	Rank5			= "Rank 5",
-	Rank6			= "Rank 6",
-	Rank7			= "Rank 7",
-	Rank8			= "Rank 8",
-	Proboskus		= "Oh dear... I'm sorry, but it looks like you're going to have to fight Proboskus."
+	Rank1			= "rang 1",
+	Rank2			= "rang 2",
+	Rank3			= "rang 3",
+	Rank4			= "rang 4",
+	Rank5			= "rang 5",
+	Rank6			= "rang 6",
+	Rank7			= "rang 7",
+	Rank8			= "rang 8",
+	Proboskus		= "Oh dear... I'm sorry, but it looks like you're going to have to fight Proboskus."--This boss is only boss out of 32 that has a custom berserk, so we need a chat yell to detect when he specificly is pulled to adjust berserk timer
 })
 
 ------------
@@ -39,7 +43,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization("BrawlRank1")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 1"
+	name = "Bastonneurs : Rang 1"
 })
 
 ------------
@@ -48,7 +52,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank2")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 2"
+	name = "Bastonneurs : Rang 2"
 })
 
 ------------
@@ -57,7 +61,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank3")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 3"
+	name = "Bastonneurs : Rang 3"
 })
 
 ------------
@@ -66,7 +70,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank4")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 4"
+	name = "Bastonneurs : Rang 4"
 })
 
 ------------
@@ -75,7 +79,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank5")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 5"
+	name = "Bastonneurs : Rang 5"
 })
 
 ------------
@@ -84,7 +88,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank6")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 6"
+	name = "Bastonneurs : Rang 6"
 })
 
 ------------
@@ -93,7 +97,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank7")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 7"
+	name = "Bastonneurs : Rang 7"
 })
 
 ------------
@@ -102,5 +106,5 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlRank8")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Rank 8"
+	name = "Bastonneurs : Rang 8"
 })

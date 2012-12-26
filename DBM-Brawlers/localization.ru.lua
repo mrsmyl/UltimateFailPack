@@ -1,3 +1,5 @@
+if GetLocale() ~= "ruRU" then return end
+
 local L
 
 --------------
@@ -19,8 +21,8 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Bizmo			= "Bizmo",--Alliance
-	Bazzelflange	= "Boss Bazzelflange",--Horde
+	Bizmo			= "Бизмо",--Alliance
+	Bazzelflange	= "Босси Кософланж",--Horde
 	--I wish there was a better way to do this....so much localizing. :(
 	Rank1			= "Rank 1",
 	Rank2			= "Rank 2",

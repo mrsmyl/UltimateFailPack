@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("BrawlRank1", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8255 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8371 $"):sub(12, -3))
 --mod:SetCreatureID(60491)
 mod:SetModelID(46327)--Last Boss of Rank 1
 mod:SetZone()
@@ -14,7 +14,7 @@ mod:RegisterEvents(
 
 local warnChomp					= mod:NewSpellAnnounce(135342, 4)
 local warnVolatileFlames		= mod:NewSpellAnnounce(134740, 3)
-local warnFireLine				= mod:NewCastAnnounce(133607, 4)
+local warnFireLine				= mod:NewCastAnnounce(133607, 4, 2)
 local warnLumberingCharge		= mod:NewSpellAnnounce(134527, 4)
 local warnHeatedPokers			= mod:NewSpellAnnounce(133286, 4)
 
@@ -49,6 +49,9 @@ function mod:SPELL_CAST_START(args)
 		if brawlersMod:PlayerFighting() then
 			specWarnHeatedPokers:Show()
 		end
+	elseif args:IsSpellID(134740) then
+		warnVolatileFlames:Show()
+		timerVolatileFlamesCD:Start()
 	elseif args:IsSpellID(133607) then
 		warnFireLine:Show()
 		timerFireLineCD:Start()--First one is 9-10 seconds after combat start

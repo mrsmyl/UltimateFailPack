@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7887 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8399 $"):sub(12, -3))
 mod:SetCreatureID(60491)
 mod:SetModelID(41448)
 mod:SetZone(809)--Kun-Lai Summit (zoneid not yet known)
@@ -13,7 +13,7 @@ mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
 -- Also, you can enter combat while boss fights (not 100% health). 
 -- On this situration, block OnCombatStart() function will be better (+ do not record kill time)
 mod:RegisterCombat("combat")
-mod:SetWipeTime(180)
+mod:SetWipeTime(120)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",

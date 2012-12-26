@@ -33,7 +33,9 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	WarnPhase	= "Announce Phase transition",
-	RangeFrame	= "Show range frame (6) during arcane phase"
+	RangeFrame	= "Show range frame (6) during arcane phase",
+	SetIconOnWS	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(116784),
+	SetIconOnAR	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(116417)
 })
 
 L:SetMiscLocalization({
@@ -68,8 +70,13 @@ L:SetWarningLocalization({
 	DarknessSoon		= "Shield of Darkness in %ds"
 })
 
+L:SetTimerLocalization({
+	timerUSRevive		= "Undying Shadow Reform"
+})
+
 L:SetOptionLocalization({
 	DarknessSoon		= "Show pre-warning countdown for $spell:117697 (5s before)",
+	timerUSRevive		= "Show timer for $spell:117506 reform",
 	RangeFrame			= "Show range frame (8)"
 })
 

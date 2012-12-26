@@ -6,6 +6,7 @@
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0搏击俱乐部|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0鬥陣俱樂部|r
 ## Title-esES:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Camorristas|r
+## Title-frFR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Bastonneurs|r
 ## LoadOnDemand: 1
 ## RequiredDeps: DBM-Core
 ## SavedVariablesPerCharacter: DBMBrawlers_SavedVars, DBMBrawlers_SavedStats
@@ -18,9 +19,10 @@
 ## X-DBM-Mod-Name-zhCN: 搏击俱乐部
 ## X-DBM-Mod-Name-zhTW: 鬥陣俱樂部
 ## X-DBM-Mod-Name-esES: Camorristas
-## X-DBM-Mod-Sort: 15
+## X-DBM-Mod-Name-frFR: Bastonneurs
+## X-DBM-Mod-Sort: 30
 ## X-DBM-Mod-LoadZoneID: 922,925
-## X-Curse-Packaged-Version: 4.11.7
+## X-Curse-Packaged-Version: 5.1.0
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
@@ -30,6 +32,8 @@ localization.de.lua
 localization.cn.lua
 localization.tw.lua
 localization.es.lua
+localization.fr.lua
+localization.ru.lua
 MapSizes.lua
 Brawlers.lua
 Rank1.lua

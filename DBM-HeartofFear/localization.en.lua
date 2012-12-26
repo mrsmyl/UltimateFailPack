@@ -20,7 +20,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Platform			= "%s flies to one of his platforms!",
+	Platform			= "flies to one of his platforms!",
 	Defeat				= "We will not give in to the despair of the dark void. If Her will for us is to perish, then it shall be so.",
 	Left				= "Left",
 	Right				= "Right"
@@ -49,6 +49,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	specwarnUnder	= "Show special warning when you are under boss",
+	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).." (Heroic difficulty only)",
 	PheromonesIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122835)
 })
 
@@ -83,11 +84,11 @@ L:SetWarningLocalization({
 	specwarnWillPower			= "Low Will Power! - 5s remaining",
 	specwarnAmberExplosionYou	= "Interrupt YOUR %s!",--Struggle for Control interrupt.
 	specwarnAmberExplosionAM	= "%s: Interrupt %s!",--Amber Montrosity
-	specwarnAmberExplosionOther	= "%s: Interrupt %s!"--Amber Montrosity
+	specwarnAmberExplosionOther	= "%s: Interrupt %s!"--Mutated Construct
 })
 
 L:SetTimerLocalization({
-	timerAmberExplosionAMCD		= "%s CD: Monstrosity"
+	timerAmberExplosionAMCD		= "Explosion CD: Monstrosity"
 })
 
 L:SetOptionLocalization({

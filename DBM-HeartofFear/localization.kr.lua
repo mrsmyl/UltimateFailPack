@@ -48,6 +48,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	specwarnUnder	= "보스의 보라색 원 안에 있을때 특수 경고 보기",
+	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).." (영웅 난이도만)",
 	PheromonesIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122835)
 })
 
@@ -86,7 +87,7 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerAmberExplosionAMCD		= "%s 대기시간: 호박석 괴수"
+	timerAmberExplosionAMCD		= "폭발 가능: 호박석 괴수"
 })
 
 L:SetOptionLocalization({

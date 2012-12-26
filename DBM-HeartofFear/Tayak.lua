@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(744, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8257 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8337 $"):sub(12, -3))
 mod:SetCreatureID(62543)
 mod:SetModelID(43141)
 mod:SetZone()
@@ -37,7 +37,7 @@ local timerTempestSlashCD				= mod:NewNextTimer(15.5, 125692)
 local timerOverwhelmingAssault			= mod:NewTargetTimer(45, 123474, nil, mod:IsTank())
 local timerOverwhelmingAssaultCD		= mod:NewCDTimer(20.5, 123474, nil, mod:IsTank() or mod:IsHealer())--Only ability with a variation in 2 pulls so far. He will use every 20.5 seconds unless he's casting something else, then it can be delayed as much as an extra 15-20 seconds. TODO: See if there is a way to detect when variation is going to occur and call update timer.
 local timerWindStepCD					= mod:NewCDTimer(25, 123175)
-local timerUnseenStrike					= mod:NewCastTimer(5, 123017)
+local timerUnseenStrike					= mod:NewCastTimer(4.8, 123017)
 local timerUnseenStrikeCD				= mod:NewCDTimer(53, 123017) -- 53~61 cd.
 local timerIntensifyCD					= mod:NewNextTimer(60, 123471)
 local timerBladeTempest					= mod:NewBuffActiveTimer(9, 125310)

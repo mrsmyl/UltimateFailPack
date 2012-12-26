@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(709, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8280 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8420 $"):sub(12, -3))
 mod:SetCreatureID(60999)--61042 Cheng Kang, 61046 Jinlun Kun, 61038 Yang Guoshi, 61034 Terror Spawn
 mod:SetModelID(41772)
 
@@ -54,6 +54,7 @@ local timerBreathOfFearCD				= mod:NewNextTimer(33.3, 119414)--Based off bosses 
 local timerOminousCackleCD				= mod:NewNextTimer(45.5, 119693)
 local timerDreadSpray					= mod:NewBuffActiveTimer(8, 120047)
 local timerDreadSprayCD					= mod:NewNextTimer(20.5, 120047)
+local timerDeathBlossom					= mod:NewBuffActiveTimer(5, 119888)
 --local timerTerrorSpawnCD				= mod:NewNextTimer(60, 119108)--every 60 or so seconds, maybe a little more maybe a little less, not sure. this is just based on instinct after seeing where 30 fit.
 local timerFearless						= mod:NewBuffFadesTimer(30, 118977)
 -- Heroic Phase 2
@@ -93,6 +94,23 @@ end
 local function warnHuddleInTerrorTargets()
 	warnHuddleInTerror:Show(table.concat(huddleInTerrorTargets, "<, >"))
 	table.wipe(huddleInTerrorTargets)
+end
+
+local function leavePlatform()
+	if onPlatform then
+		onPlatform = false
+		platformMob = nil
+		--Breath of fear timer recovery
+		local shaPower = UnitPower("boss1") --Get Boss Power
+		shaPower = shaPower / 3 --Divide it by 3 (cause he gains 3 power per second and we need to know how many seconds to subtrack from fear CD)
+		if shaPower < 28 then--Don't bother recovery if breath is in 5 or less seconds, we'll get a new one when it's cast.
+			timerBreathOfFearCD:Start(33.3-shaPower)
+			countdownBreathOfFear:Start(33.3-shaPower)
+		end
+		if mod.Options.RangeFrame then
+			DBM.RangeCheck:Show(2)
+		end
+	end
 end
 
 function mod:OnCombatStart(delay)
@@ -150,26 +168,23 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnOminousCackleYou:Show()
 			countdownBreathOfFear:Cancel()
 			timerBreathOfFearCD:Cancel()
+			if self.Options.RangeFrame then
+				DBM.RangeCheck:Hide()
+			end
 		end
 		self:Unschedule(warnOminousCackleTargets)
 		self:Schedule(2, warnOminousCackleTargets)--this actually staggers a bit, so wait the full 2 seconds to get em all in one table
 		--"<76.6> [CLEU] SPELL_AURA_APPLIED#false#0x0100000000181B61#Lycanx#1298#0#0x0100000000181B61#Lycanx#1298#0#129147#Ominous Cackle#32#DEBUFF", -- [12143]
 		--"<78.3> [CLEU] SPELL_AURA_APPLIED#false#0x0100000000011E0F#Derevka#1300#0#0x0100000000011E0F#Derevka#1300#0#129147#Ominous Cackle#32#DEBUFF", -- [12440]
-	elseif args:IsSpellID(120047) and platformMob and args.sourceName == platformMob  then--might change
+	elseif args:IsSpellID(120047) and platformMob and args.sourceName == platformMob then--might change
 		warnDreadSpray:Show()
 		timerDreadSpray:Start()
 		timerDreadSprayCD:Start()
-	elseif args:IsSpellID(118977) and args:IsPlayer() then--Fearless, you're leaving platform
-		onPlatform = false
-		platformMob = nil
+	elseif args:IsSpellID(119888) and platformMob and args.sourceName == platformMob then
+		timerDeathBlossom:Show()
+	elseif args:IsSpellID(118977) and args:IsPlayer() then--Fearless, you're leaving platform 
+		leavePlatform()
 		timerFearless:Start()
-		--Breath of fear timer recovery
-		local shaPower = UnitPower("boss1") --Get Boss Power
-		shaPower = shaPower / 3 --Divide it by 3 (cause he gains 3 power per second and we need to know how many seconds to subtrack from fear CD)
-		if shaPower < 28 then--Don't bother recovery if breath is in 5 or less seconds, we'll get a new one when it's cast.
-			timerBreathOfFearCD:Start(33.3-shaPower)
-			countdownBreathOfFear:Start(33.3-shaPower)
-		end
 	elseif args:IsSpellID(131996) and not onPlatform then
 		warnThrash:Show()
 		specWarnThrash:Show()
@@ -261,6 +276,8 @@ function mod:UNIT_DIED(args)
 	if cid == 61042 or cid == 61046 or cid == 61038 then
 		timerDreadSpray:Cancel(args.destGUID)
 		timerDreadSprayCD:Cancel(args.destGUID)
+		-- If you die on platform, and revived after platform mob die, Fearless will not be applied on you. This stuff will be slove this.
+		self:Schedule(10, leavePlatform)
 	end
 end
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(738, "DBM-Party-MoP", 6, 324)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8284 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8294 $"):sub(12, -3))
 mod:SetCreatureID(61634)
 mod:SetModelID(42169)
 mod:SetZone()
@@ -29,8 +29,8 @@ local specWarnThousandBlades	= mod:NewSpecialWarningRun(120759, mod:IsMelee())
 --local timerWaveCD				= mod:NewTimer(12, "TimerWave", 69076)--Not wave timers in traditional sense. They are non stop, this is for when he activates certain mob types.
 local timerBombard				= mod:NewBuffActiveTimer(15, 120200)
 local timerBombardCD			= mod:NewCDTimer(42, 120200)
-local timerDashingStrikeCD		= mod:NewCDTimer(13.5, 120789)
-local timerThousandBladesCD		= mod:NewCDTimer(8.5, 120759)
+local timerDashingStrikeCD		= mod:NewCDTimer(13.5, 120789)--14-16 second variation
+local timerThousandBladesCD		= mod:NewNextTimer(15, 120759)
 local timerThousandBlades		= mod:NewBuffActiveTimer(4, 120759)
 
 local soundThousandBlades		= mod:NewSound(120759, nil, mod:IsMelee())

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(687, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8278 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8357 $"):sub(12, -3))
 mod:SetCreatureID(60701, 60708, 60709, 60710)--Adds: 60731 Undying Shadow, 60958 Pinning Arrow
 mod:SetModelID(41813)
 mod:SetZone()
@@ -77,13 +77,13 @@ local specWarnSleightOfHand		= mod:NewSpecialWarningTarget(118162)--Heroic Abili
 local timerChargingShadowsCD	= mod:NewCDTimer(12, 117685)
 local timerUndyingShadowsCD		= mod:NewCDTimer(41.5, 117506)--For most part it's right, but i also think on normal he can only summon a limited amount cause he did seem to skip one? leaving a CD for now until know for sure.
 local timerFixate			  	= mod:NewTargetTimer(20, 118303)
-local timerCoalescingShadowsCD	= mod:NewNextTimer(60, 117539)
+local timerUSRevive				= mod:NewTimer(60, "timerUSRevive", 117539)
 local timerShieldOfDarknessCD  	= mod:NewNextTimer(42.5, 117697)
 --Meng
 local timerMaddeningShoutCD		= mod:NewCDTimer(47, 117708)--47-50 sec variation. So a CD timer instead of next.
 local timerDeliriousCD			= mod:NewCDTimer(20.5, 117837, nil, mod:CanRemoveEnrage())
 --Qiang
-local timerMassiveAttackCD		= mod:NewCDTimer(5, 117921, nil, mod:IsTank())
+local timerMassiveAttackCD		= mod:NewCDTimer(5, 117921)--This timer needed for all players to figure out Flanking Orders moves.
 local timerAnnihilateCD			= mod:NewNextTimer(39, 117948)
 local timerFlankingOrdersCD		= mod:NewCDTimer(40, 117910)--Every 40 seconds on normal, but on heroic it has a 40-50 second variation so has to be a CD bar instead of next
 local timerImperviousShieldCD	= mod:NewCDTimer(42, 117961)
@@ -148,7 +148,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(117539) and not diedShadow[args.destGUID] then--They only ressurrect once so only start timer once per GUID
 		diedShadow[args.destGUID] = true
-		timerCoalescingShadowsCD:Start(args.destGUID)--Basically, the rez timer for a defeated Undying Shadow that is going to re-animate in 60 seconds.
+		timerUSRevive:Start(args.destGUID)--Basically, the rez timer for a defeated Undying Shadow that is going to re-animate in 60 seconds.
 	elseif args:IsSpellID(117837) then
 		warnDelirious:Show(args.destName)
 		specWarnDelirious:Show(args.destName)

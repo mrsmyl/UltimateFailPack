@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(683, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8283 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8411 $"):sub(12, -3))
 mod:SetCreatureID(60585, 60586, 60583)--60583 Protector Kaolan, 60585 Elder Regail, 60586 Elder Asani
 mod:SetModelID(41503)--Protector Kaolan, 41502 and 41504 are elders
 mod:SetZone()
@@ -53,7 +53,7 @@ local specWarnExpelCorruption		= mod:NewSpecialWarningSpell(117975, nil, nil, ni
 local specWarnCorruptedEssence		= mod:NewSpecialWarningStack(118191, true, 9)--Amount may need adjusting depending on what becomes an accepted strategy
 
 --Elder Asani
-local timerCleansingWatersCD		= mod:NewNextTimer(32.5, 117309)
+local timerCleansingWatersCD		= mod:NewCDTimer(32.5, 117309)
 local timerCorruptingWatersCD		= mod:NewNextTimer(42, 117227)
 --Elder Regail
 local timerLightningPrisonCD		= mod:NewCDTimer(25, 111850)
@@ -176,7 +176,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		--If any are missing that actually ALTER during a phase 2 or 3 transition they will be updated here.
 		if phase == 2 then
 			if args:GetDestCreatureID() == 60585 then--Elder Regail
-				timerLightningStormCD:Start(20)
+				timerLightningStormCD:Start(25.5)--Starts 25.5~27
 			elseif args:GetDestCreatureID() == 60586 then--Elder Asani
 				timerCorruptingWatersCD:Start(10)
 			elseif args:GetDestCreatureID() == 60583 then--Protector Kaolan

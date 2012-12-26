@@ -69,8 +69,13 @@ L:SetWarningLocalization({
 	DarknessSoon		= "Schild der Dunkelheit in %d Sekunden"
 })
 
+L:SetTimerLocalization({
+	timerUSRevive		= "Unsterblicher Schatten Neuformung"
+})
+
 L:SetOptionLocalization({
 	DarknessSoon		= "Zeige Vorwarnungscountdown für $spell:117697 (5s zuvor)",
+	timerUSRevive		= "Zeige Zeit bis sich $spell:117506 neu formen",
 	RangeFrame			= "Zeige Abstandsfenster (8m)"
 })
 
@@ -91,7 +96,6 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	specWarnDespawnFloor	= "Zeige Spezialwarnung bevor der Boden (Energievortex) verschwindet",
 	timerDespawnFloor		= "Zeige Zeit bis der Boden (Energievortex) verschwindet",
-	SetIconOnCreature		= "Setze Zeichen auf $journal:6193",
 	SetIconOnDestabilized	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(132226)
 })
 

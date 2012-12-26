@@ -34,7 +34,9 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	WarnPhase	= "단계 전환 알림 보기",
-	RangeFrame	= "지팡이의 혼 단계에서 거리 프레임 표시 (6m)"
+	RangeFrame	= "지팡이의 혼 단계에서 거리 프레임 표시 (6m)",
+	SetIconOnWS	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(116784),
+	SetIconOnAR	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(116417)
 })
 
 L:SetMiscLocalization({
@@ -69,8 +71,13 @@ L:SetWarningLocalization({
 	DarknessSoon		= "%d초 후 암흑의 방패"
 })
 
+L:SetTimerLocalization({
+	timerUSRevive		= "불멸의 어둠 재형성"
+})
+
 L:SetOptionLocalization({
 	DarknessSoon		= "$spell:117697 주문의 사전 초읽기 경고 보기(5초 전부터)",
+	timerUSRevive		= "$spell:117506 재형성까지 남은 시간 바 표시",
 	RangeFrame			= "거리 프레임 표시 (8m)"
 })
 
