@@ -18,7 +18,7 @@ StaticPopupDialogs['BAGNON_VAULT_PURCHASE'] = {
 	end,
 	
 	OnCancel = CloseVoidStorageFrame,
-	timeout = 0, preferredIndex = 3,
+	timeout = 0, preferredIndex = STATICPOPUP_NUMDIALOGS,
 	hideOnEscape = 1
 }
 
@@ -29,7 +29,7 @@ StaticPopupDialogs['BAGNON_CANNOT_PURCHASE_VAULT'] = {
 	
 	OnAccept = CloseVoidStorageFrame,
 	OnCancel = CloseVoidStorageFrame,
-	timeout = 0, preferredIndex = 3,
+	timeout = 0, preferredIndex = STATICPOPUP_NUMDIALOGS,
 	hideOnEscape = 1
 }
 
@@ -47,6 +47,6 @@ StaticPopupDialogs['BAGNON_COMFIRM_TRANSFER'] = {
 		frame:SendMessage('SHOW_ITEM_FRAME')
 	end,
 	
-	timeout = 0, preferredIndex = 3,
+	timeout = 0, preferredIndex = STATICPOPUP_NUMDIALOGS,
 	hideOnEscape = 1
 }
