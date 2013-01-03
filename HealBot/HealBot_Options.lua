@@ -678,31 +678,24 @@ function HealBot_Options_setDebuffTypes()
 end
 
 local CPUProfiler=0
-StaticPopupDialogs["HEALBOT_OPTIONS_RELOADUI"] = {
-    text = HEALBOT_OPTIONS_RELOADUIMSG,
-    button1 = HEALBOT_WORDS_YES,
-    button2 = HEALBOT_WORDS_NO,
-    OnAccept = function()
-        ReloadUI();
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-};
+function HealBot_Options_ReloadUI()
+    StaticPopupDialogs["HEALBOT_OPTIONS_RELOADUI"] = {
+        text = HEALBOT_OPTIONS_RELOADUIMSG,
+        button1 = HEALBOT_WORDS_YES,
+        button2 = HEALBOT_WORDS_NO,
+        OnAccept = function()
+            ReloadUI();
+        end,
+        timeout = 0,
+        whileDead = 1,
+        hideOnEscape = 1
+    };
+
+    StaticPopup_Show ("HEALBOT_OPTIONS_RELOADUI");
+end
 
 local hbOptGetSkinFrom=" "
 local hbOptGetSkinName=" "
-StaticPopupDialogs["HEALBOT_OPTIONS_ACCEPTSKIN"] = {
-    text = HEALBOT_OPTIONS_ACCEPTSKINMSG.."%s",
-    button1 = HEALBOT_WORDS_YES,
-    button2 = HEALBOT_WORDS_NO,
-    OnAccept = function()
-        HealBot_Options_ShareSkinAccept();
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-};
 
 local function HealBot_Options_LangAddonFail(lang, reason)
                      
@@ -2005,7 +1998,7 @@ end
 
 function HealBot_Options_EnableLibQuickHealth_OnClick(self)
     HealBot_Globals.EnLibQuickHealth = self:GetChecked() or 0;
-    StaticPopup_Show ("HEALBOT_OPTIONS_RELOADUI");
+    HealBot_Options_ReloadUI()
 end
 
 function HealBot_Options_AggroBar_OnClick(self)
@@ -2039,7 +2032,7 @@ end
 function HealBot_Options_CPUProfiler_OnClick(self)
     CPUProfiler = self:GetChecked() or 0;
     SetCVar("scriptProfile", CPUProfiler)
-    StaticPopup_Show ("HEALBOT_OPTIONS_RELOADUI");
+    HealBot_Options_ReloadUI()
 end
 
 function HealBot_Options_PlayerTargetFrames_OnClick(self)
@@ -2434,7 +2427,6 @@ function HealBot_Options_ShowTooltip_OnClick(self)
 end
 
 function HealBot_Options_AddonFail(reason, addon)
-                     
     StaticPopupDialogs["HEALBOT_OPTIONS_ADDONFAIL"] = {
         text = HEALBOT_OPTIONS_ADDON_FAIL.." "..addon.."\n"..HEALBOT_OPTIONS_LANG_ADDON_FAIL2.." "..reason.."\n\n"..HEALBOT_OPTIONS_LANG_ADDON_FAIL3.." "..addon,
         button1 = CLOSE,
@@ -4380,6 +4372,18 @@ function HealBot_Options_ShareSkinRec(status, msg, partID)
     if status=="X" then
         hbOptGetSkinFrom, hbOptGetSkinName = string.split("!", msg)
         if hbOptGetSkinFrom and hbOptGetSkinName then
+            StaticPopupDialogs["HEALBOT_OPTIONS_ACCEPTSKIN"] = {
+                text = HEALBOT_OPTIONS_ACCEPTSKINMSG.."%s",
+                button1 = HEALBOT_WORDS_YES,
+                button2 = HEALBOT_WORDS_NO,
+                OnAccept = function()
+                    HealBot_Options_ShareSkinAccept();
+                end,
+                timeout = 0,
+                whileDead = 1,
+                hideOnEscape = 1
+            };
+        
             StaticPopup_Show ("HEALBOT_OPTIONS_ACCEPTSKIN", " "..hbOptGetSkinName..HEALBOT_OPTIONS_ACCEPTSKINMSGFROM..hbOptGetSkinFrom);
         end
     elseif hbOptGetSkinName and hbAccpetedSkin==hbOptGetSkinFrom then
@@ -5690,27 +5694,6 @@ function HealBot_Options_GetSpellInfo_OnEnterPressed(self)
     self:SetText(text or "")
 end
 
-StaticPopupDialogs["HEALBOT_OPTIONS_ERROR"] = {
-    text = HEALBOT_WORDS_ERROR..": %s",
-    button1 = OKAY,
-    showAlert = 1,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-};
-
-StaticPopupDialogs["HEALBOT_OPTIONS_NEWCDEBUFF"] = {
-    text = HEALBOT_OPTIONS_SAVESKIN..": %s",
-    button1 = HEALBOT_WORDS_YES,
-    button2 = HEALBOT_WORDS_NO,
-    OnAccept = function()
-        HealBot_Options_NewCDebuffBtn_OnClick(HealBot_Options_NewCDebuffBtn)
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-};
-
 local NewCDebuffTxt=nil
 function HealBot_Options_NewCDebuffBtn_OnClick(self)
     NewCDebuffTxt=HealBot_Options_NewCDebuff:GetText()
@@ -5737,12 +5720,33 @@ function HealBot_Options_ConfirmNewCDebuff()
     if tonumber(NewCDebuffTxt) then
         NewCDebuffTxt = GetSpellInfo(NewCDebuffTxt)
         if not NewCDebuffTxt then 
+            StaticPopupDialogs["HEALBOT_OPTIONS_ERROR"] = {
+                text = HEALBOT_WORDS_ERROR..": %s",
+                button1 = OKAY,
+                showAlert = 1,
+                timeout = 0,
+                whileDead = 1,
+                hideOnEscape = 1
+            };
+        
             StaticPopup_Show ("HEALBOT_OPTIONS_ERROR", HEALBOT_SPELL_NOT_FOUND);
         else
             HealBot_Options_NewCDebuff:SetText(NewCDebuffTxt)
         end
     end
     if NewCDebuffTxt and NewCDebuffTxt ~= "" then
+        StaticPopupDialogs["HEALBOT_OPTIONS_NEWCDEBUFF"] = {
+            text = HEALBOT_OPTIONS_SAVESKIN..": %s",
+            button1 = HEALBOT_WORDS_YES,
+            button2 = HEALBOT_WORDS_NO,
+            OnAccept = function()
+                HealBot_Options_NewCDebuffBtn_OnClick(HealBot_Options_NewCDebuffBtn)
+            end,
+            timeout = 0,
+            whileDead = 1,
+            hideOnEscape = 1
+        };
+    
         StaticPopup_Show ("HEALBOT_OPTIONS_NEWCDEBUFF", NewCDebuffTxt);
     end
 end
@@ -6437,27 +6441,32 @@ function HealBot_Options_Buff_Reset()
 end
 
 local BuffWatchSpell=" "
-StaticPopupDialogs["HEALBOT_OPTIONS_BUFFNAMEDTITLE"] = {
-    text = HEALBOT_OPTIONS_BUFFNAMED.."%s",
-    button1 = ACCEPT,
-    button2 = CANCEL,
-    OnShow = function(self)
-        g=_G[self:GetName().."WideEditBox"] or _G[self:GetName().."EditBox"]
-        g:SetText(HealBot_GuessName())
-    end,
-    OnAccept = function(self)
-        g=_G[self:GetName().."WideEditBox"] or _G[self:GetName().."EditBox"]
-        HealBot_Options_Set_BuffWatchGUID(g:GetText())
-    end,
-    OnCancel = function()
-        -- do nothing
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1,
-    hasEditBox = 1,
-    hasWideEditBox = 1,
-};
+
+function HealBot_Options_BUFFNAMEDTITLE_show()
+    StaticPopupDialogs["HEALBOT_OPTIONS_BUFFNAMEDTITLE"] = {
+        text = HEALBOT_OPTIONS_BUFFNAMED.."%s",
+        button1 = ACCEPT,
+        button2 = CANCEL,
+        OnShow = function(self)
+            g=_G[self:GetName().."WideEditBox"] or _G[self:GetName().."EditBox"]
+            g:SetText(HealBot_GuessName())
+        end,
+        OnAccept = function(self)
+            g=_G[self:GetName().."WideEditBox"] or _G[self:GetName().."EditBox"]
+            HealBot_Options_Set_BuffWatchGUID(g:GetText())
+        end,
+        OnCancel = function()
+            -- do nothing
+        end,
+        timeout = 0,
+        whileDead = 1,
+        hideOnEscape = 1,
+        hasEditBox = 1,
+        hasWideEditBox = 1,
+    };
+    
+    StaticPopup_Show ("HEALBOT_OPTIONS_BUFFNAMEDTITLE", BuffWatchSpell);
+end
 
 local gName=nil
 local gGUID=nil
@@ -6604,7 +6613,7 @@ function HealBot_Options_Get_BuffWatchGUID(spellName, BuffType, ddID)
     BuffWatchSpell=spellName
     BuffWatchType=BuffType
     BuffWatchID=ddID
-    StaticPopup_Show ("HEALBOT_OPTIONS_BUFFNAMEDTITLE", BuffWatchSpell);
+    HealBot_Options_BUFFNAMEDTITLE_show()
     ClickedBuffGroupDD=nil
 end
 
@@ -6613,7 +6622,7 @@ function HealBot_Options_Get_deBuffWatchGUID(spellName, BuffType, ddID)
     BuffWatchSpell=spellName
     BuffWatchType=BuffType
     BuffWatchID=ddID
-    StaticPopup_Show ("HEALBOT_OPTIONS_BUFFNAMEDTITLE", BuffWatchSpell);
+    HealBot_Options_BUFFNAMEDTITLE_show()
     ClickedBuffGroupDD=nil
 end
 
@@ -6999,7 +7008,7 @@ end
 
 function HealBot_Options_EnableMouseWheel_OnClick(self)
     HealBot_Globals.HealBot_Enable_MouseWheel = self:GetChecked() or 0;
-    StaticPopup_Show ("HEALBOT_OPTIONS_RELOADUI");
+    HealBot_Options_ReloadUI()
 end
 
 function HealBot_Options_EnableSmartCast_OnClick(self)
@@ -7067,19 +7076,19 @@ end
 
 --------------------------------------------------------------------------------
 
-StaticPopupDialogs["HEALBOT_OPTIONS_SETDEFAULTS"] = {
-    text = HEALBOT_OPTIONS_SETDEFAULTSMSG,
-    button1 = HEALBOT_WORDS_YES,
-    button2 = HEALBOT_WORDS_NO,
-    OnAccept = function()
-        HealBot_Options_SetDefaults();
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-};
-
 function HealBot_Options_Defaults_OnClick(self)
+    StaticPopupDialogs["HEALBOT_OPTIONS_SETDEFAULTS"] = {
+        text = HEALBOT_OPTIONS_SETDEFAULTSMSG,
+        button1 = HEALBOT_WORDS_YES,
+        button2 = HEALBOT_WORDS_NO,
+        OnAccept = function()
+            HealBot_Options_SetDefaults();
+        end,
+        timeout = 0,
+        whileDead = 1,
+        hideOnEscape = 1
+    };
+
     StaticPopup_Show ("HEALBOT_OPTIONS_SETDEFAULTS");
 end
 

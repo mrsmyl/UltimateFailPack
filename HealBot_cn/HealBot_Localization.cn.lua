@@ -86,7 +86,7 @@ HEALBOT_OPTIONS_SKINBRSPACE   = "行距离"
 HEALBOT_OPTIONS_SKINBCSPACE   = "列距离"
 HEALBOT_OPTIONS_EXTRASORT     = "排列方式"
 HEALBOT_SORTBY_NAME           = "名字"
-HEALBOT_SORTBY_CLASS          = "职业:"
+HEALBOT_SORTBY_CLASS          = "职业"
 HEALBOT_SORTBY_GROUP          = "小队"
 HEALBOT_SORTBY_MAXHEALTH      = "最大生命值"
 HEALBOT_OPTIONS_NEWDEBUFFTEXT = "新 Debuff"
@@ -418,7 +418,7 @@ HEALBOT_WORD_DAMAGER                = "输出"
 HEALBOT_WORD_TANK                   = "坦克"
 HEALBOT_WORD_LEADER                 = "领队"
 HEALBOT_WORD_VERSION                = "插件版本"
-HEALBOT_WORD_CLIENT                 = "客户端:"
+HEALBOT_WORD_CLIENT                 = "客户端"
 HEALBOT_WORD_ADDON                  = "插件"
 HEALBOT_INFO_CPUSECS                = "CPU 每秒"
 HEALBOT_INFO_MEMORYKB               = "内存 KB"
@@ -759,7 +759,7 @@ HEALBOT_ABOUT_CATH                     = "类别:"
 HEALBOT_ABOUT_CATD                     = "单位框体／增加 Buffs／驱散 Debuffs／治疗"
 HEALBOT_ABOUT_CREDITH                  = "荣誉:"
 HEALBOT_ABOUT_CREDITD                  = "Acirac, Kubik, Von, Aldetal, Brezza,月夜寒星@银月"  -- 任何参与翻译的人员 (如果需要的话), 请自行添加.
-HEALBOT_ABOUT_LOCALH                   = "语言:"
+HEALBOT_ABOUT_LOCALH                   = "语言"
 HEALBOT_ABOUT_LOCALD                   = "deDE, enUK, esES, frFR, huHU, itIT, koKR, poBR, ruRU, zhCN, zhTW"
 HEALBOT_ABOUT_FAQH                     = "常见问题"
 HEALBOT_ABOUT_FAQ_QUESTION             = "问题"
@@ -797,7 +797,7 @@ HEALBOT_ABOUT_FAQ_SPELLS_ANSWER01       = "在法术标签栏的选项设置 \n"
 HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "你检测到消失的 Buffs \n\n" .. 
                                           "你可以在 Buffs 标签栏关闭, \n" ..
                                           "此外,单击这个样式条施放缺少的 Buff.",
-                                  [2]   = "这是暴雪的功能而非 Healbot \n\n" .. 
+                                  [2]   = "这是暴雪的功能而非 Healbot 问题, \n\n" .. 
                                           "使用标准的暴雪框架, \n" ..
                                           "尝试施放已冷却法术 \n" ..
                                           "请注意鼠标为何会变成蓝色. \n\n" ..
@@ -914,7 +914,7 @@ HEALBOT_OPTIONS_SKINAUTHOR              = "样式条作者:"
 HEALBOT_OPTIONS_AVOIDBLUECURSOR         = "防止蓝\n色鼠标"
 HEALBOT_PLAYER_OF_REALM                  = "的"
     
-    HEALBOT_OPTIONS_LANG                    = "语言:"
+    HEALBOT_OPTIONS_LANG                    = "语言"
     HEALBOT_OPTIONS_LANG_ZHCN               = "Chinese (zhCN - 月夜寒星@银月)"
     HEALBOT_OPTIONS_LANG_ENUK               = "English (enUK - by Strife)"
     HEALBOT_OPTIONS_LANG_ENUS               = "English (enUS - by Strife)"
@@ -933,6 +933,8 @@ HEALBOT_PLAYER_OF_REALM                  = "的"
     HEALBOT_OPTIONS_LANG_ADDON_FAIL3        = "注意:在当前版本,这是唯一的警告"
     
     HEALBOT_OPTIONS_ADDON_FAIL              = "无法加载 HealBot 插件."
+
+    HEALBOT_OPTIONS_IN_A_GROUP              = "仅在小队或者团队时"
 end
 
 --if (GetLocale() == "zhCN") then
