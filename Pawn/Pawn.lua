@@ -1,14 +1,14 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2013 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.7.3: best in slot terminology change
+-- Version 1.8: One global version
 ------------------------------------------------------------
 
 
-PawnVersion = 1.703
+PawnVersion = 1.8
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -69,11 +69,6 @@ local PawnCurrentScaleVersion = 1
 local PawnTooltipAnnotation = " " .. PawnQuestionTexture -- (?) texture defined in Localization.lua
 
 local PawnScaleColorDarkFactor = 0.75 -- the unenchanted color is 75% of the enchanted color
-
-PawnShowAsterisksNever = 0
-PawnShowAsterisksNonzero = 1
-PawnShowAsterisksAlways = 2
-PawnShowAsterisksNonzeroNoText = 3
 
 PawnButtonPositionHidden = 0
 PawnButtonPositionLeft = 1
@@ -181,8 +176,10 @@ function PawnInitialize()
 		end
 	end
 	if not CurrentLocaleIsSupported then
-		VgerCore.Message(PawnLocal.WrongLocaleMessage)
-		message(PawnLocal.WrongLocaleMessage)
+		-- No need to translate this string...
+		local WrongLocaleMessage = "Sorry, this version of Pawn is for English, German, Russian, and Simplified Chinese only."
+		VgerCore.Message(VgerCore.Color.Salmon .. WrongLocaleMessage)
+		message(WrongLocaleMessage)
 	end
 
 	SLASH_PAWN1 = "/pawn"
@@ -350,9 +347,10 @@ function PawnInitialize()
 	end
 	
 	-- AtlasLoot Enhanced compatibility
-	if AtlasLootTooltip then
-		VgerCore.HookInsecureFunction(AtlasLootTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("AtlasLootTooltip", "SetHyperlink", ...) end)
-	end
+	-- *** This was causing duplicate lines to show up... need to investigate further.
+	--if AtlasLootTooltip then
+	--	VgerCore.HookInsecureFunction(AtlasLootTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("AtlasLootTooltip", "SetHyperlink", ...) end)
+	--end
 
 	-- LinkWrangler compatibility -- hook the Link Wrangler item link tooltips.
 	if LinkWrangler then
@@ -414,6 +412,8 @@ end
 -- Sets values for any options that don't have a value set yet.  Useful when upgrading.  This method can also be
 -- called by any code that might run before initialization finishes to ensure that PawnCommon exists and is set up.
 function PawnInitializeOptions()
+	local _
+
 	-- If either of the options tables don't exist yet, create them now.
 	if not PawnCommon then PawnCommon = {} end
 	if not PawnOptions then PawnOptions = {} end
@@ -431,7 +431,6 @@ function PawnInitializeOptions()
 	-- 3. The default values for the settings.
 	PawnMigrateSetting("Debug", false)
 	PawnMigrateSetting("Digits", 1)
-	PawnMigrateSetting("ShowAsterisks", PawnShowAsterisksNonzero)
 	PawnMigrateSetting("ShowItemID", false)
 	PawnMigrateSetting("AlignNumbersRight", false)
 	PawnMigrateSetting("ShowSpace", false)
@@ -456,6 +455,7 @@ function PawnInitializeOptions()
 	if PawnCommon.ShowReforgingAdvisor == nil then PawnCommon.ShowReforgingAdvisor = true end
 
 	-- Now, migrate all scales from this character over to PawnCommon.
+	local ScaleName, Scale
 	if not PawnCommon.Scales then PawnCommon.Scales = {} end
 	if PawnOptions.Scales then
 		-- Looks like there's one or more scales on this character that need to be migrated.
@@ -494,6 +494,18 @@ function PawnInitializeOptions()
 	PawnOptions.ShownGettingStarted = nil
 	PawnOptions.NormalizationFactor = nil
 	PawnCommon.ShowUnenchanted = nil
+	PawnCommon.ShowAsterisks = nil
+
+	-- The current version of Pawn doesn't use placeholder scales anymore, so remove any stale data that
+	-- the user might have accumulated.
+	local ScalesToDelete = { }
+	for ScaleName, Scale in pairs(PawnCommon.Scales) do
+		if Scale.Provider == "PawnPlaceholder" then tinsert(ScalesToDelete, ScaleName) end
+	end
+	for _, ScaleName in pairs(ScalesToDelete) do
+		PawnCommon.Scales[ScaleName] = nil
+		PawnRecalculateScaleTotal(ScaleName) -- removes information from the cache
+	end
 	
 	-- Any new stuff since the last version they used?
 	if (not PawnCommon.LastVersion) or (PawnCommon.LastVersion < 1.507) then
@@ -1246,11 +1258,11 @@ function PawnUpdateTooltip(TooltipName, MethodName, Param1, ...)
 	
 	-- If there were unrecognized values, annotate those lines.
 	local Annotated = false
-	if Item.UnknownLines and (PawnCommon.ShowAsterisks == PawnShowAsterisksAlways) or ((PawnCommon.ShowAsterisks == PawnShowAsterisksNonzero or PawnCommon.ShowAsterisks == PawnShowAsterisksNonzeroNoText) and #Item.Values > 0) then
+	if Item.UnknownLines and #Item.Values > 0 then
 		Annotated = PawnAnnotateTooltipLines(TooltipName, Item.UnknownLines)
 	end
 	-- If we annotated the tooltip for unvalued stats, display a message.
-	if (Annotated and PawnCommon.ShowAsterisks ~= PawnShowAsterisksNonzeroNoText) then
+	if Annotated then
 		Tooltip:AddLine(PawnLocal.AsteriskTooltipLine, VgerCore.Color.BlueR, VgerCore.Color.BlueG, VgerCore.Color.BlueB)
 	end
 
@@ -1435,7 +1447,6 @@ function PawnGetInventoryItemValues(UnitName)
 	local _
 	for Slot = 1, 17 do
 		if Slot ~= 4 then -- Skip slots 0, 4, 18, and 19 (they're not gear).
-			-- REVIEW: The item level of the ranged slot appears to be ignored for Ulduar vehicle scaling, at least for shamans.
 			local ItemID = GetInventoryItemID(UnitName, Slot)
 			local Item = PawnGetItemDataForInventorySlot(Slot, false, UnitName)
 			if Item then
@@ -1668,7 +1679,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 			end
 			
 			local ThisLineIsSocketBonus = false
-			if Side == 1 and strsub(CurrentParseText, 1, strlen(PawnSocketBonusPrefix)) == PawnSocketBonusPrefix then
+			if Side == 1 and strsub(CurrentParseText, 1, strlen(PawnLocal.TooltipParsing.SocketBonusPrefix)) == PawnLocal.TooltipParsing.SocketBonusPrefix then
 				-- This line is the socket bonus.
 				ThisLineIsSocketBonus = true
 				if LeftLine.GetTextColor then
@@ -1677,7 +1688,7 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 					PawnDebugMessage(VgerCore.Color.Blue .. "Failed to determine whether socket bonus was valid, so assuming that it is indeed valid.")
 					SocketBonusIsValid = true
 				end
-				CurrentParseText = strsub(CurrentParseText, strlen(PawnSocketBonusPrefix) + 1)
+				CurrentParseText = strsub(CurrentParseText, strlen(PawnLocal.TooltipParsing.SocketBonusPrefix) + 1)
 			end
 			
 			local Understood
@@ -1769,6 +1780,12 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 	end
 
 	-- Before returning, some stats require special handling.
+
+	if Stats["IsRanged"] and Stats["IsRanged"] > 1 then
+		-- Fix for non-Russian locales: INVTYPE_RANGED and INVTYPE_RANGEDRIGHT evaluate to the same thing, so don't count
+		-- IsRanged for double.  (In Russian, they're translated differently.)
+		Stats["IsRanged"] = 1
+	end
 	
 	if Stats["IsMainHand"] or Stats["IsOneHand"] or Stats["IsOffHand"] or Stats["IsTwoHand"] or Stats["IsRanged"] then
 		-- Only perform this conversion if this is an actual weapon.  This works around a problem that occurs when you
@@ -1982,7 +1999,6 @@ end
 -- Returns true if any lines were annotated.
 function PawnAnnotateTooltipLines(TooltipName, Lines)
 	if not Lines then return false end
-
 	local Annotated = false
 	local Tooltip = getglobal(TooltipName)
 	local LineCount = Tooltip:NumLines()
@@ -2031,6 +2047,7 @@ function PawnAddStatsToTable(Dest, Source)
 	end
 end
 
+local PawnFindStringInRegexTable_ShownOneError
 -- Looks for the first regular expression in a given table that matches the given string.
 -- Parameters: String, RegexTable
 --		String: The string to look for.
@@ -2042,10 +2059,18 @@ end
 --		Returns {}, {} if the string was ignored.
 function PawnFindStringInRegexTable(String, RegexTable)
 	if (String == nil) or (String == "") or (String == " ") then return {}, {} end
-	local Entry
+	local Entry, LastRegex
 	for _, Entry in pairs(RegexTable) do
-		local StartPos, EndPos, m1, m2, m3, m4, m5 = strfind(String, Entry[1])
-		if StartPos then return Entry, { m1, m2, m3, m4, m5 } end
+		if Entry[1] == nil then
+			if not PawnFindStringInRegexTable_ShownOneError then
+				VgerCore.Fail("Localization error in regex table in the entry after \"" .. VgerCore.Color.Blue .. PawnEscapeString(tostring(LastRegex)) .. "|r\".")
+				PawnFindStringInRegexTable_ShownOneError = true
+			end
+		else
+			LastRegex = Entry[1]
+			local StartPos, EndPos, m1, m2, m3, m4, m5 = strfind(String, LastRegex)
+			if StartPos then return Entry, { m1, m2, m3, m4, m5 } end
+		end
 	end
 	return nil, nil
 end
@@ -2531,15 +2556,15 @@ function PawnCorrectScaleErrors(ScaleName)
 	-- Pawn 1.7 makes smart gem socketing mandatory.
 	ThisScaleOptions.SmartGemSocketing = nil
 	ThisScaleOptions.SmartMetaGemSocketing = nil
+	ThisScaleOptions.GemQualityLevel = nil
+	ThisScaleOptions.MetaGemQualityLevel = nil
+	ThisScaleOptions.CogwheelQualityLevel = nil
 	ThisScale.PrismaticSocket = nil
 	ThisScale.RedSocket = nil
 	ThisScale.YellowSocket = nil
 	ThisScale.BlueSocket = nil
 	ThisScale.MetaSocket = nil
 	ThisScale.CogwheelSocket = nil
-	ThisScale.GemQualityLevel = nil
-	ThisScale.MetaGemQualityLevel = nil
-	ThisScale.CogwheelQualityLevel = nil
 end
 
 -- Replaces one incorrect stat with a correct stat.
@@ -3569,7 +3594,7 @@ function PawnFindOptimalReforgingCore(ScaleName, Scale, Values, Stats, NoInstruc
 	-- Finally, turn it all into a nice localized string.
 	local ReforgeString
 	if not NoInstructions then
-		ReforgeString = format(PawnLocal.ReforgeInstructions, PawnConcatenateWithConjunction(ReforgeFrom, PawnLocal.Or), PawnConcatenateWithConjunction(ReforgeTo, PawnLocal.Or))
+		ReforgeString = format(PawnLocal.ReforgeInstructions, PawnConcatenateWithConjunction(ReforgeFrom, PawnLocal.Or .. " "), PawnConcatenateWithConjunction(ReforgeTo, PawnLocal.Or .. " "))
 	end
 	
 	return BestReforgeDelta, ReforgeString, SuggestedCappedStat

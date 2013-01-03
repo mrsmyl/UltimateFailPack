@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2013 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
 -- 
@@ -20,15 +20,37 @@ PawnMultipleStatsFixed = "_MultipleFixed"
 PawnMultipleStatsExtract = "_MultipleExtract"
 
 ------------------------------------------------------------
--- Functions used in localization
+-- Localization
 ------------------------------------------------------------
+
+-- The languages that Pawn is currently translated into (http://www.wowpedia.org/API_GetLocale)
+PawnLocalizedLanguages = { "deDE", "enUS", "enGB", "ruRU", "zhCN" }
+
+-- NOTE: These functions are not super-flexible for general purpose; they don't properly handle all sorts of Lua pattern matching syntax
+-- that could be in strings, like "." and so on.  But they've been sufficient so far.
 
 -- Turns a game constant into a regular expression.
 function PawnGameConstant(Text)
 	return "^" .. PawnGameConstantUnwrapped(Text) .. "$"
 end
 
+-- Turns a game constant into a regular expression but without the ^ and $ on the ends.
 function PawnGameConstantUnwrapped(Text)
 	-- REVIEW: This function seems like it might be pretty inefficient...
 	return gsub(gsub(Text, "%%", "%%%%"), "%-", "%%-")
+end
+
+-- Turns a game constant with one "%s" placeholder into a pattern that can be used to match that string.
+function PawnGameConstantIgnoredPlaceholder(Text)
+	-- Optimize for the common case where the %s is on the end.  This yields a more efficient pattern.
+	if strsub(Text, strlen(Text) - 1) == "%s" then
+		return "^" .. PawnGameConstantUnwrapped(strsub(Text, 1, strlen(Text) - 2))
+	end
+	-- If it's not at the end, replace it.
+	return PawnGameConstant(gsub(Text, "%%s", ".+", 1))
+end
+
+-- Turns a game constant with "%d" placeholders into a pattern that can be used to match that string.
+function PawnGameConstantIgnoredNumberPlaceholder(Text)
+	return gsub(PawnGameConstant(Text), "%%%%d", "%%d+")
 end

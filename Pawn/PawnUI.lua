@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2012 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2013 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 --
 -- User interface code
@@ -95,7 +95,7 @@ function PawnUI_InventoryPawnButton_OnEnter(this)
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	GameTooltip:AddLine("Pawn", 1, 1, 1, 1)
-	GameTooltip:AddLine(PawnUI_InventoryPawnButton_Tooltip, nil, nil, nil, 1)
+	GameTooltip:AddLine(PawnLocal.UI.InventoryButtonTooltip, nil, nil, nil, 1)
 
 	-- If the user has at least one scale and at least one type of value is enabled, calculate a total of all equipped items' values.
 	if not PawnCommon.ShowValuesForUpgradesOnly then
@@ -107,17 +107,10 @@ function PawnUI_InventoryPawnButton_OnEnter(this)
 end
 
 function PawnUI_InspectPawnButton_OnEnter(this)
-	-- Even if there are no scales, we'll at least display this much.
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	GameTooltip:AddLine("Pawn", 1, 1, 1, 1)
-
-	-- If the user has at least one scale and at least one type of value is enabled, calculate a total of all equipped items' values.
-	if not PawnCommon.ShowValuesForUpgradesOnly then
-		PawnUI_AddInventoryTotalsToTooltip(GameTooltip, "playertarget")
-	end
-	
-	-- Finally, display the tooltip.
+	PawnUI_AddInventoryTotalsToTooltip(GameTooltip, "playertarget")
 	GameTooltip:Show()
 end
 
@@ -125,7 +118,7 @@ function PawnUI_SocketingPawnButton_OnEnter(this)
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	GameTooltip:AddLine("Pawn", 1, 1, 1, 1)
-	GameTooltip:AddLine(PawnUI_SocketingPawnButton_Tooltip)
+	GameTooltip:AddLine(PawnLocal.UI.SocketingAdvisorButtonTooltip)
 	
 	-- Finally, display the tooltip.
 	GameTooltip:Show()
@@ -144,18 +137,20 @@ end
 function PawnUI_AddInventoryTotalsToTooltip(Tooltip, Unit)
 	-- Get the total stats for all items.
 	local ItemValues, Count, EpicItemLevel, AverageItemLevel = PawnGetInventoryItemValues(Unit)
-	if Count and Count > 0 then
-		Tooltip:AddLine(" ")
-		Tooltip:AddLine(PawnUI_InventoryPawnButton_Subheader, 1, 1, 1, 1)
-		PawnAddValuesToTooltip(Tooltip, ItemValues, nil, nil, nil, nil, true)
-		if Unit ~= "player" then
-			-- Add average item level information to the inspect window.  (It's not necessary for the current player's
-			-- character sheet because that's part of the default UI now.)
-			if PawnCommon.AlignNumbersRight then
-				Tooltip:AddDoubleLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine,  AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
-			else
-				Tooltip:AddLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine .. ":  " .. AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
-			end
+	if not PawnCommon.ShowValuesForUpgradesOnly then
+		if Count and Count > 0 then
+			Tooltip:AddLine(" ")
+			Tooltip:AddLine(PawnLocal.UI.InventoryButtonTotalsHeader, 1, 1, 1, 1)
+			PawnAddValuesToTooltip(Tooltip, ItemValues, nil, nil, nil, nil, true)
+		end
+	end
+	-- Add average item level information to the inspect window.  (It's not necessary for the current player's
+	-- character sheet because that's part of the default UI now.)
+	if AverageItemLevel and AverageItemLevel > 0 and Unit ~= "player" then
+		if PawnCommon.AlignNumbersRight then
+			Tooltip:AddDoubleLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine,  AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
+		else
+			Tooltip:AddLine(PawnLocal.AverageItemLevelIgnoringRarityTooltipLine .. ":  " .. AverageItemLevel, VgerCore.Color.OrangeR, VgerCore.Color.OrangeG, VgerCore.Color.OrangeB)
 		end
 	end
 end
@@ -219,7 +214,7 @@ function PawnUIFrame_ScaleSelector_Refresh()
 
 	-- If the scale that they previously selected isn't in the list, or they didn't have a previously-selected
 	-- scale, just select the first visible one, or the first one if there's no visible scale.
-	PawnUICurrentScale = NewSelectedScale or FirstScale or PawnUINoScale
+	PawnUICurrentScale = NewSelectedScale or FirstScale or PawnLocal.NoScale
 	PawnUI_HighlightCurrentScale()
 	
 	-- Also refresh a few other related UI elements.
@@ -311,7 +306,7 @@ end
 function PawnUI_ScalesTab_Refresh()
 	PawnUIFrame_ScaleColorSwatch_Update()
 	
-	if PawnUICurrentScale ~= PawnUINoScale then
+	if PawnUICurrentScale ~= PawnLocal.NoScale then
 		PawnUIFrame_ScaleNameLabel:SetText(PawnGetScaleColor(PawnUICurrentScale) .. PawnGetScaleLocalizedName(PawnUICurrentScale))
 		if PawnScaleIsReadOnly(PawnUICurrentScale) then
 			PawnUIFrame_ScaleTypeLabel:SetText(PawnUIFrame_ScaleTypeLabel_ReadOnlyScaleText)
@@ -325,7 +320,7 @@ function PawnUI_ScalesTab_Refresh()
 		PawnUIFrame_CopyScaleButton:Enable()
 		PawnUIFrame_ExportScaleButton:Enable()
 	else
-		PawnUIFrame_ScaleNameLabel:SetText(PawnUINoScale)
+		PawnUIFrame_ScaleNameLabel:SetText(PawnLocal.NoScale)
 		PawnUIFrame_CopyScaleButton:Disable()
 		PawnUIFrame_RenameScaleButton:Disable()
 		PawnUIFrame_DeleteScaleButton:Disable()
@@ -341,9 +336,9 @@ function PawnUI_ValuesTab_Refresh()
 	PawnUIFrame_StatsList_Update()
 	PawnUIFrame_StatsList_SelectStat(PawnUICurrentStatIndex)
 	local Scale
-	if PawnUICurrentScale ~= PawnUINoScale then Scale = PawnCommon.Scales[PawnUICurrentScale] end
+	if PawnUICurrentScale ~= PawnLocal.NoScale then Scale = PawnCommon.Scales[PawnUICurrentScale] end
 	
-	if PawnUICurrentScale == PawnUINoScale then
+	if PawnUICurrentScale == PawnLocal.NoScale then
 		PawnUIFrame_ValuesWelcomeLabel:SetText(PawnUIFrame_ValuesWelcomeLabel_NoScalesText)
 	elseif PawnScaleIsReadOnly(PawnUICurrentScale) then
 		PawnUIFrame_ValuesWelcomeLabel:SetText(PawnUIFrame_ValuesWelcomeLabel_ReadOnlyScaleText)
@@ -370,7 +365,7 @@ end
 
 function PawnUIFrame_NewScale_OnOK(NewScaleName)
 	-- Does this scale already exist?
-	if NewScaleName == PawnUINoScale then
+	if NewScaleName == PawnLocal.NoScale then
 		PawnUIGetString(PawnLocal.NewScaleEnterName, "", PawnUIFrame_NewScale_OnOK)
 		return
 	elseif strfind(NewScaleName, "\"") then
@@ -393,7 +388,7 @@ end
 
 function PawnUIFrame_NewScaleFromDefaults_OnOK(NewScaleName)
 	-- Does this scale already exist?
-	if NewScaleName == PawnUINoScale then
+	if NewScaleName == PawnLocal.NoScale then
 		PawnUIGetString(PawnLocal.NewScaleEnterName, "", PawnUIFrame_NewScaleFromDefaults_OnOK)
 		return
 	elseif strfind(NewScaleName, "\"") then
@@ -488,7 +483,7 @@ function PawnUIFrame_RenameScale_OnOK(NewScaleName)
 	if NewScaleName == PawnUICurrentScale then return end
 	
 	-- Does this scale already exist?
-	if NewScaleName == PawnUINoScale then
+	if NewScaleName == PawnLocal.NoScale then
 		PawnUIGetString(format(PawnLocal.RenameScaleEnterName, PawnUICurrentScale), PawnUICurrentScale, PawnUIFrame_RenameScale_OnOK)
 		return
 	elseif strfind(NewScaleName, "\"") then
@@ -506,7 +501,7 @@ end
 
 function PawnUIFrame_CopyScale_OnOK(NewScaleName)
 	-- Does this scale already exist?
-	if NewScaleName == PawnUINoScale then
+	if NewScaleName == PawnLocal.NoScale then
 		PawnUIGetString(PawnLocal.CopyScaleEnterName, "", PawnUIFrame_CopyScale_OnOK)
 		return
 	elseif strfind(NewScaleName, "\"") then
@@ -552,7 +547,7 @@ function PawnUIFrame_StatsList_Update()
 	
 	-- Then, update the list items as necessary.
 	local ThisScale
-	if PawnUICurrentScale ~= PawnUINoScale then ThisScale = PawnGetAllStatValues(PawnUICurrentScale) end
+	if PawnUICurrentScale ~= PawnLocal.NoScale then ThisScale = PawnGetAllStatValues(PawnUICurrentScale) end
 	local i
 	for i = 1, PawnUIStatsListHeight do
 		local Index = i + Offset
@@ -668,7 +663,7 @@ function PawnUIFrame_StatsList_SelectStat(Index)
 	-- Finally, change the UI to the right.
 	local ThisScale
 	local ThisScaleIsReadOnly = PawnScaleIsReadOnly(PawnUICurrentScale)
-	if PawnUICurrentScale ~= PawnUINoScale then ThisScale = PawnGetAllStatValues(PawnUICurrentScale) end
+	if PawnUICurrentScale ~= PawnLocal.NoScale then ThisScale = PawnGetAllStatValues(PawnUICurrentScale) end
 	if Index > 0 and ThisScale then
 		-- They've selected a stat.
 		local ThisStatIsIgnored = ThisScale[ThisStat] and ThisScale[ThisStat] <= PawnIgnoreStatValue
@@ -720,9 +715,9 @@ function PawnUIFrame_StatsList_SelectStat(Index)
 		if WeaponSet then PawnUIFrame_NoUpgradesCheck:SetChecked(not PawnGetShowUpgradesForWeapons(PawnUICurrentScale, WeaponSet)) end
 		PawnUIFrame_FollowSpecializationCheck:SetChecked(PawnGetUpgradesFollowSpecialization(PawnUICurrentScale))
 		if WeaponSet == 1 then
-			PawnUIFrame_NoUpgradesCheck_Label:SetText(PawnUIFrame_NoUpgradesCheck_Text_1H)
+			PawnUIFrame_NoUpgradesCheck_Label:SetText(PawnLocal.UI.ValuesDoNotShowUpgradesFor1H)
 		elseif WeaponSet == 2 then
-			PawnUIFrame_NoUpgradesCheck_Label:SetText(PawnUIFrame_NoUpgradesCheck_Text_2H)
+			PawnUIFrame_NoUpgradesCheck_Label:SetText(PawnLocal.UI.ValuesDoNotShowUpgradesFor2H)
 		end
 		if WeaponSet == nil then
 			PawnUIFrame_NoUpgradesCheck:Hide()
@@ -734,7 +729,7 @@ function PawnUIFrame_StatsList_SelectStat(Index)
 		else
 			PawnUIFrame_FollowSpecializationCheck:Hide()
 		end
-	elseif PawnUICurrentScale == PawnUINoScale then
+	elseif PawnUICurrentScale == PawnLocal.NoScale then
 		-- They don't have any scales.
 		PawnUIFrame_DescriptionLabel:SetText(PawnLocal.NoScalesDescription)
 		PawnUIFrame_StatNameLabel:Hide()
@@ -829,7 +824,7 @@ end
 
 function PawnUIFrame_GetCurrentScaleColor()
 	local r, g, b
-	if PawnUICurrentScale and PawnUICurrentScale ~= PawnUINoScale then r, g, b = VgerCore.HexToRGB(PawnCommon.Scales[PawnUICurrentScale].Color) end
+	if PawnUICurrentScale and PawnUICurrentScale ~= PawnLocal.NoScale then r, g, b = VgerCore.HexToRGB(PawnCommon.Scales[PawnUICurrentScale].Color) end
 	if not r then
 		r, g, b = VgerCore.Color.BlueR, VgerCore.Color.BlueG, VgerCore.Color.BlueB
 	end
@@ -865,7 +860,7 @@ function PawnUIFrame_ScaleColorSwatch_SetColor(r, g, b)
 end
 
 function PawnUIFrame_ScaleColorSwatch_Update()
-	if PawnUICurrentScale ~= PawnUINoScale then
+	if PawnUICurrentScale ~= PawnLocal.NoScale then
 		local r, g, b = PawnUIFrame_GetCurrentScaleColor()
 		PawnUIFrame_ScaleColorSwatch_Color:SetTexture(r, g, b)
 		PawnUIFrame_ScaleColorSwatch_Label:Show()
@@ -877,7 +872,7 @@ function PawnUIFrame_ScaleColorSwatch_Update()
 end
 
 function PawnUIFrame_ShowScaleCheck_Update()
-	if PawnUICurrentScale ~= PawnUINoScale then
+	if PawnUICurrentScale ~= PawnLocal.NoScale then
 		PawnUIFrame_ShowScaleCheck:SetChecked(PawnIsScaleVisible(PawnUICurrentScale))
 		PawnUIFrame_ShowScaleCheck:Show()
 	else
@@ -891,7 +886,7 @@ function PawnUIFrame_ShowScaleCheck_OnClick()
 end
 
 function PawnUIFrame_NormalizeValuesCheck_OnClick()
-	if PawnUICurrentScale == PawnUINoScale or PawnScaleIsReadOnly(PawnUICurrentScale) then return end
+	if PawnUICurrentScale == PawnLocal.NoScale or PawnScaleIsReadOnly(PawnUICurrentScale) then return end
 	
 	if PawnUIFrame_NormalizeValuesCheck:GetChecked() then
 		PawnSetScaleNormalizationFactor(PawnUICurrentScale, 1)
@@ -1172,7 +1167,7 @@ function PawnUI_CompareItems()
 	
 	-- There must be a scale selected to perform a comparison.
 	PawnUI_EnsureLoaded()
-	if (not PawnUICurrentScale) or (PawnUICurrentScale == PawnUINoScale) then return end
+	if (not PawnUICurrentScale) or (PawnUICurrentScale == PawnLocal.NoScale) then return end
 
 	-- There must be two valid comparison items set to perform a comparison.
 	local Item1, Item2 = PawnUIComparisonItems[1], PawnUIComparisonItems[2]
@@ -1223,7 +1218,7 @@ function PawnUI_CompareItems()
 	end
 
 	-- Add gem and socket information.
-	LastFoundHeader = PawnUIFrame_CompareGemHeader_Text
+	LastFoundHeader = PawnLocal.UI.CompareSocketsHeader
 
 	local HasSockets1 = (Item1.UnenchantedStats.RedSocket or 0) + (Item1.UnenchantedStats.YellowSocket or 0) + (Item1.UnenchantedStats.BlueSocket or 0) + (Item1.UnenchantedStats.PrismaticSocket or 0)
 	local HasSockets2 = (Item2.UnenchantedStats.RedSocket or 0) + (Item2.UnenchantedStats.YellowSocket or 0) + (Item2.UnenchantedStats.BlueSocket or 0) + (Item2.UnenchantedStats.PrismaticSocket or 0)
@@ -1241,14 +1236,14 @@ function PawnUI_CompareItems()
 	local ProperlySocket1 = not UseRed and not UseYellow and not UseBlue and ItemSocketBonusStats1 ~= nil
 	local _, UseRed, UseYellow, UseBlue, TotalSocketValue2 = PawnGetItemValue(ItemStats2, Item2.Level, ItemSocketBonusStats2, PawnUICurrentScale, false, true, true)
 	local ProperlySocket2 = not UseRed and not UseYellow and not UseBlue and ItemSocketBonusStats2 ~= nil
-	if ProperlySocket1 then ProperlySocket1 = PawnUIFrame_Compare_Yes end
-	if ProperlySocket2 then ProperlySocket2 = PawnUIFrame_Compare_Yes end
+	if ProperlySocket1 then ProperlySocket1 = YES end
+	if ProperlySocket2 then ProperlySocket2 = YES end
 	if ProperlySocket1 or ProperlySocket2 then
 		if LastFoundHeader then
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineStrings(PawnUIFrame_CompareSocketBonus_Text, ProperlySocket1, ProperlySocket2)
+		PawnUI_AddComparisonStatLineStrings(PawnLocal.UI.CompareSocketBonus, ProperlySocket1, ProperlySocket2)
 	end
 
 	HasSockets1 = Item1.UnenchantedStats.MetaSocket or 0
@@ -1260,7 +1255,7 @@ function PawnUI_CompareItems()
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineNumbers(PawnUIFrame_CompareMetaSockets_Text, HasSockets1, HasSockets2)
+		PawnUI_AddComparisonStatLineNumbers(PawnLocal.UI.CompareMetaSockets, HasSockets1, HasSockets2)
 	end
 
 	HasSockets1 = Item1.UnenchantedStats.CogwheelSocket or 0
@@ -1272,7 +1267,7 @@ function PawnUI_CompareItems()
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineNumbers(PawnUIFrame_CompareCogwheelSockets_Text, HasSockets1, HasSockets2)
+		PawnUI_AddComparisonStatLineNumbers(PawnLocal.UI.CompareCogwheelSockets, HasSockets1, HasSockets2)
 	end
 
 	HasSockets1 = Item1.UnenchantedStats.ShaTouchedSocket or 0
@@ -1284,7 +1279,7 @@ function PawnUI_CompareItems()
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineNumbers(PawnUIFrame_CompareShaTouchedSockets_Text, HasSockets1, HasSockets2)
+		PawnUI_AddComparisonStatLineNumbers(PawnLocal.UI.CompareShaTouchedSockets, HasSockets1, HasSockets2)
 	end
 
 	if not TotalSocketValue1 or TotalSocketValue1 <= 0 then TotalSocketValue1 = nil end
@@ -1294,11 +1289,11 @@ function PawnUI_CompareItems()
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineNumbers(PawnUIFrame_CompareGemTotalValue_Text, TotalSocketValue1, TotalSocketValue2)
+		PawnUI_AddComparisonStatLineNumbers(PawnLocal.UI.CompareGemTotalValue, TotalSocketValue1, TotalSocketValue2)
 	end
 
 	-- Everything else below this point goes under an "Other" header.
-	LastFoundHeader = PawnUIFrame_CompareOtherInfoHeader_Text
+	LastFoundHeader = PawnLocal.UI.CompareOtherHeader
 	
 	-- Add item level information if the user normally has item levels visible.
 	local Level1, Level2 = Item1.Level, Item2.Level
@@ -1324,21 +1319,19 @@ function PawnUI_CompareItems()
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineStrings(PawnUIFrame_CompareReforgePotential, ReforgePotential1, ReforgePotential2)
+		PawnUI_AddComparisonStatLineStrings(PawnLocal.UI.CompareReforgingPotential, ReforgePotential1, ReforgePotential2)
 	end
 	
 	-- Add asterisk indicator.
-	if PawnCommon.ShowAsterisks ~= PawnShowAsterisksNever then
-		local Asterisk1, Asterisk2
-		if Item1.UnknownLines then Asterisk1 = PawnUIFrame_Compare_Yes end
-		if Item2.UnknownLines then Asterisk2 = PawnUIFrame_Compare_Yes end
-		if Asterisk1 or Asterisk2 then
-			if LastFoundHeader then
-				PawnUI_AddComparisonHeaderLine(LastFoundHeader)
-				LastFoundHeader = nil
-			end
-			PawnUI_AddComparisonStatLineStrings(PawnUIFrame_CompareAsterisk, Asterisk1, Asterisk2)
+	local Asterisk1, Asterisk2
+	if Item1.UnknownLines then Asterisk1 = YES end
+	if Item2.UnknownLines then Asterisk2 = YES end
+	if Asterisk1 or Asterisk2 then
+		if LastFoundHeader then
+			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
+			LastFoundHeader = nil
 		end
+		PawnUI_AddComparisonStatLineStrings(PawnLocal.UI.CompareSpecialEffects .. " " .. PawnQuestionTexture, Asterisk1, Asterisk2)
 	end
 	
 	-- Update the scrolling stat area's height.
@@ -1596,7 +1589,7 @@ end
 function PawnUI_ShowBestGems()
 	-- Always clear out the existing gems, no matter what happens next.
 	PawnUI_DeleteGemLines()
-	if not PawnUICurrentScale or PawnUICurrentScale == PawnUINoScale then return end
+	if not PawnUICurrentScale or PawnUICurrentScale == PawnLocal.NoScale then return end
 	
 	-- Update the gem list for this scale.
 	
@@ -1612,7 +1605,7 @@ function PawnUI_ShowBestGems()
 	local GemQualityLevel = PawnGetGemQualityForItem(PawnGemQualityLevels, PawnUIGemQualityLevel)
 
 	if #(PawnScaleBestGems[PawnUICurrentScale].RedSocket[GemQualityLevel]) > 0 then
-		PawnUI_AddGemHeaderLine(format(PawnUIFrame_FindGemColorHeader_Text, RED_GEM))
+		PawnUI_AddGemHeaderLine(format(PawnLocal.UI.GemsColorHeader, RED_GEM))
 		for _, GemData in pairs(PawnScaleBestGems[PawnUICurrentScale].RedSocket[GemQualityLevel]) do
 			PawnUI_AddGemLine(GemData.Name, GemData.Texture, GemData.ID)
 		end
@@ -1620,7 +1613,7 @@ function PawnUI_ShowBestGems()
 	end
 
 	if #(PawnScaleBestGems[PawnUICurrentScale].YellowSocket[GemQualityLevel]) > 0 then
-		PawnUI_AddGemHeaderLine(format(PawnUIFrame_FindGemColorHeader_Text, YELLOW_GEM))
+		PawnUI_AddGemHeaderLine(format(PawnLocal.UI.GemsColorHeader, YELLOW_GEM))
 		for _, GemData in pairs(PawnScaleBestGems[PawnUICurrentScale].YellowSocket[GemQualityLevel]) do
 			PawnUI_AddGemLine(GemData.Name, GemData.Texture, GemData.ID)
 		end
@@ -1628,7 +1621,7 @@ function PawnUI_ShowBestGems()
 	end
 
 	if #(PawnScaleBestGems[PawnUICurrentScale].BlueSocket[GemQualityLevel]) > 0 then
-		PawnUI_AddGemHeaderLine(format(PawnUIFrame_FindGemColorHeader_Text, BLUE_GEM))
+		PawnUI_AddGemHeaderLine(format(PawnLocal.UI.GemsColorHeader, BLUE_GEM))
 		for _, GemData in pairs(PawnScaleBestGems[PawnUICurrentScale].BlueSocket[GemQualityLevel]) do
 			PawnUI_AddGemLine(GemData.Name, GemData.Texture, GemData.ID)
 		end
@@ -1638,7 +1631,7 @@ function PawnUI_ShowBestGems()
 	-- Only show cogwheels if the player is a high-level engineer.
 	GemQualityLevel = PawnGetGemQualityForItem(PawnCogwheelQualityLevels, PawnUIGemQualityLevel)
 	if PawnPlayerUsesCogwheels() and #(PawnScaleBestGems[PawnUICurrentScale].CogwheelSocket[GemQualityLevel]) > 0 then
-		PawnUI_AddGemHeaderLine(format(PawnUIFrame_FindGemColorHeader_Text, PawnLocal.CogwheelName))
+		PawnUI_AddGemHeaderLine(format(PawnLocal.UI.GemsColorHeader, PawnLocal.CogwheelName))
 		for _, GemData in pairs(PawnScaleBestGems[PawnUICurrentScale].CogwheelSocket[GemQualityLevel]) do
 			PawnUI_AddGemLine(GemData.Name, GemData.Texture, GemData.ID)
 		end
@@ -1646,7 +1639,7 @@ function PawnUI_ShowBestGems()
 	end
 	
 	if not ShownGems then
-		PawnUI_AddGemHeaderLine(PawnUIFrame_FindGemNoGemsHeader_Text)
+		PawnUI_AddGemHeaderLine(PawnLocal.UI.GemsNoneFound)
 	end
 
 	PawnUI_RefreshGemScrollFrame()
@@ -1786,8 +1779,6 @@ function PawnUIOptionsTabPage_OnShow()
 	PawnUIFrame_ShowIconsCheck:SetChecked(PawnCommon.ShowTooltipIcons)
 	PawnUIFrame_ShowExtraSpaceCheck:SetChecked(PawnCommon.ShowSpace)
 	PawnUIFrame_AlignRightCheck:SetChecked(PawnCommon.AlignNumbersRight)
-	PawnUIFrame_AsterisksList_UpdateSelection()
-	PawnUIFrame_DigitsBox:SetText(PawnCommon.Digits)
 	PawnUIFrame_TooltipUpgradeList_UpdateSelection()
 	PawnUIFrame_ColorTooltipBorderCheck:SetChecked(PawnCommon.ColorTooltipBorder)
 	PawnUIFrame_EnchantedValuesCheck:SetChecked(PawnCommon.ShowEnchanted)
@@ -1822,18 +1813,6 @@ end
 function PawnUIFrame_AlignRightCheck_OnClick()
 	PawnCommon.AlignNumbersRight = PawnUIFrame_AlignRightCheck:GetChecked() ~= nil
 	PawnResetTooltips()
-end
-
-function PawnUIFrame_AsterisksList_SetSelection(Value)
-	PawnCommon.ShowAsterisks = Value
-	PawnUIFrame_AsterisksList_UpdateSelection()
-	PawnResetTooltips()
-end
-
-function PawnUIFrame_AsterisksList_UpdateSelection()
-	PawnUIFrame_AsterisksAutoRadio:SetChecked(PawnCommon.ShowAsterisks == PawnShowAsterisksNonzero)
-	PawnUIFrame_AsterisksAutoNoTextRadio:SetChecked(PawnCommon.ShowAsterisks == PawnShowAsterisksNonzeroNoText)
-	PawnUIFrame_AsterisksOffRadio:SetChecked(PawnCommon.ShowAsterisks == PawnShowAsterisksNever)
 end
 
 function PawnUIFrame_TooltipUpgradeList_SetSelection(ShowUpgrades, ShowUpgradesOnly)
@@ -1886,14 +1865,6 @@ function PawnUIFrame_ResetUpgradesButton_OnClick()
 	PawnResetTooltips()
 end
 
-function PawnUIFrame_DigitsBox_OnTextChanged()
-	local Digits = tonumber(PawnUIFrame_DigitsBox:GetText())
-	if not Digits then Digits = 0 end
-	PawnCommon.Digits = Digits
-	PawnRecreateAnnotationFormats()
-	PawnResetTooltips()
-end
-
 function PawnUIFrame_DebugCheck_OnClick()
 	PawnCommon.Debug = PawnUIFrame_DebugCheck:GetChecked() ~= nil
 	PawnResetTooltips()
@@ -1942,7 +1913,7 @@ function PawnUI_OnSocketUpdate()
 	CreateFrame("GameTooltip", "PawnSocketingTooltip", ItemSocketingFrame, "PawnUI_HintTooltip_PointsUp")
 	PawnSocketingTooltip:SetOwner(ItemSocketingFrame, "ANCHOR_NONE")
 	PawnSocketingTooltip:SetPoint("TOPLEFT", ItemSocketingFrame, "BOTTOMLEFT", 6, -6)
-	PawnSocketingTooltip:SetText(PawnUI_ItemSocketingDescription_Title, 1, 1, 1)
+	PawnSocketingTooltip:SetText(PawnLocal.UI.SocketingAdvisorHeader, 1, 1, 1)
 	
 	for _, Entry in pairs(Item.Values) do
 		local ScaleName, UseRed, UseYellow, UseBlue = Entry[1], Entry[4], Entry[5], Entry[6]
@@ -2098,7 +2069,7 @@ function PawnUI_OnReforgingUpdate()
 	if not PawnReforgingTooltip then CreateFrame("GameTooltip", "PawnReforgingTooltip", ReforgingFrame, "PawnUI_HintTooltip_PointsUp") end
 	PawnReforgingTooltip:SetOwner(ReforgingFrame, "ANCHOR_NONE")
 	PawnReforgingTooltip:SetPoint("TOPLEFT", ReforgingFrame, "BOTTOMLEFT", 12, -12)
-	PawnReforgingTooltip:SetText(PawnUI_ReforgingAdvisor_Title, 1, 1, 1)
+	PawnReforgingTooltip:SetText(PawnLocal.UI.ReforgingAdvisorHeader, 1, 1, 1)
 	
 	local Instructions
 	for _, Instructions in pairs(InstructionsList) do
@@ -2416,10 +2387,10 @@ end
 function PawnUIUpdateHeader()
 	if not PawnUIHeaders[PawnUICurrentTabNumber] then return end
 	local ColoredName
-	if PawnUICurrentScale and PawnUICurrentScale ~= PawnUINoScale then
+	if PawnUICurrentScale and PawnUICurrentScale ~= PawnLocal.NoScale then
 		ColoredName = PawnGetScaleColor(PawnUICurrentScale) .. PawnGetScaleLocalizedName(PawnUICurrentScale) .. "|r"
 	else
-		ColoredName = PawnUINoScale
+		ColoredName = PawnLocal.NoScale
 	end
 	PawnUIHeader:SetText(format(PawnUIHeaders[PawnUICurrentTabNumber], ColoredName))
 end
@@ -2517,11 +2488,11 @@ function PawnUIGetStringCore(Prompt, DefaultValue, Cancelable, OKCallbackFunctio
 	PawnUIStringDialog_TextBox:SetText(DefaultValue)
 	if Cancelable then
 		PawnUIStringDialog_OKButton:Show()
-		PawnUIStringDialog_OKButton:SetText(PawnLocal.OKButton)
-		PawnUIStringDialog_CancelButton:SetText(PawnLocal.CancelButton)
+		PawnUIStringDialog_OKButton:SetText(OKAY)
+		PawnUIStringDialog_CancelButton:SetText(CANCEL)
 	else
 		PawnUIStringDialog_OKButton:Hide()
-		PawnUIStringDialog_CancelButton:SetText(PawnLocal.CloseButton)
+		PawnUIStringDialog_CancelButton:SetText(CLOSE)
 	end
 	PawnUIStringDialog.OKCallbackFunction = OKCallbackFunction
 	PawnUIStringDialog.CancelCallbackFunction = CancelCallbackFunction

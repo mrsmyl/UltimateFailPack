@@ -333,14 +333,14 @@ does it happen on?</p>
 in Interface Options would 
 be helpful; the error text includes useful information about where the error 
 occurred.  Any information you can provide to help Vger track down the bug is great.</p>
-<p>Please remember that Pawn is language-specific.&nbsp; The official English 
-version of Pawn only works on the English version of World of Warcraft.&nbsp; 
-The non-English versions are maintained by other people.</p>
-<h3>Non-English versions of World of Warcraft.</h3>
-<p><b>This version of Pawn is designed for the English version of World of 
-Warcraft only.</b>&nbsp; For links to non-English versions of Pawn maintained by 
-friendly volunteers, check out the
-<a href="http://www.curse.com/downloads/details/8214/" target="_blank">Pawn page at Curse</a>.</p>
+<p>Also, when reporting bugs, please make sure that you mention which language 
+you play World of Warcraft in.</p>
+<h3>Non-English versions of World of Warcraft</h3>
+<p>Unlike most addons, Pawn will not function properly in a language that it 
+hasn't been translated into.&nbsp; Pawn needs to be able to "read" the text on 
+the tooltips, and it can't do that in languages it hasn't been translated into.&nbsp; 
+If you try to use Pawn in a language that it doesn't understand, you'll get an 
+error message when you log in.</p>
 <h3>Slash command</h3>
 <p>You can also open Pawn by typing <strong>/pawn</strong> into a chat box.</p>
 <h3>Key bindings</h3>
@@ -565,91 +565,26 @@ and Pawn.</p>
 	<a href="Version%20history.htm"><em>version history</em></a><em> document.</em></li>
 </ul>
 <h2>Updates</h2>
-<h3>Version 1.7.3</h3>
+<h3>Version 1.8</h3>
 <ul>
-	<li>Fixed another typo that caused Pawn to show an error when high-level 
-	engineers opened the Gems tab and prevented cogwheels from showing up in the 
-	list.</li>
-	<li>Changed the text "best in slot" to "your best" to make it more clear 
-	that those items are not the best items you <i>could</i> get (the more 
-	traditional definition of that term), but the best that you currently <i>
-	have</i>.</li>
-</ul>
-<h3>Version 1.7.2</h3>
-<ul>
-	<li>Fixed an error that occurred when clicking the "Normalize values (like 
-	Wowhead)" checkbox on the Values tab as of Pawn 1.7.</li>
-</ul>
-<h3>Version 1.7.1</h3>
-<ul>
-	<li>Fixed a typo that caused Pawn to show an error when opening the 
-	socketing window for an item with a cogwheel socket.</li>
-</ul>
-<h3>Version 1.7</h3>
-<ul>
-	<li>The way that Pawn uses gems and socketed items has changed drastically.&nbsp; 
-	Pawn will now take an item's level into account and automatically select 
-	gems of an appropriate quality to socket into that item for both the socketing 
-	advisor, and also to use in calculating the internal item values for the 
-	item.&nbsp; So, an epic from Heart of Fear will have Mists of Pandaria gems 
-	suggested for it, and an epic from Naxxramas will have Wrath of the Lich 
-	King gems suggested for it, without you having to do anything extra.&nbsp; You can still browse through items of various levels on the Gems 
-	tab, but doing so no longer changes any settings and doesn't affect 
-	calculations.<ul>
-		<li>It is no longer possible to manually set a value for colored 
-		sockets, cogwheel sockets, or the stats portion of meta sockets.&nbsp; 
-		You can still assign a value to the special effects of meta gems ("3% 
-		more damage on crits").</li>
-	</ul>
-	</li>
-	<li>The Gems tab works a little differently now than it did in previous 
-	versions.&nbsp; You can now have it show the best gems overall for a given scale, or you can 
-	have it show the recommended gems for an item of a particular level.<ul>
-		<li>When clicking the Pawn button that appears on the item socketing 
-		window, the Gems tab will now automatically be set up to show you 
-		recommended gems for an item of the level you're currently socketing.</li>
-	<li>Since Pawn doesn't understand the special effects of meta gems but those 
-	are the most important parts of meta gems, Pawn will no longer attempt to 
-	suggest meta gems for you.&nbsp; You should instead use online class guides 
-	to select the most appropriate meta gem.</li>
-	</ul>
-	</li>
-	<li>Sockets appear a little differently on the Compare tab than they did in 
-	previous versions.&nbsp; The Compare tab will now show you the total 
-	value of all sockets and socket bonuses on an item, including colored 
-	sockets (either the correct colors of gems plus the socket bonus or all of 
-	your best gem, depending on which strategy maximizes the item's value), meta 
-	sockets (including the meta effect bonus), cogwheels, and sha-touched 
-	weapons.&nbsp; It will also tell you whether you should go for the socket 
-	bonus for a particular item without having to open the socketing advisor (so 
-	you can find out on items you don't own).</li>
-	<li>Made various other small improvements to the Compare tab to handle items 
-	with large numbers of stats and scales with large values, so you don't see 
-	things like "(+1234..." when numbers get too big to fit on the screen.&nbsp; 
-	Now you'll see "(+12.3k)" instead.</li>
-	<li>Added some features to make Pawn work with 
-	some item tooltip changes in patch 5.1.</li>
-	<li>Added new monk scales from Wowhead and removed the placeholder scales 
-	for monks that were provided in earlier versions.</li>
-	<li>When using the default settings, Pawn will now show you which of your 
-	two rings is better so it's easy to tell which one you should replace with 
-	your new one, instead of just saying "This is one of your best items."&nbsp; (This information was already available if you turned on 
-	the "Show scale values and upgrade %" option.)</li>
-	<li>The "add a blank line before values" option is now on by default because 
-	it fits the new item tooltip style in patch 5.1 better.&nbsp; You can turn 
-	it back off if you don't like it.&nbsp; I made a few other minor 
-	modifications to tooltip formatting.</li>
-	<li>Pawn will now show a very clear error message if you try to use the 
-	English version of Pawn on a non-English World of Warcraft client.</li>
-	<li>Fixed a bug introduced as of WoW 5.0 that prevented item levels from 
-	showing up on the Compare tab.</li>
-	<li>Made a few changes to the way that Pawn starts up that might help some 
-	people who were having random troubles with Pawn not working properly 
-	immediately upon logging in.</li>
-	<li>Pawn 1.7 introduces a ton of changes to the calculation engine.&nbsp; 
-	I ran a variety of tests, but please let me know if you notice any 
-	anomalies.&nbsp; (If you report an issue, let me know which item and scale 
-	you're seeing it on, and what appears to be wrong.)</li>
+	<li>This version of Pawn now works for German and Russian in addition to 
+	English.&nbsp; Big thanks to the translation volunteers Sandmahn and 
+	mgotovtsev!&nbsp; It also has an untested Simplified Chinese translation 
+	based on work by bigbamboo.</li>
+	<li>This version also contains a large number of changes to prepare for 
+	German, Russian, and more languages in the future.</li>
+	<li>Some now-unnecessary information that was being stored in Pawn's 
+	SavedVariables file will now be removed when logging out.</li>
+	<li>Reorganized the Options tab to make it a bit cleaner.&nbsp; Options for 
+	changing the digits of displayed precision for values and for controlling 
+	the visibility of (?) icons on tooltips were removed.</li>
+	<li>Changed a bunch of bits of text throughout Pawn.</li>
+	<li>Worked around a problem that occurred with Pawn annotations showing up 
+	on AtlasLoot items twice.&nbsp; (To show Pawn annotations on AtlasLoot 
+	items, click Options in AtlasLoot and then check Use GameTooltip.)</li>
+	<li>Added support for the Pyrium Weapon Chain and Living Steel Weapon Chain.</li>
+	<li>Crystals of Fear will now no longer improperly show (?) on their 
+	tooltips.</li>
 </ul>
 <h3>Older versions</h3>
 <ul>
@@ -660,7 +595,7 @@ and Pawn.</p>
 <p>See the <a href="Version%20history.htm">version history</a> document for a 
 list of some of the features I&#39;m considering for future versions of Pawn.</p>
 <h2>The fine print</h2>
-<p>© 2006-2012 Green Eclipse.&nbsp; This mod is released under the Creative Commons
+<p>© 2006-2013 Green Eclipse.&nbsp; This mod is released under the Creative Commons
 <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/" target="_blank">
 Attribution-NonCommercial-NoDerivs 3.0</a> license.&nbsp; In short, this means 
 that you can use it, copy it, and share it, but you can't sell it or distribute 
