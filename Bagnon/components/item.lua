@@ -9,7 +9,7 @@ ItemSlot.nextID = 0
 ItemSlot.unused = {}
 
 local Cache = LibStub('LibItemCache-1.0')
-local ItemSearch = LibStub('LibItemSearch-1.0')
+local ItemSearch = LibStub('LibItemSearch-1.1')
 local Unfit = LibStub('Unfit-1.0')
 
 
@@ -141,22 +141,6 @@ function ItemSlot:BAG_SEARCH_UPDATE(msg, frameID)
 	end
 end
 
-function ItemSlot:ITEM_HIGHLIGHT_QUALITY_UPDATE()
-	self:UpdateBorder()
-end
-
-function ItemSlot:ITEM_HIGHLIGHT_UNUSABLE_UPDATE()
-	self:UpdateBorder()
-end
-
-function ItemSlot:ITEM_HIGHLIGHT_QUEST_UPDATE()
-	self:UpdateBorder()
-end
-
-function ItemSlot:ITEM_HIGHLIGHT_OPACITY_UPDATE()
-	self:UpdateBorder()
-end
-
 function ItemSlot:SHOW_EMPTY_ITEM_SLOT_TEXTURE_UPDATE()
 	self:Update()
 end
@@ -169,11 +153,15 @@ function ItemSlot:ITEM_SLOT_COLOR_UPDATE()
 	self:Update()
 end
 
-function ItemSlot:QUEST_ACCEPTED()
+function ItemSlot:QUEST_LOG_CHANGED()
 	self:UpdateBorder()
 end
 
-function ItemSlot:UNIT_QUEST_LOG_CHANGED()
+function ItemSlot:EQUIPMENT_SETS_CHANGED()
+	self:UpdateBorder()
+end
+
+function ItemSlot:ITEM_HIGHLIGHT_UPDATE()
 	self:UpdateBorder()
 end
 
@@ -264,12 +252,10 @@ end
 
 --[[ Update Methods ]]--
 
-
--- Update the texture, lock status, and other information about an item
 function ItemSlot:Update()
-  if not self:IsVisible() then
-    return
-  end
+	if not self:IsVisible() then
+		return
+	end
 
 	local icon, count, locked, quality, readable, lootable, link = self:GetInfo()
 	self:SetItem(link)
@@ -297,18 +283,22 @@ function ItemSlot:GetItem()
 	return self.item
 end
 
---item texture
+
+--[[ Icon ]]--
+
 function ItemSlot:SetTexture(texture)
-	SetItemButtonTexture(self, texture or self:GetEmptyItemTexture())
+	SetItemButtonTexture(self, texture or self:GetEmptyItemIcon())
 end
 
-function ItemSlot:GetEmptyItemTexture()
-	if self:ShowingEmptyItemSlotTexture() then
+function ItemSlot:GetEmptyItemIcon()
+	if Addon.Settings:ShowingEmptyItemSlotTextures() then
 		return [[Interface\PaperDoll\UI-Backpack-EmptySlot]]
 	end
 end
 
---item slot color
+
+--[[ Slot Color ]]--
+
 function ItemSlot:UpdateSlotColor()
 	if (not self:GetItem()) and self:ColoringBagSlots() then
 		self:SetSlotColor(self:GetBagColor(self:GetBagType()))
@@ -346,54 +336,58 @@ function ItemSlot:IsLocked()
 end
 
 
---[[ Border Quality ]]--
-
-function ItemSlot:SetBorderQuality(quality)
-	local border = self.border
-	local qBorder = self.questBorder
-	
-	qBorder:Hide()
-	border:Hide()
-
-	if self:HighlightingQuestItems() then
-		local isQuestItem, isQuestStarter = self:IsQuestItem()
-		if isQuestItem then
-			border:SetVertexColor(1, .82, .2,  self:GetHighlightAlpha())
-			border:Show()
-			return
-		end
-
-		if isQuestStarter then
-			qBorder:SetTexture(TEXTURE_ITEM_QUEST_BANG)
-			qBorder:Show()
-			return
-		end
-	end
-	
-	if self:HighlightUnusableItems() then
-		local link = self:GetItem()
-		if Unfit:IsItemUnusable(link) then
-			local r, g, b = RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b
-			border:SetVertexColor(r, g, b, self:GetHighlightAlpha())
-			border:Show()
-			return
-		end
-	end
-	
-	if self:HighlightingItemsByQuality() then
-		if self:GetItem() and quality and quality > 1 then
-			local r, g, b = GetItemQualityColor(quality)
-			border:SetVertexColor(r, g, b, self:GetHighlightAlpha())
-			border:Show()
-		end
-	end
-end
+--[[ Border Glow ]]--
 
 function ItemSlot:UpdateBorder()
 	self:SetBorderQuality(select(4, self:GetInfo()))
 end
 
---cooldown
+function ItemSlot:SetBorderQuality(quality)
+	local item = self:GetItem()
+
+	self.questBorder:Hide()
+	self.border:Hide()
+
+	if self:HighlightQuestItems() then
+		local isQuestItem, isQuestStarter = self:IsQuestItem()
+		if isQuestItem then
+			return self:SetBorderColor(1, .82, .2)
+		end
+
+		if isQuestStarter then
+			self.questBorder:SetTexture(TEXTURE_ITEM_QUEST_BANG)
+			self.questBorder:Show()
+			return
+		end
+	end
+	
+	if self:HighlightUnusableItems() then
+		if Unfit:IsItemUnusable(item) then
+			return self:SetBorderColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+		end
+	end
+
+	if self:HighlightSetItems() then
+		if ItemSearch:InSet(item) then
+   			return self:SetBorderColor(.1, 1, 1)
+  		end
+  	end
+	
+	if self:HighlightItemsByQuality() then
+		if item and quality and quality > 1 then
+			self:SetBorderColor(GetItemQualityColor(quality))
+		end
+	end
+end
+
+function ItemSlot:SetBorderColor(r, g, b)
+	self.border:SetVertexColor(r, g, b, self:GetHighlightAlpha())
+	self.border:Show()
+end
+
+
+--[[ Misk ]]--
+
 function ItemSlot:UpdateCooldown()
 	if self:GetItem() and (not self:IsCached()) then
 		ContainerFrame_UpdateCooldown(self:GetBag(), self)
@@ -403,14 +397,15 @@ function ItemSlot:UpdateCooldown()
 	end
 end
 
---stack split frame
 function ItemSlot:HideStackSplitFrame()
 	if self.hasStackSplit and self.hasStackSplit == 1 then
 		StackSplitFrame:Hide()
 	end
 end
 
---tooltip methods
+
+--[[ Tooltip ]]--
+
 function ItemSlot:UpdateTooltip()
 	self:OnEnter()
 end
@@ -442,7 +437,7 @@ function ItemSlot:UpdateSearch()
 
 	if search and search ~= '' then
 		local link = self:GetItem()
-		shouldFade = not (link and ItemSearch:Find(link, search))
+		shouldFade = not (link and ItemSearch:Matches(link, search))
 	end
 
 	if shouldFade then
@@ -478,7 +473,7 @@ end
 function ItemSlot:FlashSearch(search)
 	if search and search ~= '' then
 		local link = self:GetItem()
-		if ItemSearch:Find(link, search) then
+		if ItemSearch:Matches(link, search) then
 			UIFrameFlash(self, 0.2, 0.3, 1.5, true, 0.0, 0.0 )
 		end
 	end
@@ -532,18 +527,22 @@ function ItemSlot:GetInfo()
 end
 
 
---[[ Item Type Highlighting ]]--
-
-function ItemSlot:HighlightingItemsByQuality()
-	return Addon.Settings:HighlightingItemsByQuality()
-end
+--[[ Item Type Highlight ]]--
 
 function ItemSlot:HighlightUnusableItems()
 	return Addon.Settings:HighlightUnusableItems()
 end
 
-function ItemSlot:HighlightingQuestItems()
-	return Addon.Settings:HighlightingQuestItems()
+function ItemSlot:HighlightQuestItems()
+	return Addon.Settings:HighlightQuestItems()
+end
+
+function ItemSlot:HighlightSetItems()
+	return Addon.Settings:HighlightSetItems()
+end
+
+function ItemSlot:HighlightItemsByQuality()
+	return Addon.Settings:HighlightItemsByQuality()
 end
 
 function ItemSlot:GetHighlightAlpha()
@@ -561,7 +560,7 @@ function ItemSlot:IsQuestItem()
 	end
 
 	if self:IsCached() then
-		return ItemSearch:Find(item, QUEST_ITEM_SEARCH), false
+		return ItemSearch:Matches(item, QUEST_ITEM_SEARCH), false
 	else
 		local isQuestItem, questID, isActive = GetContainerItemQuestInfo(self:GetBag(), self:GetID())
 		return isQuestItem, (questID and not isActive)
@@ -581,13 +580,6 @@ end
 
 function ItemSlot:ColoringBagSlots()
 	return Addon.Settings:ColoringBagSlots()
-end
-
-
---[[ Empty Slot Visibility ]]--
-
-function ItemSlot:ShowingEmptyItemSlotTexture()
-	return Addon.Settings:ShowingEmptyItemSlotTextures()
 end
 
 

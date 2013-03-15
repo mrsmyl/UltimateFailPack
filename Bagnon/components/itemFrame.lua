@@ -110,13 +110,17 @@ function ItemFrame:BAG_DISABLE_UPDATE()
 	self:ReloadAllItemSlots()
 end
 
-function ItemFrame:QUEST_ACCEPTED(event)
-	self:HandleGlobalItemEvent(event)
+function ItemFrame:EQUIPMENT_SETS_CHANGED()
+	self:HandleGlobalItemEvent('EQUIPMENT_SETS_CHANGED')
 end
 
-function ItemFrame:UNIT_QUEST_LOG_CHANGED(event, unit)
+function ItemFrame:QUEST_ACCEPTED()
+	self:HandleGlobalItemEvent('QUEST_LOG_CHANGED')
+end
+
+function ItemFrame:UNIT_QUEST_LOG_CHANGED(_, unit)
 	if unit == 'player' then
-		self:HandleGlobalItemEvent(event)
+		self:HandleGlobalItemEvent('QUEST_LOG_CHANGED')
 	end
 end
 
@@ -200,6 +204,7 @@ function ItemFrame:UpdateEvents()
 			self:RegisterEvent('ITEM_LOCK_CHANGED')
       		self:RegisterEvent('QUEST_ACCEPTED')
       		self:RegisterEvent('UNIT_QUEST_LOG_CHANGED')
+      		self:RegisterEvent('EQUIPMENT_SETS_CHANGED')
 
 			self:RegisterItemEvent('ITEM_SLOT_ADD')
 			self:RegisterItemEvent('ITEM_SLOT_REMOVE')
@@ -231,10 +236,7 @@ function ItemFrame:RegisterGlobalItemEvents()
 	
 	self:RegisterMessage('TEXT_SEARCH_UPDATE', 'HandleGlobalItemEvent')
 	self:RegisterMessage('BAG_SEARCH_UPDATE', 'HandleGlobalItemEvent')
-	self:RegisterMessage('ITEM_HIGHLIGHT_QUEST_UPDATE', 'HandleGlobalItemEvent')
-	self:RegisterMessage('ITEM_HIGHLIGHT_QUALITY_UPDATE', 'HandleGlobalItemEvent')
-	self:RegisterMessage('ITEM_HIGHLIGHT_UNUSABLE_UPDATE', 'HandleGlobalItemEvent')
-	self:RegisterMessage('ITEM_HIGHLIGHT_OPACITY_UPDATE', 'HandleGlobalItemEvent')
+	self:RegisterMessage('ITEM_HIGHLIGHT_UPDATE', 'HandleGlobalItemEvent')
 	self:RegisterMessage('SHOW_EMPTY_ITEM_SLOT_TEXTURE_UPDATE', 'HandleGlobalItemEvent')
 	self:RegisterMessage('ITEM_SLOT_COLOR_UPDATE', 'HandleGlobalItemEvent')
 	self:RegisterMessage('ITEM_SLOT_COLOR_ENABLED_UPDATE', 'HandleGlobalItemEvent')
