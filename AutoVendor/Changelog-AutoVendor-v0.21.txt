@@ -1,13 +1,13 @@
 ------------------------------------------------------------------------
-r71 | egrimm | 2012-11-29 17:44:03 +0000 (Thu, 29 Nov 2012) | 1 line
+r73 | egrimm | 2013-03-11 18:28:02 +0000 (Mon, 11 Mar 2013) | 1 line
 Changed paths:
-   A /tags/v0.20 (from /trunk:70)
+   A /tags/v0.21 (from /trunk:72)
 
-Updated for 5.1.
+ToC bump, still works for 5.2.
 ------------------------------------------------------------------------
-r70 | egrimm | 2012-11-29 17:43:34 +0000 (Thu, 29 Nov 2012) | 1 line
+r72 | egrimm | 2013-03-11 18:26:17 +0000 (Mon, 11 Mar 2013) | 1 line
 Changed paths:
    M /trunk/AutoVendor.toc
 
-Updated for 5.1.
+ToC bump.
 ------------------------------------------------------------------------
