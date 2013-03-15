@@ -1,19 +1,20 @@
-## Interface: 50100
+## Interface: 50200
 ## Title: TomTom
 ## Author: jnwhiteh
-## Version: v50100-1.0.1
+## Version: v50200-1.0.2
 ## License: All Rights Reserved
 ## Notes: Acts as your portable navigation assistant
+## Notes-frFR: Agit comme un assistant de navigation portable
 ## Notes-zhCN:一个简单的导航助手。
 ## Notes-ruRU: Удобный портативный навигатор по игровой карте
 ## Author: Cladhaire
 ## SavedVariables: TomTomDB, TomTomWaypoints, TomTomWaypointsMF
-## X-Curse-Packaged-Version: v50100-1.0.1
+## X-Curse-Packaged-Version: v50200-1.0.2
 ## X-Curse-Project-Name: TomTom
 ## X-Curse-Project-ID: tomtom
 ## X-Curse-Repository-ID: wow/tomtom/mainline
 
-## X-Localizations: enUS, enGB, deDE, zhCN, ruRU, zhTW
+## X-Localizations: enUS, enGB, deDE, frFR, zhCN, ruRU, zhTW
 ## X-CompatibleLocales: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 
 libs\Astrolabe\Load.xml
