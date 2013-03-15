@@ -1,6 +1,5 @@
 local HealBotAddonMsgType=nil
 local tmpttl=0
-local HealBotcAddonIncHeals={}
 local HealBotcAddonSummary={}
 local HealBotcommAddonSummary={}
 local HealBotAddonSummaryNoCommsCPU={}
@@ -22,7 +21,6 @@ local _
 
 function HealBot_Comms_About()
     hbcommver=HealBot_GetInfo()
-    HealBotcAddonIncHeals=HealBot_RetHealBotAddonIncHeals()
 
     for x,_ in pairs(hbtmpver) do
         hbtmpver[x]=nil
@@ -30,29 +28,10 @@ function HealBot_Comms_About()
     for x,_ in pairs(sortorder) do
         sortorder[x]=nil;
     end
-    for z,x in pairs(HealBotcAddonIncHeals) do
-        table.insert(sortorder,z)
-    end
-    table.sort(sortorder,function (a,b)
-        if HealBotcAddonIncHeals[a]>HealBotcAddonIncHeals[b] then return true end
-        if HealBotcAddonIncHeals[a]<HealBotcAddonIncHeals[b] then return false end
-        return a<b
-    end)
 
     linenum=1
-    table.foreach(sortorder, function (index,z)
-        tmpttl=HealBotcAddonIncHeals[z] or 0
-        _,_,addon_id, sender_id = string.find(z, "(.+) : (.+)")
-        if linenum<29 and addon_id and sender_id then
-            addon_id=hbcommver[sender_id] or "HealBot"
-            if hbcommver[sender_id] then hbtmpver[sender_id]=true end
-            HealBot_Comms_Print_IncHealsSum(sender_id,addon_id,tmpttl,linenum)
-            linenum=linenum+1
-        end
-    end)
-
     for x,v in pairs(hbcommver) do
-        if not hbtmpver[x] and linenum<29 then
+        if not hbtmpver[x] and linenum<33 then
             HealBot_Comms_Print_IncHealsSum(x,v,0,linenum)
             linenum=linenum+1
         end
@@ -114,7 +93,7 @@ function HealBot_Comms_Info()
         return a<b
     end)
     table.foreach(sortorder, function (index,z)
-        if linenum<39 then
+        if linenum<46 then
             HealBot_Comms_Print_AddonCPUSum(z,HealBotAddonSummaryNoCommsCPU[z],HealBotAddonSummaryNoCommsMem[z],linenum)
             linenum=linenum+1
         end
@@ -138,7 +117,7 @@ function HealBot_Comms_Info()
         return a<b
     end)
     table.foreach(sortorder, function (index,z)
-        if linenum<39 and HealBotcommAddonSummary[z]>0 then 
+        if linenum<46 and HealBotcommAddonSummary[z]>0 then 
             HealBot_Comms_Print_AddonCommsSum(z,HealBotcommAddonSummary[z],linenum)
             linenum=linenum+1
         end

@@ -96,28 +96,28 @@ function HealBot_Init_Spells_Defaults(class)
   if strsub(class,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
 -- PALADIN
     HealBot_Spells = {
-        [HEALBOT_HOLY_LIGHT]                = {id = 635,    CastTime = 2.5, Mana =  35, Level = 999},
-        [HEALBOT_FLASH_OF_LIGHT]            = {id = 19750,  CastTime = 1.5, Mana =  35, Level = 16},
-        [HEALBOT_WORD_OF_GLORY]             = {id = 85673,  CastTime = 0,   Mana =  35, Level = 9},
-        [HEALBOT_DIVINE_LIGHT]              = {id = 82326,  CastTime = 3,   Mana =  35, Level = 999},        
-        [HEALBOT_HOLY_RADIANCE]             = {id = 82327,  CastTime = 0,   Mana = 200, Level = 999}, 
-        [HEALBOT_HOLY_PRISM]                = {id = 114165, CastTime = 0,   Mana = 200, Level = 90}, 
-        [HEALBOT_LIGHT_OF_DAWN]             = {id = 85222,  CastTime = 0,   Mana =  35, Level = 999},
-        [HEALBOT_REDEMPTION]                = {id = 7328,   CastTime = 10,  Mana = 155, Level = 12}, 
-        [HEALBOT_LAY_ON_HANDS]              = {id = 633,    CastTime = 0,   Mana = 155, Level = 16}, 
-        [HEALBOT_SEAL_OF_INSIGHT]           = {id = 20165,  CastTime = 0,   Mana = 155, Level = 32}, 
-        [HEALBOT_CLEANSE]                   = {id = 4987,   CastTime = 0,   Mana = 155, Level = 20}, 
-        [HEALBOT_DIVINE_PLEA]               = {id = 54428,  CastTime = 0,   Mana = 155, Level = 999}, 
-        [HEALBOT_SEAL_OF_RIGHTEOUSNESS]     = {id = 20154,  CastTime = 0,   Mana = 155, Level = 42}, 
-        [HEALBOT_HAND_OF_PROTECTION]        = {id = 1022,   CastTime = 0,   Mana = 155, Level = 48}, 
-        [HEALBOT_BLESSING_OF_KINGS]         = {id = 20217,  CastTime = 0,   Mana = 155, Level = 30}, 
-        [HEALBOT_DIVINE_SHIELD]             = {id = 642,    CastTime = 0,   Mana = 155, Level = 18}, 
-        [HEALBOT_HAND_OF_FREEDOM]           = {id = 1044,   CastTime = 0,   Mana = 155, Level = 52}, 
-        [HEALBOT_HAND_OF_SALVATION]         = {id = 1038,   CastTime = 0,   Mana = 155, Level = 66}, 
-        [HEALBOT_HAND_OF_SACRIFICE]         = {id = 6940,   CastTime = 0,   Mana = 155, Level = 80}, 
-        [HEALBOT_SEAL_OF_TRUTH]             = {id = 31801,  CastTime = 0,   Mana = 155, Level = 24}, 
-        [HEALBOT_BLESSING_OF_MIGHT]         = {id = 19740,  CastTime = 0,   Mana = 155, Level = 81}, 
-        [HEALBOT_HOLY_SHOCK]                = {id = 20473,  CastTime = 0,   Mana =  35, Level = 999},
+    --    [HEALBOT_HOLY_LIGHT]                = {id = 635,    CastTime = 2.5, Mana =  35, Level = 999},
+    --    [HEALBOT_FLASH_OF_LIGHT]            = {id = 19750,  CastTime = 1.5, Mana =  35, Level = 14},
+    --    [HEALBOT_WORD_OF_GLORY]             = {id = 85673,  CastTime = 0,   Mana =  35, Level = 9},
+    --    [HEALBOT_DIVINE_LIGHT]              = {id = 82326,  CastTime = 3,   Mana =  35, Level = 999},        
+    --    [HEALBOT_HOLY_RADIANCE]             = {id = 82327,  CastTime = 0,   Mana = 200, Level = 999}, 
+    --    [HEALBOT_HOLY_PRISM]                = {id = 114165, CastTime = 0,   Mana = 200, Level = 90}, 
+    --    [HEALBOT_LIGHT_OF_DAWN]             = {id = 85222,  CastTime = 0,   Mana =  35, Level = 999},
+    --    [HEALBOT_REDEMPTION]                = {id = 7328,   CastTime = 10,  Mana = 155, Level = 12}, 
+    --    [HEALBOT_LAY_ON_HANDS]              = {id = 633,    CastTime = 0,   Mana = 155, Level = 16}, 
+    --    [HEALBOT_SEAL_OF_INSIGHT]           = {id = 20165,  CastTime = 0,   Mana = 155, Level = 32}, 
+    --    [HEALBOT_CLEANSE]                   = {id = 4987,   CastTime = 0,   Mana = 155, Level = 20}, 
+    --    [HEALBOT_DIVINE_PLEA]               = {id = 54428,  CastTime = 0,   Mana = 155, Level = 999}, 
+    --    [HEALBOT_SEAL_OF_RIGHTEOUSNESS]     = {id = 20154,  CastTime = 0,   Mana = 155, Level = 42}, 
+    --    [HEALBOT_HAND_OF_PROTECTION]        = {id = 1022,   CastTime = 0,   Mana = 155, Level = 48}, 
+    --    [HEALBOT_BLESSING_OF_KINGS]         = {id = 20217,  CastTime = 0,   Mana = 155, Level = 30}, 
+    --    [HEALBOT_DIVINE_SHIELD]             = {id = 642,    CastTime = 0,   Mana = 155, Level = 18}, 
+    --    [HEALBOT_HAND_OF_FREEDOM]           = {id = 1044,   CastTime = 0,   Mana = 155, Level = 52}, 
+    --    [HEALBOT_HAND_OF_SALVATION]         = {id = 1038,   CastTime = 0,   Mana = 155, Level = 66}, 
+    --    [HEALBOT_HAND_OF_SACRIFICE]         = {id = 6940,   CastTime = 0,   Mana = 155, Level = 80}, 
+    --    [HEALBOT_SEAL_OF_TRUTH]             = {id = 31801,  CastTime = 0,   Mana = 155, Level = 24}, 
+    --    [HEALBOT_BLESSING_OF_MIGHT]         = {id = 19740,  CastTime = 0,   Mana = 155, Level = 81}, 
+    --    [HEALBOT_HOLY_SHOCK]                = {id = 20473,  CastTime = 0,   Mana =  35, Level = 999},
     };
     
     local _, talent = GetTalentRowSelectionInfo(1)
@@ -149,12 +149,12 @@ function HealBot_Init_Spells_Defaults(class)
     end
 
     if sID==65 then  -- Holy
-        HealBot_Spells[HEALBOT_HOLY_LIGHT]              = {id = 635,    CastTime = 2.5, Mana =  35, Level = 34}
-        HealBot_Spells[HEALBOT_DIVINE_LIGHT]            = {id = 82326,  CastTime = 3,   Mana =  35, Level = 54}
-        HealBot_Spells[HEALBOT_HOLY_RADIANCE]           = {id = 82327,  CastTime = 0,   Mana = 200, Level = 28} 
-        HealBot_Spells[HEALBOT_LIGHT_OF_DAWN]           = {id = 85222,  CastTime = 0,   Mana =  35, Level = 70}
-        HealBot_Spells[HEALBOT_DIVINE_PLEA]             = {id = 54428,  CastTime = 0,   Mana = 155, Level = 44}
-        HealBot_Spells[HEALBOT_HOLY_SHOCK]              = {id = 20473,  CastTime = 0,   Mana =  35, Level = 10}
+    --    HealBot_Spells[HEALBOT_HOLY_LIGHT]              = {id = 635,    CastTime = 2.5, Mana =  35, Level = 34}
+    --    HealBot_Spells[HEALBOT_DIVINE_LIGHT]            = {id = 82326,  CastTime = 3,   Mana =  35, Level = 54}
+    --    HealBot_Spells[HEALBOT_HOLY_RADIANCE]           = {id = 82327,  CastTime = 0,   Mana = 200, Level = 28} 
+    --    HealBot_Spells[HEALBOT_LIGHT_OF_DAWN]           = {id = 85222,  CastTime = 0,   Mana =  35, Level = 70}
+    --    HealBot_Spells[HEALBOT_DIVINE_PLEA]             = {id = 54428,  CastTime = 0,   Mana = 155, Level = 44}
+    --    HealBot_Spells[HEALBOT_HOLY_SHOCK]              = {id = 20473,  CastTime = 0,   Mana =  35, Level = 10}
     elseif sID==66 then  -- Protection
 
     elseif sID==70 then  -- Retribution
@@ -165,22 +165,22 @@ function HealBot_Init_Spells_Defaults(class)
   if strsub(class,1,4)==HealBot_Class_En[HEALBOT_DRUID] then
 -- DRUID
     HealBot_Spells = {
-        [HEALBOT_REJUVENATION]          = {id = 774,    CastTime = 0,   Mana =  25, Level = 3, HoT=HEALBOT_REJUVENATION},
-        [HEALBOT_HEALING_TOUCH]         = {id = 5185,   CastTime = 1.5, Mana =  25, Level = 26},
-        [HEALBOT_NOURISH]               = {id = 50464,  CastTime = 1.5, Mana = 999, Level = 999},
-        [HEALBOT_REGROWTH]              = {id = 8936,   CastTime = 2,   Mana =  80, Level = 999, HoT=HEALBOT_REGROWTH},
-        [HEALBOT_LIFEBLOOM]             = {id = 33763,  CastTime = 0,   Mana = 220, Level = 36, HoT=HEALBOT_LIFEBLOOM},
-        [HEALBOT_WILD_GROWTH]           = {id = 48438,  CastTime = 0,   Mana = 200, Level = 999, HoT=HEALBOT_WILD_GROWTH}, 
-        [HEALBOT_TRANQUILITY]           = {id = 740,    CastTime = 0,   Mana = 200, Level = 74},  
-        [HEALBOT_REVIVE]                = {id = 50769,  CastTime = 0,   Mana = 155, Level = 12},  
-        [HEALBOT_OMEN_OF_CLARITY]       = {id = 16864,  CastTime = 0,   Mana = 155, Level = 999},                   
-        [HEALBOT_REBIRTH]               = {id = 20484,  CastTime = 0,   Mana = 155, Level = 56},  
-        [HEALBOT_REMOVE_CORRUPTION]     = {id = 2782,   CastTime = 0,   Mana = 155, Level = 999},  
-        [HEALBOT_NATURES_CURE]          = {id = 88423,  CastTime = 0,   Mana = 155, Level = 999},  
-        [HEALBOT_MARK_OF_THE_WILD]      = {id = 1126,   CastTime = 0,   Mana = 155, Level = 62},  
-        [HEALBOT_NATURES_GRASP]         = {id = 16689,  CastTime = 0,   Mana = 155, Level = 52},  
-        [HEALBOT_INNERVATE]             = {id = 29166,  CastTime = 0,   Mana = 155, Level = 54},  
-        [HEALBOT_BARKSKIN]              = {id = 22812,  CastTime = 0,   Mana = 155, Level = 44},  
+    --    [HEALBOT_REJUVENATION]          = {id = 774,    CastTime = 0,   Mana =  25, Level = 3, HoT=HEALBOT_REJUVENATION},
+    --    [HEALBOT_HEALING_TOUCH]         = {id = 5185,   CastTime = 1.5, Mana =  25, Level = 26},
+    --    [HEALBOT_NOURISH]               = {id = 50464,  CastTime = 1.5, Mana = 999, Level = 999},
+    --    [HEALBOT_REGROWTH]              = {id = 8936,   CastTime = 2,   Mana =  80, Level = 999, HoT=HEALBOT_REGROWTH},
+    --    [HEALBOT_LIFEBLOOM]             = {id = 33763,  CastTime = 0,   Mana = 220, Level = 36, HoT=HEALBOT_LIFEBLOOM},
+    --    [HEALBOT_WILD_GROWTH]           = {id = 48438,  CastTime = 0,   Mana = 200, Level = 999, HoT=HEALBOT_WILD_GROWTH}, 
+    --    [HEALBOT_TRANQUILITY]           = {id = 740,    CastTime = 0,   Mana = 200, Level = 74},  
+    --    [HEALBOT_REVIVE]                = {id = 50769,  CastTime = 0,   Mana = 155, Level = 12},  
+    --    [HEALBOT_OMEN_OF_CLARITY]       = {id = 16864,  CastTime = 0,   Mana = 155, Level = 999},                   
+    --    [HEALBOT_REBIRTH]               = {id = 20484,  CastTime = 0,   Mana = 155, Level = 56},  
+    --    [HEALBOT_REMOVE_CORRUPTION]     = {id = 2782,   CastTime = 0,   Mana = 155, Level = 999},  
+    --    [HEALBOT_NATURES_CURE]          = {id = 88423,  CastTime = 0,   Mana = 155, Level = 999},  
+    --    [HEALBOT_MARK_OF_THE_WILD]      = {id = 1126,   CastTime = 0,   Mana = 155, Level = 62},  
+    --    [HEALBOT_NATURES_GRASP]         = {id = 16689,  CastTime = 0,   Mana = 155, Level = 52},  
+    --    [HEALBOT_INNERVATE]             = {id = 29166,  CastTime = 0,   Mana = 155, Level = 54},  
+    --    [HEALBOT_BARKSKIN]              = {id = 22812,  CastTime = 0,   Mana = 155, Level = 44},  
     };
     
     local _, talent = GetTalentRowSelectionInfo(2)
@@ -189,18 +189,18 @@ function HealBot_Init_Spells_Defaults(class)
     end
     
     if sID==102 then  -- Balanced
-        HealBot_Spells[HEALBOT_REMOVE_CORRUPTION]   = {id = 2782,    CastTime = 0,   Mana = 155, Level = 24}
+    --    HealBot_Spells[HEALBOT_REMOVE_CORRUPTION]   = {id = 2782,    CastTime = 0,   Mana = 155, Level = 24}
     elseif sID==103 then  -- Feral
-        HealBot_Spells[HEALBOT_OMEN_OF_CLARITY]     = {id = 16864,   CastTime = 0,   Mana = 155, Level = 38}
-        HealBot_Spells[HEALBOT_REMOVE_CORRUPTION]   = {id = 2782,    CastTime = 0,   Mana = 155, Level = 24}
+    --    HealBot_Spells[HEALBOT_OMEN_OF_CLARITY]     = {id = 16864,   CastTime = 0,   Mana = 155, Level = 38}
+    --    HealBot_Spells[HEALBOT_REMOVE_CORRUPTION]   = {id = 2782,    CastTime = 0,   Mana = 155, Level = 24}
     elseif sID==104 then  -- Guardian
-        HealBot_Spells[HEALBOT_REMOVE_CORRUPTION]   = {id = 2782,    CastTime = 0,   Mana = 155, Level = 24}
+    --    HealBot_Spells[HEALBOT_REMOVE_CORRUPTION]   = {id = 2782,    CastTime = 0,   Mana = 155, Level = 24}
     elseif sID==105 then  -- Restoration
-        HealBot_Spells[HEALBOT_NOURISH]             = {id = 50464,   CastTime = 1.5, Mana = 999, Level = 8}
-        HealBot_Spells[HEALBOT_REGROWTH]            = {id = 8936,    CastTime = 2,   Mana =  80, Level = 18, HoT=HEALBOT_REGROWTH}
-        HealBot_Spells[HEALBOT_WILD_GROWTH]         = {id = 48438,   CastTime = 0,   Mana = 200, Level = 76, HoT=HEALBOT_WILD_GROWTH}
-        HealBot_Spells[HEALBOT_OMEN_OF_CLARITY]     = {id = 16864,   CastTime = 0,   Mana = 155, Level = 38}
-        HealBot_Spells[HEALBOT_NATURES_CURE]        = {id = 88423,   CastTime = 0,   Mana = 155, Level = 22}
+    --    HealBot_Spells[HEALBOT_NOURISH]             = {id = 50464,   CastTime = 1.5, Mana = 999, Level = 8}
+    --    HealBot_Spells[HEALBOT_REGROWTH]            = {id = 8936,    CastTime = 2,   Mana =  80, Level = 18, HoT=HEALBOT_REGROWTH}
+    --    HealBot_Spells[HEALBOT_WILD_GROWTH]         = {id = 48438,   CastTime = 0,   Mana = 200, Level = 76, HoT=HEALBOT_WILD_GROWTH}
+    --    HealBot_Spells[HEALBOT_OMEN_OF_CLARITY]     = {id = 16864,   CastTime = 0,   Mana = 155, Level = 38}
+    --    HealBot_Spells[HEALBOT_NATURES_CURE]        = {id = 88423,   CastTime = 0,   Mana = 155, Level = 22}
     end
     
   end
@@ -208,25 +208,25 @@ function HealBot_Init_Spells_Defaults(class)
   if strsub(class,1,4)==HealBot_Class_En[HEALBOT_PRIEST] then
 -- PRIEST
     HealBot_Spells = {
-        [HEALBOT_HEAL]                  = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 999}, 
-        [HEALBOT_GREATER_HEAL]          = {id = 2060,   CastTime = 3.0, Mana = 370, Level = 999}, 
-        [HEALBOT_BINDING_HEAL]          = {id = 32546,  CastTime = 1.5, Mana = 705, Level = 48}, 
-        [HEALBOT_PRAYER_OF_MENDING]     = {id = 33076,  CastTime = 0,   Mana = 390, Level = 68}, 
-        [HEALBOT_PRAYER_OF_HEALING]     = {id = 596,    CastTime = 3.0, Mana = 410, Level = 999}, 
-        [HEALBOT_PENANCE]               = {id = 47540,  CastTime = 0,   Mana = 400, Level = 999}, 
-        [HEALBOT_RENEW]                 = {id = 139,    CastTime = 0,   Mana =  30, Level = 26, HoT=HEALBOT_RENEW}, 
-        [HEALBOT_FLASH_HEAL]            = {id = 2061,   CastTime = 1.5, Mana = 125, Level = 3}, 
-        [HEALBOT_POWER_WORD_SHIELD]     = {id = 17,     CastTime = 0,   Mana =  45, Level = 5}, 
-        [HEALBOT_SPIRIT_SHELL]          = {id = 109964, CastTime = 0,   Mana =  45, Level = 999}, 
-        [HEALBOT_DIVINE_HYMN]           = {id = 64843,  CastTime = 0,   Mana =  30, Level = 999}, 
-        [HEALBOT_INNER_FIRE]            = {id = 588,    CastTime = 0,   Mana = 155, Level = 7}, 
-        [HEALBOT_INNER_WILL]            = {id = 73413,  CastTime = 0,   Mana = 155, Level = 83}, 
-        [HEALBOT_RESURRECTION]          = {id = 2006,   CastTime = 0,   Mana = 155, Level = 14}, 
-        [HEALBOT_PURIFY]                = {id = 527,    CastTime = 0,   Mana = 155, Level = 999},
-        [HEALBOT_POWER_WORD_FORTITUDE]  = {id = 21562,  CastTime = 0,   Mana = 155, Level = 22},
-        [HEALBOT_LEVITATE]              = {id = 1706,   CastTime = 0,   Mana = 155, Level = 34},
-        [HEALBOT_FEAR_WARD]             = {id = 6346,   CastTime = 0,   Mana = 155, Level = 54},
-        [HEALBOT_LEAP_OF_FAITH]         = {id = 73325,  CastTime = 0,   Mana = 155, Level = 85},
+    --    [HEALBOT_HEAL]                  = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 999}, 
+    --    [HEALBOT_GREATER_HEAL]          = {id = 2060,   CastTime = 3.0, Mana = 370, Level = 999}, 
+    --    [HEALBOT_BINDING_HEAL]          = {id = 32546,  CastTime = 1.5, Mana = 705, Level = 48}, 
+    --    [HEALBOT_PRAYER_OF_MENDING]     = {id = 33076,  CastTime = 0,   Mana = 390, Level = 68}, 
+    --    [HEALBOT_PRAYER_OF_HEALING]     = {id = 596,    CastTime = 3.0, Mana = 410, Level = 999}, 
+    --    [HEALBOT_PENANCE]               = {id = 47540,  CastTime = 0,   Mana = 400, Level = 999}, 
+    --    [HEALBOT_RENEW]                 = {id = 139,    CastTime = 0,   Mana =  30, Level = 26, HoT=HEALBOT_RENEW}, 
+    --    [HEALBOT_FLASH_HEAL]            = {id = 2061,   CastTime = 1.5, Mana = 125, Level = 3}, 
+    --    [HEALBOT_POWER_WORD_SHIELD]     = {id = 17,     CastTime = 0,   Mana =  45, Level = 5}, 
+    --    [HEALBOT_SPIRIT_SHELL]          = {id = 109964, CastTime = 0,   Mana =  45, Level = 999}, 
+    --    [HEALBOT_DIVINE_HYMN]           = {id = 64843,  CastTime = 0,   Mana =  30, Level = 999}, 
+    --    [HEALBOT_INNER_FIRE]            = {id = 588,    CastTime = 0,   Mana = 155, Level = 7}, 
+    --    [HEALBOT_INNER_WILL]            = {id = 73413,  CastTime = 0,   Mana = 155, Level = 83}, 
+    --    [HEALBOT_RESURRECTION]          = {id = 2006,   CastTime = 0,   Mana = 155, Level = 14}, 
+    --    [HEALBOT_PURIFY]                = {id = 527,    CastTime = 0,   Mana = 155, Level = 999},
+    --    [HEALBOT_POWER_WORD_FORTITUDE]  = {id = 21562,  CastTime = 0,   Mana = 155, Level = 22},
+    --    [HEALBOT_LEVITATE]              = {id = 1706,   CastTime = 0,   Mana = 155, Level = 34},
+    --    [HEALBOT_FEAR_WARD]             = {id = 6346,   CastTime = 0,   Mana = 155, Level = 54},
+    --    [HEALBOT_LEAP_OF_FAITH]         = {id = 73325,  CastTime = 0,   Mana = 155, Level = 85},
         [HEALBOT_HOLY_WORD_SERENITY]    = {id = 88684,  CastTime = 0,   Mana =   2, Level = 999},
     };
     
@@ -241,18 +241,18 @@ function HealBot_Init_Spells_Defaults(class)
     end
     
     if sID==256 then -- Disp
-        HealBot_Spells[HEALBOT_PRAYER_OF_HEALING]   = {id = 596,    CastTime = 3.0, Mana = 410, Level = 44}
-        HealBot_Spells[HEALBOT_PENANCE]             = {id = 47540,  CastTime = 0,   Mana = 400, Level = 10}
-        HealBot_Spells[HEALBOT_SPIRIT_SHELL]        = {id = 109964, CastTime = 0,   Mana =  45, Level = 28}
-        HealBot_Spells[HEALBOT_PURIFY]              = {id = 527,    CastTime = 0,   Mana = 155, Level = 26}
-        HealBot_Spells[HEALBOT_GREATER_HEAL]        = {id = 2060,   CastTime = 3.0, Mana = 370, Level = 38}
-        HealBot_Spells[HEALBOT_HEAL]                = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 28} 
+    --    HealBot_Spells[HEALBOT_PRAYER_OF_HEALING]   = {id = 596,    CastTime = 3.0, Mana = 410, Level = 44}
+    --    HealBot_Spells[HEALBOT_PENANCE]             = {id = 47540,  CastTime = 0,   Mana = 400, Level = 10}
+    --    HealBot_Spells[HEALBOT_SPIRIT_SHELL]        = {id = 109964, CastTime = 0,   Mana =  45, Level = 28}
+    --    HealBot_Spells[HEALBOT_PURIFY]              = {id = 527,    CastTime = 0,   Mana = 155, Level = 22}
+    --    HealBot_Spells[HEALBOT_GREATER_HEAL]        = {id = 2060,   CastTime = 3.0, Mana = 370, Level = 34}
+    --    HealBot_Spells[HEALBOT_HEAL]                = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 28} 
     elseif sID==257 then -- Holy
-        HealBot_Spells[HEALBOT_PRAYER_OF_HEALING]   = {id = 596,    CastTime = 3.0, Mana = 410, Level = 44}
-        HealBot_Spells[HEALBOT_DIVINE_HYMN]         = {id = 64843,  CastTime = 0,   Mana =  30, Level = 78}
-        HealBot_Spells[HEALBOT_PURIFY]              = {id = 527,    CastTime = 0,   Mana = 155, Level = 26}
-        HealBot_Spells[HEALBOT_GREATER_HEAL]        = {id = 2060,   CastTime = 3.0, Mana = 370, Level = 38}
-        HealBot_Spells[HEALBOT_HEAL]                = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 28} 
+    --    HealBot_Spells[HEALBOT_PRAYER_OF_HEALING]   = {id = 596,    CastTime = 3.0, Mana = 410, Level = 44}
+    --    HealBot_Spells[HEALBOT_DIVINE_HYMN]         = {id = 64843,  CastTime = 0,   Mana =  30, Level = 78}
+    --    HealBot_Spells[HEALBOT_PURIFY]              = {id = 527,    CastTime = 0,   Mana = 155, Level = 22}
+    --    HealBot_Spells[HEALBOT_GREATER_HEAL]        = {id = 2060,   CastTime = 3.0, Mana = 370, Level = 34}
+    --    HealBot_Spells[HEALBOT_HEAL]                = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 28} 
         HealBot_Spells[HEALBOT_HOLY_WORD_SERENITY]  = {id = 88684,  CastTime = 0,   Mana =   2, Level = 20}
     elseif sID==258 then -- Shadow
 
@@ -263,57 +263,57 @@ function HealBot_Init_Spells_Defaults(class)
   if strsub(class,1,4)==HealBot_Class_En[HEALBOT_SHAMAN] then
 -- SHAMAN
     HealBot_Spells = {
-        [HEALBOT_HEALING_WAVE]          = {id = 331,    CastTime = 1.5, Mana =  25, Level = 999}, 
-        [HEALBOT_GREATER_HEALING_WAVE]  = {id = 77472,  CastTime = 3,   Mana = 105, Level = 999}, 
-        [HEALBOT_CHAIN_HEAL]            = {id = 1064,   CastTime = 2.5, Mana = 260, Level = 40},
-        [HEALBOT_EARTH_SHIELD]          = {id = 974,    CastTime = 0,   Mana =   0, Level = 999},
-        [HEALBOT_WATER_SHIELD]          = {id = 52127,  CastTime = 0,   Mana = 155, Level = 20}, 
-        [HEALBOT_LIGHTNING_SHIELD]      = {id = 324,    CastTime = 0,   Mana = 155, Level = 8}, 
-        [HEALBOT_RIPTIDE]               = {id = 61295,  CastTime = 0,   Mana = 250, Level = 999, HoT=HEALBOT_RIPTIDE},
-        [HEALBOT_HEALING_RAIN]          = {id = 73920,  CastTime = 0,   Mana = 250, Level = 60},
-        [HEALBOT_HEALING_SURGE]         = {id = 8004,   CastTime = 1.5, Mana = 105, Level = 7}, 
-        [HEALBOT_ANCESTRALSPIRIT]       = {id = 2008,   CastTime = 0,   Mana = 155, Level = 12}, 
-        [HEALBOT_PURIFY_SPIRIT]         = {id = 77130,  CastTime = 0,   Mana = 155, Level = 999}, 
-        [HEALBOT_CLEANSE_SPIRIT]        = {id = 51886,  CastTime = 0,   Mana = 155, Level = 18}, 
-        [HEALBOT_EARTHLIVING_WEAPON]    = {id = 51730,  CastTime = 0,   Mana = 155, Level = 999}, 
-        [HEALBOT_FLAMETONGUE_WEAPON]    = {id = 8024,   CastTime = 0,   Mana = 155, Level = 10}, 
-        [HEALBOT_FROSTBRAND_WEAPON]     = {id = 8033,   CastTime = 0,   Mana = 155, Level = 46}, 
-        [HEALBOT_WINDFURY_WEAPON]       = {id = 8232,   CastTime = 0,   Mana = 155, Level = 999}, 
-        [HEALBOT_ROCKBITER_WEAPON]      = {id = 8017,   CastTime = 0,   Mana = 155, Level = 75}, 
-        [HEALBOT_WATER_WALKING]         = {id = 546,    CastTime = 0,   Mana = 155, Level = 24}, 
+    --    [HEALBOT_HEALING_WAVE]          = {id = 331,    CastTime = 1.5, Mana =  25, Level = 999}, 
+    --    [HEALBOT_GREATER_HEALING_WAVE]  = {id = 77472,  CastTime = 3,   Mana = 105, Level = 999}, 
+    --    [HEALBOT_CHAIN_HEAL]            = {id = 1064,   CastTime = 2.5, Mana = 260, Level = 40},
+    --    [HEALBOT_EARTH_SHIELD]          = {id = 974,    CastTime = 0,   Mana =   0, Level = 999},
+    --    [HEALBOT_WATER_SHIELD]          = {id = 52127,  CastTime = 0,   Mana = 155, Level = 20}, 
+    --    [HEALBOT_LIGHTNING_SHIELD]      = {id = 324,    CastTime = 0,   Mana = 155, Level = 8}, 
+    --    [HEALBOT_RIPTIDE]               = {id = 61295,  CastTime = 0,   Mana = 250, Level = 999, HoT=HEALBOT_RIPTIDE},
+    --    [HEALBOT_HEALING_RAIN]          = {id = 73920,  CastTime = 0,   Mana = 250, Level = 60},
+    --    [HEALBOT_HEALING_SURGE]         = {id = 8004,   CastTime = 1.5, Mana = 105, Level = 7}, 
+    --    [HEALBOT_ANCESTRALSPIRIT]       = {id = 2008,   CastTime = 0,   Mana = 155, Level = 12}, 
+    --    [HEALBOT_PURIFY_SPIRIT]         = {id = 77130,  CastTime = 0,   Mana = 155, Level = 999}, 
+    --    [HEALBOT_CLEANSE_SPIRIT]        = {id = 51886,  CastTime = 0,   Mana = 155, Level = 18}, 
+    --    [HEALBOT_EARTHLIVING_WEAPON]    = {id = 51730,  CastTime = 0,   Mana = 155, Level = 999}, 
+    --    [HEALBOT_FLAMETONGUE_WEAPON]    = {id = 8024,   CastTime = 0,   Mana = 155, Level = 10}, 
+    --    [HEALBOT_FROSTBRAND_WEAPON]     = {id = 8033,   CastTime = 0,   Mana = 155, Level = 46}, 
+    --    [HEALBOT_WINDFURY_WEAPON]       = {id = 8232,   CastTime = 0,   Mana = 155, Level = 999}, 
+    --    [HEALBOT_ROCKBITER_WEAPON]      = {id = 8017,   CastTime = 0,   Mana = 155, Level = 75}, 
+    --    [HEALBOT_WATER_WALKING]         = {id = 546,    CastTime = 0,   Mana = 155, Level = 24}, 
     };
     
     if sID==262 then  -- Elemental
         
     elseif sID==263 then  -- Enhancement
-        HealBot_Spells[HEALBOT_WINDFURY_WEAPON]         = {id = 8232,   CastTime = 0,   Mana = 155, Level = 32}
+    --    HealBot_Spells[HEALBOT_WINDFURY_WEAPON]         = {id = 8232,   CastTime = 0,   Mana = 155, Level = 32}
     elseif sID==264 then  -- Restoration
-        HealBot_Spells[HEALBOT_HEALING_WAVE]            = {id = 331,    CastTime = 1.5, Mana =  25, Level = 20}
-        HealBot_Spells[HEALBOT_GREATER_HEALING_WAVE]    = {id = 77472,  CastTime = 3,   Mana = 105, Level = 60}
-        HealBot_Spells[HEALBOT_EARTH_SHIELD]            = {id = 974,    CastTime = 0,   Mana =   0, Level = 26}
-        HealBot_Spells[HEALBOT_RIPTIDE]                 = {id = 61295,  CastTime = 0,   Mana = 250, Level = 10, HoT=HEALBOT_RIPTIDE}
-        HealBot_Spells[HEALBOT_PURIFY_SPIRIT]           = {id = 77130,  CastTime = 0,   Mana = 155, Level = 18}
-        HealBot_Spells[HEALBOT_EARTHLIVING_WEAPON]      = {id = 51730,  CastTime = 0,   Mana = 155, Level = 30}
+    --    HealBot_Spells[HEALBOT_HEALING_WAVE]            = {id = 331,    CastTime = 1.5, Mana =  25, Level = 20}
+    --    HealBot_Spells[HEALBOT_GREATER_HEALING_WAVE]    = {id = 77472,  CastTime = 3,   Mana = 105, Level = 60}
+    --    HealBot_Spells[HEALBOT_EARTH_SHIELD]            = {id = 974,    CastTime = 0,   Mana =   0, Level = 26}
+    --    HealBot_Spells[HEALBOT_RIPTIDE]                 = {id = 61295,  CastTime = 0,   Mana = 250, Level = 10, HoT=HEALBOT_RIPTIDE}
+          HealBot_Spells[HEALBOT_PURIFY_SPIRIT]           = {id = 77130,  CastTime = 0,   Mana = 155, Level = 18}
+    --    HealBot_Spells[HEALBOT_EARTHLIVING_WEAPON]      = {id = 51730,  CastTime = 0,   Mana = 155, Level = 30}
     end
   end
 
   if strsub(class,1,4)==HealBot_Class_En[HEALBOT_MONK] then
 --  Monk
     HealBot_Spells = {
-        [HEALBOT_DETOX]             = {id = 115450, CastTime = 0, Mana = 155, Level = 20}, 
-        [HEALBOT_RESUSCITATE]       = {id = 115178, CastTime = 0, Mana = 155, Level = 18}, 
-        [HEALBOT_LEGACY_EMPEROR]    = {id = 115921, CastTime = 0, Mana = 155, Level = 22}, 
-        [HEALBOT_SOOTHING_MIST]     = {id = 115175, CastTime = 0, Mana = 101, Level = 10}, 
-        [HEALBOT_ZEN_MEDITATION]    = {id = 115176, CastTime = 0, Mana = 101, Level = 82}, 
-        [HEALBOT_LIFE_COCOON]       = {id = 116849, CastTime = 0, Mana = 101, Level = 999}, 
-        [HEALBOT_REVIVAL]           = {id = 115310, CastTime = 0, Mana = 101, Level = 999}, 
-        [HEALBOT_RENEWING_MIST]     = {id = 115151, CastTime = 0, Mana = 101, Level = 42}, 
-        [HEALBOT_UPLIFT]            = {id = 116670, CastTime = 0, Mana = 101, Level = 999}, 
-        [HEALBOT_SURGING_MIST]      = {id = 116694, CastTime = 0, Mana = 101, Level = 999}, 
-        [HEALBOT_ZEN_SPHERE]        = {id = 124081, CastTime = 0, Mana = 101, Level = 30},
-        [HEALBOT_ENVELOPING_MIST]   = {id = 132120, CastTime = 0, Mana = 101, Level = 34},
-        [HEALBOT_CHI_WAVE]          = {id = 132463, CastTime = 0, Mana = 101, Level = 30},
-        [HEALBOT_CHI_BURST]         = {id = 130651, CastTime = 0, Mana = 101, Level = 30},
+    --    [HEALBOT_DETOX]             = {id = 115450, CastTime = 0, Mana = 155, Level = 20}, 
+    --    [HEALBOT_RESUSCITATE]       = {id = 115178, CastTime = 0, Mana = 155, Level = 18}, 
+    --    [HEALBOT_LEGACY_EMPEROR]    = {id = 115921, CastTime = 0, Mana = 155, Level = 22}, 
+    --    [HEALBOT_SOOTHING_MIST]     = {id = 115175, CastTime = 0, Mana = 101, Level = 10}, 
+    --    [HEALBOT_ZEN_MEDITATION]    = {id = 115176, CastTime = 0, Mana = 101, Level = 82}, 
+    --    [HEALBOT_LIFE_COCOON]       = {id = 116849, CastTime = 0, Mana = 101, Level = 999}, 
+    --    [HEALBOT_REVIVAL]           = {id = 115310, CastTime = 0, Mana = 101, Level = 999}, 
+    --    [HEALBOT_RENEWING_MIST]     = {id = 115151, CastTime = 0, Mana = 101, Level = 42}, 
+    --    [HEALBOT_UPLIFT]            = {id = 116670, CastTime = 0, Mana = 101, Level = 999}, 
+    --    [HEALBOT_SURGING_MIST]      = {id = 116694, CastTime = 0, Mana = 101, Level = 999}, 
+    --    [HEALBOT_ZEN_SPHERE]        = {id = 124081, CastTime = 0, Mana = 101, Level = 30},
+    --    [HEALBOT_ENVELOPING_MIST]   = {id = 132120, CastTime = 0, Mana = 101, Level = 34},
+    --    [HEALBOT_CHI_WAVE]          = {id = 132463, CastTime = 0, Mana = 101, Level = 30},
+    --    [HEALBOT_CHI_BURST]         = {id = 130651, CastTime = 0, Mana = 101, Level = 30},
     };
     
     if sID==268 then  -- Brewmaster
@@ -321,10 +321,10 @@ function HealBot_Init_Spells_Defaults(class)
     elseif sID==269 then  -- Windwalker
 
     elseif sID==270 then  -- Mistweaver
-        HealBot_Spells[HEALBOT_LIFE_COCOON]     = {id = 116849, CastTime = 0, Mana = 101, Level = 50}
-        HealBot_Spells[HEALBOT_REVIVAL]         = {id = 115310, CastTime = 0, Mana = 101, Level = 78}
-        HealBot_Spells[HEALBOT_UPLIFT]          = {id = 116670, CastTime = 0, Mana = 101, Level = 62}
-        HealBot_Spells[HEALBOT_SURGING_MIST]    = {id = 116694, CastTime = 0, Mana = 101, Level = 32}
+    --    HealBot_Spells[HEALBOT_LIFE_COCOON]     = {id = 116849, CastTime = 0, Mana = 101, Level = 50}
+    --    HealBot_Spells[HEALBOT_REVIVAL]         = {id = 115310, CastTime = 0, Mana = 101, Level = 78}
+    --    HealBot_Spells[HEALBOT_UPLIFT]          = {id = 116670, CastTime = 0, Mana = 101, Level = 62}
+    --    HealBot_Spells[HEALBOT_SURGING_MIST]    = {id = 116694, CastTime = 0, Mana = 101, Level = 32}
     end
   end
 

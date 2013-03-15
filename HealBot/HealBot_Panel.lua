@@ -840,16 +840,20 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                 xUnit = "raid"..j;
                 if UnitExists(xUnit) then
                     xGUID=UnitGUID(xUnit)
-                    _, _, subgroup, _, _, _, _, online, _, role, _ = GetRaidRosterInfo(j);
+                    _, _, subgroup, _, _, _, _, online, _, role, _, combatRole = GetRaidRosterInfo(j);
                     HealBot_GroupGUID[xGUID]=subgroup
-                    if role then
+                    if role and (string.lower(role)=="mainassist" or string.lower(role)=="maintank") then
                         if string.lower(role)=="mainassist" then
                             HealBot_unitRole[xGUID]=hbRole[HEALBOT_MAINASSIST]
                         elseif string.lower(role)=="maintank" then
                             HealBot_unitRole[xGUID]=hbRole[HEALBOT_MAINTANK]
                         end
                     else
-						aRole = UnitGroupRolesAssigned(xUnit)
+                        if combatRole and (combatRole=="DAMAGER" or combatRole=="HEALER" or combatRole=="TANK") then
+                            aRole = combatRole
+                        else
+                            aRole = UnitGroupRolesAssigned(xUnit)
+                        end
                         if aRole=="NONE" and HealBot_UnitRole[xGUID] then
                             aRole=HealBot_UnitRole[xGUID]
                         end
@@ -862,10 +866,11 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
 							HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORD_DPS]
 						else
 							HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORDS_UNKNOWN]
+                            aRole=nil
 						end
                     end
-                    if not HealBot_UnitRole[xGUID] then
-                        if aRole=="DAMAGER" or aRole=="HEALER" or aRole=="TANK" then HealBot_UnitRole[xGUID]=aRole end
+                    if aRole and not HealBot_UnitRole[xGUID] then
+                        HealBot_UnitRole[xGUID]=aRole
                     end
                     if (not online and not HealBot_Action_retUnitOffline(xGUID)) or HealBot_Action_retUnitOffline(xGUID) then
                         HealBot_Action_UnitIsOffline(xGUID)
@@ -891,9 +896,10 @@ function HealBot_Panel_PanelChanged(showHeaders, disableHealBot)
                         HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORD_DPS]
                     else
                         HealBot_unitRole[xGUID]=hbRole[HEALBOT_WORDS_UNKNOWN]
+                        aRole=nil
                     end
-                    if not HealBot_UnitRole[xGUID] then
-                        if aRole=="DAMAGER" or aRole=="HEALER" or aRole=="TANK" then HealBot_UnitRole[xGUID]=aRole end
+                    if aRole and not HealBot_UnitRole[xGUID] then
+                        HealBot_UnitRole[xGUID]=aRole
                     end
                     if (not UnitIsConnected(xUnit) and not HealBot_Action_retUnitOffline(xGUID)) or HealBot_Action_retUnitOffline(xGUID) then
                         HealBot_Action_UnitIsOffline(xGUID)

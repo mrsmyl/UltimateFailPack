@@ -1,5 +1,5 @@
-HEALBOT_VERSION   = "5.1.0.4";
-HEALBOT_ABOUT_URL = "http://www.healbot.info/"
+HEALBOT_VERSION   = "5.2.0.0";
+HEALBOT_ABOUT_URL = "http://healbot.darktech.org/"
 
 function HealBot_globalVars()
     -- Bandages and pots
@@ -81,6 +81,10 @@ function HealBot_globalVars()
     HEALBOT_GREATER_HEALING_WAVE            = GetSpellInfo(77472) or "--Greater Healing Wave";
     HEALBOT_HEALING_RAIN                    = GetSpellInfo(73920) or "--Healing Rain";
     HEALBOT_CHAIN_HEAL                      = GetSpellInfo(1064) or "--Chain Heal";
+    HEALBOT_HEALING_STREAM_TOTEM            = GetSpellInfo(5394) or "--Healing Stream Totem";
+    HEALBOT_HEALING_TIDE_TOTEM              = GetSpellInfo(108280) or "--Healing Tide Totem";
+    HEALBOT_MANA_STREAM_TOTEM               = GetSpellInfo(73393) or "--Mana Stream Totem";
+    HEALBOT_MANA_TIDE_TOTEM                 = GetSpellInfo(16190) or "--Mana Tide Totem";
 
     HEALBOT_SOOTHING_MIST                   = GetSpellInfo(115175) or "--Soothing Mist"
     HEALBOT_ZEN_MEDITATION                  = GetSpellInfo(115176) or "--Zen Meditation"
@@ -104,6 +108,7 @@ function HealBot_globalVars()
     HEALBOT_BONE_SHIELD                     = GetSpellInfo(49222) or "--Bone Shield";
     HEALBOT_HORN_OF_WINTER                  = GetSpellInfo(57330) or "--Horn of Winter";
     HEALBOT_DANCING_RUNE_WEAPON             = GetSpellInfo(49028) or "--Dancing Rune Weapon"
+	HEALBOT_SHROUD_OF_PURGATORY             = GetSpellInfo(116888) or "--Shroud of Purgatory";
 
     HEALBOT_MARK_OF_THE_WILD                = GetSpellInfo(1126) or "--Mark of the Wild";
     --HEALBOT_THORNS                          = GetSpellInfo(467) or "--Thorns";
@@ -126,7 +131,9 @@ function HealBot_globalVars()
     HEALBOT_A_CHEETAH                       = GetSpellInfo(5118) or "--Aspect of the Cheetah"
     HEALBOT_A_PACK                          = GetSpellInfo(13159) or "--Aspect of the Pack"
     HEALBOT_A_WILD                          = GetSpellInfo(20043) or "--Aspect of the Wild"
+    HEALBOT_A_IRON_HAWK                     = GetSpellInfo(109260) or "--Aspect of the Iron Hawk"
     HEALBOT_MENDPET                         = GetSpellInfo(136) or "--Mend Pet"
+    HEALBOT_DETERRENCE                      = GetSpellInfo(19263) or "--Deterrence"
 
     HEALBOT_ARCANE_BRILLIANCE               = GetSpellInfo(1459) or "--Arcane Brilliance";
     HEALBOT_DALARAN_BRILLIANCE              = GetSpellInfo(61316) or "--Dalaran Brilliance";
@@ -135,6 +142,11 @@ function HealBot_globalVars()
     HEALBOT_MOLTEN_ARMOR                    = GetSpellInfo(30482) or "--Molten Armor";
     HEALBOT_FOCUS_MAGIC                     = GetSpellInfo(54646) or "--Focus Magic";
     HEALBOT_FROST_ARMOR                     = GetSpellInfo(7302) or "--Frost Armor";
+    HEALBOT_TEMPORAL_SHIELD                 = GetSpellInfo(115610) or "--Temporal Shield"
+    HEALBOT_ICE_BARRIER                     = GetSpellInfo(11426) or "--Ice Barrier"
+    HEALBOT_INCANTERS_WARD                  = GetSpellInfo(1463) or "--Incanter's Ward"
+    HEALBOT_ICE_BLOCK                       = GetSpellInfo(45438) or "--Ice Block"
+    HEALBOT_ICE_WARD                        = GetSpellInfo(111264) or "--Ice Ward"
 
     HEALBOT_HANDOFPROTECTION                = GetSpellInfo(1022) or "--Hand of Protection";
     HEALBOT_BEACON_OF_LIGHT                 = GetSpellInfo(53563) or "--Beacon of Light";
@@ -214,6 +226,8 @@ function HealBot_globalVars()
     HEALBOT_ARCHANGEL                       = GetSpellInfo(81700) or "--Archangel";
     HEALBOT_DIVINE_INSIGHT                  = GetSpellInfo(109175) or "--Divine Insight";
     HEALBOT_HYMN_OF_HOPE                    = GetSpellInfo(64901) or "--Hymn of Hope";
+    HEALBOT_ANGELIC_BULWARK                 = GetSpellInfo(108945) or "--Angelic Bulwark"
+    HEALBOT_DISPERSION                      = GetSpellInfo(47585) or "--Dispersion"
 
     HEALBOT_CHAINHEALHOT                    = GetSpellInfo(70809) or "--Chain Heal";
     HEALBOT_TIDAL_WAVES                     = GetSpellInfo(51564) or "--Tidal Waves";
@@ -244,6 +258,12 @@ function HealBot_globalVars()
     HEALBOT_MANA_TEA                        = GetSpellInfo(115867) or "--Mana Tea"
     HEALBOT_STANCE_MONK_TIGER               = GetSpellInfo(103985) or "--Stance of the Fierce Tiger"
     HEALBOT_STANCE_MONK_SERPENT             = GetSpellInfo(115070) or "--Stance of the Wise Serpent"
+    HEALBOT_ELUSIVE_BREW                    = GetSpellInfo(115308) or "--Elusive Brew"
+    HEALBOT_FORTIFYING_BREW                 = GetSpellInfo(115203) or "--Fortifying Brew"
+    HEALBOT_DAMPEN_HARM                     = GetSpellInfo(122278) or "--Dampen Harm"
+    HEALBOT_DIFFUSE_MAGIC                   = GetSpellInfo(122783) or "--Diffuse Magic"
+    HEALBOT_AVERT_HARM                      = GetSpellInfo(115213) or "--Avert Harm"
+    HEALBOT_GUARD                           = GetSpellInfo(115295) or "--Guard"
 
     HEALBOT_DEMON_ARMOR                     = GetSpellInfo(687) or "--Demon Armor";
     HEALBOT_FEL_ARMOR                       = GetSpellInfo(28176) or "--Fel Armor";
@@ -252,6 +272,9 @@ function HealBot_globalVars()
     HEALBOT_LIFE_TAP                        = GetSpellInfo(1454) or "--Life Tap";
     HEALBOT_BLOOD_PACT                      = GetSpellInfo(6307) or "--Blood Pact";
     HEALBOT_DARK_INTENT                     = GetSpellInfo(109773) or "--Dark Intent";
+    HEALBOT_DARK_BARGAIN                    = GetSpellInfo(110913) or "--Dark Bargain"
+    HEALBOT_TWILIGHT_WARD                   = GetSpellInfo(6229) or "--Twilight Ward"
+    HEALBOT_UNENDING_RESOLVE                = GetSpellInfo(104773) or "--Unending Resolve"
 
     HEALBOT_BATTLE_SHOUT                    = GetSpellInfo(6673) or "--Battle Shout";
     HEALBOT_COMMANDING_SHOUT                = GetSpellInfo(469) or "--Commanding Shout";
@@ -262,10 +285,13 @@ function HealBot_globalVars()
     HEALBOT_SHIELD_BLOCK                    = GetSpellInfo(2565) or "--Shield Block";
     HEALBOT_ENRAGED_REGEN                   = GetSpellInfo(55694) or "--Enraged Regeneration";
     HEALBOT_SHIELD_BARRIER                  = GetSpellInfo(112048) or "--Shield Barrier"
+    HEALBOT_SAFEGUARD                       = GetSpellInfo(114029) or "--Safeguard"
 
     HEALBOT_EVOCATION                       = GetSpellInfo(12051) or "--Evocation";
 
     HEALBOT_VANISH                          = GetSpellInfo(1856) or "--Vanish";
+    HEALBOT_FEINT                           = GetSpellInfo(1966) or "--Feint"
+    HEALBOT_CLOAK_OF_SHADOWS                = GetSpellInfo(31224) or "--Cloak of Shadows"
 
     -- Res Spells
     HEALBOT_RESURRECTION                    = GetSpellInfo(2006) or "--Resurrection";
