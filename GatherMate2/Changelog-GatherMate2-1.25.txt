@@ -1,0 +1,12 @@
+tag 1.25
+30cb26e32ef89e2045dcc332a78abefadd5bb819
+Sal Scotto <sal.scotto@gmail.com>
+2013-03-05 10:48:30 -0500
+
+5.2 release
+
+
+--------------------
+
+Sal Scotto:
+	- toc bump and pickup new lmd
