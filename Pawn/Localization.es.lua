@@ -7,12 +7,18 @@
 -- Spanish resources
 ------------------------------------------------------------
 
--- Not currently used.  Update Localization.lua, Core.lua, and this file to enable testing.
-if false and (GetLocale() == "esES" or GetLocale() == "esMX") then
+-- *** Not currently used.  Update Localization.lua (add to list of languages), Core.lua (add to list of languages), and this file (remove "false and" at the bottom) to enable testing.
 
+local function PawnUseThisLocalization()
 PawnLocal =
 {
 
 }
-
 end
+
+if false and (GetLocale() == "esES" or GetLocale() == "esMX") then
+	PawnUseThisLocalization()
+end
+
+-- After using this localization or deciding that we don't need it, remove it from memory.
+PawnUseThisLocalization = nil

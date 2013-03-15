@@ -1285,7 +1285,7 @@ PawnMetaGemQualityLevels =
 
 PawnCogwheelQualityLevels =
 {
-	{ 476, PawnCogwheelData90Rare }, -- Retinal Armor
+	{ 417, PawnCogwheelData90Rare }, -- Actual gem requirement; Ghost Iron Dragonling is 450
 	{ 0, PawnCogwheelData85Rare }, -- Bio-Optic Killshades
 }
 

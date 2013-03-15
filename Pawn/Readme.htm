@@ -335,12 +335,6 @@ be helpful; the error text includes useful information about where the error
 occurred.  Any information you can provide to help Vger track down the bug is great.</p>
 <p>Also, when reporting bugs, please make sure that you mention which language 
 you play World of Warcraft in.</p>
-<h3>Non-English versions of World of Warcraft</h3>
-<p>Unlike most addons, Pawn will not function properly in a language that it 
-hasn't been translated into.&nbsp; Pawn needs to be able to "read" the text on 
-the tooltips, and it can't do that in languages it hasn't been translated into.&nbsp; 
-If you try to use Pawn in a language that it doesn't understand, you'll get an 
-error message when you log in.</p>
 <h3>Slash command</h3>
 <p>You can also open Pawn by typing <strong>/pawn</strong> into a chat box.</p>
 <h3>Key bindings</h3>
@@ -556,6 +550,8 @@ and Pawn.</p>
 	you're ready to turn in the quest.)</li>
 	<li>The Quest Upgrade Advisor is not currently compatible with some quest 
 	log addons, such as QuestGuru.</li>
+	<li>The Quest Upgrade Advisor doesn't work with some UI skinning addons, 
+	such as ElvUI with ElvUI Skins, and probably several others.</li>
 	<li>I haven't fixed the bug yet where for some scales Pawn will suggest that 
 	you include two of the same cogwheel for your engineer's Retinal Armor.</li>
 	<li>I think that Pawn isn't correctly scanning the gear in the equipment 
@@ -565,6 +561,47 @@ and Pawn.</p>
 	<a href="Version%20history.htm"><em>version history</em></a><em> document.</em></li>
 </ul>
 <h2>Updates</h2>
+<h3>Version 1.8.4</h3>
+<ul>
+	<li>Priests will no longer incorrectly see bows, crossbows, and guns as 
+	potential upgrades when using the built-in Wowhead scales.</li>
+</ul>
+<h3>Version 1.8.3</h3>
+<ul>
+	<li>Sha-touched items from Heart of Fear and Terrace of Eternal Spring (all 
+	difficulties) will now always be valued (for base value) as if you've 
+	completed Wrathion's Chapter II questline and can add a prismatic socket to 
+	the item.</li>
+	<li>Added a Brailian Portuguese translation.&nbsp; Thanks maxmag!</li>
+	<li>Includes minor updates to the other translations.</li>
+	<li>Fixed a couple minor display issues on the Compare tab when one item had 
+	sockets and the other did not.</li>
+	<li>Thunderforged and Heroic Thunderforged items on the English PTR will no 
+	longer show (?) on their tooltips.</li>
+</ul>
+<h3>Version 1.8.2</h3>
+<ul>
+	<li>Fixed a bug in average item level calculations when inspecting hunters.&nbsp; 
+	(Their ranged weapons were only getting counted for half the appropriate 
+	level.)</li>
+	<li>The Reforging Advisor will now also show up when you right-click an item 
+	while talking to an arcane reforger.</li>
+</ul>
+<h3>Version 1.8.1</h3>
+<ul>
+	<li>This version of Pawn now includes French support, thanks to translation 
+	volunteers othor and Snuff, and an untested Traditional Chinese translation 
+	based on work by BNSSNB.</li>
+	<li>Reduced Pawn's memory usage by about 35% (at least on my PC) by 
+	optimizing the way translations are loaded.&nbsp; Pawn's memory usage should 
+	return to about where it was back when it was for a single language only.</li>
+	<li>Corrected a calculation problem where the Ghost Iron Dragonling trinket 
+	was undervalued because Pawn suggested Cataclysm cogwheels for it instead of 
+	Mists of Pandaria cogwheels.&nbsp; (Thanks durandal42!)</li>
+	<li>Fixed a minor problem that could occur when using the Compare tab if you 
+	used Pawn in the past (or on another computer), then stopped using it, then 
+	sold some of your best items, and then started using it again.</li>
+</ul>
 <h3>Version 1.8</h3>
 <ul>
 	<li>This version of Pawn now works for German and Russian in addition to 

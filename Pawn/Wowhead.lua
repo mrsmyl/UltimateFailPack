@@ -73,7 +73,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.PaladinTank,
 	"f58cba",
 	{
-		["MasteryRating"] = 100, ["HitRating"] = 63, ["Armor"] = 62, ["ExpertiseRating"] = 41, ["HasteRating"] = 39, ["Strength"] = 38, ["DodgeRating"] = 34, ["ParryRating"] = 34, ["Stamina"] = 29, ["IsDagger"] = -1000000, ["IsFist"] = -1000000, ["IsStaff"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsWand"] = -1000000, ["IsOffHand"] = -1000000, ["MetaSocketEffect"] = 16000
+		["MasteryRating"] = 100, ["HitRating"] = 63, ["Armor"] = 62, ["ExpertiseRating"] = 41, ["HasteRating"] = 39, ["Strength"] = 38, ["DodgeRating"] = 34, ["ParryRating"] = 34, ["Stamina"] = 29, ["IsDagger"] = -1000000, ["IsFist"] = -1000000, ["IsStaff"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsWand"] = -1000000, ["IsOffHand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1, -- normalize values
 	2 -- hide 2H upgrades
@@ -85,7 +85,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.PaladinRetribution,
 	"f58cba",
 	{
-		["Speed"] = 100, ["MeleeDps"] = 98, ["Strength"] = 58, ["ExpertiseRating"] = 41, ["HitRating"] = 41, ["HasteRating"] = 32, ["MasteryRating"] = 26, ["Ap"] = 24, ["CritRating"] = 24, ["Stamina"] = .1, ["IsDagger"] = -1000000, ["IsFist"] = -1000000, ["IsStaff"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsWand"] = -1000000, ["IsOffHand"] = -1000000, ["MetaSocketEffect"] = 16000
+		["Speed"] = 100, ["MeleeDps"] = 98, ["Strength"] = 58, ["ExpertiseRating"] = 41, ["HitRating"] = 41, ["HasteRating"] = 32, ["MasteryRating"] = 26, ["Ap"] = 24, ["CritRating"] = 24, ["Stamina"] = .1, ["IsDagger"] = -1000000, ["IsFist"] = -1000000, ["IsStaff"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsWand"] = -1000000, ["IsOffHand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1, -- normalize values
 	1 -- hide 1H upgrades
@@ -178,7 +178,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.PriestDiscipline,
 	"e0e0e0",
 	{
-		["Intellect"] = 100, ["SpellPower"] = 81, ["Spirit"] = 80, ["CritRating"] = 60, ["MasteryRating"] = 55, ["HasteRating"] = 50, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsMail"] = -1000000, ["IsLeather"] = -1000000, ["IsShield"] = -1000000, ["IsAxe"] = -1000000, ["Is2HAxe"] = -1000000, ["IsFist"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["Is2HMace"] = -1000000, ["IsOffHand"] = -1000000, ["MetaSocketEffect"] = 16000
+		["Intellect"] = 100, ["SpellPower"] = 81, ["Spirit"] = 80, ["CritRating"] = 60, ["MasteryRating"] = 55, ["HasteRating"] = 50, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsMail"] = -1000000, ["IsLeather"] = -1000000, ["IsShield"] = -1000000, ["IsAxe"] = -1000000, ["Is2HAxe"] = -1000000, ["IsFist"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["Is2HMace"] = -1000000, ["IsOffHand"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1 -- normalize values
 )
@@ -189,7 +189,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.PriestHoly,
 	"e0e0e0",
 	{
-		["Intellect"] = 100, ["SpellPower"] = 85, ["Spirit"] = 81, ["HasteRating"] = 62, ["CritRating"] = 43, ["MasteryRating"] = 33, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsMail"] = -1000000, ["IsLeather"] = -1000000, ["IsShield"] = -1000000, ["IsAxe"] = -1000000, ["Is2HAxe"] = -1000000, ["IsFist"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["Is2HMace"] = -1000000, ["IsOffHand"] = -1000000, ["MetaSocketEffect"] = 16000
+		["Intellect"] = 100, ["SpellPower"] = 85, ["Spirit"] = 81, ["HasteRating"] = 62, ["CritRating"] = 43, ["MasteryRating"] = 33, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsMail"] = -1000000, ["IsLeather"] = -1000000, ["IsShield"] = -1000000, ["IsAxe"] = -1000000, ["Is2HAxe"] = -1000000, ["IsFist"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["Is2HMace"] = -1000000, ["IsOffHand"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1 -- normalize values
 )
@@ -200,7 +200,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.PriestShadow,
 	"e0e0e0",
 	{
-		["Intellect"] = 100, ["SpellPower"] = 81, ["HitRating"] = 61, ["Spirit"] = 61, ["HasteRating"] = 60, ["CritRating"] = 44, ["MasteryRating"] = 38, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsMail"] = -1000000, ["IsLeather"] = -1000000, ["IsShield"] = -1000000, ["IsAxe"] = -1000000, ["Is2HAxe"] = -1000000, ["IsFist"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["Is2HMace"] = -1000000, ["IsOffHand"] = -1000000, ["MetaSocketEffect"] = 16000
+		["Intellect"] = 100, ["SpellPower"] = 81, ["HitRating"] = 61, ["Spirit"] = 61, ["HasteRating"] = 60, ["CritRating"] = 44, ["MasteryRating"] = 38, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsMail"] = -1000000, ["IsLeather"] = -1000000, ["IsShield"] = -1000000, ["IsAxe"] = -1000000, ["Is2HAxe"] = -1000000, ["IsFist"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["Is2HMace"] = -1000000, ["IsOffHand"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1 -- normalize values
 )
@@ -265,7 +265,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.ShamanEnhancement,
 	"6e95ff",
 	{
-		["Agility"] = 100, ["HitRating"] = 99, ["ExpertiseRating"] = 99, ["MeleeDps"] = 91, ["MasteryRating"] = 45, ["Strength"] = 42, ["CritRating"] = 41, ["Ap"] = 40, ["HasteRating"] = 37, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsWand"] = -1000000, ["MetaSocketEffect"] = 16000
+		["Agility"] = 100, ["HitRating"] = 99, ["ExpertiseRating"] = 99, ["MeleeDps"] = 91, ["MasteryRating"] = 45, ["Strength"] = 42, ["CritRating"] = 41, ["Ap"] = 40, ["HasteRating"] = 37, ["Stamina"] = .1, ["IsPlate"] = -1000000, ["IsPolearm"] = -1000000, ["IsSword"] = -1000000, ["Is2HSword"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1, -- normalize values
 	2 -- hide 2H upgrades

@@ -7,8 +7,7 @@
 -- German resources
 ------------------------------------------------------------
 
-if GetLocale() == "deDE" then
-
+local function PawnUseThisLocalization()
 PawnLocal =
 {
 	AsteriskTooltipLine = "|TInterface\\AddOns\\Pawn\\Textures\\Question:0|t Pawn hat für einige Attribute keine Wertung vergeben.",
@@ -245,6 +244,7 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Dps = "^%(([%d%.,]+) Schaden pro Sekunde%)$",
 		DpsAdd = "^Erhöht ([%d%.,]+) Schaden pro Sekunde$",
 		Duration = "^Dauer:",
+		Elite = "^Elite$",
 		EnchantmentArmorKit = "^Verstärkt %(%+([%d%.,]+) Rüstung%)$",
 		EnchantmentCounterweight = "^Gegengewicht %(%+([%d%.,]+) Tempowertung%)",
 		EnchantmentFieryWeapon = "^Feurige Waffe$",
@@ -263,8 +263,13 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Haste2 = "^UNUSED$",
 		HeirloomLevelRange = "^Benötigt Stufe %d bis ([%d%.,]+)",
 		HeirloomXpBoost = "^Anlegen: Erhaltene Erfahrung",
+		HeirloomXpBoost2 = "^UNUSED$",
+		Heroic = "^Heroisch$",
+		HeroicElite = "^Heroisch, Elite$",
+		HeroicThunderforged = "^Heroisch, Donnergeschmiedet$", -- Needs review
 		Hit = "^%+?([%d%.,]+) Trefferwert$",
 		Hit2 = "^UNUSED$",
+		Hit3 = "^UNUSED$",
 		Hp5 = "^Anlegen: Stellt ([%d%.,]+) Gesundheit alle 5 Sek%. wieder her%.?$",
 		Hp52 = "^Anlegen: Stellt alle 5 Sek%. ([%d%.,]+) Gesundheit wieder her%.?$",
 		Hp53 = "^%+?([%d%.,]+) Gesundheit alle 5 [sS]ek%.?$",
@@ -277,17 +282,10 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Mastery = "^%+?([%d%.,]+) Meisterschaft$",
 		Mastery2 = "^UNUSED$",
 		MetaGemRequirements = "|cff%x%x%x%x%x%xBenötigt",
-		MobInfoCompatibility = "^|cff00e0ffGedropt von",
-		Mp5 = "^%+?([%d%.,]+) Mana pro 5 [sS]ek%.?$",
-		Mp52 = "^%+?([%d%.,]+) Mana alle 5 [sS]ek%.?$",
-		Mp53 = "^%+?([%d%.,]+) Mana pro 5 [sS]ek%.?$",
-		Mp54 = "^%+?([%d%.,]+) Mana alle 5 [sS]ek%.?$",
-		Mp55 = "^%Manaregeneration ([%d%.,]+) pro 5 Sek%.?$",
 		MultiStatSeparator1 = "und",
 		NormalizationEnchant = "^Verzaubert: (.*)$",
 		NormalizationReforge = "^(.*) %(Umgeschmiedet (.*)%)$",
 		OnlyFitsInMetaGemSlot = "\"Metaedelsteine können nur in Sockel der Kategorie Meta eingesetzt werden.%.\"$",
-		OutfitterCompatibility = "^Used by outfits:",
 		Parry = "^%+?([%d%.,]+) Parieren$",
 		Parry2 = "^UNUSED$",
 		Pattern = "Muster:",
@@ -295,9 +293,11 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Plate = "^Platte$",
 		Polearm = "^Stangenwaffe$",
 		PvPPower = "^%+?([%d%.,]+) PVP-Macht$",
+		RaidFinder = "^Schlachtzugsbrowser$",
 		Recipe = "Rezept:",
 		Requires2 = "^Benötigt",
 		Resilience = "^%+?([%d%.,]+) P[vV]P[- ]Abhärtung$",
+		Resilience2 = "^UNUSED$",
 		Schematic = "Vorlage:",
 		Scope = "^Zielfernrohr %(%+([%d%.,]+) Schaden%)$",
 		ScopeCrit = "^Zielfernrohr %(%+([%d%.,]+) kritischer Trefferwert%)$",
@@ -309,11 +309,6 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Speed = "^Tempo ([%d%.,]+)$",
 		Speed2 = "^UNUSED$",
 		SpellPower = "^%+?([%d%.,]+) Zaubermacht$",
-		SpellPowerArcane = "^%+([%d%.,]+) Arkanschaden$",
-		SpellPowerFire = "^%+([%d%.,]+) Feuerschaden$",
-		SpellPowerFrost = "^%+([%d%.,]+) Frostschaden$",
-		SpellPowerNature = "^%+([%d%.,]+) Naturschaden$",
-		SpellPowerShadow = "^%+([%d%.,]+) Schattenschaden$",
 		Spirit = "^%+?([-%d%.,]+) Willenskraft$",
 		Staff = "^Stab$",
 		Stamina = "^%+?([-%d%.,]+) Ausdauer$",
@@ -322,6 +317,7 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		TempestKeep = "^Festung der Stürme$",
 		TemporaryBuffMinutes = "^.+%(%d+ Min%)$",
 		TemporaryBuffSeconds = "^.+%(%d+ Sek%)$",
+		Thunderforged = "^Donnergeschmiedet$", -- Needs review
 		UpgradeLevel = "^Upgrade Level:",
 		Use = "Benutzen:",
 		Wand = "^Zauberstab$",
@@ -569,5 +565,11 @@ Für weitere Informationen hierzu siehe readme.htm.]=],
 		WarriorTank = "Krieger: Schutz",
 	},
 }
-
 end
+
+if GetLocale() == "deDE" then
+	PawnUseThisLocalization()
+end
+
+-- After using this localization or deciding that we don't need it, remove it from memory.
+PawnUseThisLocalization = nil

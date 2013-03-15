@@ -31,8 +31,11 @@ PawnKillLines =
 {
 	"^ \n$", -- The blank line before set items before WoW 2.3
 	" %(%d+/%d+%)$", -- The (1/8) on set items for all versions of WoW
-	L.MobInfoCompatibility, -- "Dropped By" in blue... Mod compatibility: MobInfo-2 (should match mifontLightBlue .. MI_TXT_DROPPED_BY)
 }
+-- MobInfo-2 compatibility
+if MI_LightBlue and MI_TXT_DROPPED_BY then
+	tinsert(PawnKillLines, "^" .. MI_LightBlue .. MI_TXT_DROPPED_BY)
+end
 
 -- Lines that begin with any of the following strings will not be searched for separator strings.
 PawnSeparatorIgnorePrefixes =
@@ -79,11 +82,6 @@ PawnNormalizationRegexes =
 PawnRegexes =
 {
 	-- ========================================
-	-- Strings that are ignored for compatibility with other mods
-	-- ========================================
-	{L.OutfitterCompatibility}, -- Mod compatibility: Outfitter
-	
-	-- ========================================
 	-- Common strings that are ignored (rare ones are at the bottom of the file)
 	-- ========================================
 	{PawnGameConstant(ITEM_QUALITY0_DESC)}, -- Poor
@@ -93,11 +91,15 @@ PawnRegexes =
 	{PawnGameConstant(ITEM_QUALITY4_DESC)}, -- Epic
 	{PawnGameConstant(ITEM_QUALITY5_DESC)}, -- Legendary
 	{PawnGameConstant(ITEM_QUALITY7_DESC)}, -- Heirloom
-	{PawnGameConstant(ELITE)}, -- Elite (one version of Kaolan's Withering Necklace)
-	{"^" .. PawnGameConstantUnwrapped(ITEM_HEROIC)}, -- Heroic (Thrall's Chestguard of Triumph, level 258 version) (can be followed with a rarity in colorblind mode, or "Elite")
-	{PawnGameConstant(RAID_FINDER)}, -- Raid Finder
+	{L.RaidFinder}, -- Raid Finder
+	{L.Heroic}, -- Items from heroic dungeons
+	{L.Elite}, -- one version of Regail's Band of the Endless (http://www.wowhead.com/item=90517)
+	{L.HeroicElite}, -- one version of Regail's Band of the Endless (http://www.wowhead.com/item=90503)
+	{L.Thunderforged}, -- one version of Shoulders of the Crackling Protector (http://ptr.wowhead.com/item=96329)
+	{L.HeroicThunderforged}, -- one version of Shoulders of the Crackling Protector (http://ptr.wowhead.com/item=97073)
 	{"^" .. ITEM_LEVEL}, -- Item Level 200
 	{L.UpgradeLevel}, -- Upgrade Level 0/2 (ITEM_UPGRADE_TOOLTIP_FORMAT)
+	{PawnGameConstantIgnoredPlaceholder(EQUIPMENT_SETS)}, -- String is from the Blizzard UI, but only used by Outfitter
 	{PawnGameConstant(ITEM_UNSELLABLE)}, -- No sell price
 	{PawnGameConstant(ITEM_SOULBOUND)}, -- Soulbound
 	{PawnGameConstant(ITEM_BIND_ON_EQUIP)}, -- Binds when equipped
@@ -159,6 +161,7 @@ PawnRegexes =
 	-- ========================================
 	{L.HeirloomLevelRange, "MaxScalingLevel"}, -- Scaling heirloom items
 	{L.HeirloomXpBoost, "XpBoost", 1, PawnMultipleStatsFixed}, -- Experience-granting heirloom items
+	{L.HeirloomXpBoost2, "XpBoost", 1, PawnMultipleStatsFixed}, -- unused in English
 	{PawnGameConstant(INVTYPE_RANGED), "IsRanged", 1, PawnMultipleStatsFixed}, -- Ranged
 	{PawnGameConstant(INVTYPE_RANGEDRIGHT), "IsRanged", 1, PawnMultipleStatsFixed}, -- Ranged (but the translation is different in Russian)
 	{PawnGameConstant(INVTYPE_WEAPON), "IsOneHand", 1, PawnMultipleStatsFixed}, -- One-Hand
@@ -201,7 +204,9 @@ PawnRegexes =
 	{L.ScopeRangedCrit, "CritRating"}, -- Heartseeker Scope; Pawn doesn't distinguish between ranged and hybrid crit
 	{L.Hit, "HitRating"}, -- 3% hit scope
 	{L.Hit2, "HitRating"}, -- unused in English
+	{L.Hit3, "HitRating"}, -- unused in English
 	{L.Resilience, "ResilienceRating"}, -- Mystic Dawnstone
+	{L.Resilience2, "ResilienceRating"}, -- unused in English
 	{L.PvPPower, "SpellPenetration"}, -- Stormy Chalcedony
 	{L.EnchantmentCounterweight, "HasteRating"},
 	{L.Haste, "HasteRating"}, -- Leggings of the Betrayed
@@ -209,26 +214,16 @@ PawnRegexes =
 	{L.Mastery, "MasteryRating"}, -- Zen Dream Emerald
 	{L.Mastery2, "MasteryRating"}, -- unused in English
 	{L.Ap, "Ap"},
-	{L.Mp5, "Spirit", 2, PawnSingleStatMultiplier},  -- Lesser Sledgemace of the Elder (counting 1 MP5 = 2 Spirit)
-	{L.Mp52, "Spirit", 2, PawnSingleStatMultiplier},  -- ? (counting 1 MP5 = 2 Spirit)
-	{L.Mp53, "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
-	{L.Mp54, "Spirit", 2, PawnSingleStatMultiplier}, -- ? (counting 1 MP5 = 2 Spirit)
-	{L.Mp55, "Spirit", 2, PawnSingleStatMultiplier}, -- Classic-era bracers enchantment (counting 1 MP5 = 2 Spirit)
 	{L.Hp5, "Stamina", 3, PawnSingleStatMultiplier}, -- (counting 1 HP5 = 3 Stamina)
 	{L.Hp52, "Stamina", 3, PawnSingleStatMultiplier}, -- Demon's Blood (counting 1 HP5 = 3 Stamina)
 	{L.Hp53, "Stamina", 3, PawnSingleStatMultiplier}, -- Aquamarine Signet of Regeneration
-	{L.Hp54, "Stamina", 3, PawnSingleStatMultiplier}, -- Anglesite Choker of Regeneration
+	{L.Hp54, "Stamina", 3, PawnSingleStatMultiplier}, -- Lifestone
 	{L.EnchantmentHealth, "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +100 health head/leg enchantment (counting 1 HP = 1/12.5 Stamina)
 	{L.EnchantmentHealth2, "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +150 health enchantment (counting 1 HP = 1/12.5 Stamin)
 	{L.Armor, "Armor"}, -- normal armor and cloak armor enchantments
 	{L.Armor2, "Armor"}, -- unused in English
 	{L.EnchantmentArmorKit, "Armor"}, -- armor kits
 	{L.SpellPower, "SpellPower"}, -- enchantments
-	{L.SpellPowerArcane, "SpellPower"}, -- ...of Arcane Wrath
-	{L.SpellPowerFire, "SpellPower"}, -- ...of Fiery Wrath
-	{L.SpellPowerFrost, "SpellPower"}, -- ...of Frozen Wrath
-	{L.SpellPowerNature, "SpellPower"}, -- ...of Nature's Wrath
-	{L.SpellPowerShadow, "SpellPower"}, -- ...of Shadow Wrath
 	{PawnGameConstant(EMPTY_SOCKET_RED), "RedSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_YELLOW), "YellowSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_BLUE), "BlueSocket", 1, PawnMultipleStatsFixed},
@@ -236,7 +231,7 @@ PawnRegexes =
 	{PawnGameConstant(EMPTY_SOCKET_NO_COLOR), "PrismaticSocket", 1, PawnMultipleStatsFixed}, -- unused
 	{PawnGameConstant(EMPTY_SOCKET_META), "MetaSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_COGWHEEL), "CogwheelSocket", 1, PawnMultipleStatsFixed}, -- level 85+ epic Engineering crafted helms (Retinal Armor)
-	{PawnGameConstant(EMPTY_SOCKET_HYDRAULIC), "ShaTouchedSocket", 1, PawnMultipleStatsFixed}, -- Sha-Touched items (Kri'tak)
+	{PawnGameConstant(EMPTY_SOCKET_HYDRAULIC), "ShaTouchedSocket", 1, PawnMultipleStatsFixed, "PrismaticSocket", 1, PawnMultipleStatsFixed}, -- Sha-Touched items (Kri'tak)
 	{L.OnlyFitsInMetaGemSlot, "MetaSocketEffect", 1, PawnMultipleStatsFixed}, -- Actual meta gems, not the socket
 	{PawnGameConstant(PawnLocal.CrystalOfFearName)}, -- Actual crystals of fear, not the socket
 
@@ -244,7 +239,8 @@ PawnRegexes =
 	-- Rare strings that are ignored (common ones are at the top of the file)
 	-- ========================================
 	{'^"'}, -- Flavor text
-	{PawnGameConstantIgnoredPlaceholder(ITEM_REQ_SKILL)}, -- But "Requires level XX to YY" we DO care about.
+	{PawnGameConstantIgnoredPlaceholder(ITEM_MIN_LEVEL)}, -- "Requires Level XX"... but "Requires level XX to YY" we DO care about.
+	{PawnGameConstantIgnoredPlaceholder(ITEM_REQ_SKILL)}, -- "Requires SKILL (XX)"
 	{L.Requires2}, -- unused in English
 	{L.Season}, -- Honor and Conquest gear
 	{L.BladesEdgeMountains}, -- Felsworn Gas Mask

@@ -12,6 +12,14 @@
 	I got tired of the version history section of the <a href="Readme.htm">
 	readme</a> being longer than the rest of it, so I moved parts here.</p>
 <h2>FAQ</h2>
+<h3>Why doesn't Pawn work in my language?</h3>
+<p>Unlike most addons, Pawn will not function properly in a language that it 
+hasn't been translated into.&nbsp; Pawn needs to be able to "read" the text on 
+the tooltips, and it can't do that in languages it hasn't been translated into.&nbsp; 
+If you try to use Pawn in a language that it doesn't understand, you'll get an 
+error message when you log in.</p>
+<p>If you're interested in helping translate Pawn to your native language, let 
+me know!&nbsp; (I'll warn you up front that it's not an easy untertaking!)</p>
 <h3>Why doesn't Pawn let me set a cap for a stat (hit, expertise, haste, ...) 
 and then a value above the cap and a value below the cap?</h3>
 <p>The core problem is that Pawn needs a way for you to, for each character, 
@@ -52,11 +60,24 @@ in-game item decisions.</p>
 <p>There are many features that I&#39;d like to add in future versions of Pawn, 
 besides fixing issues listed in the &quot;known issues&quot; below.</p>
 <ul>
-	<li>Patch 5.2: New "nimble" gem cuts are added, and Pawn needs to support 
-	them.</li>
+	<li>New MoP-level "nimble" gem cuts are added, and Pawn needs to support 
+	them if they become available in-game.</li>
 	<li>I'd like to make it so that Pawn only shows scales for your current 
 	specialization by default.&nbsp; Most people don't care to see all three (or 
-	four) of their scales and don't know how to turn them off.</li>
+	four) of their scales and don't know how to turn them off.<ul>
+		<li>At the same time I do this I will probably add some tech so that 
+		instead of this...<br />
+		Monk: brewmaster<br />
+		Monk: mistweaver<br />
+		Monk: windwalker<br />
+		...a monk with mistweaver and windwalker as her specs would see this...<br />
+		(<span style="font-family: 'Segoe UI Symbol';">➕</span>) Mistweaver<br />
+		(<span style="font-family: 'Segoe UI Symbol';">🔪</span>) Windwalker</li>
+		<li>I'd probably want to have a per-character checkbox at the bottom of 
+		the scale list, "Pick scales for me".&nbsp; It automatically turns off 
+		if you shift-click a scale.</li>
+	</ul>
+	</li>
 	<li>I'd like to make it so that when tooltip scale values are turned off 
 	(the default), in addition to your current best items and upgrades, Pawn can 
 	optionally also show you sidegrades (items that are not identical to your 
@@ -91,13 +112,20 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 		already knows what your best items for each of your scales is.</li>
 	</ul>
 	</li>
+	<li>It would be neat if Pawn let you modify the built-in scales, and then it 
+	would apply the specific changes that you made over the new scale when the 
+	built-in one updated.&nbsp; That would allow you to adjust for hit and 
+	expertise caps, disable certain stats or weapon types, and so on.</li>
 	<li>Pawn has reported compatibility problems with the mod BagSync.  I'll look into it.</li>
 	<li>Another possible source for up-to-date example scales is
 	<a href="http://www.askmrrobot.com/">Ask Mr. Robot</a>.<ul>
 		<li>Apparently that's where Wowhead's scales come from now anyway...?</li>
 	</ul>
 	</li>
-	<li>I could add the upgrade arrow icon to the inventory icon that Pawn adds 
+	<li>I can add more upgrade arrows to more places, like your own inventory.&nbsp; 
+	(The main reason I haven't done this already is that I was worried about the 
+	performance implications.)</li>
+	<li>I could add the upgrade arrow icon to the icon that Pawn adds 
 	to the left of item link windows.</li>
 	<li>I should add a feature so that warriors with Titan&#39;s Grip can have their 
 	two best two-handed weapons tracked for upgrades instead of just one.</li>
@@ -114,8 +142,8 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 	a pretty big change though, and it might only really affect rogues.)</li>
 	<li>Someday I&#39;d still like to use some new WoW features that were added in 
 	patch 3.2 (the GetItemStats API) to drastically speed up Pawn&#39;s 
-	calculations, reduce the complexity of the code, and allow 
-	the English version of Pawn to work in other language versions of WoW.&nbsp; 
+	calculations, reduce the complexity of the code, and significantly reduce 
+	the amount of time and effort it takes to translate Pawn.&nbsp; 
 	Unfortunately there are several limitations:<ul>
 		<li>GetItemStats can&#39;t return stats for the &quot;current&quot; version of an 
 		item, so I wouldn&#39;t have a way to see what gems, enchantments, and 

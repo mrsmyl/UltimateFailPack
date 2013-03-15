@@ -24,7 +24,7 @@ PawnMultipleStatsExtract = "_MultipleExtract"
 ------------------------------------------------------------
 
 -- The languages that Pawn is currently translated into (http://www.wowpedia.org/API_GetLocale)
-PawnLocalizedLanguages = { "deDE", "enUS", "enGB", "ruRU", "zhCN" }
+PawnLocalizedLanguages = { "deDE", "enUS", "enGB", "frFR", "ptBR", "ruRU", "zhCN", "zhTW" }
 
 -- NOTE: These functions are not super-flexible for general purpose; they don't properly handle all sorts of Lua pattern matching syntax
 -- that could be in strings, like "." and so on.  But they've been sufficient so far.

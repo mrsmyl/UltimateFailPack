@@ -1229,13 +1229,13 @@ function PawnUI_CompareItems()
 			PawnUI_AddComparisonHeaderLine(LastFoundHeader)
 			LastFoundHeader = nil
 		end
-		PawnUI_AddComparisonStatLineNumbers(PawnUIFrame_CompareColoredSockets_Text, HasSockets1, HasSockets2)
+		PawnUI_AddComparisonStatLineNumbers(PawnLocal.UI.CompareColoredSockets, HasSockets1, HasSockets2)
 	end
 
 	local _, UseRed, UseYellow, UseBlue, TotalSocketValue1 = PawnGetItemValue(ItemStats1, Item1.Level, ItemSocketBonusStats1, PawnUICurrentScale,false, true, true)
-	local ProperlySocket1 = not UseRed and not UseYellow and not UseBlue and ItemSocketBonusStats1 ~= nil
+	local ProperlySocket1 = HasSockets1 and not UseRed and not UseYellow and not UseBlue and ItemSocketBonusStats1 ~= nil
 	local _, UseRed, UseYellow, UseBlue, TotalSocketValue2 = PawnGetItemValue(ItemStats2, Item2.Level, ItemSocketBonusStats2, PawnUICurrentScale, false, true, true)
-	local ProperlySocket2 = not UseRed and not UseYellow and not UseBlue and ItemSocketBonusStats2 ~= nil
+	local ProperlySocket2 = HasSockets2 and not UseRed and not UseYellow and not UseBlue and ItemSocketBonusStats2 ~= nil
 	if ProperlySocket1 then ProperlySocket1 = YES end
 	if ProperlySocket2 then ProperlySocket2 = YES end
 	if ProperlySocket1 or ProperlySocket2 then
@@ -1365,7 +1365,7 @@ function PawnUI_CompareItems()
 	if Value1 > 0 then
 		PawnUICompareItemScore1:SetText(Value1String)
 		PawnUICompareItemScore1:SetVertexColor(r, g, b)
-		if Value1 > Value2 then
+		if Value1 > Value2 and Value2 > 0 then
 			PawnUICompareItemScoreDifference1:SetText("(+" .. VgerCore.FormatCompactDecimal(Value1 - Value2) .. ")")
 			local Increase = (Value1 - Value2) / Value2
 			if Increase < PawnBigUpgradeThreshold then
@@ -1378,7 +1378,7 @@ function PawnUI_CompareItems()
 	if Value2 > 0 then
 		PawnUICompareItemScore2:SetText(Value2String)
 		PawnUICompareItemScore2:SetVertexColor(r, g, b)
-		if Value2 > Value1 then
+		if Value2 > Value1 and Value1 > 0 then
 			PawnUICompareItemScoreDifference2:SetText("(+" .. VgerCore.FormatCompactDecimal(Value2 - Value1) .. ")")
 			local Increase = (Value2 - Value1) / Value1
 			if Increase < PawnBigUpgradeThreshold then
@@ -2000,7 +2000,7 @@ end
 ------------------------------------------------------------
 
 function PawnUI_ReforgingAdvisor_Initialize()
-	hooksecurefunc("ReforgingFrame_AddItemClick", PawnUI_OnReforgingUpdate)
+	hooksecurefunc("ReforgingFrame_Update", PawnUI_OnReforgingUpdate)
 end
 
 function PawnUI_OnReforgingUpdate()

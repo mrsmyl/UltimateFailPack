@@ -7,9 +7,7 @@
 -- English resources
 ------------------------------------------------------------
 
-local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "ruRU" and Locale ~= "zhCN" then
-
+local function PawnUseThisLocalization()
 PawnLocal =
 {
 	AsteriskTooltipLine = "|TInterface\\AddOns\\Pawn\\Textures\\Question:0|t Special effects not included in the value.",
@@ -248,6 +246,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Dps = "^%(([%d%.,]+) damage per second%)$",
 		DpsAdd = "^Adds ([%d%.,]+) damage per second$",
 		Duration = "^Duration:",
+		Elite = "^Elite$",
 		EnchantmentArmorKit = "^Reinforced %(%+([%d%.,]+) Armor%)$",
 		EnchantmentCounterweight = "^Counterweight %(%+([%d%.,]+) Haste%)",
 		EnchantmentFieryWeapon = "^Fiery Weapon$",
@@ -266,12 +265,17 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Haste2 = "^UNUSED$",
 		HeirloomLevelRange = "^Requires level %d+ to (%d+)",
 		HeirloomXpBoost = "^Equip: Experience gained",
+		HeirloomXpBoost2 = "^UNUSED$",
+		Heroic = "^Heroic$",
+		HeroicElite = "^Heroic Elite$",
+		HeroicThunderforged = "^Heroic Thunderforged$",
 		Hit = "^%+?([%d%.,]+) Hit$",
 		Hit2 = "^UNUSED$",
+		Hit3 = "^UNUSED$",
 		Hp5 = "^Equip: Restores ([%d%.,]+) health every 5 sec%.$",
 		Hp52 = "^Equip: Restores ([%d%.,]+) health per 5 sec%.$",
-		Hp53 = "^%+?([%d%.,]+) [hH]ealth [eE]very 5 [sS]ec%.?$",
-		Hp54 = "^%+?([%d%.,]+) [hH]ealth [pP]er 5 [sS]ec%.?$",
+		Hp53 = "^Restores %+?([%d%.,]+) [hH]ealth [pP]er 5 [sS]ec%.?$",
+		Hp54 = "^UNUSED$",
 		Intellect = "^%+?([-%d%.,]+) Intellect$",
 		Leather = "^Leather$",
 		Mace = "^Mace$",
@@ -280,17 +284,10 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Mastery = "^%+?([%d%.,]+) Mastery$",
 		Mastery2 = "^UNUSED$",
 		MetaGemRequirements = "|cff%x%x%x%x%x%xRequires",
-		MobInfoCompatibility = "^|cff00e0ffDropped By",
-		Mp5 = "^%+?([%d%.,]+) [mM]ana [pP]er 5 [sS]ec%.?$",
-		Mp52 = "^%+?([%d%.,]+) [mM]ana [eE]very 5 [sS]ec%.?$",
-		Mp53 = "^%+?([%d%.,]+) [mM]ana [pP]er 5 [sS]econds$",
-		Mp54 = "^%+?([%d%.,]+) [mM]ana [eE]very 5 [sS]econds$",
-		Mp55 = "^%Mana Regen ([%d%.,]+) per 5 sec%.$",
 		MultiStatSeparator1 = "and",
 		NormalizationEnchant = "^Enchanted: (.*)$",
 		NormalizationReforge = "^(.*) %(Reforged from (.*)%)$",
 		OnlyFitsInMetaGemSlot = "^\"Only fits in a meta gem slot%.\"$",
-		OutfitterCompatibility = "^Used by outfits:",
 		Parry = "^%+?([%d%.,]+) Parry$",
 		Parry2 = "^UNUSED$",
 		Pattern = "Pattern:",
@@ -298,9 +295,11 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Plate = "^Plate$",
 		Polearm = "^Polearm$",
 		PvPPower = "^%+?([%d%.,]+) PvP Power$",
+		RaidFinder = "^Raid Finder$",
 		Recipe = "Recipe:",
 		Requires2 = "^UNUSED$",
 		Resilience = "^%+?([%d%.,]+) PvP Resilience$",
+		Resilience2 = "^UNUSED$",
 		Schematic = "Schematic:",
 		Scope = "^Scope %(%+([%d%.,]+) Damage%)$",
 		ScopeCrit = "^Scope %(%+([%d%.,]+) Critical Strike%)$",
@@ -312,11 +311,6 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Speed = "^Speed ([%d%.,]+)$",
 		Speed2 = "^UNUSED$",
 		SpellPower = "^%+?([%d%.,]+) Spell Power$",
-		SpellPowerArcane = "^%+([%d%.,]+) Arcane Spell Damage$",
-		SpellPowerFire = "^%+([%d%.,]+) Fire Spell Damage$",
-		SpellPowerFrost = "^%+([%d%.,]+) Frost Spell Damage$",
-		SpellPowerNature = "^%+([%d%.,]+) Nature Spell Damage$",
-		SpellPowerShadow = "^%+([%d%.,]+) Shadow Spell Damage$",
 		Spirit = "^%+?([-%d%.,]+) Spirit$",
 		Staff = "^Staff$",
 		Stamina = "^%+?([-%d%.,]+) Stamina$",
@@ -325,6 +319,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		TempestKeep = "^Tempest Keep$",
 		TemporaryBuffMinutes = "^.+%(%d+ min%)$",
 		TemporaryBuffSeconds = "^.+%(%d+ sec%)$",
+		Thunderforged = "^Thunderforged$",
 		UpgradeLevel = "^Upgrade Level:",
 		Use = "Use:",
 		Wand = "^Wand$",
@@ -516,7 +511,7 @@ Shortcut: Shift+click a scale]=],
 		ScaleTypeNormal = "You can change this scale on the Values tab.",
 		ScaleTypeReadOnly = "You must make a copy of this scale if you want to customize it.",
 		ScaleWelcome = "Scales are sets of stats and values that are used to assign point values to items.  You can customize your own or use scale values that others have created.",
-		SocketingAdvisorButtonTooltip = "Click to open Pawn's Gems tab, where you can more information about the gems that Pawn recommends.",
+		SocketingAdvisorButtonTooltip = "Click to open Pawn's Gems tab, where you can see more information about the gems that Pawn recommends.",
 		SocketingAdvisorHeader = "Pawn Socketing Advisor suggests:",
 		ValuesDoNotShowUpgradesFor1H = "Don't show upgrades for 1H items",
 		ValuesDoNotShowUpgradesFor2H = "Don't show upgrades for 2H items",
@@ -575,5 +570,12 @@ For more information on this setting, see the readme file.]=],
 		WarriorTank = "Warrior: tank",
 	},
 }
-
 end
+
+local Locale = GetLocale()
+if Locale ~= "deDE" and Locale ~= "frFR" and Locale ~= "ptBR" and Locale ~= "ruRU" and Locale ~= "zhCN" and Locale ~= "zhTW" then
+	PawnUseThisLocalization()
+end
+
+-- After using this localization or deciding that we don't need it, remove it from memory.
+PawnUseThisLocalization = nil

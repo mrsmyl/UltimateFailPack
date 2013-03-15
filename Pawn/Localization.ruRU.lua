@@ -7,8 +7,7 @@
 -- Russian resources
 ------------------------------------------------------------
 
-if GetLocale() == "ruRU" then
-
+local function PawnUseThisLocalization()
 PawnLocal =
 {
 	AsteriskTooltipLine = "|TInterface\\AddOns\\Pawn\\Textures\\Question:0|t Спец. эффекты не включаются в итоговое значение.",
@@ -246,6 +245,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Dps = "^%(([%d%.,]+) ед%. урона в секунду%)$",
 		DpsAdd = "^Добавляет ([%d%.,]+) ед%. урона в секунду$",
 		Duration = "^Срок действия:",
+		Elite = "^Элитный$",
 		EnchantmentArmorKit = "^Доспех усилен %(%+([%d%.,]+) к броне%)$",
 		EnchantmentCounterweight = "^Железный противовес %(%+([%d%.,]+) к скорости%)$",
 		EnchantmentFieryWeapon = "^Огненное оружие$",
@@ -263,9 +263,14 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Haste = "^%+?([%d%.,]+) к скорости$",
 		Haste2 = "^%+?([%d%.,]+) к показателю скорости$",
 		HeirloomLevelRange = "^Требуется уровень %d+ - (%d+)",
-		HeirloomXpBoost = "^Если на персонаже: увеличивает количество получаемого опыта",
+		HeirloomXpBoost = "^Если на персонаже: Увеличивает количество получаемого опыта на",
+		HeirloomXpBoost2 = "^Если на персонаже: Количество опыта, получаемого за убийства монстров и выполнение заданий, увеличено на",
+		Heroic = "^Героический$",
+		HeroicElite = "^Героический %(элитный%)$",
+		HeroicThunderforged = "^Создано в Кузне Грома %(героич%.%)$", -- Needs review
 		Hit = "^%+?([%d%.,]+) к меткости$",
 		Hit2 = "^%+?([%d%.,]+) к показателю меткости$",
+		Hit3 = "^UNUSED$",
 		Hp5 = "^Восстанавливает ([%d%.,]+) здоровья каждые 5 сек%.$",
 		Hp52 = "^Восстанавливает ([%d%.,]+) здоровья за 5 сек%.$",
 		Hp53 = "^%+?([%d%.,]+) [зЗ]доровья [кК]аждые 5 [сС]ек%.?$",
@@ -278,17 +283,10 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Mastery = "^%+?([%d%.,]+) к искусности$",
 		Mastery2 = "^%+?([%d%.,]+) к показателю искусности$",
 		MetaGemRequirements = "|cff%x%x%x%x%x%xТребуется",
-		MobInfoCompatibility = "^|cff00e0ffDropped By",
-		Mp5 = "^%+?([%d%.,]+) [мМ]аны [зЗ]а 5 [сС]ек%.?$",
-		Mp52 = "^%+?([%d%.,]+) [мМ]аны [кК]аждые 5 [сС]ек%.?$",
-		Mp53 = "^%+?([%d%.,]+) [мМ]аны [зЗ]а 5 [сС]екунд$",
-		Mp54 = "^%+?([%d%.,]+) [мМ]аны [кК]аждые 5 [сС]екунд$",
-		Mp55 = "^%Mana Regen ([%d%.,]+) per 5 sec%.$",
 		MultiStatSeparator1 = "и",
 		NormalizationEnchant = "^Чары: (.*)$",
 		NormalizationReforge = "^(.*) %(перековано из бонуса (.*)%)$",
 		OnlyFitsInMetaGemSlot = "^\"Подходит только для особого гнезда%.\"$",
-		OutfitterCompatibility = "^Комплекты экипировки:",
 		Parry = "^%+?([%d%.,]+) к парированию$",
 		Parry2 = "^%+?([%d%.,]+) к показателю парирования$",
 		Pattern = "Выкройка:",
@@ -296,9 +294,11 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Plate = "^Латы$",
 		Polearm = "^Древковое$",
 		PvPPower = "^%+?([%d%.,]+) к PvP-силе$",
+		RaidFinder = "^Поиск рейда$",
 		Recipe = "Рецепт:",
 		Requires2 = "^Требуемый уровень",
 		Resilience = "^%+?([%d%.,]+) к PvP-устойчивости$",
+		Resilience2 = "^UNUSED$",
 		Schematic = "Схема:",
 		Scope = "^Scope %(%+([%d%.,]+) Damage%)$",
 		ScopeCrit = "^Scope %(%+([%d%.,]+) Critical Strike%)$",
@@ -310,11 +310,6 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Speed = "^Скорость ([%d%.,]+)$",
 		Speed2 = "^UNUSED$",
 		SpellPower = "^%+?([%d%.,]+) к силе заклинаний$",
-		SpellPowerArcane = "^%+([%d%.,]+) ед%. урона от тайной магии$",
-		SpellPowerFire = "^%+([%d%.,]+) ед%. урона от огня$",
-		SpellPowerFrost = "^%+([%d%.,]+) ед%. урона от магии льда$",
-		SpellPowerNature = "^%+([%d%.,]+) ед%. урона от сил природы$",
-		SpellPowerShadow = "^%+([%d%.,]+) ед%. урона от темной магии$",
 		Spirit = "^%+?([-%d%.,]+) к духу$",
 		Staff = "^Посох$",
 		Stamina = "^%+?([-%d%.,]+) к выносливости$",
@@ -323,6 +318,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		TempestKeep = "^Крепость Бурь$",
 		TemporaryBuffMinutes = "^.+%(%d+ мин%)$",
 		TemporaryBuffSeconds = "^.+%(%d+ сек%)$",
+		Thunderforged = "^Создано в Кузне Грома$", -- Needs review
 		UpgradeLevel = "^Уровень улучшения:",
 		Use = "Используется:",
 		Wand = "^Жезл$",
@@ -356,7 +352,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		CompareMetaSockets = "Особые гнезда",
 		CompareOtherHeader = "Другое",
 		CompareReforgingPotential = "Потенциальная перековка",
-		CompareShaTouchedSockets = "Поврежденное ша",
+		CompareShaTouchedSockets = "Пораженное ша",
 		CompareSlotEmpty = "(нет вещи)",
 		CompareSocketBonus = "Бонусы от камней",
 		CompareSocketsHeader = "Гнезда",
@@ -572,5 +568,11 @@ For more information on this setting, see the readme file.]=],
 		WarriorTank = "Воин: Защита",
 	},
 }
-
 end
+
+if GetLocale() == "ruRU" then
+	PawnUseThisLocalization()
+end
+
+-- After using this localization or deciding that we don't need it, remove it from memory.
+PawnUseThisLocalization = nil

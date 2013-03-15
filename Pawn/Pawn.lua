@@ -4,11 +4,11 @@
 -- See Readme.htm for more information.
 
 -- 
--- Version 1.8: One global version
+-- Main non-UI code
 ------------------------------------------------------------
 
 
-PawnVersion = 1.8
+PawnVersion = 1.805
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -177,7 +177,7 @@ function PawnInitialize()
 	end
 	if not CurrentLocaleIsSupported then
 		-- No need to translate this string...
-		local WrongLocaleMessage = "Sorry, this version of Pawn is for English, German, Russian, and Simplified Chinese only."
+		local WrongLocaleMessage = "Sorry, this version of Pawn is for English, French, German, Portuguese, Russian, Simplified Chinese, and Traditional Chinese only."
 		VgerCore.Message(VgerCore.Color.Salmon .. WrongLocaleMessage)
 		message(WrongLocaleMessage)
 	end
@@ -1459,7 +1459,8 @@ function PawnGetInventoryItemValues(UnitName)
 				if not ThisItemLevelIgnoringRarity then return end -- If we have item information but no level, bail out rather than return inaccurate totals.
 				if Slot == 16 then
 					local _, _, _, _, _, _, _, _, InvType = GetItemInfo(GetInventoryItemLink(UnitName, Slot))
-					if InvType == "INVTYPE_2HWEAPON" and GetInventoryItemID(UnitName, 17) == nil then
+					if (InvType == "INVTYPE_2HWEAPON" or InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT") and GetInventoryItemID(UnitName, 17) == nil then
+						-- Some ranged weapons are now two-handed too.  If they're using a ranged weapon with no off-hand, count it as a two-hander.
 						ThisItemLevel = ThisItemLevel * 2
 						ThisItemLevelIgnoringRarity = ThisItemLevelIgnoringRarity * 2
 					end
@@ -2145,6 +2146,16 @@ function PawnGetItemValue(Item, ItemLevel, SocketBonus, ScaleName, DebugMessages
 			local GemQualityLevel
 
 			-- Decide what to do with the non-colored sockets.
+			Stat = "PrismaticSocket" Quantity = Item[Stat]
+			if Quantity then
+				GemQualityLevel = PawnGetGemQualityForItem(PawnGemQualityLevels, ItemLevel)
+				ThisValue = ThisScaleBestGems[Stat .. "Value"][GemQualityLevel]
+				if ThisValue then
+					TotalSocketValue = TotalSocketValue + Quantity * ThisValue
+					Total = Total + Quantity * ThisValue
+					if DebugMessages then PawnDebugMessage(format(PawnLocal.ValueCalculationMessage, Quantity, Stat, ThisValue, Quantity * ThisValue)) end
+				end
+			end
 			Stat = "MetaSocket" Quantity = Item[Stat]
 			if Quantity then
 				GemQualityLevel = PawnGetGemQualityForItem(PawnMetaGemQualityLevels, ItemLevel)
@@ -2385,7 +2396,7 @@ end
 -- nil if unsuccessful or the item is not enchanted.
 function PawnUnenchantItemLink(ItemLink)
 	local TrimmedItemLink = PawnStripLeftOfItemLink(ItemLink)
-	local Pos, _, ItemID, EnchantID, GemID1, GemID2, GemID3, GemID4, SuffixID, MoreInfo, ViewAtLevel, Reforge = strfind(TrimmedItemLink, "^item:(%-?%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)")
+	local Pos, _, ItemID, EnchantID, GemID1, GemID2, GemID3, GemID4, SuffixID, MoreInfo, ViewAtLevel, Reforge, UpgradeLevel = strfind(TrimmedItemLink, "^item:(%-?%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)")
 
 	if Pos then
 		if
@@ -2394,7 +2405,8 @@ function PawnUnenchantItemLink(ItemLink)
 			GemID2 ~= "0" or GemID2 == "" or GemID2 == nil or
 			GemID3 ~= "0" or GemID3 == "" or GemID3 == nil or
 			GemID4 ~= "0" or GemID4 == "" or GemID4 == nil or
-			Reforge ~= "0" or Reforge == "" or Reforge == nil
+			Reforge ~= "0" or Reforge == "" or Reforge == nil or
+			UpgradeLevel ~= "0" or UpgradeLevel == "" or UpgradeLevel == nil
 		then
 			-- This item is enchanted.  Return a new link.
 			if SuffixID == nil or SuffixID == "" then SuffixID = "0" end
