@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2012, all rights reserved.
--- $Revision: 1043 $
--- $Date: 2012-11-15 21:15:42 +1100 (Thu, 15 Nov 2012) $
+-- $Revision: 1061 $
+-- $Date: 2013-01-29 11:38:45 +1100 (Tue, 29 Jan 2013) $
 
 
 local _G = _G
@@ -42,11 +42,11 @@ function ArkInventoryRules.OnInitialize( )
 	-- scrap: http://wow.curse.com/downloads/wow-addons/details/scrap.aspx
 	if IsAddOnLoaded( "Scrap" ) then
 		
-		ArkInventory.Output( "enabling Scrap support" )
+		ArkInventory.Output( string.format( "%s: Scrap %s", ArkInventory.Localise["CONFIG_RULES"], ArkInventory.Localise["ENABLED"] ) )
 		
 		if IsAddOnLoaded( "Scrap_Merchant" ) then
 			if Scrap.ToggleJunk then
-				ArkInventory.Output( "enabling Scrap Merchant support" )
+				ArkInventory.Output( string.format( "%s: Scrap Merchant %s", ArkInventory.Localise["CONFIG_RULES"], ArkInventory.Localise["ENABLED"] ) )
 				ArkInventory.MySecureHook( Scrap, "ToggleJunk", ArkInventoryRules.ItemCacheClear )
 			end
 		end
@@ -56,7 +56,7 @@ function ArkInventoryRules.OnInitialize( )
 	-- selljunk: http://wow.curse.com/downloads/wow-addons/details/sell-junk.aspx
 	if IsAddOnLoaded( "SellJunk" ) then
 		if SellJunk.Add and SellJunk.Rem then
-			ArkInventory.Output( "enabling SellJunk support" )
+			ArkInventory.Output( string.format( "%s: SellJunk %s", ArkInventory.Localise["CONFIG_RULES"], ArkInventory.Localise["ENABLED"] ) )
 			ArkInventory.MySecureHook( SellJunk, "Add", ArkInventoryRules.ItemCacheClear )
 			ArkInventory.MySecureHook( SellJunk, "Rem", ArkInventoryRules.ItemCacheClear )
 		end
@@ -65,7 +65,7 @@ function ArkInventoryRules.OnInitialize( )
 	-- reagent restocker: http://wow.curse.com/downloads/wow-addons/details/reagent_restocker.aspx
 	if IsAddOnLoaded( "ReagentRestocker" ) then
 		if ReagentRestocker.addItemToSellingList and ReagentRestocker.deleteItem then
-			ArkInventory.Output( "enabling ReagentRestocker support" )
+			ArkInventory.Output( string.format( "%s: ReagentRestocker %s", ArkInventory.Localise["CONFIG_RULES"], ArkInventory.Localise["ENABLED"] ) )
 			ArkInventory.MySecureHook( ReagentRestocker, "addItemToSellingList", ArkInventoryRules.ItemCacheClear )
 			ArkInventory.MySecureHook( ReagentRestocker, "deleteItem", ArkInventoryRules.ItemCacheClear )
 		end
@@ -114,7 +114,7 @@ function ArkInventoryRules.OutfitterInitialize( ... )
 	
 	if Outfitter:IsInitialized( ) then
 		
-		ArkInventory.Output( "enabling Outfitter support" )
+		ArkInventory.Output( string.format( "%s: Outfitter %s", ArkInventory.Localise["CONFIG_RULES"], ArkInventory.Localise["ENABLED"] ) )
 		
 		Outfitter:RegisterOutfitEvent( "ADD_OUTFIT", ArkInventoryRules.ItemCacheClear )
 		Outfitter:RegisterOutfitEvent( "DELETE_OUTFIT", ArkInventoryRules.ItemCacheClear )

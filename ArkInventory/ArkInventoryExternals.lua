@@ -15,7 +15,3 @@ end
 if not IsAddOnLoaded( "LibSharedMedia-3.0" ) then
 	LoadAddOn( "LibSharedMedia-3.0" )
 end
-
-if not IsAddOnLoaded( "LibPetJournal-2.0" ) then
-	LoadAddOn( "LibPetJournal-2.0" )
-end

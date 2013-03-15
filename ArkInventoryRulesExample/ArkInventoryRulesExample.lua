@@ -7,6 +7,9 @@ function ArkInventoryRulesExample:OnEnable( )
 	
 	--ArkInventoryRules.Register( self, "test", ArkInventoryRulesExample.Execute )
 	
+	-- note: if you require another mod to be loaded you will need to add it in the .toc file
+	-- in which case make sure you check that that mod actually got loaded (it might not be installed)
+	
 end
 
 function ArkInventoryRulesExample.Execute( ... )

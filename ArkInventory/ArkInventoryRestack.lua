@@ -453,23 +453,31 @@ local function RestackRun( loc_id )
 	
 	if loc_id == ArkInventory.Const.Location.Bag then
 		
-		ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
+		if ArkInventory.db.global.option.message.restack[loc_id] then
+			ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
+		end
 		
 		while CompactBags( loc_id ) do end
 		while Consolidate( loc_id ) do end
 		
-		ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["COMPLETE"] )
+		if ArkInventory.db.global.option.message.restack[loc_id] then
+			ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["COMPLETE"] )
+		end
 		
 	elseif loc_id == ArkInventory.Const.Location.Bank then
 		
 		if ArkInventory.Global.Mode.Bank then
 			
-			ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
+			if ArkInventory.db.global.option.message.restack[loc_id] then
+				ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
+			end
 			
 			while CompactBags( loc_id ) do end
 			while Consolidate( loc_id ) do end
 			
-			ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["COMPLETE"] )
+			if ArkInventory.db.global.option.message.restack[loc_id] then
+				ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["COMPLETE"] )
+			end
 			
 		end
 		
@@ -477,11 +485,15 @@ local function RestackRun( loc_id )
 		
 		if ArkInventory.Global.Mode.Vault then
 			
-			ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
+			if ArkInventory.db.global.option.message.restack[loc_id] then
+				ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["START"] )
+			end
 			
 			while CompactVault( ) do end
 			
-			ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["COMPLETE"] )
+			if ArkInventory.db.global.option.message.restack[loc_id] then
+				ArkInventory.Output( ArkInventory.Localise["RESTACK"], ": ", ArkInventory.Global.Location[loc_id].Name, " " , ArkInventory.Localise["COMPLETE"] )
+			end
 			
 		end
 		

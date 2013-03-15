@@ -1031,151 +1031,6 @@ function ArkInventory:LISTEN_COMPANION_UPDATE( event )
 	
 end
 
-
-
-function ArkInventory:LISTEN_BATTLEPET_UPDATE( )
-	
-	--ArkInventory.Output( "LISTEN_BATTLEPET_UPDATE" )
-	
-	local loc_id = ArkInventory.Const.Location.Pet
-	ArkInventory.ScanLocation( loc_id )
-	--ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-	
-	ArkInventory.LDB.Pets:Update( )
-	ArkInventory.MountDataUpdate( )
-	
-end
-
-function ArkInventory:LISTEN_BATTLEPET_RELOAD_BUCKET( )
-	
-	--ArkInventory.Output( "LISTEN_BATTLEPET_RELOAD_BUCKET" )
-	ArkInventory.Lib.Pet:LoadPets( )
-	
-end
-
-function ArkInventory:LISTEN_BATTLEPET_RELOAD( event )
-	
-	--ArkInventory.Output( "LISTEN_BATTLEPET_RELOAD( ", event, " )" )
-	ArkInventory:SendMessage( "LISTEN_BATTLEPET_RELOAD_BUCKET" )
-	
-end
-
-function ArkInventory:LISTEN_PET_BATTLE_OPENING_DONE( event )
-	
-	--ArkInventory.Output( "LISTEN_PET_BATTLE_OPENING_DONE" )
-	
-	if not ArkInventory.db.global.option.message.battlepet.opponent then return end
-	
-	local player = 2
-	local opponents = C_PetBattles.GetNumPets( player )
-	
---	if opponents > 1 then
-		ArkInventory.Output( "--- --- --- --- --- --- ---" )
---	end
-	
-	for i = 1, opponents do
-		
-		local name = C_PetBattles.GetName( player, i )
-		
-		local speciesID = C_PetBattles.GetPetSpeciesID( player, i )
-		local level = C_PetBattles.GetLevel( player, i )
-		local rarity = C_PetBattles.GetBreedQuality( player, i )
-		local health = C_PetBattles.GetMaxHealth( player, i )
-		local power = C_PetBattles.GetPower( player, i )
-		local speed = C_PetBattles.GetSpeed( player, i )
-		
-		local h = ""
-		local owned = ""
-		
-		local name2, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoBySpeciesID( speciesID )
-		
-		if C_PetBattles.IsWildBattle( ) then
-			--ArkInventory.Output( "wild battle" )
-			rarity = ( rarity and ( rarity - 1 ) ) or -1
-		else
-			--ArkInventory.Output( "pvp/trainer battle" )
-			if isWild and canBattle then
-				--ArkInventory.Output( "wild pet" )
-				rarity = ( rarity and ( rarity - 1 ) ) or -1
-			else
-				--ArkInventory.Output( "system pet" )
-				rarity = -1
-			end
-		end
-		
-		h = string.format( "%s|Hbattlepet:%s:%s:%s:%s:%s:%s:|h[%s]|h|r", select( 5, ArkInventory.GetItemQualityColor( rarity ) ), speciesID, level, rarity, health, power, speed, name )
-		
-		if ( not canBattle ) then
-			
-			-- opponent cannot battle (and yet it is)
-			if C_PetBattles.IsWildBattle( ) then
-				-- wild battle, so its one of the secondary non-capturabe opponents
-				owned = string.format( "%s- %s", YELLOW_FONT_COLOR_CODE, ArkInventory.Localise["BATTLEPET_OPPONENT_IMMUNE"] )
-			else
-				-- trainer pets
-			end
-			
-		else
-			
-			local count = ArkInventory.ObjectCountGet( h )
-			
-			if ArkInventory.Table.IsEmpty( count ) then
-				
-				owned = string.format( "%s- %s", RED_FONT_COLOR_CODE, ArkInventory.Localise["BATTLEPET_OPPONENT_UNKNOWN"] )
-				
-			else
-				
-				local acn = ArkInventory.PlayerIDAccount( ) 
-				count = ( count[acn] and count[acn].location and count[acn].location[ArkInventory.Const.Location.Pet] ) or 0
-				
-				if count >= ArkInventory.Const.MAX_PET_SAVED_SPECIES then
-					
-					owned = string.format( "- %s", ArkInventory.Localise["BATTLEPET_OPPONENT_KNOWN_MAX"] )
-					
-				elseif C_PetBattles.IsWildBattle( ) then
-					
-					local upgrade = false
-					
-					for _, pid in ArkInventory.Lib.Pet:IteratePetIDs( ) do
-						local sid = C_PetJournal.GetPetInfoByPetID( pid )
-						if ( sid == speciesID ) then
-							local q = ( select( 5, C_PetJournal.GetPetStats( pid ) ) ) - 1
-							--local mh = C_PetJournal.GetBattlePetLink( pid )
-							--ArkInventory.Output( "s=[", speciesID, "], ", h, ", [", rarity, "] / ", mh, " [", q, "]" )
-							if ( rarity >= q ) then
-								upgrade = true
-							end
-							
-							if string.len( owned ) < 2 then
-								owned = string.format( "- %s ", ArkInventory.Localise["BATTLEPET_OPPONENT_UPGRADE"] )
-								--owned = string.format( "- " )
-							end
-							
-							owned = string.format( "%s%s", owned, C_PetJournal.GetBattlePetLink( pid ) )
-							
-						end
-					end
-					
-					if not upgrade then
-						owned = ""
-					end
-					
-				end
-				
-			end
-			
-		end
-		
-		ArkInventory.Output( YELLOW_FONT_COLOR_CODE, ArkInventory.Localise["BATTLEPET"], " #", i, ": ", h, " ", YELLOW_FONT_COLOR_CODE, owned )
-		
-	end
-	
-end
-
-
-
-
-
 function ArkInventory:LISTEN_CURRENCY_UPDATE( )
 
 	--ArkInventory.Output( "LISTEN_CURRENCY_UPDATE" )
@@ -2411,6 +2266,10 @@ function ArkInventory.ScanBattlePet( )
 	
 	--ArkInventory.Output( "ScanBattlePet( ) start" )
 	
+	if ( ArkInventory.PetJournal.NumPets( ) == 0 ) or ( not ArkInventory.PetJournal.IsReady( ) ) then
+		return
+	end
+	
 	local blizzard_id = ArkInventory.Const.Offset.Pet + 1
 	local loc_id, bag_id = ArkInventory.BagID_Internal( blizzard_id )
 	
@@ -2436,24 +2295,20 @@ function ArkInventory.ScanBattlePet( )
 	local companionData = ArkInventory.Global.Companion.CRITTER
 	table.wipe( companionData )
 	
-	--ArkInventory.Output( "scanning pets" )
+	--ArkInventory.Output( "scanning pets [", ArkInventory.PetJournal.data.owned, "]" )
 	
 	local slot_id = 0
-	local old_level
-	local rarity, speciesID, customName, level, isWild, canBattle, tradable
 	
 	cp.info.level = 1
 	
-	for _, petID in ArkInventory.Lib.Pet:IteratePetIDs( ) do
+	for petID, pd in ArkInventory.PetJournal.IteratePetIDs( ) do
 		
 		companionData[petID] = true
 		
-		local h = C_PetJournal.GetBattlePetLink( petID )
+		local h = pd.link
+		--ArkInventory.Output( gsub( h, "|", "*" ) )
 		
-		rarity = select( 5, C_PetJournal.GetPetStats( petID ) )
-		
-		speciesID, customName, level, _, _, _, _, _, _, _, _, _, _, isWild, canBattle, tradable = C_PetJournal.GetPetInfoByPetID( petID )
-		level = level or 1
+		level = pd.level or 1
 		
 		if cp.info.level < level then
 			-- save highest pet level for tint unusable
@@ -2461,7 +2316,7 @@ function ArkInventory.ScanBattlePet( )
 		end
 		
 		slot_id = slot_id + 1
-	
+		
 		if not bag.slot[slot_id] then
 			bag.slot[slot_id] = {
 				loc_id = loc_id,
@@ -2472,47 +2327,40 @@ function ArkInventory.ScanBattlePet( )
 		
 		local i = bag.slot[slot_id]
 		
-		if isWild and canBattle then
-			rarity = ( rarity and ( rarity - 1 ) ) or -1
-		else
-			rarity = -1
-		end
-		
-		
-		local sb = ( ( not tradable ) and true ) or nil
+		local sb = ( ( not pd.sd.tradable ) and true ) or nil
 		local count = 1
 		
-		local changed_item, new = ArkInventory.ScanChanged( i, h, sb, count )
+		ArkInventory.ScanChanged( i, h, sb, count )
 		
 		i.h = h
 		
 		i.ab = true
 		i.sb = sb
 		
-		i.q = rarity
+		i.q = pd.rarity
 		
 		i.count = count
 		
 		i.pid = petID
-		i.bp = ( canBattle and true ) or nil
-		i.wp = ( isWild and true ) or nil
-		i.cn = customName
+		i.bp = ( pd.sd.canBattle and true ) or nil
+		i.wp = ( pd.sd.isWild and true ) or nil
+		i.cn = pd.customName
 		
-		if changed_item then
+--		if changed_item then
 			
 --			i.age = ArkInventory.ItemAgeUpdate( )
 			
 --			i.new = new
 			
-			ArkInventory.Frame_Main_DrawStatus( loc_id, ArkInventory.Const.Window.Draw.Refresh )
-			
-		end
+--		end
 		
 	end
 	
 	bag.count = slot_id
 	
 	ArkInventory.ScanCleanup( cp, loc_id, bag_id, bag, old_bag_count )
+	
+	ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
 	
 	--ArkInventory.Output( "ScanBattlePet( ) end" )
 	
@@ -3307,12 +3155,20 @@ function ArkInventory.ObjectInfo( h )
 		
 	elseif class == "battlepet" then
 		
-		local itemName, itemTexture, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoBySpeciesID( v1 )
+		local sd = ArkInventory.PetJournal.GetSpeciesInfo( v1 )
 --		v1=speciesID, v2=level, v3=rarity, v4=maxHealth, v5=power, v6=speed, v7=petID/customName
 		
-		petType = _G["BATTLE_PET_NAME_" .. petType] or ""
+		local name = ""
+		local icon = ArkInventory.Const.Texture.Missing
+		local petType = 0
 		
-		return class, h, itemName, itemTexture, v3, v2, 0, petType, "", 1, "", 0, v1, v2, v4, v5, v6, v7, v8, v9, v10
+		if sd then
+			name = sd.name or name
+			icon = sd.icon or icon
+			petType = sd.petType or petType
+		end
+		
+		return class, h, name, icon, v3, v2, 0, petType, "", 1, "", 0, v1, v2, v4, v5, v6, v7, v8, v9, v10
 		
 	elseif class == "currency" then
 		
@@ -3357,7 +3213,7 @@ function ArkInventory.ObjectStringDecode( h )
 	v5 = tonumber( v5 ) or 0
 	v6 = tonumber( v6 ) or 0
 	if ( class == "battlepet" ) then
-		-- custom name for battlepet, so dont convert it to a number
+		-- species name (string)
 	else
 		v7 = tonumber( v7 ) or 0
 	end
@@ -3768,20 +3624,7 @@ function ArkInventory.ObjectCountGet( search_id, just_me, ignore_vaults, ignore_
 end
 
 function ArkInventory.BattlepetBaseHyperlink( ... )
-	local v = { ... } -- species, level, rarity, maxHealth, power, speed, name
+	local v = { ... } -- species, level, rarity, maxHealth, power, speed, name, unknown
 	--ArkInventory.Output( "[ ", v[1], " / ", v[2], " / ", v[3], " / ", v[4], " / ", v[5], " / ", v[6], " / ", v[7], " ]" )
-	return string.format( "battlepet:%s:%s:%s:%s:%s:%s:%s", v[1] or 0, v[2] or 0, v[3] or 0, v[4] or 0, v[5] or 0, v[6] or 0, v[7] or "" )
-end
-
-function ArkInventory.BattlepetBaseHyperlinkFromPetID( petID )
-	if petID then
-		local speciesID, _, level, _, _, _, _, name, _, _, _, _, _, isWild, canBattle = C_PetJournal.GetPetInfoByPetID( petID )
-		local _, maxHealth, power, speed, rarity = C_PetJournal.GetPetStats( petID )
-		if isWild and canBattle then
-			rarity = ( rarity and ( rarity - 1 ) ) or -1
-		else	
-			rarity = -1
-		end
-		return string.format( "%s|H%s|h[%s]|h|r", select( 5, ArkInventory.GetItemQualityColor( rarity ) ), ArkInventory.BattlepetBaseHyperlink( speciesID, level, rarity, maxHealth, power, speed, name ), name )
-	end
+	return string.format( "battlepet:%s:%s:%s:%s:%s:%s:%s", v[1] or 0, v[2] or 0, v[3] or 0, v[4] or 0, v[5] or 0, v[6] or "", v[7] or "" )
 end

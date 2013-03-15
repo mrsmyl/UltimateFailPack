@@ -304,6 +304,30 @@ function ArkInventory.ConfigBlizzard( )
 		},
 ]]--
 		
+		petbattlehelp = {
+			guiHidden = true,
+			cmdHidden = true,
+			order = 12000,
+			name = "petbattlehelp",
+			desc = "attempts to help you pick appropriate battle pets for the current battle",
+			type = "execute",
+			func = function( )
+				ArkInventory:LISTEN_PET_BATTLE_OPENING_DONE( "MANUAL_COMMAND", "PET_BATTLE_HELP" )
+			end,
+		},
+		
+		petinfo = {
+			guiHidden = true,
+			cmdHidden = true,
+			order = 12000,
+			name = "petinfo",
+			desc = "gets information about the targeted battle pet",
+			type = "execute",
+			func = function( )
+				ArkInventory.PetJournal.BattlePetInfoTarget( )
+			end,
+		},
+		
 	}
 	
 end
@@ -936,8 +960,53 @@ function ArkInventory.ConfigInternal( )
 					name = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES"],
 					type = "group",
 					args = {
-						translation = {
+						restack = {
 							order = 100,
+							name = ArkInventory.Localise["RESTACK"],
+							type = "group",
+							inline = true,
+							args = {
+								bag = {
+									order = ArkInventory.Const.Location.Bag,
+									name = ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name,
+									desc = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES_RESTACK_TEXT"],
+									type = "toggle",
+									get = function( info )
+										return ArkInventory.db.global.option.message.restack[ArkInventory.Const.Location.Bag]
+									end,
+									set = function( info, v )
+										ArkInventory.db.global.option.message.restack[ArkInventory.Const.Location.Bag] = v
+									end,
+								},
+								bank = {
+									order = ArkInventory.Const.Location.Bank,
+									name = ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].Name,
+									desc = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES_RESTACK_TEXT"],
+									type = "toggle",
+									get = function( info )
+										return ArkInventory.db.global.option.message.restack[ArkInventory.Const.Location.Bank]
+									end,
+									set = function( info, v )
+										ArkInventory.db.global.option.message.restack[ArkInventory.Const.Location.Bank] = v
+									end,
+								},
+								vault = {
+									order = ArkInventory.Const.Location.Vault,
+									name = ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name,
+									desc = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES_RESTACK_TEXT"],
+									type = "toggle",
+									get = function( info )
+										return ArkInventory.db.global.option.message.restack[ArkInventory.Const.Location.Vault]
+									end,
+									set = function( info, v )
+										ArkInventory.db.global.option.message.restack[ArkInventory.Const.Location.Vault] = v
+									end,
+								},
+
+							},
+						},
+						translation = {
+							order = 200,
 							name = ArkInventory.Localise["CONFIG_SYSTEM_MESSAGES_TRANSLATION"],
 							type = "group",
 							inline = true,
@@ -969,7 +1038,7 @@ function ArkInventory.ConfigInternal( )
 							},
 						},
 						battlepet = {
-							order = 200,
+							order = 300,
 							name = PET_BATTLE_INFO,
 							type = "group",
 							inline = true,

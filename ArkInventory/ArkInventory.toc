@@ -1,5 +1,5 @@
-## Interface: 50100
-## X-Curse-Packaged-Version: 3.03.25
+## Interface: 50200
+## X-Curse-Packaged-Version: 3.03.27
 ## X-Curse-Project-Name: ArkInventory
 ## X-Curse-Project-ID: ark-inventory
 ## X-Curse-Repository-ID: wow/ark-inventory/mainline
@@ -8,27 +8,31 @@
 ## Title-zhCN: [背包]ArkInventory 整合背包银行
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 30325
-## DefaultState: Enabled
-## LoadOnDemand: 0
+## Version: 30327
 ## SavedVariables: ARKINVDB
 
 ## Notes: Allows you to view all items from all your characters on the same realm, when-ever and where-ever you want.
 
-## OptionalDeps: Blizzard_GuildBankUI, Blizzard_VoidStorageUI, Blizzard_PetJournal, Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0, LibPetJournal-2.0
+## DefaultState: Enabled
+## LoadOnDemand: 0
 
-## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0, LibPetJournal-2.0
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: delayed
+
+## OptionalDeps: Blizzard_GuildBankUI, Blizzard_VoidStorageUI, Blizzard_PetJournal, Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
+
+## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0
 
 ## X-Category: Inventory
 ## X-Website: http://arkinventory.googlecode.com
 
-## LoadManagers: AddonLoader
-## X-LoadOn-Always:delayed
 
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler\CallbackHandler-1.0.lua
 Libs\LibDataBroker\LibDataBroker-1.1.lua
+Libs\LibDialog\LibDialog-1.0.lua
+
 Libs\ArkDewdrop\ArkDewdrop-3.0.lua
 
 #@no-lib-strip@
@@ -51,6 +55,8 @@ ArkInventoryRules.lua
 ArkInventorySearch.lua
 ArkInventorySync.lua
 
+ArkInventoryPetJournal.lua
+
 ArkInventoryTooltip.lua
 ArkInventoryMoney.lua
 ArkInventoryMedia.lua
@@ -60,5 +66,7 @@ ArkInventorySearch.xml
 
 ArkInventoryConfig.lua
 ArkInventoryLDB.lua
+
+ArkInventoryStaticPopups.lua
 
 ArkInventoryTranslate.lua

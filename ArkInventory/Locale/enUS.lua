@@ -245,6 +245,7 @@ if not L then return end
 	L["BUGFIX_TAINTED_ALERT_OPEN_TEXT"] = "some of the item frames for this window were created while you were in combat which has caused them to be tainted and cannot be used until you leave combat"
 	
 	L["CONFIG_SYSTEM_MESSAGES"] = "Messages / Alerts"
+	L["CONFIG_SYSTEM_MESSAGES_RESTACK_TEXT"] = "Show restack notification messages for this location"
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION"] = "Translation"
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_INTERIM"] = "Interim"
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_INTERIM_TEXT"] = "Show message for each translation attempt"
@@ -528,6 +529,10 @@ if not L then return end
 	L["BATTLEPET_OPPONENT_KNOWN"] = "Owned"
 	L["BATTLEPET_OPPONENT_UNKNOWN"] = "Not Owned"
 	L["BATTLEPET_OPPONENT_UPGRADE"] = "Upgrade?"
+	L["BATTLEPET_OPPONENT_FORMAT_STRONG"] = "%1$s (%2$s) Strengths" -- 1 = pet type, 2 = pet level
+	L["BATTLEPET_OPPONENT_FORMAT_WEAK"] = "%1$s (%2$s) Weaknesses" -- 1 = pet type, 2 = pet level
+	L["BATTLEPET_OPPONENT_FORMAT_ABILITY1"] = "%s or %s"
+	L["BATTLEPET_OPPONENT_FORMAT_ABILITY2"] = "%s, %s"
 	
 	
 --	item count tooltip

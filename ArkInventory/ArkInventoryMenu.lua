@@ -13,9 +13,9 @@ function ArkInventory.MenuMainOpen( frame )
 	assert( frame, "code error: frame argument is missing" )
 
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
-	
+		
 		ArkInventory.Lib.Dewdrop:Close( )
-	
+		
 	else
 
 		local loc_id = frame:GetParent( ):GetParent( ).ARK_Data.loc_id
@@ -890,8 +890,8 @@ function ArkInventory.MenuItemOpen( frame )
 									
 									ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ArkInventory.Localise["MENU_ITEM_DEBUG_PET_ID"], LIGHTYELLOW_FONT_COLOR_CODE, i.pid ) )
 									
-									local speciesID = C_PetJournal.GetPetInfoByPetID( i.pid )
-									ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ArkInventory.Localise["MENU_ITEM_DEBUG_PET_SPECIES"], LIGHTYELLOW_FONT_COLOR_CODE, speciesID ) )
+									local pd = ArkInventory.PetJournal.GetPetInfo( i.pid )
+									ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ArkInventory.Localise["MENU_ITEM_DEBUG_PET_SPECIES"], LIGHTYELLOW_FONT_COLOR_CODE, pd.sd.speciesID ) )
 									
 								end
 								
@@ -1146,14 +1146,14 @@ function ArkInventory.MenuBagOpen( frame )
 						end
 					)
 					
-					if not isEmpty then -- fix this when ready
+					if not isEmpty then
 						
 						ArkInventory.Lib.Dewdrop:AddLine( )
 						
 						ArkInventory.Lib.Dewdrop:AddLine(
 							"text", ArkInventory.Localise["MENU_BAG_EMPTY"],
-							"tooltipTitle", ArkInventory.Localise["MENU_BAG_SHOW"],
-							"tooltipText", ArkInventory.Localise["MENU_BAG_SHOW_TEXT"],
+							"tooltipTitle", ArkInventory.Localise["MENU_BAG_EMPTY"],
+							"tooltipText", ArkInventory.Localise["MENU_BAG_EMPTY_TEXT"],
 							"closeWhenClicked", true,
 							"func", function( )
 								ArkInventory.EmptyBag( loc_id, bag_id )
@@ -2719,13 +2719,13 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 	
 	if ( level == offset + 1 ) and ( ( offset == 0 ) or ( value and ( value == "INSERT_LOCATION_MENU" ) ) ) then
 		
-		local n = ArkInventory.Lib.Pet:NumPets( )
+		local n = ArkInventory.PetJournal.NumPets( )
 		
 		if n > 0 then
 		
 			for i = 1, C_PetJournal.GetNumPetTypes( ) do
 				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", _G["BATTLE_PET_NAME_" .. i],
+					"text", ArkInventory.PetJournal.PetTypeName( i ),
 					"hasArrow", true,
 					"value", string.format( "PETTYPE_%s", i )
 				)
@@ -2779,14 +2779,14 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 			
 			petType0 = tonumber( petType0 )
 			
-			for _, petID in ArkInventory.Lib.Pet:IteratePetIDs( ) do
+			for petID, pd in ArkInventory.PetJournal.IteratePetIDs( ) do
 				
-				local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
-				
-				if petType == petType0 then
+				if ( pd.sd.petType == petType0 ) then
 					
-					if customName and customName ~= "" then
-						name = string.format( "%s (%s)", name, customName )
+					local name = pd.sd.name
+					
+					if pd.customName and pd.customName ~= "" then
+						name = string.format( "%s (%s)", name, pd.customName )
 					end
 					
 					--companionCount = companionCount + 1
@@ -2828,15 +2828,12 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 		
 		if petID then
 			
-			local _, customName, _, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID( petID )
-			if customName and customName ~= "" then
-				name = string.format( "%s (%s)", name, customName )
-			end
+			local pd = ArkInventory.PetJournal.GetPetInfo( petID )
 			
 			local selected = ArkInventory.db.char.option.ldb.pets.selected
 			
 			ArkInventory.Lib.Dewdrop:AddLine(
-				"text", name,
+				"text", pd.fullName,
 				"isTitle", true,
 				"textHeight", 14
 			)
@@ -2845,8 +2842,8 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 			
 			ArkInventory.Lib.Dewdrop:AddLine(
 				"text", string.format( "%s%s%s", GREEN_FONT_COLOR_CODE, ArkInventory.Localise["CLICK_TO_SELECT"], FONT_COLOR_CODE_CLOSE ),
-				"tooltipTitle", name,
-				"tooltipText", string.format( ArkInventory.Localise["LDB_COMPANION_SELECT"], name ),
+				"tooltipTitle", pd.fullName,
+				"tooltipText", string.format( ArkInventory.Localise["LDB_COMPANION_SELECT"], pd.fullName ),
 				"checked", selected[petID] == true,
 				"disabled", selected[petID] == true,
 				"isRadio", true,
@@ -2858,8 +2855,8 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 	
 			ArkInventory.Lib.Dewdrop:AddLine(
 				"text", string.format( "%s%s%s", RED_FONT_COLOR_CODE, ArkInventory.Localise["CLICK_TO_IGNORE"], FONT_COLOR_CODE_CLOSE ),
-				"tooltipTitle", name,
-				"tooltipText", string.format( ArkInventory.Localise["LDB_COMPANION_IGNORE"], name ),
+				"tooltipTitle", pd.fullName,
+				"tooltipText", string.format( ArkInventory.Localise["LDB_COMPANION_IGNORE"], pd.fullName ),
 				"checked", selected[petID] == false,
 				"disabled", selected[petID] == false,
 				"isRadio", true,
@@ -2872,8 +2869,8 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 			if selected[petID] ~= nil then
 				ArkInventory.Lib.Dewdrop:AddLine(
 					"text", string.format( "%s%s%s", HIGHLIGHT_FONT_COLOR_CODE, ArkInventory.Localise["CLICK_TO_DESELECT"], FONT_COLOR_CODE_CLOSE ),
-					"tooltipTitle", name,
-					"tooltipText", string.format( ArkInventory.Localise["LDB_COMPANION_DESELECT"], name ),
+					"tooltipTitle", pd.fullName,
+					"tooltipText", string.format( ArkInventory.Localise["LDB_COMPANION_DESELECT"], pd.fullName ),
 					"isRadio", true,
 					"func", function( )
 						selected[petID] = nil
@@ -2892,7 +2889,7 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 			
 			ArkInventory.Lib.Dewdrop:AddLine(
 				"text", txt,
-				"tooltipTitle", name,
+				"tooltipTitle", pd.fullName,
 				"tooltipText", BATTLE_PETS_SUMMON_TOOLTIP,
 				"disabled", not C_PetJournal.PetIsSummonable( petID ),
 				"func", function( )
@@ -2993,21 +2990,18 @@ function ArkInventory.MenuBattlePet( frame, petID )
 			"relativePoint", rp,
 			"children", function( level, value )
 				
+				local pd = ArkInventory.PetJournal.GetPetInfo( petID )
+				
+				--ArkInventory.Output( pd.fullName, " / ", pd.rarity, " / ", pd.link )
+				
 				if ( level == 1 ) then
 					
-					local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
-					local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
-					
-					rarity = ( rarity and ( rarity - 1 ) ) or 1
-					
-					--name = string.format( "%s%s|r", select( 5, ArkInventory.GetItemQualityColor( rarity ) ), name )
-					if customName then
-						name = string.format( "%s (%s)", name, customName )
-					end
+					--name = string.format( "%s%s|r", select( 5, ArkInventory.GetItemQualityColor( pd.rarity ) ), pd.fullName )
 					
 					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", name,
+						"text", pd.fullName,
 						"isTitle", true,
+						"icon", pd.sd.icon,
 						"textHeight", 14
 					)
 					
@@ -3039,13 +3033,12 @@ function ArkInventory.MenuBattlePet( frame, petID )
 							"disabled", not C_PetJournal.IsJournalUnlocked( ),
 							"closeWhenClicked", true,
 							"func", function( info )
-								StaticPopup_Show( "BATTLE_PET_RENAME", nil, nil, petID )
+								ArkInventory.Lib.StaticDialog:Spawn( "BATTLE_PET_RENAME", petID )
 							end
 						)
 						
 						-- enable / disable favourite
-						local isFavorite = C_PetJournal.PetIsFavorite( petID )
-						if isFavorite then
+						if pd.favorite then
 							txt = BATTLE_PET_UNFAVORITE
 						else
 							txt = BATTLE_PET_FAVORITE
@@ -3056,7 +3049,7 @@ function ArkInventory.MenuBattlePet( frame, petID )
 							"disabled", not C_PetJournal.IsJournalUnlocked( ),
 							"closeWhenClicked", true,
 							"func", function( info )
-								if isFavorite then
+								if pd.favorite then
 									C_PetJournal.SetFavorite( petID, 0 )
 								else
 									C_PetJournal.SetFavorite( petID, 1 )
@@ -3081,21 +3074,7 @@ function ArkInventory.MenuBattlePet( frame, petID )
 								"disabled", C_PetBattles.IsInBattle( ) or C_PetJournal.PetIsSlotted( petID ),
 								"closeWhenClicked", true,
 								"func", function( info )
-									
-									local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
-									local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
-									local qd = ""
-									
-									if isWild and canBattle then
-										qd = _G["BATTLE_PET_BREED_QUALITY" .. rarity]
-										rarity = ( rarity and ( rarity - 1 ) ) or 1
-										qd = string.format( ", %s%s|r", select( 5, ArkInventory.GetItemQualityColor( rarity ) ), qd )
-									end
-									
-									local release = string.format( "%s|r, %s %d%s", name, LEVEL, level, qd )
-									
-									StaticPopup_Show( "BATTLE_PET_RELEASE", release, nil, petID )
-									
+									ArkInventory.Lib.StaticDialog:Spawn( "BATTLE_PET_RELEASE", petID )
 								end
 							)
 						end
@@ -3116,7 +3095,7 @@ function ArkInventory.MenuBattlePet( frame, petID )
 								"disabled", C_PetJournal.PetIsSlotted( petID ) or C_PetJournal.PetIsHurt( petID ),
 								"closeWhenClicked", true,
 								"func", function( info )
-									StaticPopup_Show( "BATTLE_PET_PUT_IN_CAGE", nil, nil, petID )
+									ArkInventory.Lib.StaticDialog:Spawn( "BATTLE_PET_PUT_IN_CAGE", petID )
 								end
 							)
 						end
@@ -3143,4 +3122,3 @@ function ArkInventory.MenuBattlePet( frame, petID )
 	end
 	
 end
-

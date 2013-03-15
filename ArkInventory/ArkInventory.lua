@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1059 $
--- $Date: 2012-12-21 21:34:13 +1100 (Fri, 21 Dec 2012) $
+-- $Revision: 1083 $
+-- $Date: 2013-03-07 19:12:14 +1100 (Thu, 07 Mar 2013) $
 
 
 local _G = _G
@@ -27,7 +27,7 @@ ArkInventory.Lib = { -- libraries live here
 	
 	Dewdrop = LibStub( "ArkDewdrop-3.0" ),
 	
-	Pet = LibStub( "LibPetJournal-2.0" ),
+	StaticDialog = LibStub( "LibDialog-1.0" ),
 	
 }
 
@@ -138,7 +138,7 @@ ArkInventory.Const = { -- constants
 	},
 
 	Bag = {
-		Status = { -- these need to be negative values,  do not use -1 (false)
+		Status = { -- these need to be negative values,  do not use -1
 			Unknown = -2,
 			Active = -3,
 			Empty = -4,
@@ -1380,7 +1380,7 @@ ArkInventory.Global = { -- globals
 	},
 	
 	Thread = {
-		WhileInCombat = false,
+		WhileInCombat = true,
 		Restack = { },
 		Window = { },
 		WindowState = { },
@@ -1666,6 +1666,9 @@ ArkInventory.Const.DatabaseDefaults.global = {
 			["translation"] = {
 				["interim"] = true,
 				["final"] = true,
+			},
+			["restack"] = {
+				["*"] = true,
 			},
 			["battlepet"] = {
 				["opponent"] = true,
@@ -2028,6 +2031,8 @@ ArkInventory.Const.DatabaseDefaults.profile = {
 
 function ArkInventory.OnLoad( )
 	
+	-- called via hidden frame in xml
+	
 	--ArkInventory.Output( "OnLoad: ", debugprofilestop( ) )
 	
 	ArkInventory.Const.Program.Version = 0 + GetAddOnMetadata( ArkInventory.Const.Program.Name, "Version" )
@@ -2139,7 +2144,24 @@ function ArkInventory.OnInitialize( )
 	ArkInventory.Global.Tooltip.Mount = ArkInventory.Global.Tooltip.Scan
 	
 	-- cant unhook a script so it goes here
+	
+	-- battlepet mouseovers
 	GameTooltip:HookScript( "OnTooltipSetUnit", ArkInventory.TooltipHookSetUnit )
+	
+	-- void storage
+	if not VoidStorageFrame then
+		
+		ArkInventory.OutputWarning( "VoidStorageFrame is missing, cannot monitor void storage" )
+		
+	else
+		
+		VoidStorageFrame:HookScript( "OnShow", ArkInventory.HookVoidStorageShow )
+		VoidStorageFrame:HookScript( "OnHide", ArkInventory.HookVoidStorageHide )
+		
+		--VoidStorageFrame:HookScript( "OnEvent", ArkInventory.HookVoidStorageEvent )
+		
+	end
+
 	
 	ArkInventory.PlayerInfoSet( )
 	ArkInventory.MediaRegister( )
@@ -2261,18 +2283,25 @@ function ArkInventory.OnEnable( )
 	ArkInventory:RegisterEvent( "COMPANION_LEARNED", "LISTEN_COMPANION_UPDATE" ) -- mounts only
 	ArkInventory:RegisterEvent( "COMPANION_UNLEARNED", "LISTEN_COMPANION_UPDATE" ) -- mounts only
 	
-	ArkInventory:RegisterEvent( "PET_BATTLE_OPENING_DONE", "LISTEN_PET_BATTLE_OPENING_DONE" )
-	ArkInventory.Lib.Pet.RegisterCallback( ArkInventory, "PetListUpdated", "LISTEN_BATTLEPET_UPDATE" )
+	ArkInventory:RegisterEvent( "PET_JOURNAL_LIST_UPDATE", "LISTEN_PETJOURNAL_RELOAD" )
+	ArkInventory:RegisterEvent( "PET_JOURNAL_PET_DELETED", "LISTEN_PETJOURNAL_RELOAD" )
+	ArkInventory:RegisterEvent( "PET_JOURNAL_PETS_HEALED", "LISTEN_PETJOURNAL_RELOAD" )
+	ArkInventory:RegisterEvent( "BATTLE_PET_CURSOR_CLEAR", "LISTEN_PETJOURNAL_RELOAD" )
+	ArkInventory:RegisterEvent( "PET_BATTLE_LEVEL_CHANGED", "LISTEN_PETJOURNAL_RELOAD" )
+	ArkInventory:RegisterEvent( "PET_BATTLE_QUEUE_STATUS", "LISTEN_PETJOURNAL_RELOAD" )
+	ArkInventory:RegisterEvent( "PET_BATTLE_CLOSE", "LISTEN_PETJOURNAL_RELOAD" )
 	
-	--ArkInventory:RegisterEvent( "CHAT_MSG_PET_BATTLE_COMBAT_LOG", "LISTEN_BATTLEPET_RELOAD" )
-	--ArkInventory:RegisterEvent( "CHAT_MSG_PET_INFO", "LISTEN_BATTLEPET_RELOAD" )
-	--ArkInventory:RegisterEvent( "CHAT_MSG_PET_BATTLE_INFO", "LISTEN_BATTLEPET_RELOAD" )
-	--ArkInventory:RegisterEvent( "PET_BATTLE_PET_CHANGED", "LISTEN_BATTLEPET_RELOAD" )
-	--ArkInventory:RegisterEvent( "PET_BATTLE_PET_ROUND_RESULTS", "LISTEN_BATTLEPET_RELOAD" )
-	--ArkInventory:RegisterEvent( "PET_BATTLE_XP_CHANGED", "LISTEN_BATTLEPET_RELOAD" )
-	--ArkInventory:RegisterEvent( "PET_BATTLE_OVER", "LISTEN_BATTLEPET_RELOAD" )
-	ArkInventory:RegisterEvent( "PET_BATTLE_CLOSE", "LISTEN_BATTLEPET_RELOAD" )
-	ArkInventory:RegisterBucketMessage( "LISTEN_BATTLEPET_RELOAD_BUCKET", 1 )
+	ArkInventory:RegisterEvent( "PET_BATTLE_OPENING_DONE", "LISTEN_PET_BATTLE_OPENING_DONE" )
+	
+	--ArkInventory:RegisterEvent( "CHAT_MSG_PET_BATTLE_COMBAT_LOG", "LISTEN_PETJOURNAL_RELOAD" )
+	--ArkInventory:RegisterEvent( "CHAT_MSG_PET_INFO", "LISTEN_PETJOURNAL_RELOAD" )
+	--ArkInventory:RegisterEvent( "CHAT_MSG_PET_BATTLE_INFO", "LISTEN_PETJOURNAL_RELOAD" )
+	--ArkInventory:RegisterEvent( "PET_BATTLE_PET_CHANGED", "LISTEN_PETJOURNAL_RELOAD" )
+	--ArkInventory:RegisterEvent( "PET_BATTLE_PET_ROUND_RESULTS", "LISTEN_PETJOURNAL_RELOAD" )
+	--ArkInventory:RegisterEvent( "PET_BATTLE_XP_CHANGED", "LISTEN_PETJOURNAL_RELOAD" )
+	--ArkInventory:RegisterEvent( "PET_BATTLE_OVER", "LISTEN_PETJOURNAL_RELOAD" )
+	
+	ArkInventory:RegisterBucketMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", 1 )
 	
 	ArkInventory:RegisterEvent( "EQUIPMENT_SETS_CHANGED", "LISTEN_EQUIPMENT_SETS_CHANGED" )
 	
@@ -4479,7 +4508,7 @@ function ArkInventory.Frame_Main_Draw( frame )
 	end
 	
 	if ( not ArkInventory.Global.Thread.WhileInCombat ) then
-		-- debugging only
+		-- should only be set to false while debugging any errors
 		ArkInventory.Frame_Main_DrawThreadStart( frame )
 		return
 	end
@@ -6702,12 +6731,10 @@ end
 
 function ArkInventory.Frame_Item_OnEnter( frame )
 
+	if not ArkInventory.db.global.option.tooltip.show then return end
+	
 	if not ArkInventory.ValidFrame( frame, true ) then return end
 
-	if not ArkInventory.db.global.option.tooltip.show then
-		return
-	end
-	
 	local loc_id = frame.ARK_Data.loc_id
 	local bag_id = frame.ARK_Data.bag_id
 	local blizzard_id = ArkInventory.BagID_Blizzard( loc_id, bag_id )
@@ -6949,7 +6976,7 @@ function ArkInventory.Frame_Item_Battlepet_Update( frame )
 		
 		frame.active:SetShown( i.pid == C_PetJournal.GetSummonedPetGUID( ) )
 		frame.slotted:SetShown( C_PetJournal.PetIsSlotted( i.pid ) )
-		frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pid ) ) <= 0 )
+		frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pid ) or 1 ) <= 0 )
 		frame.favorite:SetShown( C_PetJournal.PetIsFavorite( i.pid ) )
 		
 	else
@@ -7235,7 +7262,7 @@ function ArkInventory.Frame_Item_Update( loc_id, bag_id, slot_id )
 		if ( obj == GameTooltip:GetOwner( ) ) then
 			obj.UpdateTooltip( obj )
 		end
-
+		
 	end
 	
 end
@@ -7960,7 +7987,6 @@ end
 
 function ArkInventory.Frame_Changer_Battlepet_OnEnter( frame )
 	local petID = C_PetJournal.GetPetLoadOutInfo( frame:GetID( ) )
-	--local h = ArkInventory.BattlepetBaseHyperlinkFromPetID( petID )
 	local h = C_PetJournal.GetBattlePetLink( petID )
 	--ArkInventory.Output( h )
 	ArkInventory.GameTooltipSetPosition( frame )
@@ -8013,21 +8039,15 @@ function ArkInventory.Frame_Changer_Battlepet_Update( )
 		local petID, ability1ID, ability2ID, ability3ID, locked = C_PetJournal.GetPetLoadOutInfo( slot_id )
 		if petID and ( not locked ) then
 			
-			local speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID( petID )
-			local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats( petID )
+			local pd = ArkInventory.PetJournal.GetPetInfo( petID )
 			
-			if isWild and canBattle then
-				i.q = ( rarity and ( rarity - 1 ) ) or 1
-			else
-				i.q = 1
-			end
-			
-			i.h = C_PetJournal.GetBattlePetLink( petID )
-			i.sb = ( ( not tradable ) and true ) or nil
+			i.q = pd.rarity
+			i.h = pd.link
+			i.sb = ( ( not pd.sd.tradable ) and true ) or nil
 			i.count = 1
 			i.pid = petID
-			i.bp = ( canBattle and true ) or nil
-			i.cn = customName
+			i.bp = ( pd.sd.canBattle and true ) or nil
+			i.cn = pd.customName
 			i.locked = locked
 			
 		end
@@ -8041,7 +8061,7 @@ function ArkInventory.Frame_Changer_Battlepet_Update( )
 			ArkInventory.Frame_Item_Update_Stock( frame )
 
 			if i.pid then
-				frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pid ) ) <= 0 )
+				frame.dead:SetShown( ( C_PetJournal.GetPetStats( i.pid ) or 1 ) <= 0 )
 				frame.favorite:SetShown( C_PetJournal.PetIsFavorite( i.pid ) )
 			else
 				frame.dead:Hide( )
@@ -8602,6 +8622,8 @@ end
 
 function ArkInventory.HookVoidStorageShow( )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+	
 	--ArkInventory.Output( "void storage opened" )
 	
 	local loc_id = ArkInventory.Const.Location.Void
@@ -8626,6 +8648,8 @@ function ArkInventory.HookVoidStorageShow( )
 end
 
 function ArkInventory.HookVoidStorageHide( )
+	
+	if not ArkInventory:IsEnabled( ) then return end
 	
 	--ArkInventory.Output( "void storage closed" )
 	
@@ -8653,7 +8677,11 @@ function ArkInventory.HookVoidStorageHide( )
 end
 
 function ArkInventory.HookVoidStorageEvent( self, event )
+	
+	if not ArkInventory:IsEnabled( ) then return end
+	
 	--ArkInventory.Output( "void storage event ", event )
+	
 end
 
 function ArkInventory.HookFloatingBattlePet_Show( ... )
@@ -8665,6 +8693,7 @@ function ArkInventory.HookFloatingBattlePet_Show( ... )
 	if not ItemRefTooltip:IsVisible( ) then
 		ItemRefTooltip:SetOwner( UIParent, "ANCHOR_PRESERVE" )
 	end
+	
 	ArkInventory.TooltipSetBattlepet( ItemRefTooltip, h )
 	
 end
@@ -8678,6 +8707,19 @@ function ArkInventory.HookBattlePetToolTip_Show( ... )
 	ArkInventory.TooltipSetBattlepet( GameTooltip, h )
 	
 end
+
+function ArkInventory.HookCPetJournalSetPetLoadOutInfo( ... )
+	ArkInventory.Frame_Changer_Battlepet_Update( ... )
+end
+
+function ArkInventory.HookCPetJournalSetFavorite( ... )
+	ArkInventory:SendMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", "SET_FAVOURITE" )
+end
+
+function ArkInventory.HookCPetJournalSetCustomName( ... )
+	ArkInventory:SendMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", "RENAME" )
+end
+
 
 
 
@@ -8833,26 +8875,13 @@ function ArkInventory.BlizzardAPIHook( disable )
 	end
 	
 	
-	-- void storage
-	if not VoidStorageFrame then
-		
-		ArkInventory.OutputWarning( "VoidStorageFrame is missing, cannot monitor void storage" )
-		
-	else
-		
-		VoidStorageFrame:HookScript( "OnShow", ArkInventory.HookVoidStorageShow )
-		VoidStorageFrame:HookScript( "OnHide", ArkInventory.HookVoidStorageHide )
-		
-		--VoidStorageFrame:HookScript( "OnEvent", ArkInventory.HookVoidStorageEvent )
-		
-	end
-	
 	-- tooltips
 
 	local tooltip_functions = {
 		"SetAuctionItem", "SetAuctionSellItem", "SetAuctionCompareItem", "SetBagItem", "SetBuybackItem", "SetCraftItem", "SetCraftSpell", "SetGuildBankItem", "SetHyperlink",
 		"SetHyperlinkCompareItem", "SetInboxItem", "SetInventoryItem", "SetLootItem", "SetLootRollItem", "SetMerchantCompareItem", "SetMerchantItem", "SetQuestItem",
 		"SetQuestLogItem", "SetSendMailItem", "SetTradePlayerItem", "SetTradeSkillItem", "SetTradeTargetItem",
+		"SetVoidDepositItem", "SetVoidItem", "SetVoidWithdrawalItem",
 	}
     
 	if disable or not ArkInventory.db.global.option.tooltip.show then
@@ -8934,12 +8963,12 @@ function ArkInventory.BlizzardAPIHookBattlepetFunctions( disable )
 		
 	else
 		
-		ArkInventory.MySecureHook( C_PetJournal, "SetPetLoadOutInfo", ArkInventory.Frame_Changer_Battlepet_Update )
-		ArkInventory.MySecureHook( C_PetJournal, "SetFavorite", ArkInventory.ScanBattlePet )
-		ArkInventory.MySecureHook( C_PetJournal, "SetCustomName", ArkInventory.ScanBattlePet )
+		ArkInventory.MySecureHook( C_PetJournal, "SetPetLoadOutInfo", ArkInventory.HookCPetJournalSetPetLoadOutInfo )
+		ArkInventory.MySecureHook( C_PetJournal, "SetFavorite", ArkInventory.HookCPetJournalSetFavorite )
+		ArkInventory.MySecureHook( C_PetJournal, "SetCustomName", ArkInventory.HookCPetJournalSetCustomName )
 		
 	end
-
+	
 end
 
 

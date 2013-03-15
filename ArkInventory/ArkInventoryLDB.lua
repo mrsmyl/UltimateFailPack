@@ -328,7 +328,7 @@ function ArkInventory.LDB.Pets:OnClick( button )
 		
 		local companionType = "CRITTER"
 		
-		local n = ArkInventory.Lib.Pet:NumPets( )
+		local n = ArkInventory.PetJournal.NumPets( )
 		if n == 0 then return end
 		
 		ArkInventory.LDB.Companion.GetUsable( companionType, true )
@@ -855,7 +855,7 @@ function ArkInventory.LDB.Pets:GetAvailable( companionType, ignoreActive )
 	
 	if companionType ~= "CRITTER" then return end
 	
-	local n = ArkInventory.Lib.Pet:NumPets( )
+	local n = ArkInventory.PetJournal.NumPets( )
 	if n == 0 then return end
 	
 	local selected = ArkInventory.db.char.option.ldb.pets.selected
@@ -871,11 +871,9 @@ function ArkInventory.LDB.Pets:GetAvailable( companionType, ignoreActive )
 	local activePet = C_PetJournal.GetSummonedPetGUID( )
 	local activeSpecies = activePet and C_PetJournal.GetPetInfoByPetID( activePet )
 	
-	for _, petID in ArkInventory.Lib.Pet:IteratePetIDs( ) do
+	for petID, pd in ArkInventory.PetJournal.IteratePetIDs( ) do
 		
-		local speciesID = C_PetJournal.GetPetInfoByPetID( petID )
-		
-		if ( C_PetJournal.PetIsSummonable( petID ) ) and ( not active or ignoreActive ) and ( speciesID ~= activeSpecies ) and ( ( selectedCount == 0 and selected[petID] ~= false ) or ( selectedCount > 0 and selected[petID] == true ) ) then
+		if ( pd.isSummonable ) and ( not active or ignoreActive ) and ( pd.sd.speciesID ~= activeSpecies ) and ( ( selectedCount == 0 and selected[petID] ~= false ) or ( selectedCount > 0 and selected[petID] == true ) ) then
 			-- must be summonable, ignore dead pets
 			-- cannot be same current species as active pet, if one was active
 			count = count + 1
@@ -937,7 +935,7 @@ end
 function ArkInventory.LDB.Companion.GetTotal( companionType, mountType )
 	
 	if companionType == "CRITTER" then
-		return ArkInventory.Lib.Pet:NumPets( )
+		return ArkInventory.PetJournal.NumPets( )
 	end
 	
 	local count = 0

@@ -25,8 +25,8 @@ function ArkInventory.ConvertOldOptions( )
 	
 	local upgrade_version = 0
 
-	if not ArkInventory.db.profile.option["version"] then
-		ArkInventory.db.profile.option["version"] = upgrade_version
+	if not ArkInventory.db.profile.option.version then
+		ArkInventory.db.profile.option.version = upgrade_version
 	end
 	
 	

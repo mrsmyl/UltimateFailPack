@@ -7,7 +7,6 @@ local type = _G.type
 local error = _G.error
 local table = _G.table
 
-
 --[[
 ArkInventory.Global.Companion.MOUNT = {
 	[spellid] = {
@@ -747,6 +746,8 @@ local TempData = { -- temporary table for item to spell translations.
 -- spell 93461 Landro's Lil' XT
 -- spell 123212 Shore Crawler
 -- spell 123214 Gilnean Raven
+[90902]={cid=67233}, -- Imperial Silkworm
+[90900]={cid=67230}, -- Imperial Moth
 
 }
 
@@ -769,7 +770,7 @@ local function importMountCrossRefTable( )
 			
 			if ( data.cid ) and ( type( data.cid ) == "number" ) then
 				
-				speciesID = ArkInventory.Lib.Pet:GetSpeciesIDForCreatureID( data.cid )
+				speciesID = ArkInventory.PetJournal.GetSpeciesIDForCreatureID( data.cid )
 				if speciesID then
 					
 					key2 = string.format( "battlepet:%s", speciesID )

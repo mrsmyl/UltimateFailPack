@@ -1,5 +1,5 @@
-﻿## Interface: 50100
-## X-Curse-Packaged-Version: 3.03.25
+﻿## Interface: 50200
+## X-Curse-Packaged-Version: 3.03.27
 ## X-Curse-Project-Name: ArkInventory
 ## X-Curse-Project-ID: ark-inventory
 ## X-Curse-Repository-ID: wow/ark-inventory/mainline
@@ -8,13 +8,16 @@
 ## Notes: Example rule for ArkInventory
 ## Author: Arkayenro
 ## Version: 1.00
+
 ## DefaultState: Disabled
 ## LoadOnDemand: 0
 
 ## RequiredDeps: ArkInventoryRules
+## OptionalDeps: InsertAnyModsHereThatYourRuleMightNeed
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always:delayed
+## LoadWith: ArkInventoryRules
 
 
 ArkInventoryRulesExample.lua
