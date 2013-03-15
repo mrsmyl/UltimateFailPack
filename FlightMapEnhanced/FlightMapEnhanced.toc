@@ -1,11 +1,11 @@
-## Interface: 50001
+## Interface: 50200
 ## Title: Flight Map Enhanced
 ## Author: DarkStarX
-## Version: 1.5.33
+## Version: 1.5.34
 ## Notes: Enhances the normal Flight Map with adding a list to choose where you want to fly.
 ## SavedVariables: FlightMapEnhanced_FlightLocations, FlightMapEnhanced_FlightNames, FlightMapEnhanced_FlightTimes, FlightMapEnhanced_GlobalConf
 ## SavedVariablesPerCharacter: FlightMapEnhanced_Config
-## X-Curse-Packaged-Version: v1.5.33
+## X-Curse-Packaged-Version: v1.5.34
 ## X-Curse-Project-Name: Flight Map Enhanced
 ## X-Curse-Project-ID: flight-map-enhanced
 ## X-Curse-Repository-ID: wow/flight-map-enhanced/mainline

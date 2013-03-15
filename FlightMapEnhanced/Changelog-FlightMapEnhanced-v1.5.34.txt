@@ -1,0 +1,12 @@
+tag v1.5.34
+7880794dd4b249feb263f89962a468213b5cb935
+Dorwido <darkz@gmx.de>
+2013-03-12 22:57:49 +0100
+
+v1.5.34 update
+
+
+--------------------
+
+Dorwido:
+	- updated toc for 5.2
