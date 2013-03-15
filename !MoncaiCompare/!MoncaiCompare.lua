@@ -1,3 +1,5 @@
+-- local addonName, addonTable = ...; 
+
 local ItemRefTooltip = ItemRefTooltip
 
 ItemRefTooltip.UpdateTooltip = function(self)
@@ -33,7 +35,7 @@ end
 )
 
 GameTooltip:SetScript("OnTooltipSetItem", function(self)
-	if ( IsModifiedClick("COMPAREITEMS") or not self:IsEquippedItem() ) then
+	if ( not IsModifiedClick("COMPAREITEMS") and not self:IsEquippedItem() ) then
 		GameTooltip_ShowCompareItem(self, 1);
 	end
 	if (BattlePetTooltip) then
@@ -41,3 +43,27 @@ GameTooltip:SetScript("OnTooltipSetItem", function(self)
 	end
 end
 )
+
+local fEncounterJournal_Loot_OnUpdate;
+local function JournalHook()
+	
+	fEncounterJournal_Loot_OnUpdate = EncounterJournal_Loot_OnUpdate;
+	EncounterJournal_Loot_OnUpdate = function(self)
+		if GameTooltip:IsOwned(self) then
+			if (not IsModifiedClick("COMPAREITEMS")) and not IsEquippedItem(self.itemID) then
+				GameTooltip_ShowCompareItem();
+			else
+				ShoppingTooltip1:Hide();
+				ShoppingTooltip2:Hide();
+				ShoppingTooltip3:Hide();
+			end
+
+			if IsModifiedClick("DRESSUP") then
+				ShowInspectCursor();
+			else
+				ResetCursor();
+			end
+		end	
+	end;
+end
+hooksecurefunc("EncounterJournal_LoadUI", JournalHook)
