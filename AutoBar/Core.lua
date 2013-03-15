@@ -65,6 +65,10 @@ AutoBar.delay = {}
 AutoBarMountFilter = {[25953] = 1;[26056] = 1;[26054] = 1; [26055] = 1}
 
 
+AutoBar.warning_log = {}
+
+
+
 function AutoBar:ConfigToggle()
 	if (not InCombatLockdown()) then
 			AutoBar:OpenOptions()
@@ -316,6 +320,8 @@ function AutoBar:OnEnable(first)
 	AutoBar.frame:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
 	AutoBar.frame:RegisterEvent("COMPANION_UPDATE")
 	AutoBar.frame:RegisterEvent("COMPANION_LEARNED")
+	AutoBar.frame:RegisterEvent("UNIT_ENTERED_VEHICLE")
+	AutoBar.frame:RegisterEvent("UNIT_EXITED_VEHICLE")
 
 	LibKeyBound.RegisterCallback(self, "LIBKEYBOUND_ENABLED")
 	LibKeyBound.RegisterCallback(self, "LIBKEYBOUND_DISABLED")
@@ -470,6 +476,12 @@ function Delayed.prototype:Start(arg1, customDelay)
 	local function MyCallback()
 		local myself = self
 		local arg1 = arg1
+		-- If in combat delay call till after combat
+		if (InCombatLockdown()) then
+			self.timerInfo.runPostCombat = true
+			return
+		end
+
 --print("***MyCallback "..myself.name.." at  " .. tostring(GetTime()).." arg1  " .. tostring(arg1))
 		myself:Callback(arg1)
 	end
@@ -528,6 +540,9 @@ function AutoBar.events:PLAYER_ENTERING_WORLD()
 --print("   PLAYER_ENTERING_WORLD")
 		AutoBar.delay["UpdateCategories"]:Start()
 	end
+	
+	AutoBar:DumpWarningLog()
+
 end
 
 
@@ -778,6 +793,39 @@ function AutoBar.events:PLAYER_CONTROL_GAINED()
 	AutoBar:LogEvent("PLAYER_CONTROL_GAINED", arg1)
 	if (not InCombatLockdown() and not AutoBar.in_pet_battle) then
 		AutoBar.delay["UpdateButtons"]:Start()
+	end
+end
+
+function AutoBar.events:UNIT_ENTERED_VEHICLE(arg1, arg2, arg3)
+	AutoBar:LogEvent("UNIT_ENTERED_VEHICLE", arg1)
+	--AutoBar:Print("UNIT_ENTERED_VEHICLE" .. (arg1 or "arg1_blank") .. tostring(arg2) .. (arg3 or "arg3_blank") )
+
+	if( arg1 == "player") then
+	
+		for barKey, bar in pairs(AutoBar.barList) do
+			if(AutoBar.barList[barKey]) then
+				AutoBar.barList[barKey].frame:Hide()
+			end
+		end
+	
+		AutoBar.in_pet_battle = true
+	end
+
+end
+
+function AutoBar.events:UNIT_EXITED_VEHICLE(arg1, arg2, arg3)
+	AutoBar:LogEvent("UNIT_EXITED_VEHICLE", arg1)
+	
+	--AutoBar:Print("UNIT_EXITED_VEHICLE" .. (arg1 or "arg1_blank") .. (arg2 or "arg2_blank") .. (arg3 or "arg3_blank") )
+
+	if( arg1 == "player") then
+		for barKey, bar in pairs(AutoBar.barList) do
+		if(AutoBar.barList[barKey]) then
+				AutoBar.barList[barKey].frame:Show()
+			end
+		end
+
+		AutoBar.in_pet_battle = false
 	end
 end
 
@@ -1565,4 +1613,37 @@ function AutoBar:ClassUsesMana(class_name)
 	return AutoBar.set_mana_users[class_name]
 
 end
+
+function AutoBar:LogWarning(p_message)
+
+	table.insert(AutoBar.warning_log, p_message)
+
+end
+
+function AutoBar:DumpWarningLog()
+
+	if next(AutoBar.warning_log) == nil then --Empty log
+		return
+	end
+
+	AutoBar:Print("Warnings/Errors occured in AutoBar:")
+
+	for i,v in ipairs(AutoBar.warning_log) do
+		AutoBar:Print(v)
+	end
+
+end
+
+function AutoBar:LoggedGetSpellInfo(p_spell_id)
+
+	local ret_val = {GetSpellInfo(p_spell_id)} --table-ify
+
+	if next(ret_val) == nil then
+		AutoBar:LogWarning("Invalid Spell ID:" .. p_spell_id)
+	end
+
+	return unpack(ret_val)
+
+end
+
 

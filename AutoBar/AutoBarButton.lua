@@ -27,34 +27,33 @@ AutoBarButton = AceOO.Class(AutoBar.Class.Button)
 AutoBarButton.dirtyButton = {}
 
 
-spellNameList["Lay on Hands"], _, spellIconList["Lay on Hands"] = GetSpellInfo(633)
-spellNameList["Feign Death"], _, spellIconList["Feign Death"] = GetSpellInfo(5384)
-spellNameList["Disengage"], _, spellIconList["Disengage"] = GetSpellInfo(781)
-spellNameList["Healing Wave"], _, spellIconList["Healing Wave"] = GetSpellInfo(331)
-spellNameList["Ice Block"], _, spellIconList["Ice Block"] = GetSpellInfo(27619)
-spellNameList["Last Stand"], _, spellIconList["Last Stand"] = GetSpellInfo(12975)
-spellNameList["Desperate Prayer"], _, spellIconList["Desperate Prayer"] = GetSpellInfo(19236)
+spellNameList["Lay on Hands"], _, spellIconList["Lay on Hands"] = AutoBar:LoggedGetSpellInfo(633)
+spellNameList["Feign Death"], _, spellIconList["Feign Death"] = AutoBar:LoggedGetSpellInfo(5384)
+spellNameList["Disengage"], _, spellIconList["Disengage"] = AutoBar:LoggedGetSpellInfo(781)
+spellNameList["Healing Wave"], _, spellIconList["Healing Wave"] = AutoBar:LoggedGetSpellInfo(331)
+spellNameList["Ice Block"], _, spellIconList["Ice Block"] = AutoBar:LoggedGetSpellInfo(27619)
+spellNameList["Last Stand"], _, spellIconList["Last Stand"] = AutoBar:LoggedGetSpellInfo(12975)
+spellNameList["Desperate Prayer"], _, spellIconList["Desperate Prayer"] = AutoBar:LoggedGetSpellInfo(19236)
 
-spellNameList["Vanish"], _, spellIconList["Vanish"] = GetSpellInfo(1856)
-spellNameList["Nature's Swiftness"], _, spellIconList["Nature's Swiftness"] = GetSpellInfo(132158)
-spellNameList["Frenzied Regeneration"], _, spellIconList["Frenzied Regeneration"] = GetSpellInfo(22842)
-spellNameList["Invisibility"], _, spellIconList["Invisibility"] = GetSpellInfo(66)
-spellNameList["Greater Invisibility"], _, spellIconList["Greater Invisibility"] = GetSpellInfo(110959)
-spellNameList["Shadowform"], _, spellIconList["Shadowform"] = GetSpellInfo(15473)
-spellNameList["Shadowmeld"], _, spellIconList["Shadowmeld"] = GetSpellInfo(58984)
-spellNameList["Stealth"], _, spellIconList["Stealth"] = GetSpellInfo(1784)
-spellNameList["Wild Charge"], _, spellIconList["Wild Charge"] = GetSpellInfo(102401)
-spellNameList["Rune Tap"], _, spellIconList["Rune Tap"] = GetSpellInfo(48982)
-spellNameList["Bear Form"], _, spellIconList["Bear Form"] = GetSpellInfo(5487)
-spellNameList["Cat Form"], _, spellIconList["Cat Form"] = GetSpellInfo(768)
-spellNameList["Ghost Wolf"], _, spellIconList["Ghost Wolf"] = GetSpellInfo(2645)
-spellNameList["Mangle (Cat)"], _, spellIconList["Mangle (Cat)"] = GetSpellInfo(33876)
-spellNameList["Shadowstep"], _, spellIconList["Shadowstep"] = GetSpellInfo(36554)
-spellNameList["Charge"], _, spellIconList["Charge"] = GetSpellInfo(100)
-spellNameList["Intercept"], _, spellIconList["Intercept"] = GetSpellInfo(20252)
-spellNameList["Heroic Leap"], _, spellIconList["Heroic Leap"]  = GetSpellInfo(6544)
-spellNameList["Intervene"], _, spellIconList["Intervene"]  = GetSpellInfo(3411)
-spellNameList["Enraged Regeneration"] = GetSpellInfo(55694)
+spellNameList["Vanish"], _, spellIconList["Vanish"] = AutoBar:LoggedGetSpellInfo(1856)
+spellNameList["Nature's Swiftness"], _, spellIconList["Nature's Swiftness"] = AutoBar:LoggedGetSpellInfo(132158)
+spellNameList["Frenzied Regeneration"], _, spellIconList["Frenzied Regeneration"] = AutoBar:LoggedGetSpellInfo(22842)
+spellNameList["Invisibility"], _, spellIconList["Invisibility"] = AutoBar:LoggedGetSpellInfo(66)
+spellNameList["Greater Invisibility"], _, spellIconList["Greater Invisibility"] = AutoBar:LoggedGetSpellInfo(110959)
+spellNameList["Shadowform"], _, spellIconList["Shadowform"] = AutoBar:LoggedGetSpellInfo(15473)
+spellNameList["Shadowmeld"], _, spellIconList["Shadowmeld"] = AutoBar:LoggedGetSpellInfo(58984)
+spellNameList["Stealth"], _, spellIconList["Stealth"] = AutoBar:LoggedGetSpellInfo(1784)
+spellNameList["Wild Charge"], _, spellIconList["Wild Charge"] = AutoBar:LoggedGetSpellInfo(102401)
+spellNameList["Rune Tap"], _, spellIconList["Rune Tap"] = AutoBar:LoggedGetSpellInfo(48982)
+spellNameList["Bear Form"], _, spellIconList["Bear Form"] = AutoBar:LoggedGetSpellInfo(5487)
+spellNameList["Cat Form"], _, spellIconList["Cat Form"] = AutoBar:LoggedGetSpellInfo(768)
+spellNameList["Ghost Wolf"], _, spellIconList["Ghost Wolf"] = AutoBar:LoggedGetSpellInfo(2645)
+spellNameList["Mangle (Cat)"], _, spellIconList["Mangle (Cat)"] = AutoBar:LoggedGetSpellInfo(33876)
+spellNameList["Shadowstep"], _, spellIconList["Shadowstep"] = AutoBar:LoggedGetSpellInfo(36554)
+spellNameList["Charge"], _, spellIconList["Charge"] = AutoBar:LoggedGetSpellInfo(100)
+spellNameList["Heroic Leap"], _, spellIconList["Heroic Leap"]  = AutoBar:LoggedGetSpellInfo(6544)
+spellNameList["Intervene"], _, spellIconList["Intervene"]  = AutoBar:LoggedGetSpellInfo(3411)
+spellNameList["Enraged Regeneration"] = AutoBar:LoggedGetSpellInfo(55694)
 
 
 
@@ -628,11 +627,11 @@ function AutoBarButton:SetupAttributesClear(frame)
 end
 
 local spellHealingTouch, spellHealingTouchIcon
-spellHealingTouch, _, spellHealingTouchIcon = GetSpellInfo(5185)
+spellHealingTouch, _, spellHealingTouchIcon = AutoBar:LoggedGetSpellInfo(5185)
 
-local SPELL_FEED_PET = GetSpellInfo(6991) -- Feed Pet
-local SPELL_PICK_LOCK = GetSpellInfo(1804) -- Pick Lock
-local SPELL_PROWL = GetSpellInfo(5215)
+local SPELL_FEED_PET = AutoBar:LoggedGetSpellInfo(6991) -- Feed Pet
+local SPELL_PICK_LOCK = AutoBar:LoggedGetSpellInfo(1804) -- Pick Lock
+local SPELL_PROWL = AutoBar:LoggedGetSpellInfo(5215)
 
 local TRINKET1_SLOT = 13
 local TRINKET2_SLOT = 14
@@ -1245,9 +1244,9 @@ local spellAquaticForm, spellAquaticFormIcon
 local spellTreeOfLifeForm, spellTreeOfLifeFormIcon
 local spellMoonkinForm, spellMoonkinFormIcon
 
-spellMoonkinForm, _, spellMoonkinFormIcon = GetSpellInfo(24858)
-spellAquaticForm, _, spellAquaticFormIcon = GetSpellInfo(1066)
-spellTreeOfLifeForm, _, spellTreeOfLifeFormIcon = GetSpellInfo(114282)
+spellMoonkinForm, _, spellMoonkinFormIcon = AutoBar:LoggedGetSpellInfo(24858)
+spellAquaticForm, _, spellAquaticFormIcon = AutoBar:LoggedGetSpellInfo(1066)
+spellTreeOfLifeForm, _, spellTreeOfLifeFormIcon = AutoBar:LoggedGetSpellInfo(114282)
 
 
 local shapeshift = {
@@ -1483,16 +1482,6 @@ function AutoBarButtonCharge.prototype:Refresh(parentBar, buttonDB)
 			concatList[index + 2] = ";"
 			concatList[index + 3] = "[nocombat,harm,stance:1]"
 			concatList[index + 4] = spellNameList["Charge"]
-			concatList[index + 5] = ";"
-			self.macroActive = true
-			index = index + 6
-		end
-		if (GetSpellInfo(spellNameList["Intercept"])) then
-			concatList[index] = "[combat,harm,nostance:3]"
-			concatList[index + 1] = spellNameList["Berserker Stance"]
-			concatList[index + 2] = ";"
-			concatList[index + 3] = "[combat,harm,stance:3]"
-			concatList[index + 4] = spellNameList["Intercept"]
 			concatList[index + 5] = ";"
 			self.macroActive = true
 			index = index + 6
@@ -1989,7 +1978,7 @@ end
 local AutoBarButtonMount = AceOO.Class(AutoBarButton)
 AutoBar.Class["AutoBarButtonMount"] = AutoBarButtonMount
 
-_, _, spellIconList["Amani War Bear"] = GetSpellInfo(43688)
+_, _, spellIconList["Amani War Bear"] = AutoBar:LoggedGetSpellInfo(43688)
 
 function AutoBarButtonMount.prototype:init(parentBar, buttonDB)
 	AutoBarButtonMount.super.prototype.init(self, parentBar, buttonDB)
@@ -2187,7 +2176,7 @@ end
 local AutoBarButtonPets = AceOO.Class(AutoBarButton)
 AutoBar.Class["AutoBarButtonPets"] = AutoBarButtonPets
 
-_, _, spellIconList["Phoenix Hatchling"] = GetSpellInfo(46599)
+_, _, spellIconList["Phoenix Hatchling"] = AutoBar:LoggedGetSpellInfo(46599)
 
 function AutoBarButtonPets.prototype:init(parentBar, buttonDB)
 	AutoBarButtonPets.super.prototype.init(self, parentBar, buttonDB)
