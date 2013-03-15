@@ -12,7 +12,7 @@ XPerl_RequestConfig(function(new)
 				if (XPerl_TargetTarget) then XPerl_TargetTarget.conf = conf.targettarget end
 				if (XPerl_FocusTarget) then XPerl_FocusTarget.conf = conf.focustarget end
 				if (XPerl_PetTarget) then XPerl_PetTarget.conf = conf.pettarget end
-			end, "$Revision: 787 $")
+			end, "$Revision: 832 $")
 
 local percD = "%d"..PERCENT_SYMBOL
 local format = format
@@ -23,10 +23,9 @@ local UnitIsConnected = UnitIsConnected
 local UnitIsDead = UnitIsDead
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsGhost = UnitIsGhost
-local UnitMana = UnitMana
-local UnitManaMax = UnitManaMax
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
 local UnitName = UnitName
-local UnitPowerType = UnitPowerType
 local GetDifficultyColor = GetDifficultyColor or GetQuestDifficultyColor
 local buffSetup
 local playerClass
@@ -632,12 +631,8 @@ local function XPerl_Target_UpdateType(self)
 
 	--if (UnitIsPlayer(partyid)) then
 		if (self.conf.classIcon and (UnitIsPlayer(partyid) or UnitClassification(partyid) == "normal")) then
-			local LocalClass, PlayerClass
-			if (UnitClassBase) then			-- WoW 2.4 LocalClass became unit name for NPCs... WHY??
-				LocalClass, PlayerClass = UnitClassBase(partyid)
-			else
-				LocalClass, PlayerClass = UnitClass(partyid)
-			end
+			local LocalClass, PlayerClass = UnitClassBase(partyid)
+				
 			if (self.conf.classText) then
 				self.bossFrame.text:SetText(LocalClass)
 				self.bossFrame.text:SetTextColor(1, 1, 1)
@@ -670,7 +665,7 @@ end
 
 -- XPerl_Target_SetManaType
 function XPerl_Target_SetManaType(self)
-	local targetmanamax = UnitManaMax(self.partyid)
+	local targetmanamax = UnitPowerMax(self.partyid)
 
 	if (targetmanamax == 0 or not self.conf.mana) then
 		if (self.statsFrame.manaBar:IsShown()) then
@@ -698,7 +693,7 @@ end
 
 -- XPerl_Target_SetMana
 function XPerl_Target_SetMana(self)
-	local targetmana, targetmanamax = UnitMana(self.partyid), UnitManaMax(self.partyid)
+	local targetmana, targetmanamax = UnitPower(self.partyid), UnitPowerMax(self.partyid)
 	local mb = self.statsFrame.manaBar
 
 	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
@@ -716,7 +711,7 @@ function XPerl_Target_SetMana(self)
 	mb:SetMinMaxValues(0, targetmanamax)
 	mb:SetValue(targetmana)
 
-	local p = UnitPowerType(self.partyid)
+	local p = XPerl_GetDisplayedPowerType(self.partyid)
 	if (p == 0) then
 		mb.percent:SetFormattedText(percD, 100 * pmanaPct)	--	XPerl_Percent[floor(100 * (targetmana / targetmanamax))])
 	else

@@ -10,7 +10,7 @@ XPerl_RequestConfig(function(new)
 			if (XPerl_Player_Pet) then
 				XPerl_Player_Pet.conf = pconf
 			end
-		end, "$Revision: 788 $")
+		end, "$Revision: 837 $")
 local XPerl_Player_Pet_HighlightCallback
 
 -- XPerl_Player_Pet_OnLoad
@@ -176,8 +176,8 @@ end
 
 -- XPerl_Player_Pet_UpdateMana()
 local function XPerl_Player_Pet_UpdateMana(self)
-	local petmana = UnitMana(self.partyid)
-	local petmanamax = UnitManaMax(self.partyid)
+	local petmana = UnitPower(self.partyid)
+	local petmanamax = UnitPowerMax(self.partyid)
 
 	self.statsFrame.manaBar:SetMinMaxValues(0, petmanamax)
 	self.statsFrame.manaBar:SetValue(petmana)
@@ -306,7 +306,7 @@ end
 
 function XPerl_Player_Pet_Events:PET_BATTLE_CLOSE()
 	if(UnitExists("pet")) then
-		self:Show()
+		XPerl_ProtectedCall(Show, self);
 	end
 end
 

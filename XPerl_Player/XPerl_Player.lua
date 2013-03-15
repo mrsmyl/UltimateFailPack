@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 789 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 835 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%.0f"..PERCENT_SYMBOL
 
@@ -22,11 +22,10 @@ local UnitIsDead = UnitIsDead
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsGhost = UnitIsGhost
 local UnitIsAFK = UnitIsAFK
-local UnitMana = UnitMana
-local UnitManaMax = UnitManaMax
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
 local UnitName = UnitName
 local UnitPower = UnitPower
-local UnitPowerType = UnitPowerType
 local XPerl_SetHealthBar = XPerl_SetHealthBar
 
 
@@ -506,7 +505,7 @@ local function XPerl_Player_DruidBarUpdate(self)
 	end
 
 	local form = GetShapeshiftFormID()
-	if (self.runes ~= nil) then
+	if (self.runes ~= nil and not InCombatLockdown()) then
 		if (form and form ~= MOONKIN_FORM) or GetSpecialization() ~= 1 or (not pconf or not pconf.showRunes) then 
 			self.runes:Hide()
 		else
@@ -533,18 +532,13 @@ end
 -- XPerl_Player_UpdateMana
 local function XPerl_Player_UpdateMana(self)
 	local mb = self.statsFrame.manaBar
-	local playermana = UnitMana(self.partyid)
+	local pType = XPerl_GetDisplayedPowerType(self.partyid);
+	local playermana = UnitPower(self.partyid, pType);
+	local playermanamax = UnitPowerMax(self.partyid, pType);
 	
-	--if (playermana == self.Power) then
-	--	return
-	--else
-	--	self.Power = playermana;
-	--end
-	
-	
-	local playermanamax = UnitManaMax(self.partyid)
 	mb:SetMinMaxValues(0, playermanamax)
 	mb:SetValue(playermana)
+	
 	--Begin 4.3 division by 0 work around to ensure we don't divide if max is 0
 	local percent
 	if playermana > 0 and playermanamax == 0 then--We have current mana but max mana failed.
@@ -556,8 +550,9 @@ local function XPerl_Player_UpdateMana(self)
 		percent = playermana / playermanamax--Everything is dandy, so just do it right way.
 	end
 	--end division by 0 check
+	
 	mb.text:SetFormattedText("%d/%d", playermana, playermanamax)
-	local pType = UnitPowerType(self.partyid)
+
 	if (pType >= 1 or UnitPowerMax(self.partyid, pType) < 1) then
 		mb.percent:SetText(playermana)
 	else
@@ -969,8 +964,8 @@ end
 function XPerl_Player_Events:PLAYER_TALENT_UPDATE()
 	XPerl_Player_UpdateMana(self)
 	
-	if(playerClass == "PRIEST" and PriestBarFrame) then
-		PriestBarFrame_CheckAndShow(PriestBarFrame);
+	if(playerClass == "PRIEST") then
+		PriestBarFrame_CheckAndShow();
 	end
 end
 
@@ -1297,13 +1292,11 @@ function XPerl_Player_Set_Bits(self)
 	
 
 	XPerl_Player_SetupDK(self)
-	--XPerl_Player_SetupMoonkin(self)
 	XPerl_Player_InitPaladin(self)
 	XPerl_Player_InitPriest(self)
 	XPerl_Player_InitMonk(self)
 	XPerl_Player_InitMoonkin(self)
 	XPerl_Player_InitWarlock(self)
-	--XPerl_Player_SetupWarlock(self)
 
 	self.highlight:ClearAllPoints()
 	if (not pconf.level and not pconf.classIcon and (not XPerlConfigHelper or XPerlConfigHelper.ShowTargetCounters == 0)) then
@@ -1313,7 +1306,7 @@ function XPerl_Player_Set_Bits(self)
 	end
 	self.highlight:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 
-	if (playerClass == "SHAMAN" or playerClass == "DRUID") then
+	if (playerClass == "SHAMAN" or playerClass == "DRUID" or playerClass == "MAGE") then
 		if (not pconf.totems) then
 			pconf.totems = {
 				enable = true,
