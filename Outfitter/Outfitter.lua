@@ -73,6 +73,7 @@ Outfitter.CreditPlayersByRealm =
 		["Echobravo"] = 1,
 		["MacGregor"] = 1,
 		["LaoTseu"] = 1,
+		["Irozal"] = 1,
 	},
 	["Tester"] =
 	{
