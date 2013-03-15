@@ -1,13 +1,13 @@
-## Interface: 50100
-## Title: Accountant 4.08.50100
-## Version: 4.08.50100
-## Author: thorismud
+## Interface: 50200
+## Title: Accountant 4.12.50200
+## Version: 4.12.50200
+## Author: Thorismud
 ## Description: Logs where your WoW gold goes
 ## DefaultState: enabled
 ## RequiredDeps: 
 ## SavedVariables: Accountant_SaveData,Accountant_Options
 ## X-Embeds: 
-## X-Credits: thorismud
+## X-Credits: Thorismud
 ## X-Category: Information
 ## X-Website: http://code.google.com/p/accountant-wow/
 ## X-Email: accountant-wow@googlegroups.com

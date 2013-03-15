@@ -1032,6 +1032,7 @@ function SC.LoadSavedData()
 	SC.data["TAXI"] = {Title = ACCLOC_TAXI};
 	SC.data["REPAIRS"] = {Title = ACCLOC_REPAIR};
 	SC.data["OTHER"] = {Title = ACCLOC_OTHER};
+	SC.data["BMAH"] = {Title = ACCLOC_BMAH};
 --	SC.data["SYSTEM"] = {Title = ACCLOC_SYS};
 
 	for key,value in next,SC.data do
@@ -1143,11 +1144,15 @@ function SC.LoadSavedData()
 
 		-- Quel's modifications to track income/expense across all characters relies on the savedata structure,
 		-- so we have to reset the session totals for all players each time we log in, only for chars on this server.
+		-- Thanks to ShammyLewa for upgrading this bit of code
 		for player in next,Accountant_SaveData do
-			if (MatchRealm(player, SC.Realm) ~= nil) then
---				SC.Print2("Blanking session data for: "..player..", "..key);
-				Accountant_SaveData[player]["data"][key]["Session"].In = 0;
-				Accountant_SaveData[player]["data"][key]["Session"].Out = 0;
+			if MatchRealm(player, SC.Realm) then
+				--SC.Print("Blanking session data for: "..player..", "..key);
+				if Accountant_SaveData[player]["data"][key] then
+					Accountant_SaveData[player]["data"][key]["Session"] = { In = 0, Out = 0 }
+				else
+					Accountant_SaveData[player]["data"][key] = { Session = { In = 0, Out = 0 }, Total = { In = 0, Out = 0 }, Day = { In = 0, Out = 0 }, Week = { In = 0, Out = 0 } }
+				end				
 			end
 		end
 
