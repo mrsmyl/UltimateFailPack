@@ -1,4 +1,4 @@
--- Last update: 12/17/2012 (17/12/2012 in french format)
+-- Last update: 01/03/2013 (03/01/2013 in french format)
 -- By Edoz (stephanelc35@msn.com)
 
 if GetLocale() ~= "frFR" then return end
@@ -26,7 +26,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnIntensity	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS["stack"]:format(6, 113315)
+	SpecWarnIntensity	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.stack:format(6, 113315)
 })
 
 -----------------------
@@ -58,7 +58,7 @@ L= DBM:GetModLocalization(669)
 L= DBM:GetModLocalization(670)
 
 L:SetWarningLocalization({
-	SpecWarnFizzyBubbles	= "Prenez une Bulles de gaz et volé !"
+	SpecWarnFizzyBubbles	= "Prenez une Bulles de gaz et volez !"
 })
 
 L:SetOptionLocalization({
@@ -73,6 +73,14 @@ L:SetOptionLocalization({
 -- Gu Cloudstrike --
 -----------------------
 L= DBM:GetModLocalization(673)
+
+L:SetWarningLocalization({
+	warnStaticField	= "%s"
+})
+
+L:SetOptionLocalization({
+	warnStaticField	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(106923)
+})
 
 -----------------------
 -- Snowdrift --

@@ -31,7 +31,8 @@ L:SetMiscLocalization({
 	Rank6			= "6계급",
 	Rank7			= "7계급",
 	Rank8			= "8계급",
-	Proboskus		= "하하! 정말 운이 없군요! 프로보스쿠스입니다! 아하하하! 당신이 불길 속에서 죽는다에 25골드를 걸었어요!"
+	Proboskus		= "프로보스쿠스와",--Alliance
+	Proboskus2		= "하하! 정말 운이 없군요! 프로보스쿠스입니다! 아하하하! 당신이 불길 속에서 죽는다에 25골드를 걸었어요!"--Horde
 })
 
 --[등장 메세지]
@@ -89,6 +90,10 @@ L:SetGeneralLocalization({
 	name = "싸움꾼: 3 계급"
 })
 
+L:SetOptionLocalization({
+	SetIconOnBlat	= "브랏 본체에 전술 목표 아이콘 설정(해골)"
+})
+
 ------------
 -- Rank 4 --
 ------------
@@ -96,6 +101,10 @@ L= DBM:GetModLocalization("BrawlRank4")
 
 L:SetGeneralLocalization({
 	name = "싸움꾼: 4 계급"
+})
+
+L:SetOptionLocalization({
+	SetIconOnDominika	= "환영술사 도미니카 본체에 전술 목표 아이콘 설정(해골)"
 })
 
 ------------

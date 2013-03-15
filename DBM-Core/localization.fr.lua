@@ -83,6 +83,7 @@ DBM_CORE_RANGECHECK_OPTION_SLOW		= "Lente (faible utilisation du CPU)"
 DBM_CORE_RANGECHECK_OPTION_AVERAGE	= "Moyenne"
 DBM_CORE_RANGECHECK_OPTION_FAST		= "Rapide (plus proche du temps réel)"
 DBM_CORE_RANGERADAR_HEADER			= "Radar de portée (%d m)"
+DBM_CORE_RANGERADAR_IN_RANGE_TEXT	= "%d joueurs à portée"
 
 DBM_CORE_INFOFRAME_LOCK				= "Verrouiller le cadre"
 DBM_CORE_INFOFRAME_HIDE				= "Masquer"
@@ -112,6 +113,10 @@ DBM_CORE_ALLIANCE					= "Alliance"
 DBM_CORE_HORDE						= "Horde"
 
 DBM_CORE_UNKNOWN					= "inconnu"
+DBM_CORE_LEFT						= "Gauche"
+DBM_CORE_RIGHT						= "Droite"
+DBM_CORE_BACK						= "Back"--Translate
+DBM_CORE_FRONT						= "Front"--Translate
 
 DBM_CORE_BREAK_START				= "La pause commence maintenant -- vous avez %s minute(s)!"
 DBM_CORE_BREAK_MIN					= "Fin de la pause dans %s minute(s) !"

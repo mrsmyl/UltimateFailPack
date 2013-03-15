@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(677, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8289 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8777 $"):sub(12, -3))
 mod:SetCreatureID(60399, 60400)--60396 (Rage), 60397 (Strength), 60398 (Courage), 60480 (Titan Spark), 60399 (Qin-xi), 60400 (Jan-xi)
 mod:SetModelID(41391)
 mod:SetZone()
@@ -54,7 +54,7 @@ local specWarnFocusedEnergy		= mod:NewSpecialWarningYou(116829)
 --Jan-xi and Qin-xi
 local specWarnBossesActivated	= mod:NewSpecialWarningSwitch("ej5726", mod:IsTank())
 local specWarnCombo				= mod:NewSpecialWarningSpell("ej5672", mod:IsMelee())
-local specWarnTitanGas			= mod:NewSpecialWarningSpell(116779, nil, nil, nil, true)
+local specWarnTitanGas			= mod:NewSpecialWarningSpell(116779, nil, nil, nil, 2)
 
 --Rage
 local timerRageActivates		= mod:NewNextCountTimer(30, "ej5678", nil, nil, nil, 116525)

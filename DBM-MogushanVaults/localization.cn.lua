@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 12/19/2012
+-- Last update: 1/4/2013
 
 if GetLocale() ~= "zhCN" then return end
 local L
@@ -37,7 +37,9 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	WarnPhase	= "警报：阶段转换",
-	RangeFrame	= "距离监视（6码）：应对奥术阶段"
+	RangeFrame	= "距离监视（6码）：应对奥术阶段",
+	SetIconOnWS	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(116784),
+	SetIconOnAR	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(116417)
 })
 
 L:SetMiscLocalization({
@@ -54,7 +56,6 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(682)
 
 L:SetOptionLocalization({
-	RangeFrame			= "距离监视（8码）",
 	SetIconOnVoodoo		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122151)
 })
 
@@ -72,14 +73,19 @@ L:SetWarningLocalization({
 	DarknessSoon		= "黑暗之盾：%d秒后施放"
 })
 
+L:SetTimerLocalization({
+	timerUSRevive		= "不灭之影复活",
+	timerRainOfArrowsCD	= "%s"
+})
+
 L:SetOptionLocalization({
 	DarknessSoon		= "预警：$spell:117697（提前5秒倒计时）",
+	timerUSRevive		= "计时条：$spell:117506复活",
+	timerRainOfArrowsCD = DBM_CORE_AUTO_TIMER_OPTIONS.cd:format(118122),
 	RangeFrame			= "距离监视（8码）"
 })
 
 
-------------
--- Elegon --
 ------------
 L = DBM:GetModLocalization(726)
 

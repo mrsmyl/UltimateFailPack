@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("BrawlRank6", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8364 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8431 $"):sub(12, -3))
 --mod:SetCreatureID(60491)
 mod:SetModelID(39166)
 mod:SetZone()
@@ -62,7 +62,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnShadowStrikes:Show()
 		timerShadowStrikes:Start()
 		if brawlersMod:PlayerFighting() then
-			specWarnShadowStrikes:Show()
+			specWarnShadowStrikes:Show(args.destName)
 		end
 	end
 end

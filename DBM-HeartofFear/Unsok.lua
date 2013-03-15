@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(737, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8279 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8860 $"):sub(12, -3))
 mod:SetCreatureID(62511)
 mod:SetModelID(43126)
 mod:SetZone()
@@ -16,7 +16,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_CAST_SUCCESS",
 	"SPELL_DAMAGE",
-	"SPELL_MISSED"
+	"SPELL_MISSED",
+	"UNIT_SPELLCAST_STOP"
 )
 
 --[[WoL Reg Expression
@@ -27,7 +28,7 @@ mod:RegisterEventsInCombat(
 local warnReshapeLifeTutor		= mod:NewAnnounce("warnReshapeLifeTutor", 1, 122784)--Another LFR focused warning really.
 local warnReshapeLife			= mod:NewAnnounce("warnReshapeLife", 4, 122784)
 local warnWillPower				= mod:NewAnnounce("warnWillPower", 3, 63050)
-local warnAmberScalpel			= mod:NewTargetAnnounce(121994, 3)
+local warnAmberScalpel			= mod:NewSpellAnnounce(121994, 3)
 local warnParasiticGrowth		= mod:NewTargetAnnounce(121949, 4, nil, mod:IsHealer())
 local warnAmberGlob				= mod:NewTargetAnnounce(125502, 4)--Heroic drycode, might need some tweaks
 --Construct
@@ -41,22 +42,23 @@ local warnBurningAmber			= mod:NewCountAnnounce("ej6567", 2, nil, false)--Keep t
 local warnAmberCarapace			= mod:NewTargetAnnounce(122540, 4)--Monstrosity Shielding Boss (phase 2 start)
 local warnMassiveStomp			= mod:NewCastAnnounce(122408, 3, nil, nil, mod:IsHealer() or mod:IsMelee())
 local warnAmberExplosionSoon	= mod:NewSoonAnnounce(122402, 3)
+local warnAmberExplosionAM		= mod:NewAnnounce("warnAmberExplosionAM", 4, 122398)-- in koKR, even 25 man, most starts have only 1 construct. So this warning needs to be enabled by default on koKR. 10 man also uses 1 construct start.
 local warnFling					= mod:NewSpellAnnounce(122413, 3, nil, mod:IsTank())--think this always does his aggro target but not sure. If it does random targets it will need target scanning.
 local warnInterruptsAvailable	= mod:NewAnnounce("warnInterruptsAvailable", 1, 122398)
 
 --Boss
-local specwarnAmberScalpel			= mod:NewSpecialWarningYou(121994)
-local yellAmberScalpel				= mod:NewYell(121994)
-local specwarnAmberScalpelNear		= mod:NewSpecialWarningClose(121994)
+local specwarnAmberScalpel			= mod:NewSpecialWarningSpell(121994, nil, nil, nil, 2)
+--local yellAmberScalpel				= mod:NewYell(121994)
+--local specwarnAmberScalpelNear		= mod:NewSpecialWarningClose(121994)
 local specwarnReshape				= mod:NewSpecialWarningYou(122784)
 local specwarnParasiticGrowth		= mod:NewSpecialWarningTarget(121949, mod:IsHealer())
 local specwarnParasiticGrowthYou	= mod:NewSpecialWarningYou(121949) -- This warn will be needed at player is clustered together. Especially on Phase 3.
 local specwarnAmberGlob				= mod:NewSpecialWarningYou(125502)
 --Construct
 local specwarnAmberExplosionYou		= mod:NewSpecialWarning("specwarnAmberExplosionYou")--Only interruptable by the player controling construct casting, so only that person gets warning. non generic used to make this one more specific.
-local specwarnAmberExplosionAM		= mod:NewSpecialWarning("specwarnAmberExplosionAM")--Must be on by default. Amber montrosity's MUST be interrupted on heroic or it's an auto wipe. it hits for over 500k.
+local specwarnAmberExplosionAM		= mod:NewSpecialWarning("specwarnAmberExplosionAM", nil, nil, nil, 3)--Must be on by default. Amber montrosity's MUST be interrupted on heroic or it's an auto wipe. it hits for over 500k.
 local specwarnAmberExplosionOther	= mod:NewSpecialWarning("specwarnAmberExplosionOther", false)--A compromise. loose non player controled constructs now off by default but should still be an option as they are still perfectly interruptable (and should be)
-local specwarnAmberExplosion		= mod:NewSpecialWarningTarget(122398, nil, nil, nil, true)--One you can't interrupt it
+local specwarnAmberExplosion		= mod:NewSpecialWarningTarget(122398, nil, nil, nil, 2)--One you can't interrupt it
 local specwarnWillPower				= mod:NewSpecialWarning("specwarnWillPower")--Special warning for when your will power is low (construct)
 --local specwarnBossDebuff			= mod:NewSpecialWarning("specwarnBossDebuff")--Some special warning that says "get your ass to boss and refresh debuff NOW" (Debuff stacks up to 255 with 10% damage taken increase every stack, keeping buff up and stacking is paramount to dps check on heroic)
 --Living Amber
@@ -67,19 +69,20 @@ local specwarnFling				= mod:NewSpecialWarningSpell(122413, mod:IsTank())
 local specwarnMassiveStomp		= mod:NewSpecialWarningSpell(122408, nil, nil, nil, true)
 
 --Boss
-local timerReshapeLifeCD		= mod:NewNextTimer(50, 122784)--50 second cd in phase 1-2, 15 second in phase 3. if no construct is up, cd is ignored and boss casts it anyways to make sure 1 is always up.
-local timerAmberScalpelCD		= mod:NewCDTimer(40, 121994)--40 seconds after last one ENDED
+local timerReshapeLifeCD		= mod:NewNextCountTimer(50, 122784)--50 second cd in phase 1-2, 15 second in phase 3. if no construct is up, cd is ignored and boss casts it anyways to make sure 1 is always up.
+local timerAmberScalpelCD		= mod:NewNextTimer(40, 121994)--40 seconds after last one ENDED
 local timerAmberScalpel			= mod:NewBuffActiveTimer(10, 121994)
 local timerParasiticGrowthCD	= mod:NewCDTimer(35, 121949, nil, mod:IsHealer())--35-50 variation (most of the time 50, rare pulls he decides to use 35 sec cd instead)
 local timerParasiticGrowth		= mod:NewTargetTimer(30, 121949, nil, mod:IsHealer())
 --Construct
 local timerAmberExplosionCD		= mod:NewNextSourceTimer(13, 122398)--13 second cd on player controled units, 18 seconds on non player controlled constructs
-local timerDestabalize			= mod:NewTargetTimer(15, 123059, nil, false)
+local timerDestabalize			= mod:NewTimer(15, "timerDestabalize", 123059)--timer Enables for all players. It's very importantant for heroic. (espcially on phase 2)
 local timerStruggleForControl	= mod:NewTargetTimer(5, 122395, nil, false)
 --Amber Monstrosity
 local timerMassiveStompCD		= mod:NewCDTimer(18, 122408, nil, mod:IsHealer() or mod:IsMelee())--18-25 seconds variation
 local timerFlingCD				= mod:NewCDTimer(25, 122413, nil, mod:IsTank())--25-40sec variation.
 local timerAmberExplosionAMCD	= mod:NewTimer(46, "timerAmberExplosionAMCD", 122402)--Special timer just for amber monstrosity. easier to cancel, easier to tell apart. His bar is the MOST important and needs to be seperate from any other bar option.
+local timerAmberExplosion		= mod:NewCastTimer(2.5, 122402)
 
 local countdownAmberExplosion	= mod:NewCountdown(49, 122398)
 
@@ -92,11 +95,14 @@ local Phase = 1
 local Puddles = 0
 local Constructs = 0
 local constructCount = 0--NOT same as Constructs variable above. this is one is for counting them mainly in phase 1
+local reshapeElapsed = 0
 local playerIsConstruct = false
 local warnedWill = false
 local willNumber = 100--Last warned player will power number (not same as actual player will power)
 local lastStrike = 0
-local scansDone = 0
+--local scansDone = 0
+local amDestabalizeStack = 0
+local amWarnCount = 0
 local Totems = nil
 local Guardians = nil
 local Pets = nil
@@ -109,11 +115,12 @@ local guids = {}
 local guidTableBuilt = false--Entirely for DCs, so we don't need to reset between pulls cause it doesn't effect building table on combat start and after a DC then it will be reset to false always
 local function buildGuidTable()
 	table.wipe(guids)
-	for i = 1, DBM:GetGroupMembers() do
-		guids[UnitGUID("raid"..i) or "none"] = GetRaidRosterInfo(i)
+	for uId, i in DBM:GetGroupMembers() do
+		guids[UnitGUID(uId) or "none"] = GetRaidRosterInfo(i)
 	end
 end
 
+--[[
 function mod:ScalpelTarget()
 	if playerIsConstruct then return end--Don't need this info as a construct
 	scansDone = scansDone + 1
@@ -143,6 +150,22 @@ function mod:ScalpelTarget()
 			self:ScheduleMethod(0.2, "ScalpelTarget")
 		end
 	end
+end--]]
+
+function mod:AmberExplosionAMWarning()
+	amWarnCount = amWarnCount + 1
+	if amWarnCount < 6 then
+		warnAmberExplosionAM:Show()
+		self:ScheduleMethod(0.4, "AmberExplosionAMWarning")
+	end
+end
+
+function mod:ReshapeTimerRestart()
+	if Phase == 3 and (reshapeElapsed > 35.2 or reshapeElapsed == 0) then -- Not comfirmed. It's estimation
+		timerReshapeLifeCD:Update(35.2, 50, 1)
+	else
+		timerReshapeLifeCD:Update(reshapeElapsed-0.2, 50, 1)
+	end
 end
 
 local function warnAmberExplosionCast(spellId)
@@ -158,15 +181,17 @@ function mod:OnCombatStart(delay)
 	warnedWill = true--avoid wierd bug on pull
 	willNumber = 100
 	buildGuidTable()
+	guidTableBuilt = true
 	Phase = 1
 	Puddles = 0
 	Constructs = 0
 	constructCount = 0
 	lastStrike = 0
+	amDestabalizeStack = 0
 	table.wipe(canInterrupt)
 	playerIsConstruct = false
 	timerAmberScalpelCD:Start(9-delay)
-	timerReshapeLifeCD:Start(20-delay)
+	timerReshapeLifeCD:Start(20-delay, 1)
 	timerParasiticGrowthCD:Start(23.5-delay)
 	if not self:IsDifficulty("lfr25") then
 		berserkTimer:Start(-delay)
@@ -225,12 +250,23 @@ function mod:OnCombatEnd()
 end 
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(123059) and args:GetDestCreatureID() ~= 62691 then--Only track debuffs on boss, constructs, or monstrosity, ignore oozes.
-		warnDestabalize:Show(args.destName, args.amount or 1)
-		if self:IsDifficulty("lfr25") then
-			timerDestabalize:Start(60, args.destName)
-		else
-			timerDestabalize:Start(args.destName)
+	if args:IsSpellID(123059) then
+		local cid = args:GetDestCreatureID()
+		if cid == 62511 or cid == 62711 then -- Only boss or monstrosity (most raids do not care about to construct)
+			if Phase < 3 then -- ignore phase3, not useful and super spammy.
+				warnDestabalize:Show(args.destName, args.amount or 1)
+			end
+			if args.amount then
+				timerDestabalize:Cancel(args.destName, args.amount - 1)
+			end
+			if self:IsDifficulty("lfr25") then
+				timerDestabalize:Start(60, args.destName, args.amount or 1)
+			else
+				timerDestabalize:Start(nil, args.destName, args.amount or 1)
+			end
+			if cid == 62711 then 
+				amDestabalizeStack = args.amount or 1 -- save for timer canceling.
+			end
 		end
 	elseif args:IsSpellID(121949) then
 		warnParasiticGrowth:Show(args.destName)
@@ -243,16 +279,22 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerParasiticGrowth:Start(args.destName)
 		timerParasiticGrowthCD:Start()
 	elseif args:IsSpellID(122540) then
-		constructCount = 0
 		Phase = 2
+		reshapeElapsed = timerReshapeLifeCD:GetTime(constructCount+1)
+		timerReshapeLifeCD:Cancel()
+		constructCount = 0
 		warnAmberCarapace:Show(args.destName)
 		if not playerIsConstruct then
 			specwarnAmberMonstrosity:Show()
 		end
+		self:ScheduleMethod(0.2, "ReshapeTimerRestart")
 		timerMassiveStompCD:Start(20)
 		timerFlingCD:Start(33)
 		warnAmberExplosionSoon:Schedule(50.5)
 		timerAmberExplosionAMCD:Start(55.5, amberExplosion)
+		if DBM.BossHealth:IsShown() then
+			DBM.BossHealth:AddBoss(62711, Monstrosity)
+		end
 	elseif args:IsSpellID(122395) and Phase < 3 and not playerIsConstruct then
 		warnStruggleForControl:Show(args.destName)
 		timerStruggleForControl:Start(args.destName)
@@ -279,9 +321,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end
 		if Phase < 3 then
-			timerReshapeLifeCD:Start()
+			timerReshapeLifeCD:Start(nil, constructCount+1)
 		else
-			timerReshapeLifeCD:Start(15)--More often in phase 3
+			timerReshapeLifeCD:Start(15, constructCount+1)--More often in phase 3
 		end
 	elseif args:IsSpellID(125502) then
 		warnAmberGlob:Show(args.destName)
@@ -293,9 +335,7 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(122754) then
-		timerDestabalize:Cancel(args.destName)
-	elseif args:IsSpellID(122370) then
+	if args:IsSpellID(122370) then
 		Constructs = Constructs - 1
 		if args:IsPlayer() then
 			self:UnregisterShortTermEvents()
@@ -315,13 +355,19 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif args:IsSpellID(121949) then
 		timerParasiticGrowth:Cancel(args.destName)
 	elseif args:IsSpellID(122540) then--Phase 3
-		constructCount = 0
 		Phase = 3
+		reshapeElapsed = timerReshapeLifeCD:GetTime(constructCount+1)
+		timerReshapeLifeCD:Cancel()
 		timerMassiveStompCD:Cancel()
 		timerFlingCD:Cancel()
 		timerAmberExplosionAMCD:Cancel()
-		timerDestabalize:Cancel(Monstrosity)
+		constructCount = 0
+		timerDestabalize:Cancel(Monstrosity, amDestabalizeStack)
 		warnAmberExplosionSoon:Cancel()
+		self:ScheduleMethod(0.2, "ReshapeTimerRestart")
+		if DBM.BossHealth:IsShown() then
+			DBM.BossHealth:RemoveBoss(62711)
+		end
 		--He does NOT reset reshape live cd here, he finishes out last CD first, THEN starts using new one.
 	end
 end
@@ -330,7 +376,7 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(122398) then
 		warnAmberExplosion:Show(args.sourceName, args.spellName)
 		if args:GetSrcCreatureID() == 62701 then--Cast by a wild construct not controlled by player
-			if playerIsConstruct and GetTime() - lastStrike >= 4 then--Player is construct and Amber Strike will be available before cast ends.
+			if playerIsConstruct and GetTime() - lastStrike >= 3.5 then--Player is construct and Amber Strike will be available before cast ends.
 				specwarnAmberExplosionOther:Show(args.spellName, args.sourceName)
 				if self:LatencyCheck() then--if you're too laggy we don't want you telling us you can interrupt it 2-3 seconds from now. we only care if you can interrupt it NOW
 					self:SendSync("InterruptAvailable", UnitGUID("player")..":122398")
@@ -345,16 +391,20 @@ function mod:SPELL_CAST_START(args)
 			countdownAmberExplosion:Start(13)
 		end
 	elseif args:IsSpellID(122402) then--Amber Monstrosity
-		if playerIsConstruct and GetTime() - lastStrike >= 4 then--Player is construct and Amber Strike will be available before cast ends.
+		if playerIsConstruct and GetTime() - lastStrike >= 3.5 then--Player is construct and Amber Strike will be available before cast ends.
+			amWarnCount = 0
+			self:AmberExplosionAMWarning()
 			specwarnAmberExplosionAM:Show(args.spellName, args.sourceName)--On heroic, not interrupting amber montrosity is an auto wipe. this is single handedly the most important special warning of all!!!!!!
 			if self:LatencyCheck() then--if you're too laggy we don't want you telling us you can interrupt it 2-3 seconds from now. we only care if you can interrupt it NOW
 				self:SendSync("InterruptAvailable", UnitGUID("player")..":122402")
 			end
+		else
+			warnAmberExplosion:Show(args.sourceName, args.spellName)
 		end
-		warnAmberExplosion:Show(args.sourceName, args.spellName)
 		warnAmberExplosionSoon:Cancel()
 		warnAmberExplosionSoon:Schedule(41)
-		timerAmberExplosionAMCD:Start(46, args.spellName)
+		timerAmberExplosion:Start()
+		timerAmberExplosionAMCD:Start(nil, args.spellName)
 		self:Unschedule(warnAmberExplosionCast)
 		self:Schedule(0.5, warnAmberExplosionCast, 122402)--Always check available interrupts and special warn if not
 	elseif args:IsSpellID(122408) then
@@ -376,8 +426,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(122348) then
 		warnLivingAmber:Show()
 	elseif args:IsSpellID(121994) then
-		scansDone = 0
-		self:ScheduleMethod(0.2, "ScalpelTarget")
+		warnAmberScalpel:Show()
+		specwarnAmberScalpel:Show()
+--		scansDone = 0
+--		self:ScheduleMethod(0.2, "ScalpelTarget")
 	elseif args:IsSpellID(122532) then
 		Puddles = Puddles + 1
 		warnBurningAmber:Show(Puddles)
@@ -400,14 +452,14 @@ function mod:UNIT_POWER(uId)
 	if uId ~= "player" then return end
 	local playerWill = UnitPower(uId, ALTERNATE_POWER_INDEX)
 	if playerWill > willNumber then willNumber = playerWill end--Will power has gone up since last warning so reset that warning.
-	if playerWill == 75 and willNumber > 75 then--Doesn't work? A mystery
-		willNumber = 75
+	if playerWill == 80 and willNumber > 80 then
+		willNumber = 80
 		warnWillPower:Show(willNumber)
 	elseif playerWill == 50 and willNumber > 50 then--Works
 		willNumber = 50
 		warnWillPower:Show(willNumber)
-	elseif playerWill == 25 and willNumber > 25 then--Doesn't work? A mystery
-		willNumber = 25
+	elseif playerWill == 30 and willNumber > 30 then
+		willNumber = 30
 		warnWillPower:Show(willNumber)
 	elseif playerWill >= 22 and warnedWill then
 		warnedWill = false
@@ -417,9 +469,17 @@ function mod:UNIT_POWER(uId)
 	elseif playerWill == 10 and willNumber > 10 then--Works
 		willNumber = 10
 		warnWillPower:Show(willNumber)
-	elseif playerWill == 5 and willNumber > 5 then--Doesn't work? A mystery
-		willNumber = 5
+	elseif playerWill == 4 and willNumber > 4 then
+		willNumber = 4
 		warnWillPower:Show(willNumber)
+	end
+end
+
+function mod:UNIT_SPELLCAST_STOP(uId, _, _, _, spellId)
+	if spellId == 122402 then--SPELL_INTERRUPT not always fires, so use UNIT_SPELLCAST_STOP
+		timerAmberExplosion:Cancel()
+		self:UnscheduleMethod("AmberExplosionAMWarning")
+		amWarnCount = 6
 	end
 end
 

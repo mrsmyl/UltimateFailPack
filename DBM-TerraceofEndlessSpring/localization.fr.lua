@@ -1,4 +1,4 @@
-﻿-- Last update: 12/19/2012 (19/12/2012 in french format)
+﻿-- Last update: 01/07/2013 (07/01/2013 in french format)
 -- By Edoz (stephanelc35@msn.com)
 
 if GetLocale() ~= "frFR" then return end
@@ -9,7 +9,15 @@ local L
 ------------
 L= DBM:GetModLocalization(683)
 
+L:SetWarningLocalization({
+	warnGroupOrder		= "Rotation : Groupe %s",
+	specWarnYourGroup	= "C'est votre groupe - Rotation !"
+})
+
+
 L:SetOptionLocalization({
+	warnGroupOrder		= "Annoncer une rotation de groupe pour $spell:118191\n(À l'heure actuelle ne supporte que le raid 25 | 5,2,2,2, etc...)",
+	specWarnYourGroup	= "Alerte spécial quand votre groupe doit faire rotation pour $spell:118191\n(Raid 25 seulement)",
 	RangeFrame			= "Afficher le cadre de distance (8m) pour $spell:111850\n(Affiche tout le monde si vous avez le debuff, sinon ceux avec le debuff)",
 	SetIconOnPrison		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(117436)
 })
@@ -36,14 +44,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerSpecialCD			= "Prochaine capacité spécial"
+	timerSpecialCD			= "Délai capacité spécial (%d)"
 })
 
 L:SetOptionLocalization({
 	warnHideOver			= "Alerte quand $spell:123244 est fini",
-	warnHideProgress		= "Alerte de progression de $spell:123244",
-	timerSpecialCD			= "Afficher le temps avant que la prochaine capacité spécial ne sois lancé",
-	SetIconOnGuard			= "Mettre un icone sur les $journal:6224",
+	warnHideProgress		= "Alerte des statistiques quand $spell:123244 est fini",
+	timerSpecialCD			= "Délai avant la prochaine capacité spécial", -- revoir
+	SetIconOnProtector		= "Mettre un icone sur les $journal:6224\n(Pas fiable si il y a des assistants(promot))",
 	RangeFrame				= "Afficher le cadre de distance (3m) pour $spell:123121\n(Affiche tout le monde pendant $spell:123244, sinon, ne montre que les Tank)",
 	GWHealthFrame			= "Afficher le cadre de la vie restante avant que $spell:123461 soit fini\n(Nécessite que le cadre de vie des Boss sois activé)"
 })
@@ -58,6 +66,35 @@ L:SetMiscLocalization{
 ----------------------
 L= DBM:GetModLocalization(709)
 
+L:SetWarningLocalization({
+	MoveWarningForward			= "Allez de l'autre côté !",
+	MoveWarningRight			= "Allez vers la droite !",
+	MoveWarningBack				= "Allez à la position précédente !",
+	specWarnBreathOfFearSoon	= "Souffle de peur bientôt - Allez dans le mur !",
+})
+
+L:SetTimerLocalization({
+	timerSpecialAbilityCD		= "Capacité spéciale suivante",
+	timerSpoHudCD				= "Délai Peur / Geysérit",
+	timerSpoStrCD				= "Délai Geysérit / Frappe",
+	timerHudStrCD				= "Délai Peur / Frappe"
+})
+
 L:SetOptionLocalization({
-	RangeFrame			= "Afficher le cadre de distance (2m) pour $spell:119519"
+	specWarnBreathOfFearSoon	= "Alerte spécial préventive pour $spell:119414 si vous n'avez pas le buff $spell:117964",
+	SetIconOnHuddle				= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(120629)
+})
+
+L:SetOptionLocalization({
+	warnThrash					= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(131996),
+	RangeFrame					= "Afficher le cadre de distance (2m) pour $spell:119519",
+	MoveWarningForward			= "Alerte spécial pour aller de l'autre côté quand $spell:120047 est lancé",
+	MoveWarningRight			= "Alerte spécial pour aller à droite quand $spell:120047 est lancé",
+	MoveWarningBack				= "Alerte spécial pour aller à la position précédente quand \n$spell:120047 est fini",
+	warnWaterspout				= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(120519),
+	warnHuddleInTerror			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(120629),
+	timerSpecialAbilityCD		= "Délai pour la prochaine fois que la capacité spéciale est lancé",
+	timerSpoHudCD				= "Délai pour le prochain lancé de $spell:120629 ou $spell:120519",
+	timerSpoStrCD				= "Délai pour le prochain lancé de $spell:120519 ou $spell:120672",
+	timerHudStrCD				= "Délai pour le prochain lancé de $spell:120629 ou $spell:120672"
 })

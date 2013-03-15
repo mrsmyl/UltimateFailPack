@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(745, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8419 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8744 $"):sub(12, -3))
 mod:SetCreatureID(62980)--63554 (Special invisible Vizier that casts the direction based spellid versions of attenuation)
 mod:SetModelID(42807)
 mod:SetZone()
@@ -30,6 +30,8 @@ local warnExhale			= mod:NewTargetAnnounce(122761, 3)
 local warnForceandVerve		= mod:NewCastAnnounce(122713, 4, 4)
 local warnAttenuation		= mod:NewAnnounce("warnAttenuation", 4, 127834)
 local warnConvert			= mod:NewTargetAnnounce(122740, 4)
+local warnEcho				= mod:NewAnnounce("warnEcho", 4, 127834)--Maybe come up with better icon later then just using attenuation icon
+local warnEchoDown			= mod:NewAnnounce("warnEchoDown", 1, 127834)--Maybe come up with better icon later then just using attenuation icon
 
 local specwarnPlatform		= mod:NewSpecialWarning("specwarnPlatform")
 local specwarnForce			= mod:NewSpecialWarningSpell(122713)
@@ -56,6 +58,7 @@ local MCTargets = {}
 local MCIcon = 8
 local platform = 0
 local EchoAlive = false--Will be used for the very accurate phase 2 timers when an echo is left up on purpose. when convert is disabled the other 2 abilities trigger failsafes that make them predictable. it's the ONLY time phase 2 timers are possible. otherwise they are too variable to be useful
+local lastDirection = 0
 
 local function showMCWarning()
 	warnConvert:Show(table.concat(MCTargets, "<, >"))
@@ -65,6 +68,7 @@ local function showMCWarning()
 end
 
 function mod:OnCombatStart(delay)
+	lastDirection = 0
 	platform = 0
 	EchoAlive = false
 	table.wipe(MCTargets)
@@ -82,12 +86,22 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(122852) and UnitName("target") == args.sourceName then
+	if args:IsSpellID(122852) and UnitName("target") == args.sourceName then--probalby won't work for healers but oh well. On heroic if i'm tanking echo i don't want this spam. I only care if i'm tanking zorlok. Healers won't miss this one anyways
 		warnInhale:Show(args.destName, args.amount or 1)
-	elseif args:IsSpellID(122761) and UnitName("target") == args.sourceName then--probalby won't work for healers but oh well. On heroic if i'm tanking echo i don't want this spam. I only care if i'm tanking boss.
-		warnExhale:Show(args.destName)
-		specwarnExhale:Show(args.destName)
-		timerExhale:Start(args.destName)
+	elseif args:IsSpellID(122761) then
+		local uId = DBM:GetRaidUnitId(args.destName)
+		if not uId then return end
+		local x, y = GetPlayerMapPosition(uId)
+		if x == 0 and y == 0 then
+			SetMapToCurrentZone()
+			x, y = GetPlayerMapPosition(uId)
+		end
+		local inRange = DBM.RangeCheck:GetDistance("player", x, y)
+		if (inRange and inRange < 40) or (x == 0 and y == 0) then--Only show exhale warning if the target is near you (ie on same platform as you). Otherwise, we ignore it since we are likely with the echo somewhere else and this doesn't concern us
+			warnExhale:Show(args.destName)
+			specwarnExhale:Show(args.destName)
+			timerExhale:Start(args.destName)
+		end
 	elseif args:IsSpellID(122740) then
 		MCTargets[#MCTargets + 1] = args.destName
 		if self.Options.MindControlIcon then
@@ -113,10 +127,34 @@ end
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(122713) then
 		timerForce:Start()
-	elseif args:IsSpellID(122474, 122496, 123721) then
-		warnAttenuation:Show(args.spellName, args.sourceName, L.Left)
-		specwarnAttenuation:Show(args.spellName, args.sourceName, L.Left)
-		timerAttenuation:Start()
+	elseif args:IsSpellID(122474, 122496, 123721) then--All direction IDs are cast by an invisible version of Vizier.
+		lastDirection = DBM_CORE_LEFT
+	elseif args:IsSpellID(122479, 122497, 123722) then--We monitor direction, but we need to announce off non invisible mob
+		lastDirection = DBM_CORE_RIGHT
+	elseif args:IsSpellID(127834) then--This is only id that properly identifies CORRECT boss source
+		--Example
+		--http://worldoflogs.com/reports/rt-g8ncl718wga0jbuj/xe/?enc=bosses&boss=66791&x=%28spellid+%3D+127834+or+spellid+%3D+122496+or+spellid+%3D+122497%29+and+fulltype+%3D+SPELL_CAST_START
+		local bossCID = args:GetSrcCreatureID()--Figure out CID because GetBossTarget expects a CID.
+		local _, uId = self:GetBossTarget(bossCID)--Now lets get a uId. We can't simply just use boss1target and boss2target because echos do not have BossN ID. This is why we use GetBossTarget
+		warnAttenuation:Show(args.spellName, args.sourceName, lastDirection)--Always give basic warning. we don't need special warning to run in circles but on heroic green orbs go MUCH further than discs, we still need to be aware of them somewhat.
+		if uId then--Now we know who is tanking that boss
+			local x, y = GetPlayerMapPosition(uId)
+			if x == 0 and y == 0 then
+				SetMapToCurrentZone()
+				x, y = GetPlayerMapPosition(uId)
+			end
+			local inRange = DBM.RangeCheck:GetDistance("player", x, y)--We check how far we are from the tank who has that boss
+			if (inRange and inRange < 60) or (x == 0 and y == 0) then--Only show warning if we are near the boss casting it (or rathor, the player tanking that boss). I realize orbs go very far, but the special warning is for the dance, not stray discs, that's what normal warning is for
+				if self.Options.ArrowOnAttenuation then
+					DBM.Arrow:ShowStatic(lastDirection == DBM_CORE_LEFT and 90 or 270, 12)
+				end
+				specwarnAttenuation:Show(args.spellName, args.sourceName, lastDirection)
+				timerAttenuation:Start()
+			end
+		else--Could not get unitID off boss target. We give warn old special warning behavior of just showing it anyways.
+			specwarnAttenuation:Show(args.spellName, args.sourceName, lastDirection)
+			timerAttenuation:Start()
+		end
 		if platform < 4 then
 			timerAttenuationCD:Start()
 		else
@@ -127,27 +165,6 @@ function mod:SPELL_CAST_START(args)
 					timerAttenuationCD:Start(54, args.sourceGUID)
 				end
 			end
-		end
-		if self.Options.ArrowOnAttenuation then
-			DBM.Arrow:ShowStatic(90, 12)
-		end
-	elseif args:IsSpellID(122479, 122497, 123722) then
-		warnAttenuation:Show(args.spellName, args.sourceName, L.Right)
-		specwarnAttenuation:Show(args.spellName, args.sourceName, L.Right)
-		timerAttenuation:Start()
-		if platform < 4 then
-			timerAttenuationCD:Start()
-		else
-			if EchoAlive then--if echo isn't active don't do any timers
-				if args:GetSrcCreatureID() == 65173 then--Echo
-					timerAttenuationCD:Start(28, args.sourceGUID)--Because both echo and boss can use it in final phase and we want 2 bars
-				else--Boss
-					timerAttenuationCD:Start(54, args.sourceGUID)
-				end
-			end
-		end
-		if self.Options.ArrowOnAttenuation then
-			DBM.Arrow:ShowStatic(270, 12)
 		end
 	end
 end
@@ -162,7 +179,9 @@ end
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.Platform or msg:find(L.Platform) then
 		platform = platform + 1
-		specwarnPlatform:Show()
+		if platform > 1 then--Don't show for first platform, it's pretty obvious
+			specwarnPlatform:Show()
+		end
 		timerForceCD:Cancel()
 		timerAttenuationCD:Cancel()
 		if platform == 1 then
@@ -188,11 +207,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 				timerForceCD:Start(54)
 			end
 		end
-	elseif (spellId == 130297 or spellId == 127541) and not EchoAlive then--Echo of Zor'lok
+	elseif (spellId == 127542 or spellId == 127541 or spellId == 130297) and not EchoAlive then--Echo of Zor'lok (127542 is platform 1 echo spawn, 127541 is platform 2 echo spawn, 130297 is phase 2 echos)
 		EchoAlive = true
-		if platform == 2 then--Boss flew off from first platform to 2nd, and this means the echo that spawned is an Echo of Force and Verve
+		warnEcho:Show()
+		if platform == 1 then--Boss flew off from first platform to 2nd, and this means the echo that spawned is an Echo of Force and Verve
 --			timerForceCD:Start()
-		elseif platform == 3 then--Boss flew to 3rd platform and left an Echo of Attenuation behind on 2nd.
+		elseif platform == 2 then--Boss flew to 3rd platform and left an Echo of Attenuation behind on 2nd.
 --			timerAttenuationCD:Start()
 		end
 	end
@@ -202,13 +222,14 @@ function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 68168 then--Echo of Force and Verve
 		EchoAlive = false
+		warnEchoDown:Show()
 		timerForceCD:Cancel()
 	elseif cid == 65173 then--Echo of Attenuation
 		EchoAlive = false
-		if platform < 4 then
-			timerAttenuationCD:Cancel()
-		else--No echo left up in final phase, cancel al timers because they are going to go back to clusterfuck random (as in may weave convert in but may not, and delay other abilities by as much as 30-50 seconds)
-			timerAttenuationCD:Cancel()
+		warnEchoDown:Show()
+		timerAttenuationCD:Cancel()--Always cancel this
+		if platform == 4 then
+			--No echo left up in final phase, cancel all timers because they are going to go back to clusterfuck random (as in may weave convert in but may not, and delay other abilities by as much as 30-50 seconds)
 			timerForceCD:Cancel()
 		end
 	end

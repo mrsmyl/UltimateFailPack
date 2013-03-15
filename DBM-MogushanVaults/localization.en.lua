@@ -52,7 +52,6 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(682)
 
 L:SetOptionLocalization({
-	RangeFrame			= "Show range frame (8)",
 	SetIconOnVoodoo		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122151)
 })
 
@@ -71,12 +70,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerUSRevive		= "Undying Shadow Reform"
+	timerUSRevive		= "Undying Shadow Reform",
+	timerRainOfArrowsCD	= "%s"
 })
 
 L:SetOptionLocalization({
 	DarknessSoon		= "Show pre-warning countdown for $spell:117697 (5s before)",
 	timerUSRevive		= "Show timer for $spell:117506 reform",
+	timerRainOfArrowsCD = DBM_CORE_AUTO_TIMER_OPTIONS.cd:format(118122),
 	RangeFrame			= "Show range frame (8)"
 })
 

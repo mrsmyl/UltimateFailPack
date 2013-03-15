@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 12/19/2012
+-- Last update: 1/26/2013
 
 if GetLocale() ~= "zhCN" then return end
 local L
@@ -11,13 +11,17 @@ L= DBM:GetModLocalization(745)
 
 L:SetWarningLocalization({
 	warnAttenuation		= "%s：%s (%s)",
+	warnEcho			= "回响出现",
+	warnEchoDown		= "回响被击败",
 	specwarnAttenuation	= "%s：%s (%s)",
 	specwarnPlatform	= "换平台"
 })
 
 L:SetOptionLocalization({
-	warnAttenuation		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(127834, GetSpellInfo(127834)),
-	specwarnAttenuation	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format(127834, GetSpellInfo(127834)),
+	warnAttenuation		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(127834),
+	warnEcho			= "警报：回响出现",
+	warnEchoDown		= "警报：回响被击败",
+	specwarnAttenuation	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format(127834),
 	specwarnPlatform	= "特殊警报：改变平台",
 	ArrowOnAttenuation	= "DBM箭头：在$spell:127834阶段指示移动方向",
 	MindControlIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122740)
@@ -25,9 +29,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	Platform			= "%s朝他其中一个平台飞去了！",
-	Defeat				= "我们不会向黑暗虚空的绝望屈服。如果女皇要我们去死，我们便照做。",
-	Left				= "左",
-	Right				= "右"
+	Defeat				= "我们不会向黑暗虚空的绝望屈服。如果女皇要我们去死，我们便照做。"
 })
 
 
@@ -38,7 +40,7 @@ L= DBM:GetModLocalization(744)
 
 L:SetOptionLocalization({
 	UnseenStrikeArrow	= "DBM箭头：当有人受到$spell:122949影响时",
-	RangeFrame			= "距离监视（8码）：$spell:123175"
+	RangeFrame			= "距离监视（10码）：$spell:123175"
 })
 
 
@@ -48,17 +50,21 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(713)
 
 L:SetWarningLocalization({
+	warnCrush		= "%s",
 	specwarnUnder	= "远离紫圈！"
 })
 
 
 L:SetOptionLocalization({
+	warnCrush		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(122774),
 	specwarnUnder	= "特殊警报：当你在首领身体下方时",
+	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).."（仅英雄难度）",
 	PheromonesIcon	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122835)
 })
 
 L:SetMiscLocalization({
-	UnderHim	= "在它下方"
+	UnderHim	= "在它下方",
+	Phase2		= "巨型盔甲开始碎裂了"
 })
 
 ----------------------
@@ -83,28 +89,32 @@ L:SetWarningLocalization({
 	warnReshapeLife				= "%s：>%s< (%d)",--Localized because i like class colors on warning and shoving a number into targetname broke it using the generic.
 	warnReshapeLifeTutor		= "1：打断/减益目标，2：打断自己，3：回复生命/意志，4：离开构造体",
 	warnAmberExplosion			= "%s 正在施放 %s",
+	warnAmberExplosionAM		= "琥珀畸怪正在施放琥珀爆炸 - 快打断！",--personal warning.
 	warnInterruptsAvailable		= "可打断 %s: >%s<",
 	warnWillPower				= "当前意志：%s",
 	specwarnWillPower			= "意志低下！- 还剩5秒",
 	specwarnAmberExplosionYou	= "打断%s！",--Struggle for Control interrupt.
 	specwarnAmberExplosionAM	= "%s：打断 %s!",--Amber Montrosity
-	specwarnAmberExplosionOther	= "%s：打断 %s!"--Amber Montrosity
+	specwarnAmberExplosionOther	= "%s：打断 %s!"--Mutated Construct
 })
 
 L:SetTimerLocalization({
-	timerAmberExplosionAMCD		= "下一次%s：琥珀畸怪"
+	timerDestabalize			= "动摇意志（%2$d）：%1$s",
+	timerAmberExplosionAMCD		= "爆炸冷却：琥珀畸怪"
 })
 
 L:SetOptionLocalization({
-	warnReshapeLife				= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(122784, GetSpellInfo(122784)),
+	warnReshapeLife				= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(122784),
 	warnReshapeLifeTutor		= "当变为变异构造体时显示技能及其作用",
 	warnAmberExplosion			= "警报：$spell:122398正在施放，并警报来源",
+	warnAmberExplosionAM		= "个人警报：打断琥珀畸怪的$spell:122398",
 	warnInterruptsAvailable		= "警报：可使用$spell:122402打断琥珀打击的成员",
-	warnWillPower				= "警报：当前意志剩余75、50、25、10以及5点时",
+	warnWillPower				= "警报：当前意志剩余80、50、30、10以及4点时",
 	specwarnWillPower			= "特殊警报：在变异构造体中意志低下时",
 	specwarnAmberExplosionYou	= "特殊警报：打断自己的$spell:122398",
 	specwarnAmberExplosionAM	= "特殊警报：打断琥珀畸怪的$spell:122402",
 	specwarnAmberExplosionOther	= "特殊警报：打断变异构造体的$spell:122398",
+	timerDestabalize			= DBM_CORE_AUTO_TIMER_OPTIONS.target:format(123059),
 	timerAmberExplosionAMCD		= "计时条：琥珀畸怪的下一次$spell:122402",
 	InfoFrame					= "信息框：意志值",
 	FixNameplates				= "在变为变异构造体后自动关闭影响战斗的姓名板\n（战斗结束后会自动恢复原始设置）"
@@ -127,11 +137,11 @@ L:SetOptionLocalization({
 	warnAmberTrap		= "警报：$spell:125826的生成，并提示进度", -- maybe bad translation.
 	InfoFrame			= "信息框：受$spell:125390效果影响的玩家",
 	RangeFrame			= "距离监视（5码）：$spell:123735",
-	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097)
+	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097),
+	HeartOfFearIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(123845)
 })
 
 L:SetMiscLocalization({
 	PlayerDebuffs		= "凝视",
 	YellPhase3			= "别找借口了，女皇！消灭这些傻瓜，否则我会亲手杀了你！"
-
 })

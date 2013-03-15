@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8421 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8777 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
 mod:SetModelID(41892)
 mod:SetZone()
@@ -27,7 +27,7 @@ local warnJasperChains				= mod:NewTargetAnnounce(130395, 4)
 local warnAmethystPool				= mod:NewTargetAnnounce(130774, 3, nil, false)
 local warnPowerDown					= mod:NewSpellAnnounce(116529, 4, nil, not mod:IsTank())
 
-local specWarnOverloadSoon			= mod:NewSpecialWarning("SpecWarnOverloadSoon", nil, nil, nil, true)
+local specWarnOverloadSoon			= mod:NewSpecialWarning("SpecWarnOverloadSoon", nil, nil, nil, 2)
 local specWarnJasperChains			= mod:NewSpecialWarningYou(130395)
 local specWarnBreakJasperChains		= mod:NewSpecialWarning("specWarnBreakJasperChains", false)
 local yellJasperChains				= mod:NewYell(130395, nil, false)
@@ -35,7 +35,6 @@ local yellJasperChains				= mod:NewYell(130395, nil, false)
 local specWarnCobaltMineNear		= mod:NewSpecialWarningClose(129424)
 --local yellCobaltMine				= mod:NewYell(129424)
 local specWarnAmethystPool			= mod:NewSpecialWarningMove(130774)
-local yellAmethystPool				= mod:NewYell(130774, nil, false)
 local specWarnPowerDown				= mod:NewSpecialWarningSpell(116529, not mod:IsTank())
 
 local timerPetrification			= mod:NewNextTimer(76, 125091)
@@ -88,26 +87,6 @@ local function warnJasperChainsTargets()
 	table.wipe(jasperChainsTargets)
 end
 
-local function getBossuId(Boss)
-	local uId
-	if UnitExists("boss1") or UnitExists("boss2") or UnitExists("boss3") or UnitExists("boss4") then
-		for i = 1, 4 do
-			if UnitName("boss"..i) == Boss then
-				uId = "boss"..i
-				break
-			end
-		end
-	else
-		for i = 1, DBM:GetGroupMembers() do
-			if UnitName("raid"..i.."target") == Boss and not UnitIsPlayer("raid"..i.."target") then
-				uId = "raid"..i.."target"
-				break
-			end			
-		end
-	end
-	return uId
-end
-
 local function isTank(unit)
 	if GetPartyAssignment("MAINTANK", unit, 1) then
 		return true
@@ -115,7 +94,7 @@ local function isTank(unit)
 	if UnitGroupRolesAssigned(unit) == "TANK" then
 		return true
 	end
-	local uId = getBossuId(Cobalt)
+	local uId = DBM:GetBossUnitId(Cobalt)
 	if uId and UnitExists(uId.."target") and UnitDetailedThreatSituation(unit, uId) then
 		return true
 	end
@@ -233,8 +212,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			playerHasChains = true
 			specWarnJasperChains:Show()
-			yellJasperChains:Yell()
-			local uId = getBossuId(Jasper)
+			if not self:IsDifficulty("lfr25") then
+				yellJasperChains:Yell()
+			end
+			local uId = DBM:GetBossUnitId(Jasper)
 			if uId and UnitPower(uId) <= 50 and activePetrification == "Jasper" then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
 				specWarnBreakJasperChains:Show()
 				DBM.Arrow:Hide()
@@ -340,7 +321,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 		if playerHasChains then
-			local uId = getBossuId(Jasper)
+			local uId = DBM:GetBossUnitId(Jasper)
 			if uId and UnitPower(uId) <= 50 then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
 				specWarnBreakJasperChains:Show()
 				DBM.Arrow:Hide()

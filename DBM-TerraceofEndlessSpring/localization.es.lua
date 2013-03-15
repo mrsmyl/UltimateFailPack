@@ -38,8 +38,10 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	warnHideOver			= "Mostrar aviso cuando $spell:123244 ha terminado",
+	warnWaterspout				= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(120519),
+	warnHuddleInTerror			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(120629),
 	timerSpecialCD			= "Mostrar tiempo para la siguiente habilidad especial.",
-	SetIconOnGuard			= "Poner iconos en $journal:6224"
+	SetIconOnProtector		= "Poner iconos en $journal:6224"
 })
 
 L:SetMiscLocalization{

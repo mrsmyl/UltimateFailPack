@@ -1,16 +1,14 @@
 local mod	= DBM:NewMod(682, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8416 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8715 $"):sub(12, -3))
 mod:SetCreatureID(60143)
 mod:SetModelID(41256)
 mod:SetZone()
 mod:SetUsedIcons(5, 6, 7, 8)
 mod:SetMinSyncRevision(7751)
 
--- Sometimes it fails combat detection on "combat". Use yell instead until the problem being founded.
---seems that combat detection fails only in lfr. (like DS Zonozz Void of Unmaking summon event.)
-mod:RegisterCombat("yell", L.Pull)
+mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
@@ -20,6 +18,9 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED"
 )
 
+mod:RegisterEvents(
+	"CHAT_MSG_MONSTER_YELL"
+)
 --NOTES
 --Syncing is used for all warnings because the realms don't share combat events. You won't get warnings for other realm any other way.
 --Voodoo dolls do not have a CD, they are linked to banishment (or player deaths), when he banishes current tank, he reapplies voodoo dolls to new tank and new players. If tank dies, he just recasts voodoo on a new current threat target.
@@ -59,8 +60,8 @@ local guids = {}
 local guidTableBuilt = false--Entirely for DCs, so we don't need to reset between pulls cause it doesn't effect building table on combat start and after a DC then it will be reset to false always
 local function buildGuidTable()
 	table.wipe(guids)
-	for i = 1, DBM:GetGroupMembers() do
-		guids[UnitGUID("raid"..i) or "none"] = GetRaidRosterInfo(i)
+	for uId, i in DBM:GetGroupMembers() do
+		guids[UnitGUID(uId) or "none"] = GetRaidRosterInfo(i)
 	end
 end
 
@@ -111,6 +112,7 @@ end
 function mod:OnCombatStart(delay)
 	totemCount = 0
 	buildGuidTable()
+	guidTableBuilt = true
 	table.wipe(voodooDollTargets)
 	table.wipe(crossedOverTargets)
 	table.wipe(voodooDollTargetIcons)
@@ -138,7 +140,9 @@ function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actua
 		end
 	elseif args:IsSpellID(116161, 116260) then -- 116161 is normal and heroic, 116260 is lfr.
 		if args:IsPlayer() and self:AntiSpam(2, 3) then
-			warnSuicide:Schedule(25)
+			if not self:IsDifficulty("lfr25") then -- lfr do not suicide even you not press the extra button.
+				warnSuicide:Schedule(25)
+			end
 			countdownCrossedOver:Start(29)
 			timerCrossedOver:Start(29)
 		end
@@ -174,12 +178,14 @@ mod.SPELL_AURA_REFRESH = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)--We don't use spell cast success for actual debuff on >player< warnings since it has a chance to be resisted.
 	if args:IsSpellID(116161, 116260) and args:IsPlayer() then
-		warnSuicide:Cancel()
-		countdownCrossedOver:Cancel()
+		if not self:IsDifficulty("lfr25") then
+			warnSuicide:Cancel()
+		end
 		timerCrossedOver:Cancel()
+		countdownCrossedOver:Cancel()
 	elseif args:IsSpellID(116278) and args:IsPlayer() then
-		timerSoulSever:Cancel()
 		warnSuicide:Cancel()
+		timerSoulSever:Cancel()
 		countdownCrossedOver:Cancel()
 	elseif args:IsSpellID(122151) then
 		self:SendSync("VoodooGoneTargets", args.destGUID)
@@ -228,7 +234,11 @@ function mod:OnSync(msg, guid)
 			table.insert(voodooDollTargetIcons, DBM:GetRaidUnitId(guids[guid]))
 			self:UnscheduleMethod("SetVoodooIcons")
 			if self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
-				self:ScheduleMethod(1, "SetVoodooIcons")
+				if #voodooDollTargetIcons >= 4 and self:IsDifficulty("normal25", "heroic25") or #voodooDollTargetIcons >= 3 and self:IsDifficulty("normal10", "heroic10") then
+					self:SetVoodooIcons()
+				else
+					self:ScheduleMethod(1, "SetVoodooIcons")
+				end
 			end
 		end
 	elseif msg == "VoodooGoneTargets" and guids[guid] and self.Options.SetIconOnVoodoo then
@@ -249,5 +259,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		if self:LatencyCheck() then
 			self:SendSync("SummonTotem")
 		end
+	end
+end
+
+--Secondary pull trigger. (leave it for lfr combat detection bug)
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if (msg == L.Pull or msg:find(L.Pull)) and not self:IsInCombat() then
+		DBM:StartCombat(self, 0)
 	end
 end
