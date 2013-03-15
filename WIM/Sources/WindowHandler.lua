@@ -430,12 +430,35 @@ local function getParentMessageWindow(obj)
     end
 end
 
+local function createFadeAnimation(obj, direction)
+	local anim = obj:CreateAnimationGroup()
+	local fade = anim:CreateAnimation("Alpha")
+	fade:SetDuration(0.25)
+	if direction == "in" then
+		fade:SetChange(1)
+		anim:SetScript("OnFinished", function() obj:SetAlpha(1) end)
+	else
+		fade:SetChange(-0.5)
+		fade:SetStartDelay(1)
+		anim:SetScript("OnFinished", function() obj:SetAlpha(0.5) end)
+	end
+	return anim
+end
+
 local function setWindowAsFadedIn(obj)
 	if(WIM.db.winFade) then
+		if obj.animOut and obj.animOut:GetProgress() > 0 and obj.animOut:GetProgress() < 0.5 then
+			obj.animOut:Stop()
+			obj.fadedIn = true
+		end
+		if not obj.animIn then obj.animIn = createFadeAnimation(obj, "in") end
+		if not obj.animIn:IsPlaying() and not obj.fadedIn then
+			obj:SetAlpha(0.5)
+			obj.animIn:Play()
+		end
 		obj.delayFadeElapsed = 0;
 		obj.delayFade = true;
 		obj.fadedIn = true;
-		UIFrameFadeIn(obj, FadeProps.interval, obj:GetAlpha(), FadeProps.max)
 	else
 		obj:SetAlpha(FadeProps.max);
 	end
@@ -619,10 +642,18 @@ local function MessageWindow_Frame_OnUpdate(self, elapsed)
                 					(EditBoxInFocus and EditBoxInFocus.parentWindow == self)) or
                 					(window.tabStrip and window.tabStrip.selected.obj == self)) and
                 					(not self.fadedIn or self.delayFade)) then
+								if self.animOut and self.animOut:GetProgress() > 0 and self.animOut:GetProgress() < 0.5 then
+									self.animOut:Stop()
+									self.fadedIn = true
+								end
+								if not self.animIn then self.animIn = createFadeAnimation(self, "in") end
+								if not self.animIn:IsPlaying() and not self.fadedIn then
+									self:SetAlpha(0.5)
+									self.animIn:Play()
+								end
                 				self.fadedIn = true;
                 				self.delayFade = false;
                 				self.delayFadeElapsed = 0;
-                				UIFrameFadeIn(self, FadeProps.interval, self:GetAlpha(), FadeProps.max);
                 			elseif(window ~= self and window.parentWindow ~= self and not self.isOnHyperLink and
                 					(not (window.tabStrip and window.tabStrip.selected.obj == self)) and
                 					helperFrame.attachedTo ~= self and
@@ -636,7 +667,9 @@ local function MessageWindow_Frame_OnUpdate(self, elapsed)
                 				else
                 					self.fadedIn = false;
                 					self.delayFadeElapsed = 0;
-                					UIFrameFadeOut(self, FadeProps.interval, self:GetAlpha(), FadeProps.min);
+									if not self.animOut then self.animOut = createFadeAnimation(self, "out") end
+									self:SetAlpha(1)
+									self.animOut:Play()
                 				end
                 			end
                 		end
@@ -854,7 +887,8 @@ local function instantiateWindow(obj)
         local icon = self.widgets.class_icon;
         if(self.type == "chat" and self.chatType) then
                 icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
-                local color = _G.ChatTypeInfo[string.upper(self.chatType)];
+                local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
+                local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
                 icon:SetTexCoord(0,1,0,1);
                 icon:SetGradient("VERTICAL", color.r, color.g, color.b, color.r, color.g, color.b);
                 if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
@@ -868,6 +902,8 @@ local function instantiateWindow(obj)
                                 classTag = "sc2";
                 elseif(self.bn and self.bn.client == _G.BNET_CLIENT_D3) then
                                 classTag = "d3";
+                elseif(self.bn and self.bn.client == "CLNT") then--Battle.net Desktop App
+                                classTag = "bnd";
                 elseif(self.class == "") then
                 	classTag = "blank"
                 else
@@ -1867,16 +1903,19 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseDown", function(sel
 RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 if(db.tabAdvance and not _G.IsShiftKeyDown()) then
                 		-- Get the current whisper target
-                		local whisperTarget = getParentMessageWindow(self).theUser
+                		local win = getParentMessageWindow(self)
+                		local whisperTarget = win.isBN and win.toonName or win.theUser
+                		local chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 		-- Lookup the next whisper target
-                		local nextWhisperTarget = _G.ChatEdit_GetNextTellTarget(whisperTarget)
+                		local nextWhisperTarget = _G.ChatEdit_GetNextTellTarget(whisperTarget,chatType)
                 
                 		if nextWhisperTarget ~= "" then
                 			local win = GetWhisperWindowByUser(nextWhisperTarget);
+                			chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 			win:Hide();
                 			win:Pop(true); -- force popup
                 			win.widgets.msg_box:SetFocus();
-                			_G.ChatEdit_SetLastTellTarget(nextWhisperTarget);
+                			_G.ChatEdit_SetLastTellTarget(nextWhisperTarget,chatType);
                 		end
                 end
 	end);
