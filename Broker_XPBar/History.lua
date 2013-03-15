@@ -1,5 +1,8 @@
 local _G = _G
 
+-- addon name and namespace
+local ADDON, NS = ...
+
 local Addon = _G.BrokerXPBar
 
 -- local functions

@@ -20,7 +20,6 @@ local tinsert = table.insert
 local tremove = table.remove
 
 local GetNumFactions         = _G.GetNumFactions
-local GetFactionInfo         = _G.GetFactionInfo
 local SetWatchedFactionIndex = _G.SetWatchedFactionIndex
 
 local _
@@ -977,10 +976,10 @@ function BrokerXPBar:QueryFactions()
 	clear_table(lookupNames)
 	
 	for factionIndex = 1, GetNumFactions() do
-		local name, _, standing, _, _ , _ ,_ , _, isHeader, _, hasRep = GetFactionInfo(factionIndex)
+		local name, _, standing, _, _ , _ ,_ , _, isHeader, _, hasRep, _, _, _, friendID = NS:GetFactionInfo(factionIndex)
 		
 		if not isHeader or hasRep then
-			local r, g, b = self:GetBlizzardReputationColor(standing)
+			local r, g, b = self:GetBlizzardReputationColor(standing, friendID)
 			
 			tinsert(sortingTable, {factionIndex, name, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..name.."|r"})
 			lookupNames[name] = factionIndex

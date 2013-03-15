@@ -1,5 +1,8 @@
 local _G = _G
 
+-- addon name and namespace
+local ADDON, NS = ...
+
 local Addon = _G.BrokerXPBar
 
 -- local functions
@@ -12,7 +15,6 @@ local sqrt    = math.sqrt
 local floor   = math.floor
 local ceil    = math.ceil
 
-local GetFactionInfo = _G.GetFactionInfo
 local GetNumFactions = _G.GetNumFactions
 
 local _
@@ -60,7 +62,7 @@ function ReputationHistory:InitFaction(faction)
 		return nil
 	end
 
-	local _, _, standing, minRep, maxRep, currentRep, _, _, isHeader, _, hasRep = GetFactionInfo(faction)
+	local _, _, standing, minRep, maxRep, currentRep, _, _, isHeader, _, hasRep = NS:GetFactionInfo(faction)
 	
 	if isHeader and not hasRep then
 		return nil
@@ -118,7 +120,7 @@ function ReputationHistory:GetTimeToLevel(faction)
 		return "~"
 	end
 
-	local _, _, _, minRep, maxRep, currentRep = GetFactionInfo(faction)
+	local _, _, _, minRep, maxRep, currentRep = NS:GetFactionInfo(faction)
 	local toLvlRep = maxRep - currentRep
 	
 	-- rep/s (current)
@@ -213,7 +215,7 @@ end
 function ReputationHistory:Update()
 	-- update all known factions
 	for faction = 1, GetNumFactions() do
-		local _, _, _, _, _, currentRep, _, _, isHeader, _, hasRep  = GetFactionInfo(faction)
+		local _, _, _, _, _, currentRep, _, _, isHeader, _, hasRep  = NS:GetFactionInfo(faction)
 		
 		if not isHeader or hasRep then		
 			if not self.factions[faction] then
@@ -228,11 +230,10 @@ function ReputationHistory:Update()
 					local bucket = self:GetWriteBucket(faction)
 
 					local delta = totalRep - data.totalRep
-										
-					local b = bucket.reputation
 					
 					bucket.reputation = bucket.reputation + delta
-										
+					data.totalRep     = totalRep
+					
 					data.tainted = true
 				end
 			end

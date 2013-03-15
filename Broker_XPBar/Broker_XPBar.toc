@@ -1,7 +1,7 @@
 ## Interface: 50001
 ## Title: Broker: |cffffffffXP|rBar
 ## Notes: Lightweight XP Bar for Broker Bars
-## Version: 1.6 r036
+## Version: 1.6 r038
 ## Author: tritium
 ## X-Credits: Wobin (For the original Fubar - XPFu)
 ## X-Category: Interface Enhancements

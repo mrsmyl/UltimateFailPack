@@ -59,6 +59,7 @@ BrokerXPBar.playerLvl       = UnitLevel("player")
 BrokerXPBar.faction         = 0
 
 BrokerXPBar.watchedStanding = 0
+BrokerXPBar.watchedFriendID = nil
 BrokerXPBar.atMaxRep        = false
 
 BrokerXPBar.FONT_NAME_DEFAULT = "Broker: XP Bar - Default"
@@ -291,10 +292,66 @@ function NS:ColorizeByValue(value, from, to, ...)
 	end
 end
 
--- aux variables
-local countInitial = 0
+-- reputation interface (merging friendship into rep)
+function NS:GetFactionInfo(faction)
+	local name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = GetFactionInfo(faction)
+		
+	local currentRank, maxRank = GetFriendshipReputationRanks(factionID)
 
-local blizzRepColors = {
+	local friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+	if friendID ~= nil then		
+		standingID = currentRank
+		
+		-- store localized standing text
+		self.friendStanding[standingID] = friendTextLevel
+		
+		barMin   = friendThreshold
+		barMax   = nextFriendThreshold or barMin + 1000
+		barValue = friendRep
+	end
+	
+	local atMax = standingID == maxRank and barValue + 1 == barMax
+	
+	return name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, friendID, atMax
+end
+
+function NS:GetStandingLabel(standing, friend)
+	if friend then
+		return NS.friendStanding[standing] or "???"
+	else
+		return _G["FACTION_STANDING_LABEL"..tostring(standing)] or "???"
+	end
+end
+
+function NS:GetBlizzardReputationColor(standing, friendship)
+	local r, g, b, a = 0, 0, 0, 0
+	
+	if type(standing) == "number" then
+		if friendship then
+			standing = standing + 2
+		end
+	
+		if self.blizzRepColors[standing] then
+			r = self.blizzRepColors[standing].r
+			g = self.blizzRepColors[standing].g
+			b = self.blizzRepColors[standing].b
+			a = self.blizzRepColors[standing].a
+		end
+	end
+		
+	return r, g, b, a
+end
+
+NS.friendStanding = {
+	[0] = "Stranger",
+	[1] = "Acquaintance",
+	[2] = "Buddy",
+	[3] = "Friend",
+	[4] = "Good Friend",
+	[5] = "Best Buddy",
+}
+
+NS.blizzRepColors = {
 	[1] = {r=0.80, g=0.13, b=0.13, a=1}, -- hated
 	[2] = {r=1.00, g=0.25, b=0.00, a=1}, -- hostile
 	[3] = {r=0.93, g=0.40, b=0.13, a=1}, -- unfriendly
@@ -304,6 +361,9 @@ local blizzRepColors = {
 	[7] = {r=0.00, g=0.60, b=1.00, a=1}, -- revered
 	[8] = {r=0.00, g=1.00, b=1.00, a=1}, -- exalted
 }
+
+-- aux variables
+local countInitial = 0
 
 -- combat log processing
 -- using wow constants to avoid localization issues
@@ -644,7 +704,7 @@ end
 
 function BrokerXPBar:RegisterAutoTrack(register)
 	if register == nil then
-		register = self:GetSetting("AutoTrackOnLoss") or self:GetSetting("AutoTrackOnLoss")
+		register = self:GetSetting("AutoTrackOnGain") or self:GetSetting("AutoTrackOnLoss")
 	end
 	
 	if register then
@@ -757,7 +817,7 @@ function BrokerXPBar:UpdateBar()
 		if self.faction ~= 0 then
 			local name, standing, minRep, maxRep, currentRep = nil, 0, 0, 0, 0
 			
-			name, _, standing, minRep, maxRep, currentRep = GetFactionInfo(self.faction)
+			name, _, standing, minRep, maxRep, currentRep = NS:GetFactionInfo(self.faction)
 			
 			if maxRep == minRep then
 				return
@@ -849,24 +909,37 @@ end
 
 function BrokerXPBar:UpdateStanding()
 	local standing = 0
+	local friendID = nil
 	
 	-- check for changes in watched faction
 	self:UpdateWatchedFactionIndex()
 	
 	if self.faction ~= 0 then
 		local minRep, maxRep, currentRep = 0, 0, 0
-		_, _, standing, minRep, maxRep, currentRep = GetFactionInfo(self.faction)
+		_, _, standing, minRep, maxRep, currentRep, _, _, _, _, _, _, _, _, friendID, atMax = NS:GetFactionInfo(self.faction)
 		
-		if not self.atMaxRep and standing == 8 and currentRep + 1 == maxRep then
+		if not self.atMaxRep and atMax then
 			self:MaxReputationReached()
 		end
 	end
+	
+	local recolor = false
+	
+	if friendID ~= self.watchedFriendID then
+		self.watchedFriendID = friendID
 		
+		recolor = true
+	end
+	
 	if standing ~= self.watchedStanding then
 		self.watchedStanding = standing
-		
+
+		recolor = true		
+	end
+	
+	if recolor then
 		if self:GetSetting("BlizzRep") then
-			local r, g, b, a = self:GetBlizzardReputationColor()
+			local r, g, b, a = self:GetBlizzardReputationColor(standing, friendID)
 
 			self.Bar:SetColor("Rep", r, g, b, a)
 		end
@@ -919,7 +992,7 @@ function BrokerXPBar:GetInfoText(source, prefix)
 			return L["No watched faction"]
 		end
 		
-		name, _, _, min, max, current = GetFactionInfo(self.faction)
+		name, _, _, min, max, current = NS:GetFactionInfo(self.faction)
 					
 		current = current - min
 		max     = max - min
@@ -1117,12 +1190,12 @@ end
 function BrokerXPBar:UpdateWatchedFactionIndex()
 	-- isWatched in GetFactionInfo(factionIndex) doesnt do the trick before use of SetWatchedFactionIndex(index)
 	local watchedname = GetWatchedFactionInfo()
-	local currentname = GetFactionInfo(self.faction)
+	local currentname = NS:GetFactionInfo(self.faction)
 	local index = 0
 
 	if currentname ~= watchedname then
 		for i = 1, GetNumFactions() do
-			local name, _, _, _, _, _, _, _, isHeader, _, hasRep = GetFactionInfo(i)			
+			local name, _, _, _, _, _, _, _, isHeader, _, hasRep = NS:GetFactionInfo(i)			
 			if name == watchedname and (not isHeader or hasRep) then
 				index = i
 				break
@@ -1136,7 +1209,7 @@ function BrokerXPBar:UpdateWatchedFactionIndex()
 end
 
 function BrokerXPBar:GetFactionName(faction)
-	return GetFactionInfo(faction) or L["None"]
+	return NS:GetFactionInfo(faction) or L["None"]
 end
 
 -- auxillary functions
@@ -1164,21 +1237,13 @@ function BrokerXPBar:FormatNumber(number, prefix)
 	return FormatNumber(number, self:GetSetting("Separators"), self:GetSetting(prefix .. "Abbreviations"), self:GetSetting("DecimalPlaces"))
 end
 
-function BrokerXPBar:GetBlizzardReputationColor(standing)
-	local r, g, b, a = 0, 0, 0, 0
-	
+function BrokerXPBar:GetBlizzardReputationColor(standing, friendship)
 	if not standing then
-		standing = self.watchedStanding
+		standing   = self.watchedStanding
+		freindship = self.watchedFriendID 
 	end
 		
-	if standing and blizzRepColors[standing] then
-		r = blizzRepColors[standing].r
-		g = blizzRepColors[standing].g
-		b = blizzRepColors[standing].b
-		a = blizzRepColors[standing].a
-	end
-		
-	return r, g, b, a
+	return NS:GetBlizzardReputationColor(standing, friendship)
 end
 
 function BrokerXPBar:IsBarRequired(bar)
@@ -1243,13 +1308,13 @@ end
 
 function BrokerXPBar:OutputReputation()
 	if self.faction ~= 0 then
-		local name, desc, standing, minRep, maxRep, currentRep = GetFactionInfo(self.faction)
+		local name, desc, standing, minRep, maxRep, currentRep, _, _, _, _, _, _, _, _, friendID = NS:GetFactionInfo(self.faction)
 		DEFAULT_CHAT_FRAME.editBox:SetText(string.format(L["%s: %s/%s (%3.2f%%) Currently %s with %d to go"],
 					name,
 					currentRep - minRep,
 					maxRep - minRep, 
 					(currentRep-minRep)/(maxRep-minRep)*100,
-					getglobal("FACTION_STANDING_LABEL"..standing),
+					NS:GetStandingLabel(standing, friendID),
 					maxRep - currentRep))
 	else
 		self:Output(L["Currently no faction tracked."])

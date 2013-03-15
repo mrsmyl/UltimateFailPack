@@ -16,7 +16,6 @@ local floor = math.floor
 
 local UnitXP          = _G.UnitXP
 local UnitXPMax       = _G.UnitXPMax
-local GetFactionInfo  = _G.GetFactionInfo
 local GetXPExhaustion = _G.GetXPExhaustion
 
 local _
@@ -165,8 +164,8 @@ function BrokerXPBar:DrawTooltip()
 	if self:GetSetting("ShowRep") and self.faction ~= 0 then
 		lineNum = tooltip:AddLine(" ")
 	
-		local name, desc, standing, minRep, maxRep, currentRep = GetFactionInfo(self.faction)
-		local r, g, b, a = self:GetBlizzardReputationColor(standing)
+		local name, desc, standing, minRep, maxRep, currentRep, _, _, _, _, _, _, _, _, friendID = NS:GetFactionInfo(self.faction)
+		local r, g, b, a = self:GetBlizzardReputationColor(standing, friendID)
 		
 		lineNum = tooltip:AddLine(" ")
 		tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Faction"]), "LEFT")
@@ -174,7 +173,7 @@ function BrokerXPBar:DrawTooltip()
 
 		lineNum = tooltip:AddLine(" ")
 		tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Standing"]), "LEFT")
-		tooltip:SetCell(lineNum, 2, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..getglobal("FACTION_STANDING_LABEL"..standing).."|r", "LEFT")		
+		tooltip:SetCell(lineNum, 2, "|cff" .. string.format("%02x%02x%02x", r*255, g*255, b*255) .. NS:GetStandingLabel(standing, friendID) .. "|r", "LEFT")		
 
 		if not self.atMaxRep then
 			local fullLevelRep = maxRep - minRep
