@@ -343,14 +343,14 @@ function Reforgenator:FeralModel()
     return model
 end
 
-function Reforgenator:RestoDruidModel()
+function Reforgenator:ManaRestoDruidModel()
     local model = ReforgeModel:new()
     model.readOnly = true
     model.statWeights = 
 	{
         ["ITEM_MOD_SPIRIT_SHORT"] = 2.75,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2,
-        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.25,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.95,
         ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.50,
     }
 
@@ -360,16 +360,56 @@ function Reforgenator:RestoDruidModel()
 	{
 		{
             rating = CR_SPIRIT,
+            cap = "Fixed",
+            userdata = {8500},
+        },
+		{
+            rating = CR_HASTE_SPELL,
+            cap = "Fixed",
+            userdata = {3043},
+        },
+        {
+            rating = CR_MASTERY,
+            cap = "MaximumPossible",
+        },
+    }
+
+    return model
+end
+
+function Reforgenator:RestoDruidModel()
+    local model = ReforgeModel:new()
+    model.readOnly = true
+    model.statWeights = 
+	{
+        ["ITEM_MOD_SPIRIT_SHORT"] = 2.75,
+        ["ITEM_MOD_HASTE_RATING_SHORT"] = 2,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.95,
+        ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.50,
+    }
+
+    model.notes = 'http://www.noxxic.com/wow/pve/druid/restoration/reforging-gear'
+
+    model.reforgeOrder = 
+	{
+		{
+            rating = CR_SPIRIT,
+            cap = "Fixed",
+            userdata = {6000},
+        },
+		{
+            rating = CR_HASTE_SPELL,
+            cap = "Fixed",
+            userdata = {3043},
+        },
+        {
+            rating = CR_MASTERY,
             cap = "MaximumPossible",
         },
 		{
             rating = CR_HASTE_SPELL,
             cap = "Fixed",
             userdata = {4717},
-        },
-        {
-            rating = CR_MASTERY,
-            cap = "MaimumPossible",
         },
     }
 
@@ -865,8 +905,8 @@ function Reforgenator:AssassinationRogueModel()
     model.reforgeOrder = 
 	{
         {
-            rating = CR_HIT_SPELL,
-            cap = "SpellHitCap"
+            rating = CR_HIT_MELEE,
+            cap = "MeleeHitCap"
         },
 		{
             rating = CR_EXPERTISE,
@@ -1488,7 +1528,7 @@ end
         [7] = "ITEM_MOD_PARRY_RATING_SHORT",
         [8] = "ITEM_MOD_SPIRIT_SHORT",
 		]]
-function Reforgenator:WindWalkerMonkModel()
+function Reforgenator:TwoHandWindWalkerMonkModel()
 	local model = ReforgeModel:new()
 	model.readOnly = true
 	model.statWeights =
@@ -1518,6 +1558,50 @@ function Reforgenator:WindWalkerMonkModel()
         },
         {
             rating = CR_HASTE_MELEE,
+            cap = "MaximumPossible"
+        },
+		{
+            rating = CR_MASTERY,
+            cap = "MaximumPossible"
+        },
+
+      
+	}
+	
+	return model
+
+
+end
+function Reforgenator:DWWindWalkerMonkModel()
+	local model = ReforgeModel:new()
+	model.readOnly = true
+	model.statWeights =
+	{
+		["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
+        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.75,
+		["ITEM_MOD_HASTE_RATING_SHORT"] = 1.15,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0,
+        ["ITEM_MOD_MASTERY_RATING_SHORT"] = .75,
+	}
+	
+	model.notes = 'http://www.noxxic.com/wow/pve/monk/windwalker/reforging-gear'
+	
+	model.reforgeOrder = 
+	{
+		{
+            rating = CR_HIT_MELEE,
+            cap = "MeleeHitCap"
+        },
+        {
+            rating = CR_EXPERTISE,
+            cap = "ExpertiseSoftCap"
+        },
+		{
+            rating = CR_HASTE_MELEE,
+            cap = "MaximumPossible"
+        },
+		{
+            rating = CR_CRIT_MELEE,
             cap = "MaximumPossible"
         },
 		{
