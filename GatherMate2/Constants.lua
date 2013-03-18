@@ -268,6 +268,7 @@ local node_ids = {
 		[NL["Ravasaur Matriarch's Nest"]]		= 544,
 		[NL["Dark Soil"]]						= 545,
 		[NL["Onyx Egg"]]						= 546,
+		[NL["Trove of the Thunder King"]]		= 547,
 	},
 	["Archaeology"] = {
 		-- cata archeolgy objects
@@ -283,6 +284,7 @@ local node_ids = {
 		[NL["Other Archaeology Find"]]          = 610,
 		[NL["Pandaren Archaeology Find"]]		= 611,
 		[NL["Mogu Archaeology Find"]]			= 612,
+		[NL["Mantid Archaeology Find"]]			= 613,
 	}
 }
 GatherMate.nodeIDs = node_ids
@@ -605,6 +607,7 @@ local node_textures = {
 		[544] = icon_path.."Treasure\\green_raptor.tga",
 		[545] = icon_path.."Treasure\\soil.tga",
 		[546] = icon_path.."Treasure\\egg.tga",
+		[547] = icon_path.."Treasure\\footlocker.tga",
 	},
 	["Archaeology"] = {
 		[601] = icon_path.."Archaeology\\shovel.tga",
@@ -619,6 +622,7 @@ local node_textures = {
 		[610] = icon_path.."Archaeology\\shovel.tga",
 		[611] = icon_path.."Archaeology\\shovel.tga",
 		[612] = icon_path.."Archaeology\\shovel.tga",
+		[613] = icon_path.."Archaeology\\shovel.tga",
 	},
 }
 GatherMate.nodeTextures = node_textures

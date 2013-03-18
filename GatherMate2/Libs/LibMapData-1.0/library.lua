@@ -3,7 +3,7 @@
 	it also has a few functions to help determine distance and directions.
 --]]
 local MAJOR = "LibMapData-1.0"
-local MINOR = 1000 + tonumber(("$Revision: 127 $"):match("%d+"))
+local MINOR = 1000 + tonumber(("$Revision: 130 $"):match("%d+"))
 assert(LibStub, MAJOR.." requires LibStub")
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
@@ -2159,7 +2159,7 @@ do
 		}
 		mapData[928] = { 
 			['floors'] = 2, ['name'] = "IsleoftheThunderKing", ['rzti'] = 1064, ['map_type'] = 0, ['continent'] = 0, ['transform'] = 0,
-			[1] = { 480.0,320.0,-5292.5,7210.0,-5772.5,7530.0 },
+			[1] = { 4135.416015625,2756.25,-7654.166015625,8147.916015625,-3518.75,5391.666015625 },
 			[2] = { 362.0,241.3330078125,-4969.0,6999.99853515625,-5331.0,7241.33154296875 },
 			['micro'] = {
 	
