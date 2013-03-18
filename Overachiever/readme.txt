@@ -1,5 +1,5 @@
 
-Overachiever v0.70
+Overachiever v0.71
 ==============================
 
 Author: Tuhljin
@@ -106,6 +106,12 @@ Change log
 ==========
 
 The change log lists changes of particular note to users, not every change made.
+
+v0.71
+- Updated for WoW patch 5.2.
+- Tabs module: Corrected a taint issue that could occur when achievements were added to a Watch list from another tab.
+- Suggestions Tab: Added suggestions for Throne of Thunder, Isle of Thunder, and a missing one for Vale of Eternal
+  Blossoms ("Eternally in the Vale").
 
 v0.70
 - Updated for WoW patch 5.1.

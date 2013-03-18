@@ -973,6 +973,66 @@ hooksecurefunc("AchievementObjectives_DisplayCriteria", recolor_AchievementObjec
 
 
 -- Flashing tab:
+local flashFrame, flashFrame_stop
+do
+  local frames
+
+  local function flashFrame_OnFinished(self)
+      if (self.showWhenDone) then
+        self.frame:Show()
+      else
+        self.frame:Hide()
+      end
+      self.frame:SetAlpha(1)
+      frames[self.frame] = nil
+      if (next(frames) == nil) then -- If the table is empty
+        frames = nil -- then get rid of it.
+      end
+    end
+
+  function flashFrame(frame, fadeInTime, fadeOutTime, flashDuration, showWhenDone, flashInHoldTime, flashOutHoldTime)
+    if (frames) then
+      if (frames[frame]) then  return;  end  -- If currently flashing, do nothing.
+    else
+      frames = {}
+    end
+
+    frame:SetAlpha(0)
+    frame:Show()
+    local flasher = frame:CreateAnimationGroup()
+    frames[frame] = flasher
+
+    -- Flashing in
+    local fade1 = flasher:CreateAnimation("Alpha")
+    fade1:SetDuration(fadeInTime)
+    fade1:SetChange(1)
+    fade1:SetOrder(1)
+
+    if (flashInHoldTime) then  fade1:SetStartDelay(flashInHoldTime);  end
+
+    -- Flashing out
+    local fade2 = flasher:CreateAnimation("Alpha")
+    fade2:SetDuration(fadeOutTime)
+    fade2:SetChange(-1)
+    fade2:SetOrder(2)
+
+    if (flashOutHoldTime) then  fade2:SetEndDelay(flashOutHoldTime);  end
+
+    flasher:SetScript("OnFinished", flashFrame_OnFinished)
+    flasher.showWhenDone = showWhenDone
+    flasher.frame = frame
+
+    flasher:Play()
+  end
+  
+  function flashFrame_stop(frame)
+    if (frames and frames[frame]) then
+      frames[frame]:Stop()
+      flashFrame_OnFinished(frames[frame])
+    end
+  end
+end
+
 function Overachiever.FlashTab(tab)
   if (tabselected and tabselected.tab == tab) then  return;  end
   local flash = tab.flash
@@ -987,6 +1047,9 @@ function Overachiever.FlashTab(tab)
     tex:SetPoint("BOTTOMRIGHT", flash, "BOTTOMRIGHT", -3, -3)
     tab.flash = flash
   end
-  if (UIFrameIsFading(flash)) then  UIFrameFlashRemoveFrame(flash);  end
-  UIFrameFlash(flash, 0.35, 0.35, 0.9, nil, 0.05, 0.15)
+  --if (UIFrameIsFading(flash)) then  UIFrameFlashRemoveFrame(flash);  end
+  --UIFrameFlash(flash, 0.35, 0.35, 0.9, nil, 0.05, 0.15)
+  -- Use our own animation since the above causes taint:
+  flashFrame_stop(flash)
+  flashFrame(flash, 0.35, 0.35, 0.9, nil, 0.05, 0.15)
 end

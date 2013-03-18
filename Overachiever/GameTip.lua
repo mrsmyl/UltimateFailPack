@@ -144,17 +144,15 @@ function Overachiever.GetDifficulty()
   --   Note: While it may seem that the "Heroic?" and "Heroic Raid?" returns are redundant here, it's done this
   --   way to make the return values consistent with those given when you're NOT in an instance.
     local _, itype, diff, _, _, dynDiff, isDynamic = GetInstanceInfo()
-    if (itype == "raid") then
-      if (isDynamic) then  return itype, (dynDiff == 1), (diff == 2 or diff == 4), (dynDiff == 1), true;  end
-      return itype, (diff > 2), (diff == 2 or diff == 4), (diff > 2), false
-    end
-    return itype, (diff > 1), false
+    --if (isDynamic) then  diff = dynDiff;  end  -- Testing is needed to see if this line is necessary.
+    local _, _, isHeroic = GetDifficultyInfo(diff) -- This function can also give us isChallengeMode, but we're not using it at the moment.
+    return itype, isHeroic, (diff == 4 or diff == 6), (diff == 5 or diff == 6), isDynamic
   end
 -- IF NOT IN AN INSTANCE:
   -- Returns: false, <Dungeon set as Heroic?>, <Raid set for 25 players?>, <Raid set as Heroic?>
   local d = GetDungeonDifficultyID()
-  local r = GetRaidDifficulty()
-  return false, (d > 1), (r == 2 or r == 4), (r > 2)
+  local r = GetRaidDifficultyID()
+  return false, (d > 1), (r == 4 or r == 6), (r > 4)
 end
 
 

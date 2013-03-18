@@ -316,7 +316,9 @@ local ACHID_ZONE_MISC = {
 		6546, -- The Golden Lotus
 		7317, -- One Many Army
 		7318, -- A Taste of History
+		7315, -- Eternally in the Vale
 	},
+	["Isle of Thunder"] = 8121, -- "Stormbreaker"
 }
 if (IsAlliance) then
   tinsert(ACHID_ZONE_MISC["Grizzly Hills"], 2016) -- "Grizzled Veteran"
@@ -462,6 +464,10 @@ local ACHID_INSTANCES = {
 	["Heart of Fear"] = { 6718, 6845, 6936, 6518, 6683, 6553, 6937, 6922 }, -- "The Dread Approach", "Nightmare of Shek'zeer", "Candle in the Wind", "I Heard You Like Amber...", "Less Than Three", "Like An Arrow to the Face", "Overzealous", "Timing is Everything"
 	["Mogu'shan Vaults"] = { 6458, 6844, 6674, 6687, 6823, 6455, 7056, 6686 }, -- "Guardians of Mogu'shan", "The Vault of Mysteries", "Anything You Can Do, I Can Do Better...", "Getting Hot in Here", "Must Love Dogs", "Show Me Your Moves!", "Sorry, Were You Looking for This?", "Straight Six"
 	["Terrace of Endless Spring"] = { 6689, 6824, 6717, 6825, 6933 }, -- "Terrace of Endless Spring", "Face Clutchers", "Power Overwhelming", "The Mind-Killer", "Who's Got Two Green Thumbs?"
+	["Throne of Thunder"] = {
+		8070, 8071, 8069, 8072, 8089, -- "Forgotten Depths", "Halls of Flesh-Shaping", "Last Stand of the Zandalari", "Pinnacle of Storms", "I Thought He Was Supposed to Be Hard?"
+		8037, 8087, 8090, 8094, 8073, 8082, 8098, 8081, 8086 -- "Genetically Unmodified Organism", "Can't Touch This", "A Complete Circuit", "Lightning Overload", "Cage Match", "Head Case", "You Said Crossing the Streams Was Bad", "Ritualist Who?", "From Dusk 'til Dawn"
+	},
 }
 -- Battlegrounds
 ACHID_INSTANCES["The Battle for Gilneas"] = 5258
@@ -570,6 +576,7 @@ local ACHID_INSTANCES_HEROIC = {
 	["Heart of Fear"] = { 6729, 6726, 6727, 6730, 6725, 6728 },
 	["Mogu'shan Vaults"] = { 6723, 6720, 6722, 6721, 6719, 6724 },
 	["Terrace of Endless Spring"] = { 6733, 6731, 6734, 6732 },
+	["Throne of Thunder"] = { 8124, 8067 }, -- "Glory of the Thundering Raider", "Heroic: Lei Shen"
 }
 
 -- INSTANCES - 10-MAN ONLY (normal or heroic):
