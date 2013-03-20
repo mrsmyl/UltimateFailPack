@@ -1,6 +1,6 @@
-Advanced Trade Skill Window v0.10.0
+Advanced Trade Skill Window v0.10.3
 a World of Warcraft UI Addon
-written 2006-2012 by Rene Schneider (Slarti on EU-Blackhand)
+written 2006-2013 by Rene Schneider (Slarti on EU-Blackhand)
 stability and performance improved 2012 by rowaasr13
 ----------------------------------------------------------------
 
@@ -409,3 +409,6 @@ v0.10.1:
 
 v0.10.2:
 - added:   itIT localization provided by TyrusPrime
+
+v0.10.3:
+- changed  ATSW updated for patch 5.2
