@@ -992,6 +992,7 @@ end
 local ZoneLabels = 
 {
 	["none"] = L["Outside Instances"],
+	["scenario"] = L["Scenario Instances"],
 	["party"] = L["Party Instances"],
 	["raid"] = L["Raid Instances"],
 	["pvp"] = L["Battlegrounds"],
@@ -1007,7 +1008,7 @@ local GroupLabels =
 
 local ZoneOrder = 
 {
-	"none", "party", "raid", "pvp", "arena"
+	"none", "scenario", "party", "raid", "pvp", "arena"
 }
 
 function me:SetupMiscOptions(parent)
@@ -1417,6 +1418,8 @@ function me:CreateConfigWindow()
 	me:CreateAppearanceOptions(theFrame)
 	me:CreateWindowOptions(theFrame)
 	me:CreateColorOptions(theFrame)
+	
+	theFrame:SetFrameStrata("DIALOG")
 	
 	--Need to add it to our window ordering system
 	Recount:AddWindow(theFrame)
