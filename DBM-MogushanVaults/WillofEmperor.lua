@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(677, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8777 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(60399, 60400)--60396 (Rage), 60397 (Strength), 60398 (Courage), 60480 (Titan Spark), 60399 (Qin-xi), 60400 (Jan-xi)
 mod:SetModelID(41391)
 mod:SetZone()
@@ -135,17 +135,17 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(116525) then
+	if args.spellId == 116525 then
 		warnFocusedAssault:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnFocusedAssault:Show()
 		end
-	elseif args:IsSpellID(116778) then
+	elseif args.spellId == 116778 then
 		warnFocusedDefense:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnFocusedDefense:Show()
 		end
-	elseif args:IsSpellID(116829) then
+	elseif args.spellId == 116829 then
 --		warnFocusedEnergy:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnFocusedEnergy:Show()

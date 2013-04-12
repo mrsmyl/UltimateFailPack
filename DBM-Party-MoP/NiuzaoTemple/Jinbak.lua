@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(693, "DBM-Party-MoP", 6, 324)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7877 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(61567)
 mod:SetModelID(43197)
 mod:SetZone()
@@ -32,7 +32,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(119941) and args:IsPlayer() then
+	if args.spellId == 119941 and args:IsPlayer() then
 		timerSapResidue:Start()
 		if (args.amount or 1) >= 6 and self:AntiSpam(1, 2) then
 			specWarnSapResidue:Show(args.amount)
@@ -42,7 +42,7 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(120001) then
+	if args.spellId == 120001 then
 		warnDetonate:Show()
 		specWarnDetonate:Show()
 		timerDetonate:Start()

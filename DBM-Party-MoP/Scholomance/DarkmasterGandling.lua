@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(684, "DBM-Party-MoP", 7, 246)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7834 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8978 $"):sub(12, -3))
 mod:SetCreatureID(59080)
 mod:SetModelID(40322)
 mod:SetZone()
@@ -25,7 +25,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(113143) then
+	if args.spellId == 113143 then
 		warnRise:Show()
 		timerRiseCD:Start()
 	end
@@ -33,7 +33,7 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)--Just until there is a better way
 	if msg:find("spell:113395") then
-		warnLesson:Show(target)
+		warnLesson:Show(DBM:GetFullNameByShortName(target))
 		timerLessonCD:Start()
 	end
 end

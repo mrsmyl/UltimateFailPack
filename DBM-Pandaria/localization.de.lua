@@ -7,14 +7,21 @@ local L
 L= DBM:GetModLocalization(691)
 
 L:SetOptionLocalization({
-	RangeFrame			= "Zeige dynamisches Abstandsfenster (5m) basierend auf Spieler-Debuffs für\n$spell:119622",
-	SetIconOnMC			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(119622)
+	RangeFrame			= "Zeige dynamisches Abstandsfenster (5m) basierend auf Spieler-Debuffs für\n$spell:119622"
+})
+
+L:SetMiscLocalization({
+	Pull				= "Ja... JA! Nutzt Eure Wut aus! Streckt mich nieder!"
 })
 
 -----------------------
 -- Salyis --
 -----------------------
 L= DBM:GetModLocalization(725)
+
+L:SetMiscLocalization({
+	Pull				= "Bringt mir ihre Leichen!"
+})
 
 --------------
 -- Oondasta --

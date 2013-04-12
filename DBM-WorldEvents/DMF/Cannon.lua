@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Cannon", "DBM-WorldEvents", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7126 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetZone()
 
 mod:RegisterEvents(
@@ -23,7 +23,7 @@ local function wingsRemoved()
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(102120) and args:IsPlayer() then
+	if args.spellId == 102120 and args:IsPlayer() then
 		MagicWingsCountdown:Cancel()
 		timerMagicWings:Cancel()
 	end

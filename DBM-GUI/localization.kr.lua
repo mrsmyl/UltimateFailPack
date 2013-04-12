@@ -31,6 +31,7 @@ L.Button_OK 				= '확인'
 L.Button_Cancel 			= '취소'
 L.Button_LoadMod 			= '불러오기'
 L.Mod_Enabled				= "우두머리 경보 사용"
+L.Mod_Reset					= "이 우두머리의 기본 설정 불러오기(테스트중)"
 L.Reset 					= "초기화"
 
 L.Enable  					= "켜기"
@@ -42,12 +43,10 @@ L.IconsInUse				= "현재 우두머리에서 사용 되는 전술 목표 아이�
 
 -- Tab: Boss Statistics
 L.BossStatistics			= "공략 상황"
-L.Statistic_Kills			= "처치:"
+L.Statistic_Kills			= "승리:"
 L.Statistic_Wipes			= "전멸:"
+L.Statistic_Incompletes		= "미완료:"
 L.Statistic_BestKill		= "최고 기록:"
-L.Statistic_Heroic			= "영웅"
-L.Statistic_10Man			= "10인"
-L.Statistic_25Man			= "25인"
 
 -- Tab: General Options
 L.General 					= "일반 DBM 설정"
@@ -59,6 +58,7 @@ L.DisableCinematicsOutside	= "게임내 동영상 재생 기능 끄기(인스턴
 L.SKT_Enabled				= "각 우두머리 설정에서 끈 상태라도 가장 빨랐던 전투시간 바 표시(강제)"
 L.AutologBosses				= "우두머리 전투시 블리자드 전투 기록 자동 활성화"
 L.AdvancedAutologBosses		= "우두머리 전투시 Transcriptor 기록 자동 활성화"
+L.LogOnlyRaidBosses			= "공격대 우두머리 전투만 기록하기(공격대 찾기 제외)"
 L.Latency_Text				= "동기화를 사용 할 최대 지연시간 설정 : %d"
 
 L.ModelOptions				= "3D 초상화 배경 설정"
@@ -95,6 +95,7 @@ L.ShowWarningsInChat 		= "알림을 대화 창에 보여줍니다."
 L.ShowFakedRaidWarnings 	= "알림을 공격대 경보 대화처럼 보여줍니다."
 L.WarningIconLeft 			= "왼쪽에 아이콘 표시"
 L.WarningIconRight 			= "오른쪽에 아이콘 표시"
+L.ShowCountdownText			= "초읽기 글자 보기"
 L.RaidWarnMessage 			= "<Deadly Boss Mods>를 사용해 주셔셔 감사합니다."
 L.BarWhileMove 				= "알림 위치 수정"
 L.RaidWarnSound				= "알림 소리"
@@ -161,13 +162,14 @@ L.HP_ShowDemo				= "체력 바 표시"
 L.BarWidth					= "바 길이: %d"
 
 -- Tab: Spam Filter
-L.Panel_SpamFilter				= "숨김 설정"
+L.Panel_SpamFilter				= "기타 설정"
 L.Area_SpamFilter				= "일반 설정"
 L.HideBossEmoteFrame			= "블리자드 기본 레이드 경보 숨기기"
+L.StripServerName				= "알림 및 바에서 서버명 보이지 않기"
 L.SpamBlockBossWhispers			= "전투 중 다른 공격대원 또는 파티원이 보내는 <DBM> 귓속말 감추기"
 L.BlockVersionUpdateNotice		= "업데이트 알림 창 끄기"
 L.ShowBigBrotherOnCombatStart	= "전투 시작시 BigBrother 버프 체크 실행하기"
-L.BigBrotherAnnounceToRaid		= "Big Brother 버프 체크 결과를 공격대에 알리기"
+L.BigBrotherAnnounceToRaid		= "BigBrother 버프 체크 결과를 공격대에 알리기"
 L.SpamBlockSayYell				= "전투 중 대화 말풍선 숨기기"
 
 

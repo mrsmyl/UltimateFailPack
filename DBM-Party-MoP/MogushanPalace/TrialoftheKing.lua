@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(708, "DBM-Party-MoP", 5, 321)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8602 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8978 $"):sub(12, -3))
 mod:SetCreatureID(61442, 61444, 61445)--61442 (Kuai the Brute), 61453 (Mu'Shiba, Kuai's Add), 61444 (Ming the Cunning), 61445 (Haiyan the Unstoppable)
 mod:SetModelID(42060)	-- 42059=Ming the Cunning | 42058=Kuai the Brute | 42060=Haiyan the Unstoppable
 mod:SetZone()
@@ -55,16 +55,16 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(119946) then
+	if args.spellId == 119946 then
 		warnRavage:Show(args.destName)
 		specWarnRavage:Show(args.destName)
 		timerRavage:Start(args.destName)
 		timerRavageCD:Start()
-	elseif args:IsSpellID(123655) then
+	elseif args.spellId == 123655 then
 		warnTraumaticBlow:Show(args.destName)
 		timerTraumaticBlow:Start(args.destName)
 		timerTraumaticBlowCD:Start()
-	elseif args:IsSpellID(120201) then
+	elseif args.spellId == 120201 then
 		warnConflag:Show(args.destName)
 		specWarnConflag:Show(args.destName)
 		timerConflag:Start(args.destName)
@@ -73,26 +73,27 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(119946) then
+	if args.spellId == 119946 then
 		timerRavage:Cancel(args.destName)
 	end
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(119922) then
+	if args.spellId == 119922 then
 		warnShockwave:Show()
 		specWarnShockwave:Show()
 		timerShockwaveCD:Start(shockwaveCD)
-	elseif args:IsSpellID(119981) then
+	elseif args.spellId == 119981 then
 		warnWhirlingDervish:Show()
 		timerWhirlingDervishCD:Start()
-	elseif args:IsSpellID(123654) then
+	elseif args.spellId == 123654 then
 		specWarnLightningBolt:Show(args.sourceName)
 	end
 end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 	if msg == L.Meteor or msg:find(L.Meteor) then
+		local target = DBM:GetFullNameByShortName(target)
 		warnMeteor:Show(target)
 		specWarnMeteor:Show(target)
 		timerMeteorCD:Start()

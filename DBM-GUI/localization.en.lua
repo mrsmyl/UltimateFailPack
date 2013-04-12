@@ -30,6 +30,7 @@ L.Button_OK 				= 'OK'
 L.Button_Cancel 			= 'Cancel'
 L.Button_LoadMod 			= 'Load AddOn'
 L.Mod_Enabled				= "Enable boss mod"
+L.Mod_Reset					= "Load default options for this mod (WIP)"
 L.Reset 					= "Reset"
 
 L.Enable  					= "Enable"
@@ -41,12 +42,10 @@ L.IconsInUse				= "Icons used by this mod"
 
 -- Tab: Boss Statistics
 L.BossStatistics			= "Boss Statistics"
-L.Statistic_Kills			= "Kills:"
+L.Statistic_Kills			= "Victories:"
 L.Statistic_Wipes			= "Wipes:"
-L.Statistic_BestKill		= "Best Kill:"
-L.Statistic_Heroic			= "Heroic"
-L.Statistic_10Man			= "10man raid"
-L.Statistic_25Man			= "25man raid"
+L.Statistic_Incompletes		= "Incompletes:"--For scenarios, TODO, figure out a clean way to replace any Statistic_Wipes with Statistic_Incompletes for scenario mods
+L.Statistic_BestKill		= "Best Victory:"
 
 -- Tab: General Options
 L.General 					= "General DBM Options"
@@ -58,6 +57,7 @@ L.DisableCinematicsOutside	= "Disable in-game cinematics outside instances"
 L.SKT_Enabled				= "Always show speed kill timer (Overrides boss-specific option)"
 L.AutologBosses				= "Automatically record boss encounters using blizzard combat log"
 L.AdvancedAutologBosses		= "Automatically record boss encounters with Transcriptor"
+L.LogOnlyRaidBosses			= "Only record raid boss encounters (exclude Raid Finder/party/scenario)"
 L.Latency_Text				= "Set max latency sync threshold: %d"
 
 L.ModelOptions				= "3D Model Viewer Options"
@@ -94,6 +94,7 @@ L.ShowWarningsInChat 		= "Show warnings in chat frame"
 L.ShowFakedRaidWarnings 	= "Show warnings as faked raid warning messages"
 L.WarningIconLeft 			= "Show icon on left side"
 L.WarningIconRight 			= "Show icon on right side"
+L.ShowCountdownText			= "Show countdown text"
 L.RaidWarnMessage 			= "Thanks for using Deadly Boss Mods"
 L.BarWhileMove 				= "Raid warning movable"
 L.RaidWarnSound				= "Play sound on raid warning"
@@ -163,6 +164,7 @@ L.BarWidth					= "Bar width: %d"
 L.Panel_SpamFilter				= "Global and Spam Filters"
 L.Area_SpamFilter				= "Spam Filter Options"
 L.HideBossEmoteFrame			= "Hide raid boss emote frame"
+L.StripServerName				= "Strip realm name in warnings and timers"
 L.SpamBlockBossWhispers			= "Filter <DBM> warning whispers while fighting"
 L.BlockVersionUpdateNotice		= "Disable update notification popup"
 L.ShowBigBrotherOnCombatStart	= "Perform Big Brother buff check on combat start"

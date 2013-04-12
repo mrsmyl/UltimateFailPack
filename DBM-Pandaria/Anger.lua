@@ -1,19 +1,13 @@
 local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8599 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9016 $"):sub(12, -3))
 mod:SetCreatureID(60491)
 mod:SetModelID(41448)
 mod:SetZone(809)--Kun-Lai Summit
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
 
--- TODO: This is field boss, if you die while combat, you can go tomb and revive as you wish.
--- But if you go tomb, DBM regards combat ends and messing up timer and warns.
--- So, needs to improve combat detection and ends on field boss. 
--- Also, you can enter combat while boss fights (not 100% health). 
--- On this situration, block OnCombatStart() function will be better (+ do not record kill time)
 mod:RegisterCombat("combat")
-mod:SetWipeTime(120)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -22,11 +16,15 @@ mod:RegisterEventsInCombat(
 	"UNIT_AURA"
 )
 
+mod:RegisterEvents(
+	"CHAT_MSG_MONSTER_YELL"
+)
+
 local warnUnleashedWrath		= mod:NewSpellAnnounce(119488, 3)--Big aoe damage aura when at 100 rage
 local warnGrowingAnger			= mod:NewTargetAnnounce(119622, 4)--Mind control trigger
 local warnAggressiveBehavior	= mod:NewTargetAnnounce(119626, 4)--Actual mind control targets
 
-local specWarnUnleashedWrath	= mod:NewSpecialWarningSpell(119488, mod:IsTank() or mod:IsHealer())--Defaults to tank and healers cause tank probalby want to Cd through this and healers have to heal it, dps just do what they always do and kill stuff.
+local specWarnUnleashedWrath	= mod:NewSpecialWarningSpell(119488, nil, nil, nil, 2)--Defaults to tank and healers cause tank probalby want to Cd through this and healers have to heal it, dps just do what they always do and kill stuff.
 local specWarnGrowingAnger		= mod:NewSpecialWarningYou(119622)
 local specWarnBitterThoughts	= mod:NewSpecialWarningMove(119610)
 
@@ -34,10 +32,10 @@ local timerGrowingAngerCD		= mod:NewCDTimer(32, 119622)--Min 32.6~ Max 67.8
 local timerUnleashedWrathCD		= mod:NewCDTimer(53, 119488)--Based on rage, but timing is consistent enough to use a CD bar, might require some perfecting later, similar to xariona's special, if rage doesn't reset after wipes, etc.
 local timerUnleashedWrath		= mod:NewBuffActiveTimer(24, 119488, nil, mod:IsTank() or mod:IsHealer())
 
---local berserkTimer				= mod:NewBerserkTimer(900)--he did not seems to berserk. my combat lasts 20 min, not berserks at all.
-
 mod:AddBoolOption("RangeFrame", true)--For Mind control spreading.
 mod:AddBoolOption("SetIconOnMC", true)
+
+local yellTriggered = false
 
 local warnpreMCTargets = {}
 local warnMCTargets = {}
@@ -107,29 +105,34 @@ function mod:OnCombatStart(delay)
 	table.wipe(warnpreMCTargets)
 	table.wipe(warnMCTargets)
 	mcIcon = 8
---	timerUnleashedWrathCD:Start(-delay)
---	timerGrowingAngerCD:Start(-delay)
---	berserkTimer:Start(-delay)
+	if yellTriggered then
+		timerUnleashedWrathCD:Start(-delay)
+		timerGrowingAngerCD:Start(-delay)
+	end
 end
 
 function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
+	playerMCed = false
+	table.wipe(warnpreMCTargets)
+	table.wipe(warnMCTargets)
+	yellTriggered = false
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(119488) then
+	if args.spellId == 119488 then
 		warnUnleashedWrath:Show()
 		specWarnUnleashedWrath:Show()
 		timerUnleashedWrath:Start()
-	elseif args:IsSpellID(119622) then
+	elseif args.spellId == 119622 then
 		timerGrowingAngerCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(119622) then
+	if args.spellId == 119622 then
 		warnpreMCTargets[#warnpreMCTargets + 1] = args.destName
 		if self.Options.SetIconOnMC then--Set icons on first debuff to get an earlier spread out.
 			table.insert(mcTargetIcons, DBM:GetRaidUnitId(args.destName))
@@ -147,7 +150,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			self:Schedule(1.2, showpreMC)
 		end
-	elseif args:IsSpellID(119626) then
+	elseif args.spellId == 119626 then
 		--Maybe add in function to update icons here in case of a spread that results in more then the original 3 getting the final MC debuff.
 		warnMCTargets[#warnMCTargets + 1] = args.destName
 		self:Unschedule(showMC)
@@ -159,12 +162,12 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(119626) and self.Options.SetIconOnMC then--Remove them after the MCs break.
+	if args.spellId == 119626 and self.Options.SetIconOnMC then--Remove them after the MCs break.
 		removeIcon(args.destName)
 		if args:IsPlayer() then
 			playerMCed = false
 		end
-	elseif args:IsSpellID(119488) then
+	elseif args.spellId == 119488 then
 		timerUnleashedWrathCD:Start()
 	end
 end
@@ -173,5 +176,14 @@ function mod:UNIT_AURA(uId)
 	if uId ~= "player" then return end
 	if UnitDebuff("player", bitterThought) and self:AntiSpam(2) and not playerMCed then
 		specWarnBitterThoughts:Show()
+	end
+end
+
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.Pull and not self:IsInCombat() then
+		if self:GetCIDFromGUID(UnitGUID("target")) == 60491 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 60491 then--Whole zone gets yell, so lets not engage combat off yell unless he is our target (or the target of our target for healers)
+			yellTriggered = true
+			DBM:StartCombat(self, 0)
+		end
 	end
 end

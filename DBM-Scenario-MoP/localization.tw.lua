@@ -11,11 +11,6 @@ L:SetGeneralLocalization{
 	name = "賽拉摩攻防戰"
 }
 
-L:SetMiscLocalization{
---	AllianceVictory = "All of you have my deepest thanks. With the Focusing Iris removed, this lifeless bomb is merely a sickening testament to Garrosh's brutality. The winds of change blow fiercely; Azeroth is on the brink of war. My apologies, but you must excuse me... I have much to consider. Farewell.",
---	HordeVictory	= "My thanks! Shall we make our way off this miserable little island?"
-}
-
 ---------------------------
 -- Arena Of Annihilation --
 ---------------------------
@@ -49,4 +44,45 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	WarnAchFiveAlive	= "為成就\"五小福\"失敗顯示警告."
+})
+
+--------------------------------
+-- Troves of the Thunder King --
+--------------------------------
+
+L= DBM:GetModLocalization("Troves")
+
+L:SetGeneralLocalization{
+	name = "雷王的珍寶"
+}
+
+------------------------
+-- Warlock Green Fire --
+------------------------
+
+L= DBM:GetModLocalization("GreenFire")
+
+L:SetGeneralLocalization{
+	name = "追擊黑穫議會"
+}
+
+L:SetWarningLocalization({
+	specWarnLostSouls		= "靈魂迷失!",
+	specWarnEnslavePitLord	= "深淵領主 - 快奴役惡魔!"
+})
+
+L:SetTimerLocalization({
+	timerCombatStarts		= "戰鬥開始",
+	timerLostSoulsCD		= "靈魂迷失冷卻"
+})
+
+L:SetOptionLocalization({
+	specWarnLostSouls		= "為靈魂迷失重生顯示特別警告",
+	specWarnEnslavePitLord	= "為需對深淵領主使用奴役惡魔時顯示特別警告",
+	timerCombatStarts		= "為戰鬥開始顯示時間",
+	timerLostSoulsCD		= "為下一次靈魂迷失重生顯示冷卻計時器"
+})
+
+L:SetMiscLocalization({
+	LostSouls				= "面對注定滅亡的同儕靈魂，術士!"
 })

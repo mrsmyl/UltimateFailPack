@@ -45,8 +45,6 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(816)
 
 L:SetOptionLocalization({
-	warnPossessed	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(136442),
-	warnSandBolt	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(136189),
 	RangeFrame		= "距离监视"
 })
 
@@ -61,7 +59,6 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnKickShell			= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(134031),
 	specWarnCrystalShell	= "特殊警报：当没有$spell:137633效果时",
 	InfoFrame				= "信息框：没有$spell:137633效果的团员"
 })
@@ -90,9 +87,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnFlock		= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.count:format("ej7348"),
-	specWarnFlock	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switch:format("ej7348"),
-	RangeFrame		= "Show range frame (8) for $spell:138923"
+	RangeFrame		= "Show range frame (10) for $spell:138923"
 })
 
 L:SetMiscLocalization({
@@ -113,7 +108,6 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	specWarnDisintegrationBeam	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format("ej6882"),
 	ArrowOnBeam					= "Show DBM Arrow during $journal:6882 to indicate which direction to move",
 })
 
@@ -153,7 +147,6 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDeadZone	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(137229),
 	RangeFrame		= "距离监视（动态，当存在多名团员过近时显示）"
 })
 

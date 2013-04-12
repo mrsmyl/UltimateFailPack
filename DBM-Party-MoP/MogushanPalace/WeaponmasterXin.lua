@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(698, "DBM-Party-MoP", 5, 321)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7834 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(61398)
 mod:SetModelID(41987)
 mod:SetZone()
@@ -36,7 +36,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(119684) then
+	if args.spellId == 119684 then
 		warnGroundSmash:Show()
 		specWarnSmash:Show()
 		timerSmashCD:Start()
@@ -44,7 +44,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(122959) then
+	if args.spellId == 122959 then
 		warnRoar:Show()
 --		timerRoarCD:Start()
 	end

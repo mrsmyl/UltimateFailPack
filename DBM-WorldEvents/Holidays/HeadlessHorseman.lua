@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("HeadlessHorseman", "DBM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7445 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(23682, 23775)
 --mod:SetModelID(22351)--Model doesn't work/render for some reason.
 mod:RegisterCombat("combat")
@@ -28,10 +28,10 @@ local timerConflag				= mod:NewTargetTimer(4, 42380)
 local timerSquashSoul			= mod:NewTargetTimer(15, 42514)
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(42380) then					-- Conflagration
+	if args.spellId == 42380 then					-- Conflagration
 		warnConflag:Show(args.destName)
 		timerConflag:Start(args.destName)
-	elseif args:IsSpellID(42514) then				-- Squash Soul
+	elseif args.spellId == 42514 then				-- Squash Soul
 		warnSquashSoul:Show(args.destName)
 		timerSquashSoul:Start(args.destName)
 	end

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(682, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8715 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(60143)
 mod:SetModelID(41256)
 mod:SetZone()
@@ -56,14 +56,6 @@ local totemCount = 0
 local voodooDollTargets = {}
 local crossedOverTargets = {}
 local voodooDollTargetIcons = {}
-local guids = {}
-local guidTableBuilt = false--Entirely for DCs, so we don't need to reset between pulls cause it doesn't effect building table on combat start and after a DC then it will be reset to false always
-local function buildGuidTable()
-	table.wipe(guids)
-	for uId, i in DBM:GetGroupMembers() do
-		guids[UnitGUID(uId) or "none"] = GetRaidRosterInfo(i)
-	end
-end
 
 local function warnVoodooDollTargets()
 	warnVoodooDolls:Show(table.concat(voodooDollTargets, "<, >"))
@@ -111,8 +103,6 @@ end
 
 function mod:OnCombatStart(delay)
 	totemCount = 0
-	buildGuidTable()
-	guidTableBuilt = true
 	table.wipe(voodooDollTargets)
 	table.wipe(crossedOverTargets)
 	table.wipe(voodooDollTargetIcons)
@@ -131,7 +121,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actual debuff on >player< warnings since it has a chance to be resisted.
-	if args:IsSpellID(122151) then
+	if args.spellId == 122151 then
 		if args:IsPlayer() then
 			specWarnVoodooDollsYou:Show()
 		end
@@ -151,23 +141,23 @@ function mod:SPELL_AURA_APPLIED(args)--We don't use spell cast success for actua
 			self:Unschedule(warnCrossedOverTargets)
 			self:Schedule(0.3, warnCrossedOverTargets)		
 		end
-	elseif args:IsSpellID(116278) then--this is tank spell, no delays?
+	elseif args.spellId == 116278 then--this is tank spell, no delays?
 		if args:IsPlayer() then--no latency check for personal notice you aren't syncing.
 			timerSoulSever:Start()
 			countdownCrossedOver:Start(29)
 			warnSuicide:Schedule(25)
 		end
-	elseif args:IsSpellID(117543) and args:IsPlayer() then -- 117543 is healer spell, 117549 is dps spell
+	elseif args.spellId == 117543 and args:IsPlayer() then -- 117543 is healer spell, 117549 is dps spell
 		timerSpiritualInnervation:Start()
-	elseif args:IsSpellID(117549) and args:IsPlayer() then -- 117543 is healer spell, 117549 is dps spell
+	elseif args.spellId == 117549 and args:IsPlayer() then -- 117543 is healer spell, 117549 is dps spell
 		if self:IsDifficulty("lfr25") then
 			timerSpiritualInnervation:Start(40)
 		else
 			timerSpiritualInnervation:Start()
 		end
-	elseif args:IsSpellID(117723) and args:IsPlayer() then
+	elseif args.spellId == 117723 and args:IsPlayer() then
 		timerFrailSoul:Start()
-	elseif args:IsSpellID(117752) then
+	elseif args.spellId == 117752 then
 		warnFrenzy:Show()
 		if not self:IsDifficulty("lfr25") then--lfr continuing summon totem below 20%
 			timerTotemCD:Cancel()
@@ -183,23 +173,23 @@ function mod:SPELL_AURA_REMOVED(args)--We don't use spell cast success for actua
 		end
 		timerCrossedOver:Cancel()
 		countdownCrossedOver:Cancel()
-	elseif args:IsSpellID(116278) and args:IsPlayer() then
+	elseif args.spellId == 116278 and args:IsPlayer() then
 		warnSuicide:Cancel()
 		timerSoulSever:Cancel()
 		countdownCrossedOver:Cancel()
-	elseif args:IsSpellID(122151) then
+	elseif args.spellId == 122151 then
 		self:SendSync("VoodooGoneTargets", args.destGUID)
 	elseif args:IsSpellID(117543, 117549) and args:IsPlayer() then
 		timerSpiritualInnervation:Cancel()
-	elseif args:IsSpellID(117723) and args:IsPlayer() then
+	elseif args.spellId == 117723 and args:IsPlayer() then
 		timerFrailSoul:Cancel()
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(116174) and self:LatencyCheck() then
+	if args.spellId == 116174 and self:LatencyCheck() then
 		self:SendSync("SummonTotem")
-	elseif args:IsSpellID(116272) then
+	elseif args.spellId == 116272 then
 		if args:IsPlayer() then--no latency check for personal notice you aren't syncing.
 			specWarnBanishment:Show()
 		end
@@ -210,10 +200,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:OnSync(msg, guid)
-	--Make sure we build a table if we DCed mid fight, before we try comparing any syncs to that table.
-	if not guidTableBuilt then
-		buildGuidTable()
-		guidTableBuilt = true
+	local targetname
+	if guid then
+		targetname = DBM:GetFullPlayerNameByGUID(guid)
 	end
 	if msg == "SummonTotem" then
 		totemCount = totemCount + 1
@@ -226,12 +215,12 @@ function mod:OnSync(msg, guid)
 		else
 			timerTotemCD:Start(36, totemCount+1)
 		end
-	elseif msg == "VoodooTargets" and guids[guid] then
-		voodooDollTargets[#voodooDollTargets + 1] = guids[guid]
+	elseif msg == "VoodooTargets" and targetname then
+		voodooDollTargets[#voodooDollTargets + 1] = targetname
 		self:Unschedule(warnVoodooDollTargets)
 		self:Schedule(0.3, warnVoodooDollTargets)
 		if self.Options.SetIconOnVoodoo then
-			table.insert(voodooDollTargetIcons, DBM:GetRaidUnitId(guids[guid]))
+			table.insert(voodooDollTargetIcons, DBM:GetRaidUnitId(targetname))
 			self:UnscheduleMethod("SetVoodooIcons")
 			if self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
 				if #voodooDollTargetIcons >= 4 and self:IsDifficulty("normal25", "heroic25") or #voodooDollTargetIcons >= 3 and self:IsDifficulty("normal10", "heroic10") then
@@ -241,13 +230,13 @@ function mod:OnSync(msg, guid)
 				end
 			end
 		end
-	elseif msg == "VoodooGoneTargets" and guids[guid] and self.Options.SetIconOnVoodoo then
-		removeIcon(DBM:GetRaidUnitId(guids[guid]))
-	elseif msg == "BanishmentTarget" and guids[guid] then
-		warnBanishment:Show(guids[guid])
+	elseif msg == "VoodooGoneTargets" and targetname and self.Options.SetIconOnVoodoo then
+		removeIcon(DBM:GetRaidUnitId(targetname))
+	elseif msg == "BanishmentTarget" and targetname then
+		warnBanishment:Show(targetname)
 		timerBanishmentCD:Start()
 		if guid ~= UnitGUID("player") then--make sure YOU aren't target before warning "other"
-			specWarnBanishmentOther:Show(guids[guid])
+			specWarnBanishmentOther:Show(targetname)
 		end
 	end
 end

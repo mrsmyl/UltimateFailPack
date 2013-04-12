@@ -390,6 +390,32 @@ local function updatePlayerBuffStacks()
 	updateLines()
 end
 
+local function updatePlayerDebuffStacks()
+	table.wipe(lines)
+	local spell = GetSpellInfo(infoFrameThreshold)
+	if IsInRaid() then
+		for i = 1, GetNumGroupMembers() do
+			local uId = "raid"..i
+			if UnitDebuff(uId, spell) then
+				lines[UnitName(uId)] = select(4, UnitDebuff(uId, spell))
+			end
+		end
+	elseif IsInGroup() then
+		for i = 1, GetNumSubgroupMembers() do
+			local uId = "party"..i
+			if UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) then
+				lines[UnitName(uId)] = select(4, UnitDebuff(uId, spell))
+			end
+		end
+		if UnitDebuff("player", GetSpellInfo(infoFrameThreshold)) then
+			lines[UnitName("player")] = select(4, UnitDebuff("player", spell))
+		end
+	end
+
+	updateIcons()
+	updateLines()
+end
+
 local function updatePlayerAggro()
 	table.wipe(lines)
 	if IsInRaid() then
@@ -470,6 +496,8 @@ function onUpdate(self, elapsed)
 		updatePlayerAggro()
 	elseif currentEvent == "playerbuffstacks" then
 		updatePlayerBuffStacks()
+	elseif currentEvent == "playerdebuffstacks" then
+		updatePlayerDebuffStacks()
 	elseif currentEvent == "playertargets" then
 		updatePlayerTargets()
 	end
@@ -540,6 +568,8 @@ function infoFrame:Show(maxLines, event, threshold, ...)
 		updatePlayerAggro()
 	elseif currentEvent == "playerbuffstacks" then
 		updatePlayerBuffStacks()
+	elseif currentEvent == "playerdebuffstacks" then
+		updatePlayerDebuffStacks()
 	elseif currentEvent == "playertargets" then
 		updatePlayerTargets()
 	elseif currentEvent == "test" then
@@ -550,6 +580,32 @@ function infoFrame:Show(maxLines, event, threshold, ...)
 	frame:Show()
 	frame:SetOwner(UIParent, "ANCHOR_PRESERVE")
 	onUpdate(frame, 0)
+end
+
+function infoFrame:Update(event)
+	if event == "health" then
+		updateHealth()
+	elseif event == "playerpower" then
+		updatePlayerPower()
+	elseif event == "enemypower" then
+		updateEnemyPower()
+	elseif event == "playerbuff" then
+		updatePlayerBuffs()
+	elseif event == "playergooddebuff" then
+		updateGoodPlayerDebuffs()
+	elseif event == "playerbaddebuff" then
+		updateBadPlayerDebuffs()
+	elseif event == "playeraggro" then
+		updatePlayerAggro()
+	elseif event == "playerbuffstacks" then
+		updatePlayerBuffStacks()
+	elseif event == "playerdebuffstacks" then
+		updatePlayerDebuffStacks()
+	elseif event == "playertargets" then
+		updatePlayerTargets()
+	else
+		error("DBM-InfoFrame: Unsupported event", 2)
+	end
 end
 
 function infoFrame:Hide()

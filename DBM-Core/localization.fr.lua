@@ -10,8 +10,9 @@ DBM_CORE_COMBAT_STARTED				= "%s engagé. Bonne chance et amusez-vous bien ! :)"
 DBM_CORE_BOSS_DOWN					= "%s vaincu après %s !"
 DBM_CORE_BOSS_DOWN_L				= "%s vaincu après %s ! Votre dernier temps était de %s et votre record de %s. Vous l'avez tué au total %d fois."
 DBM_CORE_BOSS_DOWN_NR				= "%s vaincu après %s ! C'est un nouveau record ! (l'ancien record était de %s). Vous l'avez tué au total %d fois."
-DBM_CORE_COMBAT_ENDED_AT			= "Combat face à %s terminé après %s."
-DBM_CORE_COMBAT_ENDED_AT_LONG		= "Combat face à %s terminé après %s. Vous cumulez un total de %d wipes dans ce mode de difficulté."
+
+DBM_CORE_COMBAT_ENDED_AT			= "Combat face à %s (%s) terminé après %s."
+DBM_CORE_COMBAT_ENDED_AT_LONG		= "Combat face à %s (%s) terminé après %s. Vous cumulez un total de %d wipes dans ce mode de difficulté."
 DBM_CORE_COMBAT_STATE_RECOVERED		= "%s a été engagé il y a %s, récupération des délais..."
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d |4seconde:secondes;"
@@ -132,16 +133,16 @@ DBM_CORE_ACHIEVEMENT_TIMER_SPEED_KILL = "Victoire rapide"
 
 -- Auto-generated Timer Localizations
 DBM_CORE_AUTO_TIMER_TEXTS = {
-	target		= "%s: %%s",
+	target		= "%s: >%%s<",
 	cast		= "%s",
 	active		= "%s se termine",--Buff/Debuff/event on boss
 	fades		= "%s se dissipe",--Buff/Debuff on players
 	cd			= "Rech. %s ",
 	cdcount		= "Rech. %s (%%d)",
-	cdsource	= "Rech. %s: %%s",
+	cdsource	= "Rech. %s: >%%s<",
 	next		= "Proch. %s",
 	nextcount	= "Proch. %s (%%d)",
-	nextsource	= "Proch. %s: %%s",
+	nextsource	= "Proch. %s: >%%s<",
 	achievement	= "%s"
 }
 
@@ -206,16 +207,16 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 
 DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell = "%s!",
-	dispel = "%s on %%s - dissipez maintenant",
-	interrupt = "%s - interrompez %%s!",
+	dispel = "%s on >%%s< - dissipez maintenant",
+	interrupt = "%s - interrompez >%%s<!",
 	you = "%s sur vous",
-	target = "%s sur %%s",
-	close = "%s sur %%s près de vous",
+	target = "%s sur >%%s<",
+	close = "%s sur >%%s< près de vous",
 	move = "%s - écartez-vous",
 	run = "%s - fuyez",
 	cast = "%s - arrêtez d'incanter",
 	stack = "%s (%%d)",
-	switch = "%s - Changer de cible"
+	switch = ">%s< - Changer de cible"
 }
 
 
@@ -224,7 +225,7 @@ DBM_CORE_AUTO_SOUND_OPTION_TEXT			= "Jouer le son \"run away\" pour $spell:%s"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Compte à rebours sonore pour $spell:%s"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "Compte à rebours sonore pour ka durée de $spell:%s"
 DBM_CORE_AUTO_YELL_OPTION_TEXT			= "Cri quand vous subissez $spell:%s"
-DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "%s sur moi !"
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "%s sur " .. UnitName("player") .. " !"
 
 
 -- New special warnings

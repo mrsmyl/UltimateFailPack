@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(744, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8664 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8978 $"):sub(12, -3))
 mod:SetCreatureID(62543)
 mod:SetModelID(43141)
 mod:SetZone()
@@ -84,7 +84,7 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(123474) then
+	if args.spellId == 123474 then
 		warnOverwhelmingAssault:Show(args.destName, args.amount or 1)
 		timerOverwhelmingAssault:Start(args.destName)
 		if args:IsPlayer() then
@@ -96,7 +96,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				specWarnOverwhelmingAssaultOther:Show(args.destName)--So nudge you to taunt it off other tank already.
 			end
 		end
-	elseif args:IsSpellID(123471) then
+	elseif args.spellId == 123471 then
 		if phase2 and (args.amount or 1) % 3 == 0 or not phase2 then
 			warnIntensify:Show(args.destName, args.amount or 1)
 		end
@@ -106,13 +106,13 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(123474) then
+	if args.spellId == 123474 then
 		timerOverwhelmingAssault:Cancel(args.destName)
 	end
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(125310) then
+	if args.spellId == 125310 then
 		warnBladeTempest:Show()
 		specWarnBladeTempest:Show()
 		soundBladeTempest:Play()
@@ -123,9 +123,9 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(123474) then
+	if args.spellId == 123474 then
 		timerOverwhelmingAssaultCD:Start()--Start CD here, since this might miss.
-	elseif args:IsSpellID(123175) then
+	elseif args.spellId == 123175 then
 		warnWindStep:Show(args.destName)
 		if self:IsDifficulty("lfr25") then
 			timerWindStepCD:Start(30)
@@ -137,14 +137,14 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 	if msg:find("spell:122949") then--Does not show in combat log except for after it hits. IT does fire a UNIT_SPELLCAST event but has no target info. You can get target 1 sec faster with UNIT_AURA but it's more cpu and not worth the trivial gain IMO
+		local target = DBM:GetFullNameByShortName(target)
 		warnUnseenStrike:Show(target)
 		specWarnUnseenStrike:Show(target)
 		timerUnseenStrike:Start()
 		timerUnseenStrikeCD:Start()
 		if target == UnitName("player") then
 			yellUnseenStrike:Yell()
-		end
-		if self.Options.UnseenStrikeArrow then
+		elseif self.Options.UnseenStrikeArrow then
 			DBM.Arrow:ShowRunTo(target, 3, 3, 5)
 		end
 	end

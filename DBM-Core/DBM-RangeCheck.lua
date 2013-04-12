@@ -65,6 +65,15 @@ local initRangeCheck -- initializes the range check for a specific range (if nec
 local dots = {}
 local charms = {}
 
+--------------------------------------------------------
+--  Cache frequently used global variables in locals  --
+--------------------------------------------------------
+local GetPlayerMapPosition = GetPlayerMapPosition
+local GetPlayerFacing = GetPlayerFacing
+local UnitIsUnit = UnitIsUnit
+local GetCurrentMapDungeonLevel = GetCurrentMapDungeonLevel
+local GetRaidTargetIndex = GetRaidTargetIndex
+
 -- for Phanx' Class Colors
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 local BLIP_TEX_COORDS = {
@@ -642,7 +651,7 @@ do
 					numPlayers = GetNumSubgroupMembers()
 				end
 				if numPlayers < (prevNumPlayers or 0) then
-					for i=numPlayers, prevNumPlayers do
+					for i = numPlayers, prevNumPlayers do
 						if dots[i] then
 							if dots[i].dot then
 								dots[i].dot:Hide()		-- Hide dots when people leave the group
@@ -681,6 +690,7 @@ do
 					else
 						if dots[i] and dots[i].dot then
 							dots[i].dot:Hide()
+							dots[i].tooClose = false
 						end
 					end
 				end

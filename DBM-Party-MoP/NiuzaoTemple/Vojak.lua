@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(738, "DBM-Party-MoP", 6, 324)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8294 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(61634)
 mod:SetModelID(42169)
 mod:SetZone()
@@ -40,7 +40,7 @@ local soundThousandBlades		= mod:NewSound(120759, nil, mod:IsMelee())
 --local Warriors	 	= EJ_GetSectionInfo(6283)
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(120759) then
+	if args.spellId == 120759 then
 		warnThousandBlades:Show()
 		specWarnThousandBlades:Show()
 		timerThousandBlades:Start()
@@ -49,16 +49,16 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(120789) then
+	if args.spellId == 120789 then
 		warnDashingStrike:Show()
 		timerDashingStrikeCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(120402) then-- NPC only buff, player's buff is 123032
+	if args.spellId == 120402 then-- NPC only buff, player's buff is 123032
 		warnCausticTar:Show()
-	elseif args:IsSpellID(120759) then
+	elseif args.spellId == 120759 then
 		timerThousandBladesCD:Start()
 	end
 end

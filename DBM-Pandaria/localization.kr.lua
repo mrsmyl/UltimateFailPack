@@ -7,14 +7,21 @@ local L
 L= DBM:GetModLocalization(691)
 
 L:SetOptionLocalization({
-	RangeFrame			= "$spell:119622 상태에 따른 거리 창 보기",
-	SetIconOnMC			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(119622)
+	RangeFrame			= "$spell:119622 상태에 따른 거리 창 보기"
+})
+
+L:SetMiscLocalization({
+	Pull				= "그래... 그래! 네 분노를 행동으로 보여줘! 덤벼봐!"
 })
 
 -----------------------
 -- Salyis --
 -----------------------
 L= DBM:GetModLocalization(725)
+
+L:SetMiscLocalization({
+	Pull				= "놈들의 시체를 가져와라!"
+})
 
 --------------
 -- Oondasta --
@@ -26,7 +33,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Pull				= "How dare you interrupt our preparations! The Zandalari will not be stopped, not this time!"
+	Pull				= "감히 우릴 막겠다고? 잔달라 부족을 막을 순 없다! 이번엔 안 돼!"
 })
 
 ---------------------------

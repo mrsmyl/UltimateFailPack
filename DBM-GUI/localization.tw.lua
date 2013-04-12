@@ -5,7 +5,7 @@ local L = DBM_GUI_Translations
 
 L.MainFrame		 = "Deadly Boss Mods"
 
-L.TranslationBy 		= "Whyv@巴納札爾,Nightkiller@日落沼澤(Azael Poon)"
+L.TranslationBy 		= "Imbav@聖光之願、Nightkiller@日落沼澤(Azael Poon)"
 
 L.OTabBosses	= "首領模組"
 L.OTabOptions	= "選項"
@@ -31,6 +31,7 @@ L.Button_OK 				= '確定'
 L.Button_Cancel 			= '取消'
 L.Button_LoadMod 			= '載入模組'
 L.Mod_Enabled				= "啟用首領模組"
+L.Mod_Reset					= "為此模組讀取預設值(未完成)"
 L.Reset 					= "重置"
 
 L.Enable  					= "啟用"
@@ -42,12 +43,10 @@ L.IconsInUse				= "此模組已使用的標記"
 
 -- Tab: Boss Statistics
 L.BossStatistics			= "首領狀態"
-L.Statistic_Kills			= "擊殺："
+L.Statistic_Kills			= "勝利："
 L.Statistic_Wipes			= "失敗："
+L.Statistic_Incompletes		= "未完成："
 L.Statistic_BestKill		= "最快記錄："
-L.Statistic_Heroic			= "英雄模式"
-L.Statistic_10Man			= "10人團隊"
-L.Statistic_25Man			= "25人團隊"
 
 -- Tab: General Options
 L.General 					= "DBM綜合設置"
@@ -56,7 +55,10 @@ L.EnableMiniMapIcon			= "顯示小地圖圖示"
 L.UseMasterVolume			= "使用主要聲音頻道來播放音效檔。"
 L.DisableCinematics			= "禁用遊戲中副本裡的過場動畫"
 L.DisableCinematicsOutside	= "禁用遊戲中副本以外的過場動畫"
-L.SKT_Enabled				= "永遠顯示快速擊殺計時器 (覆蓋首領特定的選項)"
+L.SKT_Enabled				= "永遠顯示快速戰勝計時器 (覆蓋首領特定的選項)"
+L.AutologBosses				= "自動使用暴雪戰鬥日誌記錄首領戰鬥"
+L.AdvancedAutologBosses		= "自動使用Transcriptor紀錄首領戰鬥"
+L.LogOnlyRaidBosses			= "只記錄團隊首領的戰鬥(除了隨機團隊/隨機隊伍/隨機事件)"
 L.Latency_Text				= "設定最高延遲同步門檻:%d"
 
 L.ModelOptions				= "3D模型預覽選項"
@@ -93,6 +95,7 @@ L.ShowWarningsInChat 		= "在聊天視窗中顯示警告"
 L.ShowFakedRaidWarnings 	= "以偽裝團隊警告資訊的方式顯示警告內容"
 L.WarningIconLeft 			= "左側顯示圖示"
 L.WarningIconRight 			= "右側顯示圖示"
+L.ShowCountdownText			= "顯示倒數文字"
 L.RaidWarnMessage 			= "感謝您使用Deadly Boss Mods"
 L.BarWhileMove 				= "可移動的團隊警告"
 L.RaidWarnSound				= "發出團隊警告時播放音效"
@@ -108,13 +111,13 @@ L.ShowLoadMessage 			= "在聊天視窗顯示模組載入訊息"
 L.ShowPizzaMessage 			= "在聊天視窗顯示計時器廣播訊息"
 L.CombatMessages			= "戰鬥訊息選項"
 L.ShowEngageMessage 		= "在聊天視窗顯示開戰訊息"
-L.ShowKillMessage 			= "在聊天視窗顯示擊殺訊息"
+L.ShowKillMessage 			= "在聊天視窗顯示戰勝訊息"
 L.ShowWipeMessage 			= "在聊天視窗顯示滅團訊息"
 L.ShowRecoveryMessage 		= "在聊天視窗顯示計時器恢復訊息"
 L.WhisperMessages			= "密語訊息選項"
 L.AutoRespond 				= "啟用戰鬥中自動密語回覆"
 L.EnableStatus 				= "回覆'status'的密語"
-L.WhisperStats 				= "在密語回應中加入擊殺/滅團狀態"
+L.WhisperStats 				= "在密語回應中加入戰勝/滅團狀態"
 
 -- Tab: Barsetup
 L.BarSetup   				= "計時條樣式"
@@ -162,6 +165,7 @@ L.BarWidth					= "寬度: %d"
 L.Panel_SpamFilter				= "整體及垃圾過濾"
 L.Area_SpamFilter				= "垃圾過濾選項"
 L.HideBossEmoteFrame			= "隱藏團隊首領表情框"
+L.StripServerName				= "隱藏警告和計時器的玩家伺服器名稱"
 L.SpamBlockBossWhispers			= "當戰鬥時過濾 <DBM> 密語警告"
 L.BlockVersionUpdateNotice		= "禁用彈出的更新通知"
 L.ShowBigBrotherOnCombatStart	= "戰鬥開始時顯示BigBrother(檢查團隊 增益/精煉UI)"

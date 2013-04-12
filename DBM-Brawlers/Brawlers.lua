@@ -1,16 +1,12 @@
 local mod	= DBM:NewMod("Brawlers", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8443 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9116 $"):sub(12, -3))
 --mod:SetCreatureID(60491)
 --mod:SetModelID(41448)
 mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(
-	"SPELL_CAST_START",
-	"CHAT_MSG_MONSTER_YELL",
-	"PLAYER_REGEN_ENABLED",
-	"UNIT_DIED",
 	"ZONE_CHANGED_NEW_AREA"
 )
 
@@ -38,12 +34,12 @@ function mod:PlayerFighting() -- for external mods
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(135385) then
+	if args.spellId == 135385 then
 		warnOrgPortal:Show()
 		if not playerIsFighting then--Do not distract player in arena with special warning
 			specWarnOrgPortal:Show()
 		end
-	elseif args:IsSpellID(135386) then
+	elseif args.spellId == 135386 then
 		warnStormPortal:Show()
 		if not playerIsFighting then--Do not distract player in arena with special warning
 			specWarnStormPortal:Show()
@@ -111,6 +107,7 @@ function mod:PLAYER_REGEN_ENABLED()
 end
 
 function mod:UNIT_DIED(args)
+	if not args.destName then return end
 	--Another backup for when npc doesn't yell. This is a way to detect a wipe at least.
 	local thingThatDied = string.split("-", args.destName)--currentFighter never has realm name, so we need to strip it from combat log for CRZ support
 	if currentFighter and currentFighter == thingThatDied then--They wiped.
@@ -120,9 +117,19 @@ end
 
 function mod:ZONE_CHANGED_NEW_AREA()
 	currentZoneID = GetCurrentMapAreaID()
-	if currentZoneID == 922 or currentZoneID == 925 then modsStopped = false return end--We returned to arena, reset variable
+	if currentZoneID == 922 or currentZoneID == 925 then
+		modsStopped = false
+		self:RegisterShortTermEvents(
+			"SPELL_CAST_START",
+			"CHAT_MSG_MONSTER_YELL",
+			"PLAYER_REGEN_ENABLED",
+			"UNIT_DIED"
+		)
+		return
+	end--We returned to arena, reset variable
 	if modsStopped then return end--Don't need this to fire every time you change zones after the first.
 	self:Stop()
+	self:UnregisterShortTermEvents()
 	for i = 1, 8 do
 		local mod2 = DBM:GetModByName("BrawlRank" .. i)
 		if mod2 then

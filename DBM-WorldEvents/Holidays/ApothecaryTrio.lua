@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("ApothecaryTrio", "DBM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7445 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(36272, 36296, 36565)
 mod:SetModelID(16176)
 mod:RegisterCombat("combat")
@@ -25,7 +25,7 @@ mod:AddBoolOption("TrioActiveTimer", true, "timer")
 local timerChainReaction		= mod:NewCastTimer(3, 68821)
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(68821) then
+	if args.spellId == 68821 then
 		warnChainReaction:Show()
 		timerChainReaction:Start()
 	end

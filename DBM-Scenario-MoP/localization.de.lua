@@ -11,11 +11,6 @@ L:SetGeneralLocalization{
 	name = "Theramores Sturz"
 }
 
-L:SetMiscLocalization{
---	AllianceVictory = "All of you have my deepest thanks. With the Focusing Iris removed, this lifeless bomb is merely a sickening testament to Garrosh's brutality. The winds of change blow fiercely; Azeroth is on the brink of war. My apologies, but you must excuse me... I have much to consider. Farewell.", --translate (trigger)
---	HordeVictory	= "Danke! Sollen wir von dieser elenden kleinen Insel verschwinden?"
-}
-
 ---------------------------
 -- Arena Of Annihilation --
 ---------------------------
@@ -49,4 +44,45 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	WarnAchFiveAlive	= "Zeige Warnung bei Fehlschlag des Erfolgs \"Nummer 5 lebt!\""
+})
+
+--------------------------------
+-- Troves of the Thunder King --
+--------------------------------
+
+L= DBM:GetModLocalization("Troves")
+
+L:SetGeneralLocalization{
+	name = "Zitadelle des Donnerkönigs"
+}
+
+------------------------
+-- Warlock Green Fire --
+------------------------
+
+L= DBM:GetModLocalization("GreenFire")
+
+L:SetGeneralLocalization{
+	name = "Jagd auf die Schwarze Ernte"
+}
+
+L:SetWarningLocalization({
+	specWarnLostSouls		= "Verirrte Seelen!",
+	specWarnEnslavePitLord	= "Grubenlord - Jetzt versklaven!"
+})
+
+L:SetTimerLocalization({
+	timerCombatStarts		= "Kampfbeginn",
+	timerLostSoulsCD		= "Verirrte Seelen CD"
+})
+
+L:SetOptionLocalization({
+	specWarnLostSouls		= "Zeige Spezialwarnung, wenn Verirrte Seelen erscheinen",
+	specWarnEnslavePitLord	= "Zeige Spezialwarnung zum Dämonenversklaven, wenn der Grubenlord erscheint/freikommt",
+	timerCombatStarts		= "Zeige Zeit bis Kampfbeginn",
+	timerLostSoulsCD		= "Zeige Zeit bis nächste Verirrte Seelen erscheinen"
+})
+
+L:SetMiscLocalization({
+	LostSouls				= "Stellt Euch den Seelen, die Ihr in die Verdammnis schicken wolltet!"--needs to be verified (wowhead-captured translation)
 })

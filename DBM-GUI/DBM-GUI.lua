@@ -6,6 +6,7 @@
 -- This addon is written and copyrighted by:
 --    * Paul Emmerich (Tandanu @ EU-Aegwynn) (DBM-Core)
 --    * Martin Verges (Nitram @ EU-Azshara) (DBM-GUI)
+--    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author) Contact: mysticalosx@gmail.com (Twitter: @MysticalOS)
 --
 -- The localizations are written by:
 --    * enGB/enUS: Tandanu				http://www.deadlybossmods.com
@@ -15,12 +16,11 @@
 --    * ruRU: Vampik					admin@vampik.ru
 --    * zhTW: Hman						herman_c1@hotmail.com
 --    * zhTW: Azael/kc10577				paul.poon.kw@gmail.com
---    * koKR: BlueNyx/nBlueWiz			bluenyx@gmail.com / everfinale@gmail.com
+--    * koKR: nBlueWiz					everfinale@gmail.com
 --    * esES: Snamor/1nn7erpLaY      	romanscat@hotmail.com
 --
 -- Special thanks to:
 --    * Arta
---    * Omegal @ US-Whisperwind (continuing mod support for 3.2+)
 --    * Tennberg (a lot of fixes in the enGB/enUS localization)
 --
 --
@@ -40,7 +40,7 @@
 
 
 
-local revision =("$Revision: 8868 $"):sub(12, -3)
+local revision =("$Revision: 9194 $"):sub(12, -3)
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 
 local PanelPrototype = {}
@@ -1255,7 +1255,7 @@ local function CreateOptionsMenu()
 		----------------------------------------------
 		--             General Options              --
 		----------------------------------------------
-		local generaloptions = DBM_GUI_Frame:CreateArea(L.General, nil, 300, true)
+		local generaloptions = DBM_GUI_Frame:CreateArea(L.General, nil, 330, true)
 
 		local enabledbm = generaloptions:CreateCheckButton(L.EnableDBM, true)
 		enabledbm:SetScript("OnShow",  function() enabledbm:SetChecked(DBM:IsEnabled()) end)
@@ -1272,14 +1272,16 @@ local function CreateOptionsMenu()
 		local UseMasterVolume			= generaloptions:CreateCheckButton(L.UseMasterVolume, true, nil, "UseMasterVolume")
 		local DisableCinematics			= generaloptions:CreateCheckButton(L.DisableCinematics, true, nil, "DisableCinematics")
 		local DisableCinematicsOutside	= generaloptions:CreateCheckButton(L.DisableCinematicsOutside, true, nil, "DisableCinematicsOutside")
-		generaloptions:CreateCheckButton(L.SKT_Enabled, true, nil, "AlwaysShowSpeedKillTimer")
-		generaloptions:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
+		local SKT_Enabled				= generaloptions:CreateCheckButton(L.SKT_Enabled, true, nil, "AlwaysShowSpeedKillTimer")
+		local AutologBosses				= generaloptions:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")
+		local AdvancedAutologBosses
 		if Transcriptor then
-			generaloptions:CreateCheckButton(L.AdvancedAutologBosses, true, nil, "AdvancedAutologBosses")
+			AdvancedAutologBosses = generaloptions:CreateCheckButton(L.AdvancedAutologBosses, true, nil, "AdvancedAutologBosses")
 		end
+		local LogOnlyRaidBosses = generaloptions:CreateCheckButton(L.LogOnlyRaidBosses, true, nil, "LogOnlyRaidBosses")
 
 		local bmrange  = generaloptions:CreateButton(L.Button_RangeFrame)
-		bmrange:SetPoint('TOPLEFT', MiniMapIcon, "BOTTOMLEFT", 0, -150)
+		bmrange:SetPoint('TOPLEFT', LogOnlyRaidBosses, "BOTTOMLEFT", 0, 0)
 		bmrange:SetScript("OnClick", function(self)
 			if DBM.RangeCheck:IsShown() then
 				DBM.RangeCheck:Hide()
@@ -1411,12 +1413,13 @@ local function CreateOptionsMenu()
 		--            Raid Warning Colors            --
 		-----------------------------------------------
 		local RaidWarningPanel = DBM_GUI_Frame:CreateNewPanel(L.Tab_RaidWarning, "option")
-		local raidwarnoptions = RaidWarningPanel:CreateArea(L.RaidWarning_Header, nil, 200, true)
+		local raidwarnoptions = RaidWarningPanel:CreateArea(L.RaidWarning_Header, nil, 190, true)
 
 		local ShowWarningsInChat 	= raidwarnoptions:CreateCheckButton(L.ShowWarningsInChat, true, nil, "ShowWarningsInChat")
 		local ShowFakedRaidWarnings = raidwarnoptions:CreateCheckButton(L.ShowFakedRaidWarnings,  true, nil, "ShowFakedRaidWarnings")
 		local WarningIconLeft		= raidwarnoptions:CreateCheckButton(L.WarningIconLeft,  true, nil, "WarningIconLeft")
 		local WarningIconRight 		= raidwarnoptions:CreateCheckButton(L.WarningIconRight,  true, nil, "WarningIconRight")
+		local ShowCountdownText 	= raidwarnoptions:CreateCheckButton(L.ShowCountdownText,  true, nil, "ShowCountdownText")
 
 		-- RaidWarn Sound
 		local Sounds = {
@@ -1437,7 +1440,7 @@ local function CreateOptionsMenu()
 				DBM.Options.RaidWarningSound = value
 			end
 		)
-		RaidWarnSoundDropDown:SetPoint("TOPLEFT", WarningIconRight, "BOTTOMLEFT", 20, -10)
+		RaidWarnSoundDropDown:SetPoint("TOPLEFT", ShowCountdownText, "BOTTOMLEFT", 10, -10)
 
 		local countSounds = {
 			{	text	= "Mosh (Male)",	value 	= "Mosh"},
@@ -1449,7 +1452,7 @@ local function CreateOptionsMenu()
 			DBM.Options.CountdownVoice = value
 		end
 		)
-		CountSoundDropDown:SetPoint("TOPLEFT", WarningIconRight, "BOTTOMLEFT", 20, -50)
+		CountSoundDropDown:SetPoint("LEFT", RaidWarnSoundDropDown, "RIGHT", 30, 0)
 
 		--Raid Warning Colors
 		local raidwarncolors = RaidWarningPanel:CreateArea(L.RaidWarnColors, nil, 175, true)
@@ -1982,8 +1985,9 @@ local function CreateOptionsMenu()
 		spamOutArea:CreateCheckButton(L.SpamBlockNoRangeFrame, true, nil, "DontShowRangeFrame")
 		spamOutArea:CreateCheckButton(L.SpamBlockNoInfoFrame, true, nil, "DontShowInfoFrame")
 
-		local spamArea = spamPanel:CreateArea(L.Area_SpamFilter, nil, 135, true)
+		local spamArea = spamPanel:CreateArea(L.Area_SpamFilter, nil, 150, true)
 		spamArea:CreateCheckButton(L.HideBossEmoteFrame, true, nil, "HideBossEmoteFrame")
+		spamArea:CreateCheckButton(L.StripServerName, true, nil, "StripServerName")
 		spamArea:CreateCheckButton(L.SpamBlockBossWhispers, true, nil, "SpamBlockBossWhispers")
 		spamArea:CreateCheckButton(L.SpamBlockSayYell, true, nil, "FilterSayAndYell")
 		spamArea:CreateCheckButton(L.BlockVersionUpdateNotice, true, nil, "BlockVersionUpdateNotice")
@@ -2008,24 +2012,31 @@ end
 DBM:RegisterOnGuiLoadCallback(CreateOptionsMenu, 1)
 
 do
-	local function OnShowGetStats(stats, party, bossvalue1, bossvalue2, bossvalue3, boss25value1, boss25value2, boss25value3, bossvalue4, bossvalue5, bossvalue6, boss25value4, boss25value5, boss25value6)
+	local function OnShowGetStats(stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3)
 		return function(self)
-			bossvalue1:SetText( stats.normalKills )
-			bossvalue2:SetText( stats.normalPulls - stats.normalKills )
-			bossvalue3:SetText( stats.normalBestTime and ("%d:%02d"):format(math.floor(stats.normalBestTime / 60), stats.normalBestTime % 60) or "-" )
-			boss25value1:SetText( stats.normal25Kills )
-			boss25value2:SetText( stats.normal25Pulls - stats.normal25Kills )
-			boss25value3:SetText( stats.normal25BestTime and ("%d:%02d"):format(math.floor(stats.normal25BestTime / 60), stats.normal25BestTime % 60) or "-" )
-			bossvalue4:SetText( stats.heroicKills )
-			bossvalue5:SetText( stats.heroicPulls-stats.heroicKills )
-			bossvalue6:SetText( stats.heroicBestTime and ("%d:%02d"):format(math.floor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
-			boss25value4:SetText( stats.heroic25Kills )
-			boss25value5:SetText( stats.heroic25Pulls-stats.heroic25Kills )
-			boss25value6:SetText( stats.heroic25BestTime and ("%d:%02d"):format(math.floor(stats.heroic25BestTime / 60), stats.heroic25BestTime % 60) or "-" )
-			if party then
-				boss25value1:SetText( stats.heroicKills )
-				boss25value2:SetText( stats.heroicPulls-stats.heroicKills )
-				boss25value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(math.floor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
+			top1value1:SetText( stats.normalKills )
+			top1value2:SetText( stats.normalPulls - stats.normalKills )
+			top1value3:SetText( stats.normalBestTime and ("%d:%02d"):format(math.floor(stats.normalBestTime / 60), stats.normalBestTime % 60) or "-" )
+			if statsType == 1 then--Party instance
+				top2value1:SetText( stats.heroicKills )
+				top2value2:SetText( stats.heroicPulls-stats.heroicKills )
+				top2value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(math.floor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
+				top3value1:SetText( stats.challengeKills )
+				top3value2:SetText( stats.challengePulls-stats.challengeKills )
+				top3value3:SetText( stats.challengeBestTime and ("%d:%02d"):format(math.floor(stats.challengeBestTime / 60), stats.challengeBestTime % 60) or "-" )
+			else
+				top2value1:SetText( stats.normal25Kills )
+				top2value2:SetText( stats.normal25Pulls - stats.normal25Kills )
+				top2value3:SetText( stats.normal25BestTime and ("%d:%02d"):format(math.floor(stats.normal25BestTime / 60), stats.normal25BestTime % 60) or "-" )
+				top3value1:SetText( stats.lfr25Kills )
+				top3value2:SetText( stats.lfr25Pulls-stats.lfr25Kills )
+				top3value3:SetText( stats.lfr25BestTime and ("%d:%02d"):format(math.floor(stats.lfr25BestTime / 60), stats.lfr25BestTime % 60) or "-" )
+				bottom1value1:SetText( stats.heroicKills )
+				bottom1value2:SetText( stats.heroicPulls-stats.heroicKills )
+				bottom1value3:SetText( stats.heroicBestTime and ("%d:%02d"):format(math.floor(stats.heroicBestTime / 60), stats.heroicBestTime % 60) or "-" )
+				bottom2value1:SetText( stats.heroic25Kills )
+				bottom2value2:SetText( stats.heroic25Pulls-stats.heroic25Kills )
+				bottom2value3:SetText( stats.heroic25BestTime and ("%d:%02d"):format(math.floor(stats.heroic25BestTime / 60), stats.heroic25BestTime % 60) or "-" )
 			end
 		end
 	end
@@ -2034,7 +2045,8 @@ do
 		if not panel then
 			error("Panel is nil", 2)
 		end
-		if addon.modId == "DBM-PvP" then return	end -- no need to create a stats page for PvP modules
+		
+		if addon.noStatistics then return end
 
 		local ptext = panel:CreateText(L.BossModLoaded:format(subtab and addon.subTabs[subtab] or addon.name), nil, nil, GameFontNormal)
 		ptext:SetPoint('TOPLEFT', panel.frame, "TOPLEFT", 10, -10)
@@ -2046,27 +2058,8 @@ do
 
 		for _, mod in ipairs(DBM.Mods) do
 			if mod.modId == addon.modId and (not subtab or subtab == mod.subTab) then
-				local party = false
+				local statsType = 0
 				bossstats = bossstats + 1
-				local Boss 		= area:CreateText(mod.localization.general.name, nil, nil, GameFontHighlight, "LEFT")
-				local Boss10		= area:CreateText(L.Statistic_10Man, nil, nil, GameFontHighlightSmall, "LEFT")
-				local bossstat1		= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
-				local bossstat2		= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
-				local bossstat3		= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
-				local Heroic10		= area:CreateText(L.Statistic_Heroic, nil, nil, GameFontDisableSmall, "LEFT")
-				local bossstat4	= 	area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
-				local bossstat5	= 	area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
-				local bossstat6	= 	area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
-
-				local Heroic	 	= area:CreateText(L.Statistic_Heroic, nil, nil, GameFontDisableSmall, "LEFT")
-				local Boss25		= area:CreateText(L.Statistic_25Man, nil, nil, GameFontHighlightSmall, "LEFT")
-				local boss25stat1	= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25stat2	= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25stat3	= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
-				local Heroic25		= area:CreateText(L.Statistic_Heroic, nil, nil, GameFontDisableSmall, "LEFT")
-				local boss25stat4	= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25stat5	= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25stat6	= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
 				if not mod.stats then
 					mod.stats = { }
 				end
@@ -2078,77 +2071,192 @@ do
 				stats.challengeKills = stats.challengeKills or 0
 				stats.challengePulls = stats.challengePulls or 0
 				stats.normal25Kills = stats.normal25Kills or 0
-				stats.normal25Kills = stats.normal25Kills or 0
 				stats.normal25Pulls = stats.normal25Pulls or 0
 				stats.heroic25Kills = stats.heroic25Kills or 0
 				stats.heroic25Pulls = stats.heroic25Pulls or 0
 				stats.lfr25Kills = stats.lfr25Kills or 0
 				stats.lfr25Pulls = stats.lfr25Pulls or 0
-				local bossvalue1	= area:CreateText(mod.stats.normalKills, nil, nil, GameFontNormalSmall, "LEFT")
-				local bossvalue2	= area:CreateText((mod.stats.normalPulls-mod.stats.normalKills), nil, nil, GameFontNormalSmall, "LEFT")
-				local bossvalue3	= area:CreateText("0:00:00", nil, nil, GameFontNormalSmall, "LEFT")
-				local bossvalue4	= area:CreateText(mod.stats.heroicKills, nil, nil, GameFontNormalSmall, "LEFT")
-				local bossvalue5	= area:CreateText((mod.stats.heroicPulls-mod.stats.normal25Kills), nil, nil, GameFontNormalSmall, "LEFT")
-				local bossvalue6	= area:CreateText("0:00:00", nil, nil, GameFontNormalSmall, "LEFT")
 
-				local boss25value1	= area:CreateText(mod.stats.normal25Kills, nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25value2	= area:CreateText((mod.stats.normal25Pulls-mod.stats.heroicKills), nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25value3	= area:CreateText("0:00:00", nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25value4	= area:CreateText(mod.stats.heroic25Kills, nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25value5	= area:CreateText((mod.stats.heroic25Pulls-mod.stats.heroic25Kills), nil, nil, GameFontNormalSmall, "LEFT")
-				local boss25value6	= area:CreateText("0:00:00", nil, nil, GameFontNormalSmall, "LEFT")
+				--Create Frames
+				local Title			= area:CreateText(mod.localization.general.name, nil, nil, GameFontHighlight, "LEFT")
 
-				Boss:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*6*(bossstats-1)))
-				Boss10:SetPoint("TOPLEFT", Boss, "BOTTOMLEFT", 20, -5)
-				bossstat1:SetPoint("TOPLEFT", Boss10, "BOTTOMLEFT", 20, -5)
-				bossstat2:SetPoint("TOPLEFT", bossstat1, "BOTTOMLEFT", 0, -5)
-				bossstat3:SetPoint("TOPLEFT", bossstat2, "BOTTOMLEFT", 0, -5)
+				local top1header		= area:CreateText("", nil, nil, GameFontHighlightSmall, "LEFT")--Row 1, 1st column
+				local top1text1			= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
+				local top1text2			= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
+				local top1text3			= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
+				local top1value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top1value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top1value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top2header		= area:CreateText("", nil, nil, GameFontHighlightSmall, "LEFT")--Row 1, 2nd column
+				local top2text1			= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
+				local top2text2			= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
+				local top2text3			= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
+				local top2value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top2value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top2value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top3header		= area:CreateText("", nil, nil, GameFontHighlightSmall, "LEFT")--Row 1, 3rd column
+				local top3text1			= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
+				local top3text2			= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
+				local top3text3			= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
+				local top3value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top3value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local top3value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 
-				Heroic:SetPoint("LEFT", Boss, "LEFT", 220, 0)
-				Boss25:SetPoint("LEFT", Boss10, "LEFT", 220, 0)
-				boss25stat1:SetPoint("LEFT", bossstat1, "LEFT", 220, 0)
-				boss25stat2:SetPoint("LEFT", bossstat2, "LEFT", 220, 0)
-				boss25stat3:SetPoint("LEFT", bossstat3, "LEFT", 220, 0)
+				local bottom1header		= area:CreateText("", nil, nil, GameFontDisableSmall, "LEFT")--Row 2, 1st column
+				local bottom1text1		= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom1text2		= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom1text3		= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom1value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom1value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom1value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom2header		= area:CreateText("", nil, nil, GameFontDisableSmall, "LEFT")--Row 2, 2nd column
+				local bottom2text1		= area:CreateText(L.Statistic_Kills, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom2text2		= area:CreateText(L.Statistic_Wipes, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom2text3		= area:CreateText(L.Statistic_BestKill, nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom2value1		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom2value2		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
+				local bottom2value3		= area:CreateText("", nil, nil, GameFontNormalSmall, "LEFT")
 
-				bossvalue1:SetPoint("TOPLEFT", bossstat1, "TOPLEFT", 80, 0)
-				bossvalue2:SetPoint("TOPLEFT", bossstat2, "TOPLEFT", 80, 0)
-				bossvalue3:SetPoint("TOPLEFT", bossstat3, "TOPLEFT", 80, 0)
+				--Set default position
+				top1header:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 20, -5)
+				top1text1:SetPoint("TOPLEFT", top1header, "BOTTOMLEFT", 20, -5)
+				top1text2:SetPoint("TOPLEFT", top1text1, "BOTTOMLEFT", 0, -5)
+				top1text3:SetPoint("TOPLEFT", top1text2, "BOTTOMLEFT", 0, -5)
+				top1value1:SetPoint("TOPLEFT", top1text1, "TOPLEFT", 80, 0)
+				top1value2:SetPoint("TOPLEFT", top1text2, "TOPLEFT", 80, 0)
+				top1value3:SetPoint("TOPLEFT", top1text3, "TOPLEFT", 80, 0)
 
-				boss25value1:SetPoint("TOPLEFT", boss25stat1, "TOPLEFT", 80, 0)
-				boss25value2:SetPoint("TOPLEFT", boss25stat2, "TOPLEFT", 80, 0)
-				boss25value3:SetPoint("TOPLEFT", boss25stat3, "TOPLEFT", 80, 0)
-
-				if mod.modId:sub(1,9) == "DBM-Party" or mod.modId:sub(1,9) == "DBM-World" then
-					party = true
-					Boss:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*5*(bossstats-1)))
-					Boss10:Hide()
-					Boss25:Hide()
-					bossstat1:SetPoint("TOPLEFT", Boss, "BOTTOMLEFT", 20, -5)
+				--Set enable or disable per mods.
+				if mod.oneFormat then
+					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*5*(bossstats-1)))
+					--Do not use top1 header.
+					top1text1:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 20, -5)
 					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*5 )
-				elseif not mod.hasHeroic then
-					Heroic:Hide()
+				elseif mod.type == "PARTY" or mod.type == "SCENARIO" then--If party or scenario instance have no heroic, we should use oneFormat.
+					statsType = 1
+					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*6*(bossstats-1)))
+					if mod.hasChallenge then
+						--Use top1, top2 and top3 area.
+						top2header:SetPoint("LEFT", top1header, "LEFT", 150, 0)
+						top2text1:SetPoint("LEFT", top1text1, "LEFT", 150, 0)
+						top2text2:SetPoint("LEFT", top1text2, "LEFT", 150, 0)
+						top2text3:SetPoint("LEFT", top1text3, "LEFT", 150, 0)
+						top2value1:SetPoint("TOPLEFT", top2text1, "TOPLEFT", 80, 0)
+						top2value2:SetPoint("TOPLEFT", top2text2, "TOPLEFT", 80, 0)
+						top2value3:SetPoint("TOPLEFT", top2text3, "TOPLEFT", 80, 0)
+						top3header:SetPoint("LEFT", top2header, "LEFT", 150, 0)
+						top3text1:SetPoint("LEFT", top2text1, "LEFT", 150, 0)
+						top3text2:SetPoint("LEFT", top2text2, "LEFT", 150, 0)
+						top3text3:SetPoint("LEFT", top2text3, "LEFT", 150, 0)
+						top3value1:SetPoint("TOPLEFT", top3text1, "TOPLEFT", 80, 0)
+						top3value2:SetPoint("TOPLEFT", top3text2, "TOPLEFT", 80, 0)
+						top3value3:SetPoint("TOPLEFT", top3text3, "TOPLEFT", 80, 0)
+						--Set header text.
+						top3header:SetText(CHALLENGE_MODE)
+						if mod.type == "SCENARIO" then
+							top3text2:SetText(L.Statistic_Incompletes)
+						end
+					else
+						--Use top1 and top2 area.
+						top2header:SetPoint("LEFT", top1header, "LEFT", 220, 0)
+						top2text1:SetPoint("LEFT", top1text1, "LEFT", 220, 0)
+						top2text2:SetPoint("LEFT", top1text2, "LEFT", 220, 0)
+						top2text3:SetPoint("LEFT", top1text3, "LEFT", 220, 0)
+						top2value1:SetPoint("TOPLEFT", top2text1, "TOPLEFT", 80, 0)
+						top2value2:SetPoint("TOPLEFT", top2text2, "TOPLEFT", 80, 0)
+						top2value3:SetPoint("TOPLEFT", top2text3, "TOPLEFT", 80, 0)
+					end
+					--Set header text.
+					top1header:SetText(PLAYER_DIFFICULTY1)
+					top2header:SetText(PLAYER_DIFFICULTY2)
+					if mod.type == "SCENARIO" then
+						top1text2:SetText(L.Statistic_Incompletes)
+						top2text2:SetText(L.Statistic_Incompletes)
+					end
 					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*6 )
-				else
-					Boss:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*10*(bossstats-1)))
-					Heroic:Hide()
-					Heroic10:SetPoint("TOPLEFT", bossstat3, "BOTTOMLEFT", -20, -5)
-					bossstat4:SetPoint("TOPLEFT", Heroic10, "BOTTOMLEFT", 20, -5)
-					bossstat5:SetPoint("TOPLEFT", bossstat4, "BOTTOMLEFT", 0, -5)
-					bossstat6:SetPoint("TOPLEFT", bossstat5, "BOTTOMLEFT", 0, -5)
-					Heroic25:SetPoint("LEFT", Heroic10, "LEFT", 220, 0)
-					boss25stat4:SetPoint("LEFT", bossstat4, "LEFT", 220, 0)
-					boss25stat5:SetPoint("LEFT", bossstat5, "LEFT", 220, 0)
-					boss25stat6:SetPoint("LEFT", bossstat6, "LEFT", 220, 0)
-					bossvalue4:SetPoint("TOPLEFT", bossstat4, "TOPLEFT", 80, 0)
-					bossvalue5:SetPoint("TOPLEFT", bossstat5, "TOPLEFT", 80, 0)
-					bossvalue6:SetPoint("TOPLEFT", bossstat6, "TOPLEFT", 80, 0)
-					boss25value4:SetPoint("TOPLEFT", boss25stat4, "TOPLEFT", 80, 0)
-					boss25value5:SetPoint("TOPLEFT", boss25stat5, "TOPLEFT", 80, 0)
-					boss25value6:SetPoint("TOPLEFT", boss25stat6, "TOPLEFT", 80, 0)
+				elseif mod.type == "RAID" and mod.noHeroic then
+					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*6*(bossstats-1)))
+					--Use top1 and top2 area.
+					top2header:SetPoint("LEFT", top1header, "LEFT", 220, 0)
+					top2text1:SetPoint("LEFT", top1text1, "LEFT", 220, 0)
+					top2text2:SetPoint("LEFT", top1text2, "LEFT", 220, 0)
+					top2text3:SetPoint("LEFT", top1text3, "LEFT", 220, 0)
+					top2value1:SetPoint("TOPLEFT", top2text1, "TOPLEFT", 80, 0)
+					top2value2:SetPoint("TOPLEFT", top2text2, "TOPLEFT", 80, 0)
+					top2value3:SetPoint("TOPLEFT", top2text3, "TOPLEFT", 80, 0)
+					--Set header text.
+					top1header:SetText(RAID_DIFFICULTY1)
+					top2header:SetText(RAID_DIFFICULTY2)
+					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*6 )
+				elseif mod.type == "RAID" and not mod.hasLFR then
+					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*10*(bossstats-1)))
+					--Use top1, top2, bottom1 and bottom2 area.
+					top2header:SetPoint("LEFT", top1header, "LEFT", 220, 0)
+					top2text1:SetPoint("LEFT", top1text1, "LEFT", 220, 0)
+					top2text2:SetPoint("LEFT", top1text2, "LEFT", 220, 0)
+					top2text3:SetPoint("LEFT", top1text3, "LEFT", 220, 0)
+					top2value1:SetPoint("TOPLEFT", top2text1, "TOPLEFT", 80, 0)
+					top2value2:SetPoint("TOPLEFT", top2text2, "TOPLEFT", 80, 0)
+					top2value3:SetPoint("TOPLEFT", top2text3, "TOPLEFT", 80, 0)
+					bottom1header:SetPoint("TOPLEFT", top1text3, "BOTTOMLEFT", -20, -5)
+					bottom1text1:SetPoint("TOPLEFT", bottom1header, "BOTTOMLEFT", 20, -5)
+					bottom1text2:SetPoint("TOPLEFT", bottom1text1, "BOTTOMLEFT", 0, -5)
+					bottom1text3:SetPoint("TOPLEFT", bottom1text2, "BOTTOMLEFT", 0, -5)
+					bottom1value1:SetPoint("TOPLEFT", bottom1text1, "TOPLEFT", 80, 0)
+					bottom1value2:SetPoint("TOPLEFT", bottom1text2, "TOPLEFT", 80, 0)
+					bottom1value3:SetPoint("TOPLEFT", bottom1text3, "TOPLEFT", 80, 0)
+					bottom2header:SetPoint("LEFT", bottom1header, "LEFT", 220, 0)
+					bottom2text1:SetPoint("LEFT", bottom1text1, "LEFT", 220, 0)
+					bottom2text2:SetPoint("LEFT", bottom1text2, "LEFT", 220, 0)
+					bottom2text3:SetPoint("LEFT", bottom1text3, "LEFT", 220, 0)
+					bottom2value1:SetPoint("TOPLEFT", bottom2text1, "TOPLEFT", 80, 0)
+					bottom2value2:SetPoint("TOPLEFT", bottom2text2, "TOPLEFT", 80, 0)
+					bottom2value3:SetPoint("TOPLEFT", bottom2text3, "TOPLEFT", 80, 0)
+					--Set header text.
+					top1header:SetText(RAID_DIFFICULTY1)
+					top2header:SetText(RAID_DIFFICULTY2)
+					bottom1header:SetText(PLAYER_DIFFICULTY2)
+					bottom2header:SetText(PLAYER_DIFFICULTY2)
+					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*10 )
+				else--Uses everything
+					Title:SetPoint("TOPLEFT", area.frame, "TOPLEFT", 10, -10-(L.FontHeight*10*(bossstats-1)))
+					top2header:SetPoint("LEFT", top1header, "LEFT", 150, 0)
+					top2text1:SetPoint("LEFT", top1text1, "LEFT", 150, 0)
+					top2text2:SetPoint("LEFT", top1text2, "LEFT", 150, 0)
+					top2text3:SetPoint("LEFT", top1text3, "LEFT", 150, 0)
+					top2value1:SetPoint("TOPLEFT", top2text1, "TOPLEFT", 80, 0)
+					top2value2:SetPoint("TOPLEFT", top2text2, "TOPLEFT", 80, 0)
+					top2value3:SetPoint("TOPLEFT", top2text3, "TOPLEFT", 80, 0)
+					top3header:SetPoint("LEFT", top2header, "LEFT", 150, 0)
+					top3text1:SetPoint("LEFT", top2text1, "LEFT", 150, 0)
+					top3text2:SetPoint("LEFT", top2text2, "LEFT", 150, 0)
+					top3text3:SetPoint("LEFT", top2text3, "LEFT", 150, 0)
+					top3value1:SetPoint("TOPLEFT", top3text1, "TOPLEFT", 80, 0)
+					top3value2:SetPoint("TOPLEFT", top3text2, "TOPLEFT", 80, 0)
+					top3value3:SetPoint("TOPLEFT", top3text3, "TOPLEFT", 80, 0)
+					bottom1header:SetPoint("TOPLEFT", top1text3, "BOTTOMLEFT", -20, -5)
+					bottom1text1:SetPoint("TOPLEFT", bottom1header, "BOTTOMLEFT", 20, -5)
+					bottom1text2:SetPoint("TOPLEFT", bottom1text1, "BOTTOMLEFT", 0, -5)
+					bottom1text3:SetPoint("TOPLEFT", bottom1text2, "BOTTOMLEFT", 0, -5)
+					bottom1value1:SetPoint("TOPLEFT", bottom1text1, "TOPLEFT", 80, 0)
+					bottom1value2:SetPoint("TOPLEFT", bottom1text2, "TOPLEFT", 80, 0)
+					bottom1value3:SetPoint("TOPLEFT", bottom1text3, "TOPLEFT", 80, 0)
+					bottom2header:SetPoint("LEFT", bottom1header, "LEFT", 150, 0)
+					bottom2text1:SetPoint("LEFT", bottom1text1, "LEFT", 150, 0)
+					bottom2text2:SetPoint("LEFT", bottom1text2, "LEFT", 150, 0)
+					bottom2text3:SetPoint("LEFT", bottom1text3, "LEFT", 150, 0)
+					bottom2value1:SetPoint("TOPLEFT", bottom2text1, "TOPLEFT", 80, 0)
+					bottom2value2:SetPoint("TOPLEFT", bottom2text2, "TOPLEFT", 80, 0)
+					bottom2value3:SetPoint("TOPLEFT", bottom2text3, "TOPLEFT", 80, 0)
+					top1header:SetText(RAID_DIFFICULTY1)
+					top2header:SetText(RAID_DIFFICULTY2)
+					top3header:SetText(PLAYER_DIFFICULTY3)
+					bottom1header:SetText(PLAYER_DIFFICULTY2)
+					bottom2header:SetText(PLAYER_DIFFICULTY2)
 					area.frame:SetHeight( area.frame:GetHeight() + L.FontHeight*10 )
 				end
 
-				table.insert(area.onshowcall, OnShowGetStats(mod.stats, party, bossvalue1, bossvalue2, bossvalue3, boss25value1, boss25value2, boss25value3, bossvalue4, bossvalue5, bossvalue6, boss25value4, boss25value5, boss25value6))
+				table.insert(area.onshowcall, OnShowGetStats(mod.stats, statsType, top1value1, top1value2, top1value3, top2value1, top2value2, top2value3, top3value1, top3value2, top3value3, bottom1value1, bottom1value2, bottom1value3, bottom2value1, bottom2value2, bottom2value3))
 			end
 		end
 		area.frame:SetScript("OnShow", function(self)
@@ -2251,13 +2359,13 @@ do
 		local category
 
 		local iconstat = panel.frame:CreateFontString("DBM_GUI_Mod_Icons"..mod.localization.general.name, "ARTWORK")
-		iconstat:SetPoint("TOPRIGHT", panel.frame, "TOPRIGHT", -16, -16)
+		iconstat:SetPoint("TOPRIGHT", panel.frame, "TOPRIGHT", -16, -24)
 		iconstat:SetFontObject(GameFontNormal)
 		iconstat:SetText(L.IconsInUse)
 		for i=1, 8, 1 do
 			local icon = panel.frame:CreateTexture()
 			icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons.blp")
-			icon:SetPoint("TOPRIGHT", panel.frame, "TOPRIGHT", 2-(i*18), -32)
+			icon:SetPoint("TOPRIGHT", panel.frame, "TOPRIGHT", 2-(i*18), -40)
 			icon:SetWidth(16)
 			icon:SetHeight(16)
 			if not mod.usedIcons or not mod.usedIcons[i] then		icon:SetAlpha(0.25)		end
@@ -2272,8 +2380,24 @@ do
 			end
 		end
 
+		local reset  = panel:CreateButton(L.Mod_Reset, 300)--button ugly.
+		reset:SetPoint('TOPRIGHT', panel.frame, "TOPRIGHT", -14, -2)
+		reset:SetScript("OnClick", function(self)
+			local savedOptions = _G[mod.modId:gsub("-", "").."_SavedVars"][mod.id] or {}
+			table.wipe(savedOptions)
+			for i, v in ipairs(DBM.Mods) do
+				if v.id == mod.id then
+					for option, optionValue in pairs(v.DefaultOptions) do
+						savedOptions[option] = optionValue
+					end
+					v.Options = savedOptions or {}
+				end
+			end
+			_G[mod.modId:gsub("-", "").."_SavedVars"][mod.id] = savedOptions
+		end)
 		local button = panel:CreateCheckButton(L.Mod_Enabled, true)
 		button:SetScript("OnShow",  function(self) self:SetChecked(mod.Options.Enabled) end)
+		button:SetPoint('TOPLEFT', panel.frame, "TOPLEFT", 8, -24)
 		button:SetScript("OnClick", function(self) mod:Toggle()	end)
 
 		for _, catident in pairs(mod.categorySort) do

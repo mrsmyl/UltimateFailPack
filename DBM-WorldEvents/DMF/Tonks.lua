@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Tonks", "DBM-WorldEvents", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7444 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetZone()
 
 mod:RegisterEvents(
@@ -25,7 +25,7 @@ mod:RemoveOption("HealthFrame")
 mod:RemoveOption("SpeedKillTimer")
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(102341) and UnitGUID("pet") == args.destGUID and self:AntiSpam() then
+	if args.spellId == 102341 and UnitGUID("pet") == args.destGUID and self:AntiSpam() then
 		warnMarked:Show()
 		specWarnMarked:Show()
 		soundMarked:Play()

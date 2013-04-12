@@ -13,8 +13,9 @@
 ## RequiredDeps: DBM-Core
 ## SavedVariablesPerCharacter: DBMBrawlers_SavedVars, DBMBrawlers_SavedStats
 ## X-DBM-Mod: 1
+## X-DBM-Mod-Type: OTHER
 ## X-DBM-Mod-Category: MOP
-## X-DBM-Mod-Has-Heroic-Mode: 0
+## X-DBM-Mod-No-Statistics: 1
 ## X-DBM-Mod-Name: Brawlers
 ## X-DBM-Mod-Name-koKR: 싸움꾼 조합
 ## X-DBM-Mod-Name-deDE: Kampfgilde
@@ -25,7 +26,7 @@
 ## X-DBM-Mod-Name-ruRU: Бойцовский клуб
 ## X-DBM-Mod-Sort: 30
 ## X-DBM-Mod-LoadZoneID: 922,925
-## X-Curse-Packaged-Version: 5.2.1
+## X-Curse-Packaged-Version: 5.2.3
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

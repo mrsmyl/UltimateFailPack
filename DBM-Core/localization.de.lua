@@ -9,12 +9,22 @@ DBM_CORE_LOAD_GUI_ERROR				= "Konnte die grafische Benutzeroberfläche nicht lad
 DBM_CORE_LOAD_GUI_COMBAT			= "Die grafische Benutzeroberfläche kann nicht im Kampf geladen werden. Zur Vornahme von Einstellungen bitte diese zunächst außerhalb des Kampfes laden. Danach steht sie auch im Kampf zur Verfügung."
 
 DBM_CORE_COMBAT_STARTED				= "Kampf gegen %s hat begonnen. Viel Glück! :)";
-DBM_CORE_BOSS_DOWN					= "%s tot nach %s!"
-DBM_CORE_BOSS_DOWN_L				= "%s tot nach %s! Dein letzter Sieg hat %s gedauert und der schnellste %s. Das war dein %d. Sieg."
-DBM_CORE_BOSS_DOWN_NR				= "%s tot nach %s! Das ist ein neuer Rekord! (Der alte Rekord war %s.) Das war dein %d. Sieg."
+DBM_CORE_COMBAT_STARTED_IN_PROGRESS	= "Du wurdest in den laufenden Kampf gegen %s verwickelt. Viel Glück! :)"
+DBM_CORE_SCENARIO_STARTED			= "%s gestartet. Viel Glück! :)"
+DBM_CORE_BOSS_DOWN					= "%s besiegt nach %s!"
+DBM_CORE_BOSS_DOWN_I				= "%s besiegt! Das war dein %d. Sieg."
+DBM_CORE_BOSS_DOWN_L				= "%s besiegt nach %s! Dein letzter Sieg hat %s gedauert und der schnellste %s. Das war dein %d. Sieg."
+DBM_CORE_BOSS_DOWN_NR				= "%s besiegt nach %s! Das ist ein neuer Rekord! (Der alte Rekord war %s.) Das war dein %d. Sieg."
+DBM_CORE_SCENARIO_COMPLETE			= "%s abgeschlossen nach %s!"
+DBM_CORE_SCENARIO_COMPLETE_L		= "%s abgeschlossen nach %s! Dein letzter Abschluss hat %s gedauert und der schnellste %s. Das war dein %d. Abschluss."
+DBM_CORE_SCENARIO_COMPLETE_NR		= "%s abgeschlossen nach %s! Das ist ein neuer Rekord! (Der alte Rekord war %s.) Das war dein %d. Abschluss."
 DBM_CORE_COMBAT_ENDED_AT			= "Kampf gegen %s (%s) hat nach %s aufgehört."
 DBM_CORE_COMBAT_ENDED_AT_LONG		= "Kampf gegen %s (%s) hat nach %s aufgehört. Das war deine %d. Niederlage auf diesem Schwierigkeitsgrad."
+DBM_CORE_SCENARIO_ENDED_AT			= "%s abgebrochen nach %s."
+DBM_CORE_SCENARIO_ENDED_AT_LONG		= "%s abgebrochen nach %s. Das war dein %d. Abbruch auf diesem Schwierigkeitsgrad."
 DBM_CORE_COMBAT_STATE_RECOVERED		= "Kampf gegen %s hat vor %s begonnen, Neukalibrierung der Timer erfolgt..."
+DBM_CORE_TRANSCRIPTOR_LOG_START		= "\"Transcriptor\"-Aufzeichnung gestartet."
+DBM_CORE_TRANSCRIPTOR_LOG_END		= "\"Transcriptor\"-Aufzeichnung beendet."
 
 DBM_CORE_TIMER_FORMAT_SECS			= "%d |4Sekunde:Sekunden;"
 DBM_CORE_TIMER_FORMAT_MINS			= "%d |4Minute:Minuten;"
@@ -27,6 +37,7 @@ DBM_CORE_SEC_FMT					= "%d Sek"
 DBM_CORE_DEAD						= "Tot"
 DBM_CORE_OK							= "Okay"
 
+DBM_CORE_GENERIC_WARNING_DUPLICATE	= "Einer der %s"
 DBM_CORE_GENERIC_WARNING_BERSERK	= "Berserker in %s %s"
 DBM_CORE_GENERIC_TIMER_BERSERK		= "Berserker"
 DBM_CORE_OPTION_TIMER_BERSERK		= "Zeige Zeit bis $spell:26662"
@@ -114,6 +125,7 @@ DBM_CORE_BOSSHEALTH_HIDE_FRAME		= "Verstecken"
 DBM_CORE_ALLIANCE					= "Allianz"
 DBM_CORE_HORDE						= "Horde"
 
+DBM_CORE_WORLD_BOSS					= "Weltboss"
 DBM_CORE_UNKNOWN					= "unbekannt"
 DBM_CORE_LEFT						= "Links"
 DBM_CORE_RIGHT						= "Rechts"
@@ -130,20 +142,91 @@ DBM_CORE_TIMER_PULL					= "Pull in"
 DBM_CORE_ANNOUNCE_PULL				= "Pull in %d Sek"
 DBM_CORE_ANNOUNCE_PULL_NOW			= "Pull jetzt!"
 
-DBM_CORE_ACHIEVEMENT_TIMER_SPEED_KILL = "Speed Kill (Erfolg)"
+DBM_CORE_ACHIEVEMENT_TIMER_SPEED_KILL = "Zeit für Erfolg"
+
+-- Auto-generated Warning Localizations
+DBM_CORE_AUTO_ANNOUNCE_TEXTS = {
+	target		= "%s auf >%%s<",
+	targetcount	= "%s (%%d) auf >%%s<",
+	spell		= "%s",
+	ends 		= "%s ist beendet",
+	fades		= "%s ist beendet",
+	adds		= "%s verbleibend: %%d",
+	cast		= "Wirkt %s: %.1f Sek",
+	soon		= "%s bald",
+	prewarn		= "%s in %s",
+	phase		= "Phase %s",
+	prephase	= "Phase %s bald",
+	count		= "%s (%%d)",
+	stack		= "%s auf >%%s< (%%d)"
+}
+
+local prewarnOption = "Zeige Vorwarnung für $spell:%s"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS = {
+	target		= "Verkünde Ziele von $spell:%s",
+	targetcount	= "Verkünde Ziele von $spell:%s",
+	spell		= "Zeige Warnung für $spell:%s",
+	ends		= "Zeige Warnung, wenn $spell:%s beendet ist",
+	fades		= "Zeige Warnung, wenn $spell:%s beendet ist",
+	adds		= "Verkünde die Anzahl der verbleibenden $spell:%s",
+	cast		= "Zeige Warnung, wenn $spell:%s gewirkt wird",
+	soon		= prewarnOption,
+	prewarn 	= prewarnOption,
+	phase		= "Verkünde Phase %s",
+	prephase	= "Zeige Vorwarnung für Phase %s",
+	count		= "Zeige Warnung für $spell:%s",
+	stack		= "Verkünde $spell:%s Stapel"
+}
+
+DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
+	spell		= "%s!",
+	ends		= "%s beendet",
+	fades		= "%s beendet",
+	soon		= "%s bald",
+	dispel		= "%s auf >%%s< - jetzt reinigen",
+	interrupt	= "%s - unterbreche >%%s<!",
+	you			= "%s auf dir",
+	target		= "%s auf >%%s<",
+	close		= "%s auf >%%s< in deiner Nähe",
+	move		= "%s - geh weg",
+	run			= "%s - lauf weg",
+	cast		= "%s - stoppe Zauber",
+	count		= "%s! (%%d)",
+	stack		= "%%d Stapel von %s auf dir",
+	switch		= ">%s< - Ziel wechseln"
+}
+
+-- Auto-generated Special Warning Localizations
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
+	spell 		= "Zeige Spezialwarnung für $spell:%s",
+	ends 		= "Zeige Spezialwarnung, wenn $spell:%s beendet ist",
+	fades 		= "Zeige Spezialwarnung, wenn $spell:%s beendet ist",
+	soon 		= "Zeige Spezialvorwarnung für $spell:%s",
+	dispel 		= "Zeige Spezialwarnung zum Reinigen/Rauben von $spell:%s",
+	interrupt	= "Zeige Spezialwarnung zum Unterbrechen von $spell:%s",
+	you 		= "Zeige Spezialwarnung, wenn du von $spell:%s betroffen bist",
+	target 		= "Zeige Spezialwarnung, wenn jemand von $spell:%s betroffen ist",
+	close 		= "Zeige Spezialwarnung, wenn jemand in deiner Nähe von\n$spell:%s betroffen ist",
+	move 		= "Zeige Spezialwarnung, wenn du von $spell:%s betroffen bist",
+	run 		= "Zeige Spezialwarnung zum Weglaufen vor $spell:%s",
+	cast 		= "Zeige Spezialwarnung zum Zauberstopp bei $spell:%s",
+	count 		= "Zeige Spezialwarnung für $spell:%s",
+	stack 		= "Zeige Spezialwarnung für >=%d Stapel von $spell:%s auf dir",
+	switch		= "Zeige Spezialwarnung für Zielwechsel auf $spell:%s"
+}
 
 -- Auto-generated Timer Localizations
 DBM_CORE_AUTO_TIMER_TEXTS = {
-	target		= "%s: %%s",
+	target		= "%s: >%%s<",
 	cast		= "%s",
 	active		= "%s endet",--Buff/Debuff/event on boss
 	fades		= "%s schwindet",--Buff/Debuff on players
 	cd			= "%s CD",
 	cdcount		= "%s CD (%%d)",
-	cdsource	= "%s CD: %%s",
+	cdsource	= "%s CD: >%%s<",
 	next		= "Nächster %s",
 	nextcount	= "Nächster %s (%%d)",
-	nextsource	= "Nächster %s: %%s",
+	nextsource	= "Nächster %s: >%%s<",
 	achievement	= "%s"
 }
 
@@ -161,72 +244,13 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	achievement	= "Zeit für %s anzeigen"
 }
 
--- Auto-generated Warning Localizations
-DBM_CORE_AUTO_ANNOUNCE_TEXTS = {
-	target		= "%s auf >%%s<",
-	targetcount	= "%s (%%d) auf >%%s<",
-	spell		= "%s",
-	adds		= "%s verbleibend: %%d",
-	cast		= "Wirkt %s: %.1f Sek",
-	soon		= "%s bald",
-	prewarn 	= "%s in %s",
-	phase		= "Phase %s",
-	prephase	= "Phase %s bald",
-	count		= "%s (%%d)",
-	stack		= "%s auf >%%s< (%%d)"
-}
-
-local prewarnOption = "Zeige Vorwarnung für $spell:%s"
-DBM_CORE_AUTO_ANNOUNCE_OPTIONS = {
-	target		= "Verkünde Ziele von $spell:%s",
-	targetcount	= "Verkünde Ziele von $spell:%s",
-	spell		= "Zeige Warnung für $spell:%s",
-	adds		= "Verkünde die Anzahl der verbleibenden $spell:%s",
-	cast		= "Zeige Warnung, wenn $spell:%s gewirkt wird",
-	soon		= prewarnOption,
-	prewarn 	= prewarnOption,
-	phase		= "Verkünde Phase %s",
-	prephase	= "Zeige Vorwarnung für Phase %s",
-	count		= "Zeige Warnung für $spell:%s",
-	stack		= "Verkünde $spell:%s Stapel"
-}
-
--- Auto-generated Special Warning Localizations
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
-	spell 		= "Zeige Spezialwarnung für $spell:%s",
-	dispel 		= "Zeige Spezialwarnung zum Reinigen/Rauben von $spell:%s",
-	interrupt	= "Zeige Spezialwarnung zum Unterbrechen von $spell:%s",
-	you 		= "Zeige Spezialwarnung, wenn du von $spell:%s betroffen bist",
-	target 		= "Zeige Spezialwarnung, wenn jemand von $spell:%s betroffen ist",
-	close 		= "Zeige Spezialwarnung, wenn jemand in deiner Nähe von\n$spell:%s betroffen ist",
-	move 		= "Zeige Spezialwarnung, wenn du von $spell:%s betroffen bist",
-	run 		= "Zeige Spezialwarnung zum Weglaufen vor $spell:%s",
-	cast 		= "Zeige Spezialwarnung zum Zauberstopp bei $spell:%s",
-	stack 		= "Zeige Spezialwarnung für >=%d Stapel von $spell:%s",
-	switch 		= "Zeige Spezialwarnung für Zielwechsel auf $spell:%s"
-}
-
-DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
-	spell = "%s!",
-	dispel = "%s auf %%s - jetzt reinigen",
-	interrupt = "%s - unterbreche %%s!",
-	you = "%s auf dir",
-	target = "%s auf %%s",
-	close = "%s auf %%s in deiner Nähe",
-	move = "%s - geh weg",
-	run = "%s - lauf weg",
-	cast = "%s - stoppe Zauber",
-	stack = "%s (%%d)",
-	switch = "%s - Ziel wechseln"
-}
-
 
 DBM_CORE_AUTO_ICONS_OPTION_TEXT			= "Setze Zeichen auf Ziele von $spell:%s"
 DBM_CORE_AUTO_SOUND_OPTION_TEXT			= "Spiele \"Lauf weg!\"-Sound für $spell:%s"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Spiele Countdown-Sound für $spell:%s"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "Spiele Countout-Sound für Dauer von $spell:%s"
 DBM_CORE_AUTO_YELL_OPTION_TEXT			= "Schreie, wenn du von $spell:%s betroffen bist"
-DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "%s auf mir!"
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "%s auf " .. UnitName("player") .. "!"
 
 
 -- New special warnings
@@ -246,7 +270,7 @@ DBM_ARROW_ERROR_USAGE	= {
 	"/dbm arrow move  macht den Pfeil beweglich",
 }
 
-DBM_SPEED_KILL_TIMER_TEXT	= "Speed Kill"
+DBM_SPEED_KILL_TIMER_TEXT	= "Rekordzeit"
 DBM_SPEED_KILL_TIMER_OPTION	= "Zeige einen Timer zur Verbesserung deines schnellsten Siegs"
 
 

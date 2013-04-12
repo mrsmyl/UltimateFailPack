@@ -128,16 +128,16 @@ DBM_CORE_ACHIEVEMENT_TIMER_SPEED_KILL = "Matar rapido"
 
 -- Auto-generated Timer Localizations
 DBM_CORE_AUTO_TIMER_TEXTS = {
-	target		= "%s: %%s",
+	target		= "%s: >%%s<",
 	cast		= "%s",
 	active		= "%s finaliza",
 	fades		= "%s se disipa",
 	cd 			= "%s CD",
 	cdcount		= "%s CD (%%d)",
-	cdsource	= "%s CD: %%s",
+	cdsource	= "%s CD: >%%s<",
 	next		= "Siguiente %s",
 	nextcount	= "Siguiente %s (%%d)",
-	nextsource	= "Siguiente %s: %%s",
+	nextsource	= "Siguiente %s: >%%s<",
 	achievement = "%s"
 }
 
@@ -203,15 +203,15 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	spell = "%s",
 	dispel = "%s ¡dispelea ahora!",
-	interrupt = "%s ¡interrumpe %%s!",
+	interrupt = "%s ¡interrumpe >%%s<!",
 	you = "%s en ti!",
-	target = "%s en %%s",
-	close = "%s en %%s cerca de ti",
+	target = "%s en >%%s<",
+	close = "%s en >%%s< cerca de ti",
 	move = "%s ¡muévete!",
 	run = "%s ¡corre!",
 	cast = "%s ¡para de castear!",
 	stack = "%s (%%d)",
-	switch = "%s - cambio de objetivos"
+	switch = ">%s< - cambio de objetivos"
 }
 
 
@@ -220,7 +220,7 @@ DBM_CORE_AUTO_SOUND_OPTION_TEXT			= "Reproducir sonido \"huye pequeña\" en $spe
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Reproducir sonido de cuenta atrás para $spell:%s"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "Reproducir sonido de la duración de $spell:%s"
 DBM_CORE_AUTO_YELL_OPTION_TEXT			= "Gritar cuando tengas $spell:%s"
-DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "¡%s en mi!"
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "¡%s en " .. UnitName("player") .. "!"
 
 
 -- New special warnings

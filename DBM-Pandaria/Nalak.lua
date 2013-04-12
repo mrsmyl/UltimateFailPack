@@ -1,13 +1,12 @@
 local mod	= DBM:NewMod(814, "DBM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8441 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9017 $"):sub(12, -3))
 mod:SetCreatureID(69099)
---mod:SetModelID(41448)
+mod:SetModelID(47227)
 mod:SetZone(928)--Isle of Thunder
 
 mod:RegisterCombat("combat")
-mod:SetWipeTime(120)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -46,42 +45,44 @@ end
 function mod:OnCombatStart(delay)
 	table.wipe(stormcloudTargets)
 	table.wipe(tetherTargets)
---	timerStormcloudCD:Start(15-delay)--15-17 variation noted
---	timerLightningTetherCD:Start(28-delay)
---	timerArcNovaCD:Start(39-delay)--Not a large sample size
+	timerStormcloudCD:Start(15-delay)--15-17 variation noted
+	timerLightningTetherCD:Start(28-delay)
+	timerArcNovaCD:Start(39-delay)--Not a large sample size
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(10)
 	end
 end
 
 function mod:OnCombatEnd()
+	table.wipe(stormcloudTargets)
+	table.wipe(tetherTargets)
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(136340) then
+	if args.spellId == 136340 then
 		specWarnStormcloudCast:Show()
 		timerStormcloudCD:Start()
-	elseif args:IsSpellID(136338) then
+	elseif args.spellId == 136338 then
 		warnArcNova:Show()
 		specWarnArcNova:Show()
 		timerArcNovaCD:Start()
-	elseif args:IsSpellID(136339) then
+	elseif args.spellId == 136339 then
 		timerLightningTetherCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(136340) then
+	if args.spellId == 136340 then
 		stormcloudTargets[#stormcloudTargets + 1] = args.destName
 		if args:IsPlayer() then
 			specWarnStormcloud:Show()
 		end
 		self:Unschedule(warnStormcloudTargets)
 		self:Schedule(0.3, warnStormcloudTargets)
-	elseif args:IsSpellID(136339) then
+	elseif args.spellId == 136339 then
 		tetherTargets[#tetherTargets + 1] = args.destName
 		if args:IsPlayer() then
 			specWarnLightningTether:Show()

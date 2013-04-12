@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(663, "DBM-Party-MoP", 7, 246)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7901 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
 mod:SetCreatureID(59184)--59220 seem to be her mirror images
 mod:SetModelID(40639)
 mod:SetZone()
@@ -35,13 +35,13 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(114062) then
+	if args.spellId == 114062 then
 		timerWondrousRapidityCD:Start()
 	end
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(114062) then
+	if args.spellId == 114062 then
 		warnWondrousRapidity:Show()
 		specWarnWondrousRapdity:Show()
 		timerWondrousRapidity:Start()
