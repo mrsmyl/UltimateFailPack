@@ -111,7 +111,7 @@ function HealBot_Options_setLists()
         HEALBOT_OPTIONS_DONT_SHOW,
         HEALBOT_WORD_HEALTH,
         HEALBOT_OPTIONS_FUTURE_HLTH,
-       -- HEALBOT_CLASSES_CUSTOM,
+        HEALBOT_CLASSES_CUSTOM,
     }
 
     HealBot_Options_BarHealthType_List = {
@@ -227,8 +227,6 @@ function HealBot_Options_setLists()
             HEALBOT_FOCUS,
             HEALBOT_MENU,
             HEALBOT_HBMENU,
-            HEALBOT_MAINTANK,
-            HEALBOT_MAINASSIST,
             HEALBOT_STOP,
             HEALBOT_TELL.." ...",
         }
@@ -932,6 +930,7 @@ function HealBot_Options_setNewSkin(newSkinName)
     Healbot_Config_Skins.btextcursecolb[newSkinName] = Healbot_Config_Skins.btextcursecolb[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.btextcursecola[newSkinName] = Healbot_Config_Skins.btextcursecola[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.backcola[newSkinName] = Healbot_Config_Skins.backcola[Healbot_Config_Skins.Current_Skin]
+    Healbot_Config_Skins.backoutline[newSkinName] = Healbot_Config_Skins.backoutline[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.Barcola[newSkinName] = Healbot_Config_Skins.Barcola[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.BarcolaInHeal[newSkinName] = Healbot_Config_Skins.BarcolaInHeal[Healbot_Config_Skins.Current_Skin]
     Healbot_Config_Skins.backcolr[newSkinName] = Healbot_Config_Skins.backcolr[Healbot_Config_Skins.Current_Skin]
@@ -1130,6 +1129,7 @@ function HealBot_Options_DeleteSkin_OnClick(self)
         Healbot_Config_Skins.btextcursecolb[hbDelSkinName] = nil
         Healbot_Config_Skins.btextcursecola[hbDelSkinName] = nil
         Healbot_Config_Skins.backcola[hbDelSkinName] = nil
+        Healbot_Config_Skins.backoutline[hbDelSkinName] = nil
         Healbot_Config_Skins.Barcola[hbDelSkinName] = nil
         Healbot_Config_Skins.BarcolaInHeal[hbDelSkinName] = nil
         Healbot_Config_Skins.backcolr[hbDelSkinName] = nil
@@ -1586,6 +1586,13 @@ end
 function HealBot_Options_BarAlphaBackGround_OnValueChanged(self)
     Healbot_Config_Skins.barbackcola[Healbot_Config_Skins.Current_Skin] = HealBot_Options_Pct_OnValueChanged(self);
     HealBot_setOptions_Timer(80)
+end
+
+function HealBot_Options_BarOutlineBackGround_OnValueChanged(self)
+    Healbot_Config_Skins.backoutline[Healbot_Config_Skins.Current_Skin] = self:GetValue();
+    g=_G[self:GetName().."Text"]
+    g:SetText(self.text .. ": " .. self:GetValue());
+    HealBot_setOptions_Timer(150)
 end
 
 function HealBot_Options_BarAlphaDis_OnValueChanged(self)
@@ -4644,6 +4651,7 @@ function HealBot_Options_BuildSkinSendMsg(skinName, partID)
         ssMsg=ssMsg.."!"..strsub(Healbot_Config_Skins.asbarcolr[skinName],1,4)
         ssMsg=ssMsg.."!"..strsub(Healbot_Config_Skins.asbarcolg[skinName],1,4)
         ssMsg=ssMsg.."!"..strsub(Healbot_Config_Skins.asbarcolb[skinName],1,4)
+        ssMsg=ssMsg.."!"..Healbot_Config_Skins.backoutline[skinName]
     elseif partID==7 then
         ssMsg=Healbot_Config_Skins.HoTx2Bar[skinName]
         ssMsg=ssMsg.."!"..Healbot_Config_Skins.ShowIconTextCountSelfCast[skinName]
@@ -4838,7 +4846,7 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
         tmpMsg[1],   tmpMsg[2],  tmpMsg[3],  tmpMsg[4],  tmpMsg[5],  tmpMsg[6],  tmpMsg[7],  tmpMsg[8],  tmpMsg[9], tmpMsg[10],
         tmpMsg[11], tmpMsg[12], tmpMsg[13], tmpMsg[14], tmpMsg[15], tmpMsg[16], tmpMsg[17], tmpMsg[18], tmpMsg[19], tmpMsg[20],
         tmpMsg[21], tmpMsg[22], tmpMsg[23], tmpMsg[24], tmpMsg[25], tmpMsg[26], tmpMsg[27], tmpMsg[28], tmpMsg[29], tmpMsg[30],
-        tmpMsg[31], tmpMsg[32], tmpMsg[33] = string.split("!", msg)
+        tmpMsg[31], tmpMsg[32], tmpMsg[33], tmpMsg[34] = string.split("!", msg)
         Healbot_Config_Skins.CastNotifyResOnly[skinName] = tonumber(tmpMsg[1])
         Healbot_Config_Skins.HideIncGroup[skinName] = tonumber(tmpMsg[2])
         Healbot_Config_Skins.EmergIncMonitor[skinName] = tonumber(tmpMsg[3])
@@ -4873,6 +4881,7 @@ function HealBot_Options_BuildSkinRecMsg(skinName, partID, msg)
         Healbot_Config_Skins.asbarcolr[skinName] = tonumber(tmpMsg[31])
         Healbot_Config_Skins.asbarcolg[skinName] = tonumber(tmpMsg[32])
         Healbot_Config_Skins.asbarcolb[skinName] = tonumber(tmpMsg[33])
+        Healbot_Config_Skins.backoutline[skinName] = tonumber(tmpMsg[34])
     elseif partID==7 then
          tmpMsg[1],  tmpMsg[2],  tmpMsg[3],  tmpMsg[4],  tmpMsg[5],  tmpMsg[6],  tmpMsg[7],  tmpMsg[8],  tmpMsg[9], tmpMsg[10],
          tmpMsg[11],  tmpMsg[12],  tmpMsg[13],  tmpMsg[14], tmpMsg[15], tmpMsg[16], tmpMsg[17], tmpMsg[18], tmpMsg[19], tmpMsg[20],
@@ -8538,15 +8547,18 @@ function HealBot_Options_InitSub1(subNo)
             HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlpha,HEALBOT_OPTIONS_BARALPHA,0.25,1,0.01)
             HealBot_Options_BarAlpha:SetValue(Healbot_Config_Skins.Barcola[Healbot_Config_Skins.Current_Skin] or 95);
             HealBot_Options_Pct_OnValueChanged(HealBot_Options_BarAlpha)
-            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlphaInHeal,HEALBOT_OPTIONS_BARALPHAINHEAL,0,0.95,0.01)
+            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlphaInHeal,HEALBOT_OPTIONS_TTALPHA,0,0.95,0.01)
             HealBot_Options_BarAlphaInHeal:SetValue(Healbot_Config_Skins.BarcolaInHeal[Healbot_Config_Skins.Current_Skin]);
             HealBot_Options_Pct_OnValueChanged(HealBot_Options_BarAlphaInHeal)
-            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlphaAbsorb,HEALBOT_OPTIONS_BARALPHAABSORB,0,0.95,0.01)
+            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlphaAbsorb,HEALBOT_OPTIONS_TTALPHA,0,0.95,0.01)
             HealBot_Options_BarAlphaAbsorb:SetValue(Healbot_Config_Skins.barabsorbcola[Healbot_Config_Skins.Current_Skin]);
             HealBot_Options_Pct_OnValueChanged(HealBot_Options_BarAlphaAbsorb)
-            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlphaBackGround,HEALBOT_OPTIONS_BARALPHABACK,0,0.95,0.01)
+            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_BarAlphaBackGround,HEALBOT_OPTIONS_TTALPHA,0,0.95,0.01)
             HealBot_Options_BarAlphaBackGround:SetValue(Healbot_Config_Skins.barbackcola[Healbot_Config_Skins.Current_Skin]);
             HealBot_Options_Pct_OnValueChanged(HealBot_Options_BarAlphaBackGround)
+            HealBot_Options_val_OnLoad(HealBot_Options_BarOutlineBackGround,HEALBOT_OPTIONS_OUTLINE,0,5,1)
+            HealBot_Options_BarOutlineBackGround:SetValue(Healbot_Config_Skins.backoutline[Healbot_Config_Skins.Current_Skin]);
+            HealBot_Options_BarOutlineBackGroundText:SetText(HEALBOT_OPTIONS_OUTLINE..": "..Healbot_Config_Skins.backoutline[Healbot_Config_Skins.Current_Skin])
             HealBot_Options_BarTextureS:SetValue(texturesIndex[Healbot_Config_Skins.btexture[Healbot_Config_Skins.Current_Skin]] or 1)
             HealBot_Options_val_OnLoad(HealBot_Options_BarHeightS,HEALBOT_OPTIONS_SKINHEIGHT,10,80,1)
             HealBot_Options_BarHeightS:SetValue(Healbot_Config_Skins.bheight[Healbot_Config_Skins.Current_Skin])
@@ -8638,7 +8650,7 @@ function HealBot_Options_InitSub1(subNo)
     elseif subNo==338 then
         if not DoneInitTab[338] then
             HealBot_Options_MainAssistHeals:SetChecked(Healbot_Config_Skins.MainAssistHeals[Healbot_Config_Skins.Current_Skin])
-            HealBot_Options_SetText(HealBot_Options_MainAssistHeals,HEALBOT_OPTIONS_MAINASSIST)
+            HealBot_Options_SetText(HealBot_Options_MainAssistHeals,HEALBOT_CLASSES_HEALERS)
             HealBot_Options_EmergencyHeals:SetChecked(Healbot_Config_Skins.EmergencyHeals[Healbot_Config_Skins.Current_Skin])
             HealBot_Options_SetText(HealBot_Options_EmergencyHeals,HEALBOT_OPTIONS_EMERGENCYHEALS)
             HealBot_Options_FocusBar:SetChecked(Healbot_Config_Skins.SetFocusBar[Healbot_Config_Skins.Current_Skin])

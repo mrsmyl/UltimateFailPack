@@ -91,8 +91,6 @@ local hbCommands = { [strlower(HEALBOT_DISABLED_TARGET)]=true,
                      [strlower(HEALBOT_FOCUS)]=true,
                      [strlower(HEALBOT_MENU)]=true,
                      [strlower(HEALBOT_HBMENU)]=true,
-                     [strlower(HEALBOT_MAINTANK)]=true,
-                     [strlower(HEALBOT_MAINASSIST)]=true,
                      [strlower(HEALBOT_STOP)]=true,
                      [strlower(HEALBOT_TELL)]=true,
                     }

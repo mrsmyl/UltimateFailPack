@@ -5817,12 +5817,27 @@
                     <BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
                     <BarColor r="0" g="1" b="0"/>
                   </StatusBar>
-                  <Slider name="HealBot_Options_BarAlphaBackGround" inherits="HealBot_Options_SliderTemplate">
+                  <Slider name="HealBot_Options_BarOutlineBackGround" inherits="HealBot_Options_SliderTemplate">
                     <Size>
-                      <AbsDimension x="205" y="16" />
+                      <AbsDimension x="65" y="16" />
                     </Size>
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="HealBot_Options_BarHealthBackColourS" relativePoint="TOPRIGHT">
+                        <Offset>
+                          <AbsDimension x="20" y="0" />
+                        </Offset>
+                      </Anchor>
+                    </Anchors>
+                    <Scripts>
+                      <OnValueChanged>HealBot_Options_BarOutlineBackGround_OnValueChanged(self)</OnValueChanged>
+                    </Scripts>
+                  </Slider>
+                  <Slider name="HealBot_Options_BarAlphaBackGround" inherits="HealBot_Options_SliderTemplate">
+                    <Size>
+                      <AbsDimension x="120" y="16" />
+                    </Size>
+                    <Anchors>
+                      <Anchor point="TOPLEFT" relativeTo="HealBot_Options_BarOutlineBackGround" relativePoint="TOPRIGHT">
                         <Offset>
                           <AbsDimension x="20" y="0" />
                         </Offset>

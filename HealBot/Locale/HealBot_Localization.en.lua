@@ -143,7 +143,6 @@ function HealBot_Lang_enALL()
     HEALBOT_OPTIONS_PETHEALS                = "Pets"
     HEALBOT_OPTIONS_GROUPHEALS              = "Group";
     HEALBOT_OPTIONS_TANKHEALS               = "Main tanks";
-    HEALBOT_OPTIONS_MAINASSIST              = "Main assist";
     HEALBOT_OPTIONS_PRIVATETANKS            = "Private main tanks";
     HEALBOT_OPTIONS_TARGETHEALS             = "Targets";
     HEALBOT_OPTIONS_EMERGENCYHEALS          = "Raid";
@@ -268,7 +267,6 @@ function HealBot_Lang_enALL()
     HEALBOT_FOCUS                           = "Focus";
     HEALBOT_MENU                            = "Menu";
     HEALBOT_MAINTANK                        = "MainTank";
-    HEALBOT_MAINASSIST                      = "MainAssist";
     HEALBOT_STOP                            = "Stop";
     HEALBOT_TELL                            = "Tell";
 
@@ -962,6 +960,7 @@ function HealBot_Lang_enALL()
     
     HEALBOT_SKIN_ABSORBCOL_TEXT             = "Absorb effects";
     HEALBOT_OPTIONS_BARALPHAABSORB          = "Absorb effects opacity";
+    HEALBOT_OPTIONS_OUTLINE                 = "Outline"
 end
 
 if (GetLocale() == "enUK") then

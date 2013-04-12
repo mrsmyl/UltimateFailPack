@@ -37,7 +37,6 @@ local HealBot_hSpell=nil
 local HealBot_bSpell=nil
 local HealBot_dSpell=nil
 local HealBot_rSpell=nil
-
 local HealBot_ButtonArray1={}
 local HealBot_ButtonArray2={}
 local HealBot_ButtonArray=1
@@ -655,7 +654,7 @@ function HealBot_HealthColor(unit,hlth,maxhlth,tooltipcol,hbGUID,UnitDead,Member
     if (Healbot_Config_Skins.AbsorbBarColour[Healbot_Config_Skins.Current_Skin] == 4) then -- Incoming Heal Bar Colour = "Custom"
         har=Healbot_Config_Skins.asbarcolr[Healbot_Config_Skins.Current_Skin]
         hag=Healbot_Config_Skins.asbarcolg[Healbot_Config_Skins.Current_Skin]
-        har=Healbot_Config_Skins.asbarcolb[Healbot_Config_Skins.Current_Skin]
+        hab=Healbot_Config_Skins.asbarcolb[Healbot_Config_Skins.Current_Skin]
     elseif (Healbot_Config_Skins.AbsorbBarColour[Healbot_Config_Skins.Current_Skin] == 3) then -- Incoming Heal Bar Colour = "Future Health"
         har, hag = HealBot_Action_BarColourPct(hapct)
         hab=hcb
@@ -1074,35 +1073,6 @@ function HealBot_Action_EnableButton(button, hbGUID)
             HealBot_Action_ResetActiveUnitStatus()
             HealBot_PlayerDead=false
         end
-
-        if uHealIn>0 then
-            ebipct = uHlth+uHealIn
-            if ebipct<uMaxHlth then
-                ebipct=ebipct/uMaxHlth
-            else
-                ebipct=1;
-            end
-            ebipct=floor(ebipct*100)
-            ebubar2:SetValue(ebipct);
-        elseif ebubar2:GetValue()>0 then
-            ebubar2:SetValue(0)
-        end
-        if uAbsorbs>0 then
-            if Healbot_Config_Skins.AbsorbBarColour[Healbot_Config_Skins.Current_Skin] == 1 then
-                ebapct = uHlth+uAbsorbs
-            else
-                ebapct = uHlth+uHealIn+uAbsorbs
-            end
-            if ebapct<uMaxHlth then
-                ebapct=ebapct/uMaxHlth
-            else
-                ebapct=1;
-            end
-            ebapct=floor(ebapct*100)
-            ebubar6:SetValue(ebapct);
-        elseif ebubar6:GetValue()>0 then
-            ebubar6:SetValue(0)
-        end    
     
         ebur,ebug,ebub,ebua,ebpct,ebusa,ebir,ebig,ebib,hbr,hbg,hbb,har,hag,hab = HealBot_HealthColor(ebUnit,uHlth,uMaxHlth,false,hbGUID,ebuUnitDead,ebuHealBot_UnitBuff,ebuHealBot_UnitDebuff,uHealIn,uAbsorbs,true)
 
@@ -1128,7 +1098,38 @@ function HealBot_Action_EnableButton(button, hbGUID)
             HealBot_UnitBarUpdate[ebubar]=HealBot_curUnitHealth[ebubar]
             HealBot_curUnitHealth[ebubar]=ebpct
         end
-    
+
+        --local hBarWidth=ceil(HealBot_bWidth*(ebpct/100))
+        if uHealIn>0 and HealBot_UnitStatus[ebUnit]~=0 then
+            ebipct = uHlth+uHealIn
+            if ebipct<uMaxHlth then
+                ebipct=ebipct/uMaxHlth
+            else
+                ebipct=1;
+            end
+            ebipct=floor(ebipct*100)
+            --ebubar2:SetPoint("TOPLEFT",ebubar,"TOPLEFT",hBarWidth,0);
+            ebubar2:SetValue(ebipct);
+        elseif ebubar2:GetValue()>0 then
+            ebubar2:SetValue(0)
+        end
+        if uAbsorbs>0 and HealBot_UnitStatus[ebUnit]~=0 then
+            if Healbot_Config_Skins.AbsorbBarColour[Healbot_Config_Skins.Current_Skin] == 1 then
+                ebapct = uHlth+uAbsorbs
+            else
+                ebapct = uHlth+uHealIn+uAbsorbs
+            end
+            if ebapct<uMaxHlth then
+                ebapct=ebapct/uMaxHlth
+            else
+                ebapct=1;
+            end
+            ebapct=floor(ebapct*100)
+            ebubar6:SetValue(ebapct);
+        elseif ebubar6:GetValue()>0 then
+            ebubar6:SetValue(0)
+        end    
+
         ebuProcessThis=true
         ebufastenable=false
         if HealBot_Globals.ProtectPvP==1 then
@@ -1642,8 +1643,9 @@ local HealBot_resetSkinTo=""
 local HealBot_initSkin={}
 function HealBot_Action_ResetSkin(barType,button,numcols)
 local frameScale = Healbot_Config_Skins.FrameScale[Healbot_Config_Skins.Current_Skin];
-local bwidth = Healbot_Config_Skins.bwidth[Healbot_Config_Skins.Current_Skin]*frameScale;
-local bheight=Healbot_Config_Skins.bheight[Healbot_Config_Skins.Current_Skin]*frameScale;
+local bWidth = ceil(Healbot_Config_Skins.bwidth[Healbot_Config_Skins.Current_Skin]*frameScale);
+local bOutline = ceil(Healbot_Config_Skins.backoutline[Healbot_Config_Skins.Current_Skin]*frameScale);
+local bheight=ceil(Healbot_Config_Skins.bheight[Healbot_Config_Skins.Current_Skin]*frameScale);
 local b2Size = ceil(Healbot_Config_Skins.bar2size[Healbot_Config_Skins.Current_Skin]*frameScale)
 local br=Healbot_Config_Skins.headbarcolr[Healbot_Config_Skins.Current_Skin];  
 local bg=Healbot_Config_Skins.headbarcolg[Healbot_Config_Skins.Current_Skin];
@@ -1654,11 +1656,11 @@ local sg=Healbot_Config_Skins.headtxtcolg[Healbot_Config_Skins.Current_Skin];
 local sb=Healbot_Config_Skins.headtxtcolb[Healbot_Config_Skins.Current_Skin];
 local sa=Healbot_Config_Skins.headtxtcola[Healbot_Config_Skins.Current_Skin];
 local btexture=Healbot_Config_Skins.btexture[Healbot_Config_Skins.Current_Skin];
-local btextheight=Healbot_Config_Skins.btextheight[Healbot_Config_Skins.Current_Skin]*frameScale;
+local btextheight=ceil(Healbot_Config_Skins.btextheight[Healbot_Config_Skins.Current_Skin]*frameScale);
 local btextoutline=Healbot_Config_Skins.btextoutline[Healbot_Config_Skins.Current_Skin];
 local b,bar,bar2,bar3,bar4,icon,txt,icon1,icon15,icon16,icon1t,icon15t,icon1ta,icon15ta,pIcon,icont,iconta
 local barScale,h,hwidth,hheight,iScale,itScale,x,hcpct,bar5,bar6
-local abSize = ceil((Healbot_Config_Skins.AggroBarSize[Healbot_Config_Skins.Current_Skin] or 2)*frameScale)
+local abSize = ceil((Healbot_Config_Skins.AggroBarSize[Healbot_Config_Skins.Current_Skin])*frameScale)
 local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10]=4,[11]=4,[12]=4,[13]=4,[14]=4,[15]=5}
   
     if barType=="bar" then
@@ -1685,15 +1687,15 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         bar.txt = _G[bar:GetName().."_text"];
         bar3.txt=_G[bar3:GetName().."Power".."1"];
         bar:SetHeight(bheight);
-        bar:SetWidth(bwidth)
-        bar5:SetHeight(bheight);
-        bar5:SetWidth(bwidth)
+        bar:SetWidth(bWidth)
+        bar5:SetHeight(bheight+b2Size+(bOutline*2));
+        bar5:SetWidth(bWidth+(bOutline*2))
         bar6:SetHeight(bheight);
-        bar6:SetWidth(bwidth)
-        bar5:SetPoint("TOPLEFT",bar,"TOPLEFT",0,0);
+        bar6:SetWidth(bWidth)
+        bar5:SetPoint("TOPLEFT",bar,"TOPLEFT",-bOutline,bOutline);
         bar6:SetPoint("TOPLEFT",bar,"TOPLEFT",0,0);
-        bar5:SetFrameLevel(bar4:GetFrameLevel()+ 1);
-        bar6:SetFrameLevel(bar5:GetFrameLevel()+ 1);
+        bar4:SetFrameLevel(bar5:GetFrameLevel()+ 1);
+        bar6:SetFrameLevel(bar4:GetFrameLevel()+ 1);
         bar2:SetFrameLevel(bar6:GetFrameLevel()+ 1);
         bar:SetFrameLevel(bar2:GetFrameLevel()+ 1);
 		bar3:SetFrameLevel(bar:GetFrameLevel()+ 1);
@@ -1734,7 +1736,7 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         bar4:SetMinMaxValues(0,100)
         bar4:SetValue(100)
         b:SetHeight(bheight); 
-        b:SetWidth(bwidth)
+        b:SetWidth(bWidth)
         for x=2,14 do
             icon=_G[bar:GetName().."Icon"..x];
             icont=_G[bar:GetName().."Count"..x];
@@ -2115,7 +2117,7 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
           --for x=1,15 do
         h=button
         bar = HealBot_Action_HealthBar(h);
-        hwidth = ceil(bwidth*Healbot_Config_Skins.headwidth[Healbot_Config_Skins.Current_Skin])
+        hwidth = ceil(bWidth*Healbot_Config_Skins.headwidth[Healbot_Config_Skins.Current_Skin])
         hheight = ceil(bheight*Healbot_Config_Skins.headhight[Healbot_Config_Skins.Current_Skin])
         local headtextoutline = Healbot_Config_Skins.headtextoutline[Healbot_Config_Skins.Current_Skin]
         HealBot_Panel_SetHeadArrays(h)
@@ -2145,8 +2147,8 @@ local abtSize = {[0]=1,[1]=1,[2]=1,[3]=2,[4]=2,[5]=2,[6]=3,[7]=3,[8]=3,[9]=3,[10
         HealBot_Action_hbFocusButtonBar.txt:SetTextColor(0,0,0,1);
         iScale=0.84
         iScale=iScale+(numcols/10)
-        HealBot_Action_hbFocusButtonBar:SetWidth(bwidth*iScale)
-        HealBot_Action_hbFocusButton:SetWidth(bwidth*iScale)
+        HealBot_Action_hbFocusButtonBar:SetWidth(bWidth*iScale)
+        HealBot_Action_hbFocusButton:SetWidth(bWidth*iScale)
         HealBot_Action_hbFocusButtonBar:SetHeight(bheight); 
         HealBot_Action_hbFocusButton:SetHeight(bheight); 
         HealBot_Action_hbFocusButtonBar.txt:SetText(HEALBOT_ACTION_HBFOCUS)
@@ -2609,16 +2611,6 @@ function HealBot_Action_SetButtonAttrib(button,bbutton,bkey,status,j)
                 ToggleDropDownMenu(1, nil, HBFriendsDropDown, "cursor", 10, -8)
             end
             button.showhbmenu = showHBmenu
-        elseif strlower(sName)==strlower(HEALBOT_MAINTANK) then
-            button:SetAttribute(HB_prefix.."helpbutton"..j, nil);
-            button:SetAttribute(HB_prefix.."type"..j, "maintank")
-            button:SetAttribute(HB_prefix.."type-maintank"..j, "toggle")
-            hbAttribsMinReset[button.id..HB_prefix..status..j]=true
-        elseif strlower(sName)==strlower(HEALBOT_MAINASSIST) then
-            button:SetAttribute(HB_prefix.."helpbutton"..j, nil);
-            button:SetAttribute(HB_prefix.."type"..j, "mainassist")
-            button:SetAttribute(HB_prefix.."type-mainassist"..j, "toggle")
-            hbAttribsMinReset[button.id..HB_prefix..status..j]=true
         elseif HealBot_GetSpellId(sName) then
             if sTar==1 or sTrin1==1 or sTrin2==1 or AvoidBC==1 then
                 mText = HealBot_Action_AlterSpell2Macro(sName, sTar, sTrin1, sTrin2, AvoidBC, button.unit, HB_combo_prefix)

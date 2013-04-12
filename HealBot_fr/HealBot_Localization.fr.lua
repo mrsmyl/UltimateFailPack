@@ -961,4 +961,5 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
     
     HEALBOT_SKIN_ABSORBCOL_TEXT             = "Effets d'absorption";
     HEALBOT_OPTIONS_BARALPHAABSORB          = "Opacit\195\169  des effets d'absorption";
+    HEALBOT_OPTIONS_OUTLINE                 = "Contour"
 end
