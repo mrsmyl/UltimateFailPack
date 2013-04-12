@@ -1,0 +1,91 @@
+------------------------------------------------------------------------
+r846 | asixandur | 2013-04-03 11:26:47 +0000 (Wed, 03 Apr 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/localization.lua
+
+Tagging as Release 3.6.35
+------------------------------------------------------------------------
+r845 | asixandur | 2013-03-28 18:05:45 +0000 (Thu, 28 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_RaidAdmin/XPerl_Check.xml
+
+Commit code suggest by an user on curse that still experiences compactunitframe taints with last alpha
+------------------------------------------------------------------------
+r844 | asixandur | 2013-03-22 11:44:01 +0000 (Fri, 22 Mar 2013) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.lua
+
+Special bars now flash when hovered in the options
+Removed code to work around a build 13164 blizz bug (patch 4.0.1)
+------------------------------------------------------------------------
+r843 | tharai | 2013-03-19 22:45:24 +0000 (Tue, 19 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.lua
+
+Make buff frame be of the highest strata for when bug occurs and debuffs overlap the buff frame.
+------------------------------------------------------------------------
+r842 | asixandur | 2013-03-17 13:01:32 +0000 (Sun, 17 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Fixed a bug with friends drop down and potentially with others
+------------------------------------------------------------------------
+r841 | asixandur | 2013-03-17 07:21:08 +0000 (Sun, 17 Mar 2013) | 5 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Workaround a blizzard bug with the new drop downs.
+Secure function doesn't pass unitid parameter so you get an error from a GetRaidRosterInfo in UnitPopup.lua:940
+The workaround is to hide set focus in raid frames and use the old "menu" type2 attribute.
+Still using "togglemenu" with the other frames because they seem to work.
+Some cleanup
+------------------------------------------------------------------------
+r840 | asixandur | 2013-03-11 11:20:27 +0000 (Mon, 11 Mar 2013) | 2 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.toc
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.toc
+   M /trunk/XPerl_Options/XPerl_Options.toc
+   M /trunk/XPerl_Party/XPerl_Party.toc
+   M /trunk/XPerl_PartyPet/XPerl_PartyPet.toc
+   M /trunk/XPerl_Player/XPerl_Player.toc
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.toc
+   M /trunk/XPerl_PlayerPet/XPerl_PlayerPet.toc
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.toc
+   M /trunk/XPerl_RaidFrames/XPerl_RaidFrames.toc
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.toc
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.toc
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.toc
+   M /trunk/XPerl_Target/XPerl_Target.toc
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.toc
+   M /trunk/localization.lua
+
+Tagging as Release
+TOC bump for 5.2
+------------------------------------------------------------------------
+r839 | asixandur | 2013-03-09 10:32:51 +0000 (Sat, 09 Mar 2013) | 2 lines
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Hey guys, SET FOCUS IS BACK!!
+Not tested extensively. Focus is probably a bit bugged because only a few used it after data
+------------------------------------------------------------------------
+r838 | asixandur | 2013-03-04 11:36:20 +0000 (Mon, 04 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+
+Added few bandages
+------------------------------------------------------------------------
+r837 | asixandur | 2013-02-17 06:21:55 +0000 (Sun, 17 Feb 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+
+Few workarounds
+------------------------------------------------------------------------
