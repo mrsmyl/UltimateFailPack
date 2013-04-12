@@ -1,0 +1,12 @@
+tag v1.5.35
+ec05b2b3c0a93e20e246643c0b5341c3fb8b316b
+Dorwido <darkz@gmx.de>
+2013-04-04 18:12:41 +0200
+
+1.5.35 release
+
+
+--------------------
+
+Dorwido:
+	- -added new flight master locations (this should also solve any bugs) -added new flight times
