@@ -3131,7 +3131,7 @@ function ArkInventory.ObjectInfo( h )
 	
 	local class, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 = ArkInventory.ObjectStringDecode( h )
 	
-	if class == "item" then
+	if ( class == "item" ) then
 		
 		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo( v1 )
 		
@@ -3145,7 +3145,7 @@ function ArkInventory.ObjectInfo( h )
 		
 		return class, itemLink, itemName, itemTexture, itemRarity or 0, itemLevel or 0, itemMinLevel or 0, itemType or "", itemSubType or "", itemStackCount or 1, itemEquipLoc or "", itemSellPrice or 0
 		
-	elseif class == "spell" then
+	elseif ( class == "spell" ) then
 		
 		local itemName, _, itemTexture = GetSpellInfo( v1 )
 		local itemLink = GetSpellLink( v1 )
@@ -3153,7 +3153,7 @@ function ArkInventory.ObjectInfo( h )
 		
 		return class, itemLink, itemName, itemTexture, itemRarity
 		
-	elseif class == "battlepet" then
+	elseif ( class == "battlepet" ) then
 		
 		local sd = ArkInventory.PetJournal.GetSpeciesInfo( v1 )
 --		v1=speciesID, v2=level, v3=rarity, v4=maxHealth, v5=power, v6=speed, v7=petID/customName
@@ -3170,7 +3170,7 @@ function ArkInventory.ObjectInfo( h )
 		
 		return class, h, name, icon, v3, v2, 0, petType, "", 1, "", 0, v1, v2, v4, v5, v6, v7, v8, v9, v10
 		
-	elseif class == "currency" then
+	elseif ( class == "currency" ) then
 		
 		-- v1=currencyID
 		

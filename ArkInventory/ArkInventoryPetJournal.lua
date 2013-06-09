@@ -304,7 +304,6 @@ function ArkInventory.PetJournal.ScanPet( petID, update )
 	
 	
 	local link = C_PetJournal.GetBattlePetLink( petID )
-	--local border = select( 4, ArkInventory.ObjectStringDecode( link ) )
 	local isSummonable = C_PetJournal.PetIsSummonable( petID )
 	local isRevoked = C_PetJournal.PetIsRevoked( petID )
 	local isLockedForConvert = C_PetJournal.PetIsLockedForConvert( petID )

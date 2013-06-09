@@ -56,16 +56,19 @@ function ArkInventory.MediaSetFontFace( obj, fontName )
 	local fontPath = ArkInventory.Lib.SharedMedia:Fetch( ArkInventory.Lib.SharedMedia.MediaType.FONT, fontName )
 	
 	local oldPath, oldSize, oldFlags = obj:GetFont( )
-	if ( oldPath == fontPath ) or not ( oldSize == oldSize ) then
-		return
-	end
+   -- oldSize can be -1.#QNAN (some invalid number when its first created)
 	
-	oldSize = math.floor( ( oldSize or 0 ) + 0.5 )
-	if oldSize < 1 or oldSize > 1024 then
-		return
+	if fontPath and ( oldPath ~= fontPath ) then
+		if ( type( oldSize ) == "number" ) then
+			oldSize = math.floor( ( oldSize or 0 ) + 0.5 )
+			if ( oldSize >= 1 ) and ( oldSize <= 1024 ) then
+				--ArkInventory.Output( "SetFont( ", fontPath, ", ", oldSize, ", ", oldFlags, " )" )
+         	obj:SetFont( fontPath, oldSize, oldFlags )
+			end
+		else
+			--ArkInventory.OutputError( "SetFont( ", fontPath, ", ", oldSize, ", ", oldFlags, " )" )
+		end
 	end
-	
-	obj:SetFont( fontPath, oldSize, oldFlags )
 	
 end
 

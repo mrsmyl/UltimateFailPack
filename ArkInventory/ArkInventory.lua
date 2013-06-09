@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1083 $
--- $Date: 2013-03-07 19:12:14 +1100 (Thu, 07 Mar 2013) $
+-- $Revision: 1089 $
+-- $Date: 2013-05-22 21:01:00 +1000 (Wed, 22 May 2013) $
 
 
 local _G = _G
@@ -2660,7 +2660,7 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 	local s = { }
 	local sx = ""
 	
-	if sid == 9995 then
+	if ( sid == 9995 ) then
 		-- vault layout / void storage layout
 		s["!bagslot"] = string.format( "%04i %04i", i.bag_id, i.display_id or i.slot_id )
 	else
@@ -2736,6 +2736,10 @@ function ArkInventory.ItemSortKeyGenerate( i, bar_id )
 				item_type = "!"
 			end
 			
+			if ( class == "battlepet" ) and tonumber( item_type ) then
+				item_type = ArkInventory.PetJournal.PetTypeName( tonumber( item_type ) )
+			end
+
 			item_subtype = v8
 			if not item_subtype or item_subtype == "" then
 				item_subtype = "!"

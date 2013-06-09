@@ -1,6 +1,6 @@
 ﻿-- (c) 2009-2012, all rights reserved.
--- $Revision: 1061 $
--- $Date: 2013-01-29 11:38:45 +1100 (Tue, 29 Jan 2013) $
+-- $Revision: 1087 $
+-- $Date: 2013-05-22 20:51:33 +1000 (Wed, 22 May 2013) $
 
 
 local _G = _G
@@ -827,7 +827,7 @@ function ArkInventoryRules.System.outfit_blizzard( ... )
 		
 		for k, location in pairs( set ) do
 			
-			local wearing, bank, bags, slot, bag = EquipmentManager_UnpackLocation( location )
+			local wearing, bank, bags, void, slot, bag = EquipmentManager_UnpackLocation( location )
 			if wearing or bank or bags then
 				
 				local h
@@ -1216,9 +1216,10 @@ function ArkInventoryRules.System.pettype( ... )
 		error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"], fn ), 0 )
 	end
 	
-	local e = string.lower( select( 8, ArkInventory.ObjectInfo( ArkInventoryRules.Object.h ) ) )
+	local e = select( 8, ArkInventory.ObjectInfo( ArkInventoryRules.Object.h ) )
+	e = string.lower( ArkInventory.PetJournal.PetTypeName( e ) )
 	
-	if e ~= "" then
+	if e then
 		
 		for ax = 1, ac do
 			
@@ -1229,14 +1230,10 @@ function ArkInventoryRules.System.pettype( ... )
 			end
 			
 			if type( arg ) == "number" then
-				arg = _G[string.format( "%s%s", "BATTLE_PET_NAME_", arg )]
+				arg = ArkInventory.PetJournal.PetTypeName( arg )
 				if not arg then
 					error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, "within acceptable range" ), 0 )
 				end
-			end
-			
-			if type( arg ) ~= "string" then
-				error( string.format( ArkInventory.Localise["RULE_FAILED_ARGUMENT_IS_INVALID"], fn, ax, ArkInventory.Localise["STRING"] ), 0 )
 			end
 			
 			if e == string.lower( string.trim( arg ) ) then

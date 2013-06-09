@@ -878,13 +878,11 @@ function ArkInventory.MenuItemOpen( frame )
 							
 							elseif ( class == "battlepet" ) then
 								
-								irar = irar + 1
-								
-								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s (%s)", QUALITY, LIGHTYELLOW_FONT_COLOR_CODE, irar, _G[string.format( "ITEM_QUALITY%s_DESC", irar )] ) )
+								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s (%s)", QUALITY, LIGHTYELLOW_FONT_COLOR_CODE, i.q, _G[string.format( "ITEM_QUALITY%s_DESC", i.q )] ) )
 								
 								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ArkInventory.Localise["MENU_ITEM_DEBUG_LVL_ITEM"], LIGHTYELLOW_FONT_COLOR_CODE, ilvl ) )
 								
-								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s", ArkInventory.Localise["MENU_ITEM_DEBUG_TYPE"], LIGHTYELLOW_FONT_COLOR_CODE, ityp ) )
+								ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s: %s%s (%s)", ArkInventory.Localise["MENU_ITEM_DEBUG_TYPE"], LIGHTYELLOW_FONT_COLOR_CODE, ityp, ArkInventory.PetJournal.PetTypeName( ityp ) or ArkInventory.Localise["UNKNOWN"] ) )
 								
 								if i.pid then
 									
@@ -2722,7 +2720,7 @@ function ArkInventory.MenuPets( frame, level, value, offset )
 		local n = ArkInventory.PetJournal.NumPets( )
 		
 		if n > 0 then
-		
+			
 			for i = 1, C_PetJournal.GetNumPetTypes( ) do
 				ArkInventory.Lib.Dewdrop:AddLine(
 					"text", ArkInventory.PetJournal.PetTypeName( i ),

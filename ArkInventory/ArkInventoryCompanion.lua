@@ -746,8 +746,53 @@ local TempData = { -- temporary table for item to spell translations.
 -- spell 93461 Landro's Lil' XT
 -- spell 123212 Shore Crawler
 -- spell 123214 Gilnean Raven
+[90897]={cid=48641}, -- Fox Kit
+[90173]={cid=66950}, -- Pandaren Water Spirit
+[90177]={cid=66984}, -- Baneling
+[90953]={cid=68502}, -- Spectral Cub
+[91040]={cid=67332}, -- Darkmoon Eye
+[92707]={cid=68267}, -- Cinder Kitten
+[92798]={cid=68466}, -- Pandaren Fire Spirit
+[92799]={cid=68467}, -- Pandaren Air Spirit
+[92800]={cid=68468}, -- Pandaren Earth Spirit
+[93031]={cid=68655}, -- Mr. Bigglesworth
 [90902]={cid=67233}, -- Imperial Silkworm
 [90900]={cid=67230}, -- Imperial Moth
+[91031]={cid=67329}, -- Darkmoon Glowfly
+[91003]={cid=67319}, -- Darkmoon Hatchling
+[93029]={cid=68654}, -- Gluth's Bone / Stitched Pup
+[93025]={cid=68601}, -- Clock'em
+[93032]={cid=68657}, -- Blighted Spore / Fungal Abomination
+[93033]={cid=68665}, -- Mark of Flame / Harbinger of Flame
+[93034]={cid=68664}, -- Blazing Rune / Corefire Imp
+[93035]={cid=68666}, -- Core of Hardened Ash / Ashstone Core
+[93036]={cid=68661}, -- Unscathed Egg / Untamed Hatchling
+[93037]={cid=68663}, -- Blackwing Banner / Death Talon Whelpguard
+[93038]={cid=68662}, -- Whistle of Chromatic Bone / Chrominius
+[93039]={cid=68660}, -- Viscidus Globule
+[93040]={cid=68659}, -- Anubisath Idol
+[93041]={cid=68658}, -- Jewel of Maddening Whispers / Mini Mindslayer
+[93030]={cid=68656}, -- Dusty Clutch of Eggs / Giant Bone Spider
+[94595]={cid=70098}, -- Spawn of G'nathus
+[93669]={cid=69208}, -- Gusting Grimoire
+[94124]={cid=69778}, -- Sunreaver Micro-Sentry
+[94125]={cid=69748}, -- Living Sandling
+[94126]={cid=69796}, -- Zandalari Kneebiter
+[94152]={cid=69820}, -- Son of Animus
+[94190]={cid=69848}, -- Spectral Porcupette
+[94208]={cid=69891}, -- Sunfur Panda
+[94209]={cid=69893}, -- Snowy Panda
+[94210]={cid=69892}, -- Mountain Panda
+[94025]={cid=69649}, -- Red Panda
+[94835]={cid=70144}, -- Ji-Kun Hatchling
+[95422]={cid=70451}, -- Zandalari Anklerender
+[95423]={cid=70452}, -- Zandalari Footslasher
+[95424]={cid=70453}, -- Zandalari Toenibbler
+[95621]={cid=34587}, -- Warbot Ignition Key / Warbot
+[94932]={cid=70257}, -- Tiny Red Carp
+[94933]={cid=70258}, -- Tiny Blue Carp
+[94934]={cid=70259}, -- Tiny Green Carp
+[94935]={cid=70260}, -- Tiny White Carp
 
 }
 
