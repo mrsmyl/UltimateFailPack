@@ -1,13 +1,13 @@
 ------------------------------------------------------------------------
-r73 | egrimm | 2013-03-11 18:28:02 +0000 (Mon, 11 Mar 2013) | 1 line
+r75 | egrimm | 2013-05-22 19:31:11 +0000 (Wed, 22 May 2013) | 1 line
 Changed paths:
-   A /tags/v0.21 (from /trunk:72)
+   A /tags/v0.22 (from /trunk:74)
 
-ToC bump, still works for 5.2.
+Still works with 5.3.
 ------------------------------------------------------------------------
-r72 | egrimm | 2013-03-11 18:26:17 +0000 (Mon, 11 Mar 2013) | 1 line
+r74 | egrimm | 2013-05-22 19:30:53 +0000 (Wed, 22 May 2013) | 1 line
 Changed paths:
    M /trunk/AutoVendor.toc
 
-ToC bump.
+Still works with 5.3.
 ------------------------------------------------------------------------
