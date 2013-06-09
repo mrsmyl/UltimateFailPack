@@ -1,6 +1,6 @@
-## Interface: 50200
-## Title: Accountant 4.12.50200
-## Version: 4.12.50200
+## Interface: 50300
+## Title: Accountant 4.13.50300
+## Version: 4.13.50300
 ## Author: Thorismud
 ## Description: Logs where your WoW gold goes
 ## DefaultState: enabled
