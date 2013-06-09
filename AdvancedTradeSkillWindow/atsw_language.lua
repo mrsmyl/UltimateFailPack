@@ -1,4 +1,4 @@
--- Advanced Trade Skill Window v0.10.3
+-- Advanced Trade Skill Window v0.10.4
 -- written 2006-2013 by Rene Schneider (Slarti on EU-Blackhand)
 -- performance and stability improved 2012 by rowaasr13
 
@@ -9,7 +9,7 @@
 -- Español por Jsr1976-Fili
 -- zhCN and zhTW by Diablohu@è½»é£Žä¹‹è¯­ http://www.dreamgen.cn
 
-ATSW_VERSION = "ATSW v0.10.3";
+ATSW_VERSION = "ATSW v0.10.4";
 
 if(GetLocale()=="deDE") then
 	ATSW_SORTBYHEADERS = "nach Kategorien sortieren";

@@ -1,15 +1,16 @@
 ------------------------------------------------------------------------
-r32 | slartibartfast | 2013-03-19 22:23:55 +0000 (Tue, 19 Mar 2013) | 1 line
+r34 | slartibartfast | 2013-05-23 00:04:20 +0000 (Thu, 23 May 2013) | 1 line
 Changed paths:
-   A /tags/v0.10.3 (from /trunk:31)
+   A /tags/v0.10.4 (from /trunk:33)
 
-WoW 5.2.0
+WoW 5.3.0
 ------------------------------------------------------------------------
-r31 | slartibartfast | 2013-03-19 22:23:27 +0000 (Tue, 19 Mar 2013) | 1 line
+r33 | slartibartfast | 2013-05-23 00:03:56 +0000 (Thu, 23 May 2013) | 1 line
 Changed paths:
    M /trunk/AdvancedTradeSkillWindow.toc
    M /trunk/README.txt
+   M /trunk/atsw.lua
    M /trunk/atsw_language.lua
 
-WoW 5.2.0
+WoW 5.3.0
 ------------------------------------------------------------------------

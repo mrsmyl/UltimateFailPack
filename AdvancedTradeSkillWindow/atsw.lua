@@ -1,4 +1,4 @@
--- Advanced Trade Skill Window v0.10.0
+-- Advanced Trade Skill Window v0.10.4
 -- written 2006-2011 by Rene Schneider (Slarti on EU-Blackhand)
 -- performance and stability improved 2012 by rowaasr13
 
