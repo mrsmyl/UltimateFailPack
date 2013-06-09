@@ -1,15 +1,15 @@
 ## Title: Auc:Util:Compact UI
 ## Notes: Provides additional features and enhancement of the Auction House's "Browse" frame.
 ##
-## Interface: 50100
+## Interface: 50300
 ## Dependancies: Auc-Advanced
 ##
-## Version: 5.15.5383 (LikeableLyrebird)
-## Revision: $Id: Auc-Util-CompactUI.toc 5383 2012-11-27 20:05:32Z mentalpower $
+## Version: 5.17.5413 (NeedyNoddy)
+## Revision: $Id: Auc-Util-CompactUI.toc 5410 2013-05-24 16:21:37Z MentalPower $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer
 ## X-Category: Auction House
-## X-Max-Interface: 50100
+## X-Max-Interface: 50300
 ## X-URL: http://auctioneeraddon.com/
 ## X-Feedback: http://forums.norganna.org
 ##

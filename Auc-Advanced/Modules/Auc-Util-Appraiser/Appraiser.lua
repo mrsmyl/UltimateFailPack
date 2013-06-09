@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: Appraiser.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: Appraiser.lua 5389 2012-12-21 17:41:38Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -366,23 +366,25 @@ function private.GetPriceCore(sig, link, serverKey, match)
 	local stack = get("util.appraiser.item."..sig..".stack") or get("util.appraiser.stack")
 	local number = get("util.appraiser.item."..sig..".number") or get("util.appraiser.number")
 	local  _, _, _, _, _, _, _, maxStack = GetItemInfo(link)
+	if not maxStack then maxStack = 1 end
 	--we only officially accept "max" or a number, but user could have input any random string, so add some sanitization
 	stack = tonumber(stack)
 	if stack then
-		if maxStack and stack > maxStack then
+		if stack > maxStack then
 			stack = maxStack --never allow a saved stack value larger than the item can really stack to
 		elseif stack < 1 then
 			stack = 1
 		end
 	else
-		stack = maxStack or 1
+		stack = maxStack
 	end
 	if number == "maxplus" then
 		number = -1
 	elseif number == "maxfull" then
 		number = -2
+	else
+		number = tonumber(number)
 	end
-	number = tonumber(number)
 
 	-- generate bid value
 	if curModel ~= "fixed" and newBuy then
@@ -464,4 +466,4 @@ function lib.GetOwnAuctionDetails()
 end
 Stubby.RegisterEventHook("AUCTION_OWNED_LIST_UPDATE", "Auc-Util-Appraiser", lib.GetOwnAuctionDetails)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-Appraiser/Appraiser.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-Appraiser/Appraiser.lua $", "$Rev: 5389 $")

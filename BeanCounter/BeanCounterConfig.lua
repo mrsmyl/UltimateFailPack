@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: BeanCounterConfig.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: BeanCounterConfig.lua 5347 2012-09-06 06:26:15Z Esamynn $
 	URL: http://auctioneeraddon.com/
 
 	BeanCounterConfig - Controls Configuration data
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.15/BeanCounter/BeanCounterConfig.lua $","$Rev: 5381 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/5.17/BeanCounter/BeanCounterConfig.lua $","$Rev: 5347 $","5.1.DEV.", 'auctioneer', 'libs')
 
 --Most of this code is from enchantrix by ccox
 local lib = BeanCounter

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 5.15.5383 (LikeableLyrebird)
+	Version: 5.17.5413 (NeedyNoddy)
 	Revision: $Id: CoreConfig.lua 5213 2011-08-25 12:48:28Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -187,4 +187,4 @@ SLASH_AUCADVANCED2 = "/aadv"
 SLASH_AUCADVANCED3 = "/auctioneer"
 SlashCmdList["AUCADVANCED"] = function(msg, editbox) private.CommandHandler(editbox, strsplit(" ", msg)) end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreConfig.lua $", "$Rev: 5213 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreConfig.lua $", "$Rev: 5213 $")

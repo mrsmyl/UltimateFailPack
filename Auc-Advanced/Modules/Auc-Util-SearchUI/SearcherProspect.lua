@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Search UI - Searcher Prospect
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: SearcherProspect.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: SearcherProspect.lua 5368 2012-09-29 09:50:29Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is a plugin module for the SearchUI that assists in searching by refined paramaters
@@ -196,4 +196,4 @@ function lib.Search(item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-SearchUI/SearcherProspect.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-SearchUI/SearcherProspect.lua $", "$Rev: 5368 $")

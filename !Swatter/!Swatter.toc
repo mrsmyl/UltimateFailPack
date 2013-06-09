@@ -1,11 +1,11 @@
 ## Title: Swatter |cff224477(lib)
 ## Notes: Debugging tool for handling and displaying of error messages in a useful way.
 ##
-## Interface: 50100
+## Interface: 50300
 ## SavedVariables: SwatterData
 ##
-## Version: 5.15.5383 (LikeableLyrebird)
-## Revision: $Id: !Swatter.toc 345 2012-11-27 20:42:39Z mentalpower $
+## Version: 5.17.5413 (NeedyNoddy)
+## Revision: $Id: !Swatter.toc 353 2013-05-25 00:26:54Z MentalPower $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Libraries
 ## X-Category: Library

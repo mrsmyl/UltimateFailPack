@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: BeanCounter
-	Revision: $Id: BeanCounterStrings.lua 5381 2012-11-27 19:42:13Z mentalpower $
-	Version: 5.15.5383 (LikeableLyrebird)
+	Revision: $Id: BeanCounterStrings.lua 5374 2012-10-29 03:50:21Z kandoko $
+	Version: 5.17.5413 (NeedyNoddy)
 
 	License:
 		This program is free software; you can redistribute it and/or

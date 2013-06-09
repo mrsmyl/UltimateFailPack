@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: CoreBuy.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: CoreBuy.lua 5398 2013-03-27 19:22:01Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -228,11 +228,12 @@ function lib.QueueBuy(link, seller, count, minbid, buyout, price, reason, nosear
 		else
 			local lType, speciesID, _, petQuality = strsplit(":", link)
 			lType = lType:sub(-9)
+			speciesID = tonumber(speciesID)
 			if lType == "battlepet" and speciesID then
 				-- it's a pet
 				local _,_,_,_,iMin, iType = GetItemInfo(82800) -- Pet Cage
 				-- all caged pets should have the default pet name (custom names are removed when caging)
-				local petName, _, petType = C_PetJournal.GetPetInfoBySpeciesID(tonumber(speciesID))
+				local petName, _, petType = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
 				if not petType then
 					-- indicates it's not a recognized Pet species
 					return QueueBuyErrorHelper(link, "NoPet")
@@ -743,4 +744,4 @@ private.Prompt.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-Frien
 private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreBuy.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreBuy.lua $", "$Rev: 5398 $")

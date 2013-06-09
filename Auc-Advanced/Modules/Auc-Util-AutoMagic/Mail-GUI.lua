@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: Mail-GUI.lua 5293 2012-05-04 22:36:05Z kandoko $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: Mail-GUI.lua 5392 2012-12-22 01:06:53Z kandoko $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -110,12 +110,12 @@ function lib.makeMailGUI()
 	lib.ammailgui.mguimailfor = lib.mguimailfor
 	
 	
-	lib.createMailButton("Disenchant", "Add all items tagged \nfor DE to the mail.", lib.disenchantAction)
-	lib.createMailButton("Gems", "Add all Gems to the mail.", lib.gemAction)
-	lib.createMailButton("Herbs", "Add all items classified \nas herbs to the mail", lib.herbAction)
-	lib.createMailButton("Prospect", "Add all items tagged \nfor Prospect to the mail.", lib.prospectAction)
-	lib.createMailButton("Chant Mats", "Add all Enchanting mats \nto the mail.", lib.dematAction)
-	lib.createMailButton("Pigments", "Add all Pigments \nto the mail.", lib.pigmentAction)
+	lib.createMailButton("Disenchant", "Add all items tagged \nfor DE to the mail.", function() lib.scanBags(lib.disenchantAction) end )
+	lib.createMailButton("Gems", "Add all Gems to the mail.", function() lib.scanBags(lib.gemAction) end )
+	lib.createMailButton("Herbs", "Add all items classified \nas herbs to the mail", function() lib.scanBags(lib.herbAction) end )
+	lib.createMailButton("Prospect", "Add all items tagged \nfor Prospect to the mail.", function() lib.scanBags(lib.prospectAction) end )
+	lib.createMailButton("Chant Mats", "Add all Enchanting mats \nto the mail.", function() lib.scanBags(lib.dematAction) end )
+	lib.createMailButton("Pigments", "Add all Pigments \nto the mail.", function() lib.scanBags(lib.pigmentAction) end )
 	
 	--Lets make the Reason code based buttons a  different color Blue for SUI rule based, Green for default lists
 	do
@@ -197,7 +197,7 @@ function lib.makeMailGUI()
 	local ScrollSheet = LibStub:GetLibrary("ScrollSheet")
 	
 	function frame.slotclear()
-		frame.slot:SetNormalTexture("Interface\\Buttons\\UI-EmptySlot-Disabled")
+		frame.slot:SetNormalTexture(nil)
 		frame.slot.help:SetText("Drop item into box")
 		frame.slot.workingItem = nil
 		frame.addButton:Disable()
@@ -391,14 +391,17 @@ function lib.makeMailGUI()
 	frame.slot:SetWidth(38)
 	frame.slot:SetHeight(38)
 	frame.slot:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square.blp")
-	frame.slot:SetScript("OnClick", frame.slotclear)
-	frame.slot:SetScript("OnReceiveDrag", function(self, data) 
-					local objtype, itemID = GetCursorInfo()
-					ClearCursor()
-					if objtype == "item" then
-						frame.slotadd(itemID, true)
-					end
-				end)
+		function frame.slotIconDrop(self, data, ...)
+			local objtype, itemID = GetCursorInfo()
+			ClearCursor()
+			if objtype == "item" then
+				frame.slotadd(itemID, true)
+			else
+				frame.slotclear()
+			end
+		end
+	frame.slot:SetScript("OnClick", frame.slotIconDrop)
+	frame.slot:SetScript("OnReceiveDrag", frame.slotIconDrop)
 
 	frame.slot.help = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	frame.slot.help:SetPoint("LEFT", frame.slot, "RIGHT", 2, 7)
@@ -552,4 +555,4 @@ end
 
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-AutoMagic/Mail-GUI.lua $", "$Rev: 5293 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-AutoMagic/Mail-GUI.lua $", "$Rev: 5392 $")

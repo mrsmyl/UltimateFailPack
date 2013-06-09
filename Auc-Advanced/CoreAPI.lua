@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Advanced
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: CoreAPI.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: CoreAPI.lua 5398 2013-03-27 19:22:01Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -957,7 +957,7 @@ function lib.GetLinkFromSig(sig)
 		if qual == -1 then
 			qual_col = NORMAL_FONT_COLOR_CODE
 		else
-			qual_col = ITEM_QUALITY_COLORS[tonumber(s4)] -- "|cffxxxxxx"
+			qual_col = ITEM_QUALITY_COLORS[qual] -- "|cffxxxxxx"
 		end
 		if not qual_col then return end
 		local name = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
@@ -1183,4 +1183,4 @@ do
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreAPI.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreAPI.lua $", "$Rev: 5398 $")

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: CoreUtil.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: CoreUtil.lua 5408 2013-05-17 09:55:06Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -848,11 +848,12 @@ function lib.SendProcessorMessage(spmMsg, ...)
 		for i=1,#spmp do
 			local x = spmp[i]
 			local f = x.Func
---if (nLog) then nLog.AddMessage("Auctioneer", "Coreutil", N_INFO, ("SendProcessorMessage Called %s For %s"):format(x.Name, spmMsg), ("SendProcessorMessage Called %s For %s"):format(x.Name, spmMsg)) end
 
 			local good,msg=pcall(f, spmMsg, ...)
 			if not good then
-				lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..(x.Name or "??"), 0, "Debug")
+				msg = "Error trapped for Processor message '"..spmMsg.."' in module "..x.Name..":\n"..msg
+				lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..x.Name, 0, "Debug")
+				geterrorhandler()(msg)
 			end
 		end
 	else
@@ -878,10 +879,11 @@ function lib.SendProcessorMessage(spmMsg, ...)
 					x.Func = f
 				end
 				tinsert(spmp, x)
---if (nLog) then nLog.AddMessage("Auctioneer", "Coreutil", N_INFO, ("SendProcessorMessage Called %s For %s (using Processors)"):format(x.Name, spmMsg), ("SendProcessorMessage Called %s For %s"):format(x.Name, spmMsg)) end
 				local good,msg=pcall(f, spmMsg, ...)
 				if not good then
-					lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..(x.Name or "??"), 0, "Debug")
+					msg = "Error trapped for Processor message '"..spmMsg.."' in module "..x.Name..":\n"..msg
+					lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..x.Name, 0, "Debug")
+					geterrorhandler()(msg)
 				end
 			end
 		end
@@ -892,11 +894,13 @@ function lib.SendProcessorMessage(spmMsg, ...)
 				local x = {}
 				x.Name = engineLib.GetName()
 				x.Func = engineLib.Processor
-				lib.Debug.DebugPrint("Module Using Deprecated Processor to recieve "..(spmMsg or "Unknown").." processor messages.", "SendProcessorMessage", "Deprecated Function Seen in "..(x.Name or "??"), 0, "Warning")
+				lib.Debug.DebugPrint("Module "..x.Name.." using deprecated 'Processor' function for "..(spmMsg or "Unknown").." processor messages.", "SendProcessorMessage", "Deprecated Function Seen in "..x.Name, 0, "Warning")
 				tinsert(spmp, x)
 				local good,msg=pcall(engineLib.Processor, spmMsg, ...)
 				if not good then
-					lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..(x.Name or "??"), 0, "Debug")
+					msg = "Error trapped for Processor message '"..spmMsg.."' in module "..x.Name..":\n"..msg
+					lib.Debug.DebugPrint(msg, "SendProcessorMessage", "Processor Error in "..x.Name, 0, "Debug")
+					geterrorhandler()(msg)
 				end
 			end
 		end
@@ -922,4 +926,4 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreUtil.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreUtil.lua $", "$Rev: 5408 $")

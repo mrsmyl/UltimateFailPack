@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: Swatter.lua 338 2012-09-19 17:27:22Z brykrys $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: Swatter.lua 352 2013-05-14 09:44:41Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -43,7 +43,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="5.15.5383"
+Swatter.Version="5.17.5413"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "5.1.DEV"
 end
@@ -53,6 +53,7 @@ SwatterData = {
 	enabled = true,
 	autoshow = true,
 	warning = true,
+	combat = false,
 	errors = {},
 }
 
@@ -76,7 +77,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 338 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 352 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -211,7 +212,7 @@ local function OnError(msg, frame, stack, etype, ...)
 				chat("|cffffaa11Note: Swatter will continue to catch blocked actions but this is the last time this session that we'll tell you about it.|r")
 				Swatter.blockWarn = true
 			end
-		elseif (SwatterData.autoshow) then
+		elseif SwatterData.autoshow and (not InCombatLockdown() or SwatterData.combat) then
 			Swatter.ErrorUpdate()
 			Swatter.Error:Show()
 		else
@@ -683,6 +684,8 @@ SlashCmdList["SWATTER"] = function(msg)
 		chat("  /swat noauto    -  Swatter will only show an error in chat")
 		chat("  /swat warn      -  Enables swatter's blocked warnings")
 		chat("  /swat nowarn    -  Disables swatter's blocked warnings")
+		chat("  /swat combat    -  Enable autopopup during combat, if autoshow is also enabled")
+		chat("  /swat nocombat  -  Prevent autopopup during combat")
 		chat("  /swat clear     -  Swatter will clear the list of errors")
 	elseif (msg == "show") then
 		Swatter.ErrorShow()
@@ -704,6 +707,12 @@ SlashCmdList["SWATTER"] = function(msg)
 	elseif (msg == "noauto") then
 	   SwatterData.autoshow = false
 	   chat("Swatter will print into chat instead of popping up")
+	elseif msg == "combat" then
+		SwatterData.combat = true
+		chat("Swatter will popup errors during combat (if autoshow is enabled as well).")
+	elseif msg == "nocombat" then
+		SwatterData.combat = false
+		chat("Swatter will not popup errors during combat")
 	elseif (msg == "clear") then
 		Swatter.Error:Hide()
 		SwatterData.errors = {}

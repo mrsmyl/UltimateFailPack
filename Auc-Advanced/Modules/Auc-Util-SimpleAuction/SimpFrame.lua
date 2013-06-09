@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Simplified Auction Posting
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: SimpFrame.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: SimpFrame.lua 5388 2012-12-17 17:04:51Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a simple dialog for
@@ -101,7 +101,9 @@ function private.GetKey(link)
 	-- for items this matches itemId, suffix and factor
 	-- for pets this matches speciesId, level and quality
 	local id, property = GetStoreKeyFromLink(link, 1)
-	return id..":"..property
+	if id then -- only need to check id, property should also be non nil in this case
+		return id..":"..property
+	end
 end
 function private.IsMatchingKey(key, item)
 	itemlink = item[Const.LINK]
@@ -114,6 +116,7 @@ function private.GetMyPrice(link, items)
 	local uBid, uBuy
 	if not link then return end
 	local searchkey = private.GetKey(link)
+	if not searchkey then return end
 	local n = GetNumAuctionItems("owner")
 	if n and n > 0 then
 		for i = 1, n do
@@ -1356,4 +1359,4 @@ function private.CreateFrames()
 	frame:RegisterEvent("BAG_UPDATE")
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 5388 $")

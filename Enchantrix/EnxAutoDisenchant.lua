@@ -1,7 +1,7 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: EnxAutoDisenchant.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: EnxAutoDisenchant.lua 5401 2013-04-01 13:22:32Z brykrys $
 	URL: http://enchantrix.org/
 
 	Automatic disenchant scanner.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5381 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5401 $")
 
 local auto_de_session_ignore_list = {}
 local auto_de_frame
@@ -639,10 +639,10 @@ local function initUI()
 		auto_de_prompt.Lines[i] = auto_de_prompt:CreateFontString("AutoDisenchantPromptLine"..i, "HIGH")
 		if (i == 1) then
 			auto_de_prompt.Lines[i]:SetPoint("TOPLEFT", auto_de_prompt.Item, "TOPRIGHT", 5, 5)
-			auto_de_prompt.Lines[i]:SetFont("Fonts\\FRIZQT__.TTF",16)
+			auto_de_prompt.Lines[i]:SetFont(STANDARD_TEXT_FONT,16)
 		else
 			auto_de_prompt.Lines[i]:SetPoint("TOPLEFT", auto_de_prompt.Lines[i-1], "BOTTOMLEFT", 0, -5)
-			auto_de_prompt.Lines[i]:SetFont("Fonts\\FRIZQT__.TTF",13)
+			auto_de_prompt.Lines[i]:SetFont(STANDARD_TEXT_FONT,13)
 		end
 		auto_de_prompt.Lines[i]:SetWidth(350)
 		auto_de_prompt.Lines[i]:SetJustifyH("LEFT")

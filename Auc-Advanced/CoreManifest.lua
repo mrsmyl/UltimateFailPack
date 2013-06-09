@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.15.5383 (LikeableLyrebird)
-	Revision: $Id: CoreManifest.lua 5381 2012-11-27 19:42:13Z mentalpower $
+	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: CoreManifest.lua 5403 2013-04-03 16:50:32Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -55,7 +55,7 @@ if (tocVersion < 30000) then
 	msg.Text = msg:CreateFontString(nil, "HIGH")
 	msg.Text:SetPoint("TOPLEFT", msg, "TOPLEFT", 20, -20)
 	msg.Text:SetPoint("BOTTOMRIGHT", msg.Done, "TOPRIGHT", -10, 10)
-	msg.Text:SetFont("Fonts\\FRIZQT__.TTF",17)
+	msg.Text:SetFont(STANDARD_TEXT_FONT,17)
 	msg.Text:SetJustifyH("LEFT")
 	msg.Text:SetJustifyV("TOP")
 	msg.Text:SetShadowColor(0,0,0)
@@ -72,9 +72,9 @@ end
 AucAdvanced = {}
 local lib = AucAdvanced
 
-lib.Version="5.15.5383";
+lib.Version="5.17.5413";
 if (lib.Version == "<".."%version%>") then
-	lib.Version = "5.15.DEV";
+	lib.Version = "5.16.DEV";
 end
 local major, minor, release, revision = strsplit(".", lib.Version)
 lib.MajorVersion = major
@@ -125,4 +125,4 @@ function lib.ValidateInstall()
 	return true --NoOp for the moment
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.15/Auc-Advanced/CoreManifest.lua $", "$Rev: 5381 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreManifest.lua $", "$Rev: 5403 $")
