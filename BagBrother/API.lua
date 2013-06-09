@@ -43,12 +43,11 @@ function BagBrother:SaveEquip(i, count)
 end
 
 function BagBrother:ParseItem(link, count)
-	local ori = link
 	if link then
 		if link:find('0:0:0:0:0:%d+:%d+:%d+:0:0') then
 			link = link:match('|H%l+:(%d+)')
 		else
-			link = link:match('|H%l+:(.-)%|')
+			link = link:match('|H%l+:([%d:]+)')
 		end
 		
 		if count and count > 1 then

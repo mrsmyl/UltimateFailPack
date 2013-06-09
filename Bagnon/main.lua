@@ -4,7 +4,10 @@
 --]]
 
 local ADDON, Addon = ...
-_G[ADDON] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON, 'AceEvent-3.0', 'AceConsole-3.0')
+_G[ADDON] = Addon
+
+LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON, 'AceEvent-3.0', 'AceConsole-3.0')
+Addon.SendCallback = LibStub('CallbackHandler-1.0'):New(Addon).Fire
 Addon.frames = {}
 
 local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
@@ -16,11 +19,11 @@ BINDING_NAME_BAGNON_VAULT_TOGGLE = L.ToggleVault
 
 --[[ Startup ]]--
 
-function Addon:OnInitialize()
- 	self:AddSlashCommands()
+function Addon:OnEnable()
+	self:AddSlashCommands()
  	self:RegisterAutoDisplayEvents()
 	self:HookBagClickEvents()
- 	self:HookTooltips()
+	self:HookTooltips()
 
 	self:CreateFrameLoader(ADDON .. '_GuildBank', 'GuildBankFrame_LoadUI')
 	self:CreateFrameLoader(ADDON .. '_VoidStorage', 'VoidStorage_LoadUI')
@@ -77,64 +80,56 @@ end
 
 --[[ Frames ]]--
 
-function Addon:CreateFrame(frameID)
-  self.Frame:New(frameID)
-end
-
-function Addon:GetFrame(frameID)
-	for i, frame in pairs(self.frames) do
-		if frame:GetFrameID() == frameID then
-			return frame
-		end
-	end
-end
-
 function Addon:UpdateFrames()
 	for _,frame in pairs(self.frames) do
 		frame.itemFrame:UpdateEverything()
 	end
 end
 
-function Addon:ShowFrame(frameID)
-	if self:IsFrameEnabled(frameID) then
-		if not self:GetFrame(frameID) then
-			self:CreateFrame(frameID)
+function Addon:ToggleFrame(id)
+	if self:IsFrameShown(id) then
+		return self:HideFrame(id)
+	else
+		return self:ShowFrame(id)
+	end
+end
+
+function Addon:ShowFrame(id)
+	if self:IsFrameEnabled(id) then
+		if not self:GetFrame(id) then
+			self:CreateFrame(id)
 		end
 
-		self.FrameSettings:Get(frameID):Show()
+		self.FrameSettings:Get(id):Show()
 		return true
 	end
 end
 
-function Addon:HideFrame(frameID)
-	if self:IsFrameEnabled(frameID) then
-		self.FrameSettings:Get(frameID):Hide()
+function Addon:HideFrame(id)
+	if self:IsFrameEnabled(id) then
+		self.FrameSettings:Get(id):Hide()
 		return true
 	end
 end
 
-function Addon:ToggleFrame(frameID)
-	if self:IsFrameShown(frameID) then
-		return self:HideFrame(frameID)
-	else
-		return self:ShowFrame(frameID)
-	end
+function Addon:CreateFrame(id)
+ 	self.frames[id] = self[id:gsub('^.', id.upper) .. 'Frame']:New(id)
 end
 
-function Addon:IsFrameEnabled(frameID)
-	return self.Settings:IsFrameEnabled(frameID)
+function Addon:GetFrame(id)
+	return self.frames[id]
 end
 
-function Addon:IsFrameShown(frameID)
-	return self.FrameSettings:Get(frameID):IsShown()
+function Addon:IsFrameEnabled(id)
+	return self.Settings:IsFrameEnabled(id)
 end
 
-function Addon:FrameControlsBag(frameID, bagSlot)
-	return self.FrameSettings:Get(frameID):IsBagSlotShown(bagSlot) or (not self:IsBlizzardBagPassThroughEnabled())
+function Addon:IsFrameShown(id)
+	return self.FrameSettings:Get(id):IsShown()
 end
 
-function Addon:IsBlizzardBagPassThroughEnabled()
-	return self.Settings:IsBlizzardBagPassThroughEnabled()
+function Addon:FrameControlsBag(id, bag)
+	return self.FrameSettings:Get(id):IsBagSlotShown(bag) or (not self.Settings:IsBlizzardBagPassThroughEnabled())
 end
 
 
@@ -210,50 +205,22 @@ function Addon:HookBagClickEvents()
 		end
 	end
 
-	local function bag_checkIfInventoryShown(button)
+	local function checkIfInventoryShown(button)
 		if self:IsFrameEnabled('inventory') then
 			button:SetChecked(self:IsFrameShown('inventory'))
 		end
 	end
 
-	--handle checking/unchecking of the backpack buttons based on frame display
-	hooksecurefunc('BagSlotButton_UpdateChecked', bag_checkIfInventoryShown)
-	hooksecurefunc('BackpackButton_UpdateChecked', bag_checkIfInventoryShown)
-
-	self.Callbacks:Listen(self, 'FRAME_SHOW')
-	self.Callbacks:Listen(self, 'FRAME_HIDE')
-end
-
-
---[[ Frames Events ]]--
-
-function Addon:FRAME_SHOW(msg, frameID)
-	if frameID == 'inventory' and self:IsFrameEnabled('inventory') then
-		self:CheckBagButtons(true)
-	end
-end
-
-function Addon:FRAME_HIDE(msg, frameID)
-	if frameID == 'inventory' and self:IsFrameEnabled('inventory') then
-		self:CheckBagButtons(false)
-	end
-end
-
---check/uncheck the bag buttons
-function Addon:CheckBagButtons(checked)
-	_G['MainMenuBarBackpackButton']:SetChecked(checked)
-	_G["CharacterBag0Slot"]:SetChecked(checked)
-	_G["CharacterBag1Slot"]:SetChecked(checked)
-	_G["CharacterBag2Slot"]:SetChecked(checked)
-	_G["CharacterBag3Slot"]:SetChecked(checked)
+	hooksecurefunc('BagSlotButton_UpdateChecked', checkIfInventoryShown)
+	hooksecurefunc('BackpackButton_UpdateChecked', checkIfInventoryShown)
 end
 
 
 --[[ Automatic Display ]]--
 
 function Addon:RegisterAutoDisplayEvents()
-	self.BagEvents:Listen(self, 'BANK_OPENED')
-	self.BagEvents:Listen(self, 'BANK_CLOSED')
+	self.BagEvents.Listen(self, 'BANK_OPENED')
+	self.BagEvents.Listen(self, 'BANK_CLOSED')
 	self:RegisterEvent('MAIL_CLOSED')
 	self:RegisterEvent('SOCKET_INFO_UPDATE')
 	self:RegisterEvent('AUCTION_HOUSE_SHOW')

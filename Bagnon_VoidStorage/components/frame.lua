@@ -3,37 +3,32 @@
 		A specialized version of the bagnon frame for void storages
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local Frame = Bagnon:NewClass('VaultFrame', 'Frame', Bagnon.Frame)
+local Frame = Bagnon:NewClass('VoidstorageFrame', 'Frame', Bagnon.Frame)
+Frame.Title = LibStub('AceLocale-3.0'):GetLocale('Bagnon-VoidStorage').Title
+Frame.OpenSound = 'UI_EtherealWindow_Open'
+Frame.CloseSound = 'UI_EtherealWindow_Close'
 
 
 --[[ Events ]]--
 
 function Frame:OnShow()
-	PlaySound('UI_EtherealWindow_Open')
-
-	self:UpdateLook()
-	self:UpdateEvents()
+	Bagnon.Frame.OnShow(self)
+	
 	self:RegisterMessage('SHOW_TRANSFER_FRAME')
 	self:RegisterMessage('SHOW_ITEM_FRAME')
 	self:SHOW_ITEM_FRAME()
 end
 
 function Frame:OnHide()
-	PlaySound('UI_EtherealWindow_Close')
+	Bagnon.Frame.OnHide(self)
+
 	StaticPopup_Hide('BAGNON_CANNOT_PURCHASE_VAULT')
 	StaticPopup_Hide('BAGNON_COMFIRM_TRANSFER')
 	StaticPopup_Hide('BAGNON_VAULT_PURCHASE')
 	StaticPopup_Hide('VOID_DEPOSIT_CONFIRM')
 	CloseVoidStorageFrame()
 
-	self:UpdateEvents()
 	self:SendMessage('VOID_STORAGE_CLOSED')
-
-	--fix issue where a frame is hidden, but not via bagnon controlled methods (ie, close on escape)
-	if self:IsFrameShown() then
-		self:HideFrame()
-	end
 end
 
 

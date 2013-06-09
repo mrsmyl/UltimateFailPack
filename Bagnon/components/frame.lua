@@ -1,17 +1,19 @@
 --[[
 	frame.lua
-		A Bagnon frame widget
+		The base frame widget
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
-local Frame = Bagnon:NewClass('Frame', 'Frame')
+local ADDON, Addon = ...
+local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+local Frame = Addon:NewClass('Frame', 'Frame')
+Frame.OpenSound = 'igBackPackOpen'
+Frame.CloseSound = 'igBackPackClose'
 
 
 --[[ Constructor ]]--
 
-function Frame:New(frameID, title)
-	local f = self:Bind(CreateFrame('Frame', 'BagnonFrame' .. frameID, UIParent))
+function Frame:New(id)
+	local f = self:Bind(CreateFrame('Frame', 'BagnonFrame' .. id, UIParent))
 	f:SetClampedToScreen(true)
 	f:SetMovable(true)
 	f:EnableMouse(true)
@@ -25,15 +27,13 @@ function Frame:New(frameID, title)
 	  insets = {left = 4, right = 4, top = 4, bottom = 4}
 	}
 
+	f.frameID = id
 	f:SetScript('OnShow', f.OnShow)
 	f:SetScript('OnHide', f.OnHide)
-	f.frameID = frameID
-	f.title = title
 	f:Rescale()
 	f:UpdateEverything()
 
 	tinsert(UISpecialFrames, f:GetName())
-	tinsert(Bagnon.frames, f)
 	return f
 end
 
@@ -156,33 +156,19 @@ end
 ]]--
 
 function Frame:OnShow()
-	PlaySound('igBackPackOpen')
-
+	PlaySound(self.OpenSound)
 	self:UpdateEvents()
 	self:UpdateLook()
 end
 
 function Frame:OnHide()
-	PlaySound('igBackPackClose')
-
-	if self:IsBankFrame() then
-		self:CloseBankFrame()
-	end
-
+	PlaySound(self.CloseSound)
 	self:UpdateEvents()
 
-	--fix issue where a frame is hidden, but not via bagnon controlled methods (ie, close on escape)
+	-- fow when a frame is hidden not via bagnon
 	if self:IsFrameShown() then
 		self:HideFrame()
 	end
-end
-
-function Frame:CloseBankFrame()
-  CloseBankFrame() -- Will it bug out?
-end
-
-function Frame:IsBankFrame()
-	return self:GetFrameID() == 'bank'
 end
 
 
@@ -270,38 +256,33 @@ end
 	Frame Position
 --]]
 
---position
 function Frame:SavePosition()
-	local point, x, y = self:GetRelativePosition()
-	if point then
-		self:GetSettings():SetPosition(point, x, y)
-	end
-end
-
---get a frame's position relative to its parent
-function Frame:GetRelativePosition()
 	local x, y = self:GetCenter()
-	local scale = self:GetScale()
-	
-	local h = UIParent:GetHeight() / scale
-	local w = UIParent:GetWidth() / scale
-	
-	local dx, dy
-	local hHalf = (x > w/2) and 'RIGHT' or 'LEFT'
-	if hHalf == 'RIGHT' then
-		dx = self:GetRight() - w
-	else
-		dx = self:GetLeft()
-	end
 
-	local vHalf = (y > h/2) and 'TOP' or 'BOTTOM'
-	if vHalf == 'TOP' then
-		dy = self:GetTop() - h
-	else
-		dy = self:GetBottom()
-	end
+	if x and y then
+		local scale = self:GetScale()
+		local h = UIParent:GetHeight() / scale
+		local w = UIParent:GetWidth() / scale
+		local xPoint, yPoint
 
-	return vHalf..hHalf, dx, dy
+		if x > w/2 then
+			x = self:GetRight() - w
+			xPoint = 'RIGHT'
+		else
+			x = self:GetLeft()
+			xPoint = 'LEFT'
+		end
+
+		if x > w/2 then
+			y = self:GetTop() - h
+			yPoint = 'TOP'
+		else
+			y = self:GetBottom()
+			yPoint = 'BOTTOM'
+		end
+
+		self:GetSettings():SetPosition(yPoint..xPoint, x, y)
+	end
 end
 
 function Frame:UpdatePosition()
@@ -655,7 +636,7 @@ end
 --[[ title frame ]]--
 
 function Frame:CreateTitleFrame()
-	local f = Bagnon.TitleFrame:New(self:GetFrameID(), self.title, self)
+	local f = Bagnon.TitleFrame:New(self:GetFrameID(), self.Title, self)
 	self.titleFrame = f
 	return f
 end
