@@ -1,0 +1,55 @@
+------------------------------------------------------------------------
+r114 | myrroddin | 2013-05-27 01:51:09 +0000 (Mon, 27 May 2013) | 1 line
+Changed paths:
+   A /tags/0.72 (from /trunk:113)
+
+Tagging as 0.72
+------------------------------------------------------------------------
+r113 | myrroddin | 2013-05-27 01:40:54 +0000 (Mon, 27 May 2013) | 4 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/AchShield.tga
+   M /trunk/AchieveID.lua
+   M /trunk/AchieveTip.lua
+   M /trunk/Bindings.xml
+   M /trunk/GameTip.lua
+   M /trunk/Options.lua
+   M /trunk/Overachiever.lua
+   M /trunk/Overachiever.toc
+   M /trunk/Overachiever_Tabs/HelpIcon.tga
+   M /trunk/Overachiever_Tabs/HelpIconHighlight.tga
+   M /trunk/Overachiever_Tabs/Overachiever_Tabs.toc
+   M /trunk/Overachiever_Tabs/ParchmentDesaturateBlue.tga
+   M /trunk/Overachiever_Tabs/ParchmentDesaturateGreen.tga
+   M /trunk/Overachiever_Tabs/ParchmentDesaturateRed.tga
+   M /trunk/Overachiever_Tabs/Search.lua
+   M /trunk/Overachiever_Tabs/SearchWatermark.tga
+   M /trunk/Overachiever_Tabs/Suggestions.lua
+   M /trunk/Overachiever_Tabs/SuggestionsWatermark.tga
+   M /trunk/Overachiever_Tabs/TabHighlight.tga
+   M /trunk/Overachiever_Tabs/Watch.lua
+   M /trunk/Overachiever_Tabs/WatchWatermark.tga
+   M /trunk/Overachiever_Tabs/build.lua
+   M /trunk/Overachiever_Tabs/localization.lua
+   M /trunk/Overachiever_Trade/AchShieldGlow.tga
+   M /trunk/Overachiever_Trade/Overachiever_Trade.toc
+   M /trunk/Overachiever_Trade/TradeSkills.lua
+   M /trunk/Overachiever_Trade/localization.lua
+   M /trunk/libs/TjBagWatch.lua
+   M /trunk/libs/TjDragIt.lua
+   M /trunk/libs/TjOptions.lua
+   M /trunk/libs/TjOptions.txt
+   M /trunk/libs/TjSharedMediaDropDown/CallbackHandler-1.0.lua
+   M /trunk/libs/TjSharedMediaDropDown/LibSharedMedia-3.0.lua
+   M /trunk/libs/TjSharedMediaDropDown/LibStub.lua
+   M /trunk/libs/TjSharedMediaDropDown/TjDropDownMenu.lua
+   M /trunk/libs/TjSharedMediaDropDown/TjSharedMediaDropDown.lua
+   M /trunk/libs/TjSharedMediaDropDown/lib.xml
+   M /trunk/localization.lua
+   M /trunk/readme.txt
+
+- ToC bump for 5.3
+- Fix GameTip.lua errors from ticket #222
+- Use repository keywords in ToC (http://wow.curseforge.com/wiki/repositories/repository-keyword-substitutions/)
+- Localization updates
+------------------------------------------------------------------------

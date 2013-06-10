@@ -8,7 +8,7 @@
 ## Dependencies: Overachiever
 ## SavedVariables: Overachiever_Tabs_Settings
 ## X-Child-Of: Overachiever
-## X-Curse-Packaged-Version: v0.71
+## X-Curse-Packaged-Version: 0.72
 ## X-Curse-Project-Name: Overachiever - achievement tools and tweaks
 ## X-Curse-Project-ID: overachiever
 ## X-Curse-Repository-ID: wow/overachiever/mainline
