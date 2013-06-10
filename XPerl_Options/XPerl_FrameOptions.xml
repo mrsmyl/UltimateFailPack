@@ -10816,7 +10816,31 @@
 										self.configIndex = "sortByClass"
 										self.configClick = function() XPerl_Raid_ChangeAttributes() XPerl_Raid_OptionActions() end
 										XPerl_Options_RegisterProtected(self)
+										self.Validate = function()
+											XPerl_Options_EnableCheck(_G[self:GetParent():GetName().."_sortByRole"], not XPerlDB.raid.sortByClass)
+										end
 									</OnLoad>
+								</Scripts>
+							</CheckButton>
+							
+							<CheckButton name="$parent_sortByRole" inherits="XPerlCheckButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPRIGHT" relativeTo="$parent_ByClass" relativePoint="BOTTOMLEFT">
+										<Offset><AbsDimension x="200" y="30"/></Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										XPerl_OptionsSetMyText(self, "XPERL_CONF_RAID_SORTBYROLE", true)
+										self.configBase = "XPerlDB.raid"
+										self.configIndex = "sortByRole"
+										self.configClick = function() XPerl_Raid_ChangeAttributes() XPerl_Raid_OptionActions() end
+										XPerl_Options_RegisterProtected(self)
+										self.Validate = function()
+											XPerl_Options_EnableCheck(_G[self:GetParent():GetName().."_ByClass"], not XPerlDB.raid.sortByRole)
+										end
+									</OnLoad>
+									
 								</Scripts>
 							</CheckButton>
 

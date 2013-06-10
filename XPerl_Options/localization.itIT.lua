@@ -234,7 +234,7 @@ XPERL_CONF_SHOW_TUTORIAL                = SHOW_TUTORIALS
 XPERL_CONF_SHOW_TUTORIAL_DESC            = "Visualizza i suggerimenti di "..XPerl_ShortProductName
 
 XPERL_CONF_HEALER_MODE                    = "Modalità curatore"
-XPERL_CONF_HEALER_MODE_DESC                = "Visualizza la vita mancante al posto di quella che hai"
+XPERL_CONF_HEALER_MODE_DESC                = "Visualizza la vita mancante al posto di quella restante"
 XPERL_CONF_HEALERMODE_DEFICIT            = "Mancante"
 XPERL_CONF_HEALERMODE_DEFICIT_DESC         = "Visualizza solo la vita mancante"
 XPERL_CONF_HEALERMODE_DEFICITMAX         = "Mancante/Max"
@@ -738,6 +738,8 @@ XPERL_CONF_RAID_VALUES                    = "Valori vita"
 XPERL_CONF_RAID_VALUES_DESC                = "Visualizza i valori della vita e del mana dei membri dell'incursione"
 XPERL_CONF_RAID_SORTBYCLASS             = "Organizza per Classe"
 XPERL_CONF_RAID_SORTBYCLASS_DESC        = "Organizza le finestre incursione per classe"
+XPERL_CONF_RAID_SORTBYROLE              = "Organizza per Ruolo"
+XPERL_CONF_RAID_SORTBYROLE_DESC         = "Organizza le finestre incursione per ruolo"
 XPERL_CONF_RAID_ALPHABETICAL            = "Alfabeticamente"
 XPERL_CONF_RAID_ALPHABETICAL_DESC        = "Organizza i membri alfabeticamente"
 XPERL_CONF_RAID_HIGHLIGHTS                = "Evidenzia stato"
@@ -784,9 +786,6 @@ XPERL_CONF_RAID_SELECTALL                = ALL
 XPERL_CONF_RAID_SELECTALL_DESC            = "Seleziona tutto"
 XPERL_CONF_RAID_SELECTNONE                = NONE
 XPERL_CONF_RAID_SELECTNONE_DESC            = "Deseleziona tutto"
-
-XPERL_CONF_RAID_HEALER_MODE                = XPERL_CONF_PLAYER_HEALER_MODE
-XPERL_CONF_RAID_HEALER_MODE_DESC        = XPERL_CONF_PLAYER_HEALER_MODE_DESC
 
 XPERL_CONF_ALL_PORTRAIT = "Immagini"
 XPERL_CONF_ALL_PORTRAIT_DESC = "Abilita tutte le immagini"
@@ -927,8 +926,6 @@ XPERL_CONF_RAIDHELP_UNITWIDTH            = "Larghezza unità"
 XPERL_CONF_RAIDHELP_UNITWIDTH_DESC        = "Modifica la larghezza base dell'unità"
 XPERL_CONF_RAIDHELP_MAXTANKS            = "Numero di Guardiani"
 XPERL_CONF_RAIDHELP_MAXTANKS_DESC        = "Modifica il numero massimo di Guardiani principali da visualizzare"
-XPERL_CONF_RAIDHELP_HEALER_MODE            = "Modalità curatore"
-XPERL_CONF_RAIDHELP_HEALER_MODE_DESC    = "Visualizza la vita mancante al posto della vita restante"
 XPERL_CONF_RAIDHELP_HEALERMODE_DEFICIT    = "Mancante"
 XPERL_CONF_RAIDHELP_HEALERMODE_DEFICIT_DESC = "Visualizza solo la vita mancante"
 XPERL_CONF_RAIDHELP_HEALERMODE_DEFICITMAX = "Mancante/Max"

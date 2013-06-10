@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 841 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 848 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -2216,9 +2216,22 @@ function XPerl_Raid_ChangeAttributes()
 
 		-- Hide this when we change attributes, so the whole re-calc is only done once, instead of for every attribute change
 		groupHeader:Hide()
-
-		groupHeader:SetAttribute("strictFiltering", not rconf.sortByClass)
-		groupHeader:SetAttribute("groupFilter", GroupFilter(i))
+		
+		if rconf.sortByRole then
+			groupHeader:SetAttribute("groupBy", "ASSIGNEDROLE")
+			groupHeader:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+			groupHeader:SetAttribute("startingIndex", (i-1)*5+1)
+			groupHeader:SetAttribute("unitsPerColumn", 5)
+			groupHeader:SetAttribute("strictFiltering", nil)
+			groupHeader:SetAttribute("groupFilter", nil)
+		else
+			groupHeader:SetAttribute("strictFiltering", not rconf.sortByClass)
+			groupHeader:SetAttribute("groupFilter", GroupFilter(i))
+			groupHeader:SetAttribute("groupBy", nil)
+			groupHeader:SetAttribute("groupingOrder", nil)
+			groupHeader:SetAttribute("startingIndex", 1)
+			groupHeader:SetAttribute("unitsPerColumn", nil)
+		end
 		SetMainHeaderAttributes(groupHeader)
 	end
 
@@ -2231,19 +2244,6 @@ end
 function XPerl_Raid_Set_Bits(self)
 	if (raidLoaded) then
 		XPerl_ProtectedCall(XPerl_Raid_HideShowRaid)
-	end
-
-	if rconf then
-		if (not rconf.hideframemanager) then
-			rconf.hideframemanager = { --messy fix for missing config
-				enable = 0,
-			}
-		end
-		if (not rconf.hideframecontainer) then
-			rconf.hideframecontainer = { --messy fix for missing config
-				enable = 1,
-			}
-		end
 	end
 
 	SkipHighlightUpdate = nil

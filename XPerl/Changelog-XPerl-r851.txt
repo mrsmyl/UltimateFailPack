@@ -1,0 +1,59 @@
+------------------------------------------------------------------------
+r851 | asixandur | 2013-05-26 04:22:18 +0000 (Sun, 26 May 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/localization.lua
+
+Tag as 3.7.1 and reset sortbyrole option
+------------------------------------------------------------------------
+r850 | asixandur | 2013-05-22 17:09:59 +0000 (Wed, 22 May 2013) | 2 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.toc
+   M /trunk/XPerl_CustomHighlight/XPerl_CustomHighlight.toc
+   M /trunk/XPerl_Options/XPerl_Options.toc
+   M /trunk/XPerl_Party/XPerl_Party.toc
+   M /trunk/XPerl_PartyPet/XPerl_PartyPet.toc
+   M /trunk/XPerl_Player/XPerl_Player.toc
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.toc
+   M /trunk/XPerl_PlayerPet/XPerl_PlayerPet.toc
+   M /trunk/XPerl_RaidAdmin/XPerl_RaidAdmin.toc
+   M /trunk/XPerl_RaidFrames/XPerl_RaidFrames.toc
+   M /trunk/XPerl_RaidHelper/XPerl_RaidHelper.toc
+   M /trunk/XPerl_RaidMonitor/XPerl_RaidMonitor.toc
+   M /trunk/XPerl_RaidPets/XPerl_RaidPets.toc
+   M /trunk/XPerl_Target/XPerl_Target.toc
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.toc
+
+Toc Bump for patch 5.3
+Version has already been incremented
+------------------------------------------------------------------------
+r849 | asixandur | 2013-05-22 13:22:53 +0000 (Wed, 22 May 2013) | 2 lines
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Fixed DK lua error. Didn't have time to test but it should work.
+If it works, bump toc and push release
+------------------------------------------------------------------------
+r848 | asixandur | 2013-05-19 13:12:09 +0000 (Sun, 19 May 2013) | 4 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Options/localization.itIT.lua
+   M /trunk/XPerl_Options/localization.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/localization.lua
+
+New sort by role option in the raid options; you can now sort players by role in raid (tanks, healers and dps).
+Little cleanup
+Already marked as 3.7.0 to make sure settings updating works.
+If everything is fine just mark as release on wowace and set changelog
+------------------------------------------------------------------------
+r847 | asixandur | 2013-04-11 11:41:24 +0000 (Thu, 11 Apr 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Override HealBot_Options_EnablePlayerFrame if found to avoid player frame showing using healbot
+------------------------------------------------------------------------
