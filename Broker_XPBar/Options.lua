@@ -3,16 +3,24 @@ local _G = _G
 -- addon name and namespace
 local ADDON, NS = ...
 
-local BrokerXPBar    = _G.BrokerXPBar
+local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON)
+
+-- the Options module
+local Options = Addon:NewModule("Options")
+
+-- internal event handling
+Options.callbacks = LibStub("CallbackHandler-1.0"):New(Options)
 
 -- setup libs
-local AceGUI         = LibStub("AceGUI-3.0")
-local AceConfigReg   = LibStub:GetLibrary("AceConfigRegistry-3.0")
+local AceGUI            = LibStub("AceGUI-3.0")
+local AceConfig 		= LibStub:GetLibrary("AceConfig-3.0")
+local AceConfigReg 		= LibStub:GetLibrary("AceConfigRegistry-3.0")
+local AceConfigDialog	= LibStub:GetLibrary("AceConfigDialog-3.0")
 
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 -- get translations
-local L              = LibStub:GetLibrary("AceLocale-3.0"):GetLocale( ADDON )
+local L              = LibStub:GetLibrary("AceLocale-3.0"):GetLocale(ADDON)
 
 -- local functions
 local pairs   = pairs
@@ -24,15 +32,70 @@ local SetWatchedFactionIndex = _G.SetWatchedFactionIndex
 
 local _
 
-local function clear_table(tab)
-	if tab and type(tab) == "table" then
-		for k in pairs(tab) do
-			tab[k] = nil
-		end
-	end
-end
-
 -- options
+local defaults = {
+	profile = {
+		ShowText           = "XP",
+		ShowXP             = true,
+		ShowRep            = false,
+		Shadow             = true,
+		Thickness          = 2,
+		Spark              = 1,
+		Inverse            = false,
+		ExternalTexture    = false,
+		Texture            = nil,
+		ToGo               = true,
+		ShowValues         = true,
+		ShowPercentage     = true,
+		ShowFactionName    = true,
+		ShowRestedValue    = false,
+		ShowRestedPerc     = false,
+		ColoredText        = true,
+		Separators         = false,
+		Abbreviations      = false,
+		TTAbbreviations    = false,
+		DecimalPlaces      = 2,
+		ShowBlizzBars      = false,
+		HideHint           = false,
+		Location           = "Bottom",
+		xOffset            = 0,
+		yOffset            = 0,
+		Inside             = false,
+		Strata             = "HIGH",
+		Jostle             = false,
+		BlizzRep           = true,
+        Minimap	           = false,
+        MaxHideXPText      = false,
+        MaxHideXPBar       = false,
+        MaxHideRepText     = false,
+        MaxHideRepBar      = false,
+        AutoTrackOnGain    = false,
+        AutoTrackOnLoss    = false,
+		XP                 = {r = 0.0, g = 0.4, b = 0.9, a = 1},
+		Rest               = {r = 1.0, g = 0.2, b = 1.0, a = 1},
+		None               = {r = 0.0, g = 0.0, b = 0.0, a = 1},
+		Rep                = {r = 1.0, g = 0.2, b = 1.0, a = 1},
+		NoRep              = {r = 0.0, g = 0.0, b = 0.0, a = 1},
+		Weight             = 0.8,
+		TimeFrame          = 30,
+		TTHideXPDetails    = false,
+		TTHideRepDetails   = false,
+		Ticks              = 0,
+		ShowBarText        = false,
+		MouseOver          = false,
+		Font               = Addon.FONT_NAME_DEFAULT,
+		FontSize           = 6,
+		BarToGo            = false,
+		BarShowValues      = true,
+		BarShowPercentage  = false,
+		BarShowFactionName = false,
+		BarShowRestedValue = false,
+		BarShowRestedPerc  = false,
+		BarAbbreviations   = false,
+	}
+}
+
+
 local strata = {
 	opt2val = 
 	{
@@ -130,10 +193,10 @@ function mousehook:OnUpdate(elap)
     if IsMouseButtonDown("LeftButton") then
         self:Stop()
         if not type(frame.GetName) == 'function' or not frame:GetName() then
-            BrokerXPBar:Output(L["This frame has no global name and cannot be used"])
+            Addon:Output(L["This frame has no global name and cannot be used"])
         else
-        	BrokerXPBar:SetSetting("Frame", name)
-        	AceConfigReg:NotifyChange(BrokerXPBar.FULLNAME)
+        	Options:SetSetting("Frame", name)
+        	AceConfigReg:NotifyChange(Addon.FULLNAME)
         end
     end
 end
@@ -161,66 +224,45 @@ do
 	end
 end
 
--- handler called on update of setting
-local updateHandler = {}
+-- module handling
+function Options:OnInitialize()
+	-- options
+	self.options = {}
+	
+	-- options
+	self.db = LibStub:GetLibrary("AceDB-3.0"):New(Addon.MODNAME.."_DB", defaults, "Default")
+		
+	self:Setup()
+		
+	-- profile support
+	self.options.args.profile = LibStub:GetLibrary("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileChanged")
+	self.db.RegisterCallback(self, "OnProfileCopied",  "OnProfileChanged")
+	self.db.RegisterCallback(self, "OnProfileReset",   "OnProfileChanged")
 
-function BrokerXPBar:SetupOptions()
+	AceConfigReg:RegisterOptionsTable(Addon.FULLNAME, self.options)
+	AceConfigDialog:AddToBlizOptions(Addon.FULLNAME)
+end
+
+function Options:OnEnable()
+	-- empty
+end
+
+function Options:OnDisable()
+	-- empty
+end
+
+function Options:OnProfileChanged(event, database, newProfileKey)
+	self.db.profile = database.profile
+	
+	Addon:OnOptionsReloaded()
+end
+
+function Options:Setup()
 	if LibSharedMedia then
-		LibSharedMedia:Register("font", self.FONT_NAME_DEFAULT, self.FONT_DEFAULT)
+		LibSharedMedia:Register("font", Addon.FONT_NAME_DEFAULT, Addon.FONT_DEFAULT)
 	end
-	
-	updateHandler = {
-		Spark           = BrokerXPBar.UpdateBarSetting,
-		Thickness       = BrokerXPBar.UpdateBarSetting,
-		ShowXP          = BrokerXPBar.UpdateXPBarSetting,
-		ShowRep         = BrokerXPBar.UpdateRepBarSetting,
-		Shadow          = BrokerXPBar.UpdateBarSetting,
-		Inverse         = BrokerXPBar.UpdateBarSetting,
-		ExternalTexture = BrokerXPBar.UpdateTextureSetting,
-		Texture         = BrokerXPBar.UpdateTextureSetting,
-		Ticks           = BrokerXPBar.UpdateBarSetting,
-		ShowBarText     = BrokerXPBar.UpdateBarTextSetting,
-		BarToGo            = BrokerXPBar.UpdateBarTextSetting,
-		BarShowFactionName = BrokerXPBar.UpdateBarTextSetting,
-		BarShowValues      = BrokerXPBar.UpdateBarTextSetting,
-		BarShowPercentage  = BrokerXPBar.UpdateBarTextSetting,
-		BarShowRestedValue = BrokerXPBar.UpdateBarTextSetting,
-		BarShowRestedPerc  = BrokerXPBar.UpdateBarTextSetting,
-		BarAbbreviations   = BrokerXPBar.UpdateBarTextSetting,
-		MouseOver       = BrokerXPBar.UpdateBarSetting,
-		Font            = BrokerXPBar.UpdateBarSetting,
-		FontSize        = BrokerXPBar.UpdateBarSetting,
-		Frame           = BrokerXPBar.UpdateBarSetting,
-		Location        = BrokerXPBar.UpdateBarSetting,
-		xOffset         = BrokerXPBar.UpdateBarSetting,
-		yOffset         = BrokerXPBar.UpdateBarSetting,
-		Strata          = BrokerXPBar.UpdateBarSetting,
-		Inside          = BrokerXPBar.UpdateBarSetting,
-		Jostle          = BrokerXPBar.UpdateBarSetting,
-		BlizzRep        = BrokerXPBar.UpdateRepColorSetting,
-		ShowText        = BrokerXPBar.UpdateShowTextSetting,
-		ToGo            = BrokerXPBar.UpdateLabelSetting,
-		ShowFactionName = BrokerXPBar.UpdateLabelSetting,
-		ShowValues      = BrokerXPBar.UpdateLabelSetting,
-		ShowPercentage  = BrokerXPBar.UpdateLabelSetting,
-		ShowRestedValue = BrokerXPBar.UpdateLabelSetting,
-		ShowRestedPerc  = BrokerXPBar.UpdateLabelSetting,
-		ColoredText     = BrokerXPBar.UpdateLabelSetting,
-		Separators      = BrokerXPBar.UpdateLabelSetting,
-		Abbreviations   = BrokerXPBar.UpdateLabelSetting,
-		DecimalPlaces   = BrokerXPBar.UpdateLabelSetting,
-		AutoTrackOnGain = BrokerXPBar.UpdateAutoTrackSetting,
-		AutoTrackOnLoss = BrokerXPBar.UpdateAutoTrackSetting,
-		TimeFrame       = BrokerXPBar.UpdateHistorySetting,
-		Weight          = BrokerXPBar.UpdateHistorySetting,
-		MaxHideXPText   = BrokerXPBar.UpdateLabelSetting,
-		MaxHideXPBar    = BrokerXPBar.UpdateXPBarSetting,
-		MaxHideRepText  = BrokerXPBar.UpdateLabelSetting,
-		MaxHideRepBar   = BrokerXPBar.UpdateRepBarSetting,
-		ShowBlizzBars   = BrokerXPBar.UpdateBlizzardBarsSetting,
-		Minimap         = BrokerXPBar.UpdateMinimapSetting,
-	}
-	
+		
 	self.options = {
 		type = 'group',
 		args = {
@@ -921,12 +963,12 @@ function BrokerXPBar:SetupOptions()
 				name = L["Faction"],
 				desc = L["Select Faction"],
 				get = function()
-					return lookupIndexes[self:GetFaction()] or 1
+					return lookupIndexes[Addon:GetFaction()] or 1
 				end,
 				set = function(info, key)
-					self:SetFaction(lookupFactions[key] or 0)
+					Addon:SetFaction(lookupFactions[key] or 0)
 				end,
-				handler = BrokerXPBar,
+				handler = self,
 				values = "QueryFactions", 
 				order = 1,
 			},
@@ -965,21 +1007,25 @@ function BrokerXPBar:SetupOptions()
 
 end
 
+function Options:Update()
+	AceConfigReg:NotifyChange(Addon.FULLNAME)
+end
+
 -- faction helper
-function BrokerXPBar:QueryFactions()
+function Options:QueryFactions()
 	local factionTable = {}
 	local sortingTable = {}
 
 	-- reset lookup table
-	clear_table(lookupFactions)
-	clear_table(lookupIndexes)
-	clear_table(lookupNames)
+	NS:ClearTable(lookupFactions)
+	NS:ClearTable(lookupIndexes)
+	NS:ClearTable(lookupNames)
 	
 	for factionIndex = 1, GetNumFactions() do
 		local name, _, standing, _, _ , _ ,_ , _, isHeader, _, hasRep, _, _, _, friendID = NS:GetFactionInfo(factionIndex)
 		
 		if not isHeader or hasRep then
-			local r, g, b = self:GetBlizzardReputationColor(standing, friendID)
+			local r, g, b = Addon:GetBlizzardReputationColor(standing, friendID)
 			
 			tinsert(sortingTable, {factionIndex, name, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..name.."|r"})
 			lookupNames[name] = factionIndex
@@ -999,7 +1045,7 @@ function BrokerXPBar:QueryFactions()
 	return factionTable
 end
 
-function BrokerXPBar:GetFactionByName(name)
+function Options:GetFactionByName(name)
 	if not lookupNames[name] then
 		self:QueryFactions()
 	end
@@ -1007,88 +1053,12 @@ function BrokerXPBar:GetFactionByName(name)
 	return lookupNames[name]
 end
 
--- handling of updated settings
-function BrokerXPBar:UpdateSetting(option)
-	if updateHandler[option] then
-		updateHandler[option](self, option)
-	end
-end
-
-function BrokerXPBar:UpdateBarSetting(option)
-	self.Bar:SetSetting(option, self:GetSetting(option))
-end
-
-function BrokerXPBar:UpdateXPBarSetting()
-	self.Bar:SetSetting("ShowXP", self:IsBarRequired("XP"))
-	
-	self:UpdateBar()
-end
-
-function BrokerXPBar:UpdateRepBarSetting()
-	self.Bar:SetSetting("ShowRep", self:IsBarRequired("Rep"))
-
-	self:UpdateBar()
-end
-
-function BrokerXPBar:UpdateTextureSetting()
-	self.Bar:SetSetting("Texture", self:GetSetting("ExternalTexture") and self:GetSetting("Texture") or nil)
-end
-
-function BrokerXPBar:UpdateBarTextSetting()
-	self:UpdateBar()
-end
-
-function BrokerXPBar:UpdateRepColorSetting()
-	local r, g, b, a = self:GetColor("Rep")
-
-	if self:GetSetting("BlizzRep") then
-		r, g, b, a = self:GetBlizzardReputationColor()
-	end
-
-	self.Bar:SetColor("Rep", r, g, b, a)
-end
-
-function BrokerXPBar:UpdateMinimapSetting()
-	self:ShowMinimapButton(self:GetSetting("Minimap"))
-end
-
-function BrokerXPBar:UpdateLabelSetting(option)
-	self:UpdateLabel()
-end
-
-function BrokerXPBar:UpdateShowTextSetting()
-	self:RegisterTTL()
-	
-	self:UpdateLabel()
-end
-
-function BrokerXPBar:UpdateHistorySetting(option)
-	if option == "TimeFrame" then
-		self.History:SetTimeFrame(self:GetSetting(option) * 60)
-		self.ReputationHistory:SetTimeFrame(self:GetSetting(option) * 60)
-	elseif option == "Weight" then
-		self.History:SetWeight(self:GetSetting(option))
-		self.ReputationHistory:SetWeight(self:GetSetting(option))
-	end
-
-	self.History:Process()
-	self.ReputationHistory:Process()
-end
-
-function BrokerXPBar:UpdateAutoTrackSetting(option)
-	self:RegisterAutoTrack()
-end
-
-function BrokerXPBar:UpdateBlizzardBarsSetting(option)
-	self:ShowBlizzardBars(self:GetSetting("ShowBlizzBars")) 
-end
-
 -- option getter / setter
-function BrokerXPBar:GetSetting(option)
+function Options:GetSetting(option)
 	return self.db.profile[option]
 end
 
-function BrokerXPBar:SetSetting(option, value)
+function Options:SetSetting(option, value)
 	local current = self:GetSetting(option)
 
 	if current == value then
@@ -1097,55 +1067,42 @@ function BrokerXPBar:SetSetting(option, value)
 	
 	self.db.profile[option] = value
 
-	self:UpdateSetting(option)
+	-- fire event when setting changed
+	self.callbacks:Fire(ADDON .. "_SETTING_CHANGED", option, value, current)
 end
 
-function BrokerXPBar:ToggleSetting(option)
+function Options:ToggleSetting(option)
 	self:SetSetting(option, not self:GetSetting(option) and true or false)
 end
 
-function BrokerXPBar:GetFaction()
-	return self.faction
+function Options:ToggleSettingTrueNil(option)
+	self:SetSetting(option, not self:GetSetting(option) and true or nil)
 end
 
-function BrokerXPBar:SetFaction(index)
-	if not index or self.faction == index then
-		return
-	end
-	
-	self.faction  = index
-	self.atMaxRep = false
-	
-	SetWatchedFactionIndex(index)
-	
-	if self.faction == 0 then
-		self.watchedStanding = 0
-	end
-
-	AceConfigReg:NotifyChange(self.FULLNAME)
-	
-	self.Bar:SetSetting("ShowRep", self:IsBarRequired("Rep"))
-end
-
-function BrokerXPBar:GetColor(id)
+function Options:GetColor(id)
 	local color = self.db.profile[id] or {r = 0, g = 0, b = 0, a = 0}
 
 	return color.r, color.g, color.b, color.a
 end
 
-function BrokerXPBar:SetColor(id, r, g, b, a)
+function Options:SetColor(id, r, g, b, a)
 	if not self.db.profile[id] then
 		return
 	end
 
+	local current = {r = self.db.profile[id].r, g = self.db.profile[id].g, b = self.db.profile[id].b, a = self.db.profile[id].a}
+	local value   = {r = r, g = g, b = b, a = a}
+	
 	self.db.profile[id].r = r
 	self.db.profile[id].g = g
 	self.db.profile[id].b = b
 	self.db.profile[id].a = a
 	
-	if id == "Rep" and self:GetSetting("BlizzRep") then
-		return
-	end
-	
-	self.Bar:SetColor(id, r, g, b, a)
+	-- fire event when setting changed
+	self.callbacks:Fire(ADDON .. "_SETTING_CHANGED", id, value, current)
+end
+
+-- test
+function Options:Debug(msg)
+	Addon:Debug("(Options) " .. msg)
 end

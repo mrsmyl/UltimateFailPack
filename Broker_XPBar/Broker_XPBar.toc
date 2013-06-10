@@ -1,7 +1,7 @@
-## Interface: 50001
+## Interface: 50300
 ## Title: Broker: |cffffffffXP|rBar
 ## Notes: Lightweight XP Bar for Broker Bars
-## Version: 1.6 r038
+## Version: 1.7 r041
 ## Author: tritium
 ## X-Credits: Wobin (For the original Fubar - XPFu)
 ## X-Category: Interface Enhancements
@@ -16,9 +16,12 @@ embeds.xml
 
 Locales\locales.xml
 
+Utilities.lua
 Broker_XPBar.lua
 Options.lua
 Tooltip.lua
 History.lua
 ReputationHistory.lua
 Bar.lua
+MinimapButton.lua
+DataBroker.lua

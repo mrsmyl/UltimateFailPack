@@ -35,6 +35,27 @@ L["per Tick"] = "(마다)"
 L["Ticks"] = "틱"
 L["Set number of ticks shown on the bar."] = "바에 표시할 틱의 갯수를 선택합니다."
 
+L["Bar Text"] = "바 글자"
+L["Display settings for bar text."] = "바 글자에 관한 설정입니다."
+
+L["Show Bar Text"] = "바 글자 표시"
+L["Show current progress values on bar."] = "바에 진행중인 값을 표시합니다."
+L["Mouse-Over"] = "마우스 오버"
+L["Show text only on mouse over bar."] = "마우스 오버시에만 표시합니다."
+L["Font"] = "글꼴"
+L["Font of the bar text."] = "바 글자의 글꼴을 선택합니다."
+L["If you want more fonts, you should install the addon 'SharedMedia'."] = "기본 글꼴외에 추가하고 싶다면 'SharedMedia' 애드온에 원하는 글꼴을 설치하십시오."
+L["Font Size"] = "글자 크기"
+L["The font size of the text."] = "글자의 크기를 조절합니다"
+L["Show XP/Rep to go in bar text"] = "바에 다음 레벨까지 필요한 경험치/평판을 표시합니다."
+L["Show faction name in bar text."] = "바에 평판 이름을 표시합니다."
+L["Show values in bar text"] = "바에 값을 표시합니다."
+L["Show percentage in bar text"] = "바에 백분율로 표시합니다."
+L["Show rested value in bar text"] = "바에 휴식 경험치를 표시합니다."
+L["Show rested percentage in bar text"] = "바에 휴식 경험치를 백분율을 표시합니다."
+L["Abbreviations"] = "축약 표시"
+L["Use abbreviations to shorten numbers"] = "값을 백만 단위로 축약하여 표시합니다."
+
 L["Frame"] = "프레임"
 L["Frame Connection Properties"] = "바 연결에 대한 설정입니다."
 
@@ -76,14 +97,22 @@ L["Set the empty color of the Reputation Bar"] = "선택한 평판이 없거나 
 L["Blizzard Rep Colors"] = "블리자드 평판 색상"
 L["Toggle Blizzard Reputation Colors"] = "블리자드 평판 색상으로 전환합니다."
 
+L["Numbers"] = "숫자"
+L["General settings for number formatting"] = "숫자 표시에 관한 설정입니다."
+
+L["Separators"] = "구분자"
+L["Use separators for numbers to improve readability"] = "숫자를 읽기 편하도록 천단위 구분자를 표시합니다."
+L["Decimal Places"] = "소수점 표시"
+L["Number of decimal places when using abbreviations"] = "축약 표시시에 소수점 자리를 선택합니다."
+
 L["Broker Label"] = "브로커 표시"
 L["Broker Label Properties"] = "브로커의 표시 항목에 대한 설정입니다."
 
 L["Select Label Text"] = "표시 항목 선택"
 L["Select label text for Broker display"] = [[브로커에 표시할 항목을 선택합니다.:
 |cffffff00없음|r - 애드온 이름을 표시합니다..
-|cffffff00다음레벨까지 필요한 킬 수|r - 다음 레벨까지 잡아야하는 몬스터의 수를 표시합니다..
-|cffffff00다음레벨까지 시간|r - 다음 레벨까지 올리는데 필요한 시간을 표시합니다..
+|cffffff00다음 레벨까지 필요한 킬 수|r - 다음 레벨까지 잡아야하는 몬스터의 수를 표시합니다..
+|cffffff00다음 레벨까지 시간|r - 다음 레벨까지 올리는데 필요한 시간을 표시합니다..
 |cffffff00평판|r - 평판의 이름과 현재 평판 상태 및 백분율을 표시합니다.
 |cffffff00경험치|r - 경험치와 백분율을 표시합니다.
 |cffffff00경험치보다 평판|r - 평판을 기본으로 표시하고 평판이 없으면 경험치를 표시합니다.
@@ -91,20 +120,21 @@ L["Select label text for Broker display"] = [[브로커에 표시할 항목을 �
 
 L["XP/Rep to go"] = "다음 레벨까지 경험치/평판"
 L["Show XP/Rep to go in label"] = "다음 레벨까지 필요한 경험치 또는 평판을 표시합니다."
-L["Percentage only"] = "백분율"
-L["Show percentage only"] = "백분율로만 표시합니다."
 L["Show faction name"] = "평판 이름 표시"
 L["Show faction name when reputation is selected as label text."] = "평판 이름을 표시합니다."
+L["Show Values"] = "값 표시"
+L["Show values in label text"] = "라벨에 값을 표시합니다."
+L["Show Percentage"] = "백분율 표시"
+L["Show percentage in label text"] = "라벨에 백분율을 표시합니다."
+L["Show Rested"] = "휴식 경험치 표시"
+L["Show rested value in label text"] = "라벨에 휴식 경험치를 표시합니다."
+L["Show Rested %"] = "휴식 경험치 백분율 표시"
+L["Show rested percentage in label text"] = "라벨에 휴식 경험치 백분율을 표시합니다."
 L["Colored Label"] = "색상화된 글자"
 L["Color label text based on percentages"] = "백분율에 따라 글자를 색상화하여 표시합니다."
-L["Separators"] = "천단위 구분"
-L["Use separators for numbers to improve readability"] = "숫자를 천단위로 구분하여 표시합니다."
-L["Abbreviations"] = "축약 표시"
-L["Use abbreviations to shorten numbers"] = "숫자를 백만 단위로 축약하여 표시합니다."
-L["Tip Abbreviations"] = "툴팁 축약 표시"
-L["Use abbreviations in tooltip"] = "툴팁의 숫자를 백만 단위로 축약하여 표시합니다."
-L["Decimal Places"] = "소수점 표시"
-L["Number of decimal places when using abbreviations"] = "축약 표시시에 소수점 자리를 선택합니다."
+
+L["Tooltip"] = "툴팁"
+L["Tooltip Properties"] = "툴팁에 대한 설정입니다." 
 
 L["Faction Tracking"] = "평판"
 L["Auto-switch watched faction on reputation gains/losses."] = "평판을 획득하거나 잃어버릴 경우 자동으로 해당 평판으로 바를 변경합니다."

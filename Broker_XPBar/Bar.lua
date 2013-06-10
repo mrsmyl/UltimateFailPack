@@ -2,7 +2,7 @@ local _G = _G
 
 local ADDON = ...
 
-local Addon = _G.BrokerXPBar
+local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON)
 
 -- rearrangement of blizzard's frames
 local Jostle = LibStub:GetLibrary("LibJostle-3.0", true)

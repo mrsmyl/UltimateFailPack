@@ -3,7 +3,7 @@ local _G = _G
 -- addon name and namespace
 local ADDON, NS = ...
 
-local Addon = _G.BrokerXPBar
+local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON)
 
 -- local functions
 local pairs   = pairs
