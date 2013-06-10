@@ -1,15 +1,17 @@
 local mod	= DBM:NewMod(819, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9140 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9683 $"):sub(12, -3))
 mod:SetCreatureID(68476)
-mod:SetModelID(47325)
-mod:SetUsedIcons(1)
+mod:SetQuestID(32745)
+mod:SetZone()
+mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 1)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
+	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
@@ -58,7 +60,7 @@ local specWarnLightningNova		= mod:NewSpecialWarningMove(136490)--Mainly for LFR
 local specWarnHex				= mod:NewSpecialWarningYou(136512)
 local specWarnJalak				= mod:NewSpecialWarningSwitch("ej7087", mod:IsTank())--To pick him up (and maybe dps to switch, depending on strat)
 local specWarnRampage			= mod:NewSpecialWarningTarget(136821, mod:IsTank() or mod:IsHealer())--Dog is pissed master died, need more heals and cooldowns. Maybe warn dps too? his double swipes and charges will be 100% worse too.
-local specWarnDireCall			= mod:NewSpecialWarningSpell(137458, nil, nil, nil, 2)--Heroic
+local specWarnDireCall			= mod:NewSpecialWarningCount(137458, nil, nil, nil, 2)--Heroic
 local specWarnDireFixate		= mod:NewSpecialWarningRun(140946)--Heroic
 
 local timerDoor					= mod:NewTimer(113.5, "timerDoor", 2457)--They seem to be timed off last door start, not last door end. They MAY come earlier if you kill off all first doors adds though not sure yet. If they do, we'll just start new timer anyways
@@ -71,7 +73,7 @@ local timerPuncture				= mod:NewTargetTimer(90, 136767, nil, mod:IsTank() or mod
 local timerPunctureCD			= mod:NewCDTimer(11, 136767, nil, mod:IsTank() or mod:IsHealer())
 local timerJalakCD				= mod:NewNextTimer(10, "ej7087", nil, nil, nil, 2457)--Maybe it's time for a better worded spawn timer than "Next mobname". Maybe NewSpawnTimer with "mobname activates" or something.
 local timerBestialCryCD			= mod:NewNextCountTimer(10, 136817)
-local timerDireCallCD			= mod:NewCDTimer(62, 137458)--Heroic (every 62-70 seconds)
+local timerDireCallCD			= mod:NewCDCountTimer(62, 137458)--Heroic (every 62-70 seconds)
 
 local berserkTimer				= mod:NewBerserkTimer(720)
 
@@ -79,6 +81,7 @@ local soundDireFixate			= mod:NewSound(140946)
 
 mod:AddBoolOption("RangeFrame")
 mod:AddBoolOption("SetIconOnCharge")
+mod:AddBoolOption("SetIconOnAdds", false)
 
 local doorNumber = 0
 local direNumber = 0
@@ -88,23 +91,45 @@ local Farraki	= EJ_GetSectionInfo(7098)
 local Gurubashi	= EJ_GetSectionInfo(7100)
 local Drakkari	= EJ_GetSectionInfo(7103)
 local Amani		= EJ_GetSectionInfo(7106)
+local adds = {}
+local AddIcon = 7
+local addsJumped = 0
+local iconsSet = 0
+local highestVersion = 0
+local hasHighestVersion = false
+local balcMobs = {
+	[69164] = true,
+	[69175] = true,
+	[69176] = true,
+	[69177] = true,
+	[69178] = true,
+	[69221] = true,
+}
 
 function mod:OnCombatStart(delay)
 	doorNumber = 0
 	direNumber = 0
 	shamandead = 0
 	jalakEngaged = false
+	table.wipe(adds)
+	AddIcon = 7
+	iconsSet = 0
+	addsJumped = 0
+	highestVersion = 0
 	timerPunctureCD:Start(10-delay)
 	timerDoubleSwipeCD:Start(16-delay)--16-17 second variation
 	timerDoor:Start(16.5-delay)
 	timerChargeCD:Start(31-delay)--31-35sec variation
 	berserkTimer:Start(-delay)
 	if self:IsDifficulty("heroic10", "heroic25") then
-		timerDireCallCD:Start(-delay)
+		timerDireCallCD:Start(-delay, 1)
 	end
 	self:RegisterShortTermEvents(
 		"INSTANCE_ENCOUNTER_ENGAGE_UNIT"--We register here to prevent detecting first heads on pull before variables reset from first engage fire. We'll catch them on delayed engages fired couple seconds later
 	)
+	if DBM:GetRaidRank() > 0 and self.Options.SetIconOnAdds and not DBM.Options.DontSetIcons then--You can set marks and you have icons turned on
+		self:SendSync("IconCheck", UnitGUID("player"), tostring(DBM.Revision))
+	end
 end
 
 function mod:OnCombatEnd()
@@ -113,6 +138,43 @@ function mod:OnCombatEnd()
 		DBM.RangeCheck:Hide()
 	end
 end
+
+local function resetaddstate(addCount)
+	iconsSet = 0
+	addsJumped = addCount
+end
+
+mod:RegisterOnUpdateHandler(function(self)
+	if hasHighestVersion and not (iconsSet == addsJumped) then
+		for uId in DBM:GetGroupMembers() do
+			local unitid = uId.."target"
+			local guid = UnitGUID(unitid)
+			local cid = self:GetCIDFromGUID(guid)
+			if not adds[guid] and balcMobs[cid] then
+				if cid == 69221 then--Dinomancer always skull
+					SetRaidTarget(unitid, 8)
+				else
+					SetRaidTarget(unitid, AddIcon)
+					AddIcon = AddIcon - 1
+				end
+				iconsSet = iconsSet + 1
+				adds[guid] = true
+			end
+		end
+		local guid2 = UnitGUID("mouseover")
+		local cid = self:GetCIDFromGUID(guid2)
+		if not adds[guid2] and balcMobs[cid] then
+			if cid == 69221 then--Dinomancer always skull
+				SetRaidTarget("mouseover", 8)
+			else
+				SetRaidTarget("mouseover", AddIcon)
+				AddIcon = AddIcon - 1
+			end
+			iconsSet = iconsSet + 1
+			adds[guid2] = true
+		end
+	end
+end, 0.2)
 
 --[[
 Back to backs, as expected
@@ -139,8 +201,20 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 137458 then
 		direNumber = direNumber + 1
 		warnDireCall:Show(direNumber)
-		specWarnDireCall:Show()
-		timerDireCallCD:Start()--CD still reset when he breaks a door?
+		specWarnDireCall:Show(direNumber)
+		timerDireCallCD:Start(nil, direNumber+1)--CD still reset when he breaks a door?
+	elseif args.spellId == 136587 then
+		warnVenomBolt:Show()
+		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
+			specWarnVenomBolt:Show(args.sourceName)
+		end
+	end
+end
+
+function mod:SPELL_CAST_SUCCESS(args)
+	if args.spellId == 136797 then
+		warnMending:Show()
+		specWarnMending:Show(args.sourceName)
 	end
 end
 
@@ -167,19 +241,11 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 136821 then
 		warnRampage:Show(args.destName)
 		specWarnRampage:Show(args.destName)
-	elseif args.spellId == 136797 then
-		warnMending:Show()
-		specWarnMending:Show(args.sourceName)
 	elseif args.spellId == 137237 then
 		warnOrbofControl:Show()
 		specWarnOrbofControl:Show()
 	elseif args.spellId == 137240 then
 		warnCrackedShell:Show(args.destName, args.amount or 1)
-	elseif args.spellId == 136587 then
-		warnVenomBolt:Show()
-		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
-			specWarnVenomBolt:Show(args.sourceName)
-		end
 	elseif args.spellId == 136480 then
 		warnChainLightning:Show()
 		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
@@ -242,7 +308,7 @@ end
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 	if msg:find(L.chargeTarget) then
 		self:SendSync("ChargeTo", target)
-	elseif msg:find(L.newForces) then
+	elseif msg:find(L.newForces, 1, true) then
 		self:SendSync("Door")
 	end
 end
@@ -251,7 +317,9 @@ function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 69374 then
 		timerBestialCryCD:Cancel()
-	elseif cid == 69176 then--shamen
+	elseif hasHighestVersion and cid == 69177 then--shaman bear
+		resetaddstate(1)--Bear died, so start looking for shaman who jumpped off of it
+	elseif cid == 69176 then--shaman
 		shamandead = shamandead + 1
 		if shamandead == 3 then
 			if self.Options.RangeFrame then
@@ -261,7 +329,9 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:OnSync(msg, target)
+function mod:OnSync(msg, targetOrGuid, ver)
+	local target = targetOrGuid
+	local guid = targetOrGuid
 	if msg == "ChargeTo" and target then
 		local target = DBM:GetFullNameByShortName(target)
 		warnCharge:Show(target)
@@ -283,6 +353,12 @@ function mod:OnSync(msg, target)
 		timerDinoCD:Start()
 		warnDino:Schedule(56.75)
 		specWarnDino:Schedule(56.75)
+		if hasHighestVersion then
+			AddIcon = 7
+			self:Schedule(18.9, resetaddstate, 1)
+			self:Schedule(37.8, resetaddstate, 2)
+			self:Schedule(56.75, resetaddstate, 1)
+		end
 		if doorNumber == 1 then
 			timerAdds:Start(18.9, Farraki)
 			warnAdds:Schedule(18.9, Farraki)
@@ -309,6 +385,26 @@ function mod:OnSync(msg, target)
 			if not jalakEngaged then
 				timerJalakCD:Start(143)
 			end
+		end
+	elseif msg == "IconCheck" and guid and ver then
+		ver = tonumber(ver) or 0
+		if ver > highestVersion then
+			highestVersion = ver--Keep bumping highest version to highest we recieve from the icon setters
+			if guid == UnitGUID("player") then--Check if that highest version was from ourself
+				hasHighestVersion = true
+				self:Unschedule(self.SendSync)
+				self:Schedule(5, self.SendSync, self, "FastestPerson", UnitGUID("player"))
+			else--Not from self, it means someone with a higher version than us probably sent it
+				self:Unschedule(self.SendSync)
+				hasHighestVersion = false
+			end
+		end
+	elseif msg == "FastestPerson" and guid and self:AntiSpam(10, 4) then--Whoever sends this sync first wins all. They have highest version and fastest computer
+		self:Unschedule(self.SendSync)
+		if guid == UnitGUID("player") then
+			hasHighestVersion = true
+		else
+			hasHighestVersion = false
 		end
 	end
 end

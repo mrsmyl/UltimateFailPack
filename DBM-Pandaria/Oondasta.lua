@@ -1,9 +1,9 @@
 local mod	= DBM:NewMod(826, "DBM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9071 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9469 $"):sub(12, -3))
 mod:SetCreatureID(69161)
-mod:SetModelID(47257)
+mod:SetQuestID(32519)--Note, this is currently bugged and returns nalak's answer (ie, yes if nalak has been killed no if nalak hasn't, it doesn't reference oondasta at all until blizzard fixes it)
 mod:SetZone(929)--Isle of Giants
 
 mod:RegisterCombat("combat")
@@ -41,10 +41,6 @@ mod:AddBoolOption("RangeFrame", true)
 local yellTriggered = false
 
 function mod:OnCombatStart(delay)
-	local weekday, month, day, year = CalendarGetDate()--Must be called after PLAYER_ENTERING_WORLD
-	if month == 4 and day == 1 then
-		PlaySoundFile("Interface\\AddOns\\DBM-Pandaria\\dino_barking.mp3", "Master")
-	end
 	if yellTriggered then--We know for sure this is an actual pull and not diving into in progress
 --		timerCrushCD:Start(-delay)--There was no tank, so he pretty much never cast this, just ran like a wild animal around area while corpse cannoned
 --		timerSpiritfireBeamCD:Start(15-delay)

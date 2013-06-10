@@ -8,7 +8,7 @@ local L
 L= DBM:GetModLocalization(691)
 
 L:SetOptionLocalization({
-	RangeFrame			= "Показывать окно проверки дистанции, основанное на статусе игроков с $spell:119622"
+	RangeFrame			= "Показывать динамическое окно проверки дистанции, основанное\nна статусе игроков с дебаффом $spell:119622"
 })
 
 L:SetMiscLocalization({
@@ -29,12 +29,11 @@ L:SetMiscLocalization({
 --------------
 L= DBM:GetModLocalization(826)
 
-L:SetOptionLocalization({
-	RangeFrame			= "Показывать окно проверки дистанции для $spell:137511"
+L:SetMiscLocalization({
+	Pull				= "Как вы смеете вмешиваться в наши планы! На этот раз зандаларов не остановить!"
 })
 
 ---------------------------
 -- Nalak, The Storm Lord --
 ---------------------------
 L= DBM:GetModLocalization(814)
-

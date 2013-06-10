@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod(741, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9008 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9626 $"):sub(12, -3))
 mod:SetCreatureID(62397)
-mod:SetModelID(42645)
 mod:SetZone()
 mod:SetUsedIcons(1, 2)
 
@@ -24,7 +23,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_MISSED",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED",
-	"UNIT_AURA"
+	"UNIT_AURA_UNFILTERED"
 )
 
 local isDispeller = select(2, UnitClass("player")) == "MAGE"
@@ -56,10 +55,10 @@ local specWarnQuickening				= mod:NewSpecialWarningCount(122149, isDispeller)--T
 local specWarnKorthikStrike				= mod:NewSpecialWarningYou(123963)
 local specWarnKorthikStrikeOther		= mod:NewSpecialWarningTarget(123963, mod:IsHealer())
 local yellKorthikStrike					= mod:NewYell(123963)
-local specWarnWindBomb					= mod:NewSpecialWarningMove(131830)
+local specWarnWindBomb					= mod:NewSpecialWarningMove(131830, nil, nil, nil, 3)
 local specWarnWhirlingBladeMove			= mod:NewSpecialWarningMove(121898)
 local yellWindBomb						= mod:NewYell(131830)
-local specWarnReinforcements			= mod:NewSpecialWarningTarget("ej6554", not mod:IsHealer())--Also important to dps. (Espcially CC classes)
+local specWarnReinforcements			= mod:NewSpecialWarningTarget("ej6554", not mod:IsHealer(), "specWarnReinforcements")--Also important to dps. (Espcially CC classes)
 
 local timerRainOfBladesCD				= mod:NewCDTimer(48, 122406)--48-64 sec variation now. so much for it being a precise timer.
 local timerRainOfBlades					= mod:NewBuffActiveTimer(7.5, 122406)
@@ -130,7 +129,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		amberPrisonTargets[#amberPrisonTargets + 1] = args.destName
 		if args:IsPlayer() then
 			specWarnAmberPrison:Show()
-			yellAmberPrison:Yell()
+			if not self:IsDifficulty("lfr25") then
+				yellAmberPrison:Yell()
+			end
 		end
 		self:Unschedule(warnAmberPrisonTargets)
 		self:Schedule(0.3, warnAmberPrisonTargets)
@@ -196,7 +197,9 @@ end
 
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 	if spellId == 131830 then
-		windBombTargets[#windBombTargets + 1] = destName
+		if #windBombTargets < 6 then -- prevent target warning spam.
+			windBombTargets[#windBombTargets + 1] = destName
+		end
 		self:Unschedule(warnWindBombTargets)
 		self:Schedule(0.3, warnWindBombTargets)
 		if destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
@@ -256,7 +259,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	end
 end
 
-function mod:UNIT_AURA(uId)
+function mod:UNIT_AURA_UNFILTERED(uId)
 	if UnitDebuff(uId, strikeSpell) and not strikeTarget then
 		strikeTarget = uId
 		local name = DBM:GetUnitFullName(uId)

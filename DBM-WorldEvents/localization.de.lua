@@ -10,14 +10,10 @@ L:SetGeneralLocalization({
 	name = "Omen"
 })
 
------------------------
---  Apothecary Trio  --
------------------------
-L = DBM:GetModLocalization("ApothecaryTrio")
-
-L:SetGeneralLocalization({
-	name = "Apotheker-Trio"
-})
+------------------------------
+--  The Crown Chemical Co.  --
+------------------------------
+L = DBM:GetModLocalization("d288")
 
 L:SetTimerLocalization{
 	HummelActive		= "Hummel wird aktiv",
@@ -33,14 +29,10 @@ L:SetMiscLocalization({
 	SayCombatStart		= "Haben sie sich die Mühe gemacht und Euch gesagt, wer ich bin und warum ich das hier tue?"
 })
 
--------------
---  Ahune  --
--------------
-L = DBM:GetModLocalization("Ahune")
-
-L:SetGeneralLocalization({
-	name = "Ahune"
-})
+----------------------------
+--  The Frost Lord Ahune  --
+----------------------------
+L = DBM:GetModLocalization("d286")
 
 L:SetWarningLocalization({
 	Submerged		= "Ahune ist abgetaucht",
@@ -57,7 +49,7 @@ L:SetTimerLocalization{
 L:SetOptionLocalization({
 	Submerged		= "Zeige Warnung, wenn Ahune abtaucht",
 	Emerged			= "Zeige Warnung, wenn Ahune auftaucht",
-	specWarnAttack	= "Zeige Spezialwarnung, wenn Ahune verwundbar wird",
+	specWarnAttack	= "Spezialwarnung, wenn Ahune verwundbar wird",
 	SubmergTimer	= "Zeige Zeit bis Abtauchen",
 	EmergeTimer		= "Zeige Zeit bis Auftauchen",
 	TimerCombat		= "Zeige Zeit bis Kampfbeginn",
@@ -70,11 +62,7 @@ L:SetMiscLocalization({
 ----------------------
 --  Coren Direbrew  --
 ----------------------
-L = DBM:GetModLocalization("CorenDirebrew")
-
-L:SetGeneralLocalization({
-	name = "Coren Düsterbräu"
-})
+L = DBM:GetModLocalization("d287")
 
 L:SetWarningLocalization({
 	specWarnBrew		= "Werde das Bier los, bevor sie dir noch eins zuwirft!",
@@ -82,8 +70,8 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	specWarnBrew		= "Zeige Spezialwarnung für $spell:47376",
-	specWarnBrewStun	= "Zeige Spezialwarnung für $spell:47340",
+	specWarnBrew		= "Spezialwarnung für $spell:47376",
+	specWarnBrewStun	= "Spezialwarnung für $spell:47340",
 	YellOnBarrel		= "Schreie bei $spell:51413"
 })
 
@@ -91,14 +79,10 @@ L:SetMiscLocalization({
 	YellBarrel			= "Stecke im Fass!"
 })
 
--------------------------
---  Headless Horseman  --
--------------------------
-L = DBM:GetModLocalization("HeadlessHorseman")
-
-L:SetGeneralLocalization({
-	name = "Der kopflose Reiter"
-})
+-----------------------------
+--  The Headless Horseman  --
+-----------------------------
+L = DBM:GetModLocalization("d285")
 
 L:SetWarningLocalization({
 	WarnPhase				= "Phase %d",
@@ -161,7 +145,7 @@ L:SetOptionLocalization({
 	warnGameOver	= "Verkünde nach dem Spielende die insgesamt erreichbaren Punkte",
 	warnGnoll		= "Zeige Warnung, wenn ein Gnoll erscheint",
 	warnHogger		= "Zeige Warnung, wenn ein Hogger erscheint",
-	specWarnHogger	= "Zeige Spezialwarnung, wenn ein Hogger erscheint"
+	specWarnHogger	= "Spezialwarnung, wenn ein Hogger erscheint"
 })
 
 ------------------------
@@ -215,7 +199,7 @@ L:SetTimerLocalization{
 
 L:SetOptionLocalization({
 	warnTotalAdds	= "Verkünde die Anzahl der erschienenen Zombies zwischen jeder Riesigen Welle",
-	specWarnWave	= "Zeige Spezialwarnung, wenn eine Riesige Welle beginnt",
+	specWarnWave	= "Spezialwarnung, wenn eine Riesige Welle beginnt",
 	timerWave		= "Zeige Zeit bis nächste Riesige Welle"
 })
 

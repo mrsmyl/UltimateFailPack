@@ -11,14 +11,10 @@ L:SetGeneralLocalization({
 	name = "오멘"
 })
 
------------------------
---  Apothecary Trio  --
------------------------
-L = DBM:GetModLocalization("ApothecaryTrio")
-
-L:SetGeneralLocalization({
-	name = "화학회사 삼인방"
-})
+------------------------------
+--  The Crown Chemical Co.  --
+------------------------------
+L = DBM:GetModLocalization("d288")
 
 L:SetTimerLocalization{
 	HummelActive	= "훔멜 활성화",
@@ -34,14 +30,10 @@ L:SetMiscLocalization({
 	SayCombatStart		= "저들이 내가 누군지와 왜 이 일을 하는지 말해주려고 귀찮게 하든가?"
 })
 
--------------
---  Ahune  --
--------------
-L = DBM:GetModLocalization("Ahune")
-
-L:SetGeneralLocalization({
-	name = "아훈"
-})
+----------------------------
+--  The Frost Lord Ahune  --
+----------------------------
+L = DBM:GetModLocalization("d286")
 
 L:SetWarningLocalization({
 	Submerged		= "아훈 잠수",
@@ -71,11 +63,7 @@ L:SetMiscLocalization({
 --------------------
 -- Coren Direbrew --
 --------------------
-L = DBM:GetModLocalization("CorenDirebrew")
-
-L:SetGeneralLocalization({
-	name = "코렌 다이어브루"
-})
+L = DBM:GetModLocalization("d287")
 
 L:SetWarningLocalization({
 	specWarnBrew			= "흑맥주요정이 맥주를 다시 던지기전에 맥주를 마셔버리세요!",
@@ -92,14 +80,10 @@ L:SetMiscLocalization{
 	YellBarrel				= "저에게 맥주통!"
 }
 
--------------------
--- Headless Horseman --
--------------------
-L = DBM:GetModLocalization("HeadlessHorseman")
-
-L:SetGeneralLocalization({
-	name = "저주받은 기사"
-})
+-----------------------------
+--  The Headless Horseman  --
+-----------------------------
+L = DBM:GetModLocalization("d285")
 
 L:SetWarningLocalization({
 	WarnPhase				= "%d 단계",

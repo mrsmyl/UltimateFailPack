@@ -1,10 +1,12 @@
 local mod	= DBM:NewMod(817, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9211 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9705 $"):sub(12, -3))
 mod:SetCreatureID(68078, 68079, 68080, 68081)--Ro'shak 68079, Quet'zal 68080, Dam'ren 68081, Iron Qon 68078
 mod:SetMainBossID(68078)
-mod:SetModelID(46627) -- Iron Qon, 46628 Ro'shak, 46629 Quet'zal, 46630 Dam'ren
+mod:SetQuestID(32754)
+mod:SetZone()
+mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
 
@@ -16,7 +18,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_SUMMON",
 	"SPELL_DAMAGE",
 	"SPELL_MISSED",
-	"UNIT_SPELLCAST_SUCCEEDED"
+	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4",
+	"UNIT_DIED"
 )
 
 local warnImpale						= mod:NewStackAnnounce(134691, 2, nil, mod:IsTank() or mod:IsHealer())
@@ -38,7 +41,7 @@ local warnPhase4						= mod:NewPhaseAnnounce(4)
 local warnRisingAnger					= mod:NewStackAnnounce(136323, 2, nil, false)
 local warnFistSmash						= mod:NewCountAnnounce(136146, 3)
 
-local specWarnImpale					= mod:NewSpecialWarningStack(134691, mod:IsTank(), 3)
+local specWarnImpale					= mod:NewSpecialWarningStack(134691, mod:IsTank(), 2)
 local specWarnImpaleOther				= mod:NewSpecialWarningTarget(134691, mod:IsTank())
 local specWarnThrowSpear				= mod:NewSpecialWarningSpell(134926, nil, nil, nil, 2)
 local specWarnThrowSpearYou				= mod:NewSpecialWarningYou(134926)
@@ -56,8 +59,8 @@ local specWarnFistSmash					= mod:NewSpecialWarningSpell(136146, nil, nil, nil, 
 
 local timerImpale						= mod:NewTargetTimer(40, 134691, mod:IsTank() or mod:IsHealer())
 local timerImpaleCD						= mod:NewCDTimer(20, 134691, mod:IsTank() or mod:IsHealer())
-local timerThrowSpearCD					= mod:NewCDTimer(30, 134926)--30-36 second variation observed (at last in phase 1)
-local timerUnleashedFlameCD				= mod:NewCDTimer(6, 134611)
+local timerThrowSpearCD					= mod:NewCDTimer(30, 134926)--30-42 second variation observed
+local timerUnleashedFlameCD				= mod:NewCDTimer(6, 134611, nil, false)--CD for the periodic trigger, not when he'll actually be at 30 energy and use it.
 local timerScorched						= mod:NewBuffFadesTimer(30, 134647)
 local timerMoltenOverload				= mod:NewBuffActiveTimer(10, 137221)
 local timerLightningStormCD				= mod:NewCDTimer(20, 136192)
@@ -69,10 +72,11 @@ local timerRisingAngerCD				= mod:NewNextTimer(15, 136323, nil, false)
 local timerFistSmash					= mod:NewBuffActiveTimer(8, 136146)
 local timerFistSmashCD					= mod:NewNextCountTimer(20, 136146)
 local timerWhirlingWindsCD				= mod:NewCDTimer(30, 139167)--Heroic Phase 1
-local timerFrostSpikeCD					= mod:NewCDTimer(12, 139180)--Heroic Phase 2
+local timerFrostSpikeCD					= mod:NewCDTimer(11, 139180)--Heroic Phase 2
 
 local berserkTimer						= mod:NewBerserkTimer(720)
 
+mod:AddBoolOption("SetIconOnLightningStorm")
 mod:AddBoolOption("RangeFrame", true)--One tooltip says 8 yards, other says 10. Confirmed it's 10 during testing though. Ignore the 8 on spellid 134611
 mod:AddBoolOption("InfoFrame")
 
@@ -82,6 +86,11 @@ local Damren = select(2, EJ_GetCreatureInfo(4, 817))
 local arcingName = GetSpellInfo(136193)
 local phase = 1--Not sure this is useful yet, coding it in, in case spear cd is different in different phases
 local fistSmashCount = 0
+--Spear/arcing methods called VERY often, so cache these globals locally
+local UnitDetailedThreatSituation = UnitDetailedThreatSituation
+local UnitExists = UnitExists
+local UnitClass = UnitClass
+local UnitDebuff = UnitDebuff
 
 local function updateHealthFrame()
 	if DBM.BossHealth:IsShown() then
@@ -103,10 +112,11 @@ local function updateHealthFrame()
 	end
 end
 
-local function isTank(unit)
+local function notEligable(unit)
 	-- 1. check blizzard tanks first
 	-- 2. check blizzard roles second
 	-- 3. check boss' highest threat target
+	-- 4. Check monks
 	if GetPartyAssignment("MAINTANK", unit, 1) then
 		return true
 	end
@@ -119,6 +129,13 @@ local function isTank(unit)
 	if UnitExists("boss2target") and UnitDetailedThreatSituation(unit, "boss2") then
 		return true
 	end
+	--He CAN spear monks that are not in melee (I seen our mistweaver get many spears at ranged).
+	--However, if he targets a monk that IS in melee, he switches to a different target (again, i've seen him target our mistweaver in melee range, then instantly switched to ANOTHER target because the mistweaver was in melee).
+	--We assume any monk within 15 yards of tank is in melee range, may be wrong once in a blue moon.
+	--Should fairly accurately allow the mod to announce spears on monks outside melee range while ignoring monk targets in melee range
+	if (select(2, UnitClass(unit)) == "MONK") and (DBM.RangeCheck:GetDistance(unit, "boss2target") <= 15) then
+		return true
+	end
 	return false
 end
 
@@ -126,7 +143,7 @@ end
 --This will fail if the spear target actually IS his highest threat
 --In that case the aoe failsafe warning will just be used, so 1/10 or 1/25 odds in phase 1.
 local function checkSpear()
-	if UnitExists("boss1target") and not isTank("boss1target") then--Boss 1 is looking at someone that isn't his highest threat or a tank (have to filter tanks cause he looks at them to cast impale, have to filter his highest threat in case it's not a tank, ie a healer)
+	if UnitExists("boss1target") and not notEligable("boss1target") then--Boss 1 is looking at someone that isn't his highest threat or a tank (have to filter tanks cause he looks at them to cast impale, have to filter his highest threat in case it's not a tank, ie a healer)
 		mod:Unschedule(checkSpear)
 		local targetname = DBM:GetUnitFullName("boss1target")
 		warnThrowSpear:Show(targetname)
@@ -142,19 +159,18 @@ local function checkSpear()
 			local inRange = DBM.RangeCheck:GetDistance("player", x, y)
 			if inRange and inRange < 10 then
 				specWarnThrowSpearNear:Show(targetname)--Near spear target
-			elseif mod:AntiSpam(15, 8) then--Smart way to do a failsafe in case we never get a valid target
+			elseif mod:AntiSpam(15, 6) then--Smart way to do a failsafe in case we never get a valid target
 				specWarnThrowSpear:Show()--not spear target or near spear target, generic aoe warning (for the lines and stuff)
 			end
 		end
 	else
-		mod:Schedule(0.2, checkSpear)
+		mod:Schedule(0.25, checkSpear)
 	end
 end
 
 local function checkArcing()
 	local arcingDebuffs = 0
-	for i = 1, GetNumGroupMembers() do
-		local uId = "raid"..i
+	for uId in DBM:GetGroupMembers() do
 		if UnitDebuff(uId, arcingName) then
 			arcingDebuffs = arcingDebuffs + 1
 		end
@@ -187,22 +203,17 @@ function mod:OnCombatStart(delay)
 		end
 	end
 	if self:IsDifficulty("heroic10", "heroic25") then
-		timerWhirlingWindsCD:Start(20-delay)
+		timerWhirlingWindsCD:Start(15-delay)
 		timerLightningStormCD:Start(22-delay)
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(GetSpellInfo(136193))
 			DBM.InfoFrame:Show(5, "playerbaddebuff", 136193)
 		end
-	else
-		self:RegisterShortTermEvents(
-			"UNIT_DIED"--Alternate phase detection for normal (not sure if needed, but just in case, i deleted my normal mode log and don't remember if they fired "eject all passengers" there.
-		)
 	end
 	berserkTimer:Start(-delay)
 end
 
 function mod:OnCombatEnd()
-	self:UnregisterShortTermEvents()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
@@ -213,21 +224,21 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 134691 then
-		warnImpale:Show(args.destName, args.amount or 1)
+		local amount = args.amount or 1
+		warnImpale:Show(args.destName, amount)
 		timerImpaleCD:Start()
-		if args:IsPlayer() then
-			if (args.amount or 1) >= 3 then
+		if amount >= 2 then
+			if args:IsPlayer() then
 				specWarnImpale:Show(args.amount)
-			end
-		else
-			if (args.amount or 1) >= 2 and not UnitDebuff("player", GetSpellInfo(134691)) and not UnitIsDeadOrGhost("player") then
+			else
 				specWarnImpaleOther:Show(args.destName)
 			end
 		end
 	elseif args.spellId == 134647 and args:IsPlayer() then
+		local amount = args.amount or 1
 		timerScorched:Start()
-		if (args.amount or 1) > 2 then
-			specWarnScorched:Show(args.amount or 1)
+		if amount > 2 then
+			specWarnScorched:Show(amount)
 		end
 	elseif args.spellId == 137221 then
 		warnMoltenOverload:Show()
@@ -238,7 +249,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		if phase == 2 then
 			timerLightningStormCD:Start()
 		else--Heroic phase 1 or 4
-			timerLightningStormCD:Start(38)
+			timerLightningStormCD:Start(37.5)
+		end
+		if self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+			self:SetIcon(args.destName, 8)
 		end
 		if args:IsPlayer() then
 			specWarnLightningStorm:Show()
@@ -261,6 +275,8 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 134647 and args:IsPlayer() then
 		timerScorched:Cancel()
+	elseif args.spellId == 136192 and self.Options.SetIconOnLightningStorm and not self:IsDifficulty("lfr25") then
+		self:SetIcon(args.destName, 0)
 	end
 end
 
@@ -297,8 +313,7 @@ end
 
 function mod:SPELL_SUMMON(args)
 	if args.spellId == 134926 and phase < 4 then
---		warnThrowSpear:Show()
-		if self:AntiSpam(15, 8) then--Basically, if the target scanning failed, we do an aoe warning on the actual summon.
+		if self:AntiSpam(15, 6) then--Basically, if the target scanning failed, we do an aoe warning on the actual summon.
 			specWarnThrowSpear:Show()
 		end
 		timerThrowSpearCD:Start()
@@ -324,17 +339,15 @@ end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
-	if spellId == 134611 and self:AntiSpam(2, 5) then--Unleashed Flame internal CD. He cannot use more often than every 6 seconds. 137991 is ability activation on pull, before 137991 is cast, he can't use ability at all
+	if spellId == 134611 then--Unleashed Flame internal CD. He cannot use more often than every 6 seconds. 137991 is ability activation on pull, before 137991 is cast, he can't use ability at all
 		warnUnleashedFlame:Show()
-		if phase == 1 then
-			timerUnleashedFlameCD:Start()
-		else--heroic phase 3 or 4
-			timerUnleashedFlameCD:Start(30)--30-33 second variation
-		end
-	elseif spellId == 50630 and self:AntiSpam(2, 6) then--Eject All Passengers (heroic phase change trigger)
+		timerUnleashedFlameCD:Start()
+		--NOTE, on heroic phase 3-4, trigger still fires every 6 seconds but energy gain is slower so it won't actually go off often like it does in phase 1.
+		--None the less, this timer is accurate on heroic as 6 seconds as it indicates when the next POSSIBLE cast is. in other words, if he reaches enough energy during this cd, he won't cast it until 6 second cd ends
+		--This cast is the periodic trigger that checks whether or not boss has 30 energy, nothing more.
+	elseif spellId == 50630 then--Eject All Passengers (heroic phase change trigger)
 		local cid = self:GetCIDFromGUID(UnitGUID(uId))
 		self:Unschedule(checkSpear)
-		self:Schedule(25, checkSpear)
 		timerThrowSpearCD:Start()
 		if cid == 68079 then--Ro'shak
 			if self.Options.RangeFrame then
@@ -347,6 +360,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerMoltenOverload:Cancel()
 			timerWhirlingWindsCD:Cancel()
 			warnPhase2:Show()
+			self:Schedule(25, checkSpear)
 			if self:IsDifficulty("heroic10", "heroic25") then
 				timerFreezeCD:Start(13)
 				timerFrostSpikeCD:Start(15)
@@ -362,38 +376,36 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerLightningStormCD:Cancel()
 			timerWindStorm:Cancel()
 			timerWindStormCD:Cancel()
+			warnWindStorm:Cancel()
+			specWarnWindStorm:Cancel()
 			timerFrostSpikeCD:Cancel()
 			warnPhase3:Show()
+			self:Schedule(25, checkSpear)
 			timerDeadZoneCD:Start(8.5)
-			--Maybe remove this range frame. in heroic phase 3-4, he only targets melee and no one else, and cd is 31 so ALL melee just soak entire phase and never move for it. does mindless need a range checker?
-			if self:IsDifficulty("heroic10", "heroic25") then--On heroic, the fire guy returns and attacks clumps again
-				if self.Options.RangeFrame then--So on heroic we need to restore the grouping range frame
-					if self:IsDifficulty("heroic25") then
-						DBM.RangeCheck:Show(10, nil, nil, 4)--You can have 1 person in range safely. Frame goes red at 4
-					else
-						DBM.RangeCheck:Show(10, nil, nil, 2)--You can have 1 person in range safely. Frame goes red at 2
-					end
-				end
-			end
 			checkArcing()
 		elseif cid == 68081 then--Dam'ren
+			--confirmed, dam'ren's abilities do NOT reset in phase 4, cds from phase 3 carry over.
 			phase = 4
 			updateHealthFrame()
-			timerDeadZoneCD:Cancel()--Todo, find out what they change to in phase 4 since Dam'ren still casts them
-			timerFreezeCD:Cancel()--Todo, find out what they change to in phase 4 since Dam'ren still casts them
 			warnPhase4:Show()
 			timerRisingAngerCD:Start(15)
 			timerFistSmashCD:Start(62, 1)
+			self:Unschedule(checkArcing)--Phase 4, new arcings start going out again so no need to do waste time on this check until  quet'zal dies
+			if self.Options.RangeFrame then
+				DBM.RangeCheck:Show(10, nil, nil, 1)--Switch range frame back to 1. Range is assumed 10, no spell info
+			end
+			if self.Options.InfoFrame then
+				DBM.InfoFrame:SetHeader(arcingName)
+				DBM.InfoFrame:Show(5, "playerbaddebuff", 136193)
+			end
 		end
-	elseif spellId == 139172 and self:AntiSpam(2, 7) then--Whirling Winds (Phase 1 Heroic)
+	elseif spellId == 139172 then--Whirling Winds (Phase 1 Heroic).
 		warnWhirlingWinds:Show()
 		timerWhirlingWindsCD:Start()
-	elseif spellId == 139181 and self:AntiSpam(2, 7) then--Frost Spike (Phase 2 Heroic)
+	elseif spellId == 139181 then--Frost Spike (Phase 2 Heroic)
 		warnFrostSpike:Show()
 		timerFrostSpikeCD:Start()
-	--"<168.1 19:53:31> [UNIT_SPELLCAST_SUCCEEDED] Quet'zal [[boss3:Rushing Winds::0:137656]]", -- [13876]
-	--"<170.1 19:29:36> [CLEU] SPELL_MISSED#true##nil#2632#0#0x010000000003A244#Oxey#1300#8#136577#Wind Storm#8#MISS#nil", -- [11314]
-	elseif spellId == 137656 and self:AntiSpam(2, 1) then--Rushing Winds (Wind Storm pre trigger)
+	elseif spellId == 137656 and phase == 2 and self:AntiSpam(2, 1) then--Rushing Winds (Wind Storm end trigger). ANTISPAM still needed, multiple get cast
 		warnWindStorm:Cancel()
 		specWarnWindStorm:Cancel()
 		warnWindStormEnd:Show()
@@ -425,11 +437,10 @@ function mod:UNIT_DIED(args)
 			if self.Options.RangeFrame then
 				DBM.RangeCheck:Show(10, nil, nil, 1)--Switch range frame back to 1. Range is assumed 10, no spell info
 			end
-			if self.Options.InfoFrame then
+			if self.Options.InfoFrame and not self:IsDifficulty("lfr25") then
 				DBM.InfoFrame:SetHeader(arcingName)
 				DBM.InfoFrame:Show(5, "playerbaddebuff", 136193)
 			end
-			--Only one log, but i looks like spear cd from phase 1 remains intact
 			phase = 2
 			updateHealthFrame()
 			timerLightningStormCD:Start(17)
@@ -448,6 +459,13 @@ function mod:UNIT_DIED(args)
 		warnWindStorm:Cancel()
 		specWarnWindStorm:Cancel()
 		timerWindStorm:Cancel()
+		if not self:IsDifficulty("lfr25") then--LFR has no concept of clearing arcing, they certainly don't use info/range frames
+			checkArcing()
+		else--So just hide range frame when quet'zal dies
+			if self.Options.RangeFrame then
+				DBM.RangeCheck:Hide()
+			end
+		end
 		if self:IsDifficulty("heroic10", "heroic25") then--In heroic, all mounts die in phase 4.
 			DBM.BossHealth:RemoveBoss(cid)
 		else
@@ -458,7 +476,6 @@ function mod:UNIT_DIED(args)
 			self:Unschedule(checkSpear)
 			self:Schedule(25, checkSpear)
 			timerThrowSpearCD:Start()
-			checkArcing()
 		end
 	elseif cid == 68081 then--Dam'ren
 		timerDeadZoneCD:Cancel()

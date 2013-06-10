@@ -52,8 +52,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnFizzyBubbles	= "Спец-предупреждение, когда на вас нет $spell:114459",
-	RangeFrame				= "Показывать окно проверки дистанции (10 м) для $spell:106546"
+	SpecWarnFizzyBubbles	= "Спец-предупреждение, когда на вас нет $spell:114459"
 })
 
 -----------------------
@@ -78,7 +77,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnRemainingNovice	= "Показывать сколько осталось учеников"
+	warnRemainingNovice	= "Показывать количество оставшихся учеников"
 })
 
 L:SetMiscLocalization({
@@ -176,7 +175,7 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	TimerWave	= "Отсчет времени до следующей волны подкреплений"
+	TimerWave	= "Отсчёт времени до следующей волны подкреплений"
 })
 
 L:SetMiscLocalization({

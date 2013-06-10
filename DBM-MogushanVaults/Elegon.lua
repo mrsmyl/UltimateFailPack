@@ -1,11 +1,10 @@
 local mod	= DBM:NewMod(726, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9132 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9683 $"):sub(12, -3))
 mod:SetCreatureID(60410)--Energy Charge (60913), Emphyreal Focus (60776), Cosmic Spark (62618), Celestial Protector (60793)
-mod:SetModelID(41399)
 mod:SetZone()
-mod:SetUsedIcons(8, 7, 6)
+mod:SetUsedIcons(8, 7, 6, 5, 4, 3)
 
 mod:RegisterCombat("combat")
 
@@ -145,12 +144,12 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 mod:RegisterOnUpdateHandler(function(self)
-	if self.Options.SetIconOnCreature and DBM:GetRaidRank() > 0 and not (iconsSet == 6) then
-		for i = 1, DBM:GetNumGroupMembers() do
-			local uId = "raid"..i.."target"
-			local guid = UnitGUID(uId)
+	if self.Options.SetIconOnCreature and not DBM.Options.DontSetIcons and DBM:GetRaidRank() > 0 and not (iconsSet == 6) then
+		for uId in DBM:GetGroupMembers() do
+			local unitid = uId.."target"
+			local guid = UnitGUID(unitid)
 			if creatureIcons[guid] then
-				SetRaidTarget(uId, creatureIcons[guid])
+				SetRaidTarget(unitid, creatureIcons[guid])
 				iconsSet = iconsSet + 1
 				creatureIcons[guid] = nil
 			end
@@ -167,7 +166,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if not DBM.BossHealth:HasBoss(args.sourceGUID) then
 			DBM.BossHealth:AddBoss(args.sourceGUID, args.sourceName)
 		end
-		if self.Options.SetIconOnCreature and not creatureIcons[args.sourceGUID] then
+		if self.Options.SetIconOnCreature and not DBM.Options.DontSetIcons and not creatureIcons[args.sourceGUID] then
 			creatureIcons[args.sourceGUID] = creatureIcon
 			creatureIcon = creatureIcon - 1
 		end

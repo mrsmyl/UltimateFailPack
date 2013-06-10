@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Shot", "DBM-WorldEvents", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9412 $"):sub(12, -3))
 mod:SetZone()
 
 mod:RegisterCombat("combat")
@@ -13,7 +13,7 @@ mod:RegisterEvents(
 
 local timerGame		= mod:NewBuffActiveTimer(60, 101871)
 
-local countdownGame	= mod:NewCountdown(60, 101871)
+local countdownGame	= mod:NewCountdownFades(60, 101871)
 
 mod:RemoveOption("HealthFrame")
 mod:RemoveOption("SpeedKillTimer")

@@ -28,7 +28,6 @@ L:SetMiscLocalization({
 	Defeat				= "We will not give in to the despair of the dark void. If Her will for us is to perish, then it shall be so."
 })
 
-
 ------------
 -- Blade Lord Ta'yak --
 ------------
@@ -36,9 +35,8 @@ L= DBM:GetModLocalization(744)
 
 L:SetOptionLocalization({
 	UnseenStrikeArrow	= "Show DBM Arrow when someone is affected by $spell:122949",
-	RangeFrame			= "Show range frame (10) for $spell:123175"
+	RangeFrame			= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(10, 123175)
 })
-
 
 -------------------------------
 -- Garalon --
@@ -68,7 +66,8 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(741)
 
 L:SetOptionLocalization({
-	AmberPrisonIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(121885)
+	AmberPrisonIcons		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(121885),
+	specWarnReinforcements	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format("ej6554")
 })
 
 ------------
@@ -78,12 +77,12 @@ L= DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
 	warnReshapeLife				= "%s on >%s< (%d)",--Localized because i like class colors on warning and shoving a number into targetname broke it using the generic.
-	warnReshapeLifeTutor		= "1: Interrupt/debuff target, 2: Interrupt yourself, 3: Regen Health/Willpower, 4: Escape Vehicle",
+	warnReshapeLifeTutor		= "1: Interrupt/debuff target (use this on boss to build debuff stacks), 2: Interrupt yourself when casting Amber Explosion, 3: Restore Willpower when it's low (use primarily in phase 3), 4: Escape Vehicle (phase 1 & 2 only)",
 	warnAmberExplosion			= ">%s< is casting %s",
 	warnAmberExplosionAM		= "Amber Monstrosity is casting Amber Explosion - Interrupt Now!",--personal warning.
 	warnInterruptsAvailable		= "Interupts available for %s: >%s<",
 	warnWillPower				= "Current Will Power: %s",
-	specwarnWillPower			= "Low Will Power! - 5s remaining",
+	specwarnWillPower			= "Low Will Power! - Leave vehicle or consume a puddle",
 	specwarnAmberExplosionYou	= "Interrupt YOUR %s!",--Struggle for Control interrupt.
 	specwarnAmberExplosionAM	= "%s: Interrupt %s!",--Amber Montrosity
 	specwarnAmberExplosionOther	= "%s: Interrupt %s!"--Mutated Construct
@@ -127,7 +126,7 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	warnAmberTrap		= "Show warning (with progress) when $spell:125826 is making", -- maybe bad translation.
 	InfoFrame			= "Show info frame for players affected by $spell:125390",
-	RangeFrame			= "Show range frame (5) for $spell:123735",
+	RangeFrame			= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(5, 123735),
 	StickyResinIcons	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(124097),
 	HeartOfFearIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(123845)
 })
@@ -135,4 +134,17 @@ L:SetOptionLocalization({
 L:SetMiscLocalization({
 	PlayerDebuffs		= "Fixated",
 	YellPhase3			= "No more excuses, Empress! Eliminate these cretins or I will kill you myself!"
+})
+
+-------------
+--  Trash  --
+-------------
+L = DBM:GetModLocalization("HoFTrash")
+
+L:SetGeneralLocalization({
+	name =	"Heart of Fear Trash"
+})
+
+L:SetOptionLocalization({
+	UnseenStrikeArrow	= "Show DBM Arrow when someone is affected by $spell:122949"
 })

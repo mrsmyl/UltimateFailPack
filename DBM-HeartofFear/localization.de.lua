@@ -17,7 +17,7 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	warnEcho			= "Verkünde das Erscheinen eines Echos",
 	warnEchoDown		= "Verkünde den Sieg über ein Echo",
-	specwarnPlatform	= "Zeige Spezialwarnung bei Plattformwechsel des Bosses",
+	specwarnPlatform	= "Spezialwarnung bei Plattformwechsel des Bosses",
 	ArrowOnAttenuation	= "Zeige DBM-Pfeil während $spell:127834 zur Anzeige der Ausweichrichtung"
 })
 
@@ -26,17 +26,14 @@ L:SetMiscLocalization({
 	Defeat				= "Wir werden der Verzweiflung der dunklen Leere nicht nachgeben. Wenn es Ihr Wille ist, dass wir dahinscheiden, dann soll es so sein."
 })
 
-
 ------------
 -- Blade Lord Ta'yak --
 ------------
 L= DBM:GetModLocalization(744)
 
 L:SetOptionLocalization({
-	UnseenStrikeArrow	= "Zeige DBM-Pfeil, wenn jemand von $spell:122949 betroffen ist",
-	RangeFrame			= "Zeige Abstandsfenster (10m) für $spell:123175"
+	UnseenStrikeArrow	= "Zeige DBM-Pfeil, wenn jemand von $spell:122949 betroffen ist"
 })
-
 
 -------------------------------
 -- Garalon --
@@ -49,8 +46,8 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	specwarnUnder	= "Zeige Spezialwarnung, wenn du dich unter dem Boss befindest",
-	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).." (nur heroischer Schwierigkeitsgrad)"
+	specwarnUnder	= "Spezialwarnung, wenn du dich unter dem Boss befindest",
+	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).."<br/>(nur heroischer Schwierigkeitsgrad)"
 })
 
 L:SetMiscLocalization({
@@ -70,15 +67,15 @@ L= DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
 	warnReshapeLife				= "%s auf >%s< (%d)",
-	warnReshapeLifeTutor		= "1: Unterbreche/Debuffe Ziel, 2: Unterbreche dich selbst, 3: Regeneriere Gesundheit/Willen, 4: Verlasse Konstrukt",
+	warnReshapeLifeTutor		= "1: Unterbreche/Debuffe Ziel (zum Aufbau von Debuff-Stapeln auf dem Boss benutzen), 2: Unterbreche dich selbst beim Wirken einer Bernexplosion, 3: Regeneriere Willen (primär in Phase 3 bei geringem Willen nutzen), 4: Verlasse Konstrukt (nur Phase 1 und 2)",
 	warnAmberExplosion			= ">%s< wirkt %s",
 	warnAmberExplosionAM		= "Bernmonstrosität wirkt Bernexplosion - Jetzt unterbrechen!",
 	warnInterruptsAvailable		= "Unterbrechungen verfügbar für %s: >%s<",
 	warnWillPower				= "Aktueller Willen: %s",
-	specwarnWillPower			= "Geringer Willen! - 5 Sekunden verbleibend",
-	specwarnAmberExplosionYou	= "Unterbreche DEINE %s!",--Struggle for Control interrupt.
-	specwarnAmberExplosionAM	= "%s: Unterbreche %s!",--Amber Montrosity
-	specwarnAmberExplosionOther	= "%s: Unterbreche %s!"--Mutated Construct
+	specwarnWillPower			= "Geringer Willen! - Konstrukt verlassen oder Pfütze verzehren",
+	specwarnAmberExplosionYou	= "Unterbreche DEINE %s!",
+	specwarnAmberExplosionAM	= "%s: Unterbreche %s!",
+	specwarnAmberExplosionOther	= "%s: Unterbreche %s!"
 })
 
 L:SetTimerLocalization({
@@ -89,13 +86,13 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	warnReshapeLifeTutor		= "Zeige Überblick über den Zweck der Fähigkeiten Mutierter Konstrukte",
 	warnAmberExplosion			= "Zeige Warnung (mit Quelle), wenn $spell:122398 gewirkt wird",
-	warnAmberExplosionAM		= "Zeige persönliche Warnung, wenn Bernmonstrosität $spell:122398 wirkt\n(zum Unterbrechen)",
-	warnInterruptsAvailable		= "Verkünde bei wem Bernstoß-Unterbrechungen für $spell:122402\nverfügbar sind",
+	warnAmberExplosionAM		= "Zeige persönliche Warnung, wenn Bernmonstrosität $spell:122398 wirkt (zum Unterbrechen)",
+	warnInterruptsAvailable		= "Verkünde bei wem Bernstoß-Unterbrechungen für $spell:122402 verfügbar sind",
 	warnWillPower				= "Verkünde aktuellen Willen bei 80, 50, 30, 10 und 4",
-	specwarnWillPower			= "Zeige Spezialwarnung bei geringem Willen als Mutiertes Konstrukt",
-	specwarnAmberExplosionYou	= "Zeige Spezialwarnung zum Unterbrechen deiner eigenen $spell:122398",
-	specwarnAmberExplosionAM	= "Zeige Spezialwarnung zum Unterbrechen der $spell:122402\nder Bernmonstrosität",
-	specwarnAmberExplosionOther	= "Zeige Spezialwarnung zum Unterbrechen der $spell:122398\nunkontrollierter Mutierter Konstrukte",
+	specwarnWillPower			= "Spezialwarnung bei geringem Willen als Mutiertes Konstrukt",
+	specwarnAmberExplosionYou	= "Spezialwarnung zum Unterbrechen deiner eigenen $spell:122398",
+	specwarnAmberExplosionAM	= "Spezialwarnung zum Unterbrechen der $spell:122402 der Bernmonstrosität",
+	specwarnAmberExplosionOther	= "Spezialwarnung zum Unterbrechen der $spell:122398 unkontrollierter Mutierter Konstrukte",
 	timerAmberExplosionAMCD		= "Zeige Zeit bis nächste $spell:122402 der Bernmonstrosität",
 	InfoFrame					= "Zeige Infofenster für Willen der Spieler",
 	FixNameplates				= "Automatische Deaktivierung störender Namensplaketten als Konstrukt\n(wird nach dem Kampfende auf die vorherige Einstellung zurückgesetzt)"
@@ -116,11 +113,23 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	warnAmberTrap		= "Verkünde den Fortschritt beim Bau einer $spell:125826",
-	InfoFrame			= "Zeige Infofenster für Spieler, welche von $spell:125390 betroffen sind",
-	RangeFrame			= "Zeige Abstandsfenster (5m) für $spell:123735"
+	InfoFrame			= "Zeige Infofenster für Spieler, welche von $spell:125390 betroffen sind"
 })
 
 L:SetMiscLocalization({
 	PlayerDebuffs		= "Fixiert",
 	YellPhase3			= "KEINE AUSREDEN MEHR, KAISERIN! Tötet diese Idioten oder ich selbst mache Euch den Garaus!"
+})
+
+-------------
+--  Trash  --
+-------------
+L = DBM:GetModLocalization("HoFTrash")
+
+L:SetGeneralLocalization({
+	name =	"Trash des Herz der Angst"
+})
+
+L:SetOptionLocalization({
+	UnseenStrikeArrow	= "Zeige DBM-Pfeil, wenn jemand von $spell:122949 betroffen ist"
 })

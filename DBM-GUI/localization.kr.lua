@@ -5,7 +5,10 @@ local L = DBM_GUI_Translations
 
 L.MainFrame = "죽이는 보스 모드"
 
+L.TranslationByPrefix		= "번역: "
 L.TranslationBy 			= "법사세린-아즈샤라(everfinale@gmail.com)"
+L.Website					= "|cFF73C2FBwww.deadlybossmods.com|r에 있는 게시판을 방문해 보세요. (Elitist Jerks에서 서비스를 제공합니다!)"
+L.WebsiteButton				= "게시판"
 
 L.OTabBosses	= "우두머리"
 L.OTabOptions	= "설정"
@@ -30,8 +33,8 @@ L.MoveMe 					= '위치 이동'
 L.Button_OK 				= '확인'
 L.Button_Cancel 			= '취소'
 L.Button_LoadMod 			= '불러오기'
-L.Mod_Enabled				= "우두머리 경보 사용"
-L.Mod_Reset					= "이 우두머리의 기본 설정 불러오기(테스트중)"
+L.Mod_Enabled				= "경보 사용"
+L.Mod_Reset					= "이 전투의 기본 설정 불러오기"
 L.Reset 					= "초기화"
 
 L.Enable  					= "켜기"
@@ -39,7 +42,10 @@ L.Disable					= "끄기"
 
 L.NoSound					= "끄기"
 
-L.IconsInUse				= "현재 우두머리에서 사용 되는 전술 목표 아이콘:"
+L.IconsInUse				= "현재 전투에서 사용 되는 전술 목표 아이콘:"
+
+L.QuestComplete				= "이 전투를 이미 완료했습니다."
+L.QuestIncomplete			= "이 전투를 아직 완료하지 않았습니다. 참고: 이미 완료한 전투라도 UI 재시작 직후나, 또는 전투가 끝난 후 얼마 지나지 않아 재접속을 한 경우라면 미완료로 표시될 수 있습니다."
 
 -- Tab: Boss Statistics
 L.BossStatistics			= "공략 상황"
@@ -48,18 +54,25 @@ L.Statistic_Wipes			= "전멸:"
 L.Statistic_Incompletes		= "미완료:"
 L.Statistic_BestKill		= "최고 기록:"
 
--- Tab: General Options
-L.General 					= "일반 DBM 설정"
+-- Tab: General Core Options
+L.General 					= "기본 DBM 설정"
 L.EnableDBM 				= "DBM 사용"
 L.EnableMiniMapIcon			= "미니맵 버튼 사용"
-L.UseMasterVolume			= "기본 오디오 채널로 소리 듣기"
+L.SetPlayerRole				= "파티 또는 공격대 참여시 역할 자동 설정(추천)"
+L.UseMasterVolume			= "기본 오디오 채널로 애드온 소리 듣기"
 L.DisableCinematics			= "게임내 동영상 재생 기능 끄기(인스턴스 내부)"
 L.DisableCinematicsOutside	= "게임내 동영상 재생 기능 끄기(인스턴스 외부)"
-L.SKT_Enabled				= "각 우두머리 설정에서 끈 상태라도 가장 빨랐던 전투시간 바 표시(강제)"
 L.AutologBosses				= "우두머리 전투시 블리자드 전투 기록 자동 활성화"
 L.AdvancedAutologBosses		= "우두머리 전투시 Transcriptor 기록 자동 활성화"
 L.LogOnlyRaidBosses			= "공격대 우두머리 전투만 기록하기(공격대 찾기 제외)"
 L.Latency_Text				= "동기화를 사용 할 최대 지연시간 설정 : %d"
+-- Tab: General Timer Options
+L.TimerGeneral 				= "DBM 바 설정"
+L.SKT_Enabled				= "각 우두머리 설정에서 끈 상태라도 가장 빨랐던 전투시간 바 표시(강제)"
+L.ChallengeTimerOptions		= "도전 모드 최고 기록 바 설정"
+L.ChallengeTimerPersonal	= "개인 기록으로 표시"
+L.ChallengeTimerGuild		= "길드 기록으로 표시"
+L.ChallengeTimerRealm		= "서버 기록으로 표시"
 
 L.ModelOptions				= "3D 초상화 배경 설정"
 L.EnableModels				= "각 우두머리 설정에 3D 초상화 배경 사용"
@@ -100,9 +113,9 @@ L.RaidWarnMessage 			= "<Deadly Boss Mods>를 사용해 주셔셔 감사합니�
 L.BarWhileMove 				= "알림 위치 수정"
 L.RaidWarnSound				= "알림 소리"
 L.CountdownVoice			= "초읽기 및 지속시간 읽기 소리 설정"
-L.SpecialWarnSound			= "특수 경고 소리(주로 당신이나 특정 직업군이 영향을 받는 주문)"
-L.SpecialWarnSound2			= "특수 경고 소리(주로 공격대원 전체가 영향을 받는 주문)"
-L.SpecialWarnSound3			= "특수 경고 소리(당신 또는 공격대의 전멸을 불러 올 수 있는 주문)"
+L.SpecialWarnSound			= "특수 경고 소리(당신이나 특정 직업군이 영향을 받는 주문)"
+L.SpecialWarnSound2			= "특수 경고 소리(공격대원 전체가 영향을 받는 주문)"
+L.SpecialWarnSound3			= "특수 경고 소리(매우 중요한 주문)"
 
 -- Tab: Generalwarnings
 L.Tab_GeneralMessages 		= "메세지 설정"
@@ -145,6 +158,7 @@ L.Panel_SpecWarnFrame		= "특수 경고"
 L.Area_SpecWarn				= "설정"
 L.SpecWarn_Enabled			= "특수 경고 활성화"
 L.SpecWarn_LHFrame			= "특수 경고 표시시 번쩍임 효과 사용"
+L.SpecWarn_AdSound			= "특수 경고 고급 소리 설정 기능 활성화(UI 재시작 필요)"
 L.SpecWarn_Font				= "특수 경고에 사용되는 글꼴"
 L.SpecWarn_DemoButton		= "예제 보기"
 L.SpecWarn_MoveMe			= "위치 설정"
@@ -164,10 +178,11 @@ L.BarWidth					= "바 길이: %d"
 -- Tab: Spam Filter
 L.Panel_SpamFilter				= "기타 설정"
 L.Area_SpamFilter				= "일반 설정"
-L.HideBossEmoteFrame			= "블리자드 기본 레이드 경보 숨기기"
+L.HideBossEmoteFrame			= "우두머리 전투 중 블리자드 기본 레이드 경보 숨기기"
+L.HideWatchFrame				= "우두머리 전투 중 퀘스트 추척 창 숨기기"
 L.StripServerName				= "알림 및 바에서 서버명 보이지 않기"
 L.SpamBlockBossWhispers			= "전투 중 다른 공격대원 또는 파티원이 보내는 <DBM> 귓속말 감추기"
-L.BlockVersionUpdateNotice		= "업데이트 알림 창 끄기"
+L.BlockVersionUpdateNotice		= "업데이트 알림 창 끄기(추천하지 않음)"
 L.ShowBigBrotherOnCombatStart	= "전투 시작시 BigBrother 버프 체크 실행하기"
 L.BigBrotherAnnounceToRaid		= "BigBrother 버프 체크 결과를 공격대에 알리기"
 L.SpamBlockSayYell				= "전투 중 대화 말풍선 숨기기"

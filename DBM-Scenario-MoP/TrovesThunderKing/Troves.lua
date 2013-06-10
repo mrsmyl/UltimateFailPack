@@ -1,7 +1,7 @@
-local mod	= DBM:NewMod("Troves", "DBM-Scenario-MoP")
+local mod	= DBM:NewMod("d620", "DBM-Scenario-MoP")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9137 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9627 $"):sub(12, -3))
 mod:SetZone()
 
 mod:RegisterCombat("scenario", 934)
@@ -9,7 +9,7 @@ mod:RegisterCombat("scenario", 934)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_AURA_APPLIED",
-	"UNIT_AURA"
+	"UNIT_AURA player"
 )
 
 --Todo, get luck enough to have a treasure goblin spawn and capture event for it so we can special warn for it.
@@ -23,7 +23,7 @@ local specWarnSaurok		= mod:NewSpecialWarningSpell(140009)
 local timerEvent			= mod:NewBuffFadesTimer(299, 140000)
 local timerStoneSmash		= mod:NewCastTimer(3, 139777, nil, false)
 
-local countdownEvent		= mod:NewCountdown(299, 140000, nil, nil, 10)
+local countdownEvent		= mod:NewCountdownFades(299, 140000, nil, nil, 10)
 
 mod:RemoveOption("HealthFrame")
 
@@ -51,7 +51,6 @@ end
 
 --Apparently this doesn't fire in combat log, have to use UNIT_AURA instead.
 function mod:UNIT_AURA(uId)
-	if uId ~= "player" then return end
 	if UnitDebuff("player", timerDebuff) and not timerStarted then
 		timerStarted = true
 		timerEvent:Start()

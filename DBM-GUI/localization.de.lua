@@ -4,7 +4,10 @@ local L = DBM_GUI_Translations
 
 L.MainFrame = "Deadly Boss Mods"
 
-L.TranslationBy 			= "Nitram & Tandanu"
+L.TranslationByPrefix		= "Übersetzt von "
+L.TranslationBy 			= "Ebmor@EU-Malorne"
+L.Website					= "Besuche unsere neuen Diskussions- und Support-Foren: |cFF73C2FBwww.deadlybossmods.com|r (gehostet von Elitist Jerks!)"
+L.WebsiteButton				= "Foren"
 
 L.OTabBosses	= "Bosse"
 L.OTabOptions	= "Optionen"
@@ -20,6 +23,8 @@ L.TabCategory_OTHER    		= "Sonstige Boss Mods"
 L.BossModLoaded 			= "Statistiken von %s"
 L.BossModLoad_now 			= [[Dieses Boss Mod ist nicht geladen. Es wird automatisch geladen, wenn du die Instanz betrittst. Du kannst auch auf den Button klicken um das Boss Mod manuell zu laden.]]
 
+
+
 L.PosX						= 'Position X'
 L.PosY						= 'Position Y'
 
@@ -28,7 +33,7 @@ L.Button_OK 				= 'OK'
 L.Button_Cancel 			= 'Abbrechen'
 L.Button_LoadMod 			= 'Lade Boss Mod'
 L.Mod_Enabled				= "Aktiviere Boss Mod"
-L.Mod_Reset					= "Lade Standardeinstellungen für diese Seite (IN ENTWICKLUNG!)"
+L.Mod_Reset					= "Lade Standardeinstellungen"
 L.Reset 					= "Zurücksetzen"
 
 L.Enable  					= "Aktiviere"
@@ -38,6 +43,9 @@ L.NoSound					= "Kein Sound"
 
 L.IconsInUse				= "Von diesem Mod benutzte Zeichen"
 
+L.QuestComplete				= "Dieser Boss wurde in dieser Woche bereits besiegt."
+L.QuestIncomplete			= "Dieser Boss wurde in dieser Woche noch nicht besiegt. HINWEIS: Falls du nach Abfrage des Status zu schnell /reload ausführst oder dich neu einloggst werden Bosse fälschlicherweise als \"nicht besiegt\" angezeigt."
+
 -- Tab: Boss Statistics
 L.BossStatistics			= "Boss Statistiken"
 L.Statistic_Kills			= "Siege:"
@@ -45,18 +53,25 @@ L.Statistic_Wipes			= "Niederlagen:"
 L.Statistic_Incompletes		= "Abgebrochen:"
 L.Statistic_BestKill		= "Schnellster:"
 
--- Tab: General Options
-L.General 					= "Allgemeine DBM-Einstellungen"
+-- Tab: General Core Options
+L.General 					= "Allgemeine Grundeinstellungen"
 L.EnableDBM 				= "Aktiviere DBM"
 L.EnableMiniMapIcon			= "Aktiviere Minimap-Symbol"
-L.UseMasterVolume			= "Benutze Master-Audiokanal um Sounddateien abzuspielen."
+L.SetPlayerRole				= "Automatisch eigene Rolle (Schutz/Heilung/Schaden) setzen (empfohlen)"
+L.UseMasterVolume			= "Benutze Master-Audiokanal um Sounddateien abzuspielen"
 L.DisableCinematics			= "Deaktiviere Videosequenzen innerhalb von Instanzen"
 L.DisableCinematicsOutside	= "Deaktiviere Videosequenzen außerhalb von Instanzen"
-L.SKT_Enabled				= "Zeige immer Timer für schnellsten Sieg (ignoriert Boss-spezifische Einstellung)"
 L.AutologBosses				= "Automatische Aufzeichnung von Bosskämpfen im spieleigenen Kampflog"
 L.AdvancedAutologBosses		= "Automatische Aufzeichnung von Bosskämpfen mit Addon \"Transcriptor\""
 L.LogOnlyRaidBosses			= "Nur Schlachtzugbosskämpfe aufzeichnen\n(ohne Schlachtzugsbrowser-/Dungeon-/Szenarien-/Weltbosskämpfe)"
 L.Latency_Text				= "Maximale Synchronisierungslatenz: %d"
+-- Tab: General Timer Options
+L.TimerGeneral 				= "Allgemeine Einstellungen für Timer"
+L.SKT_Enabled				= "Zeige immer Timer für schnellsten Sieg (ignoriert Boss-spezifische Einstellung)"
+L.ChallengeTimerOptions		= "Timer für den schnellsten Abschluss im Herausforderungsmodus"
+L.ChallengeTimerPersonal	= "Persönliche Bestzeit"
+L.ChallengeTimerGuild		= "Bestzeit der Gilde"
+L.ChallengeTimerRealm		= "Bestzeit des Realms"
 
 L.ModelOptions				= "Einstellungen für 3D-Modellanzeige"
 L.EnableModels				= "Aktiviere 3D-Modelle in den Bosseinstellungen"
@@ -85,7 +100,8 @@ L.RaidWarnColor_1 			= "Farbe 1"
 L.RaidWarnColor_2 			= "Farbe 2"
 L.RaidWarnColor_3		 	= "Farbe 3"
 L.RaidWarnColor_4 			= "Farbe 4"
-L.InfoRaidWarning			= [[Hier wird die Position und die Farben für das Fenster für Schlachtzugwarnungen festgelegt. Dieses Fenster wird für Nachrichten wie "Player X ist betroffen von Y" verwendet.]]
+L.InfoRaidWarning			= [[Hier werden Position und Farben des Fensters für Schlachtzugwarnungen festgelegt. Dieses Fenster wird für Nachrichten wie "Spieler X ist betroffen von Y" verwendet.]]
+
 L.ColorResetted 			= "Diese Farbeinstellung wurde zurückgesetzt."
 L.ShowWarningsInChat 		= "Zeige Warnungen im Chatfenster"
 L.ShowFakedRaidWarnings 	= "Zeige Warnungen als künstliche Schlachtzugwarnungen"
@@ -94,11 +110,12 @@ L.WarningIconRight 			= "Zeige Symbol rechts an"
 L.ShowCountdownText			= "Zeige Countdown-Text"
 L.RaidWarnMessage 			= "Danke, dass du Deadly Boss Mods verwendest"
 L.BarWhileMove 				= "bewegbare Schlachtzugwarnung"
-L.RaidWarnSound				= "Spiele Sound bei Schlachtzugwarnung"
-L.CountdownVoice			= "Setze Stimme für Countdown- und Countout-Sounds"
+L.RaidWarnSound				= "Sound für Schlachtzugwarnung"
+L.CountdownVoice			= "Primäre Stimme für akustische Zählungen"
+L.CountdownVoice2			= "Sekundäre Stimme für akustische Zählungen"
 L.SpecialWarnSound			= "Sound für Spezialwarnungen, die dich oder deine Rolle betreffen"
 L.SpecialWarnSound2			= "Sound für Spezialwarnungen, die jeden betreffen"
-L.SpecialWarnSound3			= "Sound für SEHR wichtige Spezialwarnungen (tödlich für dich/Schlachtzug)"
+L.SpecialWarnSound3			= "Sound für SEHR wichtige Spezialwarnungen"
 
 -- Tab: Generalwarnings
 L.Tab_GeneralMessages 		= "Allgemeine Meldungen"
@@ -121,12 +138,12 @@ L.BarTexture 				= "Balkentextur"
 L.BarStartColor				= "Startfarbe"
 L.BarEndColor 				= "Endfarbe"
 L.ExpandUpwards				= "Erweitere Balken nach oben"
-L.Bar_Font					= "Schrift für Balken"
+L.Bar_Font					= "Schriftart für Balken"
 L.Bar_FontSize				= "Schriftgröße"
 L.Slider_BarOffSetX 		= "Abstand X: %d"
 L.Slider_BarOffSetY 		= "Abstand Y: %d"
-L.Slider_BarWidth 			= "Balkenbreite: %d"
-L.Slider_BarScale 			= "Balkenskalierung: %0.2f"
+L.Slider_BarWidth 			= "Breite: %d"
+L.Slider_BarScale 			= "Skalierung: %0.2f"
 L.AreaTitle_BarSetup		= "Allgemeine Balkeneinstellungen"
 L.AreaTitle_BarSetupSmall 	= "Einstellungen für kleine Balken"
 L.AreaTitle_BarSetupHuge	= "Einstellungen für große Balken"
@@ -141,13 +158,14 @@ L.Panel_SpecWarnFrame		= "Spezialwarnungen"
 L.Area_SpecWarn				= "Einstellungen für Spezialwarnungen"
 L.SpecWarn_Enabled			= "Zeige Spezialwarnungen für Bossfähigkeiten"
 L.SpecWarn_LHFrame			= "Aktiviere aufblinkenden Bildschirm bei Spezialwarnungen"
-L.SpecWarn_Font				= "Schrift für Spezialwarnungen"
+L.SpecWarn_AdSound			= "Erweiterte Soundeinstellungen für Spezialwarnungen (benötigt /reload)"
+L.SpecWarn_Font				= "Schriftart für Spezialwarnungen" --unused
 L.SpecWarn_DemoButton		= "Zeige Beispiel"
 L.SpecWarn_MoveMe			= "Positionieren"
 L.SpecWarn_FontSize			= "Schriftgröße"
 L.SpecWarn_FontColor		= "Schriftfarbe"
-L.SpecWarn_FontType			= "Wähle Schriftart"
-L.SpecWarn_ResetMe			= "Auf Standard zurücksetzen"
+L.SpecWarn_FontType			= "Schriftart für Spezialwarnungen"
+L.SpecWarn_ResetMe			= "Zurücksetzen"
 
 -- Tab: HealthFrame
 L.Panel_HPFrame				= "Lebensanzeige"
@@ -160,10 +178,11 @@ L.BarWidth					= "Balkenbreite: %d"
 -- Tab: Spam Filter
 L.Panel_SpamFilter				= "Filter / Spam-Filter"
 L.Area_SpamFilter				= "Spam-Filter"
-L.HideBossEmoteFrame			= "Verberge das Schlachtzugsboss-Emote-Fenster ('RaidBossEmoteFrame')"
+L.HideBossEmoteFrame			= "Verberge das Fenster \"RaidBossEmoteFrame\" während Bosskämpfen"
+L.HideWatchFrame				= "Verberge das Fenster für die Questverfolgung während Bosskämpfen"
 L.StripServerName				= "Entferne den Realmnamen der Spieler in Warnungen und Timern"
 L.SpamBlockBossWhispers			= "Aktiviere Filter für <DBM>-Flüstermitteilungen im Kampf"
-L.BlockVersionUpdateNotice		= "Zeige Update-Meldung im Chatfenster statt als Popup"
+L.BlockVersionUpdateNotice		= "Zeige Update-Meldung im Chatfenster statt als Popup (nicht empfohlen)"
 L.ShowBigBrotherOnCombatStart	= "Führe bei Kampfbeginn eine \"BigBrother\"-Buffprüfung durch"
 L.BigBrotherAnnounceToRaid		= "Verkünde Ergebnis der \"BigBrother\"-Buffprüfung zum Schlachtzug"
 L.SpamBlockSayYell				= "Sprechblasen-Ansagen im Chatfenster ausblenden"

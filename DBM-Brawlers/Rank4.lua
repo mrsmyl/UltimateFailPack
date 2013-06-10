@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("BrawlRank4", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8974 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9665 $"):sub(12, -3))
 --mod:SetCreatureID(60491)
 mod:SetModelID(28115)
 mod:SetZone()
@@ -11,7 +11,7 @@ mod:RegisterEvents(
 	"SPELL_CAST_START",
 	"SPELL_AURA_APPLIED",
 	"UNIT_TARGET",
-	"UNIT_SPELLCAST_SUCCEEDED"
+	"UNIT_SPELLCAST_SUCCEEDED target focus"
 )
 
 local warnCharging				= mod:NewSpellAnnounce(133253, 3)
@@ -48,7 +48,7 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:UNIT_TARGET()
-	if self.Options.SetIconOnDominika and UnitGUID("target") == DominikaGUID then
+	if self.Options.SetIconOnDominika and not DBM.Options.DontSetIcons and UnitGUID("target") == DominikaGUID then
 		SetRaidTarget("target", 8)
 	end
 end

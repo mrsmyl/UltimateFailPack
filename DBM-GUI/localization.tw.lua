@@ -5,7 +5,10 @@ local L = DBM_GUI_Translations
 
 L.MainFrame		 = "Deadly Boss Mods"
 
-L.TranslationBy 		= "Imbav@聖光之願、Nightkiller@日落沼澤(Azael Poon)"
+L.TranslationByPrefix		= "翻譯:"
+L.TranslationBy 			= "Imbav@聖光之願、Nightkiller@日落沼澤"
+L.Website					= "拜訪我們新的討論與支援論壇:|cFF73C2FBwww.deadlybossmods.com|r (代管於Elitist Jerks!)"
+L.WebsiteButton				= "論壇"
 
 L.OTabBosses	= "首領模組"
 L.OTabOptions	= "選項"
@@ -31,7 +34,7 @@ L.Button_OK 				= '確定'
 L.Button_Cancel 			= '取消'
 L.Button_LoadMod 			= '載入模組'
 L.Mod_Enabled				= "啟用首領模組"
-L.Mod_Reset					= "為此模組讀取預設值(未完成)"
+L.Mod_Reset					= "讀取預設值"
 L.Reset 					= "重置"
 
 L.Enable  					= "啟用"
@@ -41,6 +44,9 @@ L.NoSound					= "靜音"
 
 L.IconsInUse				= "此模組已使用的標記"
 
+L.QuestComplete				= "你已經完成這個首領的每周聲望/隨機團隊/傳奇任務的取得權。"
+L.QuestIncomplete			= "你尚未取得這個首領的每周聲望/隨機團隊/傳奇任務的取得權。注意:在開戰後重載UI或是重登太快可能會導致結果顯示尚未取得。"
+
 -- Tab: Boss Statistics
 L.BossStatistics			= "首領狀態"
 L.Statistic_Kills			= "勝利："
@@ -48,18 +54,25 @@ L.Statistic_Wipes			= "失敗："
 L.Statistic_Incompletes		= "未完成："
 L.Statistic_BestKill		= "最快記錄："
 
--- Tab: General Options
+-- Tab: General Core Options
 L.General 					= "DBM綜合設置"
 L.EnableDBM 				= "啟用DBM"
 L.EnableMiniMapIcon			= "顯示小地圖圖示"
+L.SetPlayerRole				= "自動的設定玩家角色(建議啟用)"
 L.UseMasterVolume			= "使用主要聲音頻道來播放音效檔。"
 L.DisableCinematics			= "禁用遊戲中副本裡的過場動畫"
 L.DisableCinematicsOutside	= "禁用遊戲中副本以外的過場動畫"
-L.SKT_Enabled				= "永遠顯示快速戰勝計時器 (覆蓋首領特定的選項)"
 L.AutologBosses				= "自動使用暴雪戰鬥日誌記錄首領戰鬥"
 L.AdvancedAutologBosses		= "自動使用Transcriptor紀錄首領戰鬥"
 L.LogOnlyRaidBosses			= "只記錄團隊首領的戰鬥(除了隨機團隊/隨機隊伍/隨機事件)"
 L.Latency_Text				= "設定最高延遲同步門檻:%d"
+-- Tab: General Timer Options
+L.TimerGeneral 				= "綜合DBM計時器選項"
+L.SKT_Enabled				= "永遠顯示快速戰勝計時器 (覆蓋首領特定的選項)"
+L.ChallengeTimerOptions		= "為挑戰模式設定最佳紀錄計時器"
+L.ChallengeTimerPersonal	= "個人"
+L.ChallengeTimerGuild		= "公會"
+L.ChallengeTimerRealm		= "伺服器"
 
 L.ModelOptions				= "3D模型預覽選項"
 L.EnableModels				= "在首領選項中啟用3D模型預覽"
@@ -102,7 +115,7 @@ L.RaidWarnSound				= "發出團隊警告時播放音效"
 L.CountdownVoice			= "設置倒計時聲音"
 L.SpecialWarnSound			= "設定只作用於你或你的角色天賦的特別警告的音效"
 L.SpecialWarnSound2			= "設定作用於全團的特別警告的音效"
-L.SpecialWarnSound3			= "設定作用於極度重要的特別警告的音效(對你或對團隊具毀滅性的)"
+L.SpecialWarnSound3			= "設定作用於極度重要的特別警告的音效"
 
 -- Tab: Generalwarnings
 L.Tab_GeneralMessages 		= "綜合訊息"
@@ -145,6 +158,7 @@ L.Panel_SpecWarnFrame		= "特別警告"
 L.Area_SpecWarn				= "特別警告選項"
 L.SpecWarn_Enabled			= "為首領的技能顯示特別警告"
 L.SpecWarn_LHFrame			= "為特別警告閃爍屏幕"
+L.SpecWarn_AdSound			= "為特別警告開啟進階音效選項(需要重載介面)"
 L.SpecWarn_Font				= "特別警告使用的字型"
 L.SpecWarn_DemoButton		= "顯示範例"
 L.SpecWarn_MoveMe			= "設定位置"
@@ -164,7 +178,8 @@ L.BarWidth					= "寬度: %d"
 -- Tab: Spam Filter
 L.Panel_SpamFilter				= "整體及垃圾過濾"
 L.Area_SpamFilter				= "垃圾過濾選項"
-L.HideBossEmoteFrame			= "隱藏團隊首領表情框"
+L.HideBossEmoteFrame			= "在首領戰鬥時隱藏團隊首領表情框"
+L.HideWatchFrame				= "在首領戰鬥時隱藏監看(目標)框架"
 L.StripServerName				= "隱藏警告和計時器的玩家伺服器名稱"
 L.SpamBlockBossWhispers			= "當戰鬥時過濾 <DBM> 密語警告"
 L.BlockVersionUpdateNotice		= "禁用彈出的更新通知"

@@ -5,7 +5,10 @@ local L = DBM_GUI_Translations
 
 L.MainFrame = "Deadly Boss Mods"
 
-L.TranslationBy 			= "Swix"
+L.TranslationByPrefix		= "Перевод на русский язык - "
+L.TranslationBy 			= "Swix, TOM_RUS"
+L.Website					= "Посетите наши новые форумы обсуждения и поддержки на |cFF73C2FBwww.deadlybossmods.com|r (организовано Elitist Jerks!)"
+L.WebsiteButton				= "Форумы"
 
 L.OTabBosses				= "Боссы"
 L.OTabOptions				= "Настройки"
@@ -31,7 +34,7 @@ L.Button_OK 				= 'OK'
 L.Button_Cancel 			= 'Отмена'
 L.Button_LoadMod			= 'Загрузить модуль'
 L.Mod_Enabled				= "Включить модуль"
-L.Mod_Reset					= "Восстановить настройки по умолчанию для этого модуля"
+L.Mod_Reset					= "Восстановить настройки по умолчанию"
 L.Reset 					= "Сброс"
 
 L.Enable  					= "Вкл."
@@ -41,6 +44,9 @@ L.NoSound					= "Без звука"
 
 L.IconsInUse				= "Используемые метки"
 
+L.QuestComplete				= "Уже получена еженедельная награда за этого босса (репутация/лут в Поиск Рейда/легендарный квест)."
+L.QuestIncomplete			= "Все еще можно получить еженедельную награду за этого босса (репутация/лут в Поиск Рейда/легендарный квест). Обратите внимание: перезагрузка интерфейса или перезаход в игру вскоре после запроса статуса преведет к неправильному результату \"награда еще не получена\""
+
 -- Tab: Boss Statistics
 L.BossStatistics			= "Статистика босса"
 L.Statistic_Kills			= "Убийства:"
@@ -48,18 +54,25 @@ L.Statistic_Wipes			= "Поражения:"
 L.Statistic_Incompletes		= "Не завершено:"
 L.Statistic_BestKill		= "Лучший бой:"
 
--- Tab: General Options
+-- Tab: General Core Options
 L.General 					= "Общие параметры DBM"
 L.EnableDBM 				= "Включить DBM"
 L.EnableMiniMapIcon			= "Отображать кнопку на мини-карте"
+L.SetPlayerRole				= "Автоматически устанавливать роль игрока (рекомендуется включить)"
 L.UseMasterVolume			= "Использовать общий аудио канал для проигрывания звуковых файлов"
 L.DisableCinematics			= "Отключить внутриигровые ролики в подземельях"
 L.DisableCinematicsOutside	= "Отключить внутриигровые ролики вне подземелий"
-L.SKT_Enabled				= "Всегда отображать таймер быстрого убийства\n(переопределяет настройку для конкретного босса)"
 L.AutologBosses				= "Автоматически записывать бои с боссами используя журнал боя Blizzard"
 L.AdvancedAutologBosses		= "Автоматически записывать бои с боссами используя Transcriptor"
 L.LogOnlyRaidBosses			= "Записывать только бои с рейдовыми боссами (искл. Поиск Рейдов/5 ппл/сценарии)"
 L.Latency_Text				= "Макс. задержка для синхронизации: %d"
+-- Tab: General Timer Options
+L.TimerGeneral 				= "Общие параметры таймера"
+L.SKT_Enabled				= "Всегда отображать таймер быстрого убийства\n(переопределяет настройку для конкретного босса)"
+L.ChallengeTimerOptions		= "Отображать таймер лучшего прохождения для режима испытаний"
+L.ChallengeTimerPersonal	= "Персональный"
+L.ChallengeTimerGuild		= "Гильдия"
+L.ChallengeTimerRealm		= "Сервер"
 
 L.ModelOptions				= "Настройки 3D моделей на странице боссов"
 L.EnableModels				= "Показывать 3D модели боссов"
@@ -102,7 +115,7 @@ L.RaidWarnSound				= "Звук рейд-предупреждения"
 L.CountdownVoice			= "Голос для звукового отсчета"
 L.SpecialWarnSound			= "Звук спец-предупреждения для вас или для вашей роли"
 L.SpecialWarnSound2			= "Звук спец-предупреждения для всех"
-L.SpecialWarnSound3			= "Звук очень важного спец-предупреждения (убийственно для Вас или рейда)"
+L.SpecialWarnSound3			= "Звук очень важного спец-предупреждения"
 
 -- Tab: Generalwarnings
 L.Tab_GeneralMessages 		= "Общие сообщения"
@@ -145,6 +158,7 @@ L.Panel_SpecWarnFrame		= "Специальные предупреждения"
 L.Area_SpecWarn				= "Настройка специальных предупреждений"
 L.SpecWarn_Enabled			= "Отображать спец-предупреждения для способностей босса"
 L.SpecWarn_LHFrame			= "Мигать экраном во время специальных предупреждений"
+L.SpecWarn_AdSound			= "Включить расширенные настройки звука для спец-предупреждений\n(требуется перезагрузка UI)"
 L.SpecWarn_Font				= "Выбор шрифта для специальных предупреждений"
 L.SpecWarn_DemoButton		= "Показать пример"
 L.SpecWarn_MoveMe			= "Расположение"
@@ -164,10 +178,11 @@ L.BarWidth					= "Ширина индикатора: %d"
 -- Tab: Spam Filter
 L.Panel_SpamFilter				= "Общие и спам-фильтры"
 L.Area_SpamFilter				= "Параметры спам-фильтра"
-L.HideBossEmoteFrame			= "Скрывать эмоции рейдового босса"
+L.HideBossEmoteFrame			= "Скрывать окно эмоций рейдового босса во время боя с боссом"
+L.HideWatchFrame				= "Скрывать окно отслеживания заданий во время боя с боссом"
 L.StripServerName				= "Удалять имя сервера в предупреждениях и таймерах"
 L.SpamBlockBossWhispers			= "Фильтрация <DBM> предупреждений шепотом в бою"
-L.BlockVersionUpdateNotice		= "Отключить уведомление о доступном обновлении"
+L.BlockVersionUpdateNotice		= "Отключить уведомление о доступном обновлении (не рекомендуется)"
 L.ShowBigBrotherOnCombatStart	= "Выполнять проверку положительных эффектов Big Brother в начале боя"
 L.BigBrotherAnnounceToRaid		= "Объявлять результаты проверки Big Brother в рейд"
 L.SpamBlockSayYell				= "Скрыть текст оповещений в облачках из окна чата"

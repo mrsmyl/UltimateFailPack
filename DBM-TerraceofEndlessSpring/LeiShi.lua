@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod(729, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9129 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9683 $"):sub(12, -3))
 mod:SetCreatureID(62983)--62995 Animated Protector
-mod:SetModelID(42811)
 
 mod:RegisterCombat("combat")
 mod:RegisterKill("yell", L.Victory)--Kill detection is aweful. No death, no special cast. yell is like 40 seconds AFTER victory. terrible.
@@ -14,13 +13,12 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_START",
-	"UNIT_HEALTH",--UNIT_HEALTH_FREQUENT maybe not needed. It's too high cpu usage.
-	"UNIT_SPELLCAST_SUCCEEDED"
+	"UNIT_HEALTH boss1",--UNIT_HEALTH_FREQUENT maybe not needed. It's too high cpu usage.
+	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
 local warnProtect						= mod:NewSpellAnnounce(123250, 2)
 local warnHide							= mod:NewCountAnnounce(123244, 3)
-local warnHideProgress					= mod:NewAnnounce("warnHideProgress", 1, 123244)--Probably not perm, but less spammy debug solution
 local warnHideOver						= mod:NewAnnounce("warnHideOver", 2, 123244)--Because we can. with creativeness, the boss returning is detectable a full 1-2 seconds before even visible. A good signal to stop aoe and get ready to return norm DPS
 local warnGetAway						= mod:NewCountAnnounce(123461, 3)
 local warnSpray							= mod:NewStackAnnounce(123121, 3, nil, mod:IsTank() or mod:IsHealer())
@@ -41,11 +39,7 @@ local berserkTimer						= mod:NewBerserkTimer(600)
 mod:AddBoolOption("HealthFrame", true)
 mod:AddBoolOption("GWHealthFrame", true)
 mod:AddBoolOption("RangeFrame", true)
-if GetLocale() == "koKR" then
-	mod:AddBoolOption("SetIconOnProtector", false)
-else
-	mod:AddBoolOption("SetIconOnProtector", true)
-end
+mod:AddBoolOption("SetIconOnProtector", false)
 
 local getAwayHP = 0 -- because max health is different between Asian and US 25-man encounter. Calculate manually.
 local specialsCast = 0
@@ -141,7 +135,7 @@ function mod:OnCombatStart(delay)
 	else
 		berserkTimer:Start(-delay)
 	end
-	if DBM:GetRaidRank() > 0 and self.Options.SetIconOnProtector then--You can set marks and you have icons turned on
+	if DBM:GetRaidRank() > 0 and self.Options.SetIconOnProtector and not DBM.Options.DontSetIcons then--You can set marks and you have icons turned on
 		self:SendSync("IconCheck", UnitGUID("player"), tostring(DBM.Revision))
 	end
 end
@@ -162,20 +156,34 @@ end
 	
 mod:RegisterOnUpdateHandler(function(self)
 	if hasHighestVersion and not (iconsSet == guardActivated) then
-		for i = 1, DBM:GetNumGroupMembers() do
-			local uId = "raid"..i.."target"
-			local guid = UnitGUID(uId)
+		for uId in DBM:GetGroupMembers() do
+			local unitid = uId.."target"
+			local guid = UnitGUID(unitid)
 			if guards[guid] then
-				SetRaidTarget(uId, guards[guid])
+				for g,i in pairs(guards) do
+					if i == 8 and g ~= guid then -- always set skull on first we see
+						guards[g] = guards[guid]
+						guards[guid] = 8
+						break
+					end
+				end
+				SetRaidTarget(unitid, guards[guid])
 				iconsSet = iconsSet + 1
 				guards[guid] = nil
 			end
-			local guid2 = UnitGUID("mouseover")
-			if guards[guid2] then
-				SetRaidTarget("mouseover", guards[guid2])
-				iconsSet = iconsSet + 1
-				guards[guid2] = nil
+		end
+		local guid2 = UnitGUID("mouseover")
+		if guards[guid2] then
+			for g,i in pairs(guards) do
+				if i == 8 and g ~= guid2 then -- always set skull on first we see
+					guards[g] = guards[guid2]
+					guards[guid2] = 8
+					break
+				end
 			end
+			SetRaidTarget("mouseover", guards[guid2])
+			iconsSet = iconsSet + 1
+			guards[guid2] = nil
 		end
 	end
 end, 0.05)
@@ -267,10 +275,7 @@ function mod:SPELL_CAST_START(args)
 		timerSpecialCD:Start(nil, specialsCast+1)
 		self:SetWipeTime(60)--If she hides at 1.6% or below, she will be killed during hide. In this situration, yell fires very slowly. This hack can prevent recording as wipe.
 		self:RegisterShortTermEvents(
-			"INSTANCE_ENCOUNTER_ENGAGE_UNIT",--We register on hide, because it also fires just before hide, every time and don't want to trigger "hide over" at same time as hide.
-			"SPELL_DAMAGE",
-			"SPELL_PERIODIC_DAMAGE",
-			"RANGE_DAMAGE"
+			"INSTANCE_ENCOUNTER_ENGAGE_UNIT"--We register on hide, because it also fires just before hide, every time and don't want to trigger "hide over" at same time as hide.
 		)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(3)--Show everyone during hide
@@ -281,12 +286,10 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:UNIT_HEALTH(uId)
-	if uId == "boss1" then
-		local currentHealth = 1 - (UnitHealth(uId) / UnitHealthMax(uId))
-		if currentHealth and currentHealth < 1 and currentHealth > prevlostHealth then -- Failsafe.
-			lostHealth = currentHealth
-			prevlostHealth = currentHealth
-		end
+	local currentHealth = 1 - (UnitHealth(uId) / UnitHealthMax(uId))
+	if currentHealth and currentHealth < 1 and currentHealth > prevlostHealth then -- Failsafe.
+		lostHealth = currentHealth
+		prevlostHealth = currentHealth
 	end
 end
 
@@ -296,19 +299,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	end	
 end
 
-function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId, _, _, spellDamage)
-	local cid = self:GetCIDFromGUID(destGUID)
-	if cid == 63099 then--Custom CID lei shi only uses while hiding
-		if type(spellDamage) == "number" then--Fix a rare error when spellDamage is a string? In 200 debug prints it only happened once but better safe than sorry
-			damageDebug = damageDebug + spellDamage--To see if it's amount of damage
-		end
-		hideDebug = hideDebug + 1--To see if it's number of hits
-		timeDebug = GetTime() - hideTime
-	end
-end
-mod.SPELL_PERIODIC_DAMAGE = mod.SPELL_DAMAGE
-mod.RANGE_DAMAGE = mod.SPELL_DAMAGE
-
 --Fires twice when boss returns, once BEFORE visible (and before we can detect unitID, so it flags unknown), then once a 2nd time after visible
 --"<233.9> [INSTANCE_ENCOUNTER_ENGAGE_UNIT] Fake Args:#nil#nil#Unknown#0xF130F6070000006C#normal#0#nil#nil#nil#nil#normal#0#nil#nil#nil#nil#normal#0#nil#nil#nil#nil#normal#0#Real Args:", -- [14168]
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT(event)
@@ -316,33 +306,29 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT(event)
 	self:SetWipeTime(3)
 	self:UnregisterShortTermEvents()--Once boss appears, unregister event, so we ignore the next two that will happen, which will be 2nd time after reappear, and right before next Hide.
 	warnHideOver:Show(GetSpellInfo(123244))
-	warnHideProgress:Cancel()
-	warnHideProgress:Show(hideDebug, damageDebug, tostring(format("%.1f", timeDebug)))--Show right away instead of waiting out the schedule
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(3, bossTank)--Go back to showing only tanks
 	end
 end
 
-local function FindFastestHighestVersion()
-	mod:SendSync("FastestPerson", UnitGUID("player"))
-end
 
 function mod:OnSync(msg, guid, ver)
 	if msg == "IconCheck" and guid and ver then
-		if tonumber(ver) > highestVersion then
-			highestVersion = tonumber(ver)--Keep bumping highest version to highest we recieve from the icon setters
+		ver = tonumber(ver) or 0
+		if ver > highestVersion then
+			highestVersion = ver--Keep bumping highest version to highest we recieve from the icon setters
 			if guid == UnitGUID("player") then--Check if that highest version was from ourself
 				hasHighestVersion = true
-				self:Unschedule(FindFastestHighestVersion)
-				self:Schedule(5, FindFastestHighestVersion)
+				self:Unschedule(self.SendSync)
+				self:Schedule(5, self.SendSync, self, "FastestPerson", UnitGUID("player"))
 			else--Not from self, it means someone with a higher version than us probably sent it
-				self:Unschedule(FindFastestHighestVersion)
+				self:Unschedule(self.SendSync)
 				hasHighestVersion = false
 			end
 		end
 	elseif msg == "FastestPerson" and guid and self:AntiSpam(10, 2) then--Whoever sends this sync first wins all. They have highest version and probably the lowest ping
 		-- note: this assumes that everyone sees chat/addon-messages in the same order which seems to be true at the moment; can be changed to use GetNetStats() if this changes
-		self:Unschedule(FindFastestHighestVersion)
+		self:Unschedule(self.SendSync)
 		if guid == UnitGUID("player") then
 			hasHighestVersion = true
 		else

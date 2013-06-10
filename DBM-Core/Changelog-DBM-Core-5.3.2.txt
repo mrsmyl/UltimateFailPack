@@ -1,0 +1,51 @@
+tag 5.3.2
+1aec91a285bc407e2486be4a53f451df3a04d96c
+subversion <svn@deadlybossmods.com>
+2013-06-01 17:25:12 +0200
+
+Tagging as 5.3.2
+
+
+--------------------
+
+subversion:
+	- increment version number to 5.3.2
+	- Omega via svn r9727: fix bug in hard coded voice
+	- Omega via svn r9726: actually that logic was even more flawed then last. i can't find ANY possible way to support smart voice selection so i have to revert to hard coded voice options instead :\
+	- Omega via svn r9725: better logic, should resolve issue with it always choosing second voice after first run cause at least one of them may always be running. rather than count active timers just need to iterate through an alternation of 1 2 1 2 1 2 instead and it should work better
+	- Omega via svn r9724: throw in a countdown test function that doesn't do any harm ;) Small failsaves into countdown stuff
+	- Omega via svn r9723: throw a couple concurrent voice options in there and see if it plays nice or all goes to crap :)
+	- Omega via svn r9722: some GUI stuff
+	- Omega via svn r9721: If  one countdown is already active, fallback to a secondary countdown voice of users choice so we support two concurrent countdowns that use two different voices (for distinction). Unless of course user just sets both voices to same voice then we honor that and let user sort it out. Well either that, or I replaced all countdowns with lua errors and none of them work now. Hard to say, this code is a disaster
+	I still feel like this is temporary code for current countdown object until i get more voice work done. once i have at least 5 voices with 1-10, i still want to scrap this code and merge countdown into timer object with ability to let user activate a count on ANY timer they choose to.
+	- Omega via svn r9720: remove the impossible from sha mod. huddle can never be last
+	- Omega via svn r9719: disable brewing storm event timer, it's not accurate at all. it needs real time updating to be accurate based on fire performance and watching UNIT_POWER events.
+	- tandanu via svn r9718: fix OnInitialize call
+	- Omega via svn r9717: actually shouldn't need these prints
+	- Omega via svn r9716: more changes to pvp mods to ensure they work
+	- tandanu via svn r9715: replace some (non-debug) prints with our AddMsg calls as print() triggers my static analyzer
+	note: that does not mean, that you should always use AddMsg instead of print. it's just that I get a warning about each call to print which is a good thing, but these prints are okay and I want to get rid of these warnings ;)
+	- Omega via svn r9714: increase pvp mod delay to 3 seconds to see if it fixes http://elitistjerks.com/f104/t132722-missing_bg_timers/
+	- ebmor via svn r9713: deDE update
+	- Omega via svn r9712: yell on static shock countdown since bunch of people are requesting it
+	- Omega via svn r9711: add another spellid to pyroblast for Sanoriak, at least until i verify if they changed him to using the newer one and if he still uses old one
+	- Omega via svn r9710: shorten option text description
+	- Omega via svn r9709: Refactor countout code to be easier controlled/updated from core Play voice example when changing voice option in GUI
+	- Omega via svn r9708: Make it so all boss mods honor voice setting instead of just all custom voice usage defaulting to corsica Add a new male voice to choices. Update license info
+	- Omega via svn r9707: remove barrens sound, i'm going to make an external with that plus other stuff
+	- Omega via svn r9706: code refactoring in megaera mod. local functions moved to top where they should be. COMPLETELY kill UNIT_AURA and use same work around as durumu since it seems to work fine there. Overall better to scan 25 raid members on spell cast success than it is to scan thousands of UNIT_AURA events in an event heavy 25 man.
+	- Omega via svn r9705: set HP to highest on twin consorts use only iron qon's health for that mod though.
+	- Omega via svn r9704: ru update
+	- Omega via svn r9703: fix grammer issue
+	- Omega via svn r9702: fix grammer issue
+	- Omega via svn r9701: also add a message explaining load delay while at it as it may affect some trash mod warnings such as pulling the mobs before first boss in ToT before everyone zones in may result in half the raid not getting warnings for the storm debuff on this trash.
+	- Omega via svn r9700: remove bad table logic, just use a secondary loaddelay variable. testing shows delay is fixed now.
+	- nbluewiz via svn r9699: # Core : Fix mainBossId not works.
+	- Tandanu via svn r9698: DBM:GetNumGroupMembers() now returns 1 for solo raids
+	- Omega via svn r9697: maybe fix one issue with load delay. honestly if it's infinite looping and not loading ANYTHING, need to figure out why. I think it works as long as it never becomes a table value. second it becomes a table it royally breaks?
+	- Omega via svn r9696: megaera health change. although. i'm going to just have main id fixed properly for iron qon and meg tomorrow when i bug tandanu. mainid means return health of MAIN ID, not anything else.
+	- nbluewiz via svn r9695: # HoF Trash : fix bug again. # koKR update.
+	- Omega via svn r9694: fix error
+	- Omega via svn r9693: Fix tortos bug
+	- Omega via svn r9692: Ru update
+	- tandanu via svn r9691: increment version number

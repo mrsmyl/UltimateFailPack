@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod(742, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9030 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9656 $"):sub(12, -3))
 mod:SetCreatureID(62442)--62919 Unstable Sha, 62969 Embodied Terror
-mod:SetModelID(42532)
 mod:SetReCombatTime(60)--fix lfr combat re-starts after killed.
 
 mod:RegisterCombat("combat")
@@ -168,7 +167,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerNightmaresCD:Start()
 			countdownNightmares:Start(15.5)
 		end
-	elseif spellId == 123252 and self:AntiSpam(2, 2) and self:IsInCombat() then--Dread Shadows Cancel (Sun Phase)
+	elseif spellId == 123252 and self:IsInCombat() then--Dread Shadows Cancel (Sun Phase)
 		lightOfDayCount = 0
 		terrorCount = 0
 		breathCount = 0
@@ -186,7 +185,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		if timerNightCD:GetTime() < 103 then
 			timerSummonUnstableShaCD:Start()
 		end
-	elseif spellId == 122767 and self:AntiSpam(2, 2) then--Dread Shadows (Night Phase)
+	elseif spellId == 122767 then--Dread Shadows (Night Phase)
 		timerSummonUnstableShaCD:Cancel()
 		timerSummonEmbodiedTerrorCD:Cancel()
 		timerSunBreathCD:Cancel()
@@ -200,7 +199,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerDarkOfNightCD:Start(10)
 			darkOfNightCount = 0
 		end
-	elseif spellId == 123813 and self:AntiSpam(2, 3) then--The Dark of Night (Night Phase)
+	elseif spellId == 123813 then--The Dark of Night (Night Phase)
 		darkOfNightCount = darkOfNightCount + 1
 		warnDarkOfNight:Show(darkOfNightCount)
 		specWarnDarkOfNight:Show()

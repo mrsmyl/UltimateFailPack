@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod(657, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9120 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9656 $"):sub(12, -3))
 mod:SetCreatureID(56541)
-mod:SetModelID(39887)
 mod:SetZone()
 mod:SetMinSyncRevision(7888)
 mod:SetReCombatTime(60)
@@ -17,7 +16,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_START",
-	"UNIT_SPELLCAST_SUCCEEDED"
+	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
 --Chi blast warns very spammy. and not useful.
@@ -72,7 +71,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
-	if spellId == 110324 and self:AntiSpam(2) then
+	if spellId == 110324 then
 		phase = phase + 1
 		if phase == 2 then
 			warnPhase2:Show()
@@ -81,7 +80,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		end
 		timerFistsOfFuryCD:Cancel()
 		timerTornadoKickCD:Cancel()
-	elseif spellId == 123096 and self:AntiSpam(2) then -- only first kill?
+	elseif spellId == 123096 then -- only first defeat?
 		DBM:EndCombat(self)
 	end
 end

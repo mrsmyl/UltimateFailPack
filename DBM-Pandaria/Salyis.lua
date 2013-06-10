@@ -1,9 +1,9 @@
 local mod	= DBM:NewMod(725, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9016 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9469 $"):sub(12, -3))
 mod:SetCreatureID(62346)--Salyis not dies. Only Galleon attackable and dies.
-mod:SetModelID(42439)	--Galleon=42439, Salyis=42468 / main boss is Galleon
+mod:SetQuestID(32098)
 mod:SetZone(807)--Valley of the Four winds
 
 mod:RegisterCombat("combat")

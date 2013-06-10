@@ -4,7 +4,7 @@
 -- thanks to LeoLeal, DiabloHu and Са°ЧТВ
 
 
-local Warsong	= DBM:NewMod("WarsongGulch", "DBM-PvP", 2)
+local Warsong	= DBM:NewMod("z489", "DBM-PvP", 2)
 local L			= Warsong:GetLocalizedStrings()
 
 Warsong:RemoveOption("HealthFrame")
@@ -17,13 +17,7 @@ local FlagCarrier = {
 	[2] = nil
 }
 Warsong:RegisterEvents(
-	"ZONE_CHANGED_NEW_AREA",
-	"PLAYER_REGEN_ENABLED",
-	"CHAT_MSG_BG_SYSTEM_ALLIANCE",
-	"CHAT_MSG_BG_SYSTEM_HORDE",
-	"CHAT_MSG_BG_SYSTEM_NEUTRAL",
-	"CHAT_MSG_RAID_BOSS_EMOTE",
-	"UPDATE_BATTLEFIELD_SCORE"
+	"ZONE_CHANGED_NEW_AREA"
 )
 
 --local startTimer = Warsong:NewTimer(62, "TimerStart", 2457)
@@ -42,8 +36,16 @@ Warsong:AddBoolOption("ShowFlagCarrierErrorNote", false)
 
 do
 	local function WSG_Initialize()
-		if select(2, IsInInstance()) == "pvp" and GetCurrentMapAreaID() == 443 then
+		if DBM:GetCurrentArea() == 443 then
 			bgzone = true
+			Warsong:RegisterShortTermEvents(
+				"PLAYER_REGEN_ENABLED",
+				"CHAT_MSG_BG_SYSTEM_ALLIANCE",
+				"CHAT_MSG_BG_SYSTEM_HORDE",
+				"CHAT_MSG_BG_SYSTEM_NEUTRAL",
+				"CHAT_MSG_RAID_BOSS_EMOTE",
+				"UPDATE_BATTLEFIELD_SCORE"
+			)
 			if Warsong.Options.ShowFlagCarrier then
 				Warsong:ShowFlagCarrier()
 				Warsong:CreateFlagCarrierButton()
@@ -56,13 +58,17 @@ do
 
 		elseif bgzone then
 			bgzone = false
+			Warsong:UnregisterShortTermEvents()
 			if Warsong.Options.ShowFlagCarrier then
 				Warsong:HideFlagCarrier()
 			end
 		end
 	end
-	Warsong.OnInitialize = WSG_Initialize
-	Warsong.ZONE_CHANGED_NEW_AREA = WSG_Initialize
+	Warsong.OnInitialize = WSG_Initialize()
+	
+	function Warsong:ZONE_CHANGED_NEW_AREA()
+		self:Schedule(1, WSG_Initialize)
+	end
 end
 
 function Warsong:CHAT_MSG_BG_SYSTEM_NEUTRAL(msg)
@@ -216,7 +222,7 @@ do
 					nickLong = mNick
 				end
 				
-				if mSide == L.Alliance then
+				if (mSide == L.Alliance) or (mSide == FACTION_ALLIANCE) then
 					FlagCarrier[2] = nickLong
 					self.FlagCarrierFrame2Text:SetText(mNick)
 					self.FlagCarrierFrame2:Show()
@@ -229,7 +235,7 @@ do
 						self.FlagCarrierFrame2Button:SetAttribute( "macrotext", "/targetexact " .. nickLong )
 					end					
 
-				elseif mSide == L.Horde then
+				elseif (mSide == L.Horde) or (mSide == FACTION_HORDE) then
 					FlagCarrier[1] = nickLong
 					self.FlagCarrierFrame1Text:SetText(mNick)
 					self.FlagCarrierFrame1:Show()
@@ -255,11 +261,11 @@ do
 					_, _, mSide =  string.find(arg1, L.ExprFlagReturn)
 				end
 				
-				if mSide == L.Alliance then
+				if (mSide == L.Alliance) or (mSide == FACTION_ALLIANCE) then
 					self.FlagCarrierFrame2:Hide()
 					FlagCarrier[2] = nil
 
-				elseif mSide == L.Horde then
+				elseif (mSide == L.Horde) or (mSide == FACTION_HORDE) then
 					self.FlagCarrierFrame1:Hide()
 					FlagCarrier[1] = nil
 				end
