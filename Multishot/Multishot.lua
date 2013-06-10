@@ -19,6 +19,7 @@ function Multishot:OnEnable()
   self:RegisterEvent("UNIT_GUILD_LEVEL")
   self:RegisterEvent("ACHIEVEMENT_EARNED")
   self:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+  self:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
   self:RegisterEvent("TRADE_ACCEPT_UPDATE")
   self:RegisterEvent("CHAT_MSG_SYSTEM")
   self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -64,6 +65,37 @@ function Multishot:CHALLENGE_MODE_COMPLETED(strEvent)
 	end
 end
 
+function Multishot:UPDATE_BATTLEFIELD_STATUS(strEvent)
+	if not MultishotConfig.arena or MultishotConfig.battleground then return end
+	local winner = GetBattlefieldWinner()
+	if not winner then return end
+	local isArena, registered = IsActiveBattlefieldArena()
+	if (isArena) and not MultishotConfig.arena then return end
+	if isArena then
+		if IsInArenaTeam() then
+			if not PLAYER_FACTION_GROUP[winner] then -- draw, get our screenshot and bail
+				self:ScheduleTimer("CustomScreenshot", MultishotConfig.delay1, strEvent)
+				return
+			end
+			local playerTeamId
+			for i=1, GetNumBattlefieldScores() do
+				local name, _, _, _, _, teamId = GetBattlefieldScore(i)
+				if name == player then
+					playerTeamId = teamId
+					break
+				end
+			end
+			if playerTeamId and playerTeamId == winner then
+				self:ScheduleTimer("CustomScreenshot", MultishotConfig.delay1, strEvent)
+			end
+		end
+	else
+		if PLAYER_FACTION_GROUP[winner] == GetPlayerFactionGroup() then
+			self:ScheduleTimer("CustomScreenshot", MultishotConfig.delay1, strEvent)
+		end
+	end
+end
+
 function Multishot:CHAT_MSG_SYSTEM(strEvent, strMessage)
   if MultishotConfig.repchange then
     if string.match(strMessage, strMatch) then
@@ -82,9 +114,12 @@ function Multishot:COMBAT_LOG_EVENT_UNFILTERED(strEvent, ...)
   local strType, _, sourceGuid, _, _, _, destGuid = select(2, ...) -- 4.1 compat, 4.2 compat
   local currentId = tonumber("0x" .. string.sub(destGuid, 6, 10))
   if strType == "UNIT_DIED" or strType == "PARTY_KILL" then
-    local inInstance, instanceType = IsInInstance()
+    local solo, inParty, inRaid
+    if IsInRaid() then inRaid = true elseif IsInGroup() then inParty = true else solo = true end
+    local _,_,difficultyID = GetInstanceInfo()
     if not (sourceGuid == UnitGUID("player") and MultishotConfig.rares and Multishot.RareID[currentId]) and strType == "PARTY_KILL" then return end
-    if not ((instanceType == "party" and MultishotConfig.party) or (instanceType == "raid" and MultishotConfig.raid)) then return end
+    if not ((solo and MultishotConfig.groupstatus["1solo"]) or (inParty and MultishotConfig.groupstatus["2party"]) or (inRaid and MultishotConfig.groupstatus["3raid"])) then return end
+    if difficultyID and not MultishotConfig.difficulty[difficultyID] then return end
     if not (Multishot_dbWhitelist[currentId] or Multishot.BossID[currentId]) or Multishot_dbBlacklist[currentId] then return end
     if MultishotConfig.firstkill and MultishotConfig.history[UnitName("player") .. currentId] then return end
     MultishotConfig.history[player .. currentId] = true
@@ -116,6 +151,8 @@ function Multishot:SCREENSHOT_SUCCEEDED(strEvent)
   if intAlpha and intAlpha > 0 then
     UIParent:SetAlpha(intAlpha)
     intAlpha = nil
+  else
+  	UIParent:SetAlpha(1)
   end
   self:RefreshWatermark(false)
   self:UnregisterEvent("SCREENSHOT_SUCCEEDED")
@@ -129,7 +166,7 @@ function Multishot:RefreshWatermark(show)
 	Multishot.watermarkFrame:SetPoint(anchor)
 
 	Multishot.watermarkFrame.Text:ClearAllPoints()
-	Multishot.watermarkFrame.Text:SetPoint("TOP",Multishot.watermarkFrame,"TOP")
+	Multishot.watermarkFrame.Text:SetPoint("CENTER",Multishot.watermarkFrame,"CENTER")
 	Multishot.watermarkFrame.Text:SetJustifyH("CENTER")
 	
 	local text = MultishotConfig.watermarkformat
@@ -145,21 +182,21 @@ function Multishot:RefreshWatermark(show)
 	text = text:gsub("$d", tdate)
 	text = text:gsub("$b","\n" )
 	
-	Multishot.watermarkFrame.Text:SetText(YELLOW_FONT_COLOR_CODE..text..FONT_COLOR_CODE_CLOSE)
+	Multishot.watermarkFrame.Text:SetFont(MultishotConfig.watermarkfont, MultishotConfig.watermarkfontsize, "OUTLINE")
+	Multishot.watermarkFrame.Text:SetFormattedText("%s%s%s",YELLOW_FONT_COLOR_CODE,text,FONT_COLOR_CODE_CLOSE)
 	
 	Multishot.watermarkFrame:Show()
 end
 
 function Multishot:CreateWatermark()
 	local f = CreateFrame("Frame", "MultishotWatermark", WorldFrame)
-	f:SetFrameStrata("BACKGROUND")
+	f:SetFrameStrata("TOOLTIP")
 	f:SetFrameLevel(0)
 	f:SetWidth(350)
 	f:SetHeight(100)
 	
 	f.Text = f:CreateFontString(nil, "OVERLAY")
 	f.Text:SetShadowOffset(1, -1)
-	f.Text:SetFont("Fonts\\NIM_____.ttf", 18, "OUTLINE") -- STANDARD_TEXT_FONT
 	
 	return f
 end
@@ -210,6 +247,8 @@ function Multishot:Debug(strMessage)
 		if intAlpha and intAlpha > 0 then
 			UIParent:SetAlpha(intAlpha)
 			intAlpha = nil
+		else
+			UIParent:SetAlpha(1)
 		end
 		self:RefreshWatermark(false)
 	end

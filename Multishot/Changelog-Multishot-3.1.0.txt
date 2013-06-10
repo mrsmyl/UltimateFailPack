@@ -1,0 +1,16 @@
+tag 3.1.0
+78ce2e47180d58bcf9f33da9848fe635142f3923
+Dridzt <dridzt.addons@hotmail.com>
+2013-05-21 19:47:28 +0300
+
+"Escalation"
+
+
+--------------------
+
+Dridzt:
+	- .toc update, compatible with WoW 5.3.0
+	- Fix an error with watermark font selection on non-English clients.
+	- Add difficulty options for killshots.
+	- Change instance type options to group status: solo, party, raid (solves issues with outdoors world bosses).
+	- Reogranize options pane, some new terms for localization.
