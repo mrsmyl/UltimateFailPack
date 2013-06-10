@@ -1,0 +1,17 @@
+------------------------------------------------------------------------
+r32 | moncai | 2013-05-21 17:27:11 +0000 (Tue, 21 May 2013) | 1 line
+Changed paths:
+   A /tags/v5.3.0 (from /trunk:31)
+
+Tagging as v5.3.0
+------------------------------------------------------------------------
+r31 | moncai | 2013-05-21 17:26:41 +0000 (Tue, 21 May 2013) | 3 lines
+Changed paths:
+   M /trunk/!MoncaiCompare.lua
+   M /trunk/!MoncaiCompare.toc
+   A /trunk/EncounterJournal.lua
+
+* 5.3.0 update
+* Moved Dungeon Journal code to separate module
+* New! Dungeon Journal Item tips now shown on the left side
+------------------------------------------------------------------------

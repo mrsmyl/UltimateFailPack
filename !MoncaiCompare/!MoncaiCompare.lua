@@ -1,3 +1,9 @@
+-- --------------------------------------------------------------------------------
+-- Moncai Compare
+-- Copyright (C) 2009-2013 Moncai
+-- Main module
+-- --------------------------------------------------------------------------------
+
 -- local addonName, addonTable = ...; 
 
 local ItemRefTooltip = ItemRefTooltip
@@ -41,29 +47,6 @@ GameTooltip:SetScript("OnTooltipSetItem", function(self)
 	if (BattlePetTooltip) then
 		BattlePetTooltip:Hide();
 	end
+--~ 	print("tipset")
 end
 )
-
-local fEncounterJournal_Loot_OnUpdate;
-local function JournalHook()
-	
-	fEncounterJournal_Loot_OnUpdate = EncounterJournal_Loot_OnUpdate;
-	EncounterJournal_Loot_OnUpdate = function(self)
-		if GameTooltip:IsOwned(self) then
-			if (not IsModifiedClick("COMPAREITEMS")) and not IsEquippedItem(self.itemID) then
-				GameTooltip_ShowCompareItem();
-			else
-				ShoppingTooltip1:Hide();
-				ShoppingTooltip2:Hide();
-				ShoppingTooltip3:Hide();
-			end
-
-			if IsModifiedClick("DRESSUP") then
-				ShowInspectCursor();
-			else
-				ResetCursor();
-			end
-		end	
-	end;
-end
-hooksecurefunc("EncounterJournal_LoadUI", JournalHook)
