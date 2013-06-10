@@ -1,16 +1,16 @@
-## Interface: 50200
+## Interface: 50300
 ## Author: Parnic, originally created by Iceroth
 ## Name: IceHUD
 ## Title: IceHUD |cff7fff7f-Ace3-|r
 ## Notes: Another HUD addon
-## Version: 1.8.14 (Revision: 932)
+## Version: 1.8.15.1 (Revision: 937)
 ## SavedVariables: IceCoreDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, LibDogTag-3.0, LibDogTag-Unit-3.0, LibRangeCheck-2.0, LibDualSpec-1.0, LibDBIcon-1.0, AceGUI-3.0-SharedMediaWidgets
 ## X-Category: HUDs
 ## X-Compatible-With: 40300
 ## X-Website: http://www.wowace.com/projects/ice-hud/
 ## X-WoWI-ID: 8149
-## X-Curse-Packaged-Version: 1.8.14
+## X-Curse-Packaged-Version: 1.8.15.1
 ## X-Curse-Project-Name: IceHUD
 ## X-Curse-Project-ID: ice-hud
 ## X-Curse-Repository-ID: wow/ice-hud/mainline

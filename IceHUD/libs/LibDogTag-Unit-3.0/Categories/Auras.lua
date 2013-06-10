@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibDogTag-Unit-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 248 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + tonumber(("$Revision: 253 $"):match("%d+")) or 0
 
 if MINOR_VERSION > _G.DogTag_Unit_MINOR_VERSION then
 	_G.DogTag_Unit_MINOR_VERSION = MINOR_VERSION
@@ -212,6 +212,43 @@ DogTag:AddTag("Unit", "NumAura", {
 	events = "Aura#$unit",
 	doc = L["Return the number of auras on the unit"],
 	example = '[NumAura("Renew")] => "2"; [NumAura("Renew")] => "0"',
+	category = L["Auras"]
+})
+
+DogTag:AddTag("Unit", "RaidStacks", {
+	code = function(aura)
+		local prefix = "raid"
+		local numPlayers = GetNumGroupMembers()
+    
+		local numAuras = 0
+    
+		if not IsInRaid() then
+			prefix = "party"
+			numPlayers = numPlayers-1
+        
+			local _, _, _, _, _, _, expirationTime, _, _, _, _ = UnitAura("player", aura, nil, "PLAYER|HELPFUL")
+			if expirationTime ~= nil then
+				numAuras = numAuras + 1
+			end
+		end
+    
+		for i=1,numPlayers do
+			local unit = prefix..i
+			local _, _, _, _, _, _, expirationTime, _, _, _, _ = UnitAura(unit, aura, nil, "PLAYER|HELPFUL")
+			if expirationTime ~= nil then
+				numAuras = numAuras + 1
+			end
+		end
+		
+		return numAuras
+	end,
+	arg = {
+		'aura', "string", '@req'
+	},
+	ret = "number",
+	events = "Update",
+	doc = L["Return the total number of units in raid/party that have the specified aura"],
+	example = '[RaidStacks("Renewing Mist")] => "5"',
 	category = L["Auras"]
 })
 
