@@ -1,0 +1,12 @@
+tag 1.52
+d1e266eea2c33a03e68cd9860c48911bb6bfb682
+John Pasula <ackis@shaw.ca>
+2013-05-21 19:20:06 -0600
+
+Tagging as 1.52
+
+
+--------------------
+
+John Pasula:
+	- ToC Bump.
