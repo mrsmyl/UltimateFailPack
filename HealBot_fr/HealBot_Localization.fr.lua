@@ -962,4 +962,25 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
     HEALBOT_SKIN_ABSORBCOL_TEXT             = "Effets d'absorption";
     HEALBOT_OPTIONS_BARALPHAABSORB          = "Opacit\195\169  des effets d'absorption";
     HEALBOT_OPTIONS_OUTLINE                 = "Contour"
+    HEALBOT_OPTIONS_FRAME                   = "Cadre"
+    HEALBOT_OPTION_NUMHEALERS               = "Nombre de soigneurs"
+    HEALBOT_OPTIONS_CONTENT_SKINS_FRAMES    = "        " .. "Cadres"
+    HEALBOT_OPTIONS_FRAMESOPTTEXT           = "Options  de cadres"
+    HEALBOT_OPTIONS_SETTOOLTIP_POSITION     = "Position tooltip"
+    HEALBOT_OPTIONS_FRAME_ALIAS             = "Titre du cadre"
+    HEALBOT_OPTIONS_FRAME_ALIAS_SHOW        = "Afficher le titre"
+    HEALBOT_OPTIONS_GROW_DIRECTION          = "Sens d\'accroissement"
+    HEALBOT_OPTIONS_GROW_HORIZONTAL         = "Horizontal"
+    HEALBOT_OPTIONS_GROW_VERTICAL           = "Vertical"
+    HEALBOT_OPTIONS_FONT_OFFSET             = "Offset police"
+    HEALBOT_OPTIONS_SET_FRAME_HEALGROUPS    = "Assigner les groupes de soins"
+    HEALBOT_OPTION_EXCLUDEMOUNT_ON          = "Exclure le monture maintenant"
+    HEALBOT_OPTION_EXCLUDEMOUNT_OFF         = "Ne plus exclure la monture"
+    HEALBOT_CMD_TOGGLEEXCLUDEMOUNT          = "Bascule 'Exclure la monture'"
+    HEALBOT_OPTIONS_HIDEMINIBOSSFRAMES      = "Masquer les portraits des mini boss";
+    HEALBOT_OPTIONS_HIDERAIDFRAMES          = "Masquer les portraits de raid";
+end
+
+if (GetLocale() == "frFR") then
+    HealBot_Lang_frFR()
 end

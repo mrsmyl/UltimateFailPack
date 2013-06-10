@@ -959,4 +959,23 @@ function HealBot_Lang_ptBR()
     HEALBOT_OPTIONS_CONTENT_CURE_DEBUFF     = "        " .. HEALBOT_SKIN_DEBTEXT
     HEALBOT_OPTIONS_CONTENT_CURE_CUSTOM     = "        " .. HEALBOT_CLASSES_CUSTOM
     HEALBOT_OPTIONS_CONTENT_CURE_WARNING    = "        " .. HEALBOT_OPTIONS_TAB_WARNING
+    
+    HEALBOT_SKIN_ABSORBCOL_TEXT             = "Absorb effects";
+    HEALBOT_OPTIONS_BARALPHAABSORB          = "Absorb effects opacity";
+    HEALBOT_OPTIONS_OUTLINE                 = "Outline"
+    HEALBOT_OPTIONS_FRAME                   = "Frame"
+    HEALBOT_OPTIONS_CONTENT_SKINS_FRAMES    = "        " .. "Frames"
+    HEALBOT_OPTIONS_FRAMESOPTTEXT           = "Frames options"
+    HEALBOT_OPTIONS_SETTOOLTIP_POSITION     = "Set Tooltip Position"
+    HEALBOT_OPTIONS_FRAME_ALIAS             = "Frame Title"
+    HEALBOT_OPTIONS_FRAME_ALIAS_SHOW        = "Show Title"
+    HEALBOT_OPTIONS_GROW_DIRECTION          = "Grow Direction"
+    HEALBOT_OPTIONS_GROW_HORIZONTAL         = "Horizontal"
+    HEALBOT_OPTIONS_GROW_VERTICAL           = "Vertical"
+    HEALBOT_OPTIONS_FONT_OFFSET             = "Font Offset"
+    HEALBOT_OPTIONS_SET_FRAME_HEALGROUPS    = "Assign Heal Groups"
+    HEALBOT_OPTION_EXCLUDEMOUNT_ON          = "Now Excluding Mount"
+    HEALBOT_OPTION_EXCLUDEMOUNT_OFF         = "No longer Excluding Mount"
+    HEALBOT_CMD_TOGGLEEXCLUDEMOUNT          = "Toggle Exclude Mount"
+    HEALBOT_OPTIONS_HIDEMINIBOSSFRAMES      = "Hide mini boss frames";
 end

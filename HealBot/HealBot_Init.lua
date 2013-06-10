@@ -1,24 +1,6 @@
-local i=nil
-local HB_mana=nil
-local HB_cast=nil
-local tmpText=nil
-local line=nil
-local tmpTest=nil
-local tmpTest2=nil
-local hbHealsMin=nil
-local hbHealsMax=nil
-local spell=nil
-local line1=nil
-local line2=nil
-local line3=nil
 local SmartCast_Res=nil;
-local HealBot_Spec = {}
-local TempSkins = {}
 local tonumber=tonumber
-local strfind=strfind
-local floor=floor
-local strsub=strsub
-local hb_=nil
+local _
 
 function HealBot_Init_retSmartCast_Res()
     return SmartCast_Res
@@ -27,18 +9,13 @@ end
 function HealBot_InitGetSpellData(spell)
 
     if ( not spell ) then return end
-  
-    HB_cast=nil
-    HB_mana=nil
     
    -- name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange 
-    hb_, hb_, hb_, HB_mana, hb_, hb_, HB_cast, hb_, hb_ = GetSpellInfo(spell)
+    local _, _, _, HB_mana, _, _, msCast, _, _ = GetSpellInfo(spell)
 
-    if HB_cast then HB_cast=HealBot_Comm_round(HB_cast/1000,2) end
-
-    if HB_cast then
-        HealBot_Spells[spell].CastTime=tonumber(HB_cast);
-    end
+    local hbCastTime=tonumber(msCast or 0);
+    if hbCastTime>999 then hbCastTime=HealBot_Comm_round(hbCastTime/1000,2) end
+    HealBot_Spells[spell].CastTime=hbCastTime;
     if HB_mana then
         HealBot_Spells[spell].Mana=tonumber(HB_mana);
     end
@@ -57,29 +34,22 @@ function HealBot_InitClearSpellNils(spell)
     end
 end
 
-function HealBot_Generic_Patten(matchStr,matchPattern)
-    tmpTest2,tmpTest2,hbHealsMin,hbHealsMax = strfind(matchStr, matchPattern ); 
-    return tmpTest2,hbHealsMin,hbHealsMax;
-end
-
 function HealBot_FindSpellRangeCast(id)
 
     if ( not id ) then return; end
   
-    spell, hb_, hb_, HB_mana, hb_, hb_, HB_cast, hb_, hb_ = HealBot_GetSpellName(id);
+    local spell, _, _, HB_mana, _, _, msCast, _, _ = HealBot_GetSpellName(id);
     if spell==HEALBOT_HOLY_WORD_SERENITY then 
         spell=HEALBOT_HOLY_WORD_CHASTISE 
         id=HealBot_GetSpellId(HEALBOT_HOLY_WORD_CHASTISE)
-        hb_, hb_, hb_, HB_mana, hb_, hb_, HB_cast, hb_, hb_ = HealBot_GetSpellName(id);
+        _, _, _, HB_mana, _, _, msCast, _, _ = HealBot_GetSpellName(id);
     end
 
+    local hbCastTime=tonumber(msCast or 0);
+    if hbCastTime>999 then hbCastTime=HealBot_Comm_round(hbCastTime/1000,2) end
     if ( not spell ) then return; end
     HealBot_OtherSpells[spell] = {spell = {}};
-    if not HB_cast then
-        HealBot_OtherSpells[spell].CastTime=0;
-    else
-        HealBot_OtherSpells[spell].CastTime=tonumber(HB_cast);
-    end
+    HealBot_OtherSpells[spell].CastTime=hbCastTime;
     if not HB_mana then
         HealBot_OtherSpells[spell].Mana=10*UnitLevel("player");
     else
@@ -87,13 +57,13 @@ function HealBot_FindSpellRangeCast(id)
     end
 end
 
-function HealBot_Init_Spells_Defaults(class)
+function HealBot_Init_Spells_Defaults()
     local i = GetSpecialization()
     local sID = 0
     if i then
         sID = GetSpecializationInfo(i,false,false) 
     end
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_PALADIN] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_PALADIN] then
 -- PALADIN
     HealBot_Spells = {
     --    [HEALBOT_HOLY_LIGHT]                = {id = 635,    CastTime = 2.5, Mana =  35, Level = 999},
@@ -162,7 +132,7 @@ function HealBot_Init_Spells_Defaults(class)
     end
   end
 
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_DRUID] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_DRUID] then
 -- DRUID
     HealBot_Spells = {
     --    [HEALBOT_REJUVENATION]          = {id = 774,    CastTime = 0,   Mana =  25, Level = 3, HoT=HEALBOT_REJUVENATION},
@@ -205,7 +175,7 @@ function HealBot_Init_Spells_Defaults(class)
     
   end
 
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_PRIEST] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_PRIEST] then
 -- PRIEST
     HealBot_Spells = {
     --    [HEALBOT_HEAL]                  = {id = 2050,   CastTime = 3.0, Mana = 155, Level = 999}, 
@@ -260,7 +230,7 @@ function HealBot_Init_Spells_Defaults(class)
     
   end
 
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_SHAMAN] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_SHAMAN] then
 -- SHAMAN
     HealBot_Spells = {
     --    [HEALBOT_HEALING_WAVE]          = {id = 331,    CastTime = 1.5, Mana =  25, Level = 999}, 
@@ -297,7 +267,7 @@ function HealBot_Init_Spells_Defaults(class)
     end
   end
 
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_MONK] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_MONK] then
 --  Monk
     HealBot_Spells = {
     --    [HEALBOT_DETOX]             = {id = 115450, CastTime = 0, Mana = 155, Level = 20}, 
@@ -311,7 +281,7 @@ function HealBot_Init_Spells_Defaults(class)
     --    [HEALBOT_UPLIFT]            = {id = 116670, CastTime = 0, Mana = 101, Level = 999}, 
     --    [HEALBOT_SURGING_MIST]      = {id = 116694, CastTime = 0, Mana = 101, Level = 999}, 
     --    [HEALBOT_ZEN_SPHERE]        = {id = 124081, CastTime = 0, Mana = 101, Level = 30},
-    --    [HEALBOT_ENVELOPING_MIST]   = {id = 132120, CastTime = 0, Mana = 101, Level = 34},
+    --    [HEALBOT_ENVELOPING_MIST]   = {id = 124682, CastTime = 0, Mana = 101, Level = 34},
     --    [HEALBOT_CHI_WAVE]          = {id = 132463, CastTime = 0, Mana = 101, Level = 30},
     --    [HEALBOT_CHI_BURST]         = {id = 130651, CastTime = 0, Mana = 101, Level = 30},
     };
@@ -328,14 +298,14 @@ function HealBot_Init_Spells_Defaults(class)
     end
   end
 
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_HUNTER] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_HUNTER] then
 --  Hunter
     HealBot_Spells = {
         [HEALBOT_MENDPET] = {id = 136, CastTime = 0, Mana =  40, Level = 16}, 
     };
   end
   
-  if strsub(class,1,4)==HealBot_Class_En[HEALBOT_MAGE] then
+  if HealBot_Data["PCLASSTRIM"]==HealBot_Class_En[HEALBOT_MAGE] then
 --  Mage
     HealBot_Spells = {
         [HEALBOT_FROST_ARMOR] = {id = 7302, CastTime = 0, Mana =  40, Level = 54}, 
@@ -346,15 +316,15 @@ end
 
 
 function HealBot_Init_SmartCast()
-    if HealBot_PlayerClassTrim=="PRIE" then
+    if HealBot_Data["PCLASSTRIM"]=="PRIE" then
         SmartCast_Res=HEALBOT_RESURRECTION;
-    elseif HealBot_PlayerClassTrim=="DRUI" then
+    elseif HealBot_Data["PCLASSTRIM"]=="DRUI" then
         SmartCast_Res=HEALBOT_REVIVE;
-    elseif HealBot_PlayerClassTrim=="MONK" then
+    elseif HealBot_Data["PCLASSTRIM"]=="MONK" then
         SmartCast_Res=HEALBOT_RESUSCITATE;
-    elseif HealBot_PlayerClassTrim=="PALA" then
+    elseif HealBot_Data["PCLASSTRIM"]=="PALA" then
         SmartCast_Res=HEALBOT_REDEMPTION;
-    elseif HealBot_PlayerClassTrim=="SHAM" then
+    elseif HealBot_Data["PCLASSTRIM"]=="SHAM" then
         SmartCast_Res=HEALBOT_ANCESTRALSPIRIT;
     end
 end

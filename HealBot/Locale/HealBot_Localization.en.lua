@@ -13,7 +13,6 @@
 --
 --
 
-
 function HealBot_Lang_enUK()
     HEALBOT_enWORD_COLOUR_SUFFIX = "our"
     HealBot_Lang_enALL()
@@ -388,6 +387,7 @@ function HealBot_Lang_enALL()
     HEALBOT_OPTION_NUMBARS                  = "Number of Bars"
     HEALBOT_OPTION_NUMTANKS                 = "Number of Tanks"
     HEALBOT_OPTION_NUMMYTARGETS             = "Number of MyTargets"
+    HEALBOT_OPTION_NUMHEALERS               = "Number of Healers"
     HEALBOT_OPTION_NUMPETS                  = "Number of Pets"
     HEALBOT_WORD_TEST                       = "Test";
     HEALBOT_WORD_OFF                        = "Off";
@@ -961,6 +961,22 @@ function HealBot_Lang_enALL()
     HEALBOT_SKIN_ABSORBCOL_TEXT             = "Absorb effects";
     HEALBOT_OPTIONS_BARALPHAABSORB          = "Absorb effects opacity";
     HEALBOT_OPTIONS_OUTLINE                 = "Outline"
+    HEALBOT_OPTIONS_FRAME                   = "Frame"
+    HEALBOT_OPTIONS_CONTENT_SKINS_FRAMES    = "        " .. "Frames"
+    HEALBOT_OPTIONS_FRAMESOPTTEXT           = "Frames options"
+    HEALBOT_OPTIONS_SETTOOLTIP_POSITION     = "Set Tooltip Position"
+    HEALBOT_OPTIONS_FRAME_ALIAS             = "Frame Title"
+    HEALBOT_OPTIONS_FRAME_ALIAS_SHOW        = "Show Title"
+    HEALBOT_OPTIONS_GROW_DIRECTION          = "Grow Direction"
+    HEALBOT_OPTIONS_GROW_HORIZONTAL         = "Horizontal"
+    HEALBOT_OPTIONS_GROW_VERTICAL           = "Vertical"
+    HEALBOT_OPTIONS_FONT_OFFSET             = "Font Offset"
+    HEALBOT_OPTIONS_SET_FRAME_HEALGROUPS    = "Assign Heal Groups"
+    HEALBOT_OPTION_EXCLUDEMOUNT_ON          = "Now Excluding Mount"
+    HEALBOT_OPTION_EXCLUDEMOUNT_OFF         = "No longer Excluding Mount"
+    HEALBOT_CMD_TOGGLEEXCLUDEMOUNT          = "Toggle Exclude Mount"
+    HEALBOT_OPTIONS_HIDEMINIBOSSFRAMES      = "Hide mini boss frames";
+    HEALBOT_OPTIONS_HIDERAIDFRAMES          = "Hide raid frames";
 end
 
 if (GetLocale() == "enUK") then

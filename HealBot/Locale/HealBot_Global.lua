@@ -1,4 +1,4 @@
-HEALBOT_VERSION   = "5.2.0.2";
+HEALBOT_VERSION   = "5.3.0.2";
 HEALBOT_ABOUT_URL = "http://healbot.darktech.org/"
 
 function HealBot_globalVars()
@@ -88,7 +88,7 @@ function HealBot_globalVars()
 
     HEALBOT_SOOTHING_MIST                   = GetSpellInfo(115175) or "--Soothing Mist"
     HEALBOT_ZEN_MEDITATION                  = GetSpellInfo(115176) or "--Zen Meditation"
-    HEALBOT_ENVELOPING_MIST                 = GetSpellInfo(132120) or "--Enveloping Mist"
+    HEALBOT_ENVELOPING_MIST                 = GetSpellInfo(124682) or "--Enveloping Mist"
     HEALBOT_REVIVAL                         = GetSpellInfo(115310) or "--Revival"
     HEALBOT_RENEWING_MIST                   = GetSpellInfo(115151) or "--Renewing Mist"      HEALBOT_UPLIFT                          = GetSpellInfo(116670) or "--Uplift"
     HEALBOT_SURGING_MIST                    = GetSpellInfo(116694) or "--Surging Mist"

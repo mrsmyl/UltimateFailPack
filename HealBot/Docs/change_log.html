@@ -11,9 +11,81 @@
 <body>
 
 <font face="Verdana, sans-serif"><span style="color: rgb(51, 51, 255);">
-<a href="http://www.healbot.info/">HealBot Continued</a> - Change Log
+<a href="http://healbot.darktech.org/">HealBot Continued</a> - Change Log
 </span><br>
 <br>
+<br>
+v5.3.0.2<br>
+================= <br>
+* Fixed HoT icon occasionally showing on wrong side<br>
+* Fixed HoT icon skipping 1st position when debuff icon active<br>
+* Improved priority checking of debuffs<br>
+* Power word shield now shows Weakened Soul when present<br>
+* Fixed Healbot white focus bar to display in correct frame<br>
+* Fixed flickering debuff icon<br>
+* Improved aggro monitoring<br>
+* Disabled Healbot fastHealth in Heroic Throne of Thunder, see if this fixes incorrect health with Crystal Shell<br>
+<br>
+v5.3.0.1<br>
+================= <br>
+* Fix for nil value issues<br>
+* Fix for Debuff icon not immediately removed when Debuff spell on CD and ignore debuffs when spell on CD is active<br>
+* Tuned up timer changes made in 5.3.0.0<br>
+<br>
+v5.3.0.0<br>
+================= <br>
+* Major stability update, changes to the tracking of units and GUIDs, as Blizzard's SecureButtonTemplates only binds to units, GUID's are significantly less used in this version<br>
+* The stability update has included a number of bug fixes and performance improvements<br>
+* Added new options tab Skins>Frames<br>
+* Added option Grow Direction on Skins>Frames tab, control if bars grow vertically or horizontally away from the anchors<br>
+* Frame Scale option moved to Skins>Frames tab, now applies to individual frames<br>
+* Frame Anchor option moved to Skins>Frames tab, now applies to individual frames<br>
+* Bars Anchor option moved to Skins>Frames tab, now applies to individual frames<br>
+* Frame Locked option moved to Skins>Frames tab, now applies to individual frames<br>
+* Auto Close option moved to Skins>Frames tab, now applies to individual frames<br>
+* Play Sound on Open option moved to Skins>Frames tab, now applies to individual frames<br>
+* Tooltip Position option moved to Skins>Frames tab, now applies to individual frames<br>
+* Background and Border colour setting bars moved to Skins>Frames tab, now applies to individual frames<br>
+* Added button Assign Heal Groups on Skins>Frames tab on open Skins>Healing tab<br>
+* Added button Tooltip Position on Tips tab on open Skins>Frames tab<br>
+* Added options Frame Title and Show Title on Skins>Frames tab, ability to name frames<br>
+* Added font options for Frame Title on Skins>Frames tab<br>
+* Fixes to name changes in combat and raid icons<br>
+* Anyone updating from a pre 5.2.0.0 version will have all settings reset.<br>
+* Reset Skins now prompts for a UI Reload<br>
+* Update Range/Aggro/Aura frequency, this setting now affects all healbot timers, default settings should be suitable for all clients with playable FPS.<br>
+* Significantly reduced memory overhead of HealBot_MountsPets, addon consolidated back into HealBot<br>
+* Improvements to dislike mount option when random Mounts or Pets are used with MouseWheel options<br>
+* Added command to exclude mounts when random Mounts or Pets are used with MouseWheel options. Commands are on the General tab<br>
+* Added Hide Mini Boss Frames option to Skins>General<br>
+* TOC's updated<br>
+<br>
+v5.2.0.6<br>
+================= <br>
+* Default for most skins now only use 1 frame, options to use additional frames are under Skin>Healing<br>
+* Fixed nil error when tooltips not used<br>
+* Fixed nil error when crash protection used<br>
+<br>
+v5.2.0.5<br>
+================= <br>
+* Added option to show Healing Groups in different frames<br>
+* Another fix for non English clients<br>
+* Change to update checker, anyone updating from a pre 5.1.0.0 version will have all settings reset.<br>
+* Fixed rare bug where buffs/icons don't update until next aura event<br>
+* Performance improvements and bug fixes<br>
+<br>
+v5.2.0.4 <B>Note: This version resets Healing Groups</B><br>
+=================<br>
+* Option to keep static (Class/Role/Raid) Icons visible, see Skins>Icons tab<br>
+* Major fix for non English clients<br>
+<br>
+v5.2.0.3 <B>Note: This version resets Healing Groups</B><br>
+=================<br>
+* Custom order of Healing Groups can now be set, see Skins>Healing options<br>
+* Focus is now contained in it's own Healing Group, similar to Target<br>
+* Minor improvement to texture on Cure>Warning tab<br>
+* Minor bug fix to contents in Options<br>
+* Minor performance improvement to contents in Options<br>
 <br>
 v5.2.0.2<br>
 =================<br>
