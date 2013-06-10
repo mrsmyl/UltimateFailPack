@@ -1,14 +1,14 @@
 ------------------------------------------------------------------------
-r234 | mitch0 | 2013-03-06 08:34:55 +0000 (Wed, 06 Mar 2013) | 1 line
+r236 | mitch0 | 2013-05-25 08:42:34 +0000 (Sat, 25 May 2013) | 1 line
 Changed paths:
-   A /tags/v2.2.2 (from /trunk:233)
+   A /tags/v2.2.3 (from /trunk:235)
 
-Tagging as v2.2.2
+Tagging as v2.2.3
 ------------------------------------------------------------------------
-r233 | mitch0 | 2013-03-06 08:16:24 +0000 (Wed, 06 Mar 2013) | 1 line
+r235 | mysticalos | 2013-05-24 17:28:12 +0000 (Fri, 24 May 2013) | 1 line
 Changed paths:
    M /trunk/Bazooka.toc
    M /trunk/Bazooka_Options/Bazooka_Options.toc
 
-toc bump
+Bump TOC
 ------------------------------------------------------------------------

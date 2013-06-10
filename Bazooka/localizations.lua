@@ -54,19 +54,37 @@ L["|cffeda55fRight Click|r to open the configuration window"] = "|cffeda55fClick
 L["cleft"] = "Centro-Izquierda"
 L["cright"] = "Centro-Derecha"
 L["Disable %s plugin?"] = "¿Desactivar el plugin %s?"
-L["Force Hide Tooltip"] = "Forzar esconder la herramienta de ayuda (tooltip)" -- Needs review
-L["Icon Border Clip"] = "Icono del borde del clip" -- Needs review
+L["Force Hide Tooltip"] = "Forzar a ocultar el tooltip"
+L["Icon Border Clip"] = "Recorte del borde del icono"
 L["left"] = "Izquierda"
 L["none"] = "Nada"
-L["Override Tooltip Scale"] = "Anular la escala de la herramienta de ayuda" -- Needs review
+L["Override Tooltip Scale"] = "Anular la escala del tooltip"
 L["right"] = "Derecha"
-L["Tooltip Scale"] = "Escala de la herramienta de ayuda" -- Needs review
+L["Tooltip Scale"] = "Escala del tooltip"
 L["top"] = "Arriba"
 
 end
 
 L = AL:NewLocale(AppName, "esMX")
 if L then
+L["Bar"] = "Barra"
+L["Bar#%d"] = "Barra#%d"
+L["bottom"] = "Abajo"
+L["center"] = "Centro"
+L["|cffeda55fDrag|r to move the frame"] = " |cffeda55fArrastra|r para mover el marco"
+L["|cffeda55fLeft Click|r to lock/unlock frames"] = "|cffeda55fClick Izquierdo|r para bloquear/desbloquear los marcos"
+L["|cffeda55fRight Click|r to open the configuration window"] = "|cffeda55fClick Derecho|r para abrir la ventana de configuración"
+L["cleft"] = "Centro-Izquierda"
+L["cright"] = "Centro-Derecha"
+L["Disable %s plugin?"] = "¿Desactivar el plugin %s?"
+L["Force Hide Tooltip"] = "Forzar a ocultar el tooltip"
+L["Icon Border Clip"] = "Recorte del borde del icono"
+L["left"] = "Izquierda"
+L["none"] = "Nada"
+L["Override Tooltip Scale"] = "Anular la escala del tooltip"
+L["right"] = "Derecha"
+L["Tooltip Scale"] = "Escala del tooltip"
+L["top"] = "Arriba"
 
 end
 
