@@ -3,7 +3,7 @@
 --
 -- Main module of MobInfo-2 AddOn
 
-miVersionNo = '5.0.4.0'
+miVersionNo = 'r71'
 --
 -- MobInfo-2 is a World of Warcraft AddOn that provides you with useful
 -- additional information about Mobs (ie. opponents/monsters). It adds
@@ -17,7 +17,7 @@ miVersionNo = '5.0.4.0'
 -- I have "inhereted" MobInfo from Dizzarian and MobHealth-2 from Wyv
 -- and now continue to update and improve the united result.
 --
--- $header: MobInfo2.lua 5.0.4.0 2012-08-30T11:55:08Z speedwaystar ext $
+-- $header: MobInfo2.lua r71 2012-08-30T11:55:08Z speedwaystar ext $
 
 -- library pointers
 local libPeriodicTable = LibStub("LibPeriodicTable-3.1")

@@ -1,0 +1,10 @@
+------------------------------------------------------------------------
+r71 | speedwaystar | 2013-05-22 02:21:48 +0000 (Wed, 22 May 2013) | 2 lines
+Changed paths:
+   M /trunk
+   M /trunk/MI2_Events.lua
+   M /trunk/MobInfo2.toc
+
+* squelch tainted loot warning
+* bump TOC to 5.3
+------------------------------------------------------------------------

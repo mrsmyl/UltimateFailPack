@@ -141,7 +141,7 @@ local function MI2_EventLootOpened(self, event, ...)
 		return
 	end
 
-	-- check if this is a known corpse being reopened, reopened corpses
+	-- check if this is a known corpse being reopened. reopened corpses
 	-- can (and must) be ignored because they have already been fully processed
 	local isReopen = MI2_CheckForCorpseReopen(mobIndex)
 	if isReopen then
@@ -151,7 +151,7 @@ local function MI2_EventLootOpened(self, event, ...)
 			-- printf(MI_LightBlue.."<MI2> "..MI_White.."Recorded "..link.." gather from "..UnitClass("target").." "..MI_Gray.."(id "..isReopen..")")
 			MI2_TradeskillUsed = nil
 		else
-			printf(MI_LightBlue.."<MI2> "..MI_White.."Drop data from reopened "..UnitClass("target").." is tainted and will not be recorded. "..MI_Gray.."(id "..isReopen..")")
+			-- printf(MI_LightBlue.."<MI2> "..MI_White.."Drop data from reopened "..UnitClass("target").." is tainted and will not be recorded. "..MI_Gray.."(id "..isReopen..")")
 			return
 		end
 	end	
