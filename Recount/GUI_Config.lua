@@ -666,6 +666,8 @@ function me:CreateTextureSelection(parent)
 
 	local theFrame=me.TextureOptions
 	local BarTextures=SM:List("statusbar")
+	
+	SM:RegisterCallback("LibSharedMedia_Registered", me.RefreshStatusBars)
 
 	theFrame:SetHeight(parent:GetHeight()-34)
 	theFrame:SetWidth(200)
