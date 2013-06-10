@@ -143,8 +143,10 @@ function PawnOnEvent(Event, arg1, arg2, ...)
 	elseif Event == "ITEM_LOCKED" then
 		PawnOnItemLocked(arg1, arg2)
 	elseif Event == "ADDON_LOADED" then
+		--if arg1 == "Pawn" then VgerCore.Message("Pawn initialization: ADDON_LOADED") end
 		PawnOnAddonLoaded(arg1)
 	elseif Event == "PLAYER_LOGIN" then
+		--VgerCore.Message("Pawn initialization: PLAYER_LOGIN")
 		PawnInitialize()
 	elseif Event == "PLAYER_LOGOUT" then
 		PawnOnLogout()
@@ -182,30 +184,20 @@ function PawnInitialize()
 		message(WrongLocaleMessage)
 	end
 
+	--VgerCore.Message("Pawn initialization: PawnInitialize")
+
+	-- Set up slash commands
 	SLASH_PAWN1 = "/pawn"
 	SlashCmdList["PAWN"] = PawnCommand
 	
 	-- Set any unset options to their default values.  If the user is a new Pawn user, all options
 	-- will be set to default values.  If upgrading, only missing options will be set to default values.
+	--VgerCore.Message("Pawn initialization: PawnInitializeOptions from PawnInitialize")
 	PawnInitializeOptions()
 
 	-- Check for and set default keybindings.
 	PawnSetDefaultKeybindings()
 
-	-- Now, load any plugins that are ready to be loaded.
-	PawnInitializePlugins()
-	
-	-- Go through the user's scales and check them for errors.
-	for ScaleName, _ in pairs(PawnCommon.Scales) do
-		PawnCorrectScaleErrors(ScaleName)
-	end
-	
-	-- Then, recalculate totals.
-	-- This must be done after checking for errors is completed on all scales because it can trigger other recalculations.
-	for ScaleName, _ in pairs(PawnCommon.Scales) do
-		PawnRecalculateScaleTotal(ScaleName)
-	end
-	
 	-- Adjust UI elements.
 	PawnUI_InventoryPawnButton_Move()
 	
@@ -358,13 +350,28 @@ function PawnInitialize()
 		LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refreshcomp")
 	end
 
+	-- We're now effectively initialized.  Just the last steps of scale initialization remain.
+	--VgerCore.Message("Pawn initialization: PawnIsInitialized = true")
+	PawnIsInitialized = true
+
 	-- If any of our dependencies have already loaded, pretend that they just loaded now.
 	if IsAddOnLoaded("Blizzard_InspectUI") then PawnOnAddonLoaded("Blizzard_InspectUI") end
 	if IsAddOnLoaded("Blizzard_ItemSocketingUI") then PawnOnAddonLoaded("Blizzard_ItemSocketingUI") end
 	if IsAddOnLoaded("Blizzard_ReforgingUI") then PawnOnAddonLoaded("Blizzard_ReforgingUI") end
 
-	-- We're ready!
-	PawnIsInitialized = true
+	-- Now, load any plugins that are ready to be loaded.
+	PawnInitializePlugins()
+	
+	-- Go through the user's scales and check them for errors.
+	for ScaleName, _ in pairs(PawnCommon.Scales) do
+		PawnCorrectScaleErrors(ScaleName)
+	end
+	
+	-- Then, recalculate totals.
+	-- This must be done after checking for errors is completed on all scales because it can trigger other recalculations.
+	for ScaleName, _ in pairs(PawnCommon.Scales) do
+		PawnRecalculateScaleTotal(ScaleName)
+	end
 	
 end
 
@@ -390,6 +397,9 @@ function PawnOnLogout()
 end
 
 function PawnOnAddonLoaded(AddonName)
+	-- Is Pawn hasn't initialized yet, skip this.  We'll rerun this from PawnInitialize later.
+	if not PawnIsInitialized then return end
+
 	if AddonName == "Blizzard_InspectUI" then
 		-- After the inspect UI is loaded, we want to hook it to add the Pawn button.
 		PawnUI_InspectPawnButton_Attach()
@@ -543,7 +553,7 @@ end
 function PawnSetDefaultKeybindings()
 	-- It's possible that this will happen before the main initialization code, so we need to ensure that the
 	-- default Pawn options have been set already.  Doing this multiple times is harmless.
-	PawnInitializeOptions()
+	if not PawnCommon then VgerCore.Fail("Can't set keybindings until Pawn starts to initialize.") return end
 
 	if PawnOptions.LastKeybindingsSet == nil  then PawnOptions.LastKeybindingsSet = 0 end
 	local BindingSet = false
@@ -3144,7 +3154,7 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 		
 		-- Okay, now do the calculations.
 		local BestOfType = BestItems[InvType]
-		if BestOfType == nil or Value > (BestOfType[1] + PawnEpsilon) then
+		if BestOfType == nil or BestOfType[1] == nil or Value > (BestOfType[1] + PawnEpsilon) then
 			-- This item's an upgrade.
 			if BestOfType == nil then
 				BestOfType = { }
@@ -3331,12 +3341,12 @@ end
 
 -- Called whenever the player's inventory changed.  We need to check their currently-equipped items whenever this happens.
 function PawnOnInventoryChanged()
+	-- Ignore inventory change events before we've finished loading.
 	if not PawnIsInitialized then return end
+	if not PawnScaleProvidersInitialized then return end
 	-- Ignore equipment change events when the player is in combat: they're unlikely to equip a NEW item in combat,
 	-- and we wouldn't want this procedure to slow them down even a little.
 	if InCombatLockdown() then return end
-	-- Ignore inventory change events before we've finished loading.
-	if not PawnScaleProvidersInitialized then return end
 
 	PawnCheckInventoryForUpgrades()
 end
@@ -3667,6 +3677,11 @@ end
 -- Pawn API
 ------------------------------------------------------------
 
+-- Returns true if Pawn is ready to calculate scores and upgrades and all of that stuff.  (It's false while the user's UI is still loading.)
+function PawnIsReady()
+	return PawnIsInitialized
+end
+
 -- Resets all custom Pawn scales.
 function PawnResetScales()
 	return PawnResetScalesCore(true, false)
@@ -3679,6 +3694,8 @@ end
 
 -- Common code for scale resetting functions.
 function PawnResetScalesCore(ResetCustomScales, ResetProviderScales)
+	if not PawnIsInitialized then VgerCore.Fail("Can't reset scales until Pawn is initialized") return end
+
 	local ScaleName, Scale, _
 	local ScalesToRemove = {}
 	for ScaleName, Scale in pairs(PawnCommon.Scales) do
@@ -3693,6 +3710,8 @@ end
 
 -- Adds a new scale with no values.  Returns true if successful.
 function PawnAddEmptyScale(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't add scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnAddEmptyScale(\"ScaleName\")")
 		return false
@@ -3710,6 +3729,8 @@ end
 
 -- Adds a new scale with the default values.  Returns true if successful.
 function PawnAddDefaultScale(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't add scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnAddDefaultScale(\"ScaleName\")")
 		return false
@@ -3728,6 +3749,8 @@ end
 
 -- Deletes a scale.  Returns true if successful.
 function PawnDeleteScale(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't delete scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnDeleteScale(\"ScaleName\")")
 		return false
@@ -3747,6 +3770,8 @@ end
 
 -- Renames an existing scale.  Returns true if successful.
 function PawnRenameScale(OldScaleName, NewScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't rename scales until Pawn is initialized") return end
+
 	if (not OldScaleName) or (OldScaleName == "") or (not NewScaleName) or (NewScaleName == "") then
 		VgerCore.Fail("OldScaleName and NewScaleName cannot be empty.  Usage: PawnRenameScale(\"OldScaleName\", \"NewScaleName\")")
 		return false
@@ -3774,6 +3799,8 @@ end
 
 -- Creates a new scale based on an old one.  Returns true if successful.
 function PawnDuplicateScale(OldScaleName, NewScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't duplicate scales until Pawn is initialized") return end
+
 	if (not OldScaleName) or (OldScaleName == "") or (not NewScaleName) or (NewScaleName == "") then
 		VgerCore.Fail("OldScaleName and NewScaleName cannot be empty.  Usage: PawnDuplicateScale(\"OldScaleName\", \"NewScaleName\")")
 		return false
@@ -3809,6 +3836,8 @@ end
 
 -- Returns the value of one stat in a scale, or nil if unsuccessful.
 function PawnGetStatValue(ScaleName, StatName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't get a stat value until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") or (not StatName) or (StatName == "") then
 		VgerCore.Fail("ScaleName and StatName cannot be empty.  Usage: x = PawnGetStatValue(\"ScaleName\", \"StatName\")")
 		return nil
@@ -3822,6 +3851,8 @@ end
 
 -- Returns true if a particular scale exists, or false if not.
 function PawnDoesScaleExist(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't check scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: x = PawnDoesScaleExist(\"ScaleName\")")
 		return false
@@ -3837,6 +3868,8 @@ end
 -- Returns a table of all stats and their values for a particular scale, or nil if unsuccessful.
 -- This returns the actual internal table of stat values, so be careful not to modify it!
 function PawnGetAllStatValues(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't get scale info until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: x = PawnGetAllStatValues(\"ScaleName\")")
 		return nil
@@ -3856,6 +3889,8 @@ end
 -- Sets the value of one stat in a scale.  Returns true if successful.
 -- Use 0 or nil as the Value to remove a stat from the scale.
 function PawnSetStatValue(ScaleName, StatName, Value)
+	if not PawnIsInitialized then VgerCore.Fail("Can't change scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") or (not StatName) or (StatName == "") then
 		VgerCore.Fail("ScaleName and StatName cannot be empty.  Usage: PawnSetStatValue(\"ScaleName\", \"StatName\", Value)")
 		return false
@@ -3879,6 +3914,8 @@ end
 -- For more information in one big table, use PawnGetAllScalesEx.  This method is provided here for backwards compatibility.
 -- DEPRECATED
 function PawnGetAllScales()
+	if not PawnIsInitialized then VgerCore.Fail("Can't get scale list until Pawn is initialized") return end
+
 	local TableCopy = {}
 	local ScaleName, Scale
 	for ScaleName, Scale in pairs(PawnCommon.Scales) do
@@ -3900,6 +3937,8 @@ end
 -- 	IsVisible: Whether or not this scale is visible for the current character.  Examples: true, true
 --	IsProvider: Whether or not this scale comes from a scale provider.  Examples: true, false
 function PawnGetAllScalesEx()
+	if not PawnIsInitialized then VgerCore.Fail("Can't get scale list until Pawn is initialized") return end
+
 	local TableCopy = {}
 	local ScaleName, Scale
 	local ActiveScalesHeader = format(PawnLocal.VisibleScalesHeader, UnitName("player"))
@@ -3959,6 +3998,8 @@ end
 
 -- Changes the normalization factor for a scale.  (Expected values are 1/true and 0/false/nil.)
 function PawnSetScaleNormalizationFactor(ScaleName, Value)
+	if not PawnIsInitialized then VgerCore.Fail("Can't alter scales until Pawn is initialized") return end
+
 	local Scale = PawnCommon.Scales[ScaleName]
 	if not ScaleName or ScaleName == "" or not Scale then
 		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
@@ -3981,6 +4022,8 @@ end
 --	Return value: ScaleTag, or nil if unsuccessful.
 --		ScaleTag: A Pawn scale tag.  Example:  '( Pawn: v1: "Healbot": Stamina=1, Intellect=1.24 )'
 function PawnGetScaleTag(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't export scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnGetScaleTag(\"ScaleName\")")
 		return
@@ -4017,6 +4060,8 @@ end
 --		Status: One of the PawnImportScaleResult* constants.
 --		ScaleName: The name of the Pawn scale specified by ScaleTag, or nil if ScaleTag could not be parsed.
 function PawnImportScale(ScaleTag, Overwrite)
+	if not PawnIsInitialized then VgerCore.Fail("Can't import scales until Pawn is initialized") return end
+
 	local ScaleName, Values = PawnParseScaleTag(ScaleTag)
 	if not ScaleName then
 		-- This tag couldn't be parsed.
@@ -4050,6 +4095,8 @@ end
 
 -- Sets the visibility of all scales from a particular scale provider to be visible or hidden in a single operation.
 function PawnSetAllScaleProviderScalesVisible(ProviderInternalName, Visible)
+	if not PawnIsInitialized then VgerCore.Fail("Can't show or hide providers until Pawn is initialized") return end
+
 	if (not PawnPlayerFullName) then
 		VgerCore.Fail("PawnSetAllScaleProviderScalesVisible failed because Pawn didn't know your character's name yet.")
 		return nil
@@ -4077,6 +4124,8 @@ end
 
 -- Sets whether or not a scale is visible.  If Visible is nil, it will be considered as false.
 function PawnSetScaleVisible(ScaleName, Visible)
+	if not PawnIsInitialized then VgerCore.Fail("Can't show and hide scales until Pawn is initialized") return end
+
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnSetScaleVisible(\"ScaleName\", Visible)")
 		return nil
@@ -4095,6 +4144,8 @@ end
 
 -- Returns true if a given scale is visible in tooltips.
 function PawnIsScaleVisible(ScaleName)
+	if not PawnCommon then VgerCore.Fail("Can't check scale visibility until Pawn is initialized") return end
+	
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: x = PawnIsScaleVisible(\"ScaleName\")")
 		return nil
@@ -4118,6 +4169,8 @@ end
 -- Gets the color of a scale in hex format.  If the scale doesn't specify a color, the default is returned.
 -- If Unenchanted is true, then the unenchanted color for the scale is returned.
 function PawnGetScaleColor(ScaleName, Unenchanted)
+	if not PawnIsInitialized then VgerCore.Fail("Can't get scale colors until Pawn is initialized") return end
+	
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: rrggbb = PawnGetScaleColor(\"ScaleName\", Unenchanted)")
 		return VgerCore.Color.Blue
@@ -4140,6 +4193,8 @@ end
 -- Sets the color of a scale in six-character hex format.  The unenchanted color for the scale will also be set
 -- to a slightly darker color.
 function PawnSetScaleColor(ScaleName, HexColor)
+	if not PawnIsInitialized then VgerCore.Fail("Can't change scale colors until Pawn is initialized") return end
+	
 	if (not ScaleName) or (ScaleName == "") then
 		VgerCore.Fail("ScaleName cannot be empty.  Usage: PawnGetScaleColor(\"ScaleName\", \"rrggbb\")")
 		return nil
@@ -4173,6 +4228,8 @@ end
 
 -- Gets whether or not upgrades are shown for either 1- or 2-handed weapons.
 function PawnGetShowUpgradesForWeapons(ScaleName, WeaponSet)
+	if not PawnIsInitialized then VgerCore.Fail("Can't change upgrade settings until Pawn is initialized") return end
+	
 	local Scale = PawnCommon.Scales[ScaleName]
 	if (not ScaleName) or (ScaleName == "") or not Scale then
 		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
@@ -4192,6 +4249,8 @@ end
 
 -- Sets whether or not upgrades are shown for either 1- or 2-handed weapons.
 function PawnSetShowUpgradesForWeapons(ScaleName, WeaponSet, ShowUpgrades)
+	if not PawnIsInitialized then VgerCore.Fail("Can't change weapon upgrade settings until Pawn is initialized") return end
+	
 	local Scale = PawnCommon.Scales[ScaleName]
 	if (not ScaleName) or (ScaleName == "") or not Scale then
 		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
@@ -4213,6 +4272,8 @@ end
 
 -- Gets whether only the current player's best armor type is shown for upgrades after level 50.
 function PawnGetUpgradesFollowSpecialization(ScaleName)
+	if not PawnIsInitialized then VgerCore.Fail("Can't get armor upgrade settings until Pawn is initialized") return end
+	
 	local Scale = PawnCommon.Scales[ScaleName]
 	if (not ScaleName) or (ScaleName == "") or not Scale then
 		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
@@ -4224,6 +4285,8 @@ end
 
 -- Sets whether only the current player's best armor type is shown for upgrades after level 50.
 function PawnSetUpgradesFollowSpecialization(ScaleName, FollowSpecialization)
+	if not PawnIsInitialized then VgerCore.Fail("Can't change armor upgrade settings until Pawn is initialized") return end
+	
 	local Scale = PawnCommon.Scales[ScaleName]
 	if (not ScaleName) or (ScaleName == "") or not Scale then
 		VgerCore.Fail("ScaleName must be the name of an existing scale, and is case-sensitive.")
@@ -4241,12 +4304,16 @@ end
 
 -- Returns true if a scale is read-only.
 function PawnScaleIsReadOnly(ScaleName)
+	if not PawnCommon then VgerCore.Fail("Can't check scale read-only status until Pawn is initialized") return end
+	
 	local Scale = PawnCommon.Scales[ScaleName]
 	return Scale and Scale.Provider ~= nil
 end
 
 -- Returns the localized name for a scale if it has one.  Otherwise, it returns the scale's unlocalized name.
 function PawnGetScaleLocalizedName(ScaleName)
+	if not PawnCommon then VgerCore.Fail("Can't get scale names until Pawn is initialized") return end
+	
 	local Scale = PawnCommon.Scales[ScaleName]
 	if Scale and Scale.LocalizedName then
 		return Scale.LocalizedName
@@ -4354,7 +4421,7 @@ function PawnAddPluginScale(ProviderInternalName, ScaleInternalName, LocalizedNa
 		return
 	end
 	
-	PawnInitializeOptions()
+	if not PawnCommon then VgerCore.Fail("Can't add plugin scales until Pawn starts to initialize.") return end
 	
 	-- Now, add this new scale to the master list (starting with default scale options), or if it's already there, update it with the data from the scale provider.
 	local ScaleFullName = PawnGetProviderScaleName(ProviderInternalName, ScaleInternalName)
@@ -4386,6 +4453,7 @@ end
 --	Index: If 1 or nil, return the best item for that slot.  If 2, return the second-best item for that slot.  (Most types don't have a second-best item.)
 --	DoNotRescan: If true, don't rescan for best items if information is not available.
 function PawnGetBestItemID(ScaleName, InvType, Index, DoNotRescan)
+	if not PawnIsInitialized then VgerCore.Fail("Can't get best item lists until Pawn is initialized") return nil end
 	if not InvType or InvType == "" or InvType == "INVTYPE_TRINKET" or InvType == "INVTYPE_BAG" or InvType == "INVTYPE_QUIVER" or InvType == "INVTYPE_TABARD" or InvType == "INVTYPE_BODY" then return nil end
 
 	Index = Index or 1
@@ -4429,6 +4497,7 @@ end
 -- Shortcut for PawnIsItemAnUpgrade that takes in an item ID.
 -- Returns data in the same format as PawnIsItemAnUpgrade.
 function PawnIsItemIDAnUpgrade(ItemID)
+	if not PawnIsInitialized then VgerCore.Fail("Can't check to see if items are upgrades until Pawn is initialized") return end
 	local Item = PawnGetItemData("item:" .. ItemID)
 	if not Item then return end
 	return PawnIsItemAnUpgrade(Item)
@@ -4436,7 +4505,7 @@ end
 
 -- Shows or hides the Pawn UI.
 function PawnUIShow()
-	if not PawnUIFrame then
+	if not PawnIsInitialized or not PawnUIFrame then
 		VgerCore.Fail("Pawn UI is not loaded!")
 		return
 	end

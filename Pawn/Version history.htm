@@ -60,8 +60,6 @@ in-game item decisions.</p>
 <p>There are many features that I&#39;d like to add in future versions of Pawn, 
 besides fixing issues listed in the &quot;known issues&quot; below.</p>
 <ul>
-	<li>New MoP-level "nimble" gem cuts are added, and Pawn needs to support 
-	them if they become available in-game.</li>
 	<li>I'd like to make it so that Pawn only shows scales for your current 
 	specialization by default.&nbsp; Most people don't care to see all three (or 
 	four) of their scales and don't know how to turn them off.<ul>
@@ -161,7 +159,9 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 	</li>
 	<li>I need to add a way for scales to choose a specific meta gem [effect], and the 
 	Wowhead scales should always have the best meta gem for each class/spec 
-	chosen, since that&#39;s not always the one with the best primary stats.</li>
+	chosen, since that&#39;s not always the one with the best primary stats.&nbsp; 
+	(One problem with this is that I'd need a different best meta gem for each 
+	tier of expansion content.)</li>
 	<li>To make Pawn more approachable for new users, I think that by default 
 	I'll remove Pawn values from trinkets (since trinkets have secondary effects 
 	and thus their Pawn values are very rarely accurate).&nbsp; (Of course I'd add an option to turn 
@@ -181,10 +181,6 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 	one item visible.</li>
 	<li>The Compare tab should be updated to allow comparisons between two 
 	one-handed items and a two-handed item.</li>
-	<li>It would be nice if the socketing advisor could suggest Nightmare Tear 
-	and jeweler&#39;s gems and things like that if you don&#39;t already have one equipped.&nbsp; Unique 
-	gems wouldn&#39;t be used in value calculations, but they could still be 
-	suggested in the socketing window.</li>
 	<li>Right now, the Compare tab only shows stats that have nonzero values in 
 	your currently-selected scale.&nbsp; I could add an option to show all stats, though that 
 	would make it a lot harder to use at a glance—weapons have a lot of stats, 
@@ -206,6 +202,17 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 	<li>It would be neat to have a way to let people create scales just by 
 	sorting stats in order of preference and then maybe stretching out bars, 
 	sort of like how Humble Bundle lets you split your payments.</li>
+	<li>It's been requested to add a per-scale feature that would scale down the 
+	stats on any item above a certain item level to that item level.&nbsp; For 
+	example, in PvP, items are scaled down to level 496 (as of writing).&nbsp; 
+	Having this feature would allow someone to compare a level 522 PvE item 
+	scaled down to 496 against a level 476 PvP item for arena use.<ul>
+		<li>Curse user Erdluf suggests that the formula is something like this:<br />
+		x = 1.13^(1/13).<br />
+		so for going from say 522 to 496 stats (say mastery) would shrink by<br />
+		pvpMastery = mastery / (x^(522-496))</li>
+	</ul>
+	</li>
 </ul>
 	<h2>Known issues and bugs</h2>
 <p>Check here first if you think you&#39;ve found a new bug; maybe I already know 

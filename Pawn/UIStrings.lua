@@ -222,8 +222,8 @@ PawnUIFrame_GemsHeaderLabel_Text = L.GemsWelcome
 
 PawnUIFrame_BestGemsRadio_Text = L.GemsShowBest
 PawnUIFrame_BestGemsRadio_Tooltip = L.GemsShowBestTooltip
-PawnUIFrame_GemsForItemLevel_Text = L.GemsShowForItemLevel
-PawnUIFrame_GemsForItemLevel_Tooltip = L.GemsShowForItemLevelTooltip
+PawnUIFrame_GemsForItemLevelRadio_Text = L.GemsShowForItemLevel
+PawnUIFrame_GemsForItemLevelRadio_Tooltip = L.GemsShowForItemLevelTooltip
 PawnUIFrame_GemQualityLevelBox_Label = L.GemsQualityLevel
 PawnUIFrame_GemQualityLevelBox_Tooltip = L.GemsQualityLevelTooltip
 

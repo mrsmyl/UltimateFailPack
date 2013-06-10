@@ -988,11 +988,11 @@ local PawnGemData90Uncommon =
 { 76540, true, true, false, "Intellect", 60, "MasteryRating", 120 }, -- Artful Tiger Opal
 { 76541, true, true, false, "MasteryRating", 120, "ParryRating", 120 }, -- Fine Tiger Opal
 { 76542, true, true, false, "Strength", 60, "MasteryRating", 120 }, -- Skillful Tiger Opal
-{ 76543, true, true, false, "ResilienceRating", 120, "Agility", 60 }, -- Lucent Tiger Opal
-{ 76544, true, true, false, "ExpertiseRating", 120, "ResilienceRating", 120 }, -- Tenuous Tiger Opal
-{ 76545, true, true, false, "Intellect", 60, "ResilienceRating", 120 }, -- Willful Tiger Opal
-{ 76546, true, true, false, "ResilienceRating", 120, "ParryRating", 120 }, -- Splendid Tiger Opal
-{ 76547, true, true, false, "Strength", 60, "ResilienceRating", 120 }, -- Resplendent Tiger Opal
+{ 76543, true, true, false, "ResilienceRating", 60, "Agility", 60 }, -- Lucent Tiger Opal
+{ 76544, true, true, false, "ExpertiseRating", 120, "ResilienceRating", 60 }, -- Tenuous Tiger Opal
+{ 76545, true, true, false, "Intellect", 60, "ResilienceRating", 60 }, -- Willful Tiger Opal
+{ 76546, true, true, false, "ResilienceRating", 60, "ParryRating", 120 }, -- Splendid Tiger Opal
+{ 76547, true, true, false, "Strength", 60, "ResilienceRating", 60 }, -- Resplendent Tiger Opal
 
 
 ------------------------------------------------------------
@@ -1003,7 +1003,7 @@ local PawnGemData90Uncommon =
 { 76566, false, true, false, "DodgeRating", 240 }, -- Subtle Sunstone
 { 76567, false, true, false, "HasteRating", 240 }, -- Quick Sunstone
 { 76568, false, true, false, "MasteryRating", 240 }, -- Fractured Sunstone
-{ 76569, false, true, false, "ResilienceRating", 240 }, -- Mystic Sunstone
+{ 76569, false, true, false, "ResilienceRating", 120 }, -- Mystic Sunstone
 
 
 ------------------------------------------------------------
@@ -1014,20 +1014,20 @@ local PawnGemData90Uncommon =
 { 76508, false, true, true, "CritRating", 120, "HitRating", 120 }, -- Piercing Alexandrite
 { 76509, false, true, true, "HasteRating", 120, "HitRating", 120 }, -- Lightning Alexandrite
 { 76510, false, true, true, "HitRating", 120, "MasteryRating", 120 }, -- Sensei's Alexandrite
-{ 76511, false, true, true, "SpellPenetration", 120, "MasteryRating", 120 }, -- Effulgent Alexandrite
+{ 76511, false, true, true, "SpellPenetration", 60, "MasteryRating", 120 }, -- Effulgent Alexandrite
 { 76512, false, true, true, "Spirit", 120, "MasteryRating", 120 }, -- Zen Alexandrite
-{ 76513, false, true, true, "HitRating", 120, "ResilienceRating", 120 }, -- Balanced Alexandrite
-{ 76514, false, true, true, "SpellPenetration", 120, "ResilienceRating", 120 }, -- Vivid Alexandrite
-{ 76515, false, true, true, "Spirit", 120, "ResilienceRating", 120 }, -- Turbid Alexandrite
-{ 76517, false, true, true, "CritRating", 120, "SpellPenetration", 120 }, -- Radiant Alexandrite
-{ 76518, false, true, true, "HasteRating", 120, "SpellPenetration", 120 }, -- Shattered Alexandrite
+{ 76513, false, true, true, "HitRating", 120, "ResilienceRating", 60 }, -- Balanced Alexandrite
+{ 76514, false, true, true, "SpellPenetration", 60, "ResilienceRating", 60 }, -- Vivid Alexandrite
+{ 76515, false, true, true, "Spirit", 120, "ResilienceRating", 60 }, -- Turbid Alexandrite
+{ 76517, false, true, true, "CritRating", 120, "SpellPenetration", 60 }, -- Radiant Alexandrite
+{ 76518, false, true, true, "HasteRating", 120, "SpellPenetration", 60 }, -- Shattered Alexandrite
 { 76519, false, true, true, "HasteRating", 120, "Spirit", 120 }, -- Energized Alexandrite
 { 76520, false, true, true, "CritRating", 120, "Stamina", 90 }, -- Jagged Alexandrite
 { 76521, false, true, true, "DodgeRating", 120, "Stamina", 90 }, -- Regal Alexandrite
 { 76522, false, true, true, "HasteRating", 120, "Stamina", 90 }, -- Forceful Alexandrite
 { 76523, false, true, true, "HitRating", 120, "Stamina", 90 }, -- Nimble Alexandrite
 { 76524, false, true, true, "Stamina", 90, "MasteryRating", 120 }, -- Puissant Alexandrite
-{ 76525, false, true, true, "Stamina", 90, "ResilienceRating", 120 }, -- Steady Alexandrite
+{ 76525, false, true, true, "Stamina", 90, "ResilienceRating", 60 }, -- Steady Alexandrite
 
 
 ------------------------------------------------------------
@@ -1035,7 +1035,7 @@ local PawnGemData90Uncommon =
 ------------------------------------------------------------
 
 { 76502, false, false, true, "HitRating", 240 }, -- Rigid Lapis Lazuli
-{ 76504, false, false, true, "SpellPenetration", 240 }, -- Stormy Lapis Lazuli
+{ 76504, false, false, true, "SpellPenetration", 120 }, -- Stormy Lapis Lazuli
 { 76505, false, false, true, "Spirit", 240 }, -- Sparkling Lapis Lazuli
 { 76506, false, false, true, "Stamina", 180 }, -- Solid Lapis Lazuli
 
@@ -1049,15 +1049,15 @@ local PawnGemData90Uncommon =
 { 76550, true, false, true, "Intellect", 60, "HitRating", 120 }, -- Veiled Roguestone
 { 76551, true, false, true, "HitRating", 120, "ParryRating", 120 }, -- Retaliating Roguestone
 { 76552, true, false, true, "Strength", 60, "HitRating", 120 }, -- Etched Roguestone
-{ 76553, true, false, true, "Intellect", 60, "SpellPenetration", 120 }, -- Mysterious Roguestone
+{ 76553, true, false, true, "Intellect", 60, "SpellPenetration", 60 }, -- Mysterious Roguestone
 { 76554, true, false, true, "Intellect", 60, "Spirit", 120 }, -- Purified Roguestone
 { 76555, true, false, true, "Stamina", 90, "Agility", 60 }, -- Shifting Roguestone
 { 76556, true, false, true, "ExpertiseRating", 120, "Stamina", 90 }, -- Guardian's Roguestone
 { 76557, true, false, true, "Intellect", 60, "Stamina", 90 }, -- Timeless Roguestone
 { 76558, true, false, true, "Stamina", 90, "ParryRating", 120 }, -- Defender's Roguestone
 { 76559, true, false, true, "Strength", 60, "Stamina", 90 }, -- Sovereign Roguestone
-{ 89675, true, false, true, "Strength", 60, "SpellPenetration", 120 }, -- Tense Roguestone
-{ 89678, true, false, true, "Agility", 60, "SpellPenetration", 120 }, -- Assassin's Roguestone
+{ 89675, true, false, true, "Strength", 60, "SpellPenetration", 60 }, -- Tense Roguestone
+{ 89678, true, false, true, "Agility", 60, "SpellPenetration", 60 }, -- Assassin's Roguestone
 
 
 }
@@ -1102,11 +1102,11 @@ local PawnGemData90Rare =
 { 76672, true, true, false, "Intellect", 80, "MasteryRating", 160 }, -- Artful Vermilion Onyx
 { 76673, true, true, false, "MasteryRating", 160, "ParryRating", 160 }, -- Fine Vermilion Onyx
 { 76674, true, true, false, "Strength", 80, "MasteryRating", 160 }, -- Skillful Vermilion Onyx
-{ 76675, true, true, false, "ResilienceRating", 160, "Agility", 80 }, -- Lucent Vermilion Onyx
-{ 76676, true, true, false, "ExpertiseRating", 160, "ResilienceRating", 160 }, -- Tenuous Vermilion Onyx
-{ 76677, true, true, false, "Intellect", 80, "ResilienceRating", 160 }, -- Willful Vermilion Onyx
-{ 76678, true, true, false, "ResilienceRating", 160, "ParryRating", 160 }, -- Splendid Vermilion Onyx
-{ 76679, true, true, false, "Strength", 80, "ResilienceRating", 160 }, -- Resplendent Vermilion Onyx
+{ 76675, true, true, false, "ResilienceRating", 80, "Agility", 80 }, -- Lucent Vermilion Onyx
+{ 76676, true, true, false, "ExpertiseRating", 160, "ResilienceRating", 80 }, -- Tenuous Vermilion Onyx
+{ 76677, true, true, false, "Intellect", 80, "ResilienceRating", 80 }, -- Willful Vermilion Onyx
+{ 76678, true, true, false, "ResilienceRating", 80, "ParryRating", 160 }, -- Splendid Vermilion Onyx
+{ 76679, true, true, false, "Strength", 80, "ResilienceRating", 80 }, -- Resplendent Vermilion Onyx
 
 
 ------------------------------------------------------------
@@ -1117,7 +1117,7 @@ local PawnGemData90Rare =
 { 76698, false, true, false, "DodgeRating", 320 }, -- Subtle Sun's Radiance
 { 76699, false, true, false, "HasteRating", 320 }, -- Quick Sun's Radiance
 { 76700, false, true, false, "MasteryRating", 320 }, -- Fractured Sun's Radiance
-{ 76701, false, true, false, "ResilienceRating", 320 }, -- Mystic Sun's Radiance
+{ 76701, false, true, false, "ResilienceRating", 160 }, -- Mystic Sun's Radiance
 
 
 ------------------------------------------------------------
@@ -1128,20 +1128,20 @@ local PawnGemData90Rare =
 { 76641, false, true, true, "CritRating", 160, "HitRating", 160 }, -- Piercing Wild Jade
 { 76642, false, true, true, "HasteRating", 160, "HitRating", 160 }, -- Lightning Wild Jade
 { 76643, false, true, true, "HitRating", 160, "MasteryRating", 160 }, -- Sensei's Wild Jade
-{ 76644, false, true, true, "SpellPenetration", 160, "MasteryRating", 160 }, -- Effulgent Wild Jade
+{ 76644, false, true, true, "SpellPenetration", 80, "MasteryRating", 160 }, -- Effulgent Wild Jade
 { 76645, false, true, true, "Spirit", 160, "MasteryRating", 160 }, -- Zen Wild Jade
-{ 76646, false, true, true, "HitRating", 160, "ResilienceRating", 160 }, -- Balanced Wild Jade
-{ 76647, false, true, true, "SpellPenetration", 160, "ResilienceRating", 160 }, -- Vivid Wild Jade
-{ 76648, false, true, true, "Spirit", 160, "ResilienceRating", 160 }, -- Turbid Wild Jade
-{ 76649, false, true, true, "CritRating", 160, "SpellPenetration", 160 }, -- Radiant Wild Jade
-{ 76650, false, true, true, "HasteRating", 160, "SpellPenetration", 160 }, -- Shattered Wild Jade
+{ 76646, false, true, true, "HitRating", 160, "ResilienceRating", 80 }, -- Balanced Wild Jade
+{ 76647, false, true, true, "SpellPenetration", 80, "ResilienceRating", 80 }, -- Vivid Wild Jade
+{ 76648, false, true, true, "Spirit", 160, "ResilienceRating", 80 }, -- Turbid Wild Jade
+{ 76649, false, true, true, "CritRating", 160, "SpellPenetration", 80 }, -- Radiant Wild Jade
+{ 76650, false, true, true, "HasteRating", 160, "SpellPenetration", 80 }, -- Shattered Wild Jade
 { 76651, false, true, true, "HasteRating", 160, "Spirit", 160 }, -- Energized Wild Jade
 { 76652, false, true, true, "CritRating", 160, "Stamina", 120 }, -- Jagged Wild Jade
 { 76653, false, true, true, "DodgeRating", 160, "Stamina", 120 }, -- Regal Wild Jade
 { 76654, false, true, true, "HasteRating", 160, "Stamina", 120 }, -- Forceful Wild Jade
 { 76655, false, true, true, "HitRating", 160, "Stamina", 120 }, -- Nimble Wild Jade
 { 76656, false, true, true, "Stamina", 120, "MasteryRating", 160 }, -- Puissant Wild Jade
-{ 76657, false, true, true, "Stamina", 120, "ResilienceRating", 160 }, -- Steady Wild Jade
+{ 76657, false, true, true, "Stamina", 120, "ResilienceRating", 80 }, -- Steady Wild Jade
 
 
 ------------------------------------------------------------
@@ -1149,7 +1149,7 @@ local PawnGemData90Rare =
 ------------------------------------------------------------
 
 { 76636, false, false, true, "HitRating", 320 }, -- Rigid River's Heart
-{ 76637, false, false, true, "SpellPenetration", 320 }, -- Stormy River's Heart
+{ 76637, false, false, true, "SpellPenetration", 160 }, -- Stormy River's Heart
 { 76638, false, false, true, "Spirit", 320 }, -- Sparkling River's Heart
 { 76639, false, false, true, "Stamina", 240 }, -- Solid River's Heart
 
@@ -1163,13 +1163,14 @@ local PawnGemData90Rare =
 { 76682, true, false, true, "Intellect", 80, "HitRating", 160 }, -- Veiled Imperial Amethyst
 { 76683, true, false, true, "HitRating", 160, "ParryRating", 160 }, -- Retaliating Imperial Amethyst
 { 76684, true, false, true, "Strength", 80, "HitRating", 160 }, -- Etched Imperial Amethyst
-{ 76685, true, false, true, "Intellect", 80, "SpellPenetration", 160 }, -- Mysterious Imperial Amethyst
+{ 76685, true, false, true, "Intellect", 80, "SpellPenetration", 80 }, -- Mysterious Imperial Amethyst
 { 76686, true, false, true, "Intellect", 80, "Spirit", 160 }, -- Purified Imperial Amethyst
 { 76687, true, false, true, "Stamina", 120, "Agility", 80 }, -- Shifting Imperial Amethyst
 { 76688, true, false, true, "ExpertiseRating", 160, "Stamina", 120 }, -- Guardian's Imperial Amethyst
 { 76689, true, false, true, "Intellect", 80, "Stamina", 120 }, -- Timeless Imperial Amethyst
 { 76690, true, false, true, "Stamina", 120, "ParryRating", 160 }, -- Defender's Imperial Amethyst
 { 76691, true, false, true, "Strength", 80, "Stamina", 120 }, -- Sovereign Imperial Amethyst
+{ 89674, true, false, true, "Strength", 80, "SpellPenetration", 80 }, -- Tense Imperial Amethyst
 
 
 }

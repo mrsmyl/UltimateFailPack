@@ -266,7 +266,7 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		HeirloomXpBoost2 = "^UNUSED$",
 		Heroic = "^Heroisch$",
 		HeroicElite = "^Heroisch, Elite$",
-		HeroicThunderforged = "^Heroisch, Donnergeschmiedet$", -- Needs review
+		HeroicThunderforged = "^Heroisch, Donnergeschmiedet$",
 		Hit = "^%+?([%d%.,]+) Trefferwert$",
 		Hit2 = "^UNUSED$",
 		Hit3 = "^UNUSED$",
@@ -292,7 +292,7 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Plans = "Pläne:",
 		Plate = "^Platte$",
 		Polearm = "^Stangenwaffe$",
-		PvPPower = "^%+?([%d%.,]+) PVP-Macht$",
+		PvPPower = "^%+?([%d%.,]+) PvP-Macht$",
 		RaidFinder = "^Schlachtzugsbrowser$",
 		Recipe = "Rezept:",
 		Requires2 = "^Benötigt",
@@ -317,7 +317,7 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		TempestKeep = "^Festung der Stürme$",
 		TemporaryBuffMinutes = "^.+%(%d+ Min%)$",
 		TemporaryBuffSeconds = "^.+%(%d+ Sek%)$",
-		Thunderforged = "^Donnergeschmiedet$", -- Needs review
+		Thunderforged = "^Donnergeschmiedet$",
 		UpgradeLevel = "^Upgrade Level:",
 		Use = "Benutzen:",
 		Wand = "^Zauberstab$",

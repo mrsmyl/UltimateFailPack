@@ -156,10 +156,6 @@ function PawnUI_AddInventoryTotalsToTooltip(Tooltip, Unit)
 end
 
 function PawnUI_InspectPawnButton_Attach()
-	-- It's possible that this will happen before the main initialization code, so we need to ensure that the
-	-- default Pawn options have been set already.  Doing this multiple times is harmless.
-	PawnInitializeOptions()
-
 	VgerCore.Assert(InspectPaperDollFrame ~= nil, "InspectPaperDollFrame should be loaded by now!")
 	CreateFrame("Button", "PawnUI_InspectPawnButton", InspectPaperDollFrame, "PawnUI_InspectPawnButtonTemplate")
 	PawnUI_InspectPawnButton:SetParent(InspectPaperDollFrame)
@@ -167,10 +163,6 @@ function PawnUI_InspectPawnButton_Attach()
 end
 
 function PawnUI_SocketingPawnButton_Attach()
-	-- It's possible that this will happen before the main initialization code, so we need to ensure that the
-	-- default Pawn options have been set already.  Doing this multiple times is harmless.
-	PawnInitializeOptions()
-
 	-- Attach the socketing button.
 	VgerCore.Assert(ItemSocketingFrame ~= nil, "ItemSocketingFrame should be loaded by now!")
 	CreateFrame("Button", "PawnUI_SocketingPawnButton", ItemSocketingFrame, "PawnUI_SocketingPawnButtonTemplate")
@@ -2224,6 +2216,7 @@ end
 
 -- When quest info is displayed, call other quest info hook functions as appropriate.
 function PawnUI_OnQuestInfo_Display(template)
+	if not PawnCommon or not PawnPlayerFullName then return end
 	VgerCore.Assert(QuestInfoFrame, "QuestInfoFrame should exist by the time that PawnUI_OnQuestInfo_Display is called.")
 	local i = 1
 	while template.elements[i] do
@@ -2321,8 +2314,6 @@ end
 ------------------------------------------------------------
 
 function PawnInterfaceOptionsFrame_OnLoad()
-	-- NOTE: If you need anything from PawnCommon in the future, you should call PawnInitializeOptions first.
-
 	-- Register the Interface Options page.
 	PawnInterfaceOptionsFrame.name = "Pawn"
 	InterfaceOptions_AddCategory(PawnInterfaceOptionsFrame)

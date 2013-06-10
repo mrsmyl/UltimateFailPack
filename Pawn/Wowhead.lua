@@ -25,7 +25,8 @@ PawnAddPluginScale(
 	{
 		["Dps"] = 459, ["Strength"] = 100, ["HitRating"] = 78, ["ExpertiseRating"] = 67, ["CritRating"] = 56, ["Ap"] = 49, ["MasteryRating"] = 44, ["HasteRating"] = 33, ["Stamina"] = .1, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
-	1 -- normalize values
+	1, -- normalize values
+	1 -- hide 1H upgrades
 )
 
 PawnAddPluginScale(
@@ -45,7 +46,7 @@ PawnAddPluginScale(
 	PawnLocal.Wowhead.WarriorTank,
 	"c79c6e",
 	{
-		["ParryRating"] = 100, ["DodgeRating"] = 100, ["Strength"] = 98, ["Stamina"] = 70, ["MasteryRating"] = 50, ["ExpertiseRating"] = 30, ["HitRating"] = 30, ["Armor"] = 25, ["HasteRating"] = 20, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["MetaSocketEffect"] = 16000
+		["ParryRating"] = 100, ["DodgeRating"] = 100, ["Strength"] = 98, ["Stamina"] = 70, ["MasteryRating"] = 50, ["ExpertiseRating"] = 30, ["HitRating"] = 30, ["Armor"] = 25, ["HasteRating"] = 20, ["IsWand"] = -1000000, ["IsFrill"] = -1000000, ["IsBow"] = -1000000, ["IsCrossbow"] = -1000000, ["IsGun"] = -1000000, ["IsOffHand"] = -1000000, ["MetaSocketEffect"] = 16000
 	},
 	1, -- normalize values
 	2 -- hide 2H upgrades

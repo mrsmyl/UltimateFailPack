@@ -285,7 +285,7 @@ Pour plus d'information sur la Personnalisation de Pawn, regarder le fichier d'a
 		MetaGemRequirements = "|cff%x%x%x%x%x%xN\195\169cessite",
 		MultiStatSeparator1 = "et",
 		NormalizationEnchant = "^Enchant\195\169\194\160: (.*)$", -- Needs review
-		NormalizationReforge = "^(.*) %(reforg\195\169 \195\160 partir de (.*)%)$", -- Needs review
+		NormalizationReforge = "^(.*) %(retouch\195\169 \195\160 partir de (.*)%)$", -- Needs review
 		OnlyFitsInMetaGemSlot = "^\"Ne peut \195\170tre serti que dans une ch\195\162sse de m\195\169ta-gemme.%.\"$",
 		Parry = "^%+?([%d%.,]+) Parade$",
 		Parry2 = "^%+?([%d%.,]+) \195\160 la parade$",

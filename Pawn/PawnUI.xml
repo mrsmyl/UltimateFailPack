@@ -1121,7 +1121,7 @@
 						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="50" y="-70" /></Offset></Anchor></Anchors>
 						<HitRectInsets><AbsInset left="0" right="-275" top="0" bottom="0"/></HitRectInsets>
 						<Layers><Layer level="ARTWORK">
-							<FontString name="$parent_Label" inherits="PawnUIRadioButtonLabelTemplate" text="PawnUIFrame_GemsForItemLevel_Text">
+							<FontString name="$parent_Label" inherits="PawnUIRadioButtonLabelTemplate" text="PawnUIFrame_GemsForItemLevelRadio_Text">
 								<Size><AbsDimension x="300" y="15" /></Size>
 							</FontString>
 						</Layer></Layers>
@@ -1490,6 +1490,7 @@
 
 		<Scripts>
 			<OnLoad>
+				--VgerCore.Message("Pawn initialization: PawnFrame:OnLoad")
 				tinsert(UISpecialFrames, self:GetName()) -- closes when you press Escape
 				self:RegisterEvent("ADDON_LOADED")
 				self:RegisterEvent("PLAYER_LOGIN")
