@@ -213,15 +213,25 @@ besides fixing issues listed in the &quot;known issues&quot; below.</p>
 		pvpMastery = mastery / (x^(522-496))</li>
 	</ul>
 	</li>
+	<li>It would be cool if Pawn could also keep track of upgrades for your 
+	alts, for BoE items only.&nbsp; I want for there to be a way for you to be 
+	able to clearly designate "this is my priest's discipline gear set" in the 
+	addon, or something similar. Once Pawn has a better concept of "this is 
+	which gear set this character wears for this task," I should be able to do 
+	this.</li>
+	<li>An "ignore sockets when below the level cap" option would be great for 
+	people who are never going to bother putting gems into items, ever, until 
+	they hit 90.</li>
 </ul>
 	<h2>Known issues and bugs</h2>
 <p>Check here first if you think you&#39;ve found a new bug; maybe I already know 
 about it.</p>
 <ul>
 	<li>QuestGuru breaks parts of the Quest Upgrade Advisor.</li>
-	<li>I&#39;ve noticed that sometimes the Loot Upgrade Advisor doesn&#39;t appear when 
-	it should.&nbsp; (Pawn isn&#39;t getting the notification that a loot window has 
-	appeared, so it doesn&#39;t know to show it.)</li>
+	<li>Pawn's quest advisor icons show up behind items when using some skinning 
+	addons.&nbsp; (Apparently sometimes skins cause the icon to be at the 
+	OVERLAY level.)</li>
+	<li>Unverified: Pawn_Scrap causes Pawn to produce errors upon logging in.</li>
 	<li>Unverified: Pawn adds the (?) icon to the line that EPGP adds to 
 	tooltips as if it were a stat.</li>
 	<li>Unverified: wands may only be getting the regular damage stats, and not 
@@ -239,6 +249,9 @@ about it.</p>
 	there are no Pawn values until the next time you show that item.&nbsp; (I&#39;ve 
 	found a potential solution to this issue that I&#39;ll try out sometime: waiting for 
 	GameTooltip:OnSetItem to occur, if you&#39;re curious.)</li>
+	<li>I&#39;ve noticed that sometimes the Loot Upgrade Advisor doesn&#39;t appear when 
+	it should.&nbsp; (Pawn isn&#39;t getting the notification that a loot window has 
+	appeared, so it doesn&#39;t know to show it.)</li>
 </ul>
 <h2>Release history</h2>
 <p>For recent version history, see the <a href="Readme.htm">Pawn readme</a>.</p>

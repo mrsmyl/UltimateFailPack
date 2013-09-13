@@ -258,6 +258,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Expertise = "^%+?([%d%.,]+) к мастерству$",
 		Expertise2 = "^%+?([%d%.,]+) к показателю мастерства$",
 		FistWeapon = "^Кистевое$",
+		Flexible = "^Flexible$",
 		Formula = "Формула:",
 		Gun = "^Огнестрельное$",
 		Haste = "^%+?([%d%.,]+) к скорости$",
@@ -267,7 +268,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		HeirloomXpBoost2 = "^Если на персонаже: Количество опыта, получаемого за убийства монстров и выполнение заданий, увеличено на",
 		Heroic = "^Героический$",
 		HeroicElite = "^Героический %(элитный%)$",
-		HeroicThunderforged = "^Создано в Кузне Грома %(героич%.%)$", -- Needs review
+		HeroicThunderforged = "^Создано в Кузне Грома %(героич%.%)$",
 		Hit = "^%+?([%d%.,]+) к меткости$",
 		Hit2 = "^%+?([%d%.,]+) к показателю меткости$",
 		Hit3 = "^UNUSED$",
@@ -293,11 +294,11 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Plans = "Чертеж:",
 		Plate = "^Латы$",
 		Polearm = "^Древковое$",
-		PvPPower = "^%+?([%d%.,]+) к PvP-силе$",
+		PvPPower = "^%+?([%d%.,]+) к PvP%-силе$", -- Needs review
 		RaidFinder = "^Поиск рейда$",
 		Recipe = "Рецепт:",
 		Requires2 = "^Требуемый уровень",
-		Resilience = "^%+?([%d%.,]+) к PvP-устойчивости$",
+		Resilience = "^%+?([%d%.,]+) к PvP%-устойчивости$", -- Needs review
 		Resilience2 = "^UNUSED$",
 		Schematic = "Схема:",
 		Scope = "^Scope %(%+([%d%.,]+) Damage%)$",
@@ -318,7 +319,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		TempestKeep = "^Крепость Бурь$",
 		TemporaryBuffMinutes = "^.+%(%d+ мин%)$",
 		TemporaryBuffSeconds = "^.+%(%d+ сек%)$",
-		Thunderforged = "^Создано в Кузне Грома$", -- Needs review
+		Thunderforged = "^Создано в Кузне Грома$",
 		UpgradeLevel = "^Уровень улучшения:",
 		Use = "Используется:",
 		Wand = "^Жезл$",

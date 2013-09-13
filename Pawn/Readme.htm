@@ -557,10 +557,49 @@ and Pawn.</p>
 	<li>I think that Pawn isn't correctly scanning the gear in the equipment 
 	sets that you're not currently wearing right now when determining whether or 
 	not an item is an upgrade.</li>
+	<li>Some people in rare situations get an error about the per-character 
+	options being missing&nbsp; I don't know what's causing this yet, so if you 
+	run into it, any details that come to mind would be helpful.&nbsp; (You can 
+	reach me through my Facebook or Curse pages.)&nbsp; A few people have 
+	reported that deleting this file worked around the problem:<br />
+	World of Warcraft\WTF\Account\<i>(account)</i>\<i>(realm)</i>\<i>(character)</i>\SavedVariables\Pawn.lua<br />
+	Don't worry; this will not delete any of your scales.</li>
 	<li><em>For other known issues, see the </em>
 	<a href="Version%20history.htm"><em>version history</em></a><em> document.</em></li>
 </ul>
 <h2>Updates</h2>
+<h3>Version 1.8.9</h3>
+<ul>
+	<li>Items that an Eye of the Black Prince can be applied to (Sha-Touched 
+	weapons from Heart of Fear and Terrace of Eternal Spring, Level 502 
+	Blacksmithing weapons, and weapons that drop in Throne of Thunder) will be 
+	valued assuming that you add the socket to that weapon.&nbsp; Weapons from 
+	heroic scenarios and Siege of Orgrimmar will not.&nbsp; (Previously only 
+	Sha-Touched weapons were correctly being valued in this way.)</li>
+	<li>Made a few adjustments to try to better handle chest armor that is 
+	classified as "robes" by the game.</li>
+	<li>Minor changes for patch 5.4.</li>
+</ul>
+<h3>Version 1.8.8</h3>
+<ul>
+	<li>Fixed some issues with upgrade displays showing incorrect information 
+	for wands.</li>
+	<li>Fixed some issues with upgrade displays showing incorrect information 
+	for characters that don't save healing gear but still have a healing scale 
+	enabled.</li>
+</ul>
+<h3>Version 1.8.7</h3>
+<ul>
+	<li>Pawn will now no longer show any weapons other than daggers as upgrades 
+	for assassination rogues when using the default Wowhead scales.</li>
+	<li>Fixed a rare bug that could occur with quests such as Returned Sevenfold 
+	that include both a choice of rewards and some guaranteed rewards, where 
+	Pawn could incorrectly display upgrade symbols that were intended for the 
+	guaranteed rewards on the icons for the reward choices.</li>
+	<li>Fixed a problem that appears to be new for patch 5.3 where inspecting 
+	another player that you're not also targeting would not calculate an average 
+	item level for that player's equipment.</li>
+</ul>
 <h3>Version 1.8.6</h3>
 <ul>
 	<li>Adjusted the values of PvP power and PvP resilience on MoP-quality gems 

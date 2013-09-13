@@ -8,7 +8,7 @@
 ------------------------------------------------------------
 
 
-PawnVersion = 1.805
+PawnVersion = 1.809
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -518,13 +518,12 @@ function PawnInitializeOptions()
 	end
 	
 	-- Any new stuff since the last version they used?
-	if (not PawnCommon.LastVersion) or (PawnCommon.LastVersion < 1.507) then
-		-- When upgrading to 1.5.7, invalidate all best item data.
-		PawnInvalidateBestItems()
-	end
 	if (not PawnCommon.LastVersion) or (PawnCommon.LastVersion < 1.7) then
-		-- When upgrading to 1.7, turn on the "show extra space" option and invalidate best item data again.
+		-- When upgrading to 1.7, turn on the "show extra space" option.
 		PawnCommon.ShowSpace = true
+	end
+	if (not PawnCommon.LastVersion) or (PawnCommon.LastVersion < 1.809) then
+		-- When upgrading to 1.8.9, invalidate all best item data.
 		PawnInvalidateBestItems()
 	end
 	PawnCommon.LastVersion = PawnVersion
@@ -980,7 +979,7 @@ function PawnGetItemData(ItemLink)
 	ItemID = PawnGetItemIDFromLink(ItemLink)
 	local ItemName, NewItemLink, ItemRarity, ItemLevel, _, _, _, _, InvType, ItemTexture = GetItemInfo(ItemLink)
 	if InvType == "INVTYPE_RELIC" or InvType == "INVTYPE_THROWN" then
-		-- Relics might have sockets and therefore "stats" but they aren't equippable so they shouldn't get values, so just bail out now.
+		-- Old (grey) relics might have sockets and therefore "stats" but they aren't equippable anymore so they shouldn't get values, so just bail out now.
 		return
 	end
 	if NewItemLink then
@@ -1016,9 +1015,23 @@ function PawnGetItemData(ItemLink)
 				PawnDebugMessage(ItemLink)
 			end
 		end
-		
+
 		-- First the enchanted stats.
 		Item.Stats, Item.SocketBonusStats, Item.UnknownLines, Item.PrettyLink = PawnGetStatsFromTooltipWithMethod("PawnPrivateTooltip", true, "SetHyperlink", Item.Link)
+
+		if InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT" then
+			-- We convert ranged weapons into the correct "handedness" of weapons since there's no ranged slot anymore.
+			if Item.Stats and Item.Stats.IsWand then
+				InvType = "INVTYPE_WEAPONMAINHAND"
+			else
+				InvType = "INVTYPE_2HWEAPON"
+			end
+			Item.InvType = InvType
+		elseif InvType == "INVTYPE_ROBE" then
+			-- Robes are just really long chest armor.
+			InvType = "INVTYPE_CHEST"
+			Item.InvType = InvType
+		end	
 
 		-- Then, the unenchanted stats.  But, we only need to do this if the item is enchanted or socketed.  PawnUnenchantItemLink
 		-- will return nil if the item isn't enchanted, so we can skip that process.
@@ -1057,6 +1070,12 @@ function PawnGetItemData(ItemLink)
 			Item.Stats.MetaSocketEffect = Item.UnenchantedStats.MetaSocket
 		end
 		
+		-- Items that can be upgraded with an Eye of the Black Prince get an extra prismatic socket.
+		-- We can't do this in the PawnGetStatsFromTooltip because we don't have an item ID there, and we need that to determine if the Eye can be used.
+		if Item.UnenchantedStats and PawnWrathionUpgradeableItems[Item.ID] then
+			PawnAddStatToTable(Item.UnenchantedStats, "PrismaticSocket", 1)
+		end
+		
 		-- Enchanted items should not get points for empty sockets, nor do they get socket bonuses if there are any empty sockets.
 		if Item.Stats and (Item.Stats.PrismaticSocket or Item.Stats.RedSocket or Item.Stats.YellowSocket or Item.Stats.BlueSocket or Item.Stats.MetaSocket or Item.Stats.CogwheelSocket or Item.Stats.ShaTouchedSocket) then
 			Item.SocketBonusStats = {}
@@ -1068,7 +1087,7 @@ function PawnGetItemData(ItemLink)
 			Item.Stats.CogwheelSocket = nil
 			Item.Stats.ShaTouchedSocket = nil
 		end
-		
+
 		-- Cache this item so we don't have to re-parse next time.
 		PawnCacheItem(Item)
 	end
@@ -1884,7 +1903,9 @@ function PawnGetStatsFromTooltip(TooltipName, DebugMessages)
 		PawnAddStatToTable(Stats, "RangedMaxDamage", Stats["MaxDamage"])
 		Stats["IsRanged"] = nil
 	end
-	
+
+
+
 	-- Now, socket bonuses require special handling.
 	if SocketBonusIsValid then
 		-- If the socket bonus is valid (green), then just add those stats directly to the main stats table and be done with it.
@@ -2886,15 +2907,7 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 		if MainWeaponID then
 			local MainWeapon = PawnGetItemData("item:" .. MainWeaponID)
 			if MainWeapon then
-				local MainWeaponInvType = MainWeapon.InvType
-				if MainWeaponInvType == "INVTYPE_RANGED"  or MainWeaponInvType == "INVTYPE_RANGEDRIGHT" then
-					if MainWeapon.Stats and MainWeapon.Stats.IsWand then
-						MainWeaponInvType = "INVTYPE_WEAPONMAINHAND"
-					else
-						MainWeaponInvType = "INVTYPE_2HWEAPON"
-					end
-				end
-				if MainWeaponInvType == "INVTYPE_2HWEAPON" then
+				if MainWeapon.InvType == "INVTYPE_2HWEAPON" then
 					-- They're using a two-handed weapon.  Bail out now if this is a one-handed weapon.
 					if InvType == "INVTYPE_WEAPON" or InvType == "INVTYPE_WEAPONMAINHAND" or InvType == "INVTYPE_WEAPONOFFHAND" or InvType == "INVTYPE_SHIELD" or InvType == "INVTYPE_HOLDABLE" then return end
 				else
@@ -2913,15 +2926,6 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 	local ScaleName, Scale
 	for ScaleName, Scale in pairs(PawnCommon.Scales) do
 		InvType = Item.InvType -- need to reset this here since it gets nil'ed out in the coming while loop
-		if InvType == "INVTYPE_RANGED"  or InvType == "INVTYPE_RANGEDRIGHT" then
-			-- Wands are one-handed weapons and all other ranged weapons are two-handed weapons.  We can't tell
-			-- the difference based on the InvType alone.
-			if Item.Stats and Item.Stats.IsWand then
-				InvType = "INVTYPE_WEAPONMAINHAND"
-			else
-				InvType = "INVTYPE_2HWEAPON"
-			end
-		end
 		
 		if PawnIsScaleVisible(ScaleName) and not
 			(Scale.DoNotShow1HUpgrades and (InvType == "INVTYPE_WEAPON" or InvType == "INVTYPE_WEAPONMAINHAND" or InvType == "INVTYPE_WEAPONOFFHAND" or InvType == "INVTYPE_SHIELD" or InvType == "INVTYPE_HOLDABLE")) and not
@@ -2936,8 +2940,7 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 			end
 			if not CharacterOptions.BestItems then
 				if DoNotRescan then return nil end
-				-- If best item data hasn't been calculated yet, go ahead and calculate it now.  If you decide not to
-				-- do this in final code, then we should at least always recalculate when a loot window appears.
+				-- If best item data hasn't been calculated yet, go ahead and calculate it now.
 				PawnFindBestItems(ScaleName)
 			end
 			
@@ -2975,13 +2978,14 @@ function PawnIsItemAnUpgrade(Item, DoNotRescan)
 						-- Don't bother looking for this item's value if we don't have a best item for this slot.
 						if not ThisValue then _, ThisValue = PawnGetSingleValueFromItem(Item, ScaleName) end
 						
-						if Item.ID == BestData[2] then
+						if Item.ID == BestData[2] and not (Item.InvType == "INVTYPE_WEAPON" and InvType == "INVTYPE_WEAPONOFFHAND") then
 							-- If the item IS the first best item for a scale, then it can't be an upgrade.  (Technically that's only the case if
 							-- the item is unique or unique-equipped, but Pawn currently can't determine that.)
+							-- If the item is a one-handed weapon and we're currently evaluating the off-hand weapon slot, call it a second-best item instead of best.
 							NewTableEntry = nil
 							if BestItemTable == nil then BestItemTable = { [ScaleName] = true } else BestItemTable[ScaleName] = true end
 							break
-						elseif Item.ID == BestData[5] then
+						elseif Item.ID == BestData[5] or Item.ID == BestData[2] then
 							-- If it's the second-best item for a scale it's not an upgrade either.
 							NewTableEntry = nil
 							if SecondBestItemTable == nil then SecondBestItemTable = { [ScaleName] = true } else SecondBestItemTable[ScaleName] = true end
@@ -3137,19 +3141,14 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 		local _, Value = PawnGetSingleValueFromItem(Item, ScaleName)
 		if Value <= 0 then return end
 		
-		-- Merge some equivalent item types.
+		-- For purposes of upgrades, treat all items that go in the off-hand as off-hand weapons.
 		if InvType == "INVTYPE_SHIELD" or InvType == "INVTYPE_HOLDABLE" then
 			InvType = "INVTYPE_WEAPONOFFHAND"
 		elseif InvType == "INVTYPE_ROBE" then
 			InvType = "INVTYPE_CHEST"
 		elseif InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT" then
-			-- Wands are one-handed weapons and all other ranged weapons are two-handed weapons.  We can't tell
-			-- the difference based on the InvType alone.
-			if Item.Stats and Item.Stats.IsWand then
-				InvType = "INVTYPE_WEAPONMAINHAND"
-			else
-				InvType = "INVTYPE_2HWEAPON"
-			end
+			-- A ranged weapon could be one-handed (wands) or two-handed (everything else) but it always goes in the main hand.
+			InvType = "INVTYPE_WEAPONMAINHAND"
 		end
 		
 		-- Okay, now do the calculations.
@@ -3221,6 +3220,7 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 		end
 	end
 	
+
 	-- Now we've scanned all of the items we're going to scan.  Next we have to assign out one-handed items to the main
 	-- hand and off-hand slots as appropriate.
 	PawnAssignOneHandedBestItems(Scale, BestItems)
@@ -3231,10 +3231,10 @@ function PawnFindBestItems(ScaleName, InventoryOnly)
 	--VgerCore.Message(" ")
 	--local InvType, BestOfType
 	--for InvType, BestOfType in pairs(BestItems) do
-	--	local _, ItemLink = GetItemInfo(BestOfType[2]
+	--	local _, ItemLink = GetItemInfo(BestOfType[2])
 	--	VgerCore.Message(InvType .. ": " .. ItemLink .. " = " .. tostring(BestOfType[1]))
 	--	if BestOfType[4] then
-	--		_, ItemLink = GetItemInfo(BestOfType[5]
+	--		_, ItemLink = GetItemInfo(BestOfType[5])
 	--		VgerCore.Message("    and " .. ItemLink .. " = " .. BestOfType[4])
 	--	end
 	--end
@@ -3286,7 +3286,7 @@ function PawnAssignOneHandedBestItems(Scale, BestItems)
 	
 	-- Also check if the user is allowed to put one-handed weapons in the off hand.  (Remember that shields
 	-- and off-hand frill have been converted into off-hand weapons, and real off-hand weapons will have a
-	-- value of zero.)
+	-- value of zero if they can't be wielded.)
 	local CanUseOH = (Scale.Values.IsOffHand == nil or Scale.Values.IsOffHand > PawnIgnoreStatValue)
 	-- Now, find which of the scenarios produces the largest final value.
 	if		CanUseOH and
@@ -3305,9 +3305,12 @@ function PawnAssignOneHandedBestItems(Scale, BestItems)
 		else
 			BestItems.INVTYPE_WEAPONOFFHAND = nil
 		end
-	elseif	(Best1H + BestOH) >= (Best1H + SecondBest1H) and
+	elseif	CanUseOH and
+			((Best1H + BestOH) >= (Best1H + SecondBest1H) and
 			(Best1H + BestOH) >= (BestMH + Best1H) and
-			(Best1H + BestOH) >= (BestMH + BestOH)
+			(Best1H + BestOH) >= (BestMH + BestOH))
+		or ((not CanUseOH) and
+			(Best1H + BestOH) >= (BestMH + BestOH))
 	then
 		-- The best scenario is to use the best one-handed weapon in the main hand with the best off-hand weapon.
 		if BestItems.INVTYPE_WEAPON and BestItems.INVTYPE_WEAPON[1] then
@@ -3362,7 +3365,7 @@ function PawnOnItemLost(ItemID)
 	elseif InvType == "INVTYPE_ROBE" then
 		InvType = "INVTYPE_CHEST"
 	elseif InvType == "INVTYPE_RANGED" or InvType == "INVTYPE_RANGEDRIGHT" then
-		-- A ranged weapon could be one-handed (weapons) or two-handed (everything else) but it always goes in the main hand.
+		-- A ranged weapon could be one-handed (wands) or two-handed (everything else) but it always goes in the main hand.
 		InvType = "INVTYPE_WEAPONMAINHAND"
 	end
 	local InvType2 = nil

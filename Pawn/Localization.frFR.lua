@@ -258,6 +258,7 @@ Pour plus d'information sur la Personnalisation de Pawn, regarder le fichier d'a
 		Expertise = "^%+?([%d%.,]+) Expertise$", -- Needs review
 		Expertise2 = "^%+?([%d%.,]+) \195\160 l'expertise$",
 		FistWeapon = "^Arme de pugilat$",
+		Flexible = "^Flexible$",
 		Formula = "Formule\194\160:", -- Needs review
 		Gun = "^Arme \195\160 feu$",
 		Haste = "^%+?(%-?%d+) H\195\162te$", -- Needs review

@@ -257,6 +257,7 @@ PawnLocal =
 		Expertise = "^%+?([%d%.,]+) 精准$",
 		Expertise2 = "^UNUSED$",
 		FistWeapon = "^拳套$",
+		Flexible = "^Flexible$",
 		Formula = "公式：",
 		Gun = "^枪械$",
 		Haste = "^%+?([%d%.,]+) 急速$",

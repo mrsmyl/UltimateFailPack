@@ -107,10 +107,11 @@ function PawnUI_InventoryPawnButton_OnEnter(this)
 end
 
 function PawnUI_InspectPawnButton_OnEnter(this)
+	VgerCore.Assert(INSPECTED_UNIT, "Pawn doesn't know who you're inspecting.")
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	GameTooltip:AddLine("Pawn", 1, 1, 1, 1)
-	PawnUI_AddInventoryTotalsToTooltip(GameTooltip, "playertarget")
+	if INSPECTED_UNIT then PawnUI_AddInventoryTotalsToTooltip(GameTooltip, INSPECTED_UNIT) end
 	GameTooltip:Show()
 end
 
@@ -2264,7 +2265,7 @@ function PawnUI_OnQuestInfo_ShowRewards()
 		local Item = PawnGetItemData(GetLinkFunction("reward", i))
 		if Item then
 			local _, _, _, _, Usable = GetRewardInfoFunction(i)
-			tinsert(QuestRewards, { ["Item"] = Item, ["RewardType"] = "reward", ["Usable"] = Usable, ["Index"] = i })
+			tinsert(QuestRewards, { ["Item"] = Item, ["RewardType"] = "reward", ["Usable"] = Usable, ["Index"] = i + RewardChoices })
 		else
 			--VgerCore.Fail("Pawn can't display upgrade information because the server hasn't given us item stats yet.")
 			-- TODO: Queue this up and retry these calculations later...

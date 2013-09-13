@@ -257,6 +257,7 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Expertise = "^%+?([%d%.,]+) Waffenkunde$",
 		Expertise2 = "^UNUSED$",
 		FistWeapon = "^Faustwaffe$",
+		Flexible = "^Flexible$",
 		Formula = "Formel:",
 		Gun = "^Schusswaffe$",
 		Haste = "^%+?([%d%.,]+) Tempo$",

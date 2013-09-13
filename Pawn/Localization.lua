@@ -259,6 +259,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		Expertise = "^%+?([%d%.,]+) Expertise$",
 		Expertise2 = "^UNUSED$",
 		FistWeapon = "^Fist Weapon$",
+		Flexible = "^Flexible$",
 		Formula = "Formula:",
 		Gun = "^Gun$",
 		Haste = "^%+?([%d%.,]+) Haste$",

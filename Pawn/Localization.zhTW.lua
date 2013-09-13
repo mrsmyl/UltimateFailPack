@@ -255,6 +255,7 @@ www.vgermods.com
 		Expertise = "^%+?([%d%.,]+)熟練等級$", -- Needs review
 		Expertise2 = "^裝備: 使你的熟練等級提高([%d%.,]+)點。$", -- Needs review
 		FistWeapon = "^拳套$", -- Needs review
+		Flexible = "^Flexible$",
 		Formula = "公式: ", -- Needs review
 		Gun = "^槍械$", -- Needs review
 		Haste = "^%+?([%d%.,]+)加速等級$", -- Needs review

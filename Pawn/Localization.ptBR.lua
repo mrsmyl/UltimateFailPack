@@ -258,6 +258,7 @@ Para mais informações em personalizar o Pawn, favor veja o arquivo de ajuda (R
 		Expertise = "^%+?([%d%.,]+) Aptidão$", -- Needs review
 		Expertise2 = "^%+?([%d%.,]+) de Aptidão$", -- Needs review
 		FistWeapon = "^Arma de Punho$", -- Needs review
+		Flexible = "^Flexible$",
 		Formula = "Fórmula:", -- Needs review
 		Gun = "^Arma$", -- Needs review
 		Haste = "^%+?([%d%.,]+) Aceleração$", -- Needs review
