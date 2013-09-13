@@ -4,8 +4,8 @@
 	http://localizer.norganna.org/
 
 	AddOn: Enchantrix
-	Revision: $Id: EnxStrings.lua 5409 2013-05-24 15:54:42Z localizerautocommit $
-	Version: 5.17.5413 (NeedyNoddy)
+	Revision: $Id: EnxStrings.lua 5419 2013-06-12 04:01:17Z LocalizerAutoCommit $
+	Version: 5.18.5433 (PassionatePhascogale)
 
 	License:
 		This program is free software; you can redistribute it and/or
@@ -487,7 +487,7 @@ EnchantrixLocalizations = {
 		["ArgSpellProspectingName"]	= "Sondieren";
 		["Enchanting"]	= "Verzauberkunst";
 		["Inscription"]	= "Inschriftenkunde";
-		["Jewelcrafting"]	= "Juwelenschleifen";
+		["Jewelcrafting"]	= "Juwelierskunst";
 		["PatReagents"]	= "Reagenzien: (.+)";
 		["TextCombat"]	= "Kampflog";
 		["TextGeneral"]	= "Allgemein";

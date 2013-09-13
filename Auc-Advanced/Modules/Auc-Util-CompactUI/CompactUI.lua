@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer - Price Level Utility module
-	Version: 5.17.5413 (NeedyNoddy)
-	Revision: $Id: CompactUI.lua 5400 2013-03-30 11:58:47Z brykrys $
+	Version: 5.18.5433 (PassionatePhascogale)
+	Revision: $Id: CompactUI.lua 5427 2013-07-13 09:28:05Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a price level indicator
@@ -549,7 +549,7 @@ function private.RetrievePage()
 
 			local name, texture, count, quality, canUse, level,
 				levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount,
-				highBidder, owner, saleStatus, itemId  = GetAuctionItemInfo("list", i)
+				highBidder, owner, saleStatus, itemId  = AucAdvanced.GetAuctionItemInfo("list", i)
 			local _, _, _, itemLevel, itemDetail = GetItemInfo(itemId)
 
 			if levelColHeader == "ITEM_LEVEL_ABBR" then
@@ -861,4 +861,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5400 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5427 $")

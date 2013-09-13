@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 5.17.5413 (NeedyNoddy)
+	Version: 5.18.5433 (PassionatePhascogale)
 	Revision: $Id: CoreConst.lua 5399 2013-03-28 18:53:54Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -179,4 +179,4 @@ CompileInvTypes(GetAuctionInvTypes(2, 1))
 
 AucAdvanced.Const = lib
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreConst.lua $", "$Rev: 5399 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Advanced/CoreConst.lua $", "$Rev: 5399 $")

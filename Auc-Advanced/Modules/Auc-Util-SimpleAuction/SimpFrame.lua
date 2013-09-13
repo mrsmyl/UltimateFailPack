@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Simplified Auction Posting
-	Version: 5.17.5413 (NeedyNoddy)
-	Revision: $Id: SimpFrame.lua 5388 2012-12-17 17:04:51Z brykrys $
+	Version: 5.18.5433 (PassionatePhascogale)
+	Revision: $Id: SimpFrame.lua 5415 2013-06-11 15:18:58Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a simple dialog for
@@ -32,6 +32,7 @@
 if not AucAdvanced then return end
 
 local lib = AucAdvanced.Modules.Util.SimpleAuction
+if not lib then return end
 local private = lib.Private
 local aucPrint,decode,_,_,replicate,_,get,set,default,debugPrint,fill = AucAdvanced.GetModuleLocals()
 local Const = AucAdvanced.Const
@@ -1359,4 +1360,4 @@ function private.CreateFrames()
 	frame:RegisterEvent("BAG_UPDATE")
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 5388 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 5415 $")

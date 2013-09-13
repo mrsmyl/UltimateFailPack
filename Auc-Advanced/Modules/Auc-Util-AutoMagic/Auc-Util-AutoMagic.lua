@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.17.5413 (NeedyNoddy)
+	Version: 5.18.5433 (PassionatePhascogale)
 	Revision: $Id: Auc-Util-AutoMagic.lua 5390 2012-12-22 00:55:10Z kandoko $
 	URL: http://auctioneeraddon.com/
 
@@ -701,4 +701,4 @@ function lib.ClientItemCacheRefresh(link)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5390 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5390 $")

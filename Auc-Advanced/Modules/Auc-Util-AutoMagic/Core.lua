@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 5.17.5413 (NeedyNoddy)
-	Revision: $Id: Core.lua 5392 2012-12-22 01:06:53Z kandoko $
+	Version: 5.18.5433 (PassionatePhascogale)
+	Revision: $Id: Core.lua 5415 2013-06-11 15:18:58Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	AutoMagic is an Auctioneer module which automates mundane tasks for you.
@@ -31,6 +31,7 @@
 if not AucAdvanced then return end
 
 local lib = AucAdvanced.Modules.Util.AutoMagic
+if not lib then return end
 local print,decode,_,_,replicate,empty,get,set,default,debugPrint,fill = AucAdvanced.GetModuleLocals()
 local AppraiserValue, DisenchantValue, ProspectValue, VendorValue, bestmethod, bestvalue, runstop, _
 
@@ -238,6 +239,7 @@ local isHerb =
 	[8839] = true, --  Blindweed
 	[8845] = true, --  Ghost Mushroom
 	[8846] = true, --  Gromsblood
+	[10286] = true, -- Heart of the Wild
 	[13463] = true, --  Dreamfoil
 	[13464] = true, --  Golden Sansam
 	[13465] = true, --  Mountain Silversage
@@ -605,4 +607,4 @@ end
 
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5392 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Util-AutoMagic/Core.lua $", "$Rev: 5415 $")

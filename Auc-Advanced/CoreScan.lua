@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 5.17.5413 (NeedyNoddy)
-	Revision: $Id: CoreScan.lua 5408 2013-05-17 09:55:06Z brykrys $
+	Version: 5.18.5433 (PassionatePhascogale)
+	Revision: $Id: CoreScan.lua 5427 2013-07-13 09:28:05Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -1684,7 +1684,7 @@ function private.GetAuctionItem(list, page, index, itemLinksTried, itemData)
 		return itemData
 	end
 
-	local name, texture, count, quality, canUse, level, levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus, itemId = GetAuctionItemInfo(list, index)
+	local name, texture, count, quality, canUse, level, levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus, itemId = AucAdvanced.GetAuctionItemInfo(list, index)
 	-- Check critical values (if we got those, assume we got the rest as well - except possibly owner)
 	if not (itemId and minBid) then
 		return itemData
@@ -2983,4 +2983,18 @@ end
 internal.Scan.Logout = lib.Logout
 internal.Scan.AHClosed = lib.AHClosed
 
-_G.AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Advanced/CoreScan.lua $", "$Rev: 5408 $")
+_G.AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Advanced/CoreScan.lua $", "$Rev: 5427 $")
+
+-- Hybrid mode GetAuctionItemInfo for transition from WoW 5.3 to 5.4
+-- Temporary - do not use in new code!
+local _,_,_,toc = GetBuildInfo()
+if toc < 50400 then
+	print("GetAuctionItemInfo for version 5.3")
+	AucAdvanced.GetAuctionItemInfo = GetAuctionItemInfo
+else
+	print("GetAuctionItemInfo for version 5.4")
+	function AucAdvanced.GetAuctionItemInfo(...)
+		local name, texture, count, quality, canUse, level, levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, bidderFullName, owner, ownerFullName, saleStatus, itemId, hasAllInfo =  GetAuctionItemInfo(...)
+		return name, texture, count, quality, canUse, level, levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus, itemId, hasAllInfo
+	end
+end

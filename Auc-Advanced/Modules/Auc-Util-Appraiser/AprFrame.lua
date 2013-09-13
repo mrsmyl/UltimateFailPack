@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 5.17.5413 (NeedyNoddy)
-	Revision: $Id: AprFrame.lua 5393 2013-01-10 11:24:47Z brykrys $
+	Version: 5.18.5433 (PassionatePhascogale)
+	Revision: $Id: AprFrame.lua 5427 2013-07-13 09:28:05Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -32,6 +32,7 @@
 if not AucAdvanced then return end
 
 local lib = AucAdvanced.Modules.Util.Appraiser
+if not lib then return end
 local private = lib.Private
 local Const = AucAdvanced.Const
 local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill, _TRANS = AucAdvanced.GetModuleLocals()
@@ -138,7 +139,7 @@ function private.CreateFrames()
 		if frame.showAuctions then
 			local auctionStart = #ItemList + 1
 			for auc=1, GetNumAuctionItems("owner") do
-				local name, texture, count, quality, _, _, _, _, _, _, _, _, _, _, itemId  = GetAuctionItemInfo("owner", auc)
+				local name, texture, count, quality, _, _, _, _, _, _, _, _, _, _, itemId  = AucAdvanced.GetAuctionItemInfo("owner", auc)
 				local link = GetAuctionItemLink("owner", auc)
 
 				local sig, linkType = SigFromLink(link)
@@ -2871,4 +2872,4 @@ function private.CreateFrames()
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.17/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5393 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/5.18/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5427 $")
