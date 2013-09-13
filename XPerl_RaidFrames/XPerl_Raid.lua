@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 848 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 854 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -88,11 +88,12 @@ local raidHeaders = {}
 function XPerl_Raid_OnLoad(self)
 	local events = {"CHAT_MSG_ADDON",
 			"PLAYER_ENTERING_WORLD", "VARIABLES_LOADED", "GROUP_ROSTER_UPDATE",
-			"UNIT_DYNAMIC_FLAGS", "UNIT_FLAGS", "UNIT_AURA", "UNIT_POWER", "UNIT_MAXPOWER",
+			"UNIT_FLAGS", "UNIT_AURA", "UNIT_POWER", "UNIT_MAXPOWER",
 			"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_NAME_UPDATE", "PLAYER_FLAGS_CHANGED",
 			"UNIT_COMBAT", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_FAILED",
 			"UNIT_SPELLCAST_INTERRUPTED", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED",
-			"RAID_TARGET_UPDATE", "PLAYER_LOGIN", "ROLE_CHANGED_INFORM", "PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE","UNIT_CONNECTION","PLAYER_REGEN_ENABLED"
+			"RAID_TARGET_UPDATE", "PLAYER_LOGIN", "ROLE_CHANGED_INFORM", 
+			"PET_BATTLE_OPENING_START","PET_BATTLE_CLOSE","UNIT_CONNECTION","PLAYER_REGEN_ENABLED"
 			}
 			
 			
@@ -1307,8 +1308,6 @@ end
 function XPerl_Raid_Events:UNIT_FLAGS()
 	XPerl_Raid_UpdateCombat(self)
 end
-
-XPerl_Raid_Events.UNIT_DYNAMIC_FLAGS = XPerl_Raid_Events.UNIT_FLAGS
 
 function XPerl_Raid_Events:PLAYER_FLAGS_CHANGED(unit,...)
 	XPerl_Raid_UpdatePlayerFlags(self, unit,...)
