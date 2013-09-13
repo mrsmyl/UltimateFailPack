@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 191 $
+Revision: $Revision: 192 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2012-12-01 11:46:50 +0000 (Sat, 01 Dec 2012) $
+Last Update: $Date: 2013-06-16 03:41:30 +0000 (Sun, 16 Jun 2013) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 191 $";
+local MINOR = "$Revision: 192 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -97,7 +97,11 @@ StatLogic.ItemsNotRecognized = {}; --list of all text that we were unable to par
 	5.0.5a		16057  --Mists of Panderia  GetBuildInfo() -> "5.0.5", "16057", "Sep 10 2012",  50001  Released to live 9/11/2012
 	5.0.5b		16135  --Mists of Panearia  GetBuildInfo() -> "5.0.5", "16135", "Oct 8 2012",   50001  Released to live 10/10/2012
 	5.1.0		16309  --Landfall           GetBuildInfo() -> "5.1.0", "16309", "Nov 13 2012",  50100  Released to live 11/27/2012
-	
+	5.1.0a		16357  --Landfall           GetBuildInfo() -> "5.1.0", "16357", "Dec 3 2012",   50100  Released to live 12/11/2012
+	5.2.0       16709  --The Thunder King   GetBuildInfo() -> "5.2.0", "16709", "Mar 14 2013",  50200  Released to live 3/12/2013
+	5.2.0		16826  --The Thunder King   GetBuildInfo() -> "5.2.0", "16826", "Apr 8 2013",   50200
+	5.3.0		16977  --Escalation			GetBuildInfo() -> "5.3.0", "16977", "May 20 2013",  50300
+
 --]]
 
 -- Our localization information
@@ -8306,6 +8310,9 @@ local LibStatLogicTests = {
 	end;
 
 	testCNumber = function()
+		--[[
+			Check our localization aware StringToNumber function, CNumber, works
+		--]]
 		local s = "1234";
 		local n = CNumber(s);
 		checkEquals(1234, n, s);
@@ -8326,6 +8333,10 @@ local LibStatLogicTests = {
 	end;
 	
 	testLocalizationToNumber = function()
+		--[[
+			We replace the localization aware tonumber funtion with our CNumber implementation.
+			Make sure L.tonumber(string) works as expected with DigitGroupingSeparators, and DecimalMarkSeparator
+		--]]
 		local s = "1234";
 		local n = L.tonumber(s);
 		checkEquals(1234, n, s);
@@ -8345,12 +8356,21 @@ local LibStatLogicTests = {
 	end;
 	
 	testIntegerPattern = function()
+		--[[
+			A basic test/example of LUA's pseudo-regular expression system.
+			Strictly speaking it is not RegEx, and they don't pretend it is. They call it pattern matching.
+		--]]
 		local _, _, value = strfind("1,234 Armor", "^(%d+[,%d]*) Armor$");
 		
 		checkEquals("1,234", value);
 	end;
 
 	testIntegerNumberPattern = function()
+		--[[
+			L.patNumber is the localized pattern for finding a number.
+			In this case a "number" is a whole number; no decimals. 
+			For decimals use L.patDecimal, which is a decimal number localized pattern
+		--]]
 		local s = "Something before 1,234,567,890 something after";
 		local pattern = "("..(L.patNumber)..")";
 		local _, _, value = strfind(s, pattern);
@@ -8361,6 +8381,11 @@ local LibStatLogicTests = {
 	end;
 	
 	testDecimalNumberPattern = function()
+		--[[
+			L.patDecimal is the localized pattern for finding a decimal number
+			In this case a "decimal" number can have a fractional part.
+			For whole numbers only use L.patNumber, which is an integer number localized pattern
+		--]]
 		local s = "Something before 1,234,567,890.123456 something after";
 		local _, _, value = strfind(s, "("..L.patDecimal..")");
 		checkEquals("1,234,567,890.123456", value);	
