@@ -201,14 +201,14 @@ function Atr_FullScanAnalyze()
 	
 	local dataIsGood = true
 
-	local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus
+	local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, bidderFullName, owner, ownerFullName, saleStatus
 
 	if (numBatchAuctions > 0) then
 
 		for x = gFullScanPosition, numBatchAuctions do
 
 			name, texture, count, quality, canUse, level, huh, minBid,
-					minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus   = GetAuctionItemInfo("list", x);
+					minIncrement, buyoutPrice, bidAmount, highBidder, bidderFullName, owner, ownerFullName, saleStatus   = GetAuctionItemInfo("list", x);
 
 			gNumScanned = gNumScanned + 1
 			
