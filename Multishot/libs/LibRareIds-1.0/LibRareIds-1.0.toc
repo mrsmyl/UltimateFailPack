@@ -1,9 +1,9 @@
-## Interface: 50200
+## Interface: 50300
 ## Title: LibRareIds-1.0
 ## Author: Dridzt
-## Version: 1.0.8
+## Version: 1.0.9
 ## Notes: A table of all rare/rare-elites in game.
-## X-Curse-Packaged-Version: 1.0.8
+## X-Curse-Packaged-Version: 1.0.9
 ## X-Curse-Project-Name: LibRareIds-1.0
 ## X-Curse-Project-ID: librareids-1-0
 ## X-Curse-Repository-ID: wow/librareids-1-0/mainline

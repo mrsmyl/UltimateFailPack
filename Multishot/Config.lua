@@ -26,22 +26,35 @@ end
 
 local GetDifficulties = function()
 	local diffs,id = {[0]=_G.NONE}, 1
-	local name = GetDifficultyInfo(id)
+	
+	for i=1,20 do
+		local name = GetDifficultyInfo(i)
+		if name and name ~= "" then
+			diffs[i] = name
+		end
+	end
+	--[[local name = GetDifficultyInfo(id) -- 5.3,5.4 have gaps in the ids
 	while (name and name ~= "") do
 		diffs[id] = name
 		id = id+1
 		name = GetDifficultyInfo(id)
-	end
+	end]]
 	return diffs
 end
 local getDiffDefaults = function()
 	local defaults,id = {[0]=true}, 1
-	local name = GetDifficultyInfo(id)
+	for i=1,20 do
+		local name = GetDifficultyInfo(i)
+		if name and name ~= "" then
+			defaults[i] = true
+		end
+	end
+	--[[local name = GetDifficultyInfo(id)
 	while (name and name ~= "") do
 		defaults[id] = true
 		id = id+1
 		name = GetDifficultyInfo(id)
-	end
+	end]]
 	return defaults
 end
 

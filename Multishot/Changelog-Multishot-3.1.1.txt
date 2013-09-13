@@ -1,0 +1,13 @@
+tag 3.1.1
+d91b166e090a203aff66c8cc3f570ff3c28e1bdb
+Dridzt <dridzt.addons@hotmail.com>
+2013-07-30 23:12:56 +0300
+
+"Timeless Isle"
+
+
+--------------------
+
+Dridzt:
+	- Fix instance difficulty detection to be 5.4 compatible (tested on PTR)
+	- Pickup new LibRareIDs-1.0 for Timeless Isle rares.

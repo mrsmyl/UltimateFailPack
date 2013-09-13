@@ -1,4 +1,4 @@
-local LibRareIds = LibStub:NewLibrary("LibRareIds-1.0", 1)
+local LibRareIds = LibStub:NewLibrary("LibRareIds-1.0", 2)
 if not LibRareIds then return end
 
 LibRareIds.Data = {
@@ -622,4 +622,36 @@ LibRareIds.Data = {
 		[70430] = true,		-- Rocky Horror
 		[70440] = true,		-- Monara
 		[70530] = true,		-- Ra'sha
+		[71864] = true,		-- Spelurk
+		[71919] = true,		-- Zhu-Gon the Sour
+		[72045] = true,		-- Chelon
+		[72048] = true,		-- Rattleskew
+		[72049] = true,		-- Cranegnasher
+		[72193] = true,		-- Karkanos
+		[72245] = true,		-- Zesqua
+		[72282] = true,		-- Garnia
+		[72769] = true,		-- Spirit of Jadefire
+		[72775] = true,		-- Bufo
+		[72808] = true,		-- Tsavo'ka
+		[72909] = true,		-- Gu'chi the Swarmbringer
+		[72970] = true,		-- Golganarr
+		[73157] = true,		-- Rock Moss
+		[73158] = true,		-- Emerald Gander
+		[73160] = true,		-- Ironfur Steelhorn
+		[73161] = true,		-- Great Turtle Furyshell
+		[73163] = true,		-- Imperial Python
+		[73166] = true,		-- Monstrous Spineclaw
+		[73167] = true,		-- Huolon
+		[73169] = true,		-- Jakur of Ordon
+		[73170] = true,		-- Watcher Osu
+		[73171] = true,		-- Champion of the Black Flame
+		[73173] = true,		-- Urdur the Cauterizer
+		[73174] = true,		-- Archiereus of Flame
+		[73175] = true,		-- Cinderfall
+		[73277] = true,		-- Leafmender
+		[73279] = true,		-- Evermaw
+		[73281] = true,		-- Dead Ship Vazuvius
+		[73293] = true,		-- Whizzig -- friendly
+		[73666] = true,		-- Archiereus of Flame
+		[73704] = true,		-- Stinkbraid		
 }
