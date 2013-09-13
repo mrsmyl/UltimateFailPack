@@ -1,13 +1,13 @@
 --[[
 Name: LibDogTag-3.0
-Revision: $Rev: 238 $
+Revision: $Rev: 259 $
 Author: Cameron Kenneth Knight (ckknight@gmail.com)
 Website: http://www.wowace.com/
 Description: A library to provide a markup syntax
 ]]
 
 local MAJOR_VERSION = "LibDogTag-Unit-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 238 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + tonumber(("$Revision: 259 $"):match("%d+")) or 0
 
 if MINOR_VERSION > _G.DogTag_Unit_MINOR_VERSION then
 	_G.DogTag_Unit_MINOR_VERSION = MINOR_VERSION
@@ -100,6 +100,14 @@ setmetatable(UnitToLocale, {__index=function(self, unit)
 			local num = unit:match("^raid(%d%d?)$")
 			self[unit] = L["Raid member #%d"]:format(num)
 			return self[unit]
+		elseif unit:find("^arena%d$") then
+			local num = unit:match("^arena(%d)$")
+			self[unit] = L["Arena enemy #%d"]:format(num)
+			return self[unit]
+		elseif unit:find("^boss%d$") then
+			local num = unit:match("^boss(%d)$")
+			self[unit] = L["Boss #%d"]:format(num)
+			return self[unit]
 		elseif unit:find("^partypet%d$") then
 			local num = unit:match("^partypet(%d)$")
 			self[unit] = UnitToLocale["party" .. num .. "pet"]
@@ -107,6 +115,10 @@ setmetatable(UnitToLocale, {__index=function(self, unit)
 		elseif unit:find("^raidpet%d%d?$") then
 			local num = unit:match("^raidpet(%d%d?)$")
 			self[unit] = UnitToLocale["raid" .. num .. "pet"]
+			return self[unit]
+		elseif unit:find("^arenapet%d$") then
+			local num = unit:match("^arenapet(%d)$")
+			self[unit] = UnitToLocale["arena" .. num .. "pet"]
 			return self[unit]
 		end
 		self[unit] = unit
@@ -129,11 +141,9 @@ for i = 1, 4 do
 	IsLegitimateUnit["party" .. i] = true
 	IsLegitimateUnit["partypet" .. i] = true
 	IsLegitimateUnit["party" .. i .. "pet"] = true
-	IsLegitimateUnit["boss" .. i] = true
 	IsNormalUnit["party" .. i] = true
 	IsNormalUnit["partypet" .. i] = true
 	IsNormalUnit["party" .. i .. "pet"] = true
-	IsNormalUnit["boss" .. i] = true
 	WACKY_UNITS["party" .. i .. "target"] = true
 	WACKY_UNITS["partypet" .. i .. "target"] = true
 	WACKY_UNITS["party" .. i .. "pettarget"] = true
@@ -151,6 +161,26 @@ for i = 1, 40 do
 	WACKY_UNITS["raid" .. i .. "pet"] = true
 	WACKY_UNITS["raidpet" .. i .. "target"] = true
 	WACKY_UNITS["raid" .. i .. "pettarget"] = true
+end
+for i = 1, MAX_BOSS_FRAMES do
+	IsLegitimateUnit["boss" .. i] = true
+	IsNormalUnit["boss" .. i] = true
+	WACKY_UNITS["boss" .. i .. "target"] = true
+	WACKY_UNITS["boss" .. i .. "targettarget"] = true
+end
+for i = 1, 5 do
+	IsLegitimateUnit["arena" .. i] = true
+	IsLegitimateUnit["arenapet" .. i] = true
+	IsLegitimateUnit["arena" .. i .. "pet"] = true
+	IsNormalUnit["arena" .. i] = true
+	IsNormalUnit["arenapet" .. i] = true
+	IsNormalUnit["arena" .. i .. "pet"] = true
+	WACKY_UNITS["arena" .. i .. "target"] = true
+	WACKY_UNITS["arenapet" .. i .. "target"] = true
+	WACKY_UNITS["arena" .. i .. "pettarget"] = true
+	WACKY_UNITS["arena" .. i .. "targettarget"] = true
+	WACKY_UNITS["arenapet" .. i .. "targettarget"] = true
+	WACKY_UNITS["arena" .. i .. "pettargettarget"] = true
 end
 setmetatable(IsLegitimateUnit, { __index = function(self, key)
 	if type(key) ~= "string" then
@@ -428,6 +458,11 @@ DogTag:AddEventHandler("Unit", "UNIT_TARGET", function(event, unit)
 	DogTag:FireEvent("UnitChanged", unit .. "target")
 end)
 
+DogTag:AddEventHandler("Unit", "UNIT_TARGETABLE_CHANGED", function(event, unit)
+	refreshGUID(unit)
+	DogTag:FireEvent("UnitChanged", unit)
+end)
+
 DogTag:AddEventHandler("Unit", "UNIT_PET", function(event, unit)
 	if unit == "player" then unit = "" end
 	local unit_pet = unit .. "pet"
@@ -441,7 +476,7 @@ DogTag:AddEventHandler("Unit", "UPDATE_MOUSEOVER_UNIT", function(event, ...)
 end)
 
 DogTag:AddEventHandler("Unit", "INSTANCE_ENCOUNTER_ENGAGE_UNIT", function(event, ...)
-	for i = 1, 4 do
+	for i = 1, MAX_BOSS_FRAMES do
 		refreshGUID("boss"..i)
 		DogTag:FireEvent("UnitChanged", "boss"..i)
 	end
@@ -471,6 +506,13 @@ end)
 local lastPlayerPower = 0
 local lastPetPower = 0
 
+local checkYield = DogTag.checkYield
+if not checkYield then
+	-- If LibDogTag doesn't include checkYield (old version)
+	-- Then just make checkYield an empty function to prevent errors.
+	checkYield = function() end
+end
+
 local nextRefreshGUIDsTime = 0
 DogTag:AddTimerHandler("Unit", function(num, currentTime)
 	if nextRefreshGUIDsTime > currentTime then
@@ -495,6 +537,10 @@ DogTag:AddTimerHandler("Unit", function(num, currentTime)
 			local newGUID = unitToGUID[unit]
 			if oldGUID ~= newGUID then
 				DogTag:FireEvent("UnitChanged", unit)
+
+				-- This loop is where things get hung up all the time,
+				-- so we should check for a yield right here.
+				checkYield()
 			end
 		end
 		nextUpdateWackyUnitsTime = currentTime + 0.5

@@ -1,0 +1,23 @@
+------------------------------------------------------------------------
+r943 | parnic | 2013-09-10 14:58:32 +0000 (Tue, 10 Sep 2013) | 1 line
+Changed paths:
+   A /tags/1.8.16 (from /trunk:942)
+
+Tagging as 1.8.16
+------------------------------------------------------------------------
+r942 | parnic | 2013-09-10 14:50:53 +0000 (Tue, 10 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/IceHUD.toc
+   M /trunk/IceHUD_Options/IceHUD_Options.toc
+
+- TOC update for 5.4
+------------------------------------------------------------------------
+r941 | parnic | 2013-07-16 04:40:52 +0000 (Tue, 16 Jul 2013) | 1 line
+Changed paths:
+   M /trunk/IceHUD.toc
+   A /trunk/modules/FocusAbsorb.lua
+   A /trunk/modules/PlayerAbsorb.lua
+   A /trunk/modules/TargetAbsorb.lua
+
+- Added Absorb modules for focus, target, and player.
+------------------------------------------------------------------------
