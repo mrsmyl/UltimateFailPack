@@ -53,7 +53,7 @@ L:SetOptionLocalization({
 	specWarnAttack	= "Exibir aviso especial quando Ahune tornar-se vulnerável",
 	SubmergTimer	= "Exibir cronógrafo para submergir",
 	EmergeTimer		= "Exibir cronógrafo para emerge",
-	TimerCombat		= "Exibir cronógrafo para início do combate",
+	TimerCombat		= "Exibir cronógrafo para início do combate"
 })
 
 L:SetMiscLocalization({
@@ -159,7 +159,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	SetBubbles			= "Automaticamente desabilitar balões de fala durante $spell:101871\n(Voltando ao normal ao fim da partida)"
+	SetBubbles			= "Automaticamente desabilitar balões de fala durante $spell:101871<br/>(Voltando ao normal ao fim da partida)"
 })
 
 ----------------------

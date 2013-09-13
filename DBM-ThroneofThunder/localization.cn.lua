@@ -91,8 +91,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	eggsHatchL		= "The eggs in one of the lower nests begin to hatch!",
-	eggsHatchU		= "The eggs in one of the upper nests begin to hatch!",
+	eggsHatch		= "某个鸟巢中的蛋开始孵化了",
 	Upper			= "上层",
 	Lower			= "下层",
 	UpperAndLower	= "上下都有"
@@ -108,7 +107,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	ArrowOnBeam					= "Show DBM Arrow during $journal:6882 to indicate which direction to move",
+	ArrowOnBeam					= "Show DBM Arrow during $journal:6882 to indicate which direction to move"
 })
 
 ----------------

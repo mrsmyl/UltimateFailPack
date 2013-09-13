@@ -97,7 +97,8 @@ L= DBM:GetModLocalization(677)
 
 L:SetOptionLocalization({
 	InfoFrame		= "Mostrar información de jugadores a los que les afecta $spell:116525",
-	ArrowOnCombo	= "Mostrar flecha durante $journal:5673\nNOTA: Esto asume que el tanque está delante del boss y todos los demás detrás."
+	CountOutCombo	= "Cuenta lanzamientos de $journal:5673<br/>NOTA: Solo en la versión de voz femenina.",
+	ArrowOnCombo	= "Mostrar flecha durante $journal:5673<br/>NOTA: Esto asume que el tanque está delante del boss y todos los demás detrás."
 })
 
 L:SetMiscLocalization({

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(726, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9683 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10185 $"):sub(12, -3))
 mod:SetCreatureID(60410)--Energy Charge (60913), Emphyreal Focus (60776), Cosmic Spark (62618), Celestial Protector (60793)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3)
@@ -163,7 +163,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			resetCreatureIconState()
 		end
 		focusActivated = focusActivated + 1
-		if not DBM.BossHealth:HasBoss(args.sourceGUID) then
+		if DBM.BossHealth:IsShown() and not DBM.BossHealth:HasBoss(args.sourceGUID) then
 			DBM.BossHealth:AddBoss(args.sourceGUID, args.sourceName)
 		end
 		if self.Options.SetIconOnCreature and not DBM.Options.DontSetIcons and not creatureIcons[args.sourceGUID] then
@@ -174,7 +174,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			timerDespawnFloor:Start()
 			specWarnDespawnFloor:Show()
 		end
-	elseif args.spellId == 116989 then--Cast when defeated (or rathor 1 HP)
+	elseif args.spellId == 116989 and DBM.BossHealth:IsShown() then--Cast when defeated (or rathor 1 HP)
 		DBM.BossHealth:RemoveBoss(args.sourceGUID)
 	end
 end

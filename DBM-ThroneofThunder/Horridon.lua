@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod(819, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9683 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
 mod:SetCreatureID(68476)
-mod:SetQuestID(32745)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 1)
 
@@ -275,13 +274,13 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 136723 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
+	if spellId == 136723 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
 		specWarnSandTrap:Show()
-	elseif spellId == 136646 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
+	elseif spellId == 136646 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
 		specWarnLivingPoison:Show()
-	elseif spellId == 136573 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
+	elseif spellId == 136573 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
 		specWarnFrozenBolt:Show()
-	elseif spellId == 136490 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
+	elseif spellId == 136490 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
 		specWarnLightningNova:Show()
 	end
 end
@@ -344,7 +343,7 @@ function mod:OnSync(msg, targetOrGuid, ver)
 		if UnitExists(target) and self.Options.SetIconOnCharge then
 			self:SetIcon(target, 1, 5)--star
 		end
-	elseif msg == "Door" and self:AntiSpam(60, 4) then--prevent bad doorNumber increase if very late sync received.
+	elseif msg == "Door" and self:AntiSpam(15, 3) then--prevent bad doorNumber increase if very late sync received. (60 too high, breaks first door warnings after a quick wipe recovery since antispam carries over from previous pull)
 	--Doors spawn every 131.5 seconds
 	--Halfway through it (literlaly exact center) Dinomancers spawn at 56.75
 	--Then, before the dinomancer, lesser adds spawn twice splitting that timer into 3rds
@@ -399,7 +398,7 @@ function mod:OnSync(msg, targetOrGuid, ver)
 				hasHighestVersion = false
 			end
 		end
-	elseif msg == "FastestPerson" and guid and self:AntiSpam(10, 4) then--Whoever sends this sync first wins all. They have highest version and fastest computer
+	elseif msg == "FastestPerson" and guid and self:AntiSpam(10, 1) then--Whoever sends this sync first wins all. They have highest version and fastest computer
 		self:Unschedule(self.SendSync)
 		if guid == UnitGUID("player") then
 			hasHighestVersion = true

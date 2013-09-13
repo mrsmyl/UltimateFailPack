@@ -36,24 +36,20 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("d286")
 
 L:SetWarningLocalization({
-	Submerged		= "Ахун исчез",
 	Emerged			= "Ахун появился",
 	specWarnAttack	= "Ахун уязвим - атакуйте сейчас!"
 })
 
 L:SetTimerLocalization{
 	SubmergTimer	= "Исчезновение",
-	EmergeTimer		= "Появление",
-	TimerCombat		= "Начало боя"
+	EmergeTimer		= "Появление"
 }
 
 L:SetOptionLocalization({
-	Submerged		= "Предупреждение, когда Ахун исчезает",
 	Emerged			= "Предупреждение, когда Ахун появляется",
 	specWarnAttack	= "Спец-предупреждение, когда Ахун становится уязвим",
 	SubmergTimer	= "Отсчет времени до исчезновения",
-	EmergeTimer		= "Отсчет времени до появления",
-	TimerCombat		= "Отсчет времени до начала боя",
+	EmergeTimer		= "Отсчет времени до появления"
 })
 
 L:SetMiscLocalization({
@@ -91,13 +87,8 @@ L:SetWarningLocalization({
 	warnHorsemanHead		= "Появилась голова всадника!"
 })
 
-L:SetTimerLocalization{
-	TimerCombatStart		= "Начало боя"
-}
-
 L:SetOptionLocalization({
 	WarnPhase				= "Предупреждение о смене фаз",
-	TimerCombatStart		= "Отсчет времени до начала боя",
 	warnHorsemanSoldiers	= "Предупреждать о призыве Пульсирующих тыкв",
 	warnHorsemanHead		= "Спец-предупрежение о появлении головы всадника"
 })
@@ -159,7 +150,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	SetBubbles			= "Автоматически отключать сообщения в облачках во время $spell:101871\n(восстанавливает их после завершения игры)"
+	SetBubbles			= "Автоматически отключать сообщения в облачках во время $spell:101871<br/>(восстанавливает их после завершения игры)"
 })
 
 ----------------------

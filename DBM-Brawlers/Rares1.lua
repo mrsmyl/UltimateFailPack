@@ -1,8 +1,7 @@
 local mod	= DBM:NewMod("BrawlRare1", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9652 $"):sub(12, -3))
---mod:SetCreatureID(60491)
+mod:SetRevision(("$Revision: 9770 $"):sub(12, -3))
 mod:SetModelID(46265)
 mod:SetZone()
 
@@ -88,9 +87,13 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	elseif args.spellId == 140894 then
 		warnBoomingBoogaloo:Show()
-		specWarnBoomingBoogaloo:Show()
+		if brawlersMod:PlayerFighting() then
+			specWarnBoomingBoogaloo:Show()
+		end
 	elseif args.spellId == 140912 then
 		warnDeployBoom:Show()
-		specWarnDeployBoom:Show()
+		if brawlersMod:PlayerFighting() then
+			specWarnDeployBoom:Show()
+		end
 	end
 end

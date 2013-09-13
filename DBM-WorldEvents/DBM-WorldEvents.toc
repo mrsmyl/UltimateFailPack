@@ -1,4 +1,4 @@
-﻿## Interface: 50300
+﻿## Interface: 50400
 ## X-Min-Interface: 50001
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0World Events|r
 ## Title-esES:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Eventos del Mundo|r
@@ -8,6 +8,7 @@
 ## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Weltereignisse|r
 ## Title-ptBR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Eventos Mundiais|r
 ## Title-frFR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Évènements Mondiaux|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0世界事件|r
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: DBM-Core
@@ -35,9 +36,10 @@
 ## X-DBM-Mod-Name-deDE: Weltereignisse
 ## X-DBM-Mod-Name-ptBR: Eventos Mundiais
 ## X-DBM-Mod-Name-frFR: Évènements Mondiaux
+## X-DBM-Mod-MapID: 230,189,33,547,974,1
 ## X-DBM-Mod-Sort: 50
-## X-DBM-Mod-LoadZoneID: 704,762,764,728,823
-## X-Curse-Packaged-Version: 5.3.2
+## X-DBM-Mod-LoadCID: 55003,54499,15467,15466,49687
+## X-Curse-Packaged-Version: 5.4.0
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

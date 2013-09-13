@@ -75,14 +75,17 @@ DBM_CORE_VERSIONCHECK_ENTRY			= "%s: %s (r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_TWO		= "%s: %s (r%d) und %s (r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM	= "%s: Kein Boss Mod installiert"
 DBM_CORE_VERSIONCHECK_FOOTER		= "%d Spieler mit DBM und %d Spieler mit BigWigs gefunden"
-DBM_CORE_YOUR_VERSION_OUTDATED      = "Deine Version von Deadly Boss Mods ist veraltet! Bitte besuche http://dev.deadlybossmods.com um die neueste Version herunterzuladen."
+DBM_CORE_YOUR_VERSION_OUTDATED      = "Deine Version von Deadly Boss Mods ist veraltet! Bitte besuche http://www.deadlybossmods.com um die neueste Version herunterzuladen."
+DBM_CORE_OUTDATED_PVP_MODS			= "Deine PvP-Mods von DBM sind veraltet. Die PvP-Mods sind nicht mehr im \"DBM-Core\"-Download enthalten. Die aktuellsten PvP-Mods findest du unter http://www.deadlybossmods.com als separaten Download. Bitte lösche den Ordner \"DBM-PvP\" (unterhalb des Ordners \"...\\Interface\\AddOns\"), falls du die PvP-Mods nicht benutzt."
 --DBM_BIG_WIGS
 --DBM_BIG_WIGS_ALPHA
 
 DBM_CORE_UPDATEREMINDER_HEADER			= "Deine Version von Deadly Boss Mods ist veraltet.\n Version %s (r%d) ist hier zum Download verfügbar:"
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Deine Alphaversion von Deadly Boss Mods ist veraltet.\nDu liegst mindestens %d Revisionen zurück. Es wird empfohlen, die neueste Alphaversion oder neueste stabile Version von DBM zu benutzen. Die Funktionalität veralteter Alphaversionen kann schlecht oder unvollständig sein."
 DBM_CORE_UPDATEREMINDER_FOOTER			= "Drücke " .. (IsMacClient() and "Cmd-C" or "Strg+C")  ..  " um den Downloadlink in die Zwischenablage zu kopieren."
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "Drücke " .. (IsMacClient() and "Cmd-C" or "Strg+C")  ..  " um den Link in die Zwischenablage zu kopieren."
 DBM_CORE_UPDATEREMINDER_NOTAGAIN		= "Zeige Popup, wenn eine neue Version verfügbar ist"
+--DBM_CORE_UPDATEREMINDER_DISABLE -- not translated, players should never be able to disable mods of other players..
 
 DBM_CORE_MOVABLE_BAR				= "Zieh mich!"
 
@@ -124,7 +127,7 @@ DBM_CORE_SLASHCMD_HELP				= {
 	"/dbm pull <sec>: Startet einen Pull-Timer für <sec> Sekunden. Schickt allen Schlachzugsmitgliedern mit DBM einen Pull-Timer (nur als Leiter/Assistent).",
 	"/dbm arrow: Zeigt den DBM-Pfeil, siehe /dbm arrow help für Details.",
 	"/dbm lockout: Fragt die Schlachtzugsmitglieder nach ihren derzeitigen Instanzsperren (IDs) (nur als Leiter/Assistent).",
-	"/dbm help: Zeigt diese Hilfe.",
+	"/dbm help: Zeigt diese Hilfe."
 }
 
 DBM_ERROR_NO_PERMISSION				= "Du hast nicht die benötigte Berechtigung für diesen Befehl!"
@@ -198,6 +201,7 @@ DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	move		= "%s - geh weg",
 	run			= "%s - lauf weg",
 	cast		= "%s - stoppe Zauber",
+	reflect		= "%s - stoppe Angriffe",
 	count		= "%s! (%%d)",
 	stack		= "%%d Stapel von %s auf dir",
 	switch		= ">%s< - Ziel wechseln"
@@ -218,6 +222,7 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	move 		= "Spezialwarnung zum Herausgehen aus $spell:%s",
 	run 		= "Spezialwarnung zum Weglaufen vor $spell:%s",
 	cast 		= "Spezialwarnung zum Zauberstopp bei $spell:%s",
+	reflect 	= "Spezialwarnung zum Angriffsstopp auf $spell:%s",
 	count 		= "Spezialwarnung für $spell:%s",
 	stack 		= "Spezialwarnung bei >=%d Stapel von $spell:%s auf dir",
 	switch		= "Spezialwarnung für Zielwechsel auf $spell:%s"
@@ -278,7 +283,7 @@ DBM_ARROW_ERROR_USAGE	= {
 	"/dbm arrow <x> <y>  erzeugt einen Pfeil, der auf bestimmte Koordinaten zeigt (0 < x/y < 100)",
 	"/dbm arrow <player>  erzeugt einen Pfeil, der auf einen bestimmten Spieler in deiner Gruppe oder deinem Schlachtzug zeigt",
 	"/dbm arrow hide  versteckt den Pfeil",
-	"/dbm arrow move  macht den Pfeil beweglich",
+	"/dbm arrow move  macht den Pfeil beweglich"
 }
 
 DBM_SPEED_KILL_TIMER_TEXT	= "Rekordzeit"

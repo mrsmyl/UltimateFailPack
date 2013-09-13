@@ -17,11 +17,11 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnQueuePosition	= "Verkünde deine aktuelle Position in der Warteschlange\n(bei jeder Änderung)",
+	warnQueuePosition	= "Verkünde deine aktuelle Position in der Warteschlange<br/>(bei jeder Änderung)",
 	specWarnYourNext	= "Spezialwarnung, wenn du als nächstes dran bist",
 	specWarnYourTurn	= "Spezialwarnung, wenn es dein Kampf ist",
-	SpectatorMode		= "Zeige Warnungen/Timer auch beim Zuschauen fremder Kämpfe\n(persönliche Spezialwarnungsmeldungen werden nicht angezeigt)",
-	SpeakOutQueue		= "Verkünde akustisch deine aktuelle Position in der Warteschlange\n(bei jeder Änderung)"
+	SpectatorMode		= "Zeige Warnungen/Timer auch beim Zuschauen fremder Kämpfe<br/>(persönliche Spezialwarnungsmeldungen werden nicht angezeigt)",
+	SpeakOutQueue		= "Verkünde akustisch deine aktuelle Position in der Warteschlange<br/>(bei jeder Änderung)"
 })
 
 L:SetMiscLocalization({
@@ -37,7 +37,7 @@ L:SetMiscLocalization({
 	Rank7			= "siebten Ranges",
 	Rank8			= "achten Ranges",
 	Rank9			= "9. Ranges",
-	Rank10			= "10. Ranges",--needs to be verified (guessed)
+	Rank10			= "Rang-10-Grubenkampfchampion",
 	Proboskus		= "Oje... tut mir leid, aber Ihr werdet wohl gegen Proboskus antreten müssen.",--Alliance - needs to be verified (wowhead-captured translation)
 	Proboskus2		= "Ha ha ha! Was habt Ihr auch für ein Pech! Es ist Proboskus! Ahhh ha ha ha! Ich hab fünfundzwanzig Goldstücke darauf gesetzt, dass Ihr im Feuer draufgeht!"--Horde
 })
@@ -151,4 +151,19 @@ L= DBM:GetModLocalization("BrawlRare2")
 
 L:SetGeneralLocalization({
 	name = "Kampfgilde: Herausford. 2"
+})
+
+L:SetWarningLocalization({
+	specWarnRPS			= "Benutze %s!"
+})
+
+L:SetOptionLocalization({
+	specWarnRPS			= "Spezialwarnung für die richtige Auswahl bei $spell:141206",
+	SpeakOutStrikes		= "Verkünde akustisch die Anzahl der $spell:141190 Angriffe"
+})
+
+L:SetMiscLocalization({
+	rock			= "Stein",
+	paper			= "Papier",
+	scissors		= "Schere"
 })

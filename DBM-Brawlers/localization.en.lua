@@ -19,7 +19,7 @@ L:SetOptionLocalization({
 	warnQueuePosition	= "Announce your current position in queue whenever it changes",
 	specWarnYourNext	= "Show special warning when you're next in line",
 	specWarnYourTurn	= "Show special warning when it's your match",
-	SpectatorMode		= "Show warnings/timers when spectating fights\n(Personal 'Special Warning' messages not shown to spectators)",
+	SpectatorMode		= "Show warnings/timers when spectating fights<br/>(Personal 'Special Warning' messages not shown to spectators)",
 	SpeakOutQueue		= "Count out your number in the queue when it updates"
 })
 
@@ -150,4 +150,19 @@ L= DBM:GetModLocalization("BrawlRare2")
 
 L:SetGeneralLocalization({
 	name = "Brawlers: Challenges 2"
+})
+
+L:SetWarningLocalization({
+	specWarnRPS			= "Use %s!"
+})
+
+L:SetOptionLocalization({
+	specWarnRPS			= "Show special warning on what to use for $spell:141206",
+	SpeakOutStrikes		= "Count out number of $spell:141190 attacks"
+})
+
+L:SetMiscLocalization({
+	rock			= "Rock",
+	paper			= "Paper",
+	scissors		= "Scissors"
 })

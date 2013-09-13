@@ -1,4 +1,4 @@
-﻿## Interface: 50300
+﻿## Interface: 50400
 ## X-Min-Interface: 50001
 ## Title:|cffffd200Deadly Boss Mods|r |cff69ccf0Core|r
 ## Title-zhCN:|cffffd200Deadly Boss Mods|r |cff69ccf0核心|r
@@ -14,7 +14,7 @@
 ## DefaultState: enabled
 ## Author: Tandanu and Nitram
 ## X-Website: http://www.deadlybossmods.com
-## X-Curse-Packaged-Version: 5.3.2
+## X-Curse-Packaged-Version: 5.4.0
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline
@@ -32,6 +32,7 @@ DBT-Template.xml
 DBT.lua
 DBM-Core.lua
 DBM-Arrow.lua
+DBM-Flash.lua
 DBM-RangeCheck.lua
 DBM-BossHealth.lua
 DBM-BossHealth.xml

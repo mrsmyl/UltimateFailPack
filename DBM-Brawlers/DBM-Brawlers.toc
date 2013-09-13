@@ -1,4 +1,4 @@
-﻿## Interface: 50300
+﻿## Interface: 50400
 ## X-Min-Interface: 50100
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Brawlers|r
 ## Title-ruRU:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Бойцовская гильдия|r
@@ -11,7 +11,7 @@
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: DBM-Core
-## SavedVariablesPerCharacter: DBMBrawlers_SavedVars, DBMBrawlers_SavedStats
+## SavedVariablesPerCharacter: DBMBrawlers_SavedVars
 ## X-DBM-Mod: 1
 ## X-DBM-Mod-Type: OTHER
 ## X-DBM-Mod-Category: MOP
@@ -24,9 +24,9 @@
 ## X-DBM-Mod-Name-esES: Camorristas
 ## X-DBM-Mod-Name-frFR: Bastonneurs
 ## X-DBM-Mod-Name-ruRU: Бойцовская гильдия
-## X-DBM-Mod-Sort: 30
-## X-DBM-Mod-LoadZoneID: 922,925
-## X-Curse-Packaged-Version: 5.3.2
+## X-DBM-Mod-Sort: 35
+## X-DBM-Mod-MapID: 369,1043
+## X-Curse-Packaged-Version: 5.4.0
 ## X-Curse-Project-Name: Deadly Boss Mods
 ## X-Curse-Project-ID: deadly-boss-mods
 ## X-Curse-Repository-ID: wow/deadly-boss-mods/mainline

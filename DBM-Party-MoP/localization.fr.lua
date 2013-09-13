@@ -95,7 +95,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(685)
 
 L:SetMiscLocalization({
-	Kill		= "Tant que la violence sera tapie dans vos cœurs... je... reviendrai...",
+	Kill		= "Tant que la violence sera tapie dans vos cœurs... je... reviendrai..."
 })
 
 -----------------------
@@ -219,7 +219,7 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	SpecWarnGetBoned	= "Alerte spéciale quand vous n'avez pas $spell:113996",
-	InfoFrame			= "Afficher le cadre d'informations pour les joueurs n'étant pas touché par\n$spell:113996"
+	InfoFrame			= "Afficher le cadre d'informations pour les joueurs n'étant pas touché par<br/>$spell:113996"
 })
 
 L:SetMiscLocalization({
@@ -276,7 +276,7 @@ L= DBM:GetModLocalization(688)
 L= DBM:GetModLocalization(671)
 
 L:SetOptionLocalization({
-	KickArrow	= "Voir la flèche DBM lorsque $spell:114487 est près de vous",
+	KickArrow	= "Voir la flèche DBM lorsque $spell:114487 est près de vous"
 })
 
 -----------------------

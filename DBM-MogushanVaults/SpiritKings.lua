@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(687, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9656 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9886 $"):sub(12, -3))
 mod:SetCreatureID(60701, 60708, 60709, 60710)--Adds: 60731 Undying Shadow, 60958 Pinning Arrow
 mod:SetZone()
 mod:SetBossHPInfoToHighest()
@@ -19,10 +19,6 @@ mod:RegisterEventsInCombat(
 	"CHAT_MSG_RAID_BOSS_EMOTE",
 	"CHAT_MSG_MONSTER_YELL"
 )
-
-local isDispeller = select(2, UnitClass("player")) == "MAGE"
-	    		 or select(2, UnitClass("player")) == "PRIEST"
-	    		 or select(2, UnitClass("player")) == "SHAMAN"
 
 --on heroic 2 will be up at same time, so most announces are "target" type for source distinction.
 --Unless it's a spell that doesn't directly affect the boss (ie summoning an add isn't applied to boss, it's a new mob).
@@ -58,7 +54,7 @@ local yellFixate				= mod:NewYell(118303)
 local specWarnCoalescingShadows	= mod:NewSpecialWarningMove(117558)
 local specWarnShadowBlast		= mod:NewSpecialWarningInterrupt(117628, false)--very spammy. better to optional use
 local specWarnShieldOfDarkness	= mod:NewSpecialWarningTarget(117697, nil, nil, nil, 3)--Heroic Ability
-local specWarnShieldOfDarknessD	= mod:NewSpecialWarningDispel(117697, isDispeller)--Heroic Ability
+local specWarnShieldOfDarknessD	= mod:NewSpecialWarningDispel(117697, mod:IsMagicDispeller())--Heroic Ability
 --Meng
 local specWarnMaddeningShout	= mod:NewSpecialWarningSpell(117708, nil, nil, nil, 2)
 local specWarnCrazyThought		= mod:NewSpecialWarningInterrupt(117833, false)--At discretion of whoever to enable. depending on strat, you may NOT want to interrupt these (or at least not all of them)

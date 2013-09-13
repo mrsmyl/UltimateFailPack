@@ -100,7 +100,7 @@ DBM_CORE_SLASHCMD_HELP				= {
 	"/dbm pull <seg>: Dispara um cronógrafo para iniciar a luta em <seg> segundos. Dá a todos os integrantes da raide um cronógrafo para iniciar a luta (requer status de líder/guia).",
 	"/dbm arrow: Exibe a seta do DBM, veja /dbm arrow help para detalhes.",
 	"/dbm lockout: Pergunta a todos os membros da raid, por seus vínculos de raide (ou: lockouts, ids) (requer status de líder/guia)..",
-	"/dbm help: Exibe essa mensagem.",
+	"/dbm help: Exibe essa mensagem."
 }
 
 DBM_ERROR_NO_PERMISSION				= "Você não tem as permissões necessárias para fazer isso."
@@ -177,16 +177,16 @@ DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stack		= "Anunciar empilhamento de $spell:%s"
 
 -- Auto-generated Special Warning Localizations
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell 		= "Exibir aviso especial para $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.dispel 		= "Exibir aviso especial para remover/roubar \n $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.dispel 		= "Exibir aviso especial para remover/roubar $spell:%s"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.interrupt	= "Exibir aviso especial para interromper $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.you 		= "Exibir aviso especial quando você é afetado por \n $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.target 		= "Exibir aviso especial quando alguém é afetador por \n $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.close 		= "Exibir aviso especial quando alguém próximo de você é \n afetado por $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.move 		= "Exibir aviso especial quando você é afetado por \n $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.you 		= "Exibir aviso especial quando você é afetado por $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.target 		= "Exibir aviso especial quando alguém é afetador por $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.close 		= "Exibir aviso especial quando alguém próximo de você é afetado por $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.move 		= "Exibir aviso especial quando você é afetado por $spell:%s"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.run 		= "Exibir aviso especial para $spell:%s"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.cast 		= "Exibir aviso especial para o lançamento de $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.stack 		= "Exibir aviso especial para pilha >=%d de \n $spell:%s"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switch		= "Exibir aviso especial para mudar de alvo para \n $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.stack 		= "Exibir aviso especial para pilha >=%d de $spell:%s"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switch		= "Exibir aviso especial para mudar de alvo para $spell:%s"
 
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.spell		= "%s!"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.dispel	= "%s em >%%s< - remova agora"
@@ -223,7 +223,7 @@ DBM_ARROW_ERROR_USAGE	= {
 	"/dbm arrow <x> <y>  cria uma seta que aponta para um local específico (0 < x/y < 100)",
 	"/dbm arrow <jogador>  cria uma seta que aponta para um jogador específico no seu grupo",
 	"/dbm arrow hide  esconde a seta",
-	"/dbm arrow move  torna móvel a seta",
+	"/dbm arrow move  torna móvel a seta"
 }
 
 DBM_SPEED_KILL_TIMER_TEXT	= "Vitória em tempo récorde"

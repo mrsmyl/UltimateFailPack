@@ -128,8 +128,8 @@ L:SetOptionLocalization{
 L= DBM:GetModLocalization("d649")
 
 L:SetMiscLocalization{
-	XorenthPull		= "All lesser races are enemies of the true Horde!",--translate (trigger)
-	ElagloPull		= "Fools! The true horde cannot be stopped by the likes of you."--translate (trigger)
+	XorenthPull		= "Alle niederen Völker sind Feinde der wahren Horde!",
+	ElagloPull		= "Dummköpfe! Die wahre Horde lässt sich nicht von Euresgleichen aufhalten!"
 }
 
 ----------------------
@@ -158,14 +158,12 @@ L:SetWarningLocalization{
 }
 
 L:SetTimerLocalization{
-	timerCombatStarts		= "Kampfbeginn",
 	timerLostSoulsCD		= "Verirrte Seelen CD"
 }
 
 L:SetOptionLocalization{
 	specWarnLostSouls		= "Spezialwarnung, wenn Verirrte Seelen erscheinen",
 	specWarnEnslavePitLord	= "Spezialwarnung zum Dämonenversklaven, wenn der Grubenlord erscheint/freikommt",
-	timerCombatStarts		= "Zeige Zeit bis Kampfbeginn",
 	timerLostSoulsCD		= "Zeige Zeit bis nächste Verirrte Seelen erscheinen"
 }
 

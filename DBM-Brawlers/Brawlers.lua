@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Brawlers", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9709 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 9833 $"):sub(12, -3))
 --mod:SetCreatureID(60491)
 --mod:SetModelID(41448)
 mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
@@ -36,7 +36,7 @@ local eventsRegistered = false
 local lastRank = 0
 local QueuedBuff = GetSpellInfo(132639)
 --Fix for not registering events on reloadui or login while already inside brawlers guild.
-if currentZoneID == 922 or currentZoneID == 925 then
+if currentZoneID == 369 or currentZoneID == 1043 then
 	eventsRegistered = true
 	mod:RegisterShortTermEvents(
 		"SPELL_CAST_START",
@@ -139,8 +139,8 @@ function mod:UNIT_DIED(args)
 end
 
 function mod:ZONE_CHANGED_NEW_AREA()
-	currentZoneID = GetCurrentMapAreaID()
-	if currentZoneID == 922 or currentZoneID == 925 then
+	currentZoneID = DBM:GetCurrentArea()
+	if currentZoneID == 369 or currentZoneID == 1043 then
 		modsStopped = false
 		eventsRegistered = true
 		self:RegisterShortTermEvents(
@@ -170,6 +170,17 @@ function mod:ZONE_CHANGED_NEW_AREA()
 	modsStopped = true
 end
 
+
+local startCallbacks, endCallbacks = {}, {}
+
+function mod:OnMatchStart(callback)
+	table.insert(startCallbacks, callback)
+end
+
+function mod:OnMatchEnd(callback)
+	table.insert(endCallbacks, callback)
+end
+
 --Most group up for this so they can buff eachother for matches. Syncing should greatly improve reliability, especially for match end since the person fighting definitely should detect that (probably missing yells still)
 function mod:OnSync(msg)
 	if msg == "MatchBegin" then
@@ -182,14 +193,20 @@ function mod:OnSync(msg)
 				"UNIT_AURA player"
 			)
 		end
-		if not (currentZoneID == 0 or currentZoneID == 922 or currentZoneID == 925) then return end
+		if not (currentZoneID == 369 or currentZoneID == 1043) then return end
 		self:Stop()--Sometimes NPC doesn't yell when a match ends too early, if a new match begins we stop on begin before starting new stuff
 		berserkTimer:Start()
+		for i, v in ipairs(startCallbacks) do
+			v()
+		end
 	elseif msg == "MatchEnd" then
-		if not (currentZoneID == 0 or currentZoneID == 922 or currentZoneID == 925) then return end
+		if not (currentZoneID == 369 or currentZoneID == 1043) then return end
 		currentFighter = nil
 		self:Stop()
-		--Boss from any rank can be fought by any rank at max level, so we just need to always cancel them all
+		--Boss from any rank can be fought by any rank now, so we just need to always cancel them all
+		for i, v in ipairs(endCallbacks) do
+			v()
+		end
 		for i = 1, 9 do
 			local mod2 = DBM:GetModByName("BrawlRank" .. i)
 			if mod2 then

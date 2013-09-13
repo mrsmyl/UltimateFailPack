@@ -64,13 +64,16 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
+	warnReshapeLife				= "%s en >%s< (%d)",
 	warnReshapeLifeTutor		= "1: Interrumpe/debuffa objetivo, 2: Interrúmpete a tí mismo, 3: Regenera vida/voluntad, 4: Salir del vehículo",
 	warnAmberExplosion			= ">%s< está casteando %s",
+	specwarnAmberExplosionAM	= "Monstruosidad de Ámber está lanzando Explosión de Ámbar - ¡Interrumpe ahora!",
 	warnInterruptsAvailable		= "Interrupciones disponibles para %s: >%s<",
-	specwarnWillPower			= "¡Se te agota la voluntad!",
+	warnWillPower				= "Voluntad disponible: %s",
+	specwarnWillPower			= "¡Se te agota la voluntad! - Abandona vehículo o consume un charco",
 	specwarnAmberExplosionYou	= "Interrumpte TU %s!",--Struggle for Control interrupt.
 	specwarnAmberExplosionAM	= "%s: Interrumpe %s!",--Amber Montrosity
-	specwarnAmberExplosionOther	= "%s: Interrumpe %s!"--Amber Montrosity
+	specwarnAmberExplosionOther	= "%s: Interrumpe %s!"--Mutated Construct
 })
 
 L:SetTimerLocalization({
@@ -87,7 +90,7 @@ L:SetOptionLocalization({
 	specwarnAmberExplosionOther	= "Mostrar aviso especial para interrumpir $spell:122398 de Ensamblaje mutado",
 	timerAmberExplosionAMCD		= "Mostrar tiempo para el siguiente $spell:122402 de la Monstruosidad de ámbar",
 	InfoFrame					= "Mostrar información con la Voluntad de los jugadores",
-	FixNameplates				= "Desactivar placas de nombres que interfieren al pullear\n(restaura la configuración cuando dejas el combate)"
+	FixNameplates				= "Desactivar placas de nombres que interfieren al pullear<br/>(restaura la configuración cuando dejas el combate)"
 })
 
 L:SetMiscLocalization({
@@ -101,7 +104,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(743)
 
 L:SetWarningLocalization({
-	warnAmberTrap		= "Progreso de Trampa de ámbar: (%d/5)",
+	warnAmberTrap		= "Progreso de Trampa de ámbar: (%d/5)"
 })
 
 L:SetOptionLocalization({

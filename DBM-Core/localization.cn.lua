@@ -34,6 +34,8 @@ DBM_CORE_OK							= "确定"
 DBM_CORE_GENERIC_WARNING_BERSERK	= "%s%s后狂暴"
 DBM_CORE_GENERIC_TIMER_BERSERK		= "狂暴"
 DBM_CORE_OPTION_TIMER_BERSERK		= "计时条：$spell:26662"
+DBM_CORE_GENERIC_TIMER_COMBAT		= "战斗开始"
+DBM_CORE_OPTION_TIMER_COMBAT		= "显示战斗开始倒计时"
 DBM_CORE_OPTION_HEALTH_FRAME		= "首领生命值窗口"
 
 DBM_CORE_OPTION_CATEGORY_TIMERS		= "计时条"
@@ -106,7 +108,7 @@ DBM_CORE_SLASHCMD_HELP				= {
 	"/dbm pull <秒>: 开始一个<秒>时间的开怪计时条。 并向所有团队成员发送这个DBM开怪计时条（需开启团队广播及助理权限）。",
 	"/dbm arrow: 显示DBM箭头，输入/dbm arrow查询更多信息。",
 	"/dbm lockout: 查询团队成员当前的副本锁定状态（也可使用：lockouts, ids）（需要团队领袖或助理权限）。",
-	"/dbm help：显示可用命令的说明。",
+	"/dbm help：显示可用命令的说明。"
 }
 
 DBM_ERROR_NO_PERMISSION				= "无权进行该操作。"
@@ -233,7 +235,7 @@ DBM_ARROW_ERROR_USAGE	= {
 	"/dbm arrow <x> <y>  新建一个箭头在指定位置(0 < x/y < 100)",
 	"/dbm arrow <玩家>  新建一个箭头并指向你队伍或团队中特定的玩家",
 	"/dbm arrow hide  隐藏箭头",
-	"/dbm arrow move  移动或锁定箭头",
+	"/dbm arrow move  移动或锁定箭头"
 }
 
 DBM_SPEED_KILL_TIMER_TEXT	= "击杀记录"

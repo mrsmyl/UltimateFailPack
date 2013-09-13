@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod(827, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9619 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10140 $"):sub(12, -3))
 mod:SetCreatureID(69465)
-mod:SetQuestID(32744)
 mod:SetZone()
 
 mod:RegisterCombat("combat")
@@ -13,8 +12,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_REMOVED",
-	"SPELL_PERIODIC_DAMAGE",
-	"SPELL_PERIODIC_MISSED",
 	"CHAT_MSG_RAID_BOSS_EMOTE"
 )
 
@@ -36,7 +33,7 @@ local specWarnElectrifiedWaters		= mod:NewSpecialWarningMove(138006)
 local specWarnIonization			= mod:NewSpecialWarningSpell(138732, not mod:IsTank(), nil, nil, 2)
 
 local timerFocusedLightningCD		= mod:NewCDTimer(10, 137399)--10-18 second variation, tends to lean toward 11-12 except when delayed by other casts such as throw or storm. Pull one also seems to variate highly
-local timerStaticBurstCD			= mod:NewCDTimer(19, 137162, mod:IsTank())
+local timerStaticBurstCD			= mod:NewCDTimer(19, 137162, nil, mod:IsTank())
 local timerThrowCD					= mod:NewCDTimer(26, 137175)--90-93 variable (26-30 seconds after storm. verified in well over 50 logs)
 local timerStorm					= mod:NewBuffActiveTimer(17, 137313)--2 second cast, 15 second duration
 local timerStormCD					= mod:NewCDTimer(60.5, 137313)--90-93 variable (60.5~67 seconds after throw)
@@ -100,6 +97,7 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
+	self:UnregisterShortTermEvents()
 end
 
 function mod:SPELL_CAST_START(args)
@@ -116,6 +114,11 @@ function mod:SPELL_CAST_START(args)
 			timerIonizationCD:Start()
 			countdownIonization:Start()
 		end
+		--Only register electrified waters events during storm. Avoid high cpu events during rest of fight.
+		self:RegisterShortTermEvents(
+			"SPELL_PERIODIC_DAMAGE",
+			"SPELL_PERIODIC_MISSED"
+		)
 	elseif args.spellId == 138732 then
 		warnIonization:Show()
 		specWarnIonization:Show()
@@ -166,10 +169,12 @@ function mod:SPELL_AURA_REMOVED(args)
 				DBM.RangeCheck:Hide()
 			end
 		end
+	elseif args.spellId == 137313 then
+		self:UnregisterShortTermEvents()
 	end
 end
 
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
+function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 138006 and destGUID == UnitGUID("player") and self:AntiSpam() then
 		specWarnElectrifiedWaters:Show()
 	end

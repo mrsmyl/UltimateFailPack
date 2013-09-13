@@ -1,0 +1,105 @@
+tag 5.4.0
+9aa12ace82f2baff9739e565dcda700bacc487f0
+subversion <svn@deadlybossmods.com>
+2013-09-09 23:05:34 +0200
+
+Tagging as 5.4.0
+
+
+--------------------
+
+subversion:
+	- increment version number to 5.4.0
+	- Omega via svn r10267: Updated Shredder spawn timers (blizz nerfed health by 50% but made them spawn twice as often, probably to fascilitate better tank swaps) Bump all ToC
+	- ebmor via svn r10266: it's time to remove these cosmetic GUI adjustments pre-patch...
+	- Omega via svn r10265: Fix a small spam issue
+	- Omega via svn r10264: disable shredder timer, it was changed and my log crashed so i don't have new timer.
+	- Omega via svn r10263: fix it for real this time
+	- Omega via svn r10262: fix paragons calculated bug
+	- Omega via svn r10261: dummy commit
+	- alcortes via svn r10260: ES localization update
+	- Omega via svn r10259: small Soo updates
+	- ebmor via svn r10258: deDE update
+	- Omega via svn r10257: ru update
+	- Omega via svn r10256: Several paragons updates and fixes from LFR data New filter method tested functional, it does filter the bad IEEU that fires for the inactive boss that gets added to boss frames.
+	- Omega via svn r10255: try this paragons fix
+	- ultrashining via svn r10254: zhTW update
+	- Omega via svn r10253: fix localize error
+	- Omega via svn r10252: ru update
+	- tandanu via svn r10251: typo
+	- Omega via svn r10250: add a notice to sha of pride, it seems during 25 heroic testing blizz completely changed power gain rate of boss which made all of ability timers change. Whether or not this carries over to normal is unknown but there is a good chance it does.
+	- nbluewiz via svn r10249: # GUI : Fix BC 25 man instance statistics bug.
+	- nbluewiz via svn r10248: # Core : Fix double DBM_CORE_LOAD_MOD_COMBAT combat message. And fix unknown countdown displaying in GUI when using NewCombatTimer. # Lei Shen : Fix Overloaded Circuits warning not displayes proper. # Use NewCombatTimer in world event mods. / cleanup. # koKR update.
+	- Omega via svn r10247: lower required tan distance to less than 50 yards instead of less than 60
+	- Omega via svn r10246: 10 min berserk for thok
+	- Omega via svn r10245: Fix missing icon option
+	- Omega via svn r10244: add LFR spoils nerf
+	- Omega via svn r10243: 12 min berserk in LFR
+	- Omega via svn r10242: more status fixes
+	- Omega via svn r10241: only use the numrealmembers check in an instance.
+	- Omega via svn r10240: RU update
+	- Omega via svn r10239: ru update
+	- Omega via svn r10238: fix a spoils bug
+	- Omega via svn r10237: apply changes to combattimer too
+	- Omega via svn r10236: Fix some timer logic
+	- Omega via svn r10235: Fix a bug causing right icon text to be missing in bar options Added slider to control PT countdown text threshold.
+	- Omega via svn r10234: make pull timer countdown text have an adjustable threshold where default is 5 but user can change it to whatever. (No GUI for this yet)
+	- ultrashining via svn r10233: zhTW update
+	- nbluewiz via svn r10232: # koKR update
+	- Omega via svn r10231: Add fix to a rare iron qon bug where you'd somehow get to phase 4 and mod wouldn't realize it's phase 4 and spam announce bad spear warnings the entire phase.
+	- Omega via svn r10230: Improve pull timer behavior so the count down text doesn't show up until 5 seconds remaining. the longer it's up the more desynced it gets (try /dbm pull 60 with old way, it'll be way off sync by end)
+	Plus, there is no practical reason to really show it above 5 anyways. It should show up when audio count starts.
+	- Omega via svn r10229: Fixes to last
+	- Omega via svn r10228: More combattimer code, to include countdown audiotext. The NewCombatStart prototype will also use the PT settings since that's essentially what the combatstart timer is, fights that have a delayed pull, so treat it like a pull timer
+	- nbluewiz via svn r10227: # GUI : Split PvP mod from MoP. # Remove unneeded comma. # koKR update.
+	- Omega via svn r10226: Fix paragons mod this way then. it is important flash color is maintained as well as sounds are customizable for the different catalysts, even if it does make the mod look like shit (12 options for 2 spells).
+	- nbluewiz via svn r10225: # Core : Re-fix bad fix in r10217. # koKR update.
+	- nbluewiz via svn r10224: # GUI :  GUI can use duplicate boss name. Now, Anubarak in AzolNerub, Anubarak in ToC now can coexist. Also we can use World Bosses sub category without conflict.
+	- nbluewiz via svn r10223: # koKR update.
+	- ultrashining via svn r10222: zhTW update
+	- Omega via svn r10221: Oops, re-enable DFA scan, it should work with threat check fixed
+	- Omega via svn r10220: fix same bugs on garrosh
+	- Omega via svn r10219: fix a bug in threat check though
+	- Omega via svn r10218: Disable non working paragons stuff. unfortunately the encounter is buggy as ever and it is impossible at this point to have a worth a crap mod for it by patch. As such, disabled all combat start timers, and any warnings that aren't working correctly.
+	- Omega via svn r10217: Fix another core error with special warnings that don't create options erroring out because they created no runsound defaults
+	- Omega via svn r10216: fix lua error
+	- Omega via svn r10215: If an update call goes to bosshealth with percent as nil, ignore it.
+	- Omega via svn r10214: Now cleanup locals and change other combat start timer in core to generic.
+	- Omega via svn r10213: Also, add CN and FR combat start locals
+	- Omega via svn r10212: use already existing globals instead of adding new ones, oops
+	- Omega via svn r10211: Fix error in combat start timer (looks good now)
+	- Omega via svn r10210: Fix typos in translation doc. Also, to translators, please watch the other svn folders next few days/weeks. Trying to overhaul the old mods a bit at a time to move them over to encounter journal system as well as auto localized prototypes everywhere possible. This is something I want to have done before 6.0 in case blizzard gets their ilvl scaling tech into next expansion which will revitalize old content.
+	- Omega via svn r10209: Going through classic 5 man mods, i realize should add a reflect special warning generic since there are a few of them in the 5 man mods and the fact a lot of the 5 man mods from earlier expansions are still missing languages. Also, take 2 on combat start generic as well
+	- Omega via svn r10208: more improvements to that
+	- Omega via svn r10207: add some more functions to speed up mod creation
+	- Omega via svn r10206: Update shock pulse to fixed version
+	- Omega via svn r10205: unbreak shit temporarily until 5.4
+	- Omega via svn r10204: Add nazgrim's berserk, which is also 10 minutes (it might actually be a few seconds past, probably like 10:20 or 10:30) it's at LEAST 10 though.
+	- Omega via svn r10203: RU update
+	- Omega via svn r10202: Add in some icons
+	- Omega via svn r10201: dark shaman have 9 min berserk
+	- Omega via svn r10200: Lets just fix Galakras this way. i'm not 100% sure this fix won't break shit, but it's a BIG issue that this fight literally fires IEEU for 2-3 minutes AFTER boss dies, and in LFR new players may join group after boss dies (which means their recombat fix won't be active). It may just be absolutely necessarily to block IEEU if IsEncounterInProgress() is false. This may even eliminate need for recombat code in tsulong and Galakras
+	- Omega via svn r10199: cleanup
+	- Omega via svn r10198: Remove some debug, also, verified an adds wave is not missing, that gap does exist there.
+	- Omega via svn r10197: fix missing local
+	- Omega via svn r10196: Add missing tank warnings for LFR weekend test.
+	- ebmor via svn r10195: deDE update
+	- Omega via svn r10194: another fix
+	- Omega via svn r10193: Identified real problem. stupid me
+	- Omega via svn r10192: try to fix PT bug
+	- Omega via svn r10191: Several SoO updates from last few tests and flex testing over the weekend.
+	- nbluewiz via svn r10190: # koKR update.
+	- Omega via svn r10189: More Ru
+	- Omega via svn r10188: Ru update, fix some GUI issues
+	- Omega via svn r10187: add option to block pull timers that have no mapid (mainly for people who also use the auto logging feature and don't want their logger to start when they are in a different zone and a PT is sent with BW or PS or out of date DBM)
+	- nbluewiz via svn r10186: # Fix <DBM> GUI text.
+	- nbluewiz via svn r10185: # Update BossHealth frame check.
+	- nbluewiz via svn r10184: # GUI : Fix checkbox wrap. Before, html <br/> tag only works on checkbox containing hyperlink or dropdown box. And \n char was not worked in html checkbox. Now, all checkbox use html <br/> tag to wrap. \n char never works from now on. Html checkbox also benefits in auto wrap and auto height.
+	- Omega via svn r10183: oh yeah bump norushen berserk to 10 min
+	- Omega via svn r10182: make reflection countdown off by default since not everyone uses the group up and move as one strategy
+	- Omega via svn r10181: disable infoframe on norushen do to fact unitpower returns bad information which makes frame useless Spam reduction as well Add some debuff into fallen protectors
+	- Omega via svn r10180: win detection on Immerseus worked, that method was indeed flawless as i suspected. Yay for finding a way to detect victory on a boss that doesn't die or yell or fire overkill event. target scanning on flame thing on protectors was not accurate because the mob looks at PREVIOUS target instead of current target. Will need to probably use UNIT AURA later
+	- nbluewiz via svn r10179: # Change world bosses load method. Remove all boss CIDs in core. Instead, add world boss CIDs in separate mods. # koKR update.
+	- ultrashining via svn r10178: zhTW update
+	- Omega via svn r10177: fix the fix, i just forgot to remove that. target timer not useful turns out cause it lasts 6 seconds and is cast every 5-6 seconds, the cd timer essencially is both.
+	- tandanu via svn r10176: increment version number

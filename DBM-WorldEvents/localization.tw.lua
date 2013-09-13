@@ -17,9 +17,9 @@ L:SetGeneralLocalization({
 L = DBM:GetModLocalization("d288")
 
 L:SetTimerLocalization({
-	HummelActive		= "胡默爾 開始活動",
-	BaxterActive		= "巴克斯特 開始活動",
-	FryeActive			= "弗萊伊 開始活動"
+	HummelActive		= "胡默爾開始活動",
+	BaxterActive		= "巴克斯特開始活動",
+	FryeActive			= "弗萊伊開始活動"
 })
 
 L:SetOptionLocalization({
@@ -36,24 +36,20 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("d286")
 
 L:SetWarningLocalization({
-	Submerged			= "艾胡恩已隱沒",
 	Emerged				= "艾胡恩已現身",
-	specWarnAttack		= "艾胡恩擁有易傷 - 現在攻擊!"
+	specWarnAttack		= "艾胡恩變得脆弱 - 現在攻擊!"
 })
 
 L:SetTimerLocalization({
 	SubmergTimer		= "隱沒",
-	EmergeTimer			= "現身",
-	TimerCombat			= "戰鬥開始"
+	EmergeTimer			= "現身"
 })
 
 L:SetOptionLocalization({
-	Submerged			= "當艾胡恩隱沒時顯示警告",
 	Emerged				= "當艾胡恩現身時顯示警告",
-	specWarnAttack		= "當艾胡恩擁有易傷時顯示特別警告",
+	specWarnAttack		= "當艾胡恩變得脆弱時顯示特別警告",
 	SubmergTimer		= "為隱沒顯示計時器",
-	EmergeTimer			= "為現身顯示計時器",
-	TimerCombat			= "為戰鬥開始顯示計時器"
+	EmergeTimer			= "為現身顯示計時器"
 })
 
 L:SetMiscLocalization({
@@ -91,13 +87,8 @@ L:SetWarningLocalization({
 	warnHorsemanHead		= "旋風斬 - 轉換目標!"
 })
 
-L:SetTimerLocalization{
-	TimerCombatStart		= "戰鬥開始"
-}
-
 L:SetOptionLocalization({
 	WarnPhase				= "為每個階段改變顯示警告",
-	TimerCombatStart		= "顯示戰鬥開始的計時器",
 	warnHorsemanSoldiers	= "為跳動的南瓜出現顯示警告",
 	warnHorsemanHead		= "為旋風斬顯示特別警告 (第二次及最後的頭顱出現)"
 })
@@ -143,10 +134,10 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnGameOver		= "當遊戲結束時顯示最多可以取得的點數",
-	warnGnoll			= "為豺狼人出現顯示警告",
-	warnHogger			= "為霍格出現顯示警告",
-	specWarnHogger		= "為霍格出現顯示特別警告"
+	warnGameOver	= "當遊戲結束時顯示最多可以取得的點數",
+	warnGnoll		= "為豺狼人出現顯示警告",
+	warnHogger		= "為霍格出現顯示警告",
+	specWarnHogger	= "為霍格出現顯示特別警告"
 })
 
 ------------------------
@@ -159,7 +150,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	SetBubbles			= "自動地為$spell:101871關閉對話氣泡功能\n(當遊戲結束後還原功能)"
+	SetBubbles			= "自動地為$spell:101871關閉對話氣泡功能<br/>(當遊戲結束後還原功能)"
 })
 
 ----------------------
@@ -190,7 +181,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	warnTotalAdds	= "總共已進攻的殭屍群: %d",
+	warnTotalAdds	= "總共已進攻的殭屍群:%d",
 	specWarnWave	= "大群的殭屍!"
 })
 

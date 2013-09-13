@@ -57,7 +57,7 @@ L:SetOptionLocalization({
 	specWarnAttack	= "Afficher une alerter spécial lorsque Ahune devient vulnérable",
 	SubmergTimer	= "Afficher le timer pour l'immersion",
 	EmergeTimer		= "Afficher le timer pour l'émersion",
-	TimerCombat		= "Afficher le timer du début du combat",
+	TimerCombat		= "Afficher le timer du début du combat"
 })
 
 L:SetMiscLocalization({
@@ -162,7 +162,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	SetBubbles			= "Désactiver les bulles de texte pendant $spell:101871\n(Restaure les paramètres à la fin du jeu)"
+	SetBubbles			= "Désactiver les bulles de texte pendant $spell:101871<br/>(Restaure les paramètres à la fin du jeu)"
 })
 
 ----------------------
