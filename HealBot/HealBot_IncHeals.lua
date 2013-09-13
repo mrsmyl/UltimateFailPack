@@ -16,7 +16,7 @@ function HealBot_IncHeals_updHealsIn(unit)
 end
 
 function HealBot_IncHeals_HealsInUpdate(unit)
-    if unit and UnitExists(unit) then
+    if UnitExists(unit) then
         hbHealsIn[unit]=UnitGetIncomingHeals(unit)
         hbAbsorbs[unit]=UnitGetTotalAbsorbs(unit)
 

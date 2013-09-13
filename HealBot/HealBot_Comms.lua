@@ -155,15 +155,12 @@ function HealBot_Comm_round(num, idp)
     return math.floor(num * mult + 0.5) / mult
 end
 
-function HealBot_Comms_ReportVer()  -- Used by TitanHealbot
-    return HealBot_MsgUpdateAvail
-end
-
+local HealBot_MsgUpdateAvail=nil
+local hbMajor, hbMinor, hbPatch, hbHealbot = string.split(".", HEALBOT_VERSION)
 local hbVersionChecked = {}
 function HealBot_Comms_CheckVer(userName, version)
     if not hbVersionChecked[userName] then
         local tNewVer=nil
-		local hbMajor, hbMinor, hbPatch, hbHealbot = string.split(".", HEALBOT_VERSION)
         hbVersionChecked[userName]=true
         local tMajor, tMinor, tPatch, tHealbot = string.split(".", version)
         if tonumber(tMajor)>tonumber(hbMajor) then 
@@ -185,9 +182,14 @@ function HealBot_Comms_CheckVer(userName, version)
                 HealBot_AddChat(HEALBOT_CHAT_ADDONID..HEALBOT_CHAT_NEWVERSION2)
 				HealBot_Globals.OneTimeMsg["VERSION"]=true
             end
+            HealBot_MsgUpdateAvail = hbMajor.."."..hbMinor.."."..hbPatch.."."..hbHealbot
         end
         HealBot_setOptions_Timer(195)
     end
+end
+
+function HealBot_Comms_ReportVer()  -- Used by TitanHealbot
+    return HealBot_MsgUpdateAvail
 end
 
 function HealBot_Comms_AcceptSkins()
