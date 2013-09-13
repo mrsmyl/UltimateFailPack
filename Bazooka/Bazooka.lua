@@ -1,6 +1,6 @@
 --[[
 Name: Bazooka
-Revision: $Revision: 228 $
+Revision: $Revision: 240 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/bazooka/
 SVN: svn://svn.wowace.com/wow/bazooka/mainline/trunk
@@ -10,9 +10,9 @@ License: Public Domain
 
 local AppName, Bazooka = ...
 local OptionsAppName = AppName .. "_Options"
-local VERSION = AppName .. "-v2.2.3"
+local VERSION = AppName .. "-v2.2.5"
 --[===[@debug@
-local VERSION = AppName .. "-r" .. ("$Revision: 228 $"):match("%d+")
+local VERSION = AppName .. "-r" .. ("$Revision: 240 $"):match("%d+")
 --@end-debug@]===]
 
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
@@ -571,6 +571,15 @@ function Bar:fadeIn()
     if self.fadeAnim then
         self.fadeAnimGrp:Stop()
     end
+    if self.isHidden then
+        -- force text update on plugins, the updates were disabled
+        self.isHidden = nil
+        for name, plugin in pairs(self.allPlugins) do
+            if plugin.text then
+                plugin:setText()
+            end
+        end
+    end
     local alpha = self.frame:GetAlpha()
     local change = 1.0 - alpha
     if change < 0.05 then
@@ -605,6 +614,10 @@ function Bar:fadeOut(delay, fadeAlpha)
         self.fadeAnimGrp:Stop()
     end
     fadeAlpha = fadeAlpha or self.db.fadeAlpha
+    if fadeAlpha < 0.05 then
+        fadeAlpha = 0
+        self.isHidden = true -- this will disable text updates (see Plugin:setText() and Bar:fadeIn()), partial fix for ticket-37
+    end
     local alpha = self.frame:GetAlpha()
     local change = alpha - fadeAlpha
     if change < 0.05 then
@@ -1056,8 +1069,10 @@ function Bar:applySettings()
         self:toggleMouse(not self.db.disableMouseInCombat)
         if self.db.fadeInCombat and not self.isMouseInside then
             self.frame:SetAlpha(self.db.fadeAlpha)
+            self:fadeOut(0)
         else
             self.frame:SetAlpha(1.0)
+            self:fadeIn()
         end
     elseif IsInPetBattle() then
         self:disableForPetBattle()
@@ -1065,8 +1080,10 @@ function Bar:applySettings()
         self:toggleMouse(not self.db.disableMouseOutOfCombat)
         if self.db.fadeOutOfCombat and not self.isMouseInside then
             self.frame:SetAlpha(self.db.fadeAlpha)
+            self:fadeOut(0)
         else
             self.frame:SetAlpha(1.0)
+            self:fadeIn()
         end
     end
 end
@@ -1207,6 +1224,7 @@ function Bar:disableForPetBattle(useFadeAnim)
         self:fadeOut(0, 0)
     else
         self.frame:SetAlpha(0)
+        self:fadeOut(0, 0)
     end
 end
 
@@ -1765,6 +1783,9 @@ function Plugin:setIconCoords()
 end
 
 function Plugin:setText()
+    if self.bar and self.bar.isHidden then
+        return
+    end
     local dataobj = self.dataobj
     if self.db.showLabel and self.label then
         if self.db.showText and dataobj.text then

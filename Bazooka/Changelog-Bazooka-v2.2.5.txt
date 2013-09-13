@@ -1,0 +1,32 @@
+------------------------------------------------------------------------
+r243 | mitch0 | 2013-09-13 09:30:39 +0000 (Fri, 13 Sep 2013) | 1 line
+Changed paths:
+   A /tags/v2.2.5 (from /trunk:242)
+
+Tagging as v2.2.5
+------------------------------------------------------------------------
+r242 | mitch0 | 2013-09-13 09:19:08 +0000 (Fri, 13 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/Bazooka.toc
+   M /trunk/Bazooka_Options/Bazooka_Options.toc
+
+toc bump for 5.4
+------------------------------------------------------------------------
+r240 | mitch0 | 2013-09-07 18:59:35 +0000 (Sat, 07 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+call fadeIn()/fadeOut() whenever we set bar alpha directly (fix for the partial fix for ticket-37)
+------------------------------------------------------------------------
+r239 | mitch0 | 2013-09-07 18:11:40 +0000 (Sat, 07 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+disable text updates for completely hidden bars. partial fix for ticket-37 (the broken opacity handling of embedded icons)
+------------------------------------------------------------------------
+r238 | mitch0 | 2013-07-09 13:15:05 +0000 (Tue, 09 Jul 2013) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+revert the previous SetAlpha hack, it doesn't work
+------------------------------------------------------------------------
