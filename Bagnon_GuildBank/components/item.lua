@@ -88,7 +88,11 @@ end
 --[[ Updaters ]]--
 
 function ItemSlot:UpdateTooltip()
-	BattlePetToolTip_Show(GameTooltip:SetGuildBankItem(self:GetSlot()))
+	local pet = {GameTooltip:SetGuildBankItem(self:GetSlot())}
+	if pet[1] and pet[1] > 0 then
+		BattlePetToolTip_Show(unpack(pet))
+	end
+
 	GameTooltip:Show()
 end
 
@@ -123,6 +127,10 @@ function ItemSlot:GetInfo()
 end
 
 function ItemSlot:IsQuestItem()
+	return false
+end
+
+function ItemSlot:IsNew()
 	return false
 end
 

@@ -1,80 +1,70 @@
-local Lib = LibStub('LibItemSearch-1.1')
-if #Lib.filters > 0 then
+--[[
+	ItemSearch
+		An item text search engine of some sort
+--]]
+
+local Search = LibStub('CustomSearch-1.0')
+local Lib = LibStub:NewLibrary('LibItemSearch-1.2', 2)
+if Lib then
+	Lib.Filters = {}
+else
 	return
 end
 
-local function match(search, ...)
-	for i = 1, select('#', ...) do
-		local text = select(i, ...)
-		if text and text:lower():find(search) then
-			return true
-		end
-	end
+
+--[[ User API ]]--
+
+function Lib:Matches(link, search)
+	return Search(link, search, self.Filters)
 end
 
-local function compare(op, a, b)
-	if op == '<=' then
-		return a <= b
+function Lib:InSet(link, search)
+	if IsEquippableItem(link) then
+		local id = tonumber(link:match('item:(%-?%d+)'))
+		return self:BelongsToSet(id, (search or ''):lower())
 	end
-
-	if op == '<' then
-		return a < b
-	end
-
-	if op == '>' then
-		return a > b
-	end
-
-	if op == '>=' then
-		return a >= b
-	end
-
-	return a == b
 end
 
 
 --[[ Basics ]]--
 
-Lib:NewFilter {
-	id = 'itemName',
+Lib.Filters.name = {
   	tags = {'n', 'name'},
 
 	canSearch = function(self, operator, search)
 		return not operator and search
 	end,
 
-	findItem = function(self, item, _, search)
+	match = function(self, item, _, search)
 		local name = item:match('%[(.-)%]')
-		return match(search, name)
+		return Search:Find(search, name)
 	end
 }
 
-Lib:NewFilter {
-	id = 'itemType',
+Lib.Filters.type = {
 	tags = {'t', 'type', 'slot'},
 
 	canSearch = function(self, operator, search)
 		return not operator and search
 	end,
 
-	findItem = function(self, item, _, search)
+	match = function(self, item, _, search)
 		local type, subType, _, equipSlot = select(6, GetItemInfo(item))
-		return match(search, type, subType, _G[equipSlot])
+		return Search:Find(search, type, subType, _G[equipSlot])
 	end
 }
 
-Lib:NewFilter {
-	id = 'itemLevel',
+Lib.Filters.level = {
 	tags = {'l', 'level', 'lvl'},
 
 	canSearch = function(self, _, search)
 		return tonumber(search)
 	end,
 
-	findItem = function(self, link, operator, num)
+	match = function(self, link, operator, num)
 		local lvl = select(4, GetItemInfo(link))
 		if lvl then
-			return compare(operator, lvl, num)
+			return Search:Compare(operator, lvl, num)
 		end
 	end
 }
@@ -87,8 +77,7 @@ for i = 0, #ITEM_QUALITY_COLORS do
   qualities[i] = _G['ITEM_QUALITY' .. i .. '_DESC']:lower()
 end
 
-Lib:NewFilter {
-	id = 'itemQuality',
+Lib.Filters.quality = {
 	tags = {'q', 'quality'},
 
 	canSearch = function(self, _, search)
@@ -99,9 +88,9 @@ Lib:NewFilter {
 		end
 	end,
 
-	findItem = function(self, link, operator, num)
+	match = function(self, link, operator, num)
 		local quality = select(3, GetItemInfo(link))
-		return compare(operator, quality, num)
+		return Search:Compare(operator, quality, num)
 	end,
 }
 
@@ -137,15 +126,13 @@ local function link_FindSearchInTooltip(itemLink, search)
 end
 
 
-Lib:NewFilter {
-	id = 'bindType',
-
+Lib.Filters.bind = {
 	canSearch = function(self, _, search)
 		return self.keywords[search]
 	end,
 
-	findItem = function(self, itemLink, _, search)
-		return search and link_FindSearchInTooltip(itemLink, search)
+	match = function(self, link, _, search)
+		return search and link_FindSearchInTooltip(link, search)
 	end,
 
 	keywords = {
@@ -159,8 +146,7 @@ Lib:NewFilter {
 	}
 }
 
-Lib:NewFilter {
-	id = 'tooltip',
+Lib.Filters.tooltip = {
 	tags = {'tt', 'tip', 'tooltip'},
 	onlyTags = true,
 
@@ -168,19 +154,16 @@ Lib:NewFilter {
 		return search
 	end,
 
-	findItem = function(self, link, _, search)
+	match = function(self, link, _, search)
 		tooltipScanner:SetOwner(UIParent, 'ANCHOR_NONE')
 		tooltipScanner:SetHyperlink(link)
 
 		for i = 1, tooltipScanner:NumLines() do
 			local text =  _G[tooltipScanner:GetName() .. 'TextLeft' .. i]:GetText():lower()
-			
 			if text:find(search) then
 				return true
 			end
 		end
-
-		return false
 	end,
 }
 
@@ -192,7 +175,7 @@ if IsAddOnLoaded('ItemRack') then
 
 	function Lib:BelongsToSet(id, search)
 		for name, set in pairs(ItemRackUser.Sets) do
-			if name:sub(1,1) ~= '' and match(search, name) then
+			if name:sub(1,1) ~= '' and Search:Find(search, name) then
 				for _, item in pairs(set.equip) do
 					if sameID(id, item) then
 						return true
@@ -206,7 +189,7 @@ elseif IsAddOnLoaded('Wardrobe') then
 	function Lib:BelongsToSet(id, search)
 		for _, outfit in ipairs(Wardrobe.CurrentConfig.Outfit) do
 			local name = outfit.OutfitName
-			if match(search, name) then
+			if Search:Find(search, name) then
 				for _, item in pairs(outfit.Item) do
 					if item.IsSlotUsed == 1 and item.ItemID == id then
 						return true
@@ -220,7 +203,7 @@ else
 	function Lib:BelongsToSet(id, search)
 		for i = 1, GetNumEquipmentSets() do
 			local name = GetEquipmentSetInfo(i)
-			if match(search, name) then
+			if Search:Find(search, name) then
 				local items = GetEquipmentSetItemIDs(name)
 				for _, item in pairs(items) do
 					if id == item then
@@ -232,15 +215,14 @@ else
 	end
 end
 
-Lib:NewFilter {
-	id = 'equipmentSet',
+Lib.Filters.sets = {
 	tags = {'s', 'set'},
 
 	canSearch = function(self, operator, search)
 		return not operator and search
 	end,
 
-	findItem = function(self, link, _, search)
+	match = function(self, link, _, search)
 		return Lib:InSet(link, search)
 	end,
 }

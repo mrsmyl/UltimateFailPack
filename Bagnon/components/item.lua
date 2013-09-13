@@ -9,7 +9,7 @@ ItemSlot.nextID = 0
 ItemSlot.unused = {}
 
 local Cache = LibStub('LibItemCache-1.0')
-local ItemSearch = LibStub('LibItemSearch-1.1')
+local ItemSearch = LibStub('LibItemSearch-1.2')
 local Unfit = LibStub('Unfit-1.0')
 
 
@@ -45,12 +45,27 @@ function ItemSlot:Create()
 	border:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
 	border:SetBlendMode('ADD')
 	border:Hide()
+
+	--add flash find animation
+	local flash = item:CreateAnimationGroup()
+	for i = 1, 3 do
+		local fade = flash:CreateAnimation('Alpha')
+		fade:SetDuration(.2)
+		fade:SetChange(-.8)
+		fade:SetOrder(i * 2)
+
+		local fade = flash:CreateAnimation('Alpha')
+		fade:SetDuration(.3)
+		fade:SetChange(.8)
+		fade:SetOrder(i * 2 + 1)
+	end
 	
 	--hack, make sure the cooldown model stays visible
+	item.border, item.flash = border, flash
+	item.newItemBorder = _G[name .. 'NewItemTexture']
 	item.questBorder = _G[name .. 'IconQuestTexture']
 	item.cooldown = _G[name .. 'Cooldown']
 	item.UpdateTooltip = nil
-	item.border = border
 
 	--get rid of any registered frame events, and use our own
 	item:HookScript('OnClick', item.OnClick)
@@ -134,7 +149,15 @@ function ItemSlot:TEXT_SEARCH_UPDATE()
 	self:UpdateSearch()
 end
 
-function ItemSlot:BAG_SEARCH_UPDATE(msg, frameID)
+function ItemSlot:FLASH_SEARCH_UPDATE(event, item)
+	self.flash:Stop()
+
+	if item == self:GetItem() then
+		self.flash:Play()
+	end
+end
+
+function ItemSlot:BAG_SEARCH_UPDATE(event, frameID)
 	if self:GetFrameID() == frameID then
 		self:UpdateBagSearch()
 	end
@@ -162,11 +185,6 @@ end
 
 function ItemSlot:ITEM_HIGHLIGHT_UPDATE()
 	self:UpdateBorder()
-end
-
--- Flash search broadcast hook
-function ItemSlot:FLASH_SEARCH_UPDATE(msg, search)
-	self:FlashSearch(search)
 end
 
 function ItemSlot:HandleEvent(msg, ...)
@@ -204,10 +222,7 @@ end
 
 function ItemSlot:OnClick(button)
 	if IsAltKeyDown() and button == 'LeftButton' then
-		local link = self:GetItem()
-		if link then
-			Addon.Settings:FlashFind(link:match('^|c%x+|Hitem.+|h%[(.*)%]'))
-		end
+		Addon.Settings:FlashFind(self:GetItem())
 	elseif GetNumVoidTransferDeposit() > 0 and button == 'RightButton' then
 		if self.canDeposit and self.depositSlot then
 			ClickVoidTransferDepositSlot(self.depositSlot, true)
@@ -262,7 +277,6 @@ function ItemSlot:Update()
 	self:SetCount(count)
 	self:SetLocked(locked)
 	self:SetReadable(readable)
-	self:SetBorderQuality(quality)
 	self:UpdateCooldown()
 	self:UpdateSlotColor()
 	self:UpdateSearch()
@@ -273,7 +287,6 @@ function ItemSlot:Update()
 	end
 end
 
---item link
 function ItemSlot:SetItem(item)
 	self.item = item
 end
@@ -338,43 +351,38 @@ end
 --[[ Border Glow ]]--
 
 function ItemSlot:UpdateBorder()
-	self:SetBorderQuality(select(4, self:GetInfo()))
-end
-
-function ItemSlot:SetBorderQuality(quality)
+	local _,_,_, quality = self:GetInfo()
 	local item = self:GetItem()
+	self:HideBorder()
 
-	self.questBorder:Hide()
-	self.border:Hide()
-
-	if self:HighlightQuestItems() then
-		local isQuestItem, isQuestStarter = self:IsQuestItem()
-		if isQuestItem then
-			return self:SetBorderColor(1, .82, .2)
+	if item then
+		if self:IsNew() then
+			return self.newItemBorder:Show()
 		end
 
-		if isQuestStarter then
-			self.questBorder:SetTexture(TEXTURE_ITEM_QUEST_BANG)
-			self.questBorder:Show()
-			return
+		if self:HighlightQuestItems() then
+			local isQuestItem, isQuestStarter = self:IsQuestItem()
+			if isQuestItem then
+				return self:SetBorderColor(1, .82, .2)
+			end
+
+			if isQuestStarter then
+				self.questBorder:SetTexture(TEXTURE_ITEM_QUEST_BANG)
+				self.questBorder:Show()
+				return
+			end
 		end
-	end
-	
-	if self:HighlightUnusableItems() then
-		if Unfit:IsItemUnusable(item) then
+
+		if self:HighlightUnusableItems() and Unfit:IsItemUnusable(item) then
 			return self:SetBorderColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
 		end
-	end
 
-	if self:HighlightSetItems() then
-		if ItemSearch:InSet(item) then
-   			return self:SetBorderColor(.1, 1, 1)
-  		end
-  	end
-	
-	if self:HighlightItemsByQuality() then
-		if item and quality and quality > 1 then
-			self:SetBorderColor(GetItemQualityColor(quality))
+		if self:HighlightSetItems() and ItemSearch:InSet(item) then
+	   		return self:SetBorderColor(.1, 1, 1)
+	  	end
+		
+		if self:HighlightItemsByQuality() and quality and quality > 1 then
+			return self:SetBorderColor(GetItemQualityColor(quality))
 		end
 	end
 end
@@ -382,6 +390,12 @@ end
 function ItemSlot:SetBorderColor(r, g, b)
 	self.border:SetVertexColor(r, g, b, self:GetHighlightAlpha())
 	self.border:Show()
+end
+
+function ItemSlot:HideBorder()
+	self.newItemBorder:Hide()
+	self.questBorder:Hide()
+	self.border:Hide()
 end
 
 
@@ -431,23 +445,18 @@ end
 --[[ Search ]]--
 
 function ItemSlot:UpdateSearch()
-	local shouldFade = false
 	local search = self:GetItemSearch()
+	local matches = search == '' or ItemSearch:Matches(self:GetItem(), search)
 
-	if search and search ~= '' then
-		local link = self:GetItem()
-		shouldFade = not (link and ItemSearch:Matches(link, search))
-	end
-
-	if shouldFade then
-		self:SetAlpha(0.4)
-		SetItemButtonDesaturated(self, true)
-		self.border:Hide()
-	else
+	if matches then
 		self:SetAlpha(1)
 		self:UpdateLocked()
-		self:UpdateBorder()
 		self:UpdateSlotColor()
+		self:UpdateBorder()
+	else	
+		SetItemButtonDesaturated(self, true)
+		self:SetAlpha(0.4)
+		self:HideBorder()
 	end
 end
 
@@ -466,16 +475,6 @@ end
 
 function ItemSlot:GetBagSearch()
 	return self:GetSettings():GetBagSearch()
-end
-
--- if the current item does match the sought name, flash it
-function ItemSlot:FlashSearch(search)
-	if search and search ~= '' then
-		local link = self:GetItem()
-		if ItemSearch:Matches(link, search) then
-			UIFrameFlash(self, 0.2, 0.3, 1.5, true, 0.0, 0.0 )
-		end
-	end
 end
 
 
@@ -508,17 +507,17 @@ function ItemSlot:IsSlot(bag, slot)
 	return self:GetBag() == bag and self:GetID() == slot
 end
 
+function ItemSlot:IsNew()
+	local bag, slot = self:GetBag(), self:GetID()
+	return C_NewItems.IsNewItem(bag, slot) and IsBattlePayItem(bag, slot)
+end
+
 function ItemSlot:IsCached()
 	return select(8, self:GetInfo())
 end
 
 function ItemSlot:IsBank()
 	return Addon:IsBank(self:GetBag())
-end
-
-function ItemSlot:IsBankSlot()
-	local bag = self:GetBag()
-	return Addon:IsBank(bag) or Addon:IsBankBag(bag)
 end
 
 function ItemSlot:GetInfo()

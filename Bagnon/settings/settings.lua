@@ -228,22 +228,14 @@ end
 
 --item searching
 function Settings:SetTextSearch(search)
-	local lastSearch = self:GetTextSearch()
-	if lastSearch ~= search then
-		self.textSearch = search
-		self:SetLastTextSearch(lastSearch)
-		self:SendMessage('TEXT_SEARCH_UPDATE', self:GetTextSearch())
-	end
+	self.lastTextSearch = search ~= '' and search or self:GetTextSearch()
+	self.textSearch = search
+
+	self:SendMessage('TEXT_SEARCH_UPDATE', search)
 end
 
 function Settings:GetTextSearch()
 	return self.textSearch or ''
-end
-
-function Settings:SetLastTextSearch(search)
-	if search and search ~= '' then
-		self.lastTextSearch = search
-	end
 end
 
 function Settings:GetLastTextSearch()
@@ -263,27 +255,27 @@ function Settings:IsFlashFindEnabled()
 	return self:GetDB().enableFlashFind
 end
 
--- opens the inventory and broadcasts the search message to item frames
-function Settings:FlashFind(name)
-	if self:IsFlashFindEnabled() then
-		Addon:ShowFrame('inventory')
-		self:SendMessage('FLASH_SEARCH_UPDATE', name)
+function Settings:FlashFind(link)
+	if link and self:IsFlashFindEnabled() then
+		self:SendMessage('FLASH_SEARCH_UPDATE', link)
 	end
 end
 
 -- Function that is invoked when a chat link is clicked
-hooksecurefunc("SetItemRef", function(link, text, button)
-	local name = text and text:match('^|c%x+|Hitem.+|h%[(.*)%]')
-	-- alt must be pressed and left mouse button must be used
-	if IsAltKeyDown() and button == "LeftButton" and name then
-		Settings:FlashFind(name)
+hooksecurefunc("SetItemRef", function(_, link, button)
+	if IsAltKeyDown() and button == "LeftButton" then
+		local name = link and link:match('^|c%x+|Hitem.+|h%[(.*)%]')
+		if name then
+			Addon:ShowFrame('inventory')
+			Addon:GetFrame('inventory'):GetSettings():EnableTextSearch()
+			Settings:SetTextSearch(name)
+		end
 	end
 end)
 
 --fading
 function Settings:SetFading(enable)
 	self:GetDB().fading = enable and true or false
-	Addon:HookTooltips()
 end
 
 function Settings:IsFadingEnabled()
