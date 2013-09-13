@@ -1300,7 +1300,7 @@
 	
 	</Frame>
 
-	<Frame virtual="true" name="ARKINV_TemplateFrameMainScanOnly" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true" frameStrata="MEDIUM">
+	<Frame virtual="true" name="ARKINV_TemplateFrameMainScanOnly" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true">
 		<Scripts>
 			<OnLoad>
 				ArkInventory.Frame_Main_OnLoad( self )
@@ -1308,7 +1308,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame virtual="true" name="ARKINV_TemplateFrameMain" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true" frameStrata="MEDIUM">
+	<Frame virtual="true" name="ARKINV_TemplateFrameMain" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true">
 		
 		<Size x="400" y="180" />
 		
@@ -2085,14 +2085,17 @@
 	<Frame name="ARKINV_CombatYieldTimer" hidden="true">
 		<Scripts>
 			<Onload>
-				self:RegisterEvent( "PLAYER_REGEN_DISABLED" )
-				self:RegisterEvent( "PLAYER_REGEN_ENABLED" )
+				self.timer = 0
+				if ArkInventory.Global.Thread.WhileInCombat then
+					self:RegisterEvent( "PLAYER_REGEN_DISABLED" )
+					self:RegisterEvent( "PLAYER_REGEN_ENABLED" )
+				end
 			</Onload>
 			<OnUpdate>
-				self.timer = ( self.timer or 0 ) + elapsed
-				if self.timer > 0.02 then
+				self.timer = self.timer + elapsed
+				if self.timer > 0.05 then
+					self.timer = 0
 					ArkInventory.Frame_Main_DrawThreadResume( )
-					self.timer = nil
 				end
 			</OnUpdate>
 			<OnEvent>
@@ -2102,6 +2105,7 @@
 					self:Hide( )
 					table.wipe( ArkInventory.Global.Thread.Window )
 					table.wipe( ArkInventory.Global.Thread.WindowState )
+					--ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
 				end
 			</OnEvent>
 		</Scripts>

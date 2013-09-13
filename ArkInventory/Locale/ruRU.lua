@@ -241,6 +241,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_TEXT"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_ALERT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_MOUSEOVER_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_OPEN_TEXT"] = ""
 	
@@ -254,6 +256,9 @@ if not L then return end
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = ""
 	
+--	L["CONFIG_SYSTEM_TIMERS"] = ""
+--	L["CONFIG_SYSTEM_TIMERS_TEXT"] = ""
+	
 	
 --	configuration options > auto
 	L["CONFIG_AUTO"] = "Автоматически открывать/закрывать"
@@ -265,6 +270,7 @@ if not L then return end
 	L["CONFIG_AUTO_OPEN_MERCHANT"] = "открываете окно продавца"
 	L["CONFIG_AUTO_OPEN_TRADE"] = "открываете окно обмена"
 	L["CONFIG_AUTO_OPEN_AUCTION"] = "открываете аукцион"
+--	L["CONFIG_AUTO_OPEN_VOID"] = ""
 	
 	L["CONFIG_AUTO_CLOSE"] = "Закрывать сумку %1$s, кода вы %3$s"
 	L["CONFIG_AUTO_CLOSE_BANK"] = "закрываете банк"
@@ -273,6 +279,7 @@ if not L then return end
 	L["CONFIG_AUTO_CLOSE_MERCHANT"] = "закрываете окно продавца"
 	L["CONFIG_AUTO_CLOSE_TRADE"] = "закрываете окно обмена"
 	L["CONFIG_AUTO_CLOSE_AUCTION"] = "закрываете аукцион"
+--	L["CONFIG_AUTO_CLOSE_VOID"] = ""
 	L["CONFIG_AUTO_CLOSE_COMBAT"] = "вступаете в бой"
 	
 	
@@ -342,7 +349,6 @@ if not L then return end
 --	L["CONFIG_SETTINGS_BARS_NAME_HEIGHT_TEXT"] = ""
 --	L["CONFIG_SETTINGS_BARS_NAME_ANCHOR_TEXT"] = ""
 	
-	L["CONFIG_SETTINGS_ITEMS"] = "Ячейки"
 	L["CONFIG_SETTINGS_ITEMS_PADDING_TEXT"] = "задает расстояние медлу ячейками"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN"] = "Показывать скрытые"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN_TEXT"] = "показывать ли предметы, находящиеся в скрытых категориях"

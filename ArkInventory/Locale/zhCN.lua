@@ -241,6 +241,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_TEXT"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_ALERT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_MOUSEOVER_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_OPEN_TEXT"] = ""
 	
@@ -254,6 +256,9 @@ if not L then return end
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = ""
 	
+--	L["CONFIG_SYSTEM_TIMERS"] = ""
+--	L["CONFIG_SYSTEM_TIMERS_TEXT"] = ""
+	
 	
 --	configuration options > auto
 	L["CONFIG_AUTO"] = "自动开关"
@@ -265,6 +270,7 @@ if not L then return end
 	L["CONFIG_AUTO_OPEN_MERCHANT"] = "开启一个商人/商店"
 	L["CONFIG_AUTO_OPEN_TRADE"] = "开启一个交易"
 	L["CONFIG_AUTO_OPEN_AUCTION"] = "开启拍卖行"
+--	L["CONFIG_AUTO_OPEN_VOID"] = ""
 	
 	L["CONFIG_AUTO_CLOSE"] = "%1$s %2$s 将被关闭, 当你..."
 	L["CONFIG_AUTO_CLOSE_BANK"] = "关闭银行"
@@ -273,6 +279,7 @@ if not L then return end
 	L["CONFIG_AUTO_CLOSE_MERCHANT"] = "关闭商人/商店"
 	L["CONFIG_AUTO_CLOSE_TRADE"] = "关闭交易"
 	L["CONFIG_AUTO_CLOSE_AUCTION"] = "关闭拍卖行"
+--	L["CONFIG_AUTO_CLOSE_VOID"] = ""
 	L["CONFIG_AUTO_CLOSE_COMBAT"] = "进入战斗"
 	
 	
@@ -342,7 +349,6 @@ if not L then return end
 --	L["CONFIG_SETTINGS_BARS_NAME_HEIGHT_TEXT"] = ""
 --	L["CONFIG_SETTINGS_BARS_NAME_ANCHOR_TEXT"] = ""
 	
-	L["CONFIG_SETTINGS_ITEMS"] = "物品"
 	L["CONFIG_SETTINGS_ITEMS_PADDING_TEXT"] = "设定物品格子的间隔距离"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN"] = "显示隐藏物品"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN_TEXT"] = "设定是否显示在隐藏分组内的物品"

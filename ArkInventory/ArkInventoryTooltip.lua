@@ -320,7 +320,7 @@ function ArkInventory.TooltipContains( tooltip, TextToFind, IgnoreLeft, IgnoreRi
 	end
 
 end
-	
+
 function ArkInventory.TooltipCanUse( tooltip )
 
 	local l = { "TextLeft", "TextRight" }

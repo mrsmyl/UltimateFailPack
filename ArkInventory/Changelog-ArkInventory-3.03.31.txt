@@ -1,0 +1,121 @@
+------------------------------------------------------------------------
+r413 | arkayenro | 2013-09-10 22:36:46 +0000 (Tue, 10 Sep 2013) | 4 lines
+Changed paths:
+   A /tags/3.03.31 (from /trunk:412)
+
+*3.03.31 (11-AUG-2013)*
+ * changed - toc set to 50400
+ * fixed - at load time hide the new item texture blizzard added to items in this patch (will sort out if this can be used properly later)
+
+------------------------------------------------------------------------
+r412 | arkayenro | 2013-09-10 22:33:28 +0000 (Tue, 10 Sep 2013) | 4 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.toc
+   M /trunk/Modules/ArkInventoryRulesExample/ArkInventoryRulesExample.toc
+   M /trunk/VersionHistory.txt
+
+*3.03.31 (11-AUG-2013)*
+ * changed - toc set to 50400
+ * fixed - at load time hide the new item texture blizzard added to items in this patch (will sort out if this can be used properly later)
+
+------------------------------------------------------------------------
+r410 | arkayenro | 2013-08-26 12:02:45 +0000 (Mon, 26 Aug 2013) | 8 lines
+Changed paths:
+   M /trunk/ArkInventory.toc
+   M /trunk/VersionHistory.txt
+
+*3.03.30 (26-AUG-2013)*
+ * changed - in combat threading
+ * added - config > display > bug fixes > incombat yielding - to allow for user customisation of the deliberate delays to building a bag when opening for the first time in combat
+ * fixed - displayed item level values should now include any item upgrade levels
+ * fixed - location frame will be displayed above all others when opened
+ * changed - restack will no longer start if you are in combat
+ * fixed - initial frame level for items to ensure they are on top of the bars
+
+------------------------------------------------------------------------
+r409 | arkayenro | 2013-08-24 12:44:12 +0000 (Sat, 24 Aug 2013) | 8 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/VersionHistory.txt
+
+*3.03.30 (xx-xxx-2013) ALPHA*
+ * changed - in combat threading
+ * added - config > display > bug fixes > incombat yielding - to allow for user customisation of the deliberate delays to building a bag when opening for the first time in combat
+ * fixed - displayed item level values should now include any item upgrade levels
+ * fixed - location frame will be displayed above all others when opened
+ * changed - restack will no longer start if you are in combat
+ * fixed (maybe) - initial frame level for items to ensure they are on top of the bars
+
+------------------------------------------------------------------------
+r408 | arkayenro | 2013-08-23 13:41:59 +0000 (Fri, 23 Aug 2013) | 7 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventoryConfig.lua
+   M /trunk/Locale/deDE.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Locale/esES.lua
+   M /trunk/Locale/esMX.lua
+   M /trunk/Locale/frFR.lua
+   M /trunk/Locale/koKR.lua
+   M /trunk/Locale/ruRU.lua
+   M /trunk/Locale/zhCN.lua
+   M /trunk/Locale/zhTW.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.30 (xx-xxx-2013) ALPHA 1107*
+ * changed - in combat threading
+ * added - config > display > bug fixes > incombat yielding - to allow for user customisation of the deliberate delays to building a bag when opening for the first time in combat
+ * fixed - displayed item level values should now include any item upgrade levels
+ * changed - restack will no longer start if you are in combat
+ * fixed (maybe) - inital frame strata for bars to stop their background from going on top of the bags
+
+------------------------------------------------------------------------
+r407 | arkayenro | 2013-08-22 23:34:56 +0000 (Thu, 22 Aug 2013) | 6 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/VersionHistory.txt
+
+*3.03.30 (xx-xxx-2013) ALPHA*
+ * changed - in combat threading
+ * fixed - displayed item level values should now include any item upgrade levels
+ * changed - restack will no longer start if you are in combat
+ * fixed - inital frame strata for bars to stop their background from going on top of the bags
+
+------------------------------------------------------------------------
+r406 | arkayenro | 2013-08-17 14:35:02 +0000 (Sat, 17 Aug 2013) | 5 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventory.xml
+   M /trunk/ArkInventoryCompanion.lua
+   M /trunk/ArkInventoryRestack.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/ArkInventoryTooltip.lua
+   M /trunk/Locale/game.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.30 ALPHA (xx-xxx-2013)*
+ * changed - in combat threading
+ * fixed - displayed item level values should now include any item upgrade levels
+ * changed - restack will no longer start if you are in combat
+
+------------------------------------------------------------------------
+r404 | arkayenro | 2013-08-10 05:29:57 +0000 (Sat, 10 Aug 2013) | 3 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventoryPetJournal.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.29 (10-AUG-2013)*
+ * changed - pet scanning functions
+
+------------------------------------------------------------------------

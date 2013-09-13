@@ -241,6 +241,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_TEXT"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_ALERT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_MOUSEOVER_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_OPEN_TEXT"] = ""
 	
@@ -254,6 +256,9 @@ if not L then return end
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = ""
 	
+--	L["CONFIG_SYSTEM_TIMERS"] = ""
+--	L["CONFIG_SYSTEM_TIMERS_TEXT"] = ""
+	
 	
 --	configuration options > auto
 	L["CONFIG_AUTO"] = "Ouvrir/Fermer automatique"
@@ -265,6 +270,7 @@ if not L then return end
 	L["CONFIG_AUTO_OPEN_MERCHANT"] = "un marchand/vendeur"
 	L["CONFIG_AUTO_OPEN_TRADE"] = "la fenêtre d'échange"
 	L["CONFIG_AUTO_OPEN_AUCTION"] = "un hotel des ventes"
+--	L["CONFIG_AUTO_OPEN_VOID"] = ""
 	
 	L["CONFIG_AUTO_CLOSE"] = "Fermer le %2$s %1$s quand vous fermez %3$s"
 	L["CONFIG_AUTO_CLOSE_BANK"] = "la banque"
@@ -273,6 +279,7 @@ if not L then return end
 	L["CONFIG_AUTO_CLOSE_MERCHANT"] = "un marchand/vendeur"
 	L["CONFIG_AUTO_CLOSE_TRADE"] = "la fenêtre d'échange"
 	L["CONFIG_AUTO_CLOSE_AUCTION"] = "un hotel des ventes"
+--	L["CONFIG_AUTO_CLOSE_VOID"] = ""
 	L["CONFIG_AUTO_CLOSE_COMBAT"] = "entrez en combat"
 	
 	
@@ -342,7 +349,6 @@ if not L then return end
 --	L["CONFIG_SETTINGS_BARS_NAME_HEIGHT_TEXT"] = ""
 --	L["CONFIG_SETTINGS_BARS_NAME_ANCHOR_TEXT"] = ""
 	
-	L["CONFIG_SETTINGS_ITEMS"] = "Objets"
 	L["CONFIG_SETTINGS_ITEMS_PADDING_TEXT"] = "Définir le nombre d'espace entre les emplacements d'objet"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN"] = "Montrer caché"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN_TEXT"] = "Montrer les catégories cachées"

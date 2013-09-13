@@ -1,6 +1,6 @@
 -- (c) 2006-2012, all rights reserved.
--- $Revision: 1089 $
--- $Date: 2013-05-22 21:01:00 +1000 (Wed, 22 May 2013) $
+-- $Revision: 1112 $
+-- $Date: 2013-09-11 08:31:49 +1000 (Wed, 11 Sep 2013) $
 
 
 local _G = _G
@@ -45,8 +45,7 @@ ArkInventory.Const = { -- constants
 	
 	Program = {
 		Name = "ArkInventory",
-		Version = nil, -- calculated at runtime
-		--Beta = "BETA 11-11-01-50", -- remove comment to activate beta flag
+		Version = nil, -- calculated at load
 	},
 	
 	SLOT_SIZE = nil, -- calculated at runtime
@@ -55,6 +54,7 @@ ArkInventory.Const = { -- constants
 	MAX_ACTIVE_PETS = 3,
 	MAX_PET_SAVED_SPECIES = 3,
 	VOID_STORAGE_MAX = 80,
+	MAX_BAG_SIZE = 50,
 	
 	Frame = {
 		Main = {
@@ -1070,9 +1070,9 @@ ArkInventory.Global = { -- globals
 	Enabled = false,
 	
 	Version = "", --calculated
-
+	
 	Me = nil,
-
+	
 	Mode = {
 		Bank = false,
 		Vault = false,
@@ -1084,7 +1084,11 @@ ArkInventory.Global = { -- globals
 		Edit = false,
 		Combat = false,
 	},
-
+	
+	LeaveCombatRun = {
+		PetJournal = false,
+	},
+	
 	Tooltip = {
 		Scan = nil,
 		Vendor = nil,
@@ -1674,6 +1678,9 @@ ArkInventory.Const.DatabaseDefaults.global = {
 				["opponent"] = true,
 			},
 		},
+		["combat"] = {
+			["yieldafter"] = 30,
+		},
 	},
 	["player"] = {
 	},
@@ -2039,8 +2046,9 @@ function ArkInventory.OnLoad( )
 	
 	ArkInventory.Global.Version = string.format( "v%s", string.gsub( ArkInventory.Const.Program.Version, "(%d-)(%d%d)(%d%d)$", "%1.%2.%3" ) )
 	
-	if ArkInventory.Const.Program.Beta then
-		ArkInventory.Global.Version = string.format( "%s %s(%s)%s", ArkInventory.Global.Version, RED_FONT_COLOR_CODE, ArkInventory.Const.Program.Beta or "unknown beta version", FONT_COLOR_CODE_CLOSE )
+	local releasetype = GetAddOnMetadata( ArkInventory.Const.Program.Name, "X-ReleaseType" )
+	if ( releasetype ~= "" ) then
+		ArkInventory.Global.Version = string.format( "%s %s(%s)%s", ArkInventory.Global.Version, RED_FONT_COLOR_CODE, releasetype, FONT_COLOR_CODE_CLOSE )
 	end
 	
 	
@@ -2277,7 +2285,7 @@ function ArkInventory.OnEnable( )
 	ArkInventory:RegisterEvent( "FORGE_MASTER_OPENED", "LISTEN_MERCHANT_ENTER" )
 	ArkInventory:RegisterEvent( "FORGE_MASTER_CLOSED", "LISTEN_MERCHANT_LEAVE" )
 	ArkInventory:RegisterBucketMessage( "LISTEN_MERCHANT_LEAVE_BUCKET", 0.3 )
-
+	
 	
 	--ArkInventory:RegisterEvent( "COMPANION_UPDATE" ) -- triggered from way too many irrelevant things, dont ever use it.  companions are scanned at OnEnable so its covered
 	ArkInventory:RegisterEvent( "COMPANION_LEARNED", "LISTEN_COMPANION_UPDATE" ) -- mounts only
@@ -2301,7 +2309,7 @@ function ArkInventory.OnEnable( )
 	--ArkInventory:RegisterEvent( "PET_BATTLE_XP_CHANGED", "LISTEN_PETJOURNAL_RELOAD" )
 	--ArkInventory:RegisterEvent( "PET_BATTLE_OVER", "LISTEN_PETJOURNAL_RELOAD" )
 	
-	ArkInventory:RegisterBucketMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", 1 )
+	ArkInventory:RegisterBucketMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", 2 )
 	
 	ArkInventory:RegisterEvent( "EQUIPMENT_SETS_CHANGED", "LISTEN_EQUIPMENT_SETS_CHANGED" )
 	
@@ -3942,23 +3950,24 @@ function ArkInventory.ItemCacheClear( h )
 end
 
 function ArkInventory.Frame_Main_DrawStatus( loc_id, level )
-
-	if level == nil then
+	
+	if ( level == nil ) then
 		level = ArkInventory.Const.Window.Draw.None
 	end
-		
+	
 	if ArkInventory.Global.Location[loc_id] and ArkInventory.Global.Location[loc_id].canView then
 		if level < ArkInventory.Global.Location[loc_id].drawState then
 			ArkInventory.Global.Location[loc_id].drawState = level
 		end
 	end
+	
 end
 
 function ArkInventory.Frame_Main_Generate( location, drawstatus )
 	
 	for loc_id in pairs( ArkInventory.Global.Location ) do
 		
-		if not location or loc_id == location then
+		if ( not location ) or ( loc_id == location ) then
 			ArkInventory.Frame_Main_DrawStatus( loc_id, drawstatus )
 			ArkInventory.Frame_Main_DrawLocation( loc_id )
 		end
@@ -4566,9 +4575,9 @@ end
 
 function ArkInventory.Frame_Main_DrawThreadResume( )
 	
-	--ArkInventory.Output( "ResumeThreads ", loc_id )
 	for loc_id, thread in pairs( ArkInventory.Global.Thread.Window ) do
-		if type( thread ) == "thread" and coroutine.status( thread ) == "suspended" then
+		if ( type( thread ) == "thread" ) and ( coroutine.status( thread ) == "suspended" ) then
+			--ArkInventory.Output( "resume draw thread for location ", loc_id )
 			coroutine.resume( thread )
 			return
 		end
@@ -4800,7 +4809,9 @@ function ArkInventory.Frame_Main_DrawThreadStart( frame )
 
 	ArkInventory.Global.Location[loc_id].drawState = ArkInventory.Const.Window.Draw.None
 	
-
+	-- bring the frame to the front
+	frame:Raise( )
+	
 	-- bug fix for framelevel issue
 	if ArkInventory.db.global.option.bugfix.framelevel.enable and frame:GetFrameLevel( ) > 126 then
 		
@@ -4965,7 +4976,9 @@ function ArkInventory.Frame_Main_OnHide( frame )
 		end
 		
 	elseif loc_id == ArkInventory.Const.Location.Bag then
+		
 		PlaySound( "igBackPackClose" )
+		
 	elseif loc_id == ArkInventory.Const.Location.Vault then
 		
 		PlaySound( "GuildVaultClose" )
@@ -4984,15 +4997,25 @@ function ArkInventory.Frame_Main_OnHide( frame )
 		end
 		
 	elseif loc_id == ArkInventory.Const.Location.Mail then
+		
 		PlaySound( "igSpellBookClose" )
+		
 	elseif loc_id == ArkInventory.Const.Location.Wearing then
+		
 		PlaySound( "igBackPackClose" )
+		
 	elseif loc_id == ArkInventory.Const.Location.Pet then
+		
 		PlaySound( "igSpellBookClose" )
+		
 	elseif loc_id == ArkInventory.Const.Location.Mount then
+		
 		PlaySound( "igSpellBookClose" )
+		
 	elseif loc_id == ArkInventory.Const.Location.Token then
+		
 		PlaySound( "igSpellBookClose" )
+		
 	elseif loc_id == ArkInventory.Const.Location.Auction then
 		
 	elseif loc_id == ArkInventory.Const.Location.Spellbook then
@@ -5000,7 +5023,9 @@ function ArkInventory.Frame_Main_OnHide( frame )
 	elseif loc_id == ArkInventory.Const.Location.Tradeskill then
 		
 	elseif loc_id == ArkInventory.Const.Location.Void then
+		
 		PlaySound("UI_EtherealWindow_Close")
+		
 	end
 	
 	if ArkInventory.Global.Mode.Edit then
@@ -5032,6 +5057,7 @@ function ArkInventory.Frame_Main_OnLoad( frame )
 	
 	-- setup main icon
 	local obj = _G[string.format( "%s%s%s", frame:GetName( ), ArkInventory.Const.Frame.Title.Name, "Location0" )]
+	
 	if obj then
 		
 		tex = obj:GetNormalTexture( )
@@ -5072,6 +5098,7 @@ function ArkInventory.Frame_Main_OnLoad( frame )
 			end
 			
 		end
+		
 	end
 	
 end
@@ -5108,34 +5135,46 @@ function ArkInventory.Frame_Container_CalculateBars( frame, Layout )
 	table.wipe( Layout.bar )
 	Layout.bar_count = 1
 	
-	-- the basics, just stick the items into their appropriate bars (cpu intensive)
+	-- check slot filter for this location
+	local fid = ArkInventory.LocationOptionGet( loc_id, "slotfilter" ) or 9999
+	local filter = ArkInventory.db.global.option.slotfilter.data[fid]
+	if filter.deleted or not filter.used then
+		filter = ArkInventory.db.global.option.slotfilter.data[9999]
+	end
+	
+	local bag
+	local cat_id
+	local bar_id
+	local ignore = false
+	local hidden = false
+	local show_all = false
+	if ArkInventory.Global.Mode.Edit or ArkInventory.LocationOptionGet( loc_id, "slot", "ignorehidden" ) then
+		-- show everything if in edit mode or the user wants us to ignore the hidden flag
+		show_all = true
+	end
+	
+	-- the basics, just stick the items into their appropriate bars (cpu intensive, so yield when in combat)
+	local yieldcount = 1
 	for bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
 		
-		local bag = cp.location[loc_id].bag[bag_id]
+		bag = cp.location[loc_id].bag[bag_id]
 		
 		for slot_id, i in pairs( bag.slot ) do
-		
-			local ignore = false
 			
-			if loc_id == ArkInventory.Const.Location.Vault and not ArkInventory.db.realm.player.data[cp.info.player_id].display[loc_id].bag[bag_id] then
+			ignore = false
+			
+			if ( loc_id == ArkInventory.Const.Location.Vault ) and ( not ArkInventory.db.realm.player.data[cp.info.player_id].display[loc_id].bag[bag_id] ) then
 				ignore = true
 			end
 			
 			if not ignore then
 				
-				-- check slot filter
-				local fid = ArkInventory.LocationOptionGet( loc_id, "slotfilter" ) or 9999
-				local filter = ArkInventory.db.global.option.slotfilter.data[fid]
-				if filter.deleted or not filter.used then
-					filter = ArkInventory.db.global.option.slotfilter.data[9999]
-				end
-				
-				local cat_id = ArkInventory.ItemCategoryGet( i )
-				local bar_id = filter.slot[bag_id][slot_id] or ArkInventory.CategoryLocationGet( loc_id, cat_id )
+				cat_id = ArkInventory.ItemCategoryGet( i )
+				bar_id = filter.slot[bag_id][slot_id] or ArkInventory.CategoryLocationGet( loc_id, cat_id )
 				
 				--ArkInventory.Output( "loc=[", loc_id, "], bag=[", bag_id, "], slot=[", slot_id, "], cat=[", cat_id, "], bar_id=[", bar_id, "]" )
 				
-				local hidden = false
+				hidden = false
 				
 				if not ArkInventory.db.realm.player.data[cp.info.player_id].display[loc_id].bag[bag_id] then
 					-- isoalted bags do not get shown
@@ -5145,12 +5184,7 @@ function ArkInventory.Frame_Container_CalculateBars( frame, Layout )
 					hidden = true
 				end
 				
-				if ArkInventory.Global.Mode.Edit or ArkInventory.LocationOptionGet( loc_id, "slot", "ignorehidden" ) then
-					-- show everything if in edit mode or the user wants us to ignore the hidden flag
-					hidden = false
-				end
-				
-				if not hidden then
+				if ( show_all ) or ( not hidden ) then
 				
 					bar_id = abs( bar_id )
 					
@@ -5174,12 +5208,17 @@ function ArkInventory.Frame_Container_CalculateBars( frame, Layout )
 					
 				end
 				
+				if ( ArkInventory.Global.Mode.Combat ) and ( ArkInventory.Global.Thread.WhileInCombat ) then
+					--ArkInventory.Output( loc_id, ".", bag_id, ".", slot_id, " / yield check 62 - ", yieldcount )
+					if ( yieldcount % ArkInventory.db.global.option.combat.yieldafter == 0 ) then
+						--ArkInventory.Output( "yielding" )
+						coroutine.yield( )
+					end
+					yieldcount = yieldcount + 1
+				end
+				
 			end
 			
-		end
-		
-		if ArkInventory.Global.Mode.Combat and ArkInventory.Global.Thread.WhileInCombat then
-			coroutine.yield( )
 		end
 		
 	end
@@ -5213,14 +5252,14 @@ function ArkInventory.Frame_Container_CalculateBars( frame, Layout )
 		
 		--ArkInventory.Output( "edit mode - adding ghost bars" )
 		for bar_id = 1, Layout.bar_count do
-				
-			if not Layout.bar[bar_id] then
 			
+			if not Layout.bar[bar_id] then
+				
 				-- create a ghost bar
 				Layout.bar[bar_id] = { ["id"] = bar_id, ["item"] = { }, ["count"] = 1, ["width"] = 0, ["height"] = 0, ["ghost"] = true, ["frame"] = 0 }
 				
 			else
-	
+				
 				-- add a ghost item to the bar by incrementing the bars item count
 				Layout.bar[bar_id].count = Layout.bar[bar_id].count + 1
 				
@@ -5229,7 +5268,6 @@ function ArkInventory.Frame_Container_CalculateBars( frame, Layout )
 		end
 		
 	end
-
 	
 	--ArkInventory.Output( GREEN_FONT_COLOR_CODE, "Frame_Container_CalculateBars( ", frame:GetName( ), " ) end" )
 	
@@ -5457,8 +5495,6 @@ function ArkInventory.Frame_Container_Draw( frame )
 		local placeframe = _G[placeframename]
 		assert( placeframe, string.format( "xml element '%s' could not be found", placeframename ) )
 		
-		local baselevel = placeframe:GetFrameLevel( )
-		
 		for j = 1, ArkInventory.Global.Location[loc_id].maxBar do
 			
 			local barframename = string.format( "%s%s", placeframename, j )
@@ -5466,6 +5502,7 @@ function ArkInventory.Frame_Container_Draw( frame )
 			if not barframe then
 				--ArkInventory.Output( "creating bar [", barframename, "]" )
 				barframe = CreateFrame( "Frame", barframename, placeframe, "ARKINV_TemplateFrameBar" )
+				--ArkInventory.Output( barframe:GetName( ), " / level = ", barframe:GetFrameLevel( ) )
 			end
 			
 			ArkInventory.Frame_Bar_Paint( barframe )
@@ -5716,8 +5753,6 @@ function ArkInventory.Frame_Container_OnLoad( frame )
 		loc_id = tonumber( loc_id ),
 	}
 	
-	
-	
 	loc_id = frame.ARK_Data.loc_id
 	
 	if ( loc_id == ArkInventory.Const.Location.Bag ) then
@@ -5730,7 +5765,7 @@ function ArkInventory.Frame_Container_OnLoad( frame )
 			local bagframename = string.format( "%s%s", placeframename, bag_id )
 			local bagframe = CreateFrame( "Frame", bagframename, placeframe, "ARKINV_TemplateFrameBag" )
 			
-			for j = 1, 50 do
+			for j = 1, ArkInventory.Const.MAX_BAG_SIZE do
 				
 				local itemframename = ArkInventory.ContainerItemNameGet( loc_id, bag_id, j )
 				local itemframe = CreateFrame( "Button", itemframename, bagframe, ArkInventory.Global.Location[loc_id].template or "ARKINV_TemplateButtonItem" )
@@ -5872,24 +5907,24 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 		--ArkInventory.Output( "resorting bar ", bar_id, " @ ", time( ) )
 		
 		-- sort the items in the bar (cpu intensive)
+		local bag_id
+		local slot_id
+		local i
+		
 		for j = 1, bar.count do
 			
-			local bag_id = bar.item[j].bag
-			local slot_id = bar.item[j].slot
+			bag_id = bar.item[j].bag
+			slot_id = bar.item[j].slot
 			
-			local i = cp.location[loc_id].bag[bag_id].slot[slot_id]
+			i = cp.location[loc_id].bag[bag_id].slot[slot_id]
 			
-			if bar.item[j].sortkey == nil then
+			if ( bar.item[j].sortkey == nil ) then
 				bar.item[j].sortkey = ArkInventory.ItemSortKeyGenerate( i, bar_id ) or "!"
 				--ArkInventory.Output( "build sort key for bar ", bar_id, ", item ", j )
-				
 			end
 			
 		end
 		
-		if ArkInventory.Global.Mode.Combat and ArkInventory.Global.Thread.WhileInCombat then
-			coroutine.yield( )
-		end
 		
 		local sid_def = ArkInventory.LocationOptionGet( loc_id, "sort", "default" ) or 9999
 		local sid = ArkInventory.LocationOptionGet( loc_id, "bar", "data", bar_id, "sortorder" ) or sid_def
@@ -5918,11 +5953,15 @@ function ArkInventory.Frame_Bar_DrawItems( frame )
 	local col = bar.width
 	
 	-- cycle through the items in the bar
+	local i
+	local framename
+	local obj
+	
 	for j = 1, bar.count do
 		
-		local i = cp.location[loc_id].bag[bar.item[j].bag].slot[bar.item[j].slot]
-		local framename = ArkInventory.ContainerItemNameGet( loc_id, bar.item[j].bag, bar.item[j].slot )
-		local obj = _G[framename]
+		i = cp.location[loc_id].bag[bar.item[j].bag].slot[bar.item[j].slot]
+		framename = ArkInventory.ContainerItemNameGet( loc_id, bar.item[j].bag, bar.item[j].slot )
+		obj = _G[framename]
 		
 		if not obj then
 			
@@ -7055,6 +7094,8 @@ end
 
 function ArkInventory.Frame_Item_OnLoad( frame )
 	
+	--ArkInventory.Output( frame:GetName( ), " / level = ", frame:GetFrameLevel( ) )
+	
 	local framename = frame:GetName( )
 	
 	local loc_id, bag_id, slot_id = string.match( framename, "^.-(%d+)ContainerBag(%d+)Item(%d+)" )
@@ -7076,6 +7117,14 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 		tainted = false,
 	}
 	
+	local newItemTexture = _G[frame:GetName().."NewItemTexture"]
+	if newItemTexture then
+		newItemTexture:Hide()
+	end
+
+	
+	-- bump the frame level for items up so that theyre always displayed above the bars
+	frame:SetFrameLevel( frame:GetFrameLevel( ) + 1 )
 	
 	if ( loc_id == ArkInventory.Const.Location.Bank ) and ( bag_id == 1 ) then
 		BankFrameItemButton_OnLoad( frame )
@@ -7129,6 +7178,9 @@ function ArkInventory.Frame_Item_Tainted_OnLoad( frame )
 		slot_id = slot_id,
 		tainted = true,
 	}
+	
+	-- bump the frame level for items up so that theyre always displayed above the bars
+	frame:SetFrameLevel( frame:GetFrameLevel( ) + 1 )
 	
 	ContainerFrameItemButton_OnLoad( frame )
 	
@@ -9521,7 +9573,9 @@ end
 
 function ArkInventory.FrameDragStart( frame )
 	
-	frame:SetFrameStrata( "DIALOG" )
+	--ArkInventory.Output( "START: ", frame:GetName( ), " / level = ", frame:GetFrameLevel( ), " / strata = ", frame:GetFrameStrata( ) )
+	
+--	frame:SetFrameStrata( "DIALOG" )
 	
 	frame:StartMoving( )
 	
@@ -9529,14 +9583,15 @@ end
 	
 function ArkInventory.FrameDragStop( frame )
 	
-	frame:SetFrameStrata( ArkInventory.db.profile.option.frameStrata )
-	
 	frame:StopMovingOrSizing( )
+	
+	--ArkInventory.Output( "STOP: ", frame:GetName( ), " / level = ", frame:GetFrameLevel( ), " / strata = ", frame:GetFrameStrata( ) )
 	
 	ArkInventory.Frame_Main_Anchor_Save( frame )
 	
 	frame:SetUserPlaced( false )
 	
-	frame:Raise( )
+--	frame:SetFrameStrata( ArkInventory.db.profile.option.frameStrata )
+--	frame:Raise( )
 	
 end

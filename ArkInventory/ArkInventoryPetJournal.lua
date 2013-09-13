@@ -39,22 +39,30 @@ ArkInventory.PetJournal = {
 
 function ArkInventory:LISTEN_PETJOURNAL_RELOAD_BUCKET( events )
 	
-	if filter.ignore then
-		--ArkInventory.Output( events, " - IGNORED" )
-		--return
-	end
+	--ArkInventory.Output( "LISTEN_PETJOURNAL_RELOAD_BUCKET" )
+	--ArkInventory.Output( events )
 	
 	if PetJournal:IsVisible( ) then
-		--ArkInventory.Output( event, "(", v1, ") - JOURNAL OPEN (IGNORED)" )
-		--return
+		--ArkInventory.Output( "IGNORED (JOURNAL OPEN)" )
+		return
 	end
 	
-	--ArkInventory.Output( events )
+	if filter.ignore then
+		--ArkInventory.Output( "IGNORED (FILTER CHANGED BY ME)" )
+		filter.ignore = false
+		return
+	end
 	
 	ArkInventory.PetJournal.Scan( )
 	
 end
 
+function ArkInventory.PetJournal.OnHide( )
+	filter.ignore = false
+	ArkInventory:SendMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", "RESCAN" )
+end
+
+PetJournal:HookScript( "OnHide", ArkInventory.PetJournal.OnHide )
 
 function ArkInventory.PetJournal.FilterClear( )
 	
@@ -79,7 +87,7 @@ function ArkInventory.PetJournal.FilterClear( )
 		C_PetJournal.SetPetSourceFilter( i, true )
 	end
 	
-	filter.ignore = false
+	--filter.ignore = false
 	PetJournal:RegisterEvent( "PET_JOURNAL_LIST_UPDATE" )
 	
 	--ArkInventory.Output( "FilterClear - end" )
@@ -93,7 +101,7 @@ function ArkInventory.PetJournal.FilterSave( )
 	--ArkInventory.Output( "FilterSave - start" )
 	
 	if filter.ignore then
-		ArkInventory.Output( "FilterSave - ignore" )
+		--ArkInventory.Output( "FilterSave - ignore" )
 		return
 	end
 	
@@ -125,6 +133,8 @@ end
 
 function ArkInventory.PetJournal.FilterRestore( )
 	
+	-- /run ArkInventory.PetJournal.FilterRestore( )
+	
 	--ArkInventory.Output( "FilterRestore - start" )
 	
 	PetJournal:UnregisterEvent( "PET_JOURNAL_LIST_UPDATE" )
@@ -146,7 +156,7 @@ function ArkInventory.PetJournal.FilterRestore( )
 		C_PetJournal.SetPetSourceFilter( i, filter.source[i] )
 	end
 	
-	filter.ignore = false
+	--filter.ignore = false
 	PetJournal:RegisterEvent( "PET_JOURNAL_LIST_UPDATE" )
 	
 	--ArkInventory.Output( "FilterRestore - end" )
@@ -157,6 +167,12 @@ end
 
 
 function ArkInventory.PetJournal.Scan( )
+	
+	if ( ArkInventory.Global.Mode.Combat ) then
+		-- set to scan when leaving combat
+		ArkInventory.Global.LeaveCombatRun.PetJournal = true
+		return
+	end
 	
 	local pj = ArkInventory.PetJournal.data
 	
@@ -196,7 +212,13 @@ function ArkInventory.PetJournal.Scan( )
 	
 	local check = true
 	
-    for i = 1, total do
+   for i = 1, total do
+		
+		if ( ArkInventory.Global.Mode.Combat ) then
+			-- set to scan when leaving combat
+			ArkInventory.Global.LeaveCombatRun.PetJournal = true
+			return
+		end
 		
 		local petID, speciesID, isOwned = C_PetJournal.GetPetInfoByIndex( i, false )
 		--ArkInventory.Output( petID )
@@ -822,10 +844,12 @@ function ArkInventory:LISTEN_PET_BATTLE_OPENING_DONE( event, ... )
 		
 		local speciesID = C_PetBattles.GetPetSpeciesID( player, i )
 		local level = C_PetBattles.GetLevel( player, i )
-		local rarity = C_PetBattles.GetBreedQuality( player, i )
 		local fullHealth = C_PetBattles.GetMaxHealth( player, i )
 		local power = C_PetBattles.GetPower( player, i )
 		local speed = C_PetBattles.GetSpeed( player, i )
+		
+		local rarity = C_PetBattles.GetBreedQuality( player, i )
+		rarity = ( rarity and ( rarity - 1 ) ) or -1
 		
 		local maxHealth, maxPowerm, maxSpeed
 		
@@ -848,8 +872,6 @@ function ArkInventory:LISTEN_PET_BATTLE_OPENING_DONE( event, ... )
 			
 			--ArkInventory.Output( "wild battle" )
 			
-			rarity = ( rarity and ( rarity - 1 ) ) or -1
-			
 			if ( not sd.canBattle ) then
 				-- opponent cannot battle (and yet it is), its one of the secondary non-capturabe opponents
 				info = string.format( "%s- %s", YELLOW_FONT_COLOR_CODE, ArkInventory.Localise["BATTLEPET_OPPONENT_IMMUNE"] )
@@ -861,13 +883,9 @@ function ArkInventory:LISTEN_PET_BATTLE_OPENING_DONE( event, ... )
 			
 			--ArkInventory.Output( "trainer battle" )
 			
-			rarity = rarity - 1
-			
 		else
 			
 			--ArkInventory.Output( "pvp battle" )
-			
-			rarity = ( rarity and ( rarity - 1 ) ) or -1
 			
 			count = true
 			
@@ -944,7 +962,7 @@ end
 
 function ArkInventory:LISTEN_BATTLEPET_UPDATE( )
 	
-	ArkInventory.Output( "LISTEN_BATTLEPET_UPDATE" )
+	--ArkInventory.Output( "LISTEN_BATTLEPET_UPDATE" )
 	
 	local loc_id = ArkInventory.Const.Location.Pet
 	ArkInventory.ScanLocation( loc_id )
@@ -958,12 +976,11 @@ end
 function ArkInventory:LISTEN_PETJOURNAL_RELOAD( event, ... )
 	
 	--ArkInventory.Output( "LISTEN_PETJOURNAL_RELOAD( ", event, " )" )
+	--ArkInventory.Output( event )
 	
 	if ( event == "PET_JOURNAL_LIST_UPDATE" ) then
 		
-		if not PetJournal:IsVisible( ) then
-			ArkInventory:SendMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", event )
-		end
+		ArkInventory:SendMessage( "LISTEN_PETJOURNAL_RELOAD_BUCKET", event )
 		
 	elseif ( event == "COMPANION_UPDATE" ) then
 		

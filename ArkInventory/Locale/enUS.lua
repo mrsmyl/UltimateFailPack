@@ -241,6 +241,8 @@ if not L then return end
 	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG"] = "Zero Size Bag"
 	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_TEXT"] = "A potential bug where zero or nil is returned for the size of a bag instead of it's correct size."
 	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_ALERT_TEXT"] = "display alerts for this bug"
+	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD"] = "In-Combat Yielding"
+	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD_TEXT"] = "How many items to draw (whilst in combat) before yielding to avoid hitting the In-Combat script timer limit"
 	L["BUGFIX_TAINTED_ALERT_MOUSEOVER_TEXT"] = "this item frame was created while you\nwere in combat which has caused\nit to be tainted and cannot\nbe used until you leave combat"
 	L["BUGFIX_TAINTED_ALERT_OPEN_TEXT"] = "some of the item frames for this window were created while you were in combat which has caused them to be tainted and cannot be used until you leave combat"
 	
@@ -253,6 +255,9 @@ if not L then return end
 	L["CONFIG_SYSTEM_MESSAGES_TRANSLATION_FINAL_TEXT"] = "Show final message for successful translation"
 	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = "Opponent Details"
 	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = "Display Opponent Details upon entering a pet battle"
+	
+	L["CONFIG_SYSTEM_TIMERS"] = "Update Timers"
+	L["CONFIG_SYSTEM_TIMERS_TEXT"] = "use a custom value for the %1$s update timer"
 	
 	
 --	configuration options > auto
@@ -344,7 +349,6 @@ if not L then return end
 	L["CONFIG_SETTINGS_BARS_NAME_HEIGHT_TEXT"] = "set the amount of space allocated to display the bar name in"
 	L["CONFIG_SETTINGS_BARS_NAME_ANCHOR_TEXT"] = "set the anchor point of the bar name"
 	
-	L["CONFIG_SETTINGS_ITEMS"] = "Items"
 	L["CONFIG_SETTINGS_ITEMS_PADDING_TEXT"] = "set the amount of space to add between item slots"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN"] = "Show hidden"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN_TEXT"] = "show hidden categories"

@@ -241,6 +241,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_TEXT"] = ""
 --	L["CONFIG_SYSTEM_BUGFIX_ZEROSIZEBAG_ALERT_TEXT"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD"] = ""
+--	L["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_MOUSEOVER_TEXT"] = ""
 --	L["BUGFIX_TAINTED_ALERT_OPEN_TEXT"] = ""
 	
@@ -254,6 +256,9 @@ if not L then return end
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT"] = ""
 --	L["CONFIG_SYSTEM_MESSAGES_BATTLEPET_OPPONENT_TEXT"] = ""
 	
+--	L["CONFIG_SYSTEM_TIMERS"] = ""
+--	L["CONFIG_SYSTEM_TIMERS_TEXT"] = ""
+	
 	
 --	configuration options > auto
 	L["CONFIG_AUTO"] = "automatisches \195\150ffnen/Schlie\195\159en"
@@ -265,6 +270,7 @@ if not L then return end
 	L["CONFIG_AUTO_OPEN_MERCHANT"] = "H\195\164ndler"
 	L["CONFIG_AUTO_OPEN_TRADE"] = "Handeln"
 	L["CONFIG_AUTO_OPEN_AUCTION"] = "Auktionator"
+--	L["CONFIG_AUTO_OPEN_VOID"] = ""
 	
 	L["CONFIG_AUTO_CLOSE"] = "schlie\195\159e %1$s %2$s beim %3$s"
 	L["CONFIG_AUTO_CLOSE_BANK"] = "Schlie\195\159en des Bankfachs"
@@ -273,6 +279,7 @@ if not L then return end
 	L["CONFIG_AUTO_CLOSE_MERCHANT"] = "Verlassen des H\195\164ndlers"
 	L["CONFIG_AUTO_CLOSE_TRADE"] = "Beenden eines Handels"
 	L["CONFIG_AUTO_CLOSE_AUCTION"] = "Verlassen des Auktionators"
+--	L["CONFIG_AUTO_CLOSE_VOID"] = ""
 	L["CONFIG_AUTO_CLOSE_COMBAT"] = "Beginn eines Kampfes"
 	
 	
@@ -342,7 +349,6 @@ if not L then return end
 --	L["CONFIG_SETTINGS_BARS_NAME_HEIGHT_TEXT"] = ""
 --	L["CONFIG_SETTINGS_BARS_NAME_ANCHOR_TEXT"] = ""
 	
-	L["CONFIG_SETTINGS_ITEMS"] = "Gegenst\195\164nde"
 	L["CONFIG_SETTINGS_ITEMS_PADDING_TEXT"] = "legt den Abstand zwischen den Pl\195\164tzen der Gegenst\195\164nde fest"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN"] = "versteckte anzeigen"
 	L["CONFIG_SETTINGS_ITEMS_HIDDEN_TEXT"] = "bestimmt, ob Gegenst\195\164nde aus versteckten Kategorien angezeigt werden sollen"
@@ -537,6 +543,7 @@ if not L then return end
 --	L["TOOLTIP_COUNT_ME"] = ""
 --	L["TOOLTIP_VAULT_TABS"] = ""
 --	L["TOOLTIP_GOLD_AMOUNT"] = ""
+	
 	
 --	generic text
 --	L["AUTOMATIC"] = ""

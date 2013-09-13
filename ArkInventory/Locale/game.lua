@@ -139,6 +139,8 @@ L["WOW_TOOLTIP_CLASS"] = string.format( "^%s", string.gsub( ITEM_CLASSES_ALLOWED
 L["PET_BATTLE_BOUND"] = string.format( "%s (%s)", TOOLTIP_BATTLE_PET, ITEM_ACCOUNTBOUND )
 L["PET_COMPANION_BOUND"] = string.format( "%s (%s)", PET, ITEM_ACCOUNTBOUND )
 L["PET_CANNOT_BATTLE"] = string.gsub( BATTLE_PET_CANNOT_BATTLE, "\n", " " )
+L["WOW_TOOLTIP_ITEMUPGRADELEVEL"] = ConvertToCapture( ITEM_UPGRADE_TOOLTIP_FORMAT )
+
 
 
 -- generated from auction house categories

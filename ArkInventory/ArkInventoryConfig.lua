@@ -854,13 +854,39 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
+						combatyield = {
+							order = 300,
+							name = ArkInventory.Localise["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD"],
+							type = "group",
+							inline = true,
+							args = {
+								items = {
+									order = 100,
+									name = ArkInventory.Localise["ITEMS"],
+									desc = ArkInventory.Localise["CONFIG_SYSTEM_BUGFIX_COMBAT_YIELD_TEXT"],
+									type = "range",
+									min = 1,
+									max = ArkInventory.Const.MAX_BAG_SIZE,
+									step = 1,
+									get = function( info )
+										return ArkInventory.db.global.option.combat.yieldafter or 30
+									end,
+									set = function( info, v )
+										local v = math.floor( v )
+										if v < 1 then v = 1 end
+										if v > ArkInventory.Const.MAX_BAG_SIZE then v = ArkInventory.Const.MAX_BAG_SIZE end
+										ArkInventory.db.global.option.combat.yieldafter = v
+									end,
+								},
+							},
+						},
 					},
 				},
 				bucket = {
 					cmdHidden = true,
 					order = 400,
-					name = "update timers",
-					desc = "description for update timers",
+					name = ArkInventory.Localise["CONFIG_SYSTEM_TIMERS"],
+					--desc = ArkInventory.Localise["CONFIG_SYSTEM_TIMERS"],
 					type = "group",
 					--inline = true,
 					args = {
@@ -872,8 +898,8 @@ function ArkInventory.ConfigInternal( )
 							args = {
 								enabled = {
 									order = 100,
-									name = "customise",
-									desc = "use a custom value for the bag update timer",
+									name = ArkInventory.Localise["ENABLED"],
+									desc = string.format( ArkInventory.Localise["CONFIG_SYSTEM_TIMERS_TEXT"], ArkInventory.Localise["LOCATION_BAG"] ),
 									type = "toggle",
 									get = function( info )
 										return ArkInventory.db.global.option.bucket[ArkInventory.Const.Location.Bag]
@@ -888,7 +914,7 @@ function ArkInventory.ConfigInternal( )
 								},
 								value = {
 									order = 200,
-									name = "seconds",
+									name = LOSS_OF_CONTROL_SECONDS,
 									type = "range",
 									min = 0.1,
 									max = 2,
@@ -910,14 +936,14 @@ function ArkInventory.ConfigInternal( )
 						},
 						vault = {
 							order = 200,
-							name = "vault",
+							name = GUILD_BANK,
 							type = "group",
 							inline = true,
 							args = {
 								enabled = {
 									order = 100,
-									name = "customise",
-									desc = "use a custom value for the vault update timer",
+									name = ArkInventory.Localise["ENABLED"],
+									desc = string.format( ArkInventory.Localise["CONFIG_SYSTEM_TIMERS_TEXT"], GUILD_BANK ),
 									type = "toggle",
 									get = function( info )
 										return ArkInventory.db.global.option.bucket[ArkInventory.Const.Location.Vault]
@@ -932,7 +958,7 @@ function ArkInventory.ConfigInternal( )
 								},
 								value = {
 									order = 200,
-									name = "seconds",
+									name = LOSS_OF_CONTROL_SECONDS,
 									type = "range",
 									min = 0.1,
 									max = 4,
@@ -3105,13 +3131,13 @@ function ArkInventory.ConfigInternalSettings( path )
 		
 		items = {
 			order = 300,
-			name = ArkInventory.Localise["CONFIG_SETTINGS_ITEMS"],
+			name = ArkInventory.Localise["ITEMS"],
 			type = "group",
 			args = {
 				anchor = {
 					order = 100,
 					name = ArkInventory.Localise["ANCHOR"],
-					desc = string.format( ArkInventory.Localise["ANCHOR_TEXT2"], ArkInventory.Localise["CONFIG_SETTINGS_ITEMS"], "" ),
+					desc = string.format( ArkInventory.Localise["ANCHOR_TEXT2"], ArkInventory.Localise["ITEMS"], "" ),
 					type = "select",
 					values = function( )
 						return anchorpoints

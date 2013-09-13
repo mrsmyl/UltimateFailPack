@@ -732,7 +732,7 @@ local TempData = { -- temporary table for item to spell translations.
 [87526]={cid=64899}, -- Mechanical Pandaren Dragonling
 [88147]={cid=64232}, -- Singing Cricket Cage
 [88148]={cid=65314}, -- Jade Crane Chick
-[89368]={cid=66104}, -- Chi-ji Kite
+[89367]={cid=66105}, -- Yu'lon Kite
 [89587]={cid=61086}, -- Porcupette
 [89686]={cid=66450}, -- Jade Tentacle
 [89736]={cid=66491}, -- Venus
@@ -793,6 +793,7 @@ local TempData = { -- temporary table for item to spell translations.
 [94933]={cid=70258}, -- Tiny Blue Carp
 [94934]={cid=70259}, -- Tiny Green Carp
 [94935]={cid=70260}, -- Tiny White Carp
+[89368]={cid=66104}, -- Chi-ji Kite
 
 }
 

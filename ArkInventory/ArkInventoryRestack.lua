@@ -514,6 +514,11 @@ end
 
 local function RestackLocation( loc_id )
 	
+	if ArkInventory.Global.Mode.Combat then
+		--ArkInventory.Output( "restack location ", loc_id, " aborted - in combat" )
+		return
+	end
+	
 	if type( ArkInventory.Global.Thread.Restack[loc_id] ) ~= "thread" or coroutine.status( ArkInventory.Global.Thread.Restack[loc_id] ) == "dead" then
 		
 		-- thread not active, create a new one
