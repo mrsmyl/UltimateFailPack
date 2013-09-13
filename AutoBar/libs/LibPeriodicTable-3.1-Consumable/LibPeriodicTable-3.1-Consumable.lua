@@ -1,7 +1,7 @@
 -- (c) 2007 Nymbia.  see LGPLv2.1.txt for full details.
 --DO NOT MAKE CHANGES TO THIS FILE BEFORE READING THE WIKI PAGE REGARDING CHANGING THESE FILES
 if not LibStub("LibPeriodicTable-3.1", true) then error("PT3 must be loaded before data") end
-LibStub("LibPeriodicTable-3.1"):AddData("Consumable", gsub("$Rev: 430 $", "(%d+)", function(n) return n+90000 end), {
+LibStub("LibPeriodicTable-3.1"):AddData("Consumable", gsub("$Rev: 433 $", "(%d+)", function(n) return n+90000 end), {
 	["Consumable.Anti-Venom"]="6452:25,6453:35,13462:60,2633:60,19440:60,12586:60,9030:60,3386:60,31437:70,25550:70",
 	["Consumable.Bandage.Basic"]="1251:66,2581:114,3530:161,3531:301,6450:400,6451:640,8544:800,8545:1104,14529:1360,14530:2000,21990:2800,21991:3400,38643:3400,38640:4100,34721:4800,34722:5800,53049:17400,53050:26000,53051:35000,72985:54720,72986:123120",
 	["Consumable.Bandage.Battleground.Alterac Valley"]="19307:2000",
@@ -228,7 +228,7 @@ LibStub("LibPeriodicTable-3.1"):AddData("Consumable", gsub("$Rev: 430 $", "(%d+)
 	["Consumable.Potion.Other.Runic"]="39327:50",
 
 	--NOW AUTOGENNED (These are now datamined based on effect text filters and exclusion lists. -JCinDE)
-	["Consumable.Potion.Recovery.Healing.Endless"]="43569:80,80040:90",
+	["Consumable.Potion.Recovery.Healing.Endless"]="43569:80",
 	["Consumable.Potion.Recovery.Healing.Basic"]="118:5,858:13,4596:15,929:22,1710:31,3928:45,18839:45,13446:55,28100:60,33934:60,22829:65,32763:65,32947:65,39327:65,43531:65,23822:66,33092:66,31676:69,31838:70,31839:70,31852:70,31853:70,39671:75,33447:80,41166:80,57191:81,63300:81,76097:90,88416:90,93742:90",
 	["Consumable.Potion.Recovery.Healing.Zone-Restricted"]="17349:45,17348:55,32904:65,32905:65,32784:70,32910:70,67415:81,63144:85,64994:85,92954:90",
 	["Consumable.Potion.Recovery.Mana.Endless"]="43570:80",

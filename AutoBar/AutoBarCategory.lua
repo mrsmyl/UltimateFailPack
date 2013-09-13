@@ -1339,9 +1339,6 @@ function AutoBarCategory:Initialize()
 			"WARRIOR", spellNameList["Demoralizing Shout"],
 
 			})
-	if (AutoBar.CLASS == "PALADIN") then
-		local spellDivineIntervention = AutoBar:LoggedGetSpellInfo(19752)
-	end
 
 	local spellEagleEye = AutoBar:LoggedGetSpellInfo(6197)
 	local spellTameBeast = AutoBar:LoggedGetSpellInfo(1515)
