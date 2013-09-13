@@ -5,6 +5,9 @@ local ADDON, NS = ...
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON)
 
+-- the History module
+local History = Addon:NewModule("History")
+
 -- local functions
 local pairs   = pairs
 local tinsert = table.insert
@@ -26,24 +29,11 @@ local LE_PARTY_CATEGORY_HOME = _G.LE_PARTY_CATEGORY_HOME
 
 local _
 
--- helper functions
-local function FormatTime(stamp)
-	local days    = floor(stamp/86400)
-	local hours   = floor((stamp - days * 86400) / 3600)
-	local minutes = floor((stamp - days * 86400 - hours * 3600) / 60)
-
-	if days > 0 then
-		return string.format("%dd %02d:%02d", days, hours, minutes)
-	else
-		return string.format("%02d:%02d", hours, minutes)
-	end
-end
-
 -- constants
-local MAX_HISTORY = 12
+local MAX_HISTORY      = 12
 local MAX_TIME_MINUTES = 120
 
-local History = {
+local moduleData = {
 	-- data
 	totalKills    = 0,
 	totalXP       = 0,
@@ -68,35 +58,47 @@ local History = {
 	timeframe     = 3600,
 }
 
-Addon.History = History
+-- module handling
+function History:OnInitialize()	
+	-- init the module
+	self:Initialize()
+end
+
+function History:OnEnable()
+	-- empty
+end
+
+function History:OnDisable()
+	-- empty
+end
 
 function History:Initialize()
-	self.startTime = time()
+	moduleData.startTime = time()
 	
 	if (GetXPExhaustion() or 0) == 0 then
-		self.endRestTime  = self.startTime
+		moduleData.endRestTime  = moduleData.startTime
 	end
 	
-	self.totalKills    = 0
-	self.totalXP       = 0
-	self.activityKills = 0
-	self.activityXP    = 0
-	self.startXP       = UnitXP("player")
-	self.lvlMaxXP      = UnitXPMax("player")
+	moduleData.totalKills    = 0
+	moduleData.totalXP       = 0
+	moduleData.activityKills = 0
+	moduleData.activityXP    = 0
+	moduleData.startXP       = UnitXP("player")
+	moduleData.lvlMaxXP      = UnitXPMax("player")
 	
-	for key in pairs(self.historyXP) do
-		self.historyXP[key]= nil
+	for key in pairs(moduleData.historyXP) do
+		moduleData.historyXP[key]= nil
 	end
 	
-	for key in pairs(self.historyMobs) do
-		self.historyMobs[key]= nil
+	for key in pairs(moduleData.historyMobs) do
+		moduleData.historyMobs[key]= nil
 	end	
 end
 
 -- xp rate calculations
 function History:GetWriteBucket()
 	local bucketTime = floor(time() / 60)
-	local bucket = self.historyXP[#self.historyXP]
+	local bucket = moduleData.historyXP[#moduleData.historyXP]
 	
 	if not bucket or bucket.time ~= bucketTime then
 		bucket = {
@@ -104,18 +106,18 @@ function History:GetWriteBucket()
 			totalXP = 0,
 			kills   = 0
 		}
-		tinsert(self.historyXP, bucket)
+		tinsert(moduleData.historyXP, bucket)
 	end
 	
 	return bucket
 end
 
 function History:GetTimeToLevel()
-	if self.totalXP == 0 then
+	if moduleData.totalXP == 0 then
 		return "~"
 	end
 
-	local duration = time() - self.startTime
+	local duration = time() - moduleData.startTime
 
 	if duration == 0 then
 		return "~"
@@ -123,8 +125,8 @@ function History:GetTimeToLevel()
 
 	local duration_rest = 0
 	
-	if self.endRestTime then
-		duration_rest = self.endRestTime - self.startTime
+	if moduleData.endRestTime then
+		duration_rest = moduleData.endRestTime - moduleData.startTime
 	end
 	
 	local xp_togo = UnitXPMax("player") - UnitXP("player")
@@ -136,16 +138,16 @@ function History:GetTimeToLevel()
 	-- fraction of time with rested bonus
 	local rest_factor
 
-	if self.timeframe == 0 or duration < self.timeframe then
+	if moduleData.timeframe == 0 or duration < moduleData.timeframe then
 		rest_factor   = duration_rest / duration
 	else
 		local duration_rest_activity = 0
 		
 		if duration_rest > 0 then
-			duration_rest_activity = duration_rest - (duration - self.timeframe)
+			duration_rest_activity = duration_rest - (duration - moduleData.timeframe)
 		end
 		
-		rest_factor   = (duration_rest_activity / self.timeframe) * self.weight + (duration_rest / duration) * (1-self.weight)		
+		rest_factor = (duration_rest_activity / moduleData.timeframe) * moduleData.weight + (duration_rest / duration) * (1-moduleData.weight)		
 	end
 
 	if xppersec_c == 0 then
@@ -153,7 +155,7 @@ function History:GetTimeToLevel()
 	end
 	
 	-- xp/s (based on mob kills)
-	local xppersec_m = self.xpPerKill * killspersec_c
+	local xppersec_m = moduleData.xpPerKill * killspersec_c
 	
 	local xp_rested = GetXPExhaustion() or 0
 	
@@ -175,11 +177,11 @@ function History:GetTimeToLevel()
 	-- xppersec_c(urrent) = xppersec_nomobs + 2*(xppersec_m(obs))
 	local ttl = xp_restrange / xppersec_c + (xp_togo - xp_restrange) / (xppersec_c - (xppersec_m * rest_factor))
 	
-	return FormatTime( ttl )	
+	return NS:FormatTime(ttl)	
 end
 
 function History:GetKillsToLevel()
-	if self.xpPerKill == 0 then 
+	if moduleData.xpPerKill == 0 then 
 		return "~" 
 	end
 	
@@ -190,9 +192,9 @@ function History:GetKillsToLevel()
 	
 	if GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) > 0 then
 		if IsInRaid() then
-			bonus = self.raidPenaltyPerKill
+			bonus = moduleData.raidPenaltyPerKill
 		else
-			bonus = self.grpXpPerKill
+			bonus = moduleData.grpXpPerKill
 		end
 	end
 	
@@ -201,9 +203,9 @@ function History:GetKillsToLevel()
 	-- so group bonus is incorrect if the number of players in party/raid changes
 	-- but it will adjust faily quick (and we cant take everything into account)
 	if rested >= xptogo then
-		return ceil(xptogo/(self.xpPerKill * 2 + bonus))
+		return ceil(xptogo/(moduleData.xpPerKill * 2 + bonus))
 	else
-		return ceil((rested/(self.xpPerKill * 2 + bonus)) + ((xptogo - rested)/(self.xpPerKill + bonus)))
+		return ceil((rested/(moduleData.xpPerKill * 2 + bonus)) + ((xptogo - rested)/(moduleData.xpPerKill + bonus)))
 	end
 end
 
@@ -212,16 +214,16 @@ function History:GetKillsPerHour()
 end
 
 function History:GetKillsPerSecond()
-	local duration = time() - self.startTime
+	local duration = time() - moduleData.startTime
 
 	if duration == 0 then
 		return 0
 	end
 
-	if self.timeframe == 0 or duration < self.timeframe then
-		return self.totalKills / duration
+	if moduleData.timeframe == 0 or duration < moduleData.timeframe then
+		return moduleData.totalKills / duration
 	else
-		return ((self.activityKills / self.timeframe) * self.weight + (self.totalKills / duration) * (1-self.weight))
+		return ((moduleData.activityKills / moduleData.timeframe) * moduleData.weight + (moduleData.totalKills / duration) * (1-moduleData.weight))
 	end
 end
 
@@ -230,16 +232,16 @@ function History:GetXPPerHour()
 end
 
 function History:GetXPPerSecond()
-	local duration = time() - self.startTime
+	local duration = time() - moduleData.startTime
 
 	if duration == 0 then
 		return 0
 	end
 
-	if self.timeframe == 0 or duration < self.timeframe then
-		return self.totalXP / duration
+	if moduleData.timeframe == 0 or duration < moduleData.timeframe then
+		return moduleData.totalXP / duration
 	else		
-		return ((self.activityXP / self.timeframe) * self.weight + (self.totalXP / duration) * (1-self.weight))
+		return ((moduleData.activityXP / moduleData.timeframe) * moduleData.weight + (moduleData.totalXP / duration) * (1-moduleData.weight))
 	end
 end
 
@@ -250,46 +252,46 @@ end
 
 function History:ProcessXPHistory()
 	local currentBucket = floor(time() / 60)
-	if not self.taintedXP and currentBucket == self.activeBucket then 
+	if not moduleData.taintedXP and currentBucket == moduleData.activeBucket then 
 		return 
 	end
 	
-	self.activeBucket = currentBucket
+	moduleData.activeBucket = currentBucket
 
 	-- remove old buckets
-	local oldest = self.activeBucket - MAX_TIME_MINUTES
+	local oldest = moduleData.activeBucket - MAX_TIME_MINUTES
 	
-	while #self.historyXP ~= 0 and self.historyXP[1].time <= oldest do
-		tremove(self.historyXP, 1)
+	while #moduleData.historyXP ~= 0 and moduleData.historyXP[1].time <= oldest do
+		tremove(moduleData.historyXP, 1)
 	end
 
 	local xp, mobxp, kills = 0, 0, 0
 	
-	oldest = self.activeBucket - self.timeframe / 60
+	oldest = moduleData.activeBucket - moduleData.timeframe / 60
 	
-	for _, bucket in pairs(self.historyXP) do
+	for _, bucket in pairs(moduleData.historyXP) do
 		if bucket.time > oldest then
 			xp    = xp + bucket.totalXP
 			kills = kills + bucket.kills
 		end
 	end
 
-	self.activityXP    = xp
-	self.activityKills = kills
+	moduleData.activityXP    = xp
+	moduleData.activityKills = kills
 	
-	self.taintedXP = false	
+	moduleData.taintedXP = false	
 end
 
 function History:ProcessMobHistory()
-	if not self.taintedMobs then 
+	if not moduleData.taintedMobs then 
 		return 
 	end
 	
 	-- regular mean
 	local total = 0
 	local mean = 0
-	local size = tgetn(self.historyMobs)
-	for _, xp in pairs(self.historyMobs) do
+	local size = tgetn(moduleData.historyMobs)
+	for _, xp in pairs(moduleData.historyMobs) do
 		total = total + xp.kxp
 	end
 	mean = total/size
@@ -297,7 +299,7 @@ function History:ProcessMobHistory()
 	-- std deviation
 	total = 0
 	local stdev = 0
-	for _, xp in pairs(self.historyMobs) do
+	for _, xp in pairs(moduleData.historyMobs) do
 		total = total + (xp.kxp - mean)^2
 	end
 	if size > 1 then
@@ -315,7 +317,7 @@ function History:ProcessMobHistory()
 	local low = mean - stdev
 	local high = mean + stdev
 	
-	for _, xp in pairs(self.historyMobs) do
+	for _, xp in pairs(moduleData.historyMobs) do
 		if xp.kxp >= low and xp.kxp <= high then
 			total = total + xp.kxp
 			group = group + xp.gxp
@@ -325,51 +327,51 @@ function History:ProcessMobHistory()
 	end
 	
 	if count == 0 then
-		self.xpPerKill          = 0
-		self.grpXpPerKill       = 0
-		self.raidPenaltyPerKill = 0
+		moduleData.xpPerKill          = 0
+		moduleData.grpXpPerKill       = 0
+		moduleData.raidPenaltyPerKill = 0
 	else
-		self.xpPerKill          = total/count
-		self.grpXpPerKill       = group/count
-		self.raidPenaltyPerKill = raid/count
+		moduleData.xpPerKill          = total/count
+		moduleData.grpXpPerKill       = group/count
+		moduleData.raidPenaltyPerKill = raid/count
 	end
 
-	self.taintedMobs = false	
+	moduleData.taintedMobs = false	
 end
 
 function History:UpdateXP()
 	local bucket = self:GetWriteBucket()
 
 	-- check for lvl up
-	if self.lvlMaxXP < UnitXPMax("player") then
-		local leftXP = self.lvlMaxXP - (self.totalXP + self.startXP)
-		self.totalXP = self.totalXP + leftXP
+	if moduleData.lvlMaxXP < UnitXPMax("player") then
+		local leftXP = moduleData.lvlMaxXP - (moduleData.totalXP + moduleData.startXP)
+		moduleData.totalXP = moduleData.totalXP + leftXP
 		bucket.totalXP = bucket.totalXP + leftXP
-		self.doneLvlXP = self.totalXP
+		moduleData.doneLvlXP = moduleData.totalXP
 
-		self.startXP  = 0
-		self.lvlMaxXP = UnitXPMax("player")	
+		moduleData.startXP  = 0
+		moduleData.lvlMaxXP = UnitXPMax("player")	
 	end
 
-	local lvlTotal = UnitXP("player") - self.startXP
-	local delta    = lvlTotal - (self.totalXP - self.doneLvlXP)
+	local lvlTotal = UnitXP("player") - moduleData.startXP
+	local delta    = lvlTotal - (moduleData.totalXP - moduleData.doneLvlXP)
 	
 	-- track activity	
-	self.totalXP = lvlTotal + self.doneLvlXP
+	moduleData.totalXP = lvlTotal + moduleData.doneLvlXP
 	bucket.totalXP = bucket.totalXP + delta
 	
-	if not self.endRestTime and (GetXPExhaustion() or 0) == 0 then
-		self.endRestTime  = time()
+	if not moduleData.endRestTime and (GetXPExhaustion() or 0) == 0 then
+		moduleData.endRestTime  = time()
 	end
 
-	self.taintedXP = true
+	moduleData.taintedXP = true
 end
 
 function History:AddKill(xp, bonus, penalty)
 	-- track activity	
 	local bucket = self:GetWriteBucket()
 	
-	self.totalKills   = self.totalKills + 1
+	moduleData.totalKills   = moduleData.totalKills + 1
 	bucket.kills = bucket.kills + 1
 
 	-- track mob kills
@@ -379,19 +381,28 @@ function History:AddKill(xp, bonus, penalty)
 		pxp = penalty
 	}
 	
-	tinsert(self.historyMobs, 1, mobdata)
+	tinsert(moduleData.historyMobs, 1, mobdata)
 				
 	-- remove oldest entry if we exceed history size
-	if tgetn(self.historyMobs) > MAX_HISTORY then
-		tremove(self.historyMobs)
+	if tgetn(moduleData.historyMobs) > MAX_HISTORY then
+		tremove(moduleData.historyMobs)
 	end
 		
-	self.taintedMobs = true	
+	moduleData.taintedMobs = true	
+end
+
+-- getter
+function History:GetTotalXP()
+	return moduleData.totalXP
+end
+
+function History:GetTotalKills()
+	return moduleData.totalKills
 end
 
 -- params
 function History:GetWeight()
-	return self.weight
+	return moduleData.weight
 end
 
 function History:SetWeight(weight)
@@ -401,17 +412,17 @@ function History:SetWeight(weight)
 		weight = 1
 	end
 
-	if weight == self.weight then
+	if weight == moduleData.weight then
 		return
 	end
 	
-	self.weight = weight
+	moduleData.weight = weight
 	
-	self.taintedXP = true
+	moduleData.taintedXP = true
 end
 
 function History:GetTimeFrame()
-	return self.timeframe
+	return moduleData.timeframe
 end
 
 function History:SetTimeFrame(timeframe)
@@ -419,17 +430,22 @@ function History:SetTimeFrame(timeframe)
 		timeframe = 0
 	end
 
-	if timeframe == self.timeframe then
+	if timeframe == moduleData.timeframe then
 		return
 	end
 	
-	self.timeframe = timeframe
+	moduleData.timeframe = timeframe
 	
-	self.taintedXP = true
+	moduleData.taintedXP = true
 end
 
 -- helper
 function History:IsTainted()
-	return self.taintedXP or self.taintedMobs
+	return moduleData.taintedXP or moduleData.taintedMobs
+end
+
+-- test
+function History:Debug(msg)
+	Addon:Debug("(History) " .. tostring(msg))
 end
 

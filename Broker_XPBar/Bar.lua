@@ -4,14 +4,18 @@ local ADDON = ...
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON)
 
+-- the Bar module
+local Bar = Addon:NewModule("Bar")
+
 -- rearrangement of blizzard's frames
 local Jostle = LibStub:GetLibrary("LibJostle-3.0", true)
 
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 -- imports
-local ipairs = _G.ipairs
-local unpack = _G.unpack
+local ipairs = ipairs
+local pairs  = pairs
+local unpack = unpack
 
 local _
 
@@ -34,11 +38,33 @@ local ORIENTATION_FLIP_HORIZONTAL = { 0, 1, 1, 0 }
 local ORIENTATION_ROTATE_LEFT_90  = { 1, 0, 0, 0, 1, 1, 0, 1 }
 local ORIENTATION_ROTATE_RIGHT_90 = { 0, 1, 1, 1, 0, 0, 1, 0 }
 
-local SIDES = {"TOP", "BOTTOM", "LEFT", "RIGHT"}
+local FONT_TEMPLATE      = "TextStatusBarText"
+local FONT_NAME_DEFAULT  = "Friz Quadrata TT"
+local FONT_SIZE_DEFAULT  = 10
+local FONT_DEFAULT       = "Fonts\\FRIZQT__.TTF"
+local FONT_STYLE         = "OUTLINE"
 
-local FONT_DEFAULT = "TextStatusBarText"
-local FONT_STYLE   = "OUTLINE"
+-- small positive number close to 0, used to avoid probelms with SetWidth/Height(0)
+local EPSILON = 1e-5 
 
+-- tick
+local TICK_ACTIVE_COLOR = {
+	r = 1,
+	g = 1,
+	b = 0.2,
+	a = 1,
+}
+
+local TICK_INACTIVE_COLOR = {
+	r = 0.65,
+	g = 0.65,
+	b = 0.65,
+	a = 0.75,
+}
+
+local TICK_WIDTH = 2
+
+-- utilities
 local function vertical(str)
 	if not str or type(str) ~= "string" then
 		return str
@@ -58,25 +84,16 @@ local function vertical(str)
 	return vertical:sub(1, #vertical-1)
 end
 	
--- tick
-local TICK_ACTIVE_COLOR = {
-	r = 1,
-	g = 1,
-	b = 0.2,
-	a = 1,
-}
+local function CalcSparkLength(min, max, length)
+	if length < max then
+		return min + (length*(max-min)/max)
+	else
+		return max
+	end
+end
 
-local TICK_INACTIVE_COLOR = {
-	r = 0.65,
-	g = 0.65,
-	b = 0.65,
-	a = 0.75,
-}
-
-local TICK_WIDTH = 2
-
--- the bar frame
-local Bar = {
+-- module data
+local moduleData = {
 	-- layout
 	anchored    = false,
 	anchorFrame = nil,
@@ -130,6 +147,7 @@ local Bar = {
 		None      = {r=0.0, g=0.0, b=0.0, a=1},
 		Rep       = {r=1.0, g=0.2, b=1.0, a=1},
 		NoRep     = {r=0.0, g=0.0, b=0.0, a=1},
+		Border    = {r=0.0, g=0.0, b=0.0, a=1},
 	},
 	
 	-- textures (aux list used in Reanchor)
@@ -137,124 +155,97 @@ local Bar = {
 	},
 }
 
-Addon.Bar = Bar
-
--- utilities
-local function CalcSparkLength(min, max, length)
-	if length < max then
-		return min + (length*(max-min)/max)
-	else
-		return max
-	end
+-- module handling
+function Bar:OnInitialize()	
+	-- init the module
+	self:Initialize()
 end
 
--- bar
-function Bar:Initialize()
-	local r, g, b, a
-	
-	local intensity = self:GetSetting("Spark")
-	
-	-- bar setup
-	local MainFrame = CreateFrame("Frame", ADDON.."_Bar_MainFrame", UIParent)
-	
-	MainFrame:SetScript('OnEnter', function(self) Bar:OnMouseEnter() end)
-	MainFrame:SetScript('OnLeave', function(self) Bar:OnMouseLeave() end)	
-	
-	local XPBar = CreateFrame("Frame", ADDON.."_Bar_XPBar", MainFrame)
+function Bar:OnEnable()
+	-- empty
+end
 
-	r, g, b, a = self:GetColor("XP")
+function Bar:OnDisable()
+	-- empty
+end
+
+function Bar:Initialize()
+	-- bar setup
+	local mainFrame = CreateFrame("Frame", ADDON.."_Bar_MainFrame", UIParent)
 	
-	local tex = XPBar:CreateTexture(ADDON.."_Tex_BarTex", "ARTWORK")
-	tex:SetTexture(TEX_BAR)
-	tex:SetVertexColor(r, g, b, a)
+	mainFrame:SetScript('OnEnter', function(self) Bar:OnMouseEnter() end)
+	mainFrame:SetScript('OnLeave', function(self) Bar:OnMouseLeave() end)	
+
+	local xpBar = CreateFrame("Frame", ADDON.."_Bar_XP", mainFrame)
+
+	local tex     = xpBar:CreateTexture(ADDON.."_Tex_XP",       "BACKGROUND")	
+	local restTex = xpBar:CreateTexture(ADDON.."_Tex_RestedXP", "BACKGROUND")	
+	local noTex   = xpBar:CreateTexture(ADDON.."_Tex_NoXP",     "BACKGROUND")
 	
-	local spark = XPBar:CreateTexture(ADDON.."_Tex_XPSpark", "OVERLAY")
+	local spark = xpBar:CreateTexture(ADDON.."_Tex_XPSpark", "OVERLAY")
 	spark:SetTexture(TEX_SPARK)
-	spark:SetVertexColor(r, g, b, intensity)
 	spark:SetBlendMode("ADD")
 
-	local spark2 = XPBar:CreateTexture(ADDON.."_Tex_XPSpark2", "OVERLAY")
+	local spark2 = xpBar:CreateTexture(ADDON.."_Tex_XPSparkMini", "OVERLAY")
 	spark2:SetTexture(TEX_SPARK2)
 	spark2:SetBlendMode("ADD")
 
-	r, g, b, a = self:GetColor("Rest")
+	local xpText = xpBar:CreateFontString(ADDON.."_Text_XP", "OVERLAY", FONT_TEMPLATE)
+	xpText:SetJustifyH("CENTER")
+	xpText:SetJustifyV("MIDDLE")
+	xpText:SetPoint("CENTER", xpBar, "CENTER")
 	
-	local resttex = XPBar:CreateTexture(ADDON.."_Tex_RestedXPTex", "BORDER")
-	resttex:SetTexture(TEX_BAR)
-	resttex:SetVertexColor(r, g, b, a)
+	local repBar = CreateFrame("Frame", ADDON.."_Bar_Reputation", mainFrame)
 
-	r, g, b, a = self:GetColor("None")
-	
-	local notex = XPBar:CreateTexture(ADDON.."_Tex_NoXPTex", "BACKGROUND")
-	notex:SetTexture(TEX_BAR)
-	notex:SetVertexColor(r, g, b, a)
-	notex:SetAllPoints(XPBar)
-	
-	local xptext = XPBar:CreateFontString(ADDON.."_XPText", "OVERLAY", FONT_DEFAULT)
-	--xptext:SetWidth(600) -- just make it big enough
-	--xptext:SetHeight(600) -- just make it big enough
-	xptext:SetJustifyH("CENTER")
-	xptext:SetJustifyV("MIDDLE")
-	xptext:SetPoint("CENTER", XPBar, "CENTER")
-	
-	local RepBar = CreateFrame("Frame", ADDON.."_Bar_RepBar", MainFrame)
+	local repTex   = repBar:CreateTexture(ADDON.."_Tex_Rep",   "BACKGROUND")
+	local norepTex = repBar:CreateTexture(ADDON.."_Tex_NoRep", "BACKGROUND")
 
-	r, g, b, a = self:GetColor("Rep")
-	
-	local reptex = RepBar:CreateTexture(ADDON.."_Tex_RepTex", "ARTWORK")
-	reptex:SetTexture(TEX_BAR)
-	reptex:SetVertexColor(r, g, b, a)
-
-	local rspark = RepBar:CreateTexture(ADDON.."_Tex_RepSpark", "OVERLAY")
+	local rspark = repBar:CreateTexture(ADDON.."_Tex_RepSpark", "OVERLAY")
 	rspark:SetTexture(TEX_SPARK)
-	rspark:SetVertexColor(r, g, b, intensity)
 	rspark:SetBlendMode("ADD")
 
-	local rspark2 = RepBar:CreateTexture(ADDON.."_Tex_RepSpark2", "OVERLAY")
+	local rspark2 = repBar:CreateTexture(ADDON.."_Tex_RepSparkMini", "OVERLAY")
 	rspark2:SetTexture(TEX_SPARK2)
 	rspark2:SetBlendMode("ADD")
 
-	r, g, b, a = self:GetColor("NoRep")
+	local repText = repBar:CreateFontString(ADDON.."_Text_Reputation", "OVERLAY", FONT_TEMPLATE)
+	repText:SetJustifyH("CENTER")
+	repText:SetJustifyV("MIDDLE")
+	repText:SetPoint("CENTER", repBar, "CENTER")
 	
-	local noreptex = RepBar:CreateTexture(ADDON.."_Tex_NoRepTex", "BACKGROUND")
-	noreptex:SetTexture(TEX_BAR)
-	noreptex:SetVertexColor(r, g, b, a)
-	noreptex:SetAllPoints(RepBar)
-
-	local reptext = RepBar:CreateFontString(ADDON.."_RepText", "OVERLAY", FONT_DEFAULT)
-	reptext:SetJustifyH("CENTER")
-	reptext:SetJustifyV("MIDDLE")
-	reptext:SetPoint("CENTER", RepBar, "CENTER")
+	local border = CreateFrame("Frame", ADDON.."_Bar_Border", mainFrame)
 	
-	local Border = CreateFrame("Frame", ADDON.."_Bar_Border", MainFrame)
+	local borderTex = border:CreateTexture(ADDON.."_Tex_Border", "BACKGROUND")
+	borderTex:SetTexture(TEX_BORDER)
+	borderTex:SetAllPoints()
 	
-	local bordtex = Border:CreateTexture(ADDON.."_Tex_BorderTex", "BACKGROUND")
-	bordtex:SetTexture(TEX_BORDER)
-	bordtex:SetVertexColor(0, 0, 0, 1)
-	bordtex:SetAllPoints(Border)
-
-	self.MainFrame   = MainFrame
-	self.XPBar       = XPBar
-	self.XPBarTex    = tex
-	self.Spark       = spark
-	self.Spark2      = spark2
-	self.NoXPTex     = notex
-	self.RestedXPTex = resttex
-	self.XPText      = xptext
-	self.RepBar      = RepBar
-	self.RepBarTex   = reptex
-	self.RepSpark    = rspark
-	self.RepSpark2   = rspark2
-	self.NoRepTex    = noreptex
-	self.RepText     = reptext
-	self.Border      = Border
-	self.BorderTex   = bordtex	
+	moduleData.MainFrame   = mainFrame
+	moduleData.XPBar       = xpBar
+	moduleData.XPBarTex    = tex
+	moduleData.Spark       = spark
+	moduleData.Spark2      = spark2
+	moduleData.NoXPTex     = noTex
+	moduleData.RestedXPTex = restTex
+	moduleData.XPText      = xpText
+	moduleData.RepBar      = repBar
+	moduleData.RepBarTex   = repTex
+	moduleData.RepSpark    = rspark
+	moduleData.RepSpark2   = rspark2
+	moduleData.NoRepTex    = norepTex
+	moduleData.RepText     = repText
+	moduleData.Border      = border
+	moduleData.BorderTex   = borderTex	
 	
-	self.barTextures = { tex, notex, resttex, spark, spark2, reptex, noreptex, rspark, rspark2, }
+	moduleData.barTextures = { tex, noTex, restTex, spark, spark2, repTex, norepTex, rspark, rspark2, }
 
 	-- aux vars to simplify tick handling
-	self.bars.XP         = self.XPBar
-	self.bars.Reputation = self.RepBar	
+	moduleData.bars.XP         = moduleData.XPBar
+	moduleData.bars.Reputation = moduleData.RepBar
+	
+	-- update colors
+	for id in self:IterateColors() do
+		self:UpdateColor(id)
+	end
 end
 
 function Bar:Reanchor()
@@ -262,10 +253,14 @@ function Bar:Reanchor()
 	local offsetDir   = 0
 	local visibleBars = 0
 	
-	self.anchorFrame = self:GetSetting("Frame") and getglobal(self:GetSetting("Frame")) or nil
+	self:Hide()
 	
-	if self.anchorFrame == nil then
-		self:Hide()
+	-- detach from old frame
+	moduleData.MainFrame:ClearAllPoints()
+	
+	moduleData.anchorFrame = self:GetSetting("Frame") and getglobal(self:GetSetting("Frame")) or nil
+	
+	if moduleData.anchorFrame == nil then
 		return 
 	end
 	
@@ -274,9 +269,9 @@ function Bar:Reanchor()
 	local inverse  = self:GetSetting("Inverse")
 		
 	if location == "Top" or location == "Bottom" then
-		self.horizontal = true
+		moduleData.horizontal = true
 	else
-		self.horizontal = false
+		moduleData.horizontal = false
 	end
 
 	-- assign anchor points
@@ -288,145 +283,53 @@ function Bar:Reanchor()
 		relpoint = "BOTTOMLEFT"
 	end
 
-	if self.horizontal then
+	if moduleData.horizontal then
 		if (location == "Top" and (not inside) ) or
 			(location ~= "Top" and inside) then
 			point = "BOTTOMLEFT"
-			self.BorderTex:SetTexCoord(unpack(ORIENTATION_FLIP_HORIZONTAL))
-			offsetDir = 1
+			moduleData.BorderTex:SetTexCoord(unpack(ORIENTATION_FLIP_HORIZONTAL))
 		else
 			point = "TOPLEFT"
-			self.BorderTex:SetTexCoord(unpack(ORIENTATION_DEFAULT))
-			offsetDir = -1
+			moduleData.BorderTex:SetTexCoord(unpack(ORIENTATION_DEFAULT))
 		end
 
-		for _, tex in ipairs(self.barTextures) do
-			tex:SetTexCoord(unpack(ORIENTATION_DEFAULT))
-		end
+		self:SetTexPoints("LEFT", "RIGHT", "TOP", "BOTTOM")		
 	else
 		if (location == "Right" and (not inside) ) or
 			(location ~= "Right" and inside) then
 			point = "BOTTOMLEFT"
-			self.BorderTex:SetTexCoord(unpack(ORIENTATION_ROTATE_LEFT_90))
-			offsetDir = 1
+			moduleData.BorderTex:SetTexCoord(unpack(ORIENTATION_ROTATE_LEFT_90))
 		else
 			point = "BOTTOMRIGHT"
-			self.BorderTex:SetTexCoord(unpack(ORIENTATION_ROTATE_RIGHT_90))
-			offsetDir = -1
+			moduleData.BorderTex:SetTexCoord(unpack(ORIENTATION_ROTATE_RIGHT_90))
 		end
-
-		for _, tex in ipairs(self.barTextures) do
-			tex:SetTexCoord(unpack(ORIENTATION_ROTATE_LEFT_90))
-		end
+		
+		self:SetTexPoints("BOTTOM", "TOP", "LEFT", "RIGHT")		
 	end
 	
-	-- detach from old frame
-	self.MainFrame:ClearAllPoints()
-	self.XPBar:ClearAllPoints()
-	self.RepBar:ClearAllPoints()
-	self.Border:ClearAllPoints()
-	
-	local thickness = self:GetSetting("Thickness")
-	
-	-- attach to new frame
 	local xOffset = self:GetSetting("xOffset")
 	local yOffset = self:GetSetting("yOffset")
 	
-	self:AttachBarToFrame(self.MainFrame, point, self.anchorFrame, relpoint, xOffset, yOffset)
+	-- attach to new frame
+	moduleData.MainFrame:SetParent(moduleData.anchorFrame)
+	moduleData.MainFrame:SetPoint(point, moduleData.anchorFrame, relpoint, xOffset, yOffset)
 	
-	if self:GetSetting("ShowXP") then
-		local offset = 0
-		
-		if inverse and self:GetSetting("ShowRep") then
-			offset = offsetDir * thickness
-		end
-		
-		if self.horizontal then
-			xOffset = 0
-			yOffset = offset
-		else
-			xOffset = offset
-			yOffset = 0
-		end
-		
-		self:AttachBarToFrame(self.XPBar, point, self.MainFrame, point, xOffset, yOffset)
-		
-		visibleBars = visibleBars + 1
-	end
-		
-	if self:GetSetting("ShowRep") then
-		local offset = 0
-		
-		if not inverse and self:GetSetting("ShowXP") then
-			offset = offsetDir * thickness
-		end
-		
-		if self.horizontal then
-			xOffset = 0
-			yOffset = offset
-		else
-			xOffset = offset
-			yOffset = 0
-		end
-
-		self:AttachBarToFrame(self.RepBar, point, self.MainFrame, point, xOffset, yOffset)
-
-		visibleBars = visibleBars + 1
-	end
-		
-	if self:GetSetting("Shadow") then
-		if self.horizontal then
-			xOffset = 0
-			yOffset = visibleBars * thickness * offsetDir
-		else
-			xOffset = visibleBars * thickness * offsetDir
-			yOffset = 0
-		end
-
-		self:AttachBarToFrame(self.Border, point, self.MainFrame, point, xOffset, yOffset)
-	end
+	-- setup bars
+	self:SetupBars(location, inverse, inside)		
 	
-	-- reset tex points
-	self.Spark:ClearAllPoints()
-	self.Spark2:ClearAllPoints()
-
-	self:RestoreTexturePoints(self.XPBarTex,    self.XPBar)
-	self:RestoreTexturePoints(self.RestedXPTex, self.XPBar)
-	
-	self.RepSpark:ClearAllPoints()
-	self.RepSpark2:ClearAllPoints()
-
-	self:RestoreTexturePoints(self.RepBarTex, self.RepBar)
+	-- setup sparks
+	self:SetupSparks()
 
 	-- setup ticks
 	self:SetupTicks("XP")
 	self:SetupTicks("Reputation")
 	
-	-- restore default dimensions for border and spark
-	if self.horizontal then
-		self.Spark:SetWidth(SPARK_LEN_MAX)
-		self.Spark2:SetWidth(SPARK2_LEN_MAX)
-
-		self.RepSpark:SetWidth(SPARK_LEN_MAX)
-		self.RepSpark2:SetWidth(SPARK2_LEN_MAX)
-
-		self.Border:SetHeight(BORDER_HEIGHT)
-	else
-		self.Spark:SetHeight(SPARK_LEN_MAX)
-		self.Spark2:SetHeight(SPARK2_LEN_MAX)
-
-		self.RepSpark:SetHeight(SPARK_LEN_MAX)
-		self.RepSpark2:SetHeight(SPARK2_LEN_MAX)
-
-		self.Border:SetWidth(BORDER_HEIGHT)
-	end
-	
 	if self:GetSetting("MouseOver") then
-		self.XPText:Hide()
-		self.RepText:Hide()
+		moduleData.XPText:Hide()
+		moduleData.RepText:Hide()
 	else
-		self.XPText:Show()
-		self.RepText:Show()
+		moduleData.XPText:Show()
+		moduleData.RepText:Show()
 	end	
 
 	-- refresh settings
@@ -437,269 +340,395 @@ function Bar:Reanchor()
 	self:UpdateFont()
 	
 	-- (re)anchoring finished
-	self.anchored = true	
+	moduleData.anchored = true	
+	
+	self:Update()
 	
 	self:Show()
-
-	self:Update()
-
-	if Jostle then Jostle:Refresh() end
 end
 
-function Bar:RestoreTexturePoints(tex, bar)
-	if not tex or not bar then
-		return
-	end
+function Bar:SetupBars(side, inverse, inside)
+	moduleData.XPBar:ClearAllPoints()
+	moduleData.RepBar:ClearAllPoints()
+	moduleData.Border:ClearAllPoints()
 
-	tex:ClearAllPoints()
+	local front, back, first, second
 	
-	for _, side in ipairs(SIDES) do
-		tex:SetPoint(side, bar, side)
-	end
-end
-
-function Bar:AttachBarToFrame(bar, point, frame, relpoint, xOffset, yOffset)
-	if not bar then
+	if side == "Top" or side == "Bottom" then
+		front = "LEFT"
+		back  = "RIGHT"
+		
+		if side == "Bottom" then
+			first  = inside and "BOTTOM" or "TOP"
+			second = inside and "TOP" or "BOTTOM"
+		else
+			first  = inside and "TOP" or "BOTTOM"
+			second = inside and "BOTTOM" or "TOP"
+		end
+	elseif side == "Left" or side == "Right" then
+		front = "BOTTOM"
+		back  = "TOP"
+		
+		if side == "Right" then
+			first  = inside and "RIGHT" or "LEFT"
+			second = inside and "LEFT" or "RIGHT"
+		else
+			first  = inside and "LEFT" or "RIGHT"
+			second = inside and "RIGHT" or "LEFT"
+		end
+	else
 		return
+	end	
+	
+	local showXP     = self:GetSetting("ShowXP")
+	local showRep    = self:GetSetting("ShowRep")
+	local showBorder = self:GetSetting("Shadow")
+
+	-- xp bar
+	if showXP then
+		moduleData.XPBar:SetPoint(front)
+		moduleData.XPBar:SetPoint(back)
+					
+		if inverse and showRep then
+			moduleData.XPBar:SetPoint(first, moduleData.RepBar, second)
+		else
+			moduleData.XPBar:SetPoint(first)
+		end
+		
+		if not showBorder and (inverse or not showRep) then
+			moduleData.XPBar:SetPoint(second)
+		end
 	end
 	
-	bar:SetParent(frame)
-	bar:SetPoint(point, frame, relpoint, xOffset, yOffset)
+	-- rep bar
+	if showRep then
+		moduleData.RepBar:SetPoint(front)
+		moduleData.RepBar:SetPoint(back)
+					
+		if not inverse and showXP then
+			moduleData.RepBar:SetPoint(first, moduleData.XPBar, second)
+		else
+			moduleData.RepBar:SetPoint(first)
+		end
+		
+		if not showBorder and (not inverse or not showXP) then
+			moduleData.RepBar:SetPoint(second)
+		end
+	end
+	
+	-- border
+	if showBorder then
+		moduleData.Border:SetPoint(front)
+		moduleData.Border:SetPoint(back)
+					
+		if showXP or showRep then
+			local neighbor = inverse and showXP and moduleData.XPBar or moduleData.RepBar
+			
+			moduleData.Border:SetPoint(first, neighbor, second)
+		else
+			moduleData.Border:SetPoint(first)
+		end
+		
+		moduleData.Border:SetPoint(second)
+	end
 end
 
-function Bar:TextureSetPoint(tex, bar, point, offset)
+-- viewed in progress direction of bar: front and back are moving, left right are fixed
+function Bar:SetTexPoints(front, back, left, right)
+	moduleData.XPBarTex:ClearAllPoints()
+	moduleData.RestedXPTex:ClearAllPoints()
+	moduleData.NoXPTex:ClearAllPoints()
+	moduleData.RepBarTex:ClearAllPoints()
+	moduleData.NoRepTex:ClearAllPoints()
+
+	-- left and right points are fixed
+	moduleData.XPBarTex:SetPoint(left)
+	moduleData.RestedXPTex:SetPoint(left)
+	moduleData.NoXPTex:SetPoint(left)
+	moduleData.RepBarTex:SetPoint(left)
+	moduleData.NoRepTex:SetPoint(left)
+	
+	moduleData.XPBarTex:SetPoint(right)
+	moduleData.RestedXPTex:SetPoint(right)
+	moduleData.NoXPTex:SetPoint(right)
+	moduleData.RepBarTex:SetPoint(right)
+	moduleData.NoRepTex:SetPoint(right)
+	
+	-- textures are attached side by side
+	moduleData.XPBarTex:SetPoint(front)
+	moduleData.RestedXPTex:SetPoint(front, moduleData.XPBarTex, back)
+	moduleData.NoXPTex:SetPoint(front, moduleData.RestedXPTex, back)
+	moduleData.NoXPTex:SetPoint(back)
+	
+	moduleData.RepBarTex:SetPoint(front)
+	moduleData.NoRepTex:SetPoint(front, moduleData.RepBarTex, back)
+	moduleData.NoRepTex:SetPoint(back)	
+end
+
+function Bar:SetupSparks()	
+	local back, xOffset, yOffset, orientation
+	
+	if moduleData.horizontal then
+		back = "RIGHT"
+		xOffset = 1
+		yOffset = 0
+		orientation = ORIENTATION_DEFAULT
+	else
+		back = "TOP"
+		xOffset = 0
+		yOffset = 1
+		orientation = ORIENTATION_ROTATE_LEFT_90
+	end
+	
+	-- set texture orientation
+	moduleData.Spark:SetTexCoord(unpack(orientation))
+	moduleData.Spark2:SetTexCoord(unpack(orientation))
+	moduleData.RepSpark:SetTexCoord(unpack(orientation))
+	moduleData.RepSpark2:SetTexCoord(unpack(orientation))
+	
+	-- attach sparks to the backside of XP/RepBarTex
+	moduleData.Spark:ClearAllPoints()
+	moduleData.Spark:SetPoint(back, moduleData.XPBarTex, back, xOffset*4, yOffset*4)
+
+	moduleData.Spark2:ClearAllPoints()
+	moduleData.Spark2:SetPoint(back, moduleData.XPBarTex, back, xOffset*1, yOffset*1)
+	
+	moduleData.RepSpark:ClearAllPoints()
+	moduleData.RepSpark:SetPoint(back, moduleData.RepBarTex, back, xOffset*4, yOffset*4)
+
+	moduleData.RepSpark2:ClearAllPoints()
+	moduleData.RepSpark2:SetPoint(back, moduleData.RepBarTex, back, xOffset*1, yOffset*1)
+end
+
+function Bar:UpdateTextureCoords(tex, from, to)
 	if not tex then
 		return
 	end
 
-	local xOffset, yOffset
-	
-	if self.horizontal then
-		xOffset = offset
-		yOffset = 0
+	if moduleData.horizontal then
+		tex:SetTexCoord(from, 0, from, 1, to, 0, to,   1)
 	else
-		xOffset = 0
-		yOffset = offset
+		tex:SetTexCoord(to,   0, from, 0, to, 1, from, 1)
 	end
-	
-	tex:SetPoint(point, bar, point, xOffset, yOffset)
 end
 
 function Bar:Update()
-	local length
 	local front, back, barlength
 
-	if self.anchorFrame == nil then
+	if moduleData.anchorFrame == nil then
 		return
 	end
 	
-	if self.horizontal then
+	local setLength
+	
+	if moduleData.horizontal then
 		front = "LEFT"
 		back  = "RIGHT"
 	
-		barlength = self.anchorFrame:GetWidth()
+		barlength = moduleData.anchorFrame:GetWidth()
 
-		-- adjust to possible changes in parent frame dimensions
-		self.MainFrame:SetWidth(barlength)
-		self.XPBar:SetWidth(barlength)
-		self.RepBar:SetWidth(barlength)
-		self.Border:SetWidth(barlength)
+		setLength = "SetWidth"
 	else
 		front = "BOTTOM"
 		back  = "TOP"
 	
-		barlength = self.anchorFrame:GetHeight()
+		barlength = moduleData.anchorFrame:GetHeight()
 
-		-- adjust to possible changes in parent frame dimensions
-		self.MainFrame:SetHeight(barlength)
-		self.XPBar:SetHeight(barlength)
-		self.RepBar:SetHeight(barlength)
-		self.Border:SetHeight(barlength)
+		setLength = "SetHeight"
 	end
 
+	-- adjust to possible changes in parent frame dimensions
+	moduleData.MainFrame[setLength](moduleData.MainFrame, barlength)
+	-- TODO: check if it can be skipped
+	moduleData.XPBar[setLength](moduleData.XPBar, barlength)
+	moduleData.RepBar[setLength](moduleData.RepBar, barlength)
+	moduleData.Border[setLength](moduleData.Border, barlength)
+	
 	if self:GetSetting("ShowXP") then
-		length = self.progress.XP * barlength
-		
-		self:TextureSetPoint(self.XPBarTex, self.XPBar, back, length-barlength)
-		self:TextureSetPoint(self.RestedXPTex, self.XPBar, front, length)
-
-		self:TextureSetPoint(self.Spark, self.XPBar, back, length-barlength+4)
-		self:TextureSetPoint(self.Spark2, self.XPBar, back, length-barlength+1)
-		
-		-- resize spark to avoid excessive overlapping
-		if self.horizontal then
-			self.Spark:SetWidth(CalcSparkLength(SPARK_LEN_MIN, SPARK_LEN_MAX, length))
-			self.Spark2:SetWidth(CalcSparkLength(SPARK2_LEN_MIN, SPARK2_LEN_MAX, length))	
-		else
-			self.Spark:SetHeight(CalcSparkLength(SPARK_LEN_MIN, SPARK_LEN_MAX, length))
-			self.Spark2:SetHeight(CalcSparkLength(SPARK2_LEN_MIN, SPARK2_LEN_MAX, length))	
+		local xp     = self:GetProgress("XP")
+		local rested = self:GetProgress("Rested")
+	
+		if xp + rested > 1 then
+			rested = 1 - xp
 		end
+	
+		local xpLength   = xp == 0 and EPSILON or xp * barlength
+		local restLength = rested == 0 and EPSILON or rested * barlength
+	
+		-- bar sections
+		moduleData.XPBarTex[setLength](moduleData.XPBarTex, xpLength)
+		moduleData.RestedXPTex[setLength](moduleData.RestedXPTex, restLength)
 		
-		if self.progress.XP + self.progress.Rested > 1 then
-			length = barlength
-		else
-			length = length + self.progress.Rested * barlength
-		end
-
-		self:TextureSetPoint(self.RestedXPTex, self.XPBar, back, length-barlength)
-
+		self:UpdateTextureCoords(moduleData.XPBarTex, 0, xp)
+		self:UpdateTextureCoords(moduleData.RestedXPTex, xp, xp+rested)
+		self:UpdateTextureCoords(moduleData.NoXPTex, xp+rested, 1)
+	
+		-- spark
+		-- resize to avoid excessive overlapping
+		moduleData.Spark[setLength](moduleData.Spark, CalcSparkLength(SPARK_LEN_MIN, SPARK_LEN_MAX, xpLength))
+		moduleData.Spark2[setLength](moduleData.Spark2, CalcSparkLength(SPARK2_LEN_MIN, SPARK2_LEN_MAX, xpLength))	
+		
+		-- ticks
 		self:UpdateTicks("XP", barlength, front)
 		
 		local text = self:GetText("XP")
 		
-		if not self.horizontal then
+		if not moduleData.horizontal then
 			text = vertical(text)
 		end
 	
-		self.XPText:SetText(text)
+		-- text
+		moduleData.XPText:SetText(text)
 			
-		if self.XPText:IsShown() then
-			self.XPText:Show()
+		if moduleData.XPText:IsShown() then
+			moduleData.XPText:Show()
 		end
 	end
 
 	if self:GetSetting("ShowRep") then
-		length = self.progress.Reputation * barlength
-		
-		self:TextureSetPoint(self.RepBarTex, self.RepBar, back, length-barlength)
+		local reputation = self:GetProgress("Reputation")
+		local length = reputation == 0 and EPSILON or reputation * barlength
+	
+		-- bar sections
+		moduleData.RepBarTex[setLength](moduleData.RepBarTex, length)
 
-		self:TextureSetPoint(self.RepSpark, self.RepBar, back, length-barlength+4)
-		self:TextureSetPoint(self.RepSpark2, self.RepBar, back, length-barlength+1)
-		
-		-- resize spark to avoid excessive overlapping
-		if self.horizontal then
-			self.RepSpark:SetWidth(CalcSparkLength(SPARK_LEN_MIN, SPARK_LEN_MAX, length))
-			self.RepSpark2:SetWidth(CalcSparkLength(SPARK2_LEN_MIN, SPARK2_LEN_MAX, length))	
-		else
-			self.RepSpark:SetHeight(CalcSparkLength(SPARK_LEN_MIN, SPARK_LEN_MAX, length))
-			self.RepSpark2:SetHeight(CalcSparkLength(SPARK2_LEN_MIN, SPARK2_LEN_MAX, length))	
-		end
+		self:UpdateTextureCoords(moduleData.RepBarTex, 0, reputation)
+		self:UpdateTextureCoords(moduleData.NoRepTex, reputation, 1)
 
+		-- spark
+		-- resize to avoid excessive overlapping
+		moduleData.RepSpark[setLength](moduleData.RepSpark, CalcSparkLength(SPARK_LEN_MIN, SPARK_LEN_MAX, length))
+		moduleData.RepSpark2[setLength](moduleData.RepSpark2, CalcSparkLength(SPARK2_LEN_MIN, SPARK2_LEN_MAX, length))	
+
+		-- ticks
 		self:UpdateTicks("Reputation", barlength, front)
 		
+		-- text
 		local text = self:GetText("Reputation")
 		
-		if not self.horizontal then
+		if not moduleData.horizontal then
 			text = vertical(text)
 		end
 	
-		self.RepText:SetText(text)
+		moduleData.RepText:SetText(text)
 			
-		if self.RepText:IsShown() then
-			self.RepText:Show()
+		if moduleData.RepText:IsShown() then
+			moduleData.RepText:Show()
 		end
 	end
 end
 
 function Bar:Show()
-	local height = 0
-	
 	self:Hide()
 
 	local jostle    = self:GetSetting("Jostle")
 	local location  = self:GetSetting("Location")
 	
 	if self:GetSetting("ShowXP") then
-		self.XPBar:Show()
+		moduleData.XPBar:Show()
 
 		-- register for jostle
-		if Jostle and jostle and self.horizontal then
+		if Jostle and jostle and moduleData.horizontal then
 			if location == "Bottom" then
-				Jostle:RegisterTop(self.XPBar)
+				Jostle:RegisterTop(moduleData.XPBar)
 			else
-				Jostle:RegisterBottom(self.XPBar)
+				Jostle:RegisterBottom(moduleData.XPBar)
 			end
 		end		
 	end
 	
 	if self:GetSetting("ShowRep") then
-		self.RepBar:Show()
+		moduleData.RepBar:Show()
 
 		-- register for jostle
-		if Jostle and jostle and self.horizontal then
+		if Jostle and jostle and moduleData.horizontal then
 			if location == "Bottom" then
-				Jostle:RegisterTop(self.RepBar)
+				Jostle:RegisterTop(moduleData.RepBar)
 			else
-				Jostle:RegisterBottom(self.RepBar)
+				Jostle:RegisterBottom(moduleData.RepBar)
 			end
 		end
 	end
 	
 	if self:GetSetting("Shadow") then
-		self.Border:Show()
+		moduleData.Border:Show()
 	end
 
-	self.MainFrame:Show() 
+	moduleData.MainFrame:Show()
+	
+	if Jostle then Jostle:Refresh() end	
 end
 
 function Bar:Hide()
 	-- remove from jostle
 	if Jostle then
-		Jostle:Unregister(self.XPBar)
-		Jostle:Unregister(self.RepBar)
+		Jostle:Unregister(moduleData.XPBar)
+		Jostle:Unregister(moduleData.RepBar)
 	end
 
-	self.XPBar:Hide()
-	self.Border:Hide()
-	self.RepBar:Hide()
+	moduleData.XPBar:Hide()
+	moduleData.RepBar:Hide()
+	moduleData.Border:Hide()
 	
-	self.MainFrame:Hide() 
+	moduleData.MainFrame:Hide() 
+	
+	if Jostle then Jostle:Refresh() end	
 end
 
 function Bar:OnMouseEnter()
 	if self:GetSetting("MouseOver") then
-		if not self.XPText:IsShown() then
-			self.XPText:Show()
+		if not moduleData.XPText:IsShown() then
+			moduleData.XPText:Show()
 		end
-		if not self.RepText:IsShown() then
-			self.RepText:Show()
+		if not moduleData.RepText:IsShown() then
+			moduleData.RepText:Show()
 		end
 	end
 end
 
 function Bar:OnMouseLeave()
 	if self:GetSetting("MouseOver") then
-		if self.XPText:IsShown() then
-			self.XPText:Hide()
+		if moduleData.XPText:IsShown() then
+			moduleData.XPText:Hide()
 		end
-		if self.RepText:IsShown() then
-			self.RepText:Hide()
+		if moduleData.RepText:IsShown() then
+			moduleData.RepText:Hide()
 		end
 	end
 end
 
 -- ticks
 function Bar:SetupTicks(id)
-	if not self.bars[id] then
+	if not moduleData.bars[id] then
 		return
 	end
 	
 	local ticks = self:GetSetting("Ticks")
 
 	-- create all required ticks
-	for i = #self.ticks[id] + 1, ticks do
-		local tick = self:NewTick(self.bars[id])
+	for i = #moduleData.ticks[id] + 1, ticks do
+		local tick = self:NewTick(moduleData.bars[id])
 		
-		self.ticks[id][i] = tick
+		moduleData.ticks[id][i] = tick
 	end
 	
 	-- remove surplus ticks
-	for i = #self.ticks[id], ticks + 1, -1 do
-		self:DelTick(self.ticks[id][i])
-		self.ticks[id][i] = nil		
+	for i = #moduleData.ticks[id], ticks + 1, -1 do
+		self:DelTick(moduleData.ticks[id][i])
+		moduleData.ticks[id][i] = nil		
 	end	
 end
 
 function Bar:NewTick(bar)
-	local newTick = next(self.tickPool)
+	local newTick = next(moduleData.tickPool)
 	
 	if not newTick then
-		self.tickCount = self.tickCount + 1
-		newTick = bar:CreateTexture(ADDON.."_Tick_"..tostring(self.tickCount), "OVERLAY")
+		moduleData.tickCount = moduleData.tickCount + 1
+		newTick = bar:CreateTexture(ADDON.."_Tick_"..tostring(moduleData.tickCount), "OVERLAY")
 		newTick:SetBlendMode("ADD")	
 	else
 		newTick:SetParent(bar)
-		self.tickPool[newTick] = nil
+		moduleData.tickPool[newTick] = nil
 	end
 	
 	newTick:Show()
@@ -710,28 +739,28 @@ end
 function Bar:DelTick(tick)
 	if tick then
 		tick:Hide()
-		self.tickPool[tick] = true
+		moduleData.tickPool[tick] = true
 	end
 end
 
 function Bar:UpdateTicks(id, length, front)
-	if not self.ticks[id] or #self.ticks[id] == 0 then
+	if not moduleData.ticks[id] or #moduleData.ticks[id] == 0 then
 		return
 	end
 	
-	local progress = self.progress[id] * length
-	local count    = #self.ticks[id]
+	local progress = moduleData.progress[id] * length
+	local count    = #moduleData.ticks[id]
 	local interval = length / (count + 1)
 
 	for i = 1, count do
-		local tick = self.ticks[id][i]
+		local tick = moduleData.ticks[id][i]
 		
 		local pos = i * interval
 		
-		if self.horizontal then
-			tick:SetPoint("CENTER", self.bars[id], front, pos, 0)
+		if moduleData.horizontal then
+			tick:SetPoint("CENTER", moduleData.bars[id], front, pos, 0)
 		else
-			tick:SetPoint("CENTER", self.bars[id], front, 0,   pos)
+			tick:SetPoint("CENTER", moduleData.bars[id], front, 0,   pos)
 		end
 
 		if pos <= progress then
@@ -743,6 +772,10 @@ function Bar:UpdateTicks(id, length, front)
 end
 
 -- properties
+function Bar:IsAnchored()
+	return moduleData.anchored
+end
+
 function Bar:UpdateThickness()
 	local thickness = self:GetSetting("Thickness")
 	local mainThickness = 0
@@ -759,47 +792,38 @@ function Bar:UpdateThickness()
 		mainThickness = mainThickness + BORDER_HEIGHT
 	end	
 	
-	if self.horizontal then
-		self.MainFrame:SetHeight(mainThickness)
-
-		self.XPBar:SetHeight(thickness)
-		self.Spark:SetHeight(thickness * 2 + 12)
-		self.Spark2:SetHeight(thickness * 8)
-
-		self.RepBar:SetHeight(thickness)
-		self.RepSpark:SetHeight(thickness * 2 + 12)
-		self.RepSpark2:SetHeight(thickness * 8)
-		
-		for _, tick in ipairs(self.ticks.XP) do
-			tick:SetHeight(thickness)
-			tick:SetWidth(TICK_WIDTH)
-		end
-
-		for _, tick in ipairs(self.ticks.Reputation) do
-			tick:SetHeight(thickness)
-			tick:SetWidth(TICK_WIDTH)
-		end
+	local setThickness
+	local setTickWidth
+	
+	if moduleData.horizontal then
+		setThickness = "SetHeight"
+		setTickWidth = "SetWidth"
 	else
-		self.MainFrame:SetWidth(mainThickness)
-		
-		self.XPBar:SetWidth(thickness)
-		self.Spark:SetWidth(thickness * 2 + 12)
-		self.Spark2:SetWidth(thickness * 8)
-
-		self.RepBar:SetWidth(thickness)
-		self.RepSpark:SetWidth(thickness * 2 + 12)
-		self.RepSpark2:SetWidth(thickness * 8)
-		
-		for _, tick in ipairs(self.ticks.XP) do
-			tick:SetWidth(thickness)
-			tick:SetHeight(TICK_WIDTH)
-		end
-
-		for _, tick in ipairs(self.ticks.Reputation) do
-			tick:SetWidth(thickness)
-			tick:SetHeight(TICK_WIDTH)
-		end		
+		setThickness = "SetWidth"
+		setTickWidth = "SetHeight"
 	end
+	
+	thickness = thickness == 0 and EPSILON or thickness
+	mainThickness = mainThickness == 0 and EPSILON or mainThickness
+	
+	moduleData.MainFrame[setThickness](moduleData.MainFrame, mainThickness)
+
+	moduleData.XPBar[setThickness](moduleData.XPBar, thickness)
+	moduleData.Spark[setThickness](moduleData.Spark, thickness * 2 + 12)
+	moduleData.Spark2[setThickness](moduleData.Spark2, thickness * 8)
+
+	moduleData.RepBar[setThickness](moduleData.RepBar, thickness)
+	moduleData.RepSpark[setThickness](moduleData.RepSpark, thickness * 2 + 12)
+	moduleData.RepSpark2[setThickness](moduleData.RepSpark2, thickness * 8)
+	
+	for _, ticks in pairs(moduleData.ticks) do
+		for _, tick in ipairs(ticks) do
+			tick[setThickness](tick, thickness)
+			tick[setTickWidth](tick, TICK_WIDTH)
+		end
+	end
+	
+	moduleData.Border[setThickness](moduleData.Border, BORDER_HEIGHT)	
 end
 
 function Bar:UpdateColor(id)
@@ -809,17 +833,19 @@ function Bar:UpdateColor(id)
 	local spark
 	
 	if id == "XP" then
-		tex   = self.XPBarTex
-		spark = self.Spark
+		tex   = moduleData.XPBarTex
+		spark = moduleData.Spark
 	elseif id == "Rest" then
-		tex = self.RestedXPTex
+		tex = moduleData.RestedXPTex
 	elseif id == "None" then
-		tex = self.NoXPTex
+		tex = moduleData.NoXPTex
 	elseif id == "Rep" then
-		tex   = self.RepBarTex
-		spark = self.RepSpark
+		tex   = moduleData.RepBarTex
+		spark = moduleData.RepSpark
 	elseif id == "NoRep" then
-		tex = self.NoRepTex
+		tex = moduleData.NoRepTex
+	elseif id == "Border" then
+		tex = moduleData.BorderTex
 	end
 	
 	if tex ~= nil then
@@ -834,19 +860,20 @@ end
 function Bar:UpdateSparkIntensity()
 	local intensity = self:GetSetting("Spark")
 	
-	self.Spark:SetAlpha(intensity)
-	self.Spark2:SetAlpha(intensity)
-	self.RepSpark:SetAlpha(intensity)
-	self.RepSpark2:SetAlpha(intensity)
+	moduleData.Spark:SetAlpha(intensity)
+	moduleData.Spark2:SetAlpha(intensity)
+	moduleData.RepSpark:SetAlpha(intensity)
+	moduleData.RepSpark2:SetAlpha(intensity)
 end
 
 function Bar:UpdateStrata()
 	local strata = self:GetSetting("Strata")
 	
-	self.MainFrame:SetFrameStrata(strata)
-	self.XPBar:SetFrameStrata(strata)
-	self.RepBar:SetFrameStrata(strata)
-	self.Border:SetFrameStrata(strata)
+	-- TODO: all frames have to have their strata set? or do children inherit parents strata?
+	moduleData.MainFrame:SetFrameStrata(strata)
+	moduleData.XPBar:SetFrameStrata(strata)
+	moduleData.RepBar:SetFrameStrata(strata)
+	moduleData.Border:SetFrameStrata(strata)
 end
 
 function Bar:UpdateTexture()
@@ -862,11 +889,11 @@ function Bar:UpdateTexture()
 		texture = TEX_BAR
 	end
 
-	self.XPBarTex:SetTexture(texture)
-	self.NoXPTex:SetTexture(texture)
-	self.RestedXPTex:SetTexture(texture)
-	self.RepBarTex:SetTexture(texture)
-	self.NoRepTex:SetTexture(texture)
+	moduleData.XPBarTex:SetTexture(texture)
+	moduleData.RestedXPTex:SetTexture(texture)
+	moduleData.NoXPTex:SetTexture(texture)
+	moduleData.RepBarTex:SetTexture(texture)
+	moduleData.NoRepTex:SetTexture(texture)
 end
 
 function Bar:UpdateFont()
@@ -874,21 +901,23 @@ function Bar:UpdateFont()
 		return
 	end
 	
-	local font = self:GetSetting("Font")
+	local fontName = self:GetSetting("Font") or FONT_NAME_DEFAULT
 	
-	font = LibSharedMedia:Fetch("font", font)
+	font = LibSharedMedia:Fetch("font", fontName) or FONT_DEFAULT
 
-	if not font then
-		font = FONT_DEFAULT
-	end
+	local size = self:GetSetting("FontSize") or FONT_SIZE_DEFAULT
 
 	-- setup bar texts
-	self.XPText:SetFont(font, self:GetSetting("FontSize") or 6, FONT_STYLE)
-	self.RepText:SetFont(font, self:GetSetting("FontSize") or 6, FONT_STYLE)
+	moduleData.XPText:SetFont(font, size, FONT_STYLE)
+	moduleData.RepText:SetFont(font, size, FONT_STYLE)
+end
+
+function Bar:GetProgress(bar)
+	return moduleData.progress[bar] or 0
 end
 
 -- set bar progress in fraction of 1
-function Bar:SetBarProgress(bar, fraction)
+function Bar:SetProgress(bar, fraction)
 	if not bar or not fraction then
 		return
 	end
@@ -899,22 +928,22 @@ function Bar:SetBarProgress(bar, fraction)
 		fraction = 1
 	end
 	
-	self.progress[bar] = fraction
+	moduleData.progress[bar] = fraction
 end
 
 -- settings
 function Bar:GetSetting(option)
-	return self.settings[option]
+	return moduleData.settings[option]
 end
 
 function Bar:SetSetting(option, value, skipReanchor)
 	local current = self:GetSetting(option)
-
+	
 	if current == value then
 		return
 	end
 	
-	self.settings[option] = value
+	moduleData.settings[option] = value
 	
 	if not skipReanchor then
 		self:Reanchor()
@@ -922,26 +951,26 @@ function Bar:SetSetting(option, value, skipReanchor)
 end
 
 function Bar:GetColor(id)
-	local color = self.colors[id] or {r = 0, g = 0, b = 0, a = 0}
+	local color = moduleData.colors[id] or {r = 0, g = 0, b = 0, a = 0}
 
 	return color.r, color.g, color.b, color.a
 end
 
 function Bar:SetColor(id, r, g, b, a)
-	if not self.colors[id] then
+	if not moduleData.colors[id] then
 		return
 	end
 
-	self.colors[id].r = r
-	self.colors[id].g = g
-	self.colors[id].b = b
-	self.colors[id].a = a
+	moduleData.colors[id].r = r
+	moduleData.colors[id].g = g
+	moduleData.colors[id].b = b
+	moduleData.colors[id].a = a
 	
 	self:UpdateColor(id)
 end
 
 function Bar:GetText(bar)
-	return self.text[bar]
+	return moduleData.text[bar]
 end
 
 function Bar:SetText(bar, text)
@@ -959,5 +988,55 @@ function Bar:SetText(bar, text)
 		return
 	end
 	
-	self.text[bar] = text
+	moduleData.text[bar] = text
+end
+
+-- iterators
+
+-- function Bar:IterateSettings()
+-- function Bar:IterateColors()
+do --Do-end block for iterators
+	local tablestack = setmetatable({}, {__mode = 'k'})
+	
+	local function KeyOnlyIter(t, prestate)
+		if not t then 
+			return nil 
+		end
+
+		if t.iterator then
+			local key = t.iterator(t.t, prestate)
+
+			if key then
+				return key
+			end				
+		end
+		
+		tablestack[t] = true
+		return nil, nil		
+	end
+	
+	local function IterateTable(data)
+		local tbl = next(tablestack) or {}		
+		tablestack[tbl] = nil
+		
+		local iterator, t, state = pairs(data)
+		
+		tbl.iterator   = iterator
+		tbl.t          = t
+		
+		return KeyOnlyIter, tbl, state
+	end
+	
+	function Bar:IterateSettings()
+		return IterateTable(moduleData.settings)
+	end
+
+	function Bar:IterateColors()
+		return IterateTable(moduleData.colors)
+	end	
+end
+
+-- test
+function Bar:Debug(msg)
+	Addon:Debug("(Bar) " .. tostring(msg))
 end

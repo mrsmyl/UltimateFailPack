@@ -9,9 +9,6 @@ local tinsert       = table.insert
 local pairs         = pairs
 local tostring      = tostring
 
-local GetFactionInfo          = _G.GetFactionInfo
-local GetFriendshipReputation = _G.GetFriendshipReputation
-
 -- get translations
 local L = LibStub:GetLibrary("AceLocale-3.0"):GetLocale(ADDON)
 
@@ -93,7 +90,7 @@ function NS:ColorizeByValue(value, from, to, ...)
 end
 
 function NS:ClearTable(tab)
-	if tab and type(tab) == "table" then
+	if type(tab) == "table" then
 		for k in pairs(tab) do
 			tab[k] = nil
 		end
@@ -108,7 +105,11 @@ function NS:FormatTime(stamp)
 	local minutes = floor((stamp - days * 86400 - hours * 3600) / 60)
 	local seconds = floor((stamp - days * 86400 - hours * 3600 - minutes * 60))
 
-	return string_format("%02d:%02d:%02d", hours, minutes, seconds)
+	if days > 0 then
+		return string_format("%dd %02d:%02d", days, hours, minutes)
+	else
+		return string_format("%02d:%02d", hours, minutes)
+	end
 end
 
 local abbreviations = {
@@ -159,74 +160,3 @@ function NS:FormatNumber(number, sep, abbrev, decimals)
 	
 	return num .. decimal .. abbreviations[lvl]
 end
-
--- reputation interface (merging friendship into rep)
-function NS:GetFactionInfo(faction)
-	local name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = GetFactionInfo(faction)
-		
-	local currentRank, maxRank = GetFriendshipReputationRanks(factionID)
-
-	local friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
-	if friendID ~= nil then		
-		standingID = currentRank
-		
-		-- store localized standing text
-		self.friendStanding[standingID] = friendTextLevel
-		
-		barMin   = friendThreshold
-		barMax   = nextFriendThreshold or barMin + 1000
-		barValue = friendRep
-	end
-	
-	local atMax = standingID == maxRank and barValue + 1 == barMax
-	
-	return name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, friendID, atMax
-end
-
-function NS:GetStandingLabel(standing, friend)
-	if friend then
-		return NS.friendStanding[standing] or "???"
-	else
-		return _G["FACTION_STANDING_LABEL"..tostring(standing)] or "???"
-	end
-end
-
-function NS:GetBlizzardReputationColor(standing, friendship)
-	local r, g, b, a = 0, 0, 0, 0
-	
-	if type(standing) == "number" then
-		if friendship then
-			standing = standing + 2
-		end
-	
-		if self.blizzRepColors[standing] then
-			r = self.blizzRepColors[standing].r
-			g = self.blizzRepColors[standing].g
-			b = self.blizzRepColors[standing].b
-			a = self.blizzRepColors[standing].a
-		end
-	end
-		
-	return r, g, b, a
-end
-
-NS.friendStanding = {
-	[0] = "Stranger",
-	[1] = "Acquaintance",
-	[2] = "Buddy",
-	[3] = "Friend",
-	[4] = "Good Friend",
-	[5] = "Best Buddy",
-}
-
-NS.blizzRepColors = {
-	[1] = {r=0.80, g=0.13, b=0.13, a=1}, -- hated
-	[2] = {r=1.00, g=0.25, b=0.00, a=1}, -- hostile
-	[3] = {r=0.93, g=0.40, b=0.13, a=1}, -- unfriendly
-	[4] = {r=1.00, g=1.00, b=0.00, a=1}, -- neutral
-	[5] = {r=0.00, g=0.70, b=0.00, a=1}, -- friendly
-	[6] = {r=0.00, g=1.00, b=0.00, a=1}, -- honoured
-	[7] = {r=0.00, g=0.60, b=1.00, a=1}, -- revered
-	[8] = {r=0.00, g=1.00, b=1.00, a=1}, -- exalted
-}
-

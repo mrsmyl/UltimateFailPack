@@ -30,7 +30,7 @@ local moduleData = {
 
 -- module handling
 function DataBroker:OnInitialize()	
-	-- create the minimap button
+	-- create the data broker object
 	self:Create()
 end
 
@@ -87,5 +87,5 @@ end
 
 -- test
 function DataBroker:Debug(msg)
-	Addon:Debug("(DataBroker) " .. msg)
+	Addon:Debug("(DataBroker) " .. tostring(msg))
 end

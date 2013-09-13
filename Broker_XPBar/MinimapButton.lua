@@ -166,5 +166,5 @@ end
 
 -- test
 function MinimapButton:Debug(msg)
-	Addon:Debug("(MinimapButton) " .. msg)
+	Addon:Debug("(MinimapButton) " .. tostring(msg))
 end

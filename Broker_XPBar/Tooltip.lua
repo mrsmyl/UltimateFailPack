@@ -167,19 +167,21 @@ function Tooltip:Draw()
 		
 		-- show history data
 		if not Addon:GetSetting("TTHideXPDetails") and Addon.playerLvl < Addon.MAX_LEVEL then
-			Addon.History:Process()
+			local History = Addon:GetModule("History")
 			
-			local kph  = floor(Addon.History:GetKillsPerHour())
-			local xpph = floor(Addon.History:GetXPPerHour())
+			History:Process()
+			
+			local kph  = floor(History:GetKillsPerHour())
+			local xpph = floor(History:GetXPPerHour())
 			
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Session XP"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, Addon:FormatNumber(Addon.History.totalXP, FORMAT_NUMBER_PREFIX), "LEFT")
+			tooltip:SetCell(lineNum, 2, Addon:FormatNumber(History:GetTotalXP(), FORMAT_NUMBER_PREFIX), "LEFT")
 			
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Session kills"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, Addon.History.totalKills, "LEFT")
+			tooltip:SetCell(lineNum, 2, History:GetTotalKills(), "LEFT")
 			
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
@@ -193,11 +195,11 @@ function Tooltip:Draw()
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Time to level"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, Addon.History:GetTimeToLevel(), "LEFT")
+			tooltip:SetCell(lineNum, 2, History:GetTimeToLevel(), "LEFT")
 			
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Blueish", L["Kills to level"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, NS:Colorize("Red", Addon.History:GetKillsToLevel() ), "LEFT")		
+			tooltip:SetCell(lineNum, 2, NS:Colorize("Red", History:GetKillsToLevel() ), "LEFT")		
 		end
 		
 	end
@@ -205,10 +207,12 @@ function Tooltip:Draw()
 	-- add reputation data
 	local faction = Addon:GetFaction()
 	
-	if Addon:GetSetting("ShowRep") and faction ~= 0 then
+	if Addon:GetSetting("ShowRep") and faction then
+		local Factions = Addon:GetModule("Factions")
+	
 		lineNum = tooltip:AddLine(" ")
 	
-		local name, desc, standing, minRep, maxRep, currentRep, _, _, _, _, _, _, _, _, friendID = NS:GetFactionInfo(faction)
+		local name, desc, standing, minRep, maxRep, currentRep, _, _, _, _, _, _, _, _, friendID = Factions:GetFactionInfo(faction)
 		local r, g, b, a = Addon:GetBlizzardReputationColor(standing, friendID)
 		
 		lineNum = tooltip:AddLine(" ")
@@ -217,7 +221,7 @@ function Tooltip:Draw()
 
 		lineNum = tooltip:AddLine(" ")
 		tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Standing"]), "LEFT")
-		tooltip:SetCell(lineNum, 2, "|cff" .. string.format("%02x%02x%02x", r*255, g*255, b*255) .. NS:GetStandingLabel(standing, friendID) .. "|r", "LEFT")		
+		tooltip:SetCell(lineNum, 2, "|cff" .. string.format("%02x%02x%02x", r*255, g*255, b*255) .. Factions:GetStandingLabel(standing, friendID) .. "|r", "LEFT")		
 
 		if not Addon.atMaxRep then
 			local fullLevelRep = maxRep - minRep
@@ -245,10 +249,12 @@ function Tooltip:Draw()
 		
 		-- show history data
 		if not Addon:GetSetting("TTHideRepDetails") and not Addon.atMaxRep then
-			Addon.ReputationHistory:ProcessFaction(faction)
+			local ReputationHistory = Addon:GetModule("ReputationHistory")
 			
-			local total = Addon.ReputationHistory:GetTotalRep(faction)
-			local repph = floor(Addon.ReputationHistory:GetRepPerHour(faction))
+			ReputationHistory:ProcessFaction(faction)
+			
+			local total = ReputationHistory:GetTotalRep(faction)
+			local repph = floor(ReputationHistory:GetRepPerHour(faction))
 			
 			tooltip:AddLine(" ")
 			lineNum = tooltip:AddLine(" ")
@@ -261,7 +267,7 @@ function Tooltip:Draw()
 
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Orange", L["Time to level"]), "LEFT")
-			tooltip:SetCell(lineNum, 2, Addon.ReputationHistory:GetTimeToLevel(faction), "LEFT")
+			tooltip:SetCell(lineNum, 2, ReputationHistory:GetTimeToLevel(faction), "LEFT")
 		end
 		
 	end
@@ -271,7 +277,7 @@ function Tooltip:Draw()
 		tooltip:AddLine(" ")
 		lineNum = tooltip:AddLine(" ")
 		tooltip:SetCell(lineNum, 1,  NS:Colorize("Brownish", L["Click"] .. ":" ) .. " " .. NS:Colorize("Yellow", L["Send current XP to an open editbox."] ), nil, "LEFT", colcount)
-		if faction ~= 0 then
+		if faction then
 			lineNum = tooltip:AddLine(" ")
 			tooltip:SetCell(lineNum, 1, NS:Colorize("Brownish", L["Shift-Click"] .. ":" ) .. " " .. NS:Colorize("Yellow", L["Send current reputation to an open editbox."] ), nil, "LEFT", colcount )
 		end
@@ -281,3 +287,7 @@ function Tooltip:Draw()
 	
 end
 
+-- test
+function Tooltip:Debug(msg)
+	Addon:Debug("(Tooltip) " .. tostring(msg))
+end

@@ -27,10 +27,9 @@ local pairs   = pairs
 local tinsert = table.insert
 local tremove = table.remove
 
-local GetNumFactions         = _G.GetNumFactions
-local SetWatchedFactionIndex = _G.SetWatchedFactionIndex
-
 local _
+
+local BLACK = {r = 0, g = 0, b = 0, a = 1}
 
 -- options
 local defaults = {
@@ -84,7 +83,7 @@ local defaults = {
 		ShowBarText        = false,
 		MouseOver          = false,
 		Font               = Addon.FONT_NAME_DEFAULT,
-		FontSize           = 6,
+		FontSize           = 10,
 		BarToGo            = false,
 		BarShowValues      = true,
 		BarShowPercentage  = false,
@@ -94,7 +93,6 @@ local defaults = {
 		BarAbbreviations   = false,
 	}
 }
-
 
 local strata = {
 	opt2val = 
@@ -167,9 +165,8 @@ local showtext = {
 }
 
 -- cache faction info
-local lookupFactions = {}
-local lookupIndexes  = {}
-local lookupNames    = {}
+local lookupOptIndexToFaction = {}
+local lookupFactionToOptIndex = {}
 
 -- frame selector
 local mousehook     = CreateFrame("Frame")
@@ -259,10 +256,6 @@ function Options:OnProfileChanged(event, database, newProfileKey)
 end
 
 function Options:Setup()
-	if LibSharedMedia then
-		LibSharedMedia:Register("font", Addon.FONT_NAME_DEFAULT, Addon.FONT_DEFAULT)
-	end
-		
 	self.options = {
 		type = 'group',
 		args = {
@@ -482,7 +475,13 @@ function Options:Setup()
 								type = 'execute',
 								name = L["Refresh"],
 								desc = L["Refresh Bar Position"],
-								func = function() self.Bar:Reanchor() end,
+								func = function() 
+									local Bar = Addon:GetModule("Bar")
+									
+									if Bar then
+										Bar:Reanchor() 
+									end
+								end,
 								order = 9,
 							},
 						},
@@ -963,10 +962,10 @@ function Options:Setup()
 				name = L["Faction"],
 				desc = L["Select Faction"],
 				get = function()
-					return lookupIndexes[Addon:GetFaction()] or 1
+					return lookupFactionToOptIndex[Addon:GetFaction()] or 1
 				end,
 				set = function(info, key)
-					Addon:SetFaction(lookupFactions[key] or 0)
+					Addon:SetFaction(lookupOptIndexToFaction[key] or 0)
 				end,
 				handler = self,
 				values = "QueryFactions", 
@@ -1013,44 +1012,42 @@ end
 
 -- faction helper
 function Options:QueryFactions()
+	local Factions = Addon:GetModule("Factions")
+	
 	local factionTable = {}
 	local sortingTable = {}
 
 	-- reset lookup table
-	NS:ClearTable(lookupFactions)
-	NS:ClearTable(lookupIndexes)
-	NS:ClearTable(lookupNames)
+	NS:ClearTable(lookupOptIndexToFaction)
+	NS:ClearTable(lookupFactionToOptIndex)
 	
-	for factionIndex = 1, GetNumFactions() do
-		local name, _, standing, _, _ , _ ,_ , _, isHeader, _, hasRep, _, _, _, friendID = NS:GetFactionInfo(factionIndex)
-		
-		if not isHeader or hasRep then
-			local r, g, b = Addon:GetBlizzardReputationColor(standing, friendID)
+	for index, factionID in Factions:IterateAllFactions() do
+		if factionID then
+			local name, _, standing, _, _ , _ ,_ , _, isHeader, _, hasRep, _, _, _, friendID = Factions:GetFactionInfo(factionID)
 			
-			tinsert(sortingTable, {factionIndex, name, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..name.."|r"})
-			lookupNames[name] = factionIndex
+			if not isHeader or hasRep then
+				local r, g, b = Addon:GetBlizzardReputationColor(standing, friendID)
+				
+				tinsert(sortingTable, {factionID, name, "|cff"..string.format("%02x%02x%02x", r*255, g*255, b*255)..name.."|r"})
+			end
 		end
 	end
 	
+	Factions:RestoreUI()
+	
+	-- sort by name
 	table.sort(sortingTable, function(a, b) return a[2]<b[2] end)
 	
+	-- insert nil
 	tinsert(sortingTable, 1, {0, L["None"], L["None"]})
 	
 	for k, v in pairs(sortingTable) do
 		tinsert(factionTable, v[3])
-		lookupFactions[#factionTable] = v[1]
-		lookupIndexes[v[1]] = #factionTable
+		lookupOptIndexToFaction[#factionTable] = v[1]
+		lookupFactionToOptIndex[v[1]]          = #factionTable
 	end
 
 	return factionTable
-end
-
-function Options:GetFactionByName(name)
-	if not lookupNames[name] then
-		self:QueryFactions()
-	end
-
-	return lookupNames[name]
 end
 
 -- option getter / setter
@@ -1080,7 +1077,7 @@ function Options:ToggleSettingTrueNil(option)
 end
 
 function Options:GetColor(id)
-	local color = self.db.profile[id] or {r = 0, g = 0, b = 0, a = 0}
+	local color = self.db.profile[id] or BLACK
 
 	return color.r, color.g, color.b, color.a
 end
@@ -1104,5 +1101,5 @@ end
 
 -- test
 function Options:Debug(msg)
-	Addon:Debug("(Options) " .. msg)
+	Addon:Debug("(Options) " .. tostring(msg))
 end

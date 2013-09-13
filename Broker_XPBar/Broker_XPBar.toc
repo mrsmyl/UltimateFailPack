@@ -1,7 +1,7 @@
 ## Interface: 50300
 ## Title: Broker: |cffffffffXP|rBar
 ## Notes: Lightweight XP Bar for Broker Bars
-## Version: 1.7 r041
+## Version: 1.7 r044
 ## Author: tritium
 ## X-Credits: Wobin (For the original Fubar - XPFu)
 ## X-Category: Interface Enhancements
@@ -20,6 +20,7 @@ Utilities.lua
 Broker_XPBar.lua
 Options.lua
 Tooltip.lua
+Factions.lua
 History.lua
 ReputationHistory.lua
 Bar.lua
