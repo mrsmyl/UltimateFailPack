@@ -1,0 +1,13 @@
+tag 4.5.13
+169e659e8f186aa08a252e6a63b8be2c5557c1dd
+Hendrik Leppkes <h.leppkes@gmail.com>
+2013-09-14 17:37:52 +0200
+
+Tag as 4.5.13
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Fix layout of the micro menu bar
+	- Use HookScript instead of SecureHookScript so the code runs earlier.

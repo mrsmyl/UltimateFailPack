@@ -55,7 +55,7 @@ function MicroMenuMod:OnEnable()
 		table_insert(buttons, HelpMicroButton)
 		self.bar.buttons = buttons
 
-		MicroMenuMod.button_count = #buttons
+		MicroMenuMod.button_count = 12
 
 		self.bar.anchors = {}
 		for i,v in pairs(buttons) do
@@ -66,10 +66,10 @@ function MicroMenuMod:OnEnable()
 	end
 
 	self:SecureHook("UpdateMicroButtons", "MicroMenuBarShow")
-	self:SecureHookScript(OverrideActionBar, "OnShow", "BlizzardBarShow")
-	self:SecureHookScript(OverrideActionBar, "OnHide", "MicroMenuBarShow")
-	self:SecureHookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnShow", "BlizzardBarShow")
-	self:SecureHookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnHide", "MicroMenuBarShow")
+	self:HookScript(OverrideActionBar, "OnShow", "BlizzardBarShow")
+	self:HookScript(OverrideActionBar, "OnHide", "MicroMenuBarShow")
+	self:HookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnShow", "BlizzardBarShow")
+	self:HookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnHide", "MicroMenuBarShow")
 	self:MicroMenuBarShow()
 
 	self.bar:Enable()
@@ -96,6 +96,7 @@ end
 MicroMenuBar.button_width = 28
 MicroMenuBar.button_height = 58
 MicroMenuBar.vpad_offset = -21
+MicroMenuBar.numbuttons = 12
 function MicroMenuBar:ApplyConfig(config)
 	ButtonBar.ApplyConfig(self, config)
 
