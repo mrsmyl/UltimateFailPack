@@ -6,6 +6,10 @@ local L
 ---------------
 L= DBM:GetModLocalization(852)
 
+L:SetMiscLocalization({
+	Victory			= "Ah, Ihr habt es geschafft! Das Wasser ist wieder rein."
+})
+
 ---------------------------
 -- The Fallen Protectors --
 ---------------------------
@@ -21,7 +25,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	wasteOfTime			= "Very well, I will create a field to keep your corruption quarantined."--translate (trigger)
+	wasteOfTime			= "Nun gut, ich werde ein Feld erschaffen, das Eure Verderbnis eindämmt."
 })
 
 ------------------
@@ -39,21 +43,20 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetTimerLocalization({
-	timerAddsCD		= "Nächste Adds",
-	timerTowerCD	= "Nächster Turm & Adds"
+	timerTowerCD	= "Nächster Turm"
 })
 
 L:SetOptionLocalization({
-	timerAddsCD		= "Zeige Zeit bis nächste Gegnerwelle",
 	timerTowerCD	= "Zeige Zeit bis nächsten Turmangriff"
 })
 
 L:SetMiscLocalization({
-	newForces1	= "Da kommen sie!",--needs to be verified (PTR screenshot-captured translation)
-	newForces2	= "Drachenmalklan, ausrücken!",--needs to be verified (PTR screenshot-captured translation)
-	newForces3	= "Für Höllschrei!",--needs to be verified (PTR screenshot-captured translation)
-	newForces4	= "Nächster Trupp, vorwärts!"--needs to be verified (PTR screenshot-captured translation)
---	tower		= "Das Tor zum"--needs to be verified (PTR screenshot-captured translation)
+	newForces1	= "Da kommen sie!",--needs to be verified (PTR screenshot-captured translation) (alliance)
+	newForces1H	= "Holt sie schnell vom Himmel, damit ich sie erwürgen kann.",
+	newForces2	= "Drachenmalklan, ausrücken!",
+	newForces3	= "Für Höllschrei!",
+	newForces4	= "Nächster Trupp, vorwärts!",
+	tower		= "Das Tor zum"--"Das Tor zum Nordturm ist durchbrochen!"/"Das Tor zum Südturm ist durchbrochen!"
 })
 
 --------------------
@@ -103,8 +106,8 @@ L= DBM:GetModLocalization(846)
 L= DBM:GetModLocalization(870)
 
 L:SetMiscLocalization({
-	Module1 = "Module 1's all prepared for system reset.",--translate (trigger)
-	Victory	= "Module 2's all prepared for system reset"--translate (trigger)
+	Module1 = "Modul 1 bereit für den Systemneustart.",--needs to be verified (PTR screenshot-captured translation)
+	Victory	= "Modul 2 bereit für den Systemneustart."--needs to be verified (PTR screenshot-captured translation)
 })
 
 ---------------------------

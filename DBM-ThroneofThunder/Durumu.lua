@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(818, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10152 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10302 $"):sub(12, -3))
 mod:SetCreatureID(68036)--Crimson Fog 69050, 
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 1)
@@ -454,7 +454,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, npc, _, _, target)
 			specWarnFogRevealed:Show(npc)
 		end
 	elseif msg:find("spell:133795") then--Does show in combat log, but emote gives targetname 3 seconds earlier.
-		local target = DBM:GetFullNameByShortName(target)
+		local target = DBM:GetUnitFullName(target)
 		warnLifeDrain:Show(target)
 		specWarnLifeDrain:Show(target)
 		timerLifeDrain:Start()

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(867, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10250 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10306 $"):sub(12, -3))
 mod:SetCreatureID(71734)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
@@ -20,7 +20,7 @@ mod:RegisterEventsInCombat(
 
 --Sha of Pride
 local warnGiftOfTitans			= mod:NewTargetAnnounce(144359, 1)
-local warnSwellingPride			= mod:NewSpellAnnounce(144400, 3)
+local warnSwellingPride			= mod:NewCountAnnounce(144400, 3)
 local warnMark					= mod:NewTargetAnnounce(144351, 3, nil, mod:IsHealer())
 local warnWoundedPride			= mod:NewTargetAnnounce(144358, 4, nil, mod:IsTank() or mod:IsHealer())
 local warnSelfReflection		= mod:NewSpellAnnounce(144800, 3)
@@ -41,7 +41,7 @@ local warnMockingBlast			= mod:NewSpellAnnounce(144379, 3, nil, false)
 --Sha of Pride
 local specWarnGiftOfTitans		= mod:NewSpecialWarningYou(144359)
 local yellGiftOfTitans			= mod:NewYell(144359)
-local specWarnSwellingPride		= mod:NewSpecialWarningSpell(144400, nil, nil, nil, 2)
+local specWarnSwellingPride		= mod:NewSpecialWarningCount(144400, nil, nil, nil, 2)
 local specWarnWoundedPride		= mod:NewSpecialWarningSpell(144358, mod:IsTank())
 local specWarnSelfReflection	= mod:NewSpecialWarningSpell(144800, nil, nil, nil, 2)
 local specWarnCorruptedPrison	= mod:NewSpecialWarningSpell(144574)
@@ -50,7 +50,7 @@ local yellCorruptedPrison		= mod:NewYell(144574, nil, false)
 --Pride
 local specWarnBurstingPride		= mod:NewSpecialWarningMove(144911)--25-49 Energy
 local yellBurstingPride			= mod:NewYell(144911)
-local specWarnProjection		= mod:NewSpecialWarningYou(146822)--50-74 Energy
+local specWarnProjection		= mod:NewSpecialWarningYou(146822, nil, nil, nil, 3)--50-74 Energy
 local specWarnAuraOfPride		= mod:NewSpecialWarningYou(146817)--75-99 Energy
 local yellAuraOfPride			= mod:NewYell(146817)
 local specWarnOvercome			= mod:NewSpecialWarningYou(144843, nil, nil, nil, 3)--100 EnergyHonestly, i have a feeling your best option if this happens is to find a way to kill yourself!
@@ -61,20 +61,20 @@ local specWarnMockingBlast		= mod:NewSpecialWarningInterrupt(144379)
 
 --Sha of Pride
 local timerGiftOfTitansCD		= mod:NewNextTimer(25.5, 144359)--NOT cast or tied or boss, on it's own
---These abilitie timings are all based on boss1 UNIT_POWER. All timers have a 1 second variance (ie 20-21, 43-44, 48-49, etc)
+--These abilitie timings are all based on boss1 UNIT_POWER. All timers have a 1 second variance
 local timerMarkCD				= mod:NewNextTimer(20.5, 144351, nil, mod:IsHealer())
-local timerSelfReflectionCD		= mod:NewNextTimer(20.5, 144800)
-local timerWoundedPrideCD		= mod:NewNextTimer(26, 144358, nil, mod:IsTank())--A tricky on that is based off unit power but with variable timings, but easily workable with an 11, 26 rule
-local timerCorruptedPrisonCD	= mod:NewNextTimer(42, 144574)--Technically 40 for Imprison base cast, but this is timer til debuffs go out.
-local timerManifestationCD		= mod:NewNextTimer(48, "ej8262", nil, nil, nil, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
-local timerSwellingPrideCD		= mod:NewNextTimer(60.5, 144400)--Energy based, like sha of fear breath, is it also 33?
+local timerSelfReflectionCD		= mod:NewNextTimer(25, 144800)
+local timerWoundedPrideCD		= mod:NewNextTimer(30, 144358, nil, mod:IsTank())--A tricky on that is based off unit power but with variable timings, but easily workable with an 11, 26 rule
+local timerCorruptedPrisonCD	= mod:NewNextTimer(53, 144574)--Technically 51 for Imprison base cast, but this is timer til debuffs go out.
+local timerManifestationCD		= mod:NewNextTimer(60, "ej8262", nil, nil, nil, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
+local timerSwellingPrideCD		= mod:NewNextTimer(75.5, 144400)
 local timerWeakenedResolve		= mod:NewBuffFadesTimer(60, 147207, nil, false)
 --Pride
 local timerBurstingPride		= mod:NewCastTimer(3, 144911)
 local timerProjection			= mod:NewCastTimer(6, 146822)
 
-local countdownSwellingPride	= mod:NewCountdown(60.5, 144400)
-local countdownReflection		= mod:NewCountdown(20.5, 144800, false, nil, nil, nil, true)
+local countdownSwellingPride	= mod:NewCountdown(75.5, 144400)
+local countdownReflection		= mod:NewCountdown(25, 144800, false, nil, nil, nil, true)
 
 mod:AddBoolOption("InfoFrame")
 mod:AddBoolOption("SetIconOnMark", false)
@@ -94,6 +94,7 @@ local corruptedPrisonTargets = {}
 local prideLevel = EJ_GetSectionInfo(8255)
 local firstWound = false
 local UnleashedCast = false
+local swellingCount = 0
 
 local function warnGiftOfTitansTargets()
 	warnGiftOfTitans:Show(tconcat(giftOfTitansTargets, "<, >"))
@@ -184,11 +185,11 @@ function mod:OnCombatStart(delay)
 	countdownSwellingPride:Start(-delay)
 	firstWound = false
 	UnleashedCast = false
+	swellingCount = 0
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(prideLevel)
 		DBM.InfoFrame:Show(5, "playerpower", 5, ALTERNATE_POWER_INDEX)
 	end
-	print("DBM NOTICED: Blizzard changed power gains after this mod was writen and it's likely most of timers will be wrong until fight is relogged and mod is patched")
 end
 
 function mod:OnCombatEnd()
@@ -199,14 +200,22 @@ end
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 144400 then
-		warnSwellingPride:Show()
-		specWarnSwellingPride:Show()
+		swellingCount = swellingCount + 1
+		warnSwellingPride:Show(swellingCount)
+		specWarnSwellingPride:Show(swellingCount)
 	elseif args.spellId == 144379 then
 		local sourceGUID = args.sourceGUID
 		warnMockingBlast:Show()
 		if sourceGUID == UnitGUID("target") or sourceGUID == UnitGUID("focus") then 
 			specWarnMockingBlast:Show(args.sourceName)
 		end
+	elseif args.spellId == 144832 then
+		--These abilitie cd reset on CAST_START not finish and cause a desync from energy
+		countdownReflection:Cancel()
+		timerWoundedPrideCD:Start()
+		timerSelfReflectionCD:Start()
+		countdownReflection:Start()
+		timerCorruptedPrisonCD:Start()
 	end
 end
 
@@ -214,19 +223,20 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 144400 then--Swelling Pride Cast END
 		firstWound = false
 		--Since we register this event anyways for bursting, might as well start cd bars here instead
-		timerWoundedPrideCD:Start(11)
-		if UnleashedCast then--Account for the 2 abilities (or more unsure about manifestations) that change timing when unleashed is cast
-			timerSelfReflectionCD:Start(11.5)
-			countdownReflection:Start(11.5)
+		if UnleashedCast then--Account for the 3 abilities (or more unsure about manifestations) that change timing when unleashed is cast
+			timerSelfReflectionCD:Start(16.5)
+			countdownReflection:Start(16.5)
 			timerCorruptedPrisonCD:Start(34)
+--			timerWoundedPrideCD:Start(2)--Unconfirmed, but likely and a 2 second timer kind of worthless and i may adjust stuff
 		else
 			timerSelfReflectionCD:Start()
 			countdownReflection:Start()
 			timerCorruptedPrisonCD:Start()
+			timerWoundedPrideCD:Start(11.5)
 		end
-		timerManifestationCD:Start()
-		timerSwellingPrideCD:Start()
-		countdownSwellingPride:Start()
+		timerManifestationCD:Start()--Unconfirmed but likely remaining in sync with UNIT_POWER
+		timerSwellingPrideCD:Start()--Unconfirmed but likely remaining in sync with UNIT_POWER
+		countdownSwellingPride:Start()--Unconfirmed but likely remaining in sync with UNIT_POWER
 		--This is done here because a lot can change during a cast, and we need to know players energy when cast ends, i.e. this event
 		for uId in DBM:GetGroupMembers() do
 			local maxPower = UnitPowerMax(uId, ALTERNATE_POWER_INDEX)
@@ -249,16 +259,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnUnleashed:Show()
 		timerGiftOfTitansCD:Cancel()
 		countdownSwellingPride:Cancel()
-		countdownReflection:Cancel()
 		firstWound = false
 		UnleashedCast = true
-		timerWoundedPrideCD:Start()--The Same
-		timerSelfReflectionCD:Start(11.5)--Altered (because this cd resets on cast start not cast finished, bug?)
-		countdownReflection:Start(11.5)--Altered (because this cd resets on cast start not cast finished, bug?)
-		timerCorruptedPrisonCD:Start(34)--Altered (because this cd resets on cast start not cast finished, bug?)
 		timerManifestationCD:Start()--Not yet verified if altered or not
-		timerSwellingPrideCD:Start(62)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
-		countdownSwellingPride:Start(62)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
+		timerSwellingPrideCD:Start(75)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
+		countdownSwellingPride:Start(75)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
 	elseif args.spellId == 144800 then
 		warnSelfReflection:Show()
 		specWarnSelfReflection:Show()

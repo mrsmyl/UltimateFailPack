@@ -6,6 +6,10 @@ local L
 ---------------
 L= DBM:GetModLocalization(852)
 
+L:SetMiscLocalization({
+	Victory			= "啊，你成功了!水又再次純淨了。"
+})
+
 ---------------------------
 -- The Fallen Protectors --
 ---------------------------
@@ -21,7 +25,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	wasteOfTime			= "Very well, I will create a field to keep your corruption quarantined."
+	wasteOfTime			= "很好，我會創造一個力場隔離你們的腐化。"
 })
 
 ------------------
@@ -39,21 +43,20 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetTimerLocalization({
-	timerAddsCD		= "下一波小兵",
 	timerTowerCD	= "下一波塔攻"
 })
 
 L:SetOptionLocalization({
-	timerAddsCD		= "為下一波小兵顯示計時器",
 	timerTowerCD	= "為下一波塔攻顯示計時器"
 })
 
 L:SetMiscLocalization({
-	newForces1	= "Here they come!",--Jaina's line, horde may not be same
-	newForces2	= "Dragonmaw, advance!",
-	newForces3	= "For Hellscream!",
-	newForces4	= "Next squad, push forward!"
---	tower		= "The door barring the"--The door barring the South/North Tower has been breached!
+	newForces1	= "他們來了!",
+	newForces1H	= "趕快把她弄下來，讓我用手掐死她。",
+	newForces2	= "龍喉氏族，前進!",
+	newForces3	= "為了地獄吼!",
+	newForces4	= "下一隊，前進!",
+	tower		= "的門已經遭到破壞!"
 })
 
 --------------------
@@ -84,12 +87,12 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	newForces1					= "Warriors, on the double!",
-	newForces2					= "Defend the gate!",
-	newForces3					= "Rally the forces!",
-	newForces4					= "Kor'kron, at my side!",
-	newForces5					= "Next squad, to the front!",
-	allForces					= "All Kor'kron... under my command... kill them... NOW!"
+	newForces1					= "戰士們，快點過來!",
+	newForces2					= "守住大門!",
+	newForces3					= "重整部隊!",
+	newForces4					= "柯爾克隆，來我身邊!",
+	newForces5					= "下一隊，來前線!",
+	allForces					= "所有柯爾克隆...聽我號令...殺死他們!"
 })
 
 -----------------
@@ -103,8 +106,8 @@ L= DBM:GetModLocalization(846)
 L= DBM:GetModLocalization(870)
 
 L:SetMiscLocalization({
-	Module1 = "Module 1's all prepared for system reset.",
-	Victory	= "Module 2's all prepared for system reset"
+	Module1 = "模組一號已準備好系統重置。",
+	Victory	= "模組二號已準備好系統重置。"
 })
 
 ---------------------------
@@ -113,7 +116,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(851)
 
 L:SetOptionLocalization({
-	RangeFrame	= "顯示動態距離框架(10碼)<br/>(This is a smart range frame that shows when you reach Frenzy threshold)"
+	RangeFrame	= "顯示動態距離框架(10碼)<br/>(這是智慧距離框架，當到達血之狂暴階段時自動切換)"
 })
 
 ----------------------------
@@ -122,8 +125,8 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(865)
 
 L:SetMiscLocalization({
-	newWeapons	= "Unfinished weapons begin to roll out on the assembly line.",
-	newShredder	= "An Automated Shredder draws near!"
+	newWeapons	= "尚未完成的武器開始從生產線上掉落。",
+	newShredder	= "有個自動化伐木機靠近了!"
 })
 
 ----------------------------

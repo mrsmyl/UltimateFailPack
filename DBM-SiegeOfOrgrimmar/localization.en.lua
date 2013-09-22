@@ -5,6 +5,10 @@ local L
 ---------------
 L= DBM:GetModLocalization(852)
 
+L:SetMiscLocalization({
+	Victory			= "Ah, you have done it!  The waters are pure once more."
+})
+
 ---------------------------
 -- The Fallen Protectors --
 ---------------------------
@@ -39,22 +43,21 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetTimerLocalization({
-	timerAddsCD		= "Next Adds",
-	timerTowerCD	= "Next Tower & Adds"
+	timerTowerCD	= "Next Tower"
 })
 
 L:SetOptionLocalization({
-	timerAddsCD		= "Show timer for next adds wave",
 	timerTowerCD	= "Show timer for next tower assault",
 	FixateIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(147068)
 })
 
 L:SetMiscLocalization({
-	newForces1	= "Here they come!",--Jaina's line, horde may not be same
+	newForces1	= "Here they come!",--Jaina's line, alliance
+	newForces1H	= "Bring her down quick so i can wrap my fingers around her neck.",--Sylva's line, horde
 	newForces2	= "Dragonmaw, advance!",
 	newForces3	= "For Hellscream!",
-	newForces4	= "Next squad, push forward!"
---	tower		= "The door barring the"--The door barring the South/North Tower has been breached!
+	newForces4	= "Next squad, push forward!",
+	tower		= "The door barring the"--The door barring the South/North Tower has been breached!
 })
 
 --------------------
