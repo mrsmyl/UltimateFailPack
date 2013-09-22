@@ -355,8 +355,14 @@ HealBot_GlobalsDefaults = {
         [HEALBOT_DEBUFF_WATERLOGGED]       = 10, -- Ascendant Council - Waterlogged
         [HEALBOT_DEBUFF_GRAVITY_CORE]      = 10, -- Ascendant Council (heroic) - Gravity Core
         [HEALBOT_DEBUFF_GRAVITY_CRUSH]     = 10, -- Ascendant Council - Gravity Crush
-		-- Updated by Ariá - Silvermoon EU 
-		-- Throne of Thunder
+		--Updated 5.3 by Ariá - Silvermoon EU 
+		--World Bosses
+		--Oondasta
+		[HEALBOT_DEBUFF_CRUSH]             = 10, -- Oondasta    
+		--Nalak, the Storm Lord
+	    [HEALBOT_DEBUFF_LIGHTNING_TETHER]  = 10, -- Nalak, the Storm Lord      
+	    [HEALBOT_DEBUFF_STORMCLOUD]        = 10, -- Nalak, the Storm Lord        
+		--Throne of Thunder
 		[HEALBOT_DEBUFF_WOUNDING_STRIKE]   = 10, -- Trash
 		[HEALBOT_DEBUFF_STORM_ENERGY]      = 10, -- Trash
 		[HEALBOT_DEBUFF_ANCIENT_VENOM]     = 10, -- Trash
@@ -395,10 +401,10 @@ HealBot_GlobalsDefaults = {
 		[HEALBOT_DEBUFF_INFECTED_TALONS]   = 10, -- ji-Kun
 		[HEALBOT_DEBUFF_FEED_POOL]         = 10, -- ji-Kun
 		[HEALBOT_DEBUFF_SLIMED]            = 10, -- ji-Kun
-		--[HEALBOT_DEBUFF_DAEDALIAN_WINGS]   = 10, -- ji-Kun      
-	    --[HEALBOT_DEBUFF_LESSONS_OF_ICARUS] = 10, -- ji-Kun       
-	    --[HEALBOT_DEBUFF_FLIGHT]            = 10, -- ji-Kun       
-		--[HEALBOT_DEBUFF_PRIMAL_NUTRIMENT]  = 10, -- ji-Kun
+		[HEALBOT_DEBUFF_DAEDALIAN_WINGS]   = 10, -- ji-Kun      
+	    [HEALBOT_DEBUFF_LESSONS_OF_ICARUS] = 10, -- ji-Kun       
+	    [HEALBOT_DEBUFF_FLIGHT]            = 10, -- ji-Kun       
+		[HEALBOT_DEBUFF_PRIMAL_NUTRIMENT]  = 10, -- ji-Kun Buff
 		[HEALBOT_DEBUFF_MALFORMED_BLOOD]   = 10, -- Primordius
 		[HEALBOT_DEBUFF_VOLATILE_PATHOGEN] = 10, -- Primordius
 		[HEALBOT_DEBUFF_CRIMSON_WAKE]      = 10, -- Dark Animus
@@ -418,7 +424,7 @@ HealBot_GlobalsDefaults = {
 		[HEALBOT_DEBUFF_LINGERING_GAZE]    = 10, -- Durumu the Forgotten
 		[HEALBOT_DEBUFF_LIFE_DRAIN]        = 10, -- Durumu the Forgotten
 		[HEALBOT_DEBUFF_BLUE_RAY_TRACKING] = 10, -- Durumu the Forgotten       
-	    [HEALBOT_BLUE_RAYS]                = 10, -- Durumu the Forgotten       
+	    [HEALBOT_DEBUFF_BLUE_RAYS]         = 10, -- Durumu the Forgotten       
 	    [HEALBOT_DEBUFF_INFRARED_TRACKING] = 10, -- Durumu the Forgotten       
 	    [HEALBOT_DEBUFF_INFRARED_LIGHT]    = 10, -- Durumu the Forgotten       
 	    [HEALBOT_DEBUFF_BRIGHT_LIGHT]      = 10, -- Durumu the Forgotten       
@@ -434,15 +440,27 @@ HealBot_GlobalsDefaults = {
 		[HEALBOT_DEBUFF_DISCHARGED_ENERGY] = 10, -- Lei Shen
 		[HEALBOT_DEBUFF_ELECTRICAL_SHOCK]  = 10, -- Lei Shen 
 		[HEALBOT_DEBUFF_WINDBURN]          = 10, -- Lei Shen
-		[HEALBOT_UNSTABLE_VITA]            = 10, --Ra-Den
-		[HEALBOT_VITA_SENSITIVITY]         = 10, --Ra-Den
-		-- Updated by Ariá - Silvermoon EU 
+		[HEALBOT_UNSTABLE_VITA]            = 10, -- Ra-Den
+		[HEALBOT_VITA_SENSITIVITY]         = 10, -- Ra-Den
+		--Updated 5.4 by Ariá - Silvermoon EU 
+		--World Bosses
+		--Ordos
+		[HEALBOT_DEBUFF_BURNING_SOUL]      = 10, --Ordos            
+	    [HEALBOT_DEBUFF_POOL_OF_FIRE]      = 10, --Ordos       
+	    [HEALBOT_DEBUFF_ANCIENT_FLAME]     = 10, --Ordos        
 		-- Siege of Orgrimmar
-	    [HEALBOT_DEBUFF_LOCKED_ON]         = 10, -- Trash 
+	    [HEALBOT_DEBUFF_LESSER_SHA_RESIDUE]= 10, -- Trash Buff
+		[HEALBOT_DEBUFF_GROWING_OVERCONFIDENCE] = 10, -- Trash   
+	    [HEALBOT_DEBUFF_JEALOUSY]          = 10, -- Trash                 
+		[HEALBOT_DEBUFF_LOCKED_ON]         = 10, -- Trash 
 		[HEALBOT_DEBUFF_RESONATING_AMBER]  = 10, -- Trash
 		[HEALBOT_DEBUFF_CORROSIVE_BLAST]   = 10, -- Immerseus
 		[HEALBOT_DEBUFF_SHA_SPLASH]        = 10, -- Immerseus
-		[HEALBOT_DEBUFF_INFERNO_STRIKE]    = 10, -- The Fallen Protectors         
+		[HEALBOT_DEBUFF_PURIFIED_RESIDUE]  = 10, -- Immerseus Buff      
+	    [HEALBOT_DEBUFF_SHA_RESIDUE]       = 10, -- Immerseus Buff       
+		[HEALBOT_DEBUFF_MEDITATIVE_FIELD]  = 10, -- The Fallen Protectors        
+		[HEALBOT_DEBUFF_CORRUPTED_BREW]    = 10, -- The Fallen Protectors
+		[HEALBOT_DEBUFF_DEFILED_GROUND]    = 10, -- The Fallen Protectors                  
 	    [HEALBOT_DEBUFF_VENGEFUL_STRIKES]  = 10, -- The Fallen Protectors     
 	    [HEALBOT_DEBUFF_CORRUPTION_KICK]   = 10, -- The Fallen Protectors    
 	    [HEALBOT_DEBUFF_GARROTE]           = 10, -- The Fallen Protectors     
@@ -451,10 +469,20 @@ HealBot_GlobalsDefaults = {
 	    [HEALBOT_DEBUFF_SHADOWED_WEAKNESS] = 10, -- The Fallen Protectors    
 	    [HEALBOT_DEBUFF_DEBILITATION]      = 10, -- The Fallen Protectors    
 	    [HEALBOT_DEBUFF_SHA_SEAR]          = 10, -- The Fallen Protectors    
-		--[HEALBOT_DEBUFF_PURIFIED]          = 10, -- Norushen
+		[HEALBOT_DEBUFF_CORRUPTION]        = 10, -- Norushen   
+		[HEALBOT_DEBUFF_SELF_DOUBT]        = 10, -- Norushen
+		[HEALBOT_DEBUFF_ICY_FEAR]          = 10, -- Norushen     
+		[HEALBOT_DEBUFF_BOTTOMLESS_PIT]    = 10, -- Norushen
+		[HEALBOT_DEBUFF_DISHEARTENING_LAUGH] = 10, -- Norushen
+		[HEALBOT_DEBUFF_PURIFIED]          = 10, -- Norushen
 		[HEALBOT_DEBUFF_WOUNDED_PRIDE]     = 10, -- Sha of Pride
 		[HEALBOT_DEBUFF_CORRUPTED_PRISON]  = 10, -- Sha of Pride
-		--[HEALBOT_DEBUFF_GIFT_OF_THE_TITANS] = 10, -- Sha of Pride
+		[HEALBOT_DEBUFF_GIFT_OF_THE_TITANS] = 10, -- Sha of Pride Buff
+		[HEALBOT_DEBUFF_POWER_OF_THE_TITANS] = 10, -- Sha of Pride Buff    
+		[HEALBOT_DEBUFF_BANISHMENT]        = 10, -- Sha of Pride Heroic
+        [HEALBOT_DEBUFF_WEAKENED_RESOLVE]  = 10, -- Sha of Pride Heroic 
+	    [HEALBOT_DEBUFF_OVERCOME]          = 10, -- Sha of Pride              
+	    [HEALBOT_DEBUFF_AURA_OF_PRIDE]     = 10, -- Sha of Pride        		
 		[HEALBOT_DEBUFF_FRACTURE]          = 10, -- Galakras
 		[HEALBOT_DEBUFF_FLAME_ARROWS]      = 10, -- Galakras
 		[HEALBOT_DEBUFF_POISON_CLOUD]      = 10, -- Galakras
@@ -477,7 +505,9 @@ HealBot_GlobalsDefaults = {
 		[HEALBOT_DEBUFF_FATAL_STRIKE]      = 10, -- Malkorok             
 	    [HEALBOT_DEBUFF_LANGUISH]          = 10, -- Malkorok               
 	    [HEALBOT_DEBUFF_ANCIENT_MIASMA]    = 10, -- Malkorok       
-	    [HEALBOT_ANCIENT_BARRIER]          = 10, -- Malkorok       
+	    [HEALBOT_WEEK_ANCIENT_BARRIER]     = 10, -- Malkorok       
+		[HEALBOT_ANCIENT_BARRIER]          = 10, -- Malkorok       
+		[HEALBOT_STRONG_ANCIENT_BARRIER]   = 10, -- Malkorok     
 		[HEALBOT_DEBUFF_SET_TO_BLOW]       = 10, -- Spoils of Pandaria
 		[HEALBOT_DEBUFF_CARNIVOROUS_BITE]  = 10, -- Spoils of Pandaria
 		[HEALBOT_DEBUFF_ENCAPSULATED_PHEROMONES] = 10, -- Spoils of Pandaria
@@ -493,7 +523,7 @@ HealBot_GlobalsDefaults = {
 	    [HEALBOT_DEBUFF_BURNING_BLOOD]     = 10, -- Thok the Bloodthirsty    
 		[HEALBOT_DEBUFF_ELECTROSTATIC_CHARGE] = 10, --Siegecrafter Blackfuse
 	    [HEALBOT_DEBUFF_OVERLOAD]          = 10, -- Siegecrafter Blackfuse           
-	    --[HEALBOT_DEBUFF_PATTERN_RECOGNITION] = 10, -- Siegecrafter Blackfuse  
+	    [HEALBOT_DEBUFF_PATTERN_RECOGNITION] = 10, -- Siegecrafter Blackfuse  
 	    [HEALBOT_DEBUFF_SUPERHEATED]       = 10, -- Siegecrafter Blackfuse          
 	    [HEALBOT_DEBUFF_MAGNETIC_CRUSH]    = 10, -- Siegecrafter Blackfuse       
 		[HEALBOT_DEBUFF_EXPOSED_VEINS]     = 10, -- Paragons of the Klaxxi 
@@ -511,6 +541,16 @@ HealBot_GlobalsDefaults = {
         [HEALBOT_DEBUFF_HUNGER]            = 10, -- Paragons of the Klaxxi
         [HEALBOT_DEBUFF_FIERY_EDGE]        = 10, -- Paragons of the Klaxxi 		
 		--Garrosh Hellscream
+		[HEALBOT_DEBUFF_HAMSTRING]         = 10, -- Garrosh Hellscream
+	    [HEALBOT_EMBODIED_DOUBT]           = 10, -- Garrosh Hellscream
+	    [HEALBOT_DEBUFF_ULTIMATE_DESPAIR]  = 10, -- Garrosh Hellscream
+        [HEALBOT_DEBUFF_WHIRLING_CORRUPTION] = 10, -- Garrosh Hellscream 
+        [HEALBOT_DEBUFF_TOUCH_OF_YSHAARJ]  = 10, -- Garrosh Hellscream 
+        [HEALBOT_DEBUFF_EMPOWERED_TOUCH_OF_YSHAARJ] = 10, -- Garrosh Hellscream 
+        [HEALBOT_DEBUFF_GRIPPING_DESPAIR]  = 10, -- Garrosh Hellscream
+        [HEALBOT_DEBUFF_EMPOWERED_GRIPPING_DESPAIR] = 10, -- Garrosh Hellscream 
+        [HEALBOT_DEBUFF_EXPLOSIVE_DESPAIR] = 10, -- Garrosh Hellscream     		
+        [HEALBOT_DEBUFF_MARK_OF_ARROGANCE] = 10, -- Sha of Pride
 	},
     Custom_Debuff_Categories=HEALBOT_CUSTOM_DEBUFF_CATS;
     HoTReserve = {

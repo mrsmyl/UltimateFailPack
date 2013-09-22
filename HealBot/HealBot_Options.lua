@@ -861,11 +861,12 @@ function HealBot_Options_Pct_OnLoad(self,vText)
     g:SetText("100%");
     self:SetMinMaxValues(0.00,1.00);
     self:SetValueStep(0.01);
+    self:SetStepsPerPage(5);
 end
 
-function HealBot_Options_Pct_OnLoad_MinMax(self,vText,Min,Max,Step)
+function HealBot_Options_Pct_OnLoad_MinMax(self,vText,Min,Max,Step,pageStep)
     self.text = vText;
-
+    local StepsPerPage=pageStep or 5
     local i=(Min*100).."%";
     local j=(Max*100).."%";
 
@@ -877,10 +878,12 @@ function HealBot_Options_Pct_OnLoad_MinMax(self,vText,Min,Max,Step)
     g:SetText(j);
     self:SetMinMaxValues(Min,Max);
     self:SetValueStep(Step);
+    self:SetStepsPerPage(StepsPerPage);
 end
 
-function HealBot_Options_val_OnLoad(self,vText,Min,Max,Step)
+function HealBot_Options_val_OnLoad(self,vText,Min,Max,Step,pageStep)
     self.text = vText;
+    local StepsPerPage=pageStep or HealBot_Options_getStepsPerPage(Max,Step)
     local g=_G[self:GetName().."Text"]
     g:SetText(vText);
     g=_G[self:GetName().."Low"]
@@ -889,6 +892,7 @@ function HealBot_Options_val_OnLoad(self,vText,Min,Max,Step)
     g:SetText(Max);
     self:SetMinMaxValues(Min,Max);
     self:SetValueStep(Step);
+    self:SetStepsPerPage(StepsPerPage);
 end
 
 function HealBot_Options_valNoCols_OnLoad(self,Min,Max)
@@ -900,11 +904,12 @@ function HealBot_Options_valNoCols_OnLoad(self,Min,Max)
     g:SetText(Max);
     self:SetMinMaxValues(Min,Max);
     self:SetValueStep(1);
+    self:SetStepsPerPage(2);
 end
 
-function HealBot_Options_val2_OnLoad(self,vText,Min,Max,Step,vDiv)
+function HealBot_Options_val2_OnLoad(self,vText,Min,Max,Step,vDiv,pageStep)
     self.text = vText;
-
+    local StepsPerPage=pageStep or HealBot_Options_getStepsPerPage(Max,Step)
     local g=_G[self:GetName().."Text"]
     g:SetText(vText);
     g=_G[self:GetName().."Low"]
@@ -913,11 +918,12 @@ function HealBot_Options_val2_OnLoad(self,vText,Min,Max,Step,vDiv)
     g:SetText(Max/vDiv);
     self:SetMinMaxValues(Min,Max);
     self:SetValueStep(Step);
+    self:SetStepsPerPage(StepsPerPage);
 end
 
-function HealBot_Options_valtime_OnLoad(self,vText,Min,Max,Step,secsOnly)
+function HealBot_Options_valtime_OnLoad(self,vText,Min,Max,Step,secsOnly,pageStep)
     self.text = vText;
-
+    local StepsPerPage=pageStep or 2 --HealBot_Options_getStepsPerPage(Max,Step)
     local g=_G[self:GetName().."Text"]
     g:SetText(vText);
     if secsOnly then
@@ -933,6 +939,20 @@ function HealBot_Options_valtime_OnLoad(self,vText,Min,Max,Step,secsOnly)
     end
     self:SetMinMaxValues(Min,Max);
     self:SetValueStep(Step);
+    self:SetStepsPerPage(StepsPerPage);
+end
+
+function HealBot_Options_getStepsPerPage(Max,Step)
+    local i=ceil(Max/5)
+    if i<Step then i=Step end
+    if i>20 then
+        i=10
+    elseif i>5 then
+        i=5
+    elseif i>2 then
+        i=2
+    end
+    return i
 end
 
 function HealBot_Options_SetText(self,vText)
@@ -1135,33 +1155,49 @@ end
 
 function HealBot_Options_CrashProtStartTime_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    HealBot_Config.CrashProtStartTime = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val.." "..HEALBOT_WORDS_SEC);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        HealBot_Config.CrashProtStartTime = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val.." "..HEALBOT_WORDS_SEC);
+    end
 end
 
 function HealBot_Options_ShowEnemyNumBoss_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_CombatPartyNo_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.Protection[Healbot_Config_Skins.Current_Skin]["COMBATPARTY"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(val.." "..self.text);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.Protection[Healbot_Config_Skins.Current_Skin]["COMBATPARTY"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(val.." "..self.text);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_CombatRaidNo_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.Protection[Healbot_Config_Skins.Current_Skin]["COMBATRAID"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(val.." "..self.text);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.Protection[Healbot_Config_Skins.Current_Skin]["COMBATRAID"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(val.." "..self.text);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
         
 function HealBot_Options_ShowHeaders_OnClick(self)
@@ -1178,252 +1214,347 @@ end
 function HealBot_Options_WarningSound_OnValueChanged(self)
     local g=nil
     local v=floor(self:GetValue()+0.5)
-    if v > 0 and sounds then
-        HealBot_Config_Cures.SoundDebuffPlay = sounds[v];
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. " ".. v..": " ..sounds[v]);
+    if v~=self:GetValue() then
+        self:SetValue(v) 
     else
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text);
+        if v > 0 and sounds then
+            HealBot_Config_Cures.SoundDebuffPlay = sounds[v];
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. " ".. v..": " ..sounds[v]);
+        else
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text);
+        end
+        if not DoneInitTab[4] and not updatingMedia then
+            PlaySoundFile(LSM:Fetch('sound',HealBot_Config_Cures.SoundDebuffPlay));
+        end
+        updatingMedia=false;
     end
-    if not DoneInitTab[4] and not updatingMedia then
-        PlaySoundFile(LSM:Fetch('sound',HealBot_Config_Cures.SoundDebuffPlay));
-    end
-    updatingMedia=false;
 end
 
 function HealBot_Options_BarTextureS_OnValueChanged(self)
     local g=nil
     local v=floor(self:GetValue()+0.5)
-    if v > 0 and hb_textures then
-        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["TEXTURE"] = hb_textures[v];
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. " "..v..": " .. hb_textures[v]);
+    if v~=self:GetValue() then
+        self:SetValue(v) 
     else
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text);
-    end    
-    if not updatingMedia then
-        HealBot_setOptions_Timer(150)
-        HealBot_setOptions_Timer(160)
+        if v > 0 and hb_textures then
+            Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["TEXTURE"] = hb_textures[v];
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. " "..v..": " .. hb_textures[v]);
+        else
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text);
+        end    
+        if not updatingMedia then
+            HealBot_setOptions_Timer(150)
+            HealBot_setOptions_Timer(160)
+        end
+        updatingMedia=false;
     end
-    updatingMedia=false;
 end
 
 function HealBot_FrameScale_OnValueChanged(self)
-    local val=floor(self:GetValue()+0.5)
-    val=val/10;
-    Healbot_Config_Skins.Frame[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SCALE"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+--    local val=floor(self:GetValue()+0.5)
+    local val=HealBot_Comm_round(self:GetValue(), 1)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        val=val/10;
+        Healbot_Config_Skins.Frame[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SCALE"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_BarButtonIconScale_OnValueChanged(self)
-    local val=floor(self:GetValue()+0.5)
-    val=val/10;
-    Healbot_Config_Skins.Icons[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SCALE"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+--    local val=floor(self:GetValue()+0.5)
+    local val=HealBot_Comm_round(self:GetValue(), 1)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        val=val/10;
+        Healbot_Config_Skins.Icons[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SCALE"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_BarButtonIconTextScale_OnValueChanged(self)
-    local val=floor(self:GetValue()+0.5)
-    val=val/10;
-    Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SCALE"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+--    local val=floor(self:GetValue()+0.5)
+    local val=HealBot_Comm_round(self:GetValue(), 1)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        val=val/10;
+        Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SCALE"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_BarButtonIconTextDurationTime_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURTHRH"]=val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURTHRH"]);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURTHRH"]=val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURTHRH"]);
+    end
 end
 
 function HealBot_BarButtonIconTextDurationWarn_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURWARN"]=val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURWARN"]);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURWARN"]=val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. Healbot_Config_Skins.IconText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["DURWARN"]);
+    end
 end
 
 function HealBot_Options_HeadTextureS_OnValueChanged(self)
     local g=nil
     local val=floor(self:GetValue()+0.5)
-    if val > 0 and hb_textures then
-        Healbot_Config_Skins.HeadBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["TEXTURE"] = hb_textures[val];
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. " " .. val..": " .. hb_textures[val]);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
     else
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text);
-    end  
-    if not updatingMedia then
-        HealBot_setOptions_Timer(150)
-        HealBot_setOptions_Timer(160)
+        if val > 0 and hb_textures then
+            Healbot_Config_Skins.HeadBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["TEXTURE"] = hb_textures[val];
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. " " .. val..": " .. hb_textures[val]);
+        else
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text);
+        end  
+        if not updatingMedia then
+            HealBot_setOptions_Timer(150)
+            HealBot_setOptions_Timer(160)
+        end
+        updatingMedia=false;
     end
-    updatingMedia=false;
 end
 
 function HealBot_Options_HeadFontNameS_OnValueChanged(self)
     local g=nil
     local val=floor(self:GetValue()+0.5)
-    if val > 0 and fonts then
-        Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"] = fonts[val];
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. " ".. val..": " ..fonts[val]);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
     else
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text);
-    end   
-    if not updatingMedia and  val > 0 then
-        HealBot_setOptions_Timer(150)
+        if val > 0 and fonts then
+            Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"] = fonts[val];
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. " ".. val..": " ..fonts[val]);
+        else
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text);
+        end   
+        if not updatingMedia and  val > 0 then
+            HealBot_setOptions_Timer(150)
+        end
+        updatingMedia=false;
+        HealBot_setOptions_Timer(160)
     end
-    updatingMedia=false;
-    HealBot_setOptions_Timer(160)
 end
 
 function HealBot_Options_AliasFontName_OnValueChanged(self)
     local g=nil
     local val=floor(self:GetValue()+0.5)
-    if val > 0 and fonts then
-        Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"] = fonts[val];
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. " ".. val..": " ..fonts[val]);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
     else
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text);
-    end   
-    local tst="UpdFrameAlias"..HealBot_Options_StorePrev["FramesSelFrame"]
-    HealBot_Options_StorePrev[tst]="S"
-    HealBot_setOptions_Timer(415)
+        if val > 0 and fonts then
+            Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"] = fonts[val];
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. " ".. val..": " ..fonts[val]);
+        else
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text);
+        end   
+        local tst="UpdFrameAlias"..HealBot_Options_StorePrev["FramesSelFrame"]
+        HealBot_Options_StorePrev[tst]="S"
+        HealBot_setOptions_Timer(415)
+    end
 end
 
 function HealBot_Options_HeadFontHeightS_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["HEIGHT"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
-    HealBot_setOptions_Timer(160)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["HEIGHT"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+        HealBot_setOptions_Timer(160)
+    end
 end
 
 function HealBot_Options_AliasFontHeight_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SIZE"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    local tst="UpdFrameAlias"..HealBot_Options_StorePrev["FramesSelFrame"]
-    HealBot_Options_StorePrev[tst]="S"
-    HealBot_setOptions_Timer(415)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["SIZE"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        local tst="UpdFrameAlias"..HealBot_Options_StorePrev["FramesSelFrame"]
+        HealBot_Options_StorePrev[tst]="S"
+        HealBot_setOptions_Timer(415)
+    end
 end
 
 function HealBot_Options_AliasFontOffset_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["OFFSET"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    local tst="UpdFrameAlias"..HealBot_Options_StorePrev["FramesSelFrame"]
-    HealBot_Options_StorePrev[tst]="S"
-    HealBot_setOptions_Timer(415)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["OFFSET"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        local tst="UpdFrameAlias"..HealBot_Options_StorePrev["FramesSelFrame"]
+        HealBot_Options_StorePrev[tst]="S"
+        HealBot_setOptions_Timer(415)
+    end
 end
 
 function HealBot_Options_BarHeightS_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["HEIGHT"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["HEIGHT"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_Options_BarWidthS_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["WIDTH"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["WIDTH"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_Options_BarNumColsS_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["NUMCOLS"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(HealBot_Options_SetNoColsText() .. ": " .. val);
-    if HealBot_Data["REFRESH"]<4 then HealBot_Data["REFRESH"]=4; end
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["NUMCOLS"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(HealBot_Options_SetNoColsText() .. ": " .. val);
+        if HealBot_Data["REFRESH"]<4 then HealBot_Data["REFRESH"]=4; end
+    end
 end
 
 function HealBot_Options_BarBRSpaceS_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["RMARGIN"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["RMARGIN"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_Options_BarBCSpaceS_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["CMARGIN"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["CMARGIN"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_Options_FontName_OnValueChanged(self)
     local g=nil
     local val=floor(self:GetValue()+0.5)
-    if val > 0 and fonts then
-        Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"] = fonts[val];
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. " ".. val..": " ..fonts[val]);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
     else
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text);
-    end       
-    if not updatingMedia and  val > 0 then
-        HealBot_setOptions_Timer(150)
+        if val > 0 and fonts then
+            Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"] = fonts[val];
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. " ".. val..": " ..fonts[val]);
+        else
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text);
+        end       
+        if not updatingMedia and  val > 0 then
+            HealBot_setOptions_Timer(150)
+        end
+        updatingMedia=false;
+        HealBot_setOptions_Timer(160)
     end
-    updatingMedia=false;
-    HealBot_setOptions_Timer(160)
 end
 
 function HealBot_Options_FontHeight_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["HEIGHT"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
-    HealBot_setOptions_Timer(160)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["HEIGHT"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+        HealBot_setOptions_Timer(160)
+    end
 end
 
 function HealBot_Options_AggroBarSize_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["AGGROSIZE"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["AGGROSIZE"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_Options_Bar2Size_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["POWERSIZE"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
-	HealBot_Options_Energy()
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["POWERSIZE"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+        HealBot_Options_Energy()
+    end
 end
 
 local HealBot_Alignment = { [1]=HEALBOT_OPTIONS_BUTTONLEFT, [2]=HEALBOT_OPTIONS_BUTTONMIDDLE, [3]=HEALBOT_OPTIONS_BUTTONRIGHT }
 function HealBot_Options_TextAlign_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. " ".. val..": " ..HealBot_Alignment[val]);
-    if Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["ALIGN"] ~= val then
-        Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["ALIGN"] = val;
-        HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. " ".. val..": " ..HealBot_Alignment[val]);
+        if Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["ALIGN"] ~= val then
+            Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["ALIGN"] = val;
+            HealBot_setOptions_Timer(150)
+        end
     end
 end
 
@@ -1463,10 +1594,14 @@ end
 
 function HealBot_Options_BarOutlineBackGround_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    Healbot_Config_Skins.BarCol[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["BOUT"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_setOptions_Timer(150)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        Healbot_Config_Skins.BarCol[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["BOUT"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_setOptions_Timer(150)
+    end
 end
 
 function HealBot_Options_BarAlphaDis_OnValueChanged(self)
@@ -1708,11 +1843,15 @@ end
 
 function HealBot_Options_AggroFlashFreq_OnValueChanged(self)
     local val=HealBot_Comm_round(self:GetValue(),1)
-    val=val/100;
-    Healbot_Config_Skins.Aggro[Healbot_Config_Skins.Current_Skin]["FREQ"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
-    HealBot_Action_Set_Timers()
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        val=val/100;
+        Healbot_Config_Skins.Aggro[Healbot_Config_Skins.Current_Skin]["FREQ"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+        HealBot_Action_Set_Timers()
+    end
 end
 
 function HealBot_Options_AggroFlashAlphaMin_OnValueChanged(self)
@@ -1733,30 +1872,39 @@ end
 
 function HealBot_Options_RangeCheckFreq_OnValueChanged(self)
     local val=HealBot_Comm_round(self:GetValue(), 1)
-    val=val/10;
-    HealBot_Globals.RangeCheckFreq = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        val=val/10;
+        HealBot_Globals.RangeCheckFreq = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+    end
 end
 
 function HealBot_Options_BuffTimer_OnValueChanged(self,bufftype)
-    local val=HealBot_Comm_round(self:GetValue(), -1)
-    if bufftype=="SHORT" then
-        HealBot_Config_Buffs.ShortBuffTimer = val;
+    --local val=HealBot_Comm_round(self:GetValue(), -1)
+    local val=floor(self:GetValue()+0.5)
+    if val~=self:GetValue() then
+        self:SetValue(val) 
     else
-        HealBot_Config_Buffs.LongBuffTimer = val;
+        if bufftype=="SHORT" then
+            HealBot_Config_Buffs.ShortBuffTimer = val;
+        else
+            HealBot_Config_Buffs.LongBuffTimer = val;
+        end
+        local mins,secs=HealBot_ReturnMinsSecs(val)
+        local g=nil
+        if mins<1 then
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. ": " .. secs .." secs");
+        else
+            val=val/60;
+            g=_G[self:GetName().."Text"]
+            g:SetText(self.text .. ": " .. mins ..":".. secs .." mins");
+        end
+        HealBot_setOptions_Timer(10)
     end
-    local mins,secs=HealBot_ReturnMinsSecs(val)
-    local g=nil
-    if mins<1 then
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. ": " .. secs .." secs");
-    else
-        val=val/60;
-        g=_G[self:GetName().."Text"]
-        g:SetText(self.text .. ": " .. mins ..":".. secs .." mins");
-    end
-    HealBot_setOptions_Timer(10)
 end
 
 function HealBot_ReturnMinsSecs(s)
@@ -1769,51 +1917,75 @@ end
 
 function HealBot_Options_BarFreq_OnValueChanged(self)
     local val=floor(self:GetValue()+0.5)
-    val=val/10;
-    Healbot_Config_Skins.General[Healbot_Config_Skins.Current_Skin]["FLUIDFREQ"] = val;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. val);
+    if val~=self:GetValue() then
+        self:SetValue(val) 
+    else
+        val=val/10;
+        Healbot_Config_Skins.General[Healbot_Config_Skins.Current_Skin]["FLUIDFREQ"] = val;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. val);
+    end
 end
 
 function HealBot_Options_NumTestBars_OnValueChanged(self)
     local v=floor(self:GetValue()+0.5)
-    HealBot_Globals.TestBars["BARS"] = v;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. v);
-    HealBot_Panel_SetNumBars(HealBot_Globals.TestBars["BARS"])
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if v~=self:GetValue() then
+        self:SetValue(v) 
+    else
+        HealBot_Globals.TestBars["BARS"] = v;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. v);
+        HealBot_Panel_SetNumBars(HealBot_Globals.TestBars["BARS"])
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_NumTestTanks_OnValueChanged(self)
     local v=floor(self:GetValue()+0.5)
-    HealBot_Globals.TestBars["TANKS"] = v;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. v);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if v~=self:GetValue() then
+        self:SetValue(v) 
+    else
+        HealBot_Globals.TestBars["TANKS"] = v;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. v);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_NumberTestHealers_OnValueChanged(self)
     local v=floor(self:GetValue()+0.5)
-    HealBot_Globals.TestBars["HEALERS"] = v;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. v);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if v~=self:GetValue() then
+        self:SetValue(v) 
+    else
+        HealBot_Globals.TestBars["HEALERS"] = v;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. v);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_NumTestMyTargets_OnValueChanged(self)
     local v=floor(self:GetValue()+0.5)
-    HealBot_Globals.TestBars["TARGETS"] = v;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. v);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if v~=self:GetValue() then
+        self:SetValue(v) 
+    else
+        HealBot_Globals.TestBars["TARGETS"] = v;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. v);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_NumTestPets_OnValueChanged(self)
     local v=floor(self:GetValue()+0.5)
-    HealBot_Globals.TestBars["PETS"] = v;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. v);
-    if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    if v~=self:GetValue() then
+        self:SetValue(v) 
+    else
+        HealBot_Globals.TestBars["PETS"] = v;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. v);
+        if HealBot_Data["REFRESH"]<2 then HealBot_Data["REFRESH"]=2; end
+    end
 end
 
 function HealBot_Options_AutoShow_OnClick(self)
@@ -1844,9 +2016,13 @@ end
 
 function HealBot_Options_IgnoreDebuffsDurationSecs_OnValueChanged(self)
     local v=floor(self:GetValue()+0.5)
-    HealBot_Config_Cures.IgnoreFastDurDebuffsSecs = v;
-    local g=_G[self:GetName().."Text"]
-    g:SetText(self.text .. ": " .. v.." secs");
+    if v~=self:GetValue() then
+        self:SetValue(v) 
+    else
+        HealBot_Config_Cures.IgnoreFastDurDebuffsSecs = v;
+        local g=_G[self:GetName().."Text"]
+        g:SetText(self.text .. ": " .. v.." secs");
+    end
 end
 
 function HealBot_Options_IgnoreDebuffsMovement_OnClick(self)
@@ -8833,13 +9009,13 @@ function HealBot_Options_InitSub1(subNo)
             HealBot_Options_SetText(HealBot_Options_HighlightActiveBarInCombat,HEALBOT_OPTIONS_MONITORBUFFSC)
             HealBot_Options_HighlightTargetBarInCombat:SetChecked(Healbot_Config_Skins.Highlight[Healbot_Config_Skins.Current_Skin]["TBARCOMBAT"] or 1)
             HealBot_Options_SetText(HealBot_Options_HighlightTargetBarInCombat,HEALBOT_OPTIONS_MONITORBUFFSC)
-            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_AggroFlashAlphaMax,HEALBOT_WORDS_MAX,0.2,1,0.05)
+            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_AggroFlashAlphaMax,HEALBOT_WORDS_MAX,0.2,1,0.05,2)
             HealBot_Options_AggroFlashAlphaMax:SetValue(Healbot_Config_Skins.Aggro[Healbot_Config_Skins.Current_Skin]["MAXA"])
             HealBot_Options_Pct_OnValueChanged(HealBot_Options_AggroFlashAlphaMax)
-            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_AggroFlashAlphaMin,HEALBOT_WORDS_MIN,0,0.8,0.05)
+            HealBot_Options_Pct_OnLoad_MinMax(HealBot_Options_AggroFlashAlphaMin,HEALBOT_WORDS_MIN,0,0.8,0.05,2)
             HealBot_Options_AggroFlashAlphaMin:SetValue(Healbot_Config_Skins.Aggro[Healbot_Config_Skins.Current_Skin]["MINA"])
             HealBot_Options_Pct_OnValueChanged(HealBot_Options_AggroFlashAlphaMin)
-            HealBot_Options_val2_OnLoad(HealBot_Options_AggroFlashFreq,HEALBOT_OPTIONS_AGGROFLASHFREQ,0.5,20,0.5,100)
+            HealBot_Options_val2_OnLoad(HealBot_Options_AggroFlashFreq,HEALBOT_OPTIONS_AGGROFLASHFREQ,0.5,10,0.5,100)
             HealBot_Options_AggroFlashFreq:SetValue(Healbot_Config_Skins.Aggro[Healbot_Config_Skins.Current_Skin]["FREQ"]*100)
             HealBot_Options_AggroFlashFreqText:SetText(HEALBOT_OPTIONS_AGGROFLASHFREQ..": "..Healbot_Config_Skins.Aggro[Healbot_Config_Skins.Current_Skin]["FREQ"])
             g=_G["HealBot_AggroBars_FontStr"]
@@ -9421,7 +9597,7 @@ function HealBot_Options_InitSub2(subNo)
             HealBot_Options_SetText(HealBot_Options_IgnoreDebuffsDuration,HEALBOT_OPTIONS_IGNOREDEBUFFDURATION)
             HealBot_Options_IgnoreDebuffsMovement:SetChecked(HealBot_Config_Cures.IgnoreMovementDebuffs)
             HealBot_Options_SetText(HealBot_Options_IgnoreDebuffsMovement,HEALBOT_OPTIONS_IGNOREDEBUFFMOVEMENT)
-            HealBot_Options_valtime_OnLoad(HealBot_Options_IgnoreDebuffsDurationSecs,HEALBOT_OPTIONS_HOTTEXTDURATION,1,5,1,true)
+            HealBot_Options_valtime_OnLoad(HealBot_Options_IgnoreDebuffsDurationSecs,HEALBOT_OPTIONS_HOTTEXTDURATION,1,5,1,true,1)
             HealBot_Options_IgnoreDebuffsDurationSecs:SetValue(HealBot_Config_Cures.IgnoreFastDurDebuffsSecs)
             HealBot_Options_IgnoreDebuffsDurationSecs_OnValueChanged(HealBot_Options_IgnoreDebuffsDurationSecs)
             HealBot_Options_IgnoreDebuffsNoHarm:SetChecked(HealBot_Config_Cures.IgnoreNonHarmfulDebuffs)
@@ -10375,7 +10551,6 @@ function HealBot_Options_UpdateMedia(panel)
         HealBot_Options_SetSliderValue(HealBot_Options_HeadFontNameS,fontsIndex[Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"]],true)
         HealBot_Options_SetSliderValue(HealBot_Options_AliasFontName,fontsIndex[Healbot_Config_Skins.FrameAlias[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"]],true)
         HealBot_Options_val_OnLoad(HealBot_Options_BarTextureS,HEALBOT_OPTIONS_SKINTEXTURE,1,#hb_textures,1)
-        HealBot_Options_BarTextureS:SetValueStep(1);
         HealBot_Options_val_OnLoad(HealBot_Options_FontName,HEALBOT_OPTIONS_SKINFONT,1,#fonts,1)
         HealBot_Options_SetSliderValue(HealBot_Options_BarTextureS,texturesIndex[Healbot_Config_Skins.HealBar[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["TEXTURE"]],true)
         HealBot_Options_SetSliderValue(HealBot_Options_FontName,fontsIndex[Healbot_Config_Skins.BarText[Healbot_Config_Skins.Current_Skin][HealBot_Options_StorePrev["FramesSelFrame"]]["FONT"]],true)
@@ -10395,9 +10570,8 @@ end
 function HealBot_UpdateUsedMedia(event, mediatype, key)
     if mediatype == "statusbar" then
         if Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin] then
-            local hdr=HealBot_Panel_retHealBot_Header_Frames()
-            for _,xButton in pairs(hdr) do
-                local h=_G["HealBot_Action_Header"..xButton];
+            local hFrames=HealBot_Panel_retHealBot_Header_Frames()
+            for _,h in pairs(hFrames) do
                 local bar = HealBot_Action_HealthBar(h);
                 bar:SetStatusBarTexture(LSM:Fetch('statusbar',Healbot_Config_Skins.HeadBar[Healbot_Config_Skins.Current_Skin][h.frame]["TEXTURE"]));
                 bar:GetStatusBarTexture():SetHorizTile(false)
@@ -10425,9 +10599,8 @@ function HealBot_UpdateUsedMedia(event, mediatype, key)
         end
     elseif mediatype == "font" then
         if Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin] then
-            local hdr=HealBot_Panel_retHealBot_Header_Frames()
-            for _,xButton in pairs(hdr) do
-                local h=_G["HealBot_Action_Header"..xButton];
+            local hFrames=HealBot_Panel_retHealBot_Header_Frames()
+            for _,h in pairs(hFrames) do
                 local bar = HealBot_Action_HealthBar(h);
                 bar.txt = _G[bar:GetName().."_text"];
                 bar.txt:SetFont(LSM:Fetch('font',Healbot_Config_Skins.HeadText[Healbot_Config_Skins.Current_Skin][h.frame]["FONT"]),

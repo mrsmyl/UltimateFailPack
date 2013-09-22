@@ -2691,7 +2691,7 @@ function HealBot_Action_SetButtonAttrib(button,bbutton,bkey,status,j)
             button.showhbmenu = showHBmenu
         elseif HealBot_GetSpellId(sName) then
             if sTar==1 or sTrin1==1 or sTrin2==1 or AvoidBC==1 then
-                local mText = HealBot_Action_AlterSpell2Macro(sName, sTar, sTrin1, sTrin2, AvoidBC, button.unit, HB_combo_prefix)
+                local mText = HealBot_Action_AlterSpell2Macro(sName, sTar, sTrin1, sTrin2, AvoidBC, button.unit, status)
                 button:SetAttribute(HB_prefix..buttonType..j, nil);
                 button:SetAttribute(HB_prefix.."type"..j,"macro")
                 button:SetAttribute(HB_prefix.."macrotext"..j, mText)
@@ -2722,7 +2722,7 @@ function HealBot_Action_SetButtonAttrib(button,bbutton,bkey,status,j)
             button:SetAttribute(HB_prefix.."item-item"..j, sName);
         else
             if sTar==1 or sTrin1==1 or sTrin2==1 or AvoidBC==1 then
-                local mText = HealBot_Action_AlterSpell2Macro(sName, sTar, sTrin1, sTrin2, AvoidBC, button.unit, HB_combo_prefix)
+                local mText = HealBot_Action_AlterSpell2Macro(sName, sTar, sTrin1, sTrin2, AvoidBC, button.unit, status)
                 button:SetAttribute(HB_prefix..buttonType..j, nil);
                 button:SetAttribute(HB_prefix.."type"..j,"macro")
                 button:SetAttribute(HB_prefix.."macrotext"..j, mText)
@@ -2746,46 +2746,46 @@ function HealBot_Action_SethbFocusButtonAttrib(button)
     button:SetAttribute("type-focus1", "focus")
 end
 
-local smName={}
-function HealBot_Action_AlterSpell2Macro(spellName, spellTar, spellTrin1, spellTrin2, spellAvoidBC, unit, combo)
-    if not smName[combo..unit] then
-        local sysSoundSFX = strsub(GetCVar("Sound_EnableSFX") or "nil",1,1)
-        smName[combo..unit]=""
-        if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName[combo..unit]=smName[combo..unit].."/console Sound_EnableSFX 0;\n" end
-        if HealBot_Globals.MacroSuppressError==1 then smName[combo..unit]=smName[combo..unit].."/script UIErrorsFrame:Hide();\n" end
-        if spellTar==1 then smName[combo..unit]=smName[combo..unit].."/target "..unit..";\n" end
-        if spellTrin1==1 then smName[combo..unit]=smName[combo..unit].."/use 13;\n" end
-        if spellTrin2==1 then smName[combo..unit]=smName[combo..unit].."/use 14;\n" end
-        if HealBot_Config.MacroUse10==1 then smName[combo..unit]=smName[combo..unit].."/use 10;\n" end
-        if HealBot_Globals.MacroSuppressError==1 then smName[combo..unit]=smName[combo..unit].."/script UIErrorsFrame:Clear(); UIErrorsFrame:Show();\n" end
-        if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName[combo..unit]=smName[combo..unit].."/console Sound_EnableSFX 1;\n" end
-        smName[combo..unit]=smName[combo..unit].."/cast [@"..unit.."] "..spellName..";\n"
-        if spellAvoidBC==1 then smName[combo..unit]=smName[combo..unit].."/use 4;" end
-        if strlen(smName[combo..unit])>255 then
-            smName[combo..unit]=""
-            if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName[combo..unit]=smName[combo..unit].."/console Sound_EnableSFX 0;\n" end
-            if spellTar==1 then smName[combo..unit]=smName[combo..unit].."/target "..UnitName(unit)..";\n" end
-            if spellTrin1==1 then smName[combo..unit]=smName[combo..unit].."/use 13;\n" end
-            if spellTrin2==1 then smName[combo..unit]=smName[combo..unit].."/use 14;\n" end
-            if HealBot_Config.MacroUse10==1 then smName[combo..unit]=smName[combo..unit].."/use 10;\n" end
-            if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName[combo..unit]=smName[combo..unit].."/console Sound_EnableSFX 1;\n" end
-            smName[combo..unit]=smName[combo..unit].."/cast [@"..unit.."] "..spellName..";\n"
-            if spellAvoidBC==1 then smName[combo..unit]=smName[combo..unit].."/use 4;" end
-            if strlen(smName[combo..unit])>255 then
-                smName[combo..unit]=""
-                if spellTar==1 then smName[combo..unit]=smName[combo..unit].."/target "..UnitName(unit)..";\n" end
-                if spellTrin1==1 then smName[combo..unit]=smName[combo..unit].."/use 13;\n" end
-                if spellTrin2==1 then smName[combo..unit]=smName[combo..unit].."/use 14;\n" end
-                if HealBot_Config.MacroUse10==1 then smName[combo..unit]=smName[combo..unit].."/use 10;\n" end
-                smName[combo..unit]=smName[combo..unit].."/cast [@"..unit.."] "..spellName..";\n"
-                if spellAvoidBC==1 then smName[combo..unit]=smName[combo..unit].."/use 4;" end
-                if strlen(smName[combo..unit])>255 then
-                    smName[combo..unit]=spellName
-                end
+function HealBot_Action_AlterSpell2Macro(spellName, spellTar, spellTrin1, spellTrin2, spellAvoidBC, unit, status)
+    local smName=""
+    local sysSoundSFX = strsub(GetCVar("Sound_EnableSFX") or "nil",1,1)
+    local spellType="help"
+    if status=="Enemy" then spellType="harm" end
+    
+    if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName=smName.."/console Sound_EnableSFX 0;\n" end
+    if HealBot_Globals.MacroSuppressError==1 then smName=smName.."/script UIErrorsFrame:Hide();\n" end
+    if spellTar==1 then smName=smName.."/target "..unit..";\n" end
+    if spellTrin1==1 then smName=smName.."/use 13;\n" end
+    if spellTrin2==1 then smName=smName.."/use 14;\n" end
+    if HealBot_Config.MacroUse10==1 then smName=smName.."/use 10;\n" end
+    if HealBot_Globals.MacroSuppressError==1 then smName=smName.."/script UIErrorsFrame:Clear(); UIErrorsFrame:Show();\n" end
+    if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName=smName.."/console Sound_EnableSFX 1;\n" end
+    smName=smName.."/cast [@"..unit..","..spellType.."] "..spellName..";\n"
+    if spellAvoidBC==1 then smName=smName.."/use 4;" end
+    if strlen(smName)>255 then
+        smName=""
+        if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName=smName.."/console Sound_EnableSFX 0;\n" end
+        if spellTar==1 then smName=smName.."/target "..UnitName(unit)..";\n" end
+        if spellTrin1==1 then smName=smName.."/use 13;\n" end
+        if spellTrin2==1 then smName=smName.."/use 14;\n" end
+        if HealBot_Config.MacroUse10==1 then smName=smName.."/use 10;\n" end
+        if HealBot_Globals.MacroSuppressSound==1 and sysSoundSFX=="1" then smName=smName.."/console Sound_EnableSFX 1;\n" end
+        smName=smName.."/cast [@"..unit..","..spellType.."] "..spellName..";\n"
+        if spellAvoidBC==1 then smName=smName.."/use 4;" end
+        if strlen(smName)>255 then
+            smName=""
+            if spellTar==1 then smName=smName.."/target "..UnitName(unit)..";\n" end
+            if spellTrin1==1 then smName=smName.."/use 13;\n" end
+            if spellTrin2==1 then smName=smName.."/use 14;\n" end
+            if HealBot_Config.MacroUse10==1 then smName=smName.."/use 10;\n" end
+            smName=smName.."/cast [@"..unit..","..spellType.."] "..spellName..";\n"
+            if spellAvoidBC==1 then smName=smName.."/use 4;" end
+            if strlen(smName)>255 then
+                smName=spellName
             end
         end
     end
-    return smName[combo..unit]
+    return smName
 end
 
 function HealBot_Action_hbmenuFrame_DropDown_Initialize(self,level)
@@ -2960,9 +2960,6 @@ function HealBot_Action_PartyChanged(HealBot_PreCombat, disableHealBot)
             end
             for x,_ in pairs(HealBotButtonMacroAttribs) do
                 HealBotButtonMacroAttribs[x]=nil;
-            end
-            for x,_ in pairs(smName) do
-                smName[x]=nil;
             end
             for x,_ in pairs(hbAttribsMinReset) do
                 hbAttribsMinReset[x]=nil;
