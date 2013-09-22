@@ -1,7 +1,7 @@
-## Interface: 50300
+## Interface: 50400
 ## Author: John Stephen
 ## Title: Outfitter
-## Version: 5.9.1
+## Version: 5.9.2
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps: Titan, FuBar, TankPoints, ButtonFacade
 ## RequiredDeps: 
