@@ -1,14 +1,14 @@
-﻿## Interface: 50001
+﻿## Interface: 50400
 ## Title: Analyst
 ## Notes: Collects, analyzes and presents information about the virtual economy.
 ## Notes-deDE: Sammelt, analyisert und präsentiert Informationen über die virtuelle Wirtschaft.
 ## Notes-zhCN: 收集、分析并显示你在游戏中的经济活动状况资讯。
 ## Notes-zhTW: 收集、分析並顯示你在遊戲中的經濟活動狀況資訊。
 ## Author: Bethink
-## Version: 1.2.0
+## Version: 1.2.1
 ## SavedVariables: AnalystDB
 ## OptionalDeps: Ace3, LibDBIcon-1.0
-## X-Curse-Packaged-Version: 1.2.0
+## X-Curse-Packaged-Version: 1.2.1
 ## X-Curse-Project-Name: Analyst
 ## X-Curse-Project-ID: analyst
 ## X-Curse-Repository-ID: wow/analyst/mainline
