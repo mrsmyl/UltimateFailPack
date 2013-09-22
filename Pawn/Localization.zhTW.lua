@@ -266,6 +266,7 @@ www.vgermods.com
 		Heroic = "^英雄模式$", -- Needs review
 		HeroicElite = "^英雄難度精英$", -- Needs review
 		HeroicThunderforged = "^Heroic Thunderforged$", -- Requires localization
+		HeroicWarforged = "^Heroic Warforged$",
 		Hit = "^%+?([%d%.,]+)命中等級$", -- Needs review
 		Hit2 = "^裝備: 提高([%d%.,]+)點命中等級。$", -- Needs review
 		Hit3 = "^UNUSED$", -- Needs review
@@ -317,9 +318,11 @@ www.vgermods.com
 		TemporaryBuffMinutes = "^.+%(%d+ 分%)$", -- Needs review
 		TemporaryBuffSeconds = "^.+%(%d+ 秒%)$", -- Needs review
 		Thunderforged = "^Thunderforged$", -- Requires localization
+		Timeless = "^Timeless$",
 		UpgradeLevel = "^Upgrade Level:", -- Needs review
 		Use = "使用: ", -- Needs review
 		Wand = "^魔杖$", -- Needs review
+		Warforged = "^Warforged$",
 		WeaponDamage = "^([%d%.,]+) %- ([%d%.,]+) 傷害$", -- Needs review
 		WeaponDamageArcane = "^%+?([%d%.,]+)%-([%d%.,]+)秘法傷害$", -- Needs review
 		WeaponDamageEnchantment = "^%+?([%d%.,]+)武器傷害$", -- Needs review

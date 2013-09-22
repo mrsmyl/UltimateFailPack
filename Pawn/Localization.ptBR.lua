@@ -269,6 +269,7 @@ Para mais informações em personalizar o Pawn, favor veja o arquivo de ajuda (R
 		Heroic = "^Heroico$",
 		HeroicElite = "^Heroico de Elite$",
 		HeroicThunderforged = "^Forjado pelo Trovão Heroico$", -- Needs review
+		HeroicWarforged = "^Heroic Warforged$",
 		Hit = "^%+?([%d%.,]+) Acerto$", -- Needs review
 		Hit2 = "^%+?([%d%.,]+) de Acerto$", -- Needs review
 		Hit3 = "^UNUSED$", -- Needs review
@@ -320,9 +321,11 @@ Para mais informações em personalizar o Pawn, favor veja o arquivo de ajuda (R
 		TemporaryBuffMinutes = "^.+%(%d+ min%)$", -- Needs review
 		TemporaryBuffSeconds = "^.+%(%d+ s%)$", -- Needs review
 		Thunderforged = "^Forjado pelo Trovão$", -- Needs review
+		Timeless = "^Timeless$",
 		UpgradeLevel = "^Nível de aprimoramento:", -- Needs review
 		Use = "Usar:", -- Needs review
 		Wand = "^Varinha$", -- Needs review
+		Warforged = "^Warforged$",
 		WeaponDamage = "^([%d%.,]+) %- ([%d%.,]+) de Dano$", -- Needs review
 		WeaponDamageArcane = "^%+?([%d%.,]+) %- ([%d%.,]+) de [dD]ano Arcano$", -- Needs review
 		WeaponDamageEnchantment = "^%+?([%d%.,]+) [dD]ano de [aA]rma$", -- Needs review
