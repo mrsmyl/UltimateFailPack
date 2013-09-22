@@ -149,10 +149,10 @@ function ItemSlot:TEXT_SEARCH_UPDATE()
 	self:UpdateSearch()
 end
 
-function ItemSlot:FLASH_SEARCH_UPDATE(event, item)
+function ItemSlot:FLASH_SEARCH_UPDATE(event, search)
 	self.flash:Stop()
 
-	if item == self:GetItem() then
+	if ItemSearch:Matches(self:GetItem(), search) then
 		self.flash:Play()
 	end
 end
