@@ -2,7 +2,7 @@
 -- Author: Zek <Boodhoof-EU>
 -- License: GNU GPL v3, 29 June 2007 (see LICENSE.txt)
 
-XPerl_SetModuleRevision("$Revision: 851 $")
+XPerl_SetModuleRevision("$Revision: 856 $")
 
 local localGroups = LOCALIZED_CLASS_NAMES_MALE
 local WoWclassCount = 0
@@ -2446,6 +2446,8 @@ local function XPerl_Raid_ConfigDefault(default)
 		},
 		titles			= 1,
 		percent			= 1,
+		precisionPercent = 1,
+		precisionManaPercent = 1,
 		scale			= 0.8,
 		spacing			= 0,
 		buffs = {
@@ -3145,6 +3147,10 @@ if (XPerl_UpgradeSettings) then
 				old.raid.sortByRole = 0
 			end
 			
+			if (oldVersion < "3.7.3") then
+				old.raid.precisionPercent = 1
+				old.raid.precisionManaPercent = 1
+			end
 		end
 	end
 

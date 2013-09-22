@@ -1,4 +1,25 @@
 ------------------------------------------------------------------------
+r856 | asixandur | 2013-09-15 05:44:37 +0000 (Sun, 15 Sep 2013) | 3 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Options/localization.deDE.lua
+   M /trunk/XPerl_Options/localization.esES.lua
+   M /trunk/XPerl_Options/localization.frFR.lua
+   M /trunk/XPerl_Options/localization.itIT.lua
+   M /trunk/XPerl_Options/localization.koKR.lua
+   M /trunk/XPerl_Options/localization.lua
+   M /trunk/XPerl_Options/localization.ruRU.lua
+   M /trunk/XPerl_Options/localization.zhCN.lua
+   M /trunk/XPerl_Options/localization.zhTW.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/localization.lua
+
+New setting to disable the decimal digit in the raid mana and health percentages (thanks ooblushy88oo for the suggestion)
+Tag as 3.7.3
+Removed unused translations
+------------------------------------------------------------------------
 r855 | asixandur | 2013-09-12 10:50:13 +0000 (Thu, 12 Sep 2013) | 2 lines
 Changed paths:
    M /trunk/XPerl.toc

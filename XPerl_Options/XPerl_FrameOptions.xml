@@ -10173,7 +10173,24 @@
 								XPerlDB.raid.values = nil
 								XPerl_Raid_OptionActions()
 								XPerl_Options_CheckRadio(self,{"Percent", "Values"})
+								XPerl_Options_EnableCheck(_G[self:GetParent():GetName().."_precisionPercent"], true)
 							</OnClick>
+						</Scripts>
+					</CheckButton>
+					
+					<CheckButton name="$parent_precisionPercent" inherits="XPerlCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="$parent_Percent" relativePoint="TOPRIGHT">
+								<Offset><AbsDimension x="100" y="4"/></Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								XPerl_OptionsSetMyText(self, "XPERL_CONF_RAID_PRECISIONPERCENTS")
+								self.configBase = "XPerlDB.raid"
+								self.configIndex = "precisionPercent"
+								self.configClick = XPerl_Raid_OptionActions
+							</OnLoad>
 						</Scripts>
 					</CheckButton>
 
@@ -10189,12 +10206,14 @@
 							</OnLoad>
 							<OnShow>
 								self:SetChecked(XPerlDB.raid.values)
+								XPerl_Options_EnableCheck(_G[self:GetParent():GetName().."_precisionPercent"], not XPerlDB.raid.values)
 							</OnShow>
 							<OnClick>
 								self:SetChecked(true)
 								XPerlDB.raid.values = 1
 								XPerl_Raid_OptionActions()
 								XPerl_Options_CheckRadio(self,{"Percent", "Values"})
+								XPerl_Options_EnableCheck(_G[self:GetParent():GetName().."_precisionPercent"], false)
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -10233,6 +10252,25 @@
 								self.configIndex = "manaPercent"
 								self.configClick = XPerl_Raid_OptionActions
 								XPerl_Options_RegisterProtected(self)
+								self.Validate = function()
+									XPerl_Options_EnableSibling(self, "precisionManaPercent")
+								end
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+					
+					<CheckButton name="$parent_precisionManaPercent" inherits="XPerlCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="$parent_ManaPercent" relativePoint="TOPRIGHT">
+								<Offset><AbsDimension x="100" y="2"/></Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								XPerl_OptionsSetMyText(self, "XPERL_CONF_RAID_MANAPRECISIONPERCENT")
+								self.configBase = "XPerlDB.raid"
+								self.configIndex = "precisionManaPercent"
+								self.configClick = XPerl_Raid_OptionActions
 							</OnLoad>
 						</Scripts>
 					</CheckButton>

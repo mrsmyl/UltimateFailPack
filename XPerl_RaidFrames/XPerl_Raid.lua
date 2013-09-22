@@ -11,7 +11,8 @@ local ResArray = {}		-- List of currently active resserections in progress
 local buffUpdates = {}		-- Queue for buff updates after a roster change
 local raidLoaded
 local rosterUpdated
-local percD = "%.1f"..PERCENT_SYMBOL
+local percF = "%.1f"..PERCENT_SYMBOL
+local percD = "%d"..PERCENT_SYMBOL
 local lastNamesList, lastName, lastWith, lastNamesCount -- Stores with/without buff list (OnUpdate optimization)
 local fullyInitiallized
 
@@ -50,7 +51,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 854 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 856 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -476,10 +477,11 @@ function XPerl_Raid_UpdateHealth(self)
 			if (rconf.healerMode.enable) then
 				self.statsFrame.healthBar.text:SetText(-(healthmax - health))
 			else
-				if (rconf.values) then
+				if rconf.values then
 					self.statsFrame.healthBar.text:SetFormattedText("%d/%d", health, healthmax)
+				elseif rconf.precisionPercent then
+					self.statsFrame.healthBar.text:SetFormattedText(percF, (percentHp) * 100)
 				else
-					--self.statsFrame.healthBar.text:SetFormattedText(percD, (percentHp + 0.005) * 100)
 					self.statsFrame.healthBar.text:SetFormattedText(percD, (percentHp) * 100)
 				end
 			end
@@ -541,7 +543,13 @@ local function XPerl_Raid_UpdateMana(self)
 					pmanaPct = mana / manamax--Everything is dandy, so just do it right way.
 				end
 				--end division by 0 check
-				self.statsFrame.manaBar.text:SetFormattedText(percD, pmanaPct * 100)	-- XPerl_Percent[floor(pmanaPct)])
+				
+				if rconf.precisionManaPercent then
+					self.statsFrame.manaBar.text:SetFormattedText(percF, pmanaPct * 100)
+				else
+					self.statsFrame.manaBar.text:SetFormattedText(percD, pmanaPct * 100)
+				end
+				
 			end
 		else
 			self.statsFrame.manaBar.text:SetText("")
