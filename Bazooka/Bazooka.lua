@@ -10,7 +10,7 @@ License: Public Domain
 
 local AppName, Bazooka = ...
 local OptionsAppName = AppName .. "_Options"
-local VERSION = AppName .. "-v2.2.5"
+local VERSION = AppName .. "-2.2.6"
 --[===[@debug@
 local VERSION = AppName .. "-r" .. ("$Revision: 240 $"):match("%d+")
 --@end-debug@]===]
