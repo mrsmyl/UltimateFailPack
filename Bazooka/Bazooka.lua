@@ -1,6 +1,6 @@
 --[[
 Name: Bazooka
-Revision: $Revision: 240 $
+Revision: $Revision: 245 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/bazooka/
 SVN: svn://svn.wowace.com/wow/bazooka/mainline/trunk
@@ -10,9 +10,9 @@ License: Public Domain
 
 local AppName, Bazooka = ...
 local OptionsAppName = AppName .. "_Options"
-local VERSION = AppName .. "-2.2.6"
+local VERSION = AppName .. "-v2.2.7"
 --[===[@debug@
-local VERSION = AppName .. "-r" .. ("$Revision: 240 $"):match("%d+")
+local VERSION = AppName .. "-r" .. ("$Revision: 245 $"):match("%d+")
 --@end-debug@]===]
 
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
@@ -2544,3 +2544,4 @@ local bft = bottomFrame:CreateTexture()
 bft:SetAllPoints()
 bft:SetTexture(.8, 0.4, 0.2, 0.5)
 --]]
+

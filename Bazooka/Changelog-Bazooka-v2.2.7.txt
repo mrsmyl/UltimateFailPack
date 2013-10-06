@@ -1,9 +1,15 @@
 ------------------------------------------------------------------------
-r244 | mitch0 | 2013-09-22 17:43:30 +0000 (Sun, 22 Sep 2013) | 1 line
+r247 | mitch0 | 2013-09-23 14:17:55 +0000 (Mon, 23 Sep 2013) | 1 line
 Changed paths:
-   A /tags/2.2.6 (from /trunk:243)
+   A /tags/v2.2.7 (from /trunk:246)
 
-Tagging as 2.2.6
+Tagging as v2.2.7
+------------------------------------------------------------------------
+r245 | mitch0 | 2013-09-23 07:35:33 +0000 (Mon, 23 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+fake commit, maybe this'll put the packager in gear...
 ------------------------------------------------------------------------
 r242 | mitch0 | 2013-09-13 09:19:08 +0000 (Fri, 13 Sep 2013) | 1 line
 Changed paths:
