@@ -90,7 +90,7 @@ function HealBot_Action_RefreshTooltip()
     if spellButton4 and strsub(strlower(spellButton4),1,4)==strlower(HEALBOT_TELL) then spellButton4=HEALBOT_TELL end
     if spellButton5 and strsub(strlower(spellButton5),1,4)==strlower(HEALBOT_TELL) then spellButton5=HEALBOT_TELL end
   
-    if not IsModifierKeyDown() and HealBot_Data["UILOCK"]=="NO" and HealBot_Globals.SmartCast==1 and not xButton.enemy then 
+    if not IsModifierKeyDown() and HealBot_Data["UILOCK"]=="NO" and HealBot_Globals.SmartCast==1 and UnitExists(xUnit) and UnitIsFriend("player",xUnit) then 
         local z=spellLeft;
         spellLeft=nil;
         spellLeft=HealBot_Action_SmartCast(xButton);
@@ -157,7 +157,7 @@ function HealBot_Action_RefreshTooltip()
             end
             linenum=linenum+1
             if hlth and maxhlth then
-                local inHeal, inAbsorb = HealBot_IncHeals_retHealsIn(xUnit)
+                local inHeal, inAbsorb = HealBot_IncHeals_retHealsIn(xUnit, xButton.frame)
                 r,g,b=HealBot_HealthColor(xUnit,hlth,maxhlth,true,false,uBuff,DebuffType,inHeal,inAbsorb,false,xButton);
                 local hPct=floor((hlth/maxhlth)*100)
                 hlth=HealBot_Tooltip_readNumber(hlth)

@@ -1,9 +1,0 @@
-## Interface: 50400
-## Title: HealBot Spanish Localization
-## Author: Strife
-## Notes: HealBot Localization for esES
-## RequiredDeps: HealBot
-## LoadOnDemand: 1
-## Version: 5.4.0.0
-
-HealBot_Localization.es.lua

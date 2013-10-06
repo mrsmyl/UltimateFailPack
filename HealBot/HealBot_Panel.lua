@@ -1454,7 +1454,7 @@ function HealBot_Panel_focusHeals()
     end
     
     if i[hbCurrentFrame]>k then 
-        if UnitIsFriend("player",xUnit) or uName==HEALBOT_WORD_RESERVED..":"..xUnit then
+        if Healbot_Config_Skins.Healing[Healbot_Config_Skins.Current_Skin]["FONLYFRIEND"]==1 then
             HealBot_Panel_SubSort(false)
         else
             HealBot_Panel_SubSort(false, true)
@@ -1739,32 +1739,6 @@ function HealBot_Panel_raidHeals()
                             end
                         end
                     end
-                end
-            end
-        end
-    end
-    for bi=1,4 do
-        xUnit="boss"..bi
-        xGUID=UnitGUID(xUnit)
-        if UnitExists(xUnit) and UnitIsFriend("player",xUnit) and UnitHealth(xUnit)>99 then
-            if not HealBot_TrackNames[xGUID] then
-                if not HealBot_TrackNotVisible[xGUID] then
-                    uName=UnitName(xUnit);
-                    if Healbot_Config_Skins.Sort[Healbot_Config_Skins.Current_Skin]["RAIDORDER"]==1 then
-                        order[xUnit] = uName;
-                    elseif Healbot_Config_Skins.Sort[Healbot_Config_Skins.Current_Skin]["RAIDORDER"]==2 then
-                        _,classEN=UnitClass(xUnit)
-                        order[xUnit] = classEN;
-                    elseif Healbot_Config_Skins.Sort[Healbot_Config_Skins.Current_Skin]["RAIDORDER"]==3 then
-                        order[xUnit] = 9;
-                    elseif Healbot_Config_Skins.Sort[Healbot_Config_Skins.Current_Skin]["RAIDORDER"]==4 then
-                        order[xUnit] = 0-UnitHealthMax(xUnit);
-                        if UnitHealthMax(xUnit)>TempMaxH then TempMaxH=UnitHealthMax(xUnit); end
-                    end
-                    table.insert(units,xUnit);
-                    HealBot_UnitName[xGUID] = uName;
-                    HealBot_UnitNameGUID[uName]=xGUID
-                    HealBot_TrackNames[xGUID]=true;
                 end
             end
         end
@@ -2117,7 +2091,7 @@ function HealBot_Panel_targetHeals()
     end
     
     if i[hbCurrentFrame]>k then 
-        if UnitIsFriend("player",xUnit) or uName==HEALBOT_WORD_RESERVED..":"..xUnit then
+        if Healbot_Config_Skins.Healing[Healbot_Config_Skins.Current_Skin]["TONLYFRIEND"]==1 then
             HealBot_Panel_SubSort(false)
         else
             HealBot_Panel_SubSort(false, true)
@@ -2138,14 +2112,14 @@ function HealBot_Panel_enemyTargets()
             if HealBot_Data["UILOCK"]=="YES" then
                 if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWPTAR"]==1 then
                     if UnitExists("playertarget") and not UnitIsFriend("player","playertarget") then
-                        HealBot_Panel_enemyBar("playertarget", "player")
+                        HealBot_Panel_enemyBar("playertarget", "player", true)
                     end
                 else
-                    HealBot_Panel_enemyBar("playertarget", "player")
+                    HealBot_Panel_enemyBar("playertarget", "player", true)
                 end
             end
         else
-            HealBot_Panel_enemyBar("playertarget", "player")
+            HealBot_Panel_enemyBar("playertarget", "player", true)
         end
     end
     if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["INCTANKS"]==1 then
@@ -2157,14 +2131,14 @@ function HealBot_Panel_enemyTargets()
                 if HealBot_Data["UILOCK"]=="YES" then
                     if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWPTAR"]==1 then
                         if UnitExists(xUnit.."target") and not UnitIsFriend(xUnit,xUnit.."target") then
-                            HealBot_Panel_enemyBar(xUnit.."target", xUnit)
+                            HealBot_Panel_enemyBar(xUnit.."target", xUnit, true)
                         end
                     else
-                        HealBot_Panel_enemyBar(xUnit.."target", xUnit)
+                        HealBot_Panel_enemyBar(xUnit.."target", xUnit, true)
                     end
                 end
             else
-                HealBot_Panel_enemyBar(xUnit.."target", xUnit)
+                HealBot_Panel_enemyBar(xUnit.."target", xUnit, true)
             end
         end
     end
@@ -2175,22 +2149,33 @@ function HealBot_Panel_enemyTargets()
                 if HealBot_Data["UILOCK"]=="YES" then
                     if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWPTAR"]==1 then
                         if UnitExists(xUnit.."target") and not UnitIsFriend(xUnit,xUnit.."target") then
-                            HealBot_Panel_enemyBar(xUnit.."target", xUnit)
+                            HealBot_Panel_enemyBar(xUnit.."target", xUnit, true)
                         end
                     else
-                        HealBot_Panel_enemyBar(xUnit.."target", xUnit)
+                        HealBot_Panel_enemyBar(xUnit.."target", xUnit, true)
                     end
                 end
             else
-                HealBot_Panel_enemyBar(xUnit.."target", xUnit)
+                HealBot_Panel_enemyBar(xUnit.."target", xUnit, true)
             end
         end)
     end
     if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"]>0 then
-        for bi=1,Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"] do
+        local numBoss=Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"]
+        local showBossExists=Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWBOSS"]
+        local mapID=GetCurrentMapAreaID()
+        if mapID==953 then
+            local bossGUID=UnitExists("boss1") and not UnitIsDead("boss1") and UnitGUID("boss1")
+            local bossCId=bossGUID and tonumber(bossGUID:sub(6, 10), 16)
+            if (bossCId or 0)==71246 then
+                if numBoss<3 then numBoss=3 end
+                showBossExists=0
+            end
+        end
+        for bi=1,numBoss do
             if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["HIDE"]==1 then
                 if HealBot_Data["UILOCK"]=="YES" then
-                    if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWBOSS"]==1 then
+                    if showBossExists==1 then
                         if UnitExists("boss"..bi) then
                             HealBot_Panel_enemyBar("boss"..bi, "boss"..bi)
                         end
@@ -2204,7 +2189,7 @@ function HealBot_Panel_enemyTargets()
         end
     end
     if i[hbCurrentFrame]>k then 
-        HealBot_Panel_SubSort(true, true)
+        HealBot_Panel_SubSort(true,true)
         if HealBot_BottomAnchors[hbCurrentFrame] then 
             HeaderPos[hbCurrentFrame][i[hbCurrentFrame]+1] = HEALBOT_CUSTOM_CASTBY_ENEMY 
         else
@@ -2213,24 +2198,18 @@ function HealBot_Panel_enemyTargets()
     end
 end
 
-function HealBot_Panel_enemyBar(unit, pUnit)
+function HealBot_Panel_enemyBar(unit, pUnit, noEvents)
     local xGUID=unit
     local uName=HEALBOT_ENEMY_NO_TARGET
     local incEnemy=true
     if UnitExists(unit) and UnitHealth(unit)>99 then
-        if not UnitIsFriend("player",unit) then
-            xGUID=HealBot_UnitGUID(unit)
-            uName=UnitName(unit)
-        else
-            incEnemy=false
-        end
+        xGUID=HealBot_UnitGUID(unit)
+        uName=UnitName(unit)
     end
-    if incEnemy then
-        HealBot_UnitName[unit]=uName;    
-        i[hbCurrentFrame]=i[hbCurrentFrame]+1;
-        table.insert(subunits,unit)
-        HealBot_setEnemyUnits(unit, xGUID, pUnit)
-    end
+    HealBot_UnitName[unit]=uName;    
+    i[hbCurrentFrame]=i[hbCurrentFrame]+1;
+    table.insert(subunits,unit)
+    HealBot_setEnemyUnits(unit, xGUID, pUnit)
 end
 
 function HealBot_Panel_cpSave(mNum)
@@ -2277,7 +2256,7 @@ function HealBot_Panel_insSubSort(unit, hbGUID)
     table.insert(subunits,unit)
 end
 
-function HealBot_Panel_SubSort(hbincSort,enemy)
+function HealBot_Panel_SubSort(hbincSort,alsoEnemy)
     if Healbot_Config_Skins.Sort[Healbot_Config_Skins.Current_Skin]["SUBORDER"]<6 and hbincSort then
         table.sort(subunits,function (a,b)
             if not order[a] or not order[b] then
@@ -2293,7 +2272,7 @@ function HealBot_Panel_SubSort(hbincSort,enemy)
         local sUnit=subunits[j];
         local sGUID=HealBot_UnitGUID(sUnit) or sUnit
         if not HealBot_TrackUnit[sUnit] and not HealBot_Panel_BlackList[sGUID] then
-            local setBtutton=HealBot_Action_SetHealButton(sUnit,sGUID,hbCurrentFrame,enemy);
+            local setBtutton=HealBot_Action_SetHealButton(sUnit,sGUID,hbCurrentFrame,alsoEnemy);
             if setBtutton then
                 HealBot_TrackUnit[sUnit]=true
                 HealBot_TrackGUID[sGUID]=nil

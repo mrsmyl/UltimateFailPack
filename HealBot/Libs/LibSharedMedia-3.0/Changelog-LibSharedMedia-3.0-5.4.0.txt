@@ -1,11 +1,11 @@
 ------------------------------------------------------------------------
-r80 | funkydude | 2013-05-21 12:40:23 +0000 (Tue, 21 May 2013) | 1 line
+r82 | funkydude | 2013-09-09 23:37:04 +0000 (Mon, 09 Sep 2013) | 1 line
 Changed paths:
-   A /tags/5.3.0 (from /trunk:79)
+   A /tags/5.4.0 (from /trunk:81)
 
-Tagging as 5.3.0
+Tagging as 5.4.0
 ------------------------------------------------------------------------
-r79 | funkydude | 2013-05-21 12:36:57 +0000 (Tue, 21 May 2013) | 1 line
+r81 | funkydude | 2013-09-09 23:19:55 +0000 (Mon, 09 Sep 2013) | 1 line
 Changed paths:
    M /trunk/LibSharedMedia-3.0.toc
 

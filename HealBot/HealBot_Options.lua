@@ -6357,15 +6357,21 @@ end
 
 function HealBot_Options_setCustomDebuffList()
     local customPriority = {}
-    local customDefaultCnt=0
+    local customDefaultDamageCnt=0
+    local customDefaultEffectCnt=0
+    local customDefaultMiscCnt=0
     local customListPos=0
     local textname=nil
     for dName, x in pairs(HealBot_Globals.HealBot_Custom_Debuffs) do
-        if HealBot_Globals.CDCBarColour[dName] or HealBot_Globals.HealBot_Custom_Debuffs[dName]~=10 then
+        if HealBot_Globals.CDCBarColour[dName] or (HealBot_Globals.HealBot_Custom_Debuffs[dName]<10 and HealBot_Globals.HealBot_Custom_Debuffs[dName]>11) then
             if not customPriority[x] then customPriority[x]={} end
             customPriority[x][dName]=dName
+        elseif HealBot_Globals.HealBot_Custom_Debuffs[dName]==10 then
+            customDefaultDamageCnt=customDefaultDamageCnt+1
+        elseif HealBot_Globals.HealBot_Custom_Debuffs[dName]==11 then
+            customDefaultEffectCnt=customDefaultEffectCnt+1
         else
-            customDefaultCnt=customDefaultCnt+1
+            customDefaultMiscCnt=customDefaultMiscCnt+1
         end
     end
     local x=HealBot_Config_Cures.HealBotDebuffPriority[HEALBOT_DISEASE_en]
@@ -6380,11 +6386,18 @@ function HealBot_Options_setCustomDebuffList()
     x=HealBot_Config_Cures.HealBotDebuffPriority[HEALBOT_POISON_en]
     if not customPriority[x] then customPriority[x]={} end
     customPriority[x][HEALBOT_POISON_en]=HEALBOT_POISON
-    if customDefaultCnt>0 then
+    if customDefaultDamageCnt>0 then
         if not customPriority[10] then customPriority[10]={} end
-        customPriority[10][HEALBOT_CUSTOM_CAT_CUSTOM]=HEALBOT_CUSTOM_CAT_CUSTOM.." (x"..customDefaultCnt..")"
+        customPriority[10][HEALBOT_CUSTOM_CAT_CUSTOM_DAMAGE]=HEALBOT_CUSTOM_CAT_CUSTOM_DAMAGE.." (x"..customDefaultDamageCnt..")"
     end
-    
+    if customDefaultEffectCnt>0 then
+        if not customPriority[11] then customPriority[11]={} end
+        customPriority[11][HEALBOT_CUSTOM_CAT_CUSTOM_EFFECT]=HEALBOT_CUSTOM_CAT_CUSTOM_EFFECT.." (x"..customDefaultEffectCnt..")"
+    end
+    if customDefaultMiscCnt>0 then
+        if not customPriority[12] then customPriority[12]={} end
+        customPriority[12][HEALBOT_CUSTOM_CAT_CUSTOM_MISC]=HEALBOT_CUSTOM_CAT_CUSTOM_MISC.." (x"..customDefaultMiscCnt..")"
+    end
     for j=1,20 do
         if customPriority[j] then
             for z, dName in pairs(customPriority[j]) do

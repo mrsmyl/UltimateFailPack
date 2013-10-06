@@ -52,12 +52,11 @@ local hbprevThreatPct=-3
 function HealBot_Action_UpdateAggro(unit,status,threatStatus,threatPct)
     local xButton=HealBot_Unit_Button[unit]
     if not xButton then return end
-    if xButton.enemy then return end
     --if HealBot_UnitAggro[unit] then HealBot_UnitAggro[unit]=nil end
 
     local barName=HealBot_Action_HealthBar4(xButton)
     if not barName then return end    
-    if UnitExists(unit) then
+    if UnitExists(unit) and UnitIsFriend("player",unit) then
         if UnitIsDeadOrGhost(unit) and not UnitIsFeignDeath(unit) then
             status=nil
             threatPct=0
@@ -163,7 +162,7 @@ function HealBot_Action_aggoIndicatorUpd(unit, threatStatus)
     if not xButton then return end
     local mainBar=HealBot_Action_HealthBar(HealBot_Unit_Button[unit])
     local iconName=nil
-    if xButton.enemy then
+    if not UnitExists(unit) or (UnitExists(unit) and not UnitIsFriend("player",unit)) then
         iconName = _G[mainBar:GetName().."Iconal1"];
         iconName:SetAlpha(0)
         iconName = _G[mainBar:GetName().."Iconal2"];
@@ -763,7 +762,7 @@ end
 function HealBot_Action_SetBar3Value(button, sName)
     if not button then return end
     local barName = HealBot_Action_HealthBar3(button)
-    if button.enemy then
+    if UnitExists(button.unit) and not UnitIsFriend("player",button.unit) then
         local cast=HealBot_retEnemyUnits(button.unit, "CAST") or -1
         local r, g, b, a = 1, 0.1, 0.1, 1
         if cast>-1 then
@@ -1072,18 +1071,18 @@ function HealBot_Action_EnableButton(button, isTarget)
     ebubar6 = HealBot_Action_HealthBar6(button)
     ebuicon15 = _G[ebubar:GetName().."Icon15"];
     
-    if button.enemy then
+    if UnitExists(ebUnit) and not UnitIsFriend("player",ebUnit) then
         HealBot_UnitRangeSpell[ebUnit]=HealBot_RangeSpells["HARM"]
     else
         HealBot_UnitRangeSpell[ebUnit]=HealBot_RangeSpells["HEAL"]
     end
     local unitHRange=HealBot_UnitInRange(HealBot_UnitRangeSpell[ebUnit], ebUnit)
 
-    local uHealIn, uAbsorbs = HealBot_IncHeals_retHealsIn(ebUnit)
-    local uExists=false
-    if button.enemy and not UnitIsFriend("player",ebUnit) then uExists=true end
-    if not button.enemy and UnitIsFriend("player",ebUnit) then uExists=true end
-    if UnitExists(ebUnit) and uExists then
+    local uHealIn, uAbsorbs = HealBot_IncHeals_retHealsIn(ebUnit, button.frame)
+    local hbExclude=false
+    if HealBot_UnitData[ebUnit] and HealBot_UnitData[ebUnit]["EEXCLUDE"] then hbExclude=true end
+    if UnitExists(ebUnit) and not hbExclude then
+        local isFriend=UnitIsFriend("player",ebUnit)
         activeUnit = true
         uName=UnitName(ebUnit)
         uHlth,uMaxHlth=HealBot_UnitHealth(ebUnit)
@@ -1170,11 +1169,7 @@ function HealBot_Action_EnableButton(button, isTarget)
             ebubar2:SetValue(0)
         end
         if uAbsorbs>0 and HealBot_UnitStatus[ebUnit]~=0 then
-            if Healbot_Config_Skins.BarIACol[Healbot_Config_Skins.Current_Skin][button.frame]["AC"] == 1 then
-                ebapct = uHlth+uAbsorbs
-            else
-                ebapct = uHlth+uHealIn+uAbsorbs
-            end
+            ebapct = uHlth+uHealIn+uAbsorbs
             if ebapct<uMaxHlth then
                 ebapct=ebapct/uMaxHlth
             else
@@ -1188,13 +1183,13 @@ function HealBot_Action_EnableButton(button, isTarget)
 
         ebuProcessThis=true
         ebufastenable=false
-        if HealBot_Globals.ProtectPvP==1 and not button.enemy then
+        if HealBot_Globals.ProtectPvP==1 and isFriend then
             if UnitIsPVP(ebUnit) and not UnitIsPVP("player") then 
                 ebuProcessThis=false
             end
         end
         if not ebuUnitDead and not HealBot_PlayerDead and ebuProcessThis then
-            if button.enemy then
+            if not UnitIsFriend("player",ebUnit) then
                 if unitHRange==1 then ebufastenable=true end
             else
                 if ebuHealBot_UnitDebuff then
@@ -1229,7 +1224,7 @@ function HealBot_Action_EnableButton(button, isTarget)
             HealBot_UnitTextRange["og"][ebUnit]=ebusg
             HealBot_UnitTextRange["ob"][ebUnit]=ebusb
             if HealBot_Data["TIPUSE"]=="YES" and HealBot_Data["TIPUNIT"] and ebUnit==HealBot_Data["TIPUNIT"] then
-                if button.enemy then
+                if not isFriend then
                     HealBot_Data["TIPTYPE"] = "Enemy"
                 else
                     HealBot_Data["TIPTYPE"] = "Enabled"
@@ -1259,7 +1254,7 @@ function HealBot_Action_EnableButton(button, isTarget)
                 HealBot_UnitTextRange["or"][ebUnit]=0.2
                 HealBot_UnitTextRange["og"][ebUnit]=1
                 HealBot_UnitTextRange["ob"][ebUnit]=0.2
-            elseif ebuUnitDead and hbGUID~=HealBot_Data["PGUID"] and not button.enemy then
+            elseif ebuUnitDead and hbGUID~=HealBot_Data["PGUID"] and isFriend then
                 if HealBot_RangeSpells["RES"] then
                     HealBot_UnitRangeSpell[ebUnit]=HealBot_RangeSpells["RES"]
                     if HealBot_UnitInRange(HealBot_RangeSpells["RES"], ebUnit)==1 and not UnitIsGhost(ebUnit) then
@@ -1316,7 +1311,7 @@ function HealBot_Action_EnableButton(button, isTarget)
             end
             if HealBot_Data["UILOCK"]=="NO" and HealBot_Config.EnableHealthy==0 then
                 if HealBot_Data["TIPUSE"]=="YES" and HealBot_Data["TIPUNIT"] and ebUnit==HealBot_Data["TIPUNIT"] then
-                    if button.enemy then
+                    if not isFriend then
                         HealBot_Data["TIPTYPE"] = "Enemy"
                     else
                         HealBot_Data["TIPTYPE"] = "Disabled"
@@ -1348,10 +1343,7 @@ function HealBot_Action_EnableButton(button, isTarget)
         HealBot_UnitTextRange["oa"][ebUnit]=ebusa or 0.01
         activeUnit = false
         HealBot_HoT_RemoveIconButton(button)
-        if button.enemy then
-            local pName=HealBot_retEnemyUnits(ebUnit, "PNAME") or ""
-            uName=pName.."\n"..HEALBOT_ENEMY_NO_TARGET
-        elseif hbGUID==ebUnit then
+        if hbGUID==ebUnit then
             uName=HEALBOT_WORD_RESERVED..":"..ebUnit
             HealBot_Reserved[ebUnit]=true
         else
@@ -2281,8 +2273,7 @@ end
 
 function HealBot_Action_CheckRange(button)
     local unit=button.unit
-    if not HealBot_UnitStatus[unit] then return end
-    if HealBot_UnitStatus[unit]>0 then
+    if (HealBot_UnitStatus[unit] or 0)>0 then
         local uRange=HealBot_UnitInRange(HealBot_UnitRangeSpell[unit] or HealBot_RangeSpells["HEAL"], unit)
         if unit~="player" and HealBot_UnitStatus[unit]==8 and (UnitHealth(unit) or 2)>1 then 
             HealBot_Reset_UnitHealth(unit) 
@@ -2291,9 +2282,8 @@ function HealBot_Action_CheckRange(button)
             --HealBot_AddDebug("HealBot_UnitRange[unit]==-2 unit="..unit)
             HealBot_Action_RefreshButton(button)
         elseif uRange~=HealBot_UnitRange[unit] then
-            local uHealIn, uAbsorbs = HealBot_IncHeals_retHealsIn(unit)
+            local uHealIn, uAbsorbs = HealBot_IncHeals_retHealsIn(unit, button.frame)
             local ebubar,ebubar2,ebubar6,ebuicon15=nil,nil,nil,nil
-            local uHealIn, uAbsorbs = HealBot_IncHeals_retHealsIn(unit)
             ebubar = HealBot_Action_HealthBar(button)
             ebubar2 = HealBot_Action_HealthBar2(button)
             ebubar6 = HealBot_Action_HealthBar6(button)
@@ -2361,6 +2351,9 @@ function HealBot_Action_CheckRange(button)
                 end
             end
         end
+    elseif not UnitExists(unit) and HealBot_UnitStatus[unit]~=-3 then
+        HealBot_Action_RefreshButton(button)
+        HealBot_UnitStatus[unit]=-3
     end
 end
 
@@ -2417,7 +2410,7 @@ function HealBot_Action_clearResetBarSkinDone()
     end
 end
 
-function HealBot_Action_SetHealButton(unit,hbGUID,hbCurFrame,enemy)
+function HealBot_Action_SetHealButton(unit,hbGUID,hbCurFrame,alsoEnemy)
     local shb=nil
     if hbGUID then
         if not HealBot_Unit_Button[unit] then
@@ -2450,13 +2443,24 @@ function HealBot_Action_SetHealButton(unit,hbGUID,hbCurFrame,enemy)
                 HealBot_UnitData[hbGUID]["SPEC"] = " "
                 HealBot_UnitData[hbGUID]["NAME"] = ""
                 HealBot_UnitData[hbGUID]["ROLE"] = HEALBOT_WORDS_UNKNOWN
-                if not enemy then HealBot_CheckPlayerMana(hbGUID, unit) end
+                if UnitExists(unit) then
+                    if UnitIsFriend("player",unit) then 
+                        HealBot_CheckPlayerMana(hbGUID, unit) 
+                        if HealBot_UnitData[unit] and HealBot_UnitData[unit]["EEXCLUDE"] then HealBot_UnitData[unit]["EEXCLUDE"]=nil end
+                    elseif (unit=="target" and Healbot_Config_Skins.Healing[Healbot_Config_Skins.Current_Skin]["TONLYFRIEND"]==1) or
+                           (unit=="focus" and Healbot_Config_Skins.Healing[Healbot_Config_Skins.Current_Skin]["FONLYFRIEND"]==1) then
+                        if not HealBot_UnitData[unit] then HealBot_UnitData[unit]={} end
+                        HealBot_UnitData[unit]["EEXCLUDE"]=true
+                    end
+                end
             end
             HealBot_UnitData[hbGUID]["TIME"]=GetTime()
             shb.reset=true
         end
         if shb.guid~=hbGUID then
             shb.guid=hbGUID
+            HealBot_UnitStatus[unit]=9
+            HealBot_UnitRange[unit]=-2
         end
         if HealBot_Unit_Button[unit]~=shb or shb.unit~=unit or shb.reset then
             shb.reset=nil
@@ -2473,19 +2477,10 @@ function HealBot_Action_SetHealButton(unit,hbGUID,hbCurFrame,enemy)
                 shb.bar4state=0
             end
             shb:SetAttribute("unit", unit);
-            if enemy then
-                shb.enemy=true
-                if unit~="target" and unit~="focus" then 
-                    HealBot_Action_SetAllButtonAttribs(shb,"Enemy")
-                end
-            else
-                shb.enemy=false
-                if unit~="target" and unit~="focus" then 
-                    HealBot_Action_SetAllButtonAttribs(shb,"Enabled")
-                end
-            end
-            if unit=="target" or unit=="focus" then 
+            if alsoEnemy then
                 HealBot_Action_SetAllButtonAttribs(shb,"Enemy")
+                HealBot_Action_SetAllButtonAttribs(shb,"Enabled")
+            else
                 HealBot_Action_SetAllButtonAttribs(shb,"Enabled")
             end
             HealBot_Unit_Button[unit]=shb
@@ -3053,8 +3048,8 @@ function HealBot_Action_DeleteButton(hbBarID)
     HealBot_Unit_Button[dbUnit]=nil
     dg.guid="nil"
     dg.unit="nil"
-    HealBot_UnitStatus[dbUnit]=nil
-    HealBot_UnitRange[dbUnit]=nil
+    HealBot_UnitStatus[dbUnit]=0
+    HealBot_UnitRange[dbUnit]=0
     if (dg.refresh or 0)>0 then ctlBuckets[dg.refresh]=ctlBuckets[dg.refresh]-1 end
     dg.buff=false
     dg.debuff={}
@@ -3194,7 +3189,7 @@ function HealBot_Action_HealUnit_OnEnter(self)
     if not self.unit then return; end
     if HealBot_Globals.ShowTooltip==1 and HealBot_Data["TIPUSE"]=="YES" and UnitExists(self.unit) then
         HealBot_Data["TIPUNIT"] = self.unit
-        if self.enemy then
+        if not UnitIsFriend("player",self.unit) then
             HealBot_Data["TIPTYPE"] = "Enemy"
         elseif HealBot_Data["UILOCK"]=="YES" and HealBot_Globals.DisableToolTipInCombat==0 then
             HealBot_Data["TIPTYPE"] = "Enabled"
@@ -3558,8 +3553,8 @@ local ModKey=nil
 local abutton=nil
 local aj=nil
 function HealBot_Action_PreClick(self,button)
-    if self.id<999 and not self.enemy then
-        if UnitExists(self.unit) then
+    if self.id<999 and UnitExists(self.unit) then
+        if UnitIsFriend("player",self.unit) then
             HealBot_UpdTargetUnitID(self.unit)
             usedSmartCast=false;
             ModKey=""
@@ -3673,22 +3668,24 @@ function HealBot_Action_UseSmartCast(bp)
 end
 
 function HealBot_Action_PostClick(self,button)
-    if not self.enemy then
-        if self.id==999 and not IsModifierKeyDown() then
-            HealBot_Panel_clickToFocus("hide")
-        elseif usedSmartCast then
-            if self.unit=="target" then
-                if aj==1 then
-                    self:SetAttribute(HB_prefix.."helpbutton"..aj, "target"..aj);
-                    self:SetAttribute(HB_prefix.."type"..aj, "target")
-                    self:SetAttribute(HB_prefix.."type-target"..aj, "target")
+    if UnitExists(self.unit) then
+        if UnitIsFriend("player",self.unit) then
+            if self.id==999 and not IsModifierKeyDown() then
+                HealBot_Panel_clickToFocus("hide")
+            elseif usedSmartCast then
+                if self.unit=="target" then
+                    if aj==1 then
+                        self:SetAttribute(HB_prefix.."helpbutton"..aj, "target"..aj);
+                        self:SetAttribute(HB_prefix.."type"..aj, "target")
+                        self:SetAttribute(HB_prefix.."type-target"..aj, "target")
+                    end
+                else
+                    HealBot_Action_SetButtonAttrib(self,abutton,ModKey,"Enabled",aj)
                 end
-            else
-                HealBot_Action_SetButtonAttrib(self,abutton,ModKey,"Enabled",aj)
             end
+        else
+            HealBot_setCheckEnemyAura()
         end
-    else
-        HealBot_setCheckEnemyAura()
     end
 end
 
@@ -3712,7 +3709,7 @@ function HealBot_Action_SmartCast(button)
         scuSpell=button.buff
         rangeSpell=HealBot_RangeSpells["BUFF"]
     elseif HealBot_Globals.SmartCastHeal==1 then
-        scuHealsIn = HealBot_IncHeals_retHealsIn(button.unit);
+        scuHealsIn = HealBot_IncHeals_retHealsIn(button.unit, button.frame);
         scuHlth, scuMaxHlth = HealBot_UnitHealth(button.unit);
         x = scuMaxHlth-(scuHlth+scuHealsIn);
         if x>scuMinHlth then
