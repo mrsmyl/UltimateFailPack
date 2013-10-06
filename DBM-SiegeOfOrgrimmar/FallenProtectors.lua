@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(849, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10280 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10394 $"):sub(12, -3))
 mod:SetCreatureID(71479, 71475, 71480)--He-Softfoot, Rook Stonetoe, Sun Tenderheart
 mod:SetZone()
+mod:SetUsedIcons(7)
 
 mod:RegisterCombat("combat")
 
@@ -17,6 +18,15 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
 )
 
+local Softfoot = EJ_GetSectionInfo(7889)
+local Stonetoe = EJ_GetSectionInfo(7885)
+local Tenderheart = EJ_GetSectionInfo(7904)
+
+mod:SetBossHealthInfo(
+	71479, Softfoot,
+	71475, Stonetoe,
+	71480, Tenderheart
+)
 
 --All
 local warnBondGoldenLotus			= mod:NewCastAnnounce(143497, 4)
@@ -53,10 +63,10 @@ local specWarnCorruptedBrewNear		= mod:NewSpecialWarningClose(143019)
 local specWarnMiserySorrowGloom		= mod:NewSpecialWarningSpell(143955)
 local specWarnCorruptionShock		= mod:NewSpecialWarningInterrupt(143958, mod:IsMelee())
 local specWarnDefiledGround			= mod:NewSpecialWarningMove(143959)
---local specWarnInfernoStrike			= mod:NewSpecialWarningYou(143962)
---local yellInfernoStrike				= mod:NewYell(143962)
+local specWarnInfernoStrike			= mod:NewSpecialWarningYou(143962)
+local yellInfernoStrike				= mod:NewYell(143962)
 --He Softfoot
-local specWarnGouge					= mod:NewSpecialWarningMove(143330, mod:IsTank())--Maybe localize it as a "turn away" warning.
+local specWarnGouge					= mod:NewSpecialWarningMove(143330, mod:IsTank(), nil, nil, 3)--Maybe localize it as a "turn away" warning.
 local specWarnGougeStunOther		= mod:NewSpecialWarningTarget(143301, mod:IsTank())--Tank is stunned, other tank must taunt or he'll start killing people
 local specWarnNoxiousPoison			= mod:NewSpecialWarningMove(144367)
 ----He Softfoot's Desperate measures
@@ -65,7 +75,6 @@ local specWarnMarked				= mod:NewSpecialWarningYou(143840)
 local yellMarked					= mod:NewYell(143840, nil, false)
 --Sun Tenderheart
 local specWarnShaShear				= mod:NewSpecialWarningInterrupt(143423, false)
-local specWarnBane					= mod:NewSpecialWarningSpell(143446, mod:IsHealer())
 local specWarnCalamity				= mod:NewSpecialWarningSpell(143491, nil, nil, nil, 2)
 ----Sun Tenderheart's Desperate Measures
 local specWarnDarkMeditation		= mod:NewSpecialWarningSpell(143546)
@@ -82,13 +91,17 @@ local timerGougeCD					= mod:NewCDTimer(30, 143330, nil, mod:IsTank())--30-41
 local timerGarroteCD				= mod:NewCDTimer(30, 143198, nil, mod:IsHealer())--30-46 (heroic 20-26)
 --Sun Tenderheart
 local timerBaneCD					= mod:NewCDTimer(17, 143446, nil, mod:IsHealer())--17-25 (heroic 13-20)
-local timerCalamityCD				= mod:NewCDTimer(42, 143491)--42-50 (when two can be cast in a row) Also affected by boss specials
+local timerCalamityCD				= mod:NewCDTimer(40, 143491)--40-50 (when two can be cast in a row) Also affected by boss specials
 
---local berserkTimer				= mod:NewBerserkTimer(490)
+local berserkTimer					= mod:NewBerserkTimer(600)
+
+mod:AddBoolOption("SetIconOnStrike")
 
 local UnitExists = UnitExists
 local UnitGUID = UnitGUID
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
+local strikeDebuff = GetSpellInfo(143962)--Cast spellid, Unconfirmed if debuff has same id or even name. Need to verify
+local previousStrike = nil
 
 function mod:BrewTarget(targetname, uId)
 	if not targetname then return end
@@ -113,12 +126,10 @@ end
 
 function mod:InfernoStrikeTarget(targetname, uId)
 	if not targetname then return end
-	print("DBM DEBUG: InfernoStrikeTarget", targetname)--Need to verify timing is grabbing new target and not previous target
---[[	warnInfernoStrike:Show(targetname)
+	print("DBM DEBUG: Infero Strike on "..targetname.." ?")
 	if targetname == UnitName("player") then
-		specWarnInfernoStrike:Show()
-		yellInfernoStrike:Yell()
-	end--]]
+		
+	end
 end
 
 function mod:OnCombatStart(delay)
@@ -128,8 +139,12 @@ function mod:OnCombatStart(delay)
 	timerCorruptedBrewCD:Start(18-delay)
 	timerGougeCD:Start(23-delay)
 	timerCalamityCD:Start(31-delay)
-	timerClashCD:Start(-delay)--Unsure if stll same, since this almost NEVER happens, at least one of them will enter a special and cancel this timer
---	berserkTimer:Start(-delay)
+	timerClashCD:Start(45-delay)
+	if self:IsDifficulty("lfr25") then--Might also be flex as well
+		berserkTimer:Start(900-delay)--15min confirmed
+	else
+		berserkTimer:Start(-delay)
+	end
 end
 
 function mod:SPELL_CAST_START(args)
@@ -142,7 +157,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143330 then
 		warnGouge:Show()
 		timerGougeCD:Start()
-		for i = 1, 3 do
+		for i = 1, 5 do
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				specWarnGouge:Show()--So show tank warning
@@ -150,7 +165,6 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif args.spellId == 143446 then
 		warnBane:Show()
-		specWarnBane:Show()
 		if self:IsDifficulty("heroic10", "heroic25") then
 			timerBaneCD:Start(13)--TODO, verify normal to see if it was changed too
 		else
@@ -164,15 +178,15 @@ function mod:SPELL_CAST_START(args)
 		warnDefiledGround:Show()
 		timerDefiledGroundCD:Start()
 	elseif args.spellId == 143962 then
-		self:BossTargetScanner(71481, "InfernoStrikeTarget", 2, 1)
 		warnInfernoStrike:Show()
 		timerInfernoStrikeCD:Start()
+--		self:BossTargetScanner(71481, "InfernoStrikeTarget", 0.5, 1)--This one is a pain, because boss looks at CORRECT target for a super split second, then stares at previous target for rest of time. Repeated scans don't fix it because you really can't tell good target from shit one
 	elseif args.spellId == 143497 then
 		warnBondGoldenLotus:Show()
 	elseif args.spellId == 144396 then
 		warnVengefulStrikes:Show()
 		timerVengefulStrikesCD:Start()
-		for i = 1, 3 do
+		for i = 1, 5 do
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				specWarnVengefulStrikes:Show()--So show tank warning
@@ -251,7 +265,11 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerInfernoStrikeCD:Cancel()
 		timerCorruptedBrewCD:Start(12)
 		timerVengefulStrikesCD:Start(18)
-		timerClashCD:Start(46)--Still needs more verification.
+		timerClashCD:Start(46)
+		if previousStrike and self.Options.SetIconOnStrike then
+			SetRaidTarget(previousStrike, 0)
+			previousStrike = nil
+		end
 	elseif args.spellId == 143812 then--Mark of Anguish
 		timerGarroteCD:Start(12)--TODO, verify consistency in all difficulties
 		timerGougeCD:Start(23)--Seems to be either be exactly 23 or exactly 35. Not sure what causes it to switch.

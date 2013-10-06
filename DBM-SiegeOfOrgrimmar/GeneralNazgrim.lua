@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(850, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10204 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10392 $"):sub(12, -3))
 mod:SetCreatureID(71515)
 mod:SetZone()
+mod:SetUsedIcons(8, 7, 6, 4, 2, 1)
 
 mod:RegisterCombat("combat")
 
@@ -79,14 +80,20 @@ local timerCoolingOff				= mod:NewBuffFadesTimer(15, 143484)
 --Kor'kron Adds
 local timerEmpoweredChainHealCD		= mod:NewNextSourceTimer(6, 143473)
 
-local countdownAdds					= mod:NewCountdown(45, "ej7920")
-local countdownCoolingOff			= mod:NewCountdown(15, 143484, nil, nil, nil, nil, true)
+local countdownAdds					= mod:NewCountdown(45, "ej7920", false)--Confusing with Colling Off. off by default.
+local countdownCoolingOff			= mod:NewCountdownFades(15, 143484, nil, nil, nil, nil, true)
 
 local berserkTimer					= mod:NewBerserkTimer(600)
+
+mod:AddBoolOption("SetIconOnAdds", false)
+mod:AddBoolOption("InfoFrame", true)
 
 local addsCount = 0
 local boneTargets = {}
 local UnitName, UnitExists, UnitGUID, UnitDetailedThreatSituation = UnitName, UnitExists, UnitGUID, UnitDetailedThreatSituation
+local adds = {}
+local scanLimiter = 0
+local scanLimiter2 = 0
 
 local function warnBoneTargets()
 	warnBonecracker:Show(table.concat(boneTargets, "<, >"))
@@ -94,13 +101,117 @@ local function warnBoneTargets()
 	table.wipe(boneTargets)
 end
 
+local function scanForBanner()
+	if DBM:GetRaidRank() > 0 then--Cannot impliment counting because it seems there is too much variation between difficulties and it would be ugly
+		scanLimiter2 = scanLimiter2 + 1
+		for uId in DBM:GetGroupMembers() do
+			local unitid = uId.."target"
+			local guid = UnitGUID(unitid)
+			local cid = mod:GetCIDFromGUID(guid)
+			if guid and not adds[guid] and cid == 71626 then--Banner
+				SetRaidTarget(unitid, 8)
+				adds[guid] = true
+				return--Only one banner, so we can kill loop early
+			end
+		end
+		local guid2 = UnitGUID("mouseover")
+		local cid = mod:GetCIDFromGUID(guid2)
+		if guid2 and not adds[guid2] and cid == 71626 then--Banner
+			SetRaidTarget("mouseover", 8)
+			adds[guid2] = true
+			return--Only one banner, so we can kill loop early
+		end
+		if scanLimiter2 < 20 then--Don't scan for more than 4 seconds
+			mod:Schedule(0.2, scanForBanner)
+		end
+	end
+end
+
+local function scanForMobs()
+	if DBM:GetRaidRank() > 0 then--Cannot impliment counting because it seems there is too much variation between difficulties and it would be ugly
+		scanLimiter = scanLimiter + 1
+		for uId in DBM:GetGroupMembers() do
+			local unitid = uId.."target"
+			local guid = UnitGUID(unitid)
+			local cid = mod:GetCIDFromGUID(guid)
+			if guid and not adds[guid] then
+				if cid == 71519 then--Shaman
+					SetRaidTarget(unitid, 7)
+				elseif cid == 71517 then--Arcweaver
+					SetRaidTarget(unitid, 6)
+				elseif cid == 71518 then--Assassin
+					SetRaidTarget(unitid, 1)
+				elseif cid == 71516 then--Iron Blade
+					SetRaidTarget(unitid, 2)
+				elseif cid == 71656 then--Sniper (Heroic)
+					SetRaidTarget(unitid, 4)
+				end
+				adds[guid] = true
+			end
+		end
+		local guid2 = UnitGUID("mouseover")
+		local cid = mod:GetCIDFromGUID(guid2)
+		if guid2 and not adds[guid2] then
+			if cid == 71519 then--Shaman
+				SetRaidTarget("mouseover", 7)
+			elseif cid == 71517 then--Arcweaver
+				SetRaidTarget("mouseover", 6)
+			elseif cid == 71518 then--Assassin
+				SetRaidTarget("mouseover", 1)
+			elseif cid == 71516 then--Iron Blade
+				SetRaidTarget("mouseover", 2)
+			elseif cid == 71656 then--Sniper (Heroic)
+				SetRaidTarget("mouseover", 4)
+			end
+			adds[guid2] = true
+		end
+		if scanLimiter < 50 then--Don't scan for more than 10 seconds
+			mod:Schedule(0.2, scanForMobs)
+		end
+	end
+end
+
+local function updateInfoFrame()
+	local lines = {}
+	if UnitPower("boss1") < 50 then
+		lines["|cFF088A08"..GetSpellInfo(143500).."|r"] = UnitPower("boss1")--Green
+		lines[GetSpellInfo(143536)] = 50
+		lines[GetSpellInfo(143503)] = 70
+		lines[GetSpellInfo(143872)] = 100
+	elseif UnitPower("boss1") < 70 then
+		lines[GetSpellInfo(143500)] = 25
+		lines["|cFF088A08"..GetSpellInfo(143536).."|r"] = UnitPower("boss1")--Green (Would yellow be too hard to see on this?)
+		lines[GetSpellInfo(143503)] = 70
+		lines[GetSpellInfo(143872)] = 100
+	elseif UnitPower("boss1") < 100 then
+		lines[GetSpellInfo(143500)] = 25
+		lines[GetSpellInfo(143536)] = 50
+		lines["|cFF088A08"..GetSpellInfo(143503).."|r"] = UnitPower("boss1")--Green (Maybe change to orange?)
+		lines[GetSpellInfo(143872)] = 100
+	elseif UnitPower("boss1") == 100 then
+		lines[GetSpellInfo(143500)] = 25
+		lines[GetSpellInfo(143536)] = 50
+		lines[GetSpellInfo(143503)] = 70
+		lines["|cFFFF0000"..GetSpellInfo(143872).."|r"] = UnitPower("boss1")--Red (definitely work making this one red, it's really the only critically bad one)
+	end
+	
+	return lines
+end
+
 function mod:OnCombatStart(delay)
 	addsCount = 0
+	table.wipe(adds)
 	table.wipe(boneTargets)
 	timerAddsCD:Start(-delay, 1)
 	countdownAdds:Start()
 	berserkTimer:Start(-delay)
 end
+
+function mod:OnCombatEnd()
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
+	end
+end 
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 143872 then
@@ -145,6 +256,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 143589 then
 		warnBattleStance:Show()
 		timerBerserkerStanceCD:Start()
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(143589))
+			DBM.InfoFrame:Show(4, "function", updateInfoFrame)
+		end
 	elseif args.spellId == 143594 then
 		warnBerserkerStance:Show()
 		specWarnBerserkerStance:Show()
@@ -154,13 +269,25 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnDefensiveStanceSoon:Schedule(57, 3)
 		warnDefensiveStanceSoon:Schedule(58, 2)
 		warnDefensiveStanceSoon:Schedule(59, 1)
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(143594))
+			DBM.InfoFrame:Show(4, "function", updateInfoFrame)
+		end
 	elseif args.spellId == 143593 then
 		warnDefensiveStance:Show()
 		specWarnDefensiveStance:Show()
 		timerDefensiveStance:Start()
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(143593))
+			DBM.InfoFrame:Show(4, "function", updateInfoFrame)
+		end
 	elseif args.spellId == 143536 then
 		warnKorkronBanner:Show()
 		specWarnKorkronBanner:Show()
+		if self.Options.SetIconOnAdds then
+			scanLimiter2 = 0
+			scanForBanner()
+		end
 	elseif args.spellId == 143474 then
 		warnHealingTideTotem:Show()
 		specWarnHealingTideTotem:Show()
@@ -195,7 +322,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			specWarnAssassinsMarkOther:Show(args.destName)
 		end
-	elseif args.spellId == 143475 then
+	elseif args.spellId == 143475 and not args:IsDestTypePlayer() then
 		warnEarthShield:Show(args.destName)
 		specWarnEarthShield:Show(args.destName)
 	elseif args.spellId == 143638 then
@@ -226,7 +353,12 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		specWarnAdds:Show(addsCount)
 		timerAddsCD:Start(nil, addsCount+1)
 		countdownAdds:Start()
+		if self.Options.SetIconOnAdds then
+			scanLimiter = 0
+			scanForMobs()
+		end
 	elseif msg == L.allForces then
+		--Icon setting not put here on purpose, so as not ot mess with existing adds (it's burn boss phase anyawys)
 		specWarnAdds:Show(0)
 	end
 end

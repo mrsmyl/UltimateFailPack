@@ -14,6 +14,10 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(849)
 
+L:SetOptionLocalization({
+	SetIconOnStrike		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(143962)
+})
+
 ---------------------------
 -- Norushen --
 ---------------------------
@@ -52,6 +56,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull		= "Dragonmaw clan, retake the docks and push them into the sea!  In the name of Hellscream and the True Horde!",
 	newForces1	= "Here they come!",--Jaina's line, alliance
 	newForces1H	= "Bring her down quick so i can wrap my fingers around her neck.",--Sylva's line, horde
 	newForces2	= "Dragonmaw, advance!",
@@ -95,7 +100,9 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon		= "Show pre-warning countdown for $spell:143593 (5s before)"
+	warnDefensiveStanceSoon		= "Show pre-warning countdown for $spell:143593 (5s before)",
+	SetIconOnAdds				= "Set icon on $journal:7920",
+	InfoFrame					= "Show info frame for $journal:7909"
 })
 
 L:SetMiscLocalization({
@@ -122,9 +129,13 @@ L:SetOptionLocalization({
 ------------------------
 L= DBM:GetModLocalization(870)
 
+L:SetOptionLocalization({
+	RangeFrame	= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(10, 145987)
+})
+
 L:SetMiscLocalization({
 	Module1 = "Module 1's all prepared for system reset.",
-	Victory	= "Module 2's all prepared for system reset"
+	Victory	= "Module 2's all prepared for system reset."
 })
 
 ---------------------------
@@ -141,6 +152,10 @@ L:SetOptionLocalization({
 -- Siegecrafter Blackfuse --
 ----------------------------
 L= DBM:GetModLocalization(865)
+
+L:SetOptionLocalization({
+	InfoFrame			= "Show info frame for $journal:8202"
+})
 
 L:SetMiscLocalization({
 	newWeapons	= "Unfinished weapons begin to roll out on the assembly line.",
@@ -190,6 +205,10 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	SetIconOnShaman			= "Set icon on $journal:8294"
+})
 
 -------------
 --  Trash  --

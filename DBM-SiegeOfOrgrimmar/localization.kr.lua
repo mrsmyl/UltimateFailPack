@@ -6,6 +6,10 @@ local L
 ---------------
 L= DBM:GetModLocalization(852)
 
+L:SetMiscLocalization({
+	Victory			= "아, 역시 해냈군! 골짜기의 물이 다시 깨끗해졌네."
+})
+
 ---------------------------
 -- The Fallen Protectors --
 ---------------------------
@@ -17,7 +21,7 @@ L= DBM:GetModLocalization(849)
 L= DBM:GetModLocalization(866)
 
 L:SetOptionLocalization({
-	InfoFrame			= "$journal:8252에 대한 정보를 정보 창으로 보기"
+	InfoFrame			= "$journal:8252 정보를 정보 창으로 보기"
 })
 
 L:SetMiscLocalization({
@@ -30,7 +34,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(867)
 
 L:SetOptionLocalization({
-	InfoFrame			= "$journal:8255에 대한 정보를 정보 창으로 보기"
+	InfoFrame			= "$journal:8255 정보를 정보 창으로 보기"
 })
 
 --------------
@@ -47,8 +51,9 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull			= "용아귀 부족 용사들이여! 항구를 탈환하고 적을 바다로 몰아내라! 헬스크림 님과 진정한 호드를 위하여!",
 	newForces1		= "놈들이 와요!",--제이나 대사
-	newForces1H		= "저 계집을 당장 끌어내려라. 내가 친히 그녀의 목을 칠 것이다.",--실바나스 대사 (확인 필요)
+	newForces1H		= "저 계집을 당장 끌어내려라. 내가 친히 그녀의 목을 죌 것이다.",--실바나스 대사 (확인 필요)
 	newForces2		= "용아귀 용사들아, 진격하라!",
 	newForces3		= "헬스크림 님을 위하여!",
 	newForces4		= "다음 분대, 진격!",
@@ -79,7 +84,9 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon		= "$spell:143593 이전에 초읽기 알림 보기(5초 전부터)"
+	warnDefensiveStanceSoon		= "$spell:143593 이전에 초읽기 알림 보기(5초 전부터)",
+	SetIconOnAdds				= "$journal:7920에 전술 목표 아이콘 설정",
+	InfoFrame					= "$journal:7909 정보를 정보 창으로 보기"
 })
 
 L:SetMiscLocalization({
@@ -119,6 +126,10 @@ L:SetOptionLocalization({
 -- Siegecrafter Blackfuse --
 ----------------------------
 L= DBM:GetModLocalization(865)
+
+L:SetOptionLocalization({
+	InfoFrame	= "$journal:8202 정보를 정보 창으로 보기"
+})
 
 L:SetMiscLocalization({
 	newWeapons	= "생산 설비에서 미완성 무기가 나오기 시작합니다.",
@@ -164,6 +175,10 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	SetIconOnShaman			= "$journal:8294에 전술 목표 아이콘 설정"
+})
 
 -------------
 --  Trash  --

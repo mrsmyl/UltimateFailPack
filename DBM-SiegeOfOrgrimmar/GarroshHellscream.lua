@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(869, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10320 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10380 $"):sub(12, -3))
 mod:SetCreatureID(71865)
 mod:SetZone()
+mod:SetUsedIcons(8, 7)
 
 mod:RegisterCombat("combat")
 
@@ -81,7 +82,11 @@ local countdownPowerIronStar		= mod:NewCountdown(15, 144616)
 local countdownWhirlingCorruption	= mod:NewCountdown(52, 144985)
 local countdownTouchOfYShaarj		= mod:NewCountdown(45, 145071, false, nil, nil, nil, true)--Off by default only because it's a cooldown and it does have a 45-48sec variation
 
+mod:AddBoolOption("SetIconOnShaman", false)
+
 local touchOfYShaarjTargets = {}
+local adds = {}
+local scanLimiter = 0
 local firstIronStar = false
 local engineerDied = 0
 local phase = 1
@@ -89,6 +94,41 @@ local UnitExists = UnitExists
 local whirlCount = 0
 local desecrateCount = 0
 local mindControlCount = 0
+local shamanAlive = 0
+
+local function scanForMobs()
+	if DBM:GetRaidRank() > 0 then
+		scanLimiter = scanLimiter + 1
+		for uId in DBM:GetGroupMembers() do
+			local unitid = uId.."target"
+			local guid = UnitGUID(unitid)
+			local cid = mod:GetCIDFromGUID(guid)
+			if cid == 71983 and guid and not adds[guid] then
+				if shamanAlive == 1 then
+					SetRaidTarget(unitid, 8)
+				else--We are behind on them, so use X instead of skull
+					SetRaidTarget(unitid, 7)
+				end
+				adds[guid] = true
+				return
+			end
+		end
+		local guid2 = UnitGUID("mouseover")
+		local cid = mod:GetCIDFromGUID(guid2)
+		if cid == 71983 and guid2 and not adds[guid2] then
+			if shamanAlive == 1 then
+				SetRaidTarget("mouseover", 8)
+			else--We are behind on them, so use X instead of skull
+				SetRaidTarget("mouseover", 7)
+			end
+			adds[guid2] = true
+			return
+		end
+		if scanLimiter < 40 then--Don't scan for more than 8 seconds
+			mod:Schedule(0.2, scanForMobs)
+		end
+	end
+end
 
 local function warnTouchOfYShaarjTargets(spellId)
 	if spellId == 145171 then
@@ -116,7 +156,9 @@ function mod:OnCombatStart(delay)
 	whirlCount = 0
 	desecrateCount = 0
 	mindControlCount = 0
+	shamanAlive = 0
 	table.wipe(touchOfYShaarjTargets)
+	table.wipe(adds)
 	timerDesecrateCD:Start(10.5-delay, 1)
 	timerSiegeEngineerCD:Start(20-delay)
 	timerHellscreamsWarsongCD:Start(22-delay)
@@ -215,9 +257,14 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end
 	elseif args.spellId == 144585 then
+		shamanAlive = shamanAlive + 1
 		warnFarseerWolfRider:Show()
 		specWarnFarseerWolfRider:Show()
 		timerFarseerWolfRiderCD:Start()
+		if self.Options.SetIconOnShaman then
+			scanLimiter = 0
+			scanForMobs()
+		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -238,6 +285,8 @@ function mod:UNIT_DIED(args)
 			timerPowerIronStar:Cancel()
 			countdownPowerIronStar:Cancel()
 		end
+	elseif cid == 71983 then--Farseer Wolf Rider
+		shamanAlive = shamanAlive - 1
 	end
 end
 

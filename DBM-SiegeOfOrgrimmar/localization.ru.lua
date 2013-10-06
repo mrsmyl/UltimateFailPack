@@ -51,7 +51,9 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	Pull		= "Воины Драконьей Пасти! Отбейте пристань и сбросьте врага в море! Во имя Истинной Орды!",
 	newForces1	= "Вот и они!",--Jaina's line, horde may not be same
+	newForces1H	= "Сбейте ее скорее, не терпится взять ее за глотку.",--Sylva's line, horde
 	newForces2	= "Драконья Пасть, вперед!",
 	newForces3	= "За Гарроша!",
 	newForces4	= "Следующий отряд!",
@@ -82,7 +84,9 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon		= "Обратный отсчет за 5 секунд до $spell:143593"
+	warnDefensiveStanceSoon		= "Обратный отсчет за 5 секунд до $spell:143593",
+	SetIconOnAdds				= "Устанавливать метки на $journal:7920",
+	InfoFrame					= "Информационное окно для $journal:7909"
 })
 
 L:SetMiscLocalization({
@@ -122,6 +126,10 @@ L:SetOptionLocalization({
 -- Siegecrafter Blackfuse --
 ----------------------------
 L= DBM:GetModLocalization(865)
+
+L:SetOptionLocalization({
+	InfoFrame			= "Информационное окно для $journal:8202"
+})
 
 L:SetMiscLocalization({
 	newWeapons	= "На сборочную линию начинает поступать незаконченное оружие.",
@@ -167,6 +175,10 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	SetIconOnShaman			= "Устанавливать метки на $journal:8294"
+})
 
 -------------
 --  Trash  --

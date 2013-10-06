@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10151 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10387 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
 mod:SetZone()
 
@@ -80,6 +80,16 @@ end
 local function warnJasperChainsTargets()
 	warnJasperChains:Show(table.concat(jasperChainsTargets, "<, >"))
 	table.wipe(jasperChainsTargets)
+end
+
+local function updateInfoFrame()
+	local lines = {}
+	for i = 1, 5 do
+		lines[UnitName("boss"..i)] = UnitPower("boss"..i)
+	end
+	lines[UnitName("player")] = UnitPower("player", ALTERNATE_POWER_INDEX)
+	
+	return lines
 end
 
 function mod:ThreeBossStart(delay)
@@ -242,21 +252,21 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Cobalt)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
+			DBM.InfoFrame:Show(5, "function", updateInfoFrame)
 		end
 	elseif spellId == 116006 then
 		activePetrification = "Jade"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Jade)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
+			DBM.InfoFrame:Show(5, "function", updateInfoFrame)
 		end
 	elseif spellId == 116036 then
 		activePetrification = "Jasper"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Jasper)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
+			DBM.InfoFrame:Show(5, "function", updateInfoFrame)
 		end
 		if playerHasChains then
 			local uId = DBM:GetBossUnitId(Jasper)
@@ -270,7 +280,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Amethyst)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
+			DBM.InfoFrame:Show(5, "function", updateInfoFrame)
 		end
 	elseif spellId == 129424 then
 		warnCobaltMine:Show()

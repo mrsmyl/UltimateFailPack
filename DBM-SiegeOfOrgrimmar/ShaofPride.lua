@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(867, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10306 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10391 $"):sub(12, -3))
 mod:SetCreatureID(71734)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
@@ -40,7 +40,7 @@ local warnMockingBlast			= mod:NewSpellAnnounce(144379, 3, nil, false)
 
 --Sha of Pride
 local specWarnGiftOfTitans		= mod:NewSpecialWarningYou(144359)
-local yellGiftOfTitans			= mod:NewYell(144359)
+local yellGiftOfTitans			= mod:NewYell(146594, nil, false)
 local specWarnSwellingPride		= mod:NewSpecialWarningCount(144400, nil, nil, nil, 2)
 local specWarnWoundedPride		= mod:NewSpecialWarningSpell(144358, mod:IsTank())
 local specWarnSelfReflection	= mod:NewSpecialWarningSpell(144800, nil, nil, nil, 2)
@@ -67,11 +67,13 @@ local timerSelfReflectionCD		= mod:NewNextTimer(25, 144800)
 local timerWoundedPrideCD		= mod:NewNextTimer(30, 144358, nil, mod:IsTank())--A tricky on that is based off unit power but with variable timings, but easily workable with an 11, 26 rule
 local timerCorruptedPrisonCD	= mod:NewNextTimer(53, 144574)--Technically 51 for Imprison base cast, but this is timer til debuffs go out.
 local timerManifestationCD		= mod:NewNextTimer(60, "ej8262", nil, nil, nil, "Interface\\Icons\\achievement_raid_terraceofendlessspring04")
-local timerSwellingPrideCD		= mod:NewNextTimer(75.5, 144400)
+local timerSwellingPrideCD		= mod:NewNextCountTimer(75.5, 144400)
 local timerWeakenedResolve		= mod:NewBuffFadesTimer(60, 147207, nil, false)
 --Pride
 local timerBurstingPride		= mod:NewCastTimer(3, 144911)
 local timerProjection			= mod:NewCastTimer(6, 146822)
+
+local berserkTimer				= mod:NewBerserkTimer(600)
 
 local countdownSwellingPride	= mod:NewCountdown(75.5, 144400)
 local countdownReflection		= mod:NewCountdown(25, 144800, false, nil, nil, nil, true)
@@ -176,13 +178,16 @@ function mod:OnCombatStart(delay)
 	twipe(markOfArroganceIcons)
 	timerGiftOfTitansCD:Start(7.5-delay)
 	timerMarkCD:Start(-delay)
-	timerWoundedPrideCD:Start(10-delay)
+	if not self:IsDifficulty("lfr25") then
+		timerWoundedPrideCD:Start(10-delay)
+	end
 	timerSelfReflectionCD:Start(-delay)
 	countdownReflection:Start(-delay)
 	timerCorruptedPrisonCD:Start(-delay)
 	timerManifestationCD:Start(-delay)
-	timerSwellingPrideCD:Start(-delay)
+	timerSwellingPrideCD:Start(-delay, 1)
 	countdownSwellingPride:Start(-delay)
+	berserkTimer:Start(-delay)
 	firstWound = false
 	UnleashedCast = false
 	swellingCount = 0
@@ -212,7 +217,11 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 144832 then
 		--These abilitie cd reset on CAST_START not finish and cause a desync from energy
 		countdownReflection:Cancel()
-		timerWoundedPrideCD:Start()
+		countdownSwellingPride:Cancel()
+		timerSwellingPrideCD:Cancel()
+		if not self:IsDifficulty("lfr25") then
+			timerWoundedPrideCD:Start()
+		end
 		timerSelfReflectionCD:Start()
 		countdownReflection:Start()
 		timerCorruptedPrisonCD:Start()
@@ -232,11 +241,13 @@ function mod:SPELL_CAST_SUCCESS(args)
 			timerSelfReflectionCD:Start()
 			countdownReflection:Start()
 			timerCorruptedPrisonCD:Start()
-			timerWoundedPrideCD:Start(11.5)
+			if not self:IsDifficulty("lfr25") then
+				timerWoundedPrideCD:Start(11.5)
+			end
 		end
-		timerManifestationCD:Start()--Unconfirmed but likely remaining in sync with UNIT_POWER
-		timerSwellingPrideCD:Start()--Unconfirmed but likely remaining in sync with UNIT_POWER
-		countdownSwellingPride:Start()--Unconfirmed but likely remaining in sync with UNIT_POWER
+		timerManifestationCD:Start()
+		timerSwellingPrideCD:Start(nil, swellingCount + 1)
+		countdownSwellingPride:Start()
 		--This is done here because a lot can change during a cast, and we need to know players energy when cast ends, i.e. this event
 		for uId in DBM:GetGroupMembers() do
 			local maxPower = UnitPowerMax(uId, ALTERNATE_POWER_INDEX)
@@ -258,11 +269,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 144832 then
 		warnUnleashed:Show()
 		timerGiftOfTitansCD:Cancel()
-		countdownSwellingPride:Cancel()
 		firstWound = false
 		UnleashedCast = true
 		timerManifestationCD:Start()--Not yet verified if altered or not
-		timerSwellingPrideCD:Start(75)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
+		timerSwellingPrideCD:Start(75, swellingCount + 1)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
 		countdownSwellingPride:Start(75)--Not yet verified if altered or not (it would be 62 instead of 60 though since we'd be starting at 0 energy instead of cast finish of last swelling)
 	elseif args.spellId == 144800 then
 		warnSelfReflection:Show()
@@ -277,7 +287,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Schedule(0.5, warnGiftOfTitansTargets)
 		if args:IsPlayer() then
 			specWarnGiftOfTitans:Show()
-			yellGiftOfTitans:Yell()
+			if not self:IsDifficulty("lfr25") then
+				yellGiftOfTitans:Yell()
+			end
 		end
 	elseif args.spellId == 145215 then
 		banishmentTargets[#banishmentTargets + 1] = args.destName
@@ -333,7 +345,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args.spellId == 144358 then
 		warnWoundedPride:Show(args.destName)
 		specWarnWoundedPride:Show()
-		if not firstWound then
+		if not firstWound and not self:IsDifficulty("lfr25") then
 			firstWound = true
 			timerWoundedPrideCD:Start()
 		end

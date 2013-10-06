@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(865, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10295 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10387 $"):sub(12, -3))
 mod:SetCreatureID(71504)--71591 Automated Shredder
 mod:SetZone()
 
@@ -14,8 +14,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
-	"SPELL_PERIODIC_DAMAGE",
-	"SPELL_PERIODIC_MISSED",
 	"UNIT_DIED",
 	"CHAT_MSG_RAID_BOSS_EMOTE",
 	"RAID_BOSS_WHISPER"
@@ -77,10 +75,18 @@ local timerPatternRecognition			= mod:NewBuffActiveTimer(60, 144236)
 local timerShockwaveMissileCD			= mod:NewNextCountTimer(15, 143641)
 local timerBreakinPeriod				= mod:NewTargetTimer(60, 145269, nil, false)--Many mines can be up at once so timer off by default do to spam
 
+mod:AddBoolOption("InfoFrame")
+
 local missileCount = 0
 --local laserCount = 0--Fires 3 times
 --local activeWeaponsGUIDS = {}
 local shockwaveOvercharged = false
+local weapon = 0
+local assemblyLine = EJ_GetSectionInfo(8202)
+local crawlerMine = EJ_GetSectionInfo(8212)
+local shockwaveMissile = EJ_GetSectionInfo(8205)
+local laserTurret = EJ_GetSectionInfo(8208)
+local electroMagnet = EJ_GetSectionInfo(8210)
 
 function mod:LaunchSawBladeTarget(targetname, uId)
 	warnLaunchSawblade:Show(targetname)
@@ -101,31 +107,43 @@ function mod:DeathFromAboveTarget(sGUID)
 	end
 end
 
---[[
---like many important debuffs last tier and now this tier, APPLIED & REMOVED SPELL_CAST events are disabled, so we have to waste cpu to find them.
-local spellName = GetSpellInfo(143828)
-local function findLaser()
-	for uId in DBM:GetGroupMembers() do
-		local name = DBM:GetUnitFullName(uId)
-		if UnitDebuff(uId, spellName) then
-			print("DBM DEBUG: Possible match to laser targeting using "..spellName)
-			warnLaserFixate:Show(name)
-			if name == UnitName("player") then
-				specWarnLaserFixate:Show()
-				yellLaserFixate:Yell()
-			end
-			return
-		end
+--VEM Idea
+local function showWeaponInfo()
+	local lines = {}
+	if weapon == 1 or weapon == 2 or weapon == 4 or weapon == 10 or weapon == 13 then
+		lines[crawlerMine] = shockwaveMissile.." / "..laserTurret
+	elseif weapon == 3 then
+		lines[electroMagnet] = shockwaveMissile.." / "..laserTurret
+	elseif weapon == 5 or weapon == 7 or weapon == 8 then
+		lines[crawlerMine] = electroMagnet.." / "..shockwaveMissile
+	elseif weapon == 6 then
+		lines[crawlerMine] = crawlerMine.." / "..shockwaveMissile
+	elseif weapon == 9 then
+		lines[laserTurret] =  laserTurret.." / "..laserTurret
+	elseif weapon == 11 then
+		lines[electroMagnet] = shockwaveMissile.." / "..shockwaveMissile
+	elseif weapon == 12 then
+		lines[crawlerMine] = electroMagnet.." / "..laserTurret
+	else
+		lines[_G["UNKNOWN"]] = ""
 	end
-	mod:Schedule(0.1, findLaser)
-end--]]
+	return lines
+end
+--End VEM Idea
 
 function mod:OnCombatStart(delay)
 --	table.wipe(activeWeaponsGUIDS)
 	missileCount = 0
 --	laserCount = 0
+	weapon = 0
 	shockwaveOvercharged = false
 	timerAutomatedShredderCD:Start(35-delay)
+end
+
+function mod:OnCombatEnd()
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
+	end
 end
 
 function mod:SPELL_CAST_START(args)
@@ -202,12 +220,12 @@ function mod:SPELL_AURA_APPLIED(args)
 		laserCount = laserCount + 1
 		if laserCount < 3 then--Seems each laser construction casts 3 times, then disapears.
 			timerDisintegrationLaserCD:Start(nil, laserCount+1)
-		end
-		self:Unschedule(findLaser)
-		findLaser()--]]
+		end--]]
 	elseif args.spellId == 144466 and self:AntiSpam(15, 1) then--Only way i see to detect magnet activation, antispam is so it doesn't break if a player dies during it.
 		warnMagneticCrush:Show()
 		specWarnMagneticCrush:Show()
+	elseif args.spellId == 143856 and args:IsPlayer() and self:AntiSpam(2, 2) then
+		specWarnSuperheated:Show()
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -223,13 +241,6 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerShockwaveMissileCD:Cancel()
 	end
 end
-
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 143856 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
-		specWarnSuperheated:Show()
-	end
-end
-mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -254,9 +265,14 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc, _, _, target)
 	if msg == L.newWeapons or msg:find(L.newWeapons) then
+		weapon = weapon + 1
 		warnAssemblyLine:Show()
 		specWarnAssemblyLine:Show()
 		timerAssemblyLineCD:Start()
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(assemblyLine.."("..weapon..")")
+			DBM.InfoFrame:Show(1, "function", showWeaponInfo, true)
+		end
 	elseif msg == L.newShredder or msg:find(L.newShredder) then
 		warnAutomatedShredder:Show()
 		specWarnAutomatedShredder:Show()

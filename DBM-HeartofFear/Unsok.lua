@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(737, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 9656 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10387 $"):sub(12, -3))
 mod:SetCreatureID(62511)
 mod:SetZone()
 mod:SetMinSyncRevision(8052)
@@ -151,8 +151,9 @@ function mod:OnCombatStart(delay)
 		berserkTimer:Start(-delay)
 	end
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(L.WillPower)--This is a work in progress
-		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, true)
+		DBM.InfoFrame:SetHeader(L.WillPower)
+		DBM.InfoFrame:SetSortingAsc(true)
+		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX)
 	end
 	if self.Options.FixNameplates then
 		--Blizz settings either return 1 or nil, we pull users original settings first, then change em if appropriate after.

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(820, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10336 $"):sub(12, -3))
 mod:SetCreatureID(69017)--69070 Viscous Horror, 69069 good ooze, 70579 bad ooze (patched out of game, :\)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)--Although if you have 8 viscous horrors up, you are probably doing fight wrong.
@@ -185,7 +185,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args.spellId == 140546 and args:IsPlayer() then
 		specWarnFullyMutated:Show()
-		timerFullyMutated:Start()
+		local _, _, _, _, _, _, expires = UnitDebuff("player", args.spellName)
+		timerFullyMutated:Start(expires-GetTime())
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
