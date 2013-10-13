@@ -547,7 +547,6 @@ function HealBot_Panel_retTestBars()
     return HealBot_setTestBars
 end
 
-local gNo=5
 local grpNo=1
 local tHeader={}
 function HealBot_Panel_TestBarsOn()
@@ -577,88 +576,116 @@ function HealBot_Panel_TestBarsOn()
     noBars=tonumber(HealBot_noBars)
     i={[1]=0,[2]=0,[3]=0,[4]=0,[5]=0,[6]=0,[7]=0,[8]=0,[9]=0,[10]=0}
     grpNo=1
-
+    local gNo=5
     local healGroups=Healbot_Config_Skins.HealGroups[Healbot_Config_Skins.Current_Skin]
     local gl=0
     local xRaidBars=40
     if HealBot_Globals.TestBars["PROFILE"]==3 then xRaidBars=25 end
     if HealBot_Globals.TestBars["PROFILE"]==2 then xRaidBars=10 end
+    if HealBot_Globals.TestBars["PROFILE"]==1 then xRaidBars=5 end
 
     for gl=1,10 do
         hbCurrentFrame=healGroups[gl]["FRAME"]
-        if healGroups[gl]["NAME"]==HEALBOT_OPTIONS_SELFHEALS_en and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_OPTIONS_SELFHEALS,HEALBOT_OPTIONS_SELFHEALS,1,1,HEALBOT_WORD_HEALER)
-            gNo=4
-            xRaidBars=xRaidBars-1
-        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_TANKHEALS_en and HealBot_Globals.TestBars["TANKS"]>0 and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_OPTIONS_TANKHEALS,HEALBOT_WORD_TANK,1,HealBot_Globals.TestBars["TANKS"],HEALBOT_WORD_TANK)
-            xRaidBars=xRaidBars-HealBot_Globals.TestBars["TANKS"]
-        elseif healGroups[gl]["NAME"]==HEALBOT_CLASSES_HEALERS_en and HealBot_Globals.TestBars["HEALERS"]>0 and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_CLASSES_HEALERS,HEALBOT_WORD_HEALER,1,HealBot_Globals.TestBars["HEALERS"],HEALBOT_WORD_HEALER)
-            xRaidBars=xRaidBars-HealBot_Globals.TestBars["HEALERS"]
-        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_GROUPHEALS_en and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_GROUPHEALS,1,gNo)
-            xRaidBars=xRaidBars-gNo
-        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_MYTARGET_en and HealBot_Globals.TestBars["TARGETS"]>0 and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_OPTIONS_MYTARGET,HEALBOT_DISABLED_TARGET,1,HealBot_Globals.TestBars["TARGETS"])
-            xRaidBars=xRaidBars-HealBot_Globals.TestBars["TARGETS"]
-        elseif healGroups[gl]["NAME"]==HEALBOT_FOCUS_en and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_FOCUS,HEALBOT_FOCUS,1,1)
-        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_EMERGENCYHEALS_en and healGroups[gl]["STATE"]==1 and HealBot_Globals.TestBars["PROFILE"]>1 and xRaidBars>0 then
-            if xRaidBars<5 then
-                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,1,xRaidBars)
-            else
-                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,1,5)
+        if healGroups[gl]["NAME"]==HEALBOT_OPTIONS_SELFHEALS_en then
+            if healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_SELFHEALS,HEALBOT_OPTIONS_SELFHEALS,1,1,HEALBOT_WORD_HEALER)
+                gNo=4
+                xRaidBars=xRaidBars-1
             end
-            if xRaidBars>5 then
-                if xRaidBars<10 then
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,6,xRaidBars)
+        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_TANKHEALS_en then
+            local nTanks=HealBot_Globals.TestBars["TANKS"]
+            if HealBot_Globals.TestBars["PROFILE"]==1 then nTanks=1 end
+            if nTanks>0 and healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_TANKHEALS,HEALBOT_WORD_TANK,1,nTanks,HEALBOT_WORD_TANK)
+                xRaidBars=xRaidBars-nTanks
+            end
+        elseif healGroups[gl]["NAME"]==HEALBOT_CLASSES_HEALERS_en then
+            local nHealers=HealBot_Globals.TestBars["HEALERS"]
+            if HealBot_Globals.TestBars["PROFILE"]==1 then nHealers=1 end
+            if nHealers>0 and healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_CLASSES_HEALERS,HEALBOT_WORD_HEALER,1,nHealers,HEALBOT_WORD_HEALER)
+                xRaidBars=xRaidBars-nHealers
+            end
+        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_GROUPHEALS_en then
+            if gNo>xRaidBars then gNo=xRaidBars end
+            if healGroups[gl]["STATE"]==1 and gNo>0 then
+                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_GROUPHEALS,1,gNo)
+                xRaidBars=xRaidBars-gNo
+            end
+        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_MYTARGET_en then
+            if HealBot_Globals.TestBars["TARGETS"]>0 and healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_MYTARGET,HEALBOT_DISABLED_TARGET,1,HealBot_Globals.TestBars["TARGETS"])
+                xRaidBars=xRaidBars-HealBot_Globals.TestBars["TARGETS"]
+            end
+        elseif healGroups[gl]["NAME"]==HEALBOT_FOCUS_en then
+            if healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_FOCUS,HEALBOT_FOCUS,1,1)
+            end
+        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_EMERGENCYHEALS_en then
+            if healGroups[gl]["STATE"]==1 and HealBot_Globals.TestBars["PROFILE"]>1 and xRaidBars>0 then
+                if xRaidBars<5 then
+                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,1,xRaidBars)
                 else
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,6,10)
+                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,1,5)
+                end
+                if xRaidBars>5 then
+                    if xRaidBars<10 then
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,6,xRaidBars)
+                    else
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,6,10)
+                    end
+                end
+                if xRaidBars>10 then
+                    if xRaidBars<15 then
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,11,xRaidBars)
+                    else
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,11,15)
+                    end
+                end
+                if xRaidBars>15 then
+                    if xRaidBars<20 then
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,16,xRaidBars)
+                    else
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,16,20)
+                    end
+                end
+                if xRaidBars>20 then
+                    if xRaidBars<25 then
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,21,xRaidBars)
+                    else
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,21,25)
+                    end
+                end
+                if xRaidBars>25 then
+                    if xRaidBars<30 then
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,26,xRaidBars)
+                    else
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,26,30)
+                    end
+                end
+                if xRaidBars>30 then
+                    if xRaidBars<35 then
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,31,xRaidBars)
+                    else
+                        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,31,35)
+                    end
+                end
+                if xRaidBars>35 then
+                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,36,xRaidBars)
                 end
             end
-            if xRaidBars>10 then
-                if xRaidBars<15 then
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,11,xRaidBars)
-                else
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,11,15)
-                end
+        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_PETHEALS_en then
+            if HealBot_Globals.TestBars["PETS"]>0 and healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_PETHEALS,HEALBOT_OPTIONS_PETHEALS,1,HealBot_Globals.TestBars["PETS"],HEALBOT_OPTIONS_PETHEALS)
             end
-            if xRaidBars>15 then
-                if xRaidBars<20 then
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,16,xRaidBars)
-                else
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,16,20)
-                end
+        elseif healGroups[gl]["NAME"]==HEALBOT_VEHICLE_en then
+            if healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_VEHICLE,HEALBOT_VEHICLE,1,2)
             end
-            if xRaidBars>20 then
-                if xRaidBars<25 then
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,21,xRaidBars)
-                else
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,21,25)
-                end
+        elseif healGroups[gl]["NAME"]==HEALBOT_CUSTOM_CASTBY_ENEMY_en then
+            if healGroups[gl]["STATE"]==1 then
+                HealBot_Panel_testAddButton(HEALBOT_CUSTOM_CASTBY_ENEMY,HEALBOT_CUSTOM_CASTBY_ENEMY,1,HealBot_Globals.TestBars["ENEMY"],HEALBOT_CUSTOM_CASTBY_ENEMY)
             end
-            if xRaidBars>25 then
-                if xRaidBars<30 then
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,26,xRaidBars)
-                else
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,26,30)
-                end
-            end
-            if xRaidBars>30 then
-                if xRaidBars<35 then
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,31,xRaidBars)
-                else
-                    HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,31,35)
-                end
-            end
-            if xRaidBars>35 then
-                HealBot_Panel_testAddButton(HEALBOT_OPTIONS_EMERGENCYHEALS.." "..HEALBOT_OPTIONS_GROUPHEALS.." "..grpNo,HEALBOT_OPTIONS_EMERGENCYHEALS,36,xRaidBars)
-            end
-        elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_PETHEALS_en and HealBot_Globals.TestBars["PETS"]>0 and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_OPTIONS_PETHEALS,HEALBOT_OPTIONS_PETHEALS,1,HealBot_Globals.TestBars["PETS"],HEALBOT_OPTIONS_PETHEALS)
-        elseif healGroups[gl]["NAME"]==HEALBOT_VEHICLE_en and healGroups[gl]["STATE"]==1 then
-            HealBot_Panel_testAddButton(HEALBOT_VEHICLE,HEALBOT_VEHICLE,1,2)
     --    elseif healGroups[gl]["NAME"]==HEALBOT_OPTIONS_TARGETHEALS_en and healGroups[gl]["STATE"]==1 then
     --        HealBot_Panel_testAddButton(HEALBOT_OPTIONS_TARGETHEALS,HEALBOT_DISABLED_TARGET,1,1)
         end
@@ -1872,7 +1899,7 @@ function HealBot_Panel_raidHeals()
                 table.insert(subunits,xUnit)
             end
         else
-            do break end
+            break
         end
     end
     if i[hbCurrentFrame]==k+1 and not HealBot_BottomAnchors[hbCurrentFrame] then
@@ -2160,18 +2187,44 @@ function HealBot_Panel_enemyTargets()
             end
         end)
     end
-    if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"]>0 then
-        local numBoss=Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"]
-        local showBossExists=Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWBOSS"]
-        local mapID=GetCurrentMapAreaID()
-        if mapID==953 then
-            local bossGUID=UnitExists("boss1") and not UnitIsDead("boss1") and UnitGUID("boss1")
-            local bossCId=bossGUID and tonumber(bossGUID:sub(6, 10), 16)
-            if (bossCId or 0)==71246 then
-                if numBoss<3 then numBoss=3 end
-                showBossExists=0
-            end
+    local numBoss=Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["NUMBOSS"]
+    local showBossExists=Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["EXISTSHOWBOSS"]
+    if HealBot_Data["MAPID"]==953 then
+        if UnitExists("boss1") then
+            if numBoss<3 then numBoss=3 end
+            showBossExists=0
         end
+--        local bossGUID=UnitGUID("boss1") or "000000000000"
+--        local bossCId=tonumber(bossGUID:sub(6, 10), 16)
+--        if bossCId==71246 then
+--            if numBoss<3 then numBoss=3 end
+--            showBossExists=0
+--        elseif UnitExists("target") and not UnitIsFriend("target", "player") then
+--            bossGUID=UnitGUID("target") or "000000000000"
+--            bossCId=tonumber(bossGUID:sub(6, 10), 16)
+--            if bossCId==71246 then
+--                if numBoss<3 then numBoss=3 end
+--                showBossExists=0
+--            end
+--        else
+--            if #HealBot_MainTanks<1 then
+--                HealBot_Panel_setTanks()
+--            end
+--            for _,xUnit in pairs(HealBot_MainTanks) do
+--                if UnitExists(xUnit.."target") and not UnitIsFriend(xUnit,xUnit.."target") then
+--                    bossGUID=UnitGUID(xUnit.."target") or "000000000000"
+--                    bossCId=tonumber(bossGUID:sub(6, 10), 16)
+--                    if bossCId==71246 then
+--                        if numBoss<3 then numBoss=3 end
+--                        showBossExists=0
+--                        break
+--                    end
+--                end
+--            end
+--        end
+    end
+    
+    if numBoss>0 then
         for bi=1,numBoss do
             if Healbot_Config_Skins.Enemy[Healbot_Config_Skins.Current_Skin]["HIDE"]==1 then
                 if HealBot_Data["UILOCK"]=="YES" then

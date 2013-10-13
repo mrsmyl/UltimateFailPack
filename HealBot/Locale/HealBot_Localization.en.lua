@@ -609,8 +609,6 @@ function HealBot_Lang_enALL()
     HEALBOT_FRAMELOCK_BYPASS_ON             = "Frame lock bypass (Ctl+Alt+Left) turned On"
     HEALBOT_RESTRICTTARGETBAR_ON            = "Restrict Target bar turned On"
     HEALBOT_RESTRICTTARGETBAR_OFF           = "Restrict Target bar turned Off"
-    HEALBOT_PRELOADOPTIONS_ON               = "PreLoad Options turned On"
-    HEALBOT_PRELOADOPTIONS_OFF              = "PreLoad Options turned Off"
     HEALBOT_AGGRO2_ERROR_MSG                = "To set aggro level 2, threat percentage must be between 25 and 95"
     HEALBOT_AGGRO3_ERROR_MSG                = "To set aggro level 3, threat percentage must be between 75 and 100"
     HEALBOT_AGGRO2_SET_MSG                  = "Aggro level 2 set at threat percentage "
@@ -665,8 +663,15 @@ function HealBot_Lang_enALL()
     HEALBOT_CUSTOM_CASTBY_EVERYONE          = "Everyone"
     HEALBOT_CUSTOM_CASTBY_ENEMY             = "Enemy"
     HEALBOT_CUSTOM_CASTBY_FRIEND            = "Friend"
-
+    
+    HEALBOT_CUSTOM_CAT_CUSTOM_DAMAGE        = "Damage Debuffs"
+    HEALBOT_CUSTOM_CAT_CUSTOM_EFFECT        = "Effect Debuffs"
+    HEALBOT_CUSTOM_CAT_CUSTOM_MISC          = "Misc. Debuffs"
     HEALBOT_CUSTOM_DEBUFF_CATS = {
+             -- Defaults
+            [HEALBOT_CUSTOM_CAT_CUSTOM_DAMAGE]     = 1,
+            [HEALBOT_CUSTOM_CAT_CUSTOM_EFFECT]     = 1,
+            [HEALBOT_CUSTOM_CAT_CUSTOM_MISC]       = 1,
              -- A-B 2
 			[HEALBOT_DEBUFF_ACID_BREATH]           = 2,
 			[HEALBOT_DEBUFF_ACID_DRENCHED_MANDIBLES] = 2,
@@ -683,19 +688,19 @@ function HealBot_Lang_enALL()
 			[HEALBOT_DEBUFF_ARCTIC_FREEZE]         = 2,
 			[HEALBOT_DEBUFF_ARTERIAL_CUT]          = 2,
 			[HEALBOT_DEBUFF_ASSASSINS_MARK]        = 2,
-			--[HEALBOT_DEBUFF_AURA_OF_PRIDE]         = 2,
+			[HEALBOT_DEBUFF_AURA_OF_PRIDE]         = 2,
 			[HEALBOT_DEBUFF_BANISHMENT]            = 2,
 			[HEALBOT_DEBUFF_BEAST_OF_NIGHTMARES]   = 2,
-			[HEALBOT_DEBUFF_BEAST_OF_NIGHTMARES]   = 2,
+            [HEALBOT_DEBUFF_BEAST_OF_NIGHTMARES]   = 2,
 			[HEALBOT_DEBUFF_BITING_COLD]           = 2,
 			[HEALBOT_DEBUFF_BLOOD_OF_YSHAARJ]      = 2,
 			[HEALBOT_DEBUFF_BLUE_RAY_TRACKING]     = 2,  
-			[HEALBOT_DEBUFF_BLUE_RAYS]             = 2,
+			--[HEALBOT_DEBUFF_BLUE_RAYS]             = 2,
 			[HEALBOT_DEBUFF_BODY_HEAT]             = 2,
 			[HEALBOT_DEBUFF_BOILING_BLOOD]         = 2,
             [HEALBOT_DEBUFF_BONECRACKER]           = 2,
 			[HEALBOT_DEBUFF_BOTTOMLESS_PIT]        = 2,
-			[HEALBOT_DEBUFF_BRIGHT_LIGHT]          = 2,
+			--[HEALBOT_DEBUFF_BRIGHT_LIGHT]          = 2,
 			[HEALBOT_DEBUFF_BURN]                  = 2,
             [HEALBOT_DEBUFF_BURNING_BILE]          = 2,
             [HEALBOT_DEBUFF_BURNING_BLOOD]         = 2,
@@ -724,7 +729,7 @@ function HealBot_Lang_enALL()
 			[HEALBOT_DEBUFF_CRUSH_ARMOR]           = 3, 
 			[HEALBOT_DEBUFF_CRYSTAL_SHELL]         = 3,
             [HEALBOT_DEBUFF_CRYSTAL_SHELL_FULL_CAPACITY] = 3,
-			[HEALBOT_DEBUFF_DAEDALIAN_WINGS]       = 3,
+			--[HEALBOT_DEBUFF_DAEDALIAN_WINGS]       = 3,
 			[HEALBOT_DEBUFF_DARK_BARRAGE]          = 3,
             [HEALBOT_DEBUFF_DEAD_ZONE]             = 3,
 			[HEALBOT_DEBUFF_DEBILITATION]          = 3,
@@ -733,6 +738,7 @@ function HealBot_Lang_enALL()
             [HEALBOT_DEBUFF_DEFILED_GROUND]        = 3,
 			[HEALBOT_DEBUFF_DELIRIOUS_SLASH]       = 3,
             [HEALBOT_DEBUFF_DESECRATED]            = 3,
+			--HEALBOT_DEBUFF_DESPAIR                 = 3,
 			[HEALBOT_DEBUFF_DISCHARGED_ENERGY]     = 3,
 			[HEALBOT_DEBUFF_DISHEARTENING_LAUGH]   = 3,
 			[HEALBOT_DEBUFF_DOOMFIRE]              = 3,
@@ -768,7 +774,7 @@ function HealBot_Lang_enALL()
 			[HEALBOT_DEBUFF_FLAMES_OF_PASSION]     = 4,
 			[HEALBOT_DEBUFF_FLAME_SEAR]            = 4, 
             [HEALBOT_DEBUFF_FLASH_FREEZE]          = 4,
-            [HEALBOT_DEBUFF_FLIGHT]                = 4,
+            --[HEALBOT_DEBUFF_FLIGHT]                = 4,
 			[HEALBOT_DEBUFF_FOCUSED_LIGHTNING]     = 4,
 			[HEALBOT_DEBUFF_FOUL_GEYSER]           = 4, 
 			[HEALBOT_DEBUFF_FRACTURE]              = 4,
@@ -820,7 +826,7 @@ function HealBot_Lang_enALL()
             [HEALBOT_DEBUFF_INCINERATE_FLESH]      = 6,
             [HEALBOT_DEBUFF_INFECTED_TALONS]       = 6,
 			[HEALBOT_DEBUFF_INFEST]                = 6,
-            [HEALBOT_DEBUFF_INFRARED_LIGHT]        = 6,
+            --[HEALBOT_DEBUFF_INFRARED_LIGHT]        = 6,
 			[HEALBOT_DEBUFF_INFRARED_TRACKING]     = 6,
 			[HEALBOT_DEBUFF_INJECTION]             = 6,
 			[HEALBOT_DEBUFF_INSTABILITY]           = 6,
@@ -834,7 +840,7 @@ function HealBot_Lang_enALL()
 			[HEALBOT_DEBUFF_LASER_BURN]            = 7,
 			[HEALBOT_DEBUFF_LEGION_FLAME]          = 7, 
             --[HEALBOT_DEBUFF_LESSER_SHA_RESIDUE]    = 7,
-			[HEALBOT_DEBUFF_LESSONS_OF_ICARUS]     = 7,
+			--[HEALBOT_DEBUFF_LESSONS_OF_ICARUS]     = 7,
 			[HEALBOT_DEBUFF_LIFE_DRAIN]            = 7,
 			[HEALBOT_DEBUFF_LIGHTNING_ROD]         = 7,
             [HEALBOT_DEBUFF_LIGHTNING_TETHER]      = 7,
@@ -845,7 +851,6 @@ function HealBot_Lang_enALL()
 			[HEALBOT_DEBUFF_MAGNETIC_CRUSH]        = 8,
 			[HEALBOT_DEBUFF_MALFORMED_BLOOD]       = 8, 
 			[HEALBOT_DEBUFF_MARK_OF_ANGUISH]       = 8,
-            [HEALBOT_DEBUFF_MARK_OF_ARROGANCE]     = 8,
             [HEALBOT_DEBUFF_FALLEN_CHAMPION]       = 8,
 			[HEALBOT_DEBUFF_MARKED_SOUL]           = 8,
 			--[HEALBOT_DEBUFF_MEDITATIVE_FIELD]      = 8, 
@@ -857,7 +862,8 @@ function HealBot_Lang_enALL()
             [HEALBOT_DEBUFF_NAPALM_SHELL]          = 8,
             [HEALBOT_DEBUFF_NECROTIC_PLAGUE]       = 8,
             [HEALBOT_DEBUFF_NECROTIC_STRIKE]       = 8,
-            -- O-P 9
+            [HEALBOT_DEBUFF_NOXIOUS_POISON]        = 8, 
+			-- O-P 9
 			--[HEALBOT_DEBUFF_OVERCOME]              = 9,
 			[HEALBOT_DEBUFF_OVERCHARGED]           = 9,
 			[HEALBOT_DEBUFF_OVERCONFIDENCE]        = 9,  
@@ -872,7 +878,7 @@ function HealBot_Lang_enALL()
             [HEALBOT_DEBUFF_POISON_CLOUD]          = 9,
 			[HEALBOT_DEBUFF_POOL_OF_FIRE]          = 9,
 			--[HEALBOT_DEBUFF_POWER_OF_THE_TITANS]   = 9,
-			[HEALBOT_DEBUFF_PRIMAL_NUTRIMENT]      = 9,
+			--[HEALBOT_DEBUFF_PRIMAL_NUTRIMENT]      = 9,
 			--[HEALBOT_DEBUFF_PURIFIED]              = 9,
 			--[HEALBOT_DEBUFF_PURIFIED_RESIDUE]      = 9, 
 			-- Q-R 10
@@ -1205,9 +1211,7 @@ function HealBot_Lang_enALL()
     HEALBOT_OPTIONS_PROFILE_CLASS           = "Class"
     HEALBOT_OPTIONS_INCOMBATALERTLEVEL      = "Alert Level - In Combat";
     HEALBOT_OPTIONS_OUTCOMBATALERTLEVEL     = "Alert Level - Out of Combat";
-    HEALBOT_CUSTOM_CAT_CUSTOM_DAMAGE        = "Damage Debuffs"
-    HEALBOT_CUSTOM_CAT_CUSTOM_EFFECT        = "Effect Debuffs"
-    HEALBOT_CUSTOM_CAT_CUSTOM_MISC          = "Misc. Debuffs"
+    HEALBOT_OPTION_NUMENEMYS                = "Number of Enemys"
 end
 
 if (GetLocale() == "enUK") then

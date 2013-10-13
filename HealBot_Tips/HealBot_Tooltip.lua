@@ -66,8 +66,14 @@ function HealBot_Action_RefreshTooltip()
         return
     end
   
-    local hlth,maxhlth=HealBot_UnitHealth(xUnit)
+    local hbhlth,hbmaxhlth=HealBot_UnitHealth(xUnit)
+    local hlth=UnitHealth(xUnit)
+    local maxhlth=UnitHealthMax(xUnit)
     local mana,maxmana=HealBot_UnitMana(xUnit)
+    
+    if hbhlth~=hlth or hbmaxhlth~=maxhlth then
+        HealBot_HealthCheck(xUnit)
+    end
 
     if hlth>maxhlth then
         maxhlth=HealBot_CorrectPetHealth(xUnit,hlth,maxhlth,xGUID)
@@ -139,7 +145,7 @@ function HealBot_Action_RefreshTooltip()
                         for r=1,GetNumGroupMembers() do
                             if UnitIsUnit("raid"..r,xUnit) then
                                 _, _, _, _, _, _, zone, _, _ = GetRaidRosterInfo(r);
-                                do break end
+                                break
                             end
                         end
                     end
@@ -210,10 +216,14 @@ function HealBot_Action_RefreshTooltip()
                                                 (HealBot_Globals.CDCBarColour[xButton.debuff.name].B or 0.2)+0.2,
                                                 1," ",0,0,0,0)
                 elseif DebuffType == HEALBOT_CUSTOM_en then
+                    local customDebuffPriority=HEALBOT_CUSTOM_en.."10"
+                    if HealBot_GlobalsDefaults.HealBot_Custom_Debuffs[xButton.debuff.name] then
+                        customDebuffPriority=HEALBOT_CUSTOM_en..HealBot_GlobalsDefaults.HealBot_Custom_Debuffs[xButton.debuff.name]
+                    end
                     HealBot_Tooltip_SetLine(linenum,uName.." suffers from "..xButton.debuff.name,
-                                                (HealBot_Globals.CDCBarColour[DebuffType].R or 0.5)+0.2,
-                                                (HealBot_Globals.CDCBarColour[DebuffType].G or 0.2)+0.2,
-                                                (HealBot_Globals.CDCBarColour[DebuffType].B or 0.4)+0.2,
+                                                (HealBot_Globals.CDCBarColour[customDebuffPriority].R or 0.5)+0.2,
+                                                (HealBot_Globals.CDCBarColour[customDebuffPriority].G or 0.2)+0.2,
+                                                (HealBot_Globals.CDCBarColour[customDebuffPriority].B or 0.4)+0.2,
                                                 1," ",0,0,0,0)
                 else
                     HealBot_Tooltip_SetLine(linenum,uName.." suffers from "..xButton.debuff.name,
@@ -368,10 +378,10 @@ function HealBot_Action_RefreshTooltip()
 end
 
 function HealBot_Tooltip_readNumber(n)
-    if n>10000000 then
-        n=tostring(ceil(n/1000000)).."M"
-    elseif n>10000 then
-        n=tostring(ceil(n/1000)).."K"
+    if n>999999 then
+        n=tostring(HealBot_Comm_round(n/1000000,0)).."M"
+    elseif n>999 then
+        n=tostring(HealBot_Comm_round(n/1000,0)).."K"
     else
         n=tostring(n)
     end

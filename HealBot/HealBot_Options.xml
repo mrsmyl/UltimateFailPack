@@ -9213,6 +9213,31 @@
                       <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 105)</OnLoad>
                     </Scripts>
                   </Frame>
+                  <Frame name="HealBot_Options_CDCCastByCustom" inherits="UIDropDownMenuTemplate">
+                    <Layers>
+                      <Layer level="BACKGROUND">
+                        <FontString name="HealBot_Options_CustomDebuff_CastByText" text="HEALBOT_OPTIONS_CUSTOM_CASTBY" inherits="GameFontNormal">
+                          <Anchors>
+                            <Anchor point="CENTER">
+                              <Offset>
+                                <AbsDimension x="0" y="25" />
+                              </Offset>
+                            </Anchor>
+                          </Anchors>
+                        </FontString>
+                      </Layer>
+                    </Layers>
+                    <Anchors>
+                      <Anchor point="LEFT" relativeTo="HealBot_Options_CDebuffTxt1" relativePoint="RIGHT">
+                        <Offset>
+                          <AbsDimension x="-5" y="0"/>
+                        </Offset>
+                      </Anchor>
+                    </Anchors>
+                    <Scripts>
+                      <OnLoad>HealBot_Options_UIDropDownMenu_OnLoad(self, 105); self:Hide()</OnLoad>
+                    </Scripts>
+                  </Frame>
                   <CheckButton name="HealBot_Options_CDCReverseDurC" inherits="OptionsCheckButtonTemplate">
                     <Anchors>
                       <Anchor point="LEFT" relativeTo="HealBot_Options_CDCCastBy" relativePoint="RIGHT">
@@ -10601,7 +10626,7 @@
                 <Anchors>
                   <Anchor point="TOP" relativePoint="TOP">>
                     <Offset>
-                      <AbsDimension x="0" y="-95" />
+                      <AbsDimension x="0" y="-75" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -10641,7 +10666,7 @@
                 <Anchors>
                   <Anchor point="TOP">
                     <Offset>
-                      <AbsDimension x="0" y="-180" />
+                      <AbsDimension x="0" y="-165" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -10656,7 +10681,7 @@
                 <Anchors>
                   <Anchor point="TOP">
                     <Offset>
-                      <AbsDimension x="0" y="-270" />
+                      <AbsDimension x="0" y="-240" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -10671,7 +10696,7 @@
                 <Anchors>
                   <Anchor point="TOP">
                     <Offset>
-                      <AbsDimension x="0" y="-360" />
+                      <AbsDimension x="0" y="-315" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -10686,7 +10711,7 @@
                 <Anchors>
                   <Anchor point="TOP">
                     <Offset>
-                      <AbsDimension x="0" y="-450" />
+                      <AbsDimension x="0" y="-390" />
                     </Offset>
                   </Anchor>
                 </Anchors>
@@ -10701,12 +10726,27 @@
                 <Anchors>
                   <Anchor point="TOP">
                     <Offset>
-                      <AbsDimension x="0" y="-540" />
+                      <AbsDimension x="0" y="-465" />
                     </Offset>
                   </Anchor>
                 </Anchors>
                 <Scripts>
                   <OnValueChanged>HealBot_Options_NumTestPets_OnValueChanged(self)</OnValueChanged>
+                </Scripts>
+              </Slider>
+              <Slider name="HealBot_Options_NumberTestEnemy" inherits="HealBot_Options_SliderTemplate">
+                <Size>
+                  <AbsDimension x="390" y="16" />
+                </Size>
+                <Anchors>
+                  <Anchor point="TOP">
+                    <Offset>
+                      <AbsDimension x="0" y="-540" />
+                    </Offset>
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnValueChanged>HealBot_Options_NumberTestEnemy_OnValueChanged(self)</OnValueChanged>
                 </Scripts>
               </Slider>
             </Frames>
