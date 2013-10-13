@@ -37,12 +37,12 @@ local moduleData = {
 
 -- module handling
 function ReputationHistory:OnInitialize()	
-	-- init the module
-	self:Initialize()
+	-- empty
 end
 
 function ReputationHistory:OnEnable()
-	-- empty
+	-- init the module
+	self:Initialize()
 end
 
 function ReputationHistory:OnDisable()

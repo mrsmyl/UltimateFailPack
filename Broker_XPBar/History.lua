@@ -60,12 +60,12 @@ local moduleData = {
 
 -- module handling
 function History:OnInitialize()	
-	-- init the module
-	self:Initialize()
+	-- empty
 end
 
 function History:OnEnable()
-	-- empty
+	-- init the module
+	self:Initialize()
 end
 
 function History:OnDisable()
@@ -353,11 +353,11 @@ function History:UpdateXP()
 		moduleData.lvlMaxXP = UnitXPMax("player")	
 	end
 
-	local lvlTotal = UnitXP("player") - moduleData.startXP
-	local delta    = lvlTotal - (moduleData.totalXP - moduleData.doneLvlXP)
+	local lvlXP = UnitXP("player") - moduleData.startXP
+	local delta = lvlXP - (moduleData.totalXP - moduleData.doneLvlXP)
 	
 	-- track activity	
-	moduleData.totalXP = lvlTotal + moduleData.doneLvlXP
+	moduleData.totalXP = lvlXP + moduleData.doneLvlXP
 	bucket.totalXP = bucket.totalXP + delta
 	
 	if not moduleData.endRestTime and (GetXPExhaustion() or 0) == 0 then

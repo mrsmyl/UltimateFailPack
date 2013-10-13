@@ -1,7 +1,7 @@
-## Interface: 50300
+## Interface: 50400
 ## Title: Broker: |cffffffffXP|rBar
 ## Notes: Lightweight XP Bar for Broker Bars
-## Version: 1.7 r044
+## Version: 1.7 r045
 ## Author: tritium
 ## X-Credits: Wobin (For the original Fubar - XPFu)
 ## X-Category: Interface Enhancements
