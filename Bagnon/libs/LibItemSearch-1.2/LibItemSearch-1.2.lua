@@ -4,7 +4,7 @@
 --]]
 
 local Search = LibStub('CustomSearch-1.0')
-local Lib = LibStub:NewLibrary('LibItemSearch-1.2', 2)
+local Lib = LibStub:NewLibrary('LibItemSearch-1.2', 3)
 if Lib then
 	Lib.Filters = {}
 else
@@ -42,7 +42,7 @@ Lib.Filters.name = {
 }
 
 Lib.Filters.type = {
-	tags = {'t', 'type', 'slot'},
+	tags = {'t', 'type', 's', 'slot'},
 
 	canSearch = function(self, operator, search)
 		return not operator and search
@@ -55,7 +55,7 @@ Lib.Filters.type = {
 }
 
 Lib.Filters.level = {
-	tags = {'l', 'level', 'lvl'},
+	tags = {'l', 'level', 'lvl', 'ilvl'},
 
 	canSearch = function(self, _, search)
 		return tonumber(search)
@@ -64,6 +64,7 @@ Lib.Filters.level = {
 	match = function(self, link, operator, num)
 		local lvl = select(4, GetItemInfo(link))
 		if lvl then
+			print(operator, lvl, num)
 			return Search:Compare(operator, lvl, num)
 		end
 	end
