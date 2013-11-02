@@ -1,4 +1,43 @@
 ------------------------------------------------------------------------
+r860 | asixandur | 2013-10-14 12:06:46 +0000 (Mon, 14 Oct 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl_Party/XPerl_Party.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+Fixed pvp marks disabling on party, target and target's target
+------------------------------------------------------------------------
+r859 | asixandur | 2013-10-13 16:30:31 +0000 (Sun, 13 Oct 2013) | 4 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/localization.lua
+
+Tag as 3.7.5 for settings updating
+Debuffs should now be correctly enabled and disabled in the TTT Frame and also for FocusTarget and PetTarget
+Changing these options in combat is not advised.
+It seems that FocusTarget is not so responsive and sometimes it doesn't refresh correctly.
+------------------------------------------------------------------------
+r858 | asixandur | 2013-10-08 11:27:57 +0000 (Tue, 08 Oct 2013) | 2 lines
+Changed paths:
+   M /trunk/XPerl.toc
+   M /trunk/XPerl_Options/XPerl_FrameOptions.lua
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/localization.lua
+
+Tag as 3.7.4 for settings updating
+Debuffs are now correctly enabled and disabled in the TTT Frame
+------------------------------------------------------------------------
+r857 | asixandur | 2013-09-22 15:35:13 +0000 (Sun, 22 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/XPerl_Options/XPerl_FrameOptions.xml
+   M /trunk/XPerl_Options/localization.itIT.lua
+   M /trunk/XPerl_Options/localization.lua
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+You can now enable Target's Target Debuffs independently from buffs
+------------------------------------------------------------------------
 r856 | asixandur | 2013-09-15 05:44:37 +0000 (Sun, 15 Sep 2013) | 3 lines
 Changed paths:
    M /trunk/XPerl.toc
@@ -42,21 +81,4 @@ Changed paths:
 
 Tag as 3.7.2
 Toc update
-------------------------------------------------------------------------
-r854 | asixandur | 2013-09-11 13:24:46 +0000 (Wed, 11 Sep 2013) | 3 lines
-Changed paths:
-   M /trunk/XPerl.lua
-   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
-
-Revert "Don't know while doing this causes a lua error. Can someone look into that issue?"
-
-This reverts commit 6bed4f4a33733d3324b997e28da33b17a22fa37b.
-------------------------------------------------------------------------
-r853 | asixandur | 2013-06-23 13:25:41 +0000 (Sun, 23 Jun 2013) | 2 lines
-Changed paths:
-   M /trunk/XPerl.lua
-   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
-
-Don't know while doing this causes a lua error. Can someone look into that issue?
-Try to report in BGs, revert if doesn't work.
 ------------------------------------------------------------------------
