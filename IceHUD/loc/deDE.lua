@@ -292,6 +292,7 @@ L["Height"] = "Höhe"
 L["Hide Blizzard Buffs"] = "Verstecke Blizzard Buffs"
 L["Hide Blizzard Frame"] = "Verstecke Blizzard Rahmen"
 L["Hide Blizzard Party"] = "Verstecke Blizzard Gruppe"
+L["Hide during pet battles"] = "Hide during pet battles" -- Requires localization
 L["Hides Blizzard Focus frame and disables all events related to it"] = "Verstecke Blizzard Focus Rahmen und deaktiviert alle zugehörigen Ereignisse"
 L[ [=[Hides Blizzard frame and disables all events related to it.
 
@@ -463,6 +464,7 @@ L["Only show for my debuffs"] = "Zeige nur für meine Debuffs"
 L["Only show if target uses mana"] = "Zeige nur, wenn Ziel Mana hat"
 L["Only show in groups"] = "Zeige nur in Gruppen"
 L["Only show the threat bar if you are in a group or you have an active pet"] = "Zeige nur die Bedrohungsleiste, wenn in einer Gruppe oder ein Begleiter aktiv ist"
+L["Only show with a target selected"] = "Only show with a target selected" -- Requires localization
 L["Only track auras by me"] = "Beobachte nur Auren von mir"
 L["Other"] = "Sonstige"
 L["Outline"] = "Outline" -- Requires localization
@@ -653,6 +655,7 @@ L[ [=[This will fade the graphical representation from the min color specified t
 (e.g. if the min color is yellow, the color is red, and there are 3 total applications, then the first would be yellow, second orange, and third red)]=] ] = [=[Dies wird die grafische Representation von der minimal Farbe auf die reguläre Farbe überblenden
 
 (bsp. Wenn die minimal Farbe gelb ist, die Reguläre rot und es 3 Stapel / Applikationen gibt, dann wird der erste gelb, zweite orange und die dritte rot gefärbt werden)]=]
+L["This will hide the entire mod during pet battles."] = "This will hide the entire mod during pet battles." -- Requires localization
 L["This will override the global bar texture setting for this bar."] = "Dies wird die Globale Einstellunge für diese Leiste überschreiben."
 L["This will override the global bar texture setting for this bar with the one specified below."] = "Dies wird die Globale Einstellung der Leisten Textur für diese Leiste mit der darunter Spezifizierten überschreiben."
 L["This will remove the marker selected in the 'edit marker' box. This action is irreversible."] = "Dies wird die ausgewählte Makierung entfernen. Dies ist nicht rückgäng zu machen"
@@ -702,6 +705,7 @@ L[ [=[Use class color as the bar color instead of reaction color
 L["Use Dog Tags"] = "Benutze Dog Tags"
 L["Use normal alpha"] = "Benutze normalen Alphawert"
 L["Use 'Target' alpha for friendlies"] = "Benutze Ziel Alpha für freundliche Ziele"
+L["Use this for abilities that don't require a target to cast, but you only want to see them when you have a target"] = "Use this for abilities that don't require a target to cast, but you only want to see them when you have a target" -- Requires localization
 L["Use your Dismiss Pet spell to dismiss a pet"] = "Use your Dismiss Pet spell to dismiss a pet" -- Requires localization
 L["Usually CD bars will always display if they're set to 'When Ready' or 'Always' mode regardless of your other transparency settings. If you'd rather this bar show/hide as per normal transparency rules, then check this box."] = "Usually CD bars will always display if they're set to 'When Ready' or 'Always' mode regardless of your other transparency settings. If you'd rather this bar show/hide as per normal transparency rules, then check this box." -- Requires localization
 L["Vertical position"] = "Vertikal Position"

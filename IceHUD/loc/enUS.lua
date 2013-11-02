@@ -254,6 +254,7 @@ L["Height"] = true
 L["Hide Blizzard Buffs"] = true
 L["Hide Blizzard Frame"] = true
 L["Hide Blizzard Party"] = true
+L["Hide during pet battles"] = true
 L["Hides Blizzard Focus frame and disables all events related to it"] = true
 L[ [=[Hides Blizzard frame and disables all events related to it.
 
@@ -409,6 +410,7 @@ L["Only show for my debuffs"] = true
 L["Only show if target uses mana"] = true
 L["Only show in groups"] = true
 L["Only show the threat bar if you are in a group or you have an active pet"] = true
+L["Only show with a target selected"] = true
 L["Only track auras by me"] = true
 L["Other"] = true
 L["Outline"] = true
@@ -571,6 +573,7 @@ L[ [=[This will fade the bars or numeric representation from the min color speci
 L[ [=[This will fade the graphical representation from the min color specified to the regular color
 
 (e.g. if the min color is yellow, the color is red, and there are 3 total applications, then the first would be yellow, second orange, and third red)]=] ] = true
+L["This will hide the entire mod during pet battles."] = true
 L["This will override the global bar texture setting for this bar."] = true
 L["This will override the global bar texture setting for this bar with the one specified below."] = true
 L["This will remove the marker selected in the 'edit marker' box. This action is irreversible."] = true
@@ -614,6 +617,7 @@ L[ [=[Use class color as the bar color instead of reaction color
 L["Use Dog Tags"] = true
 L["Use normal alpha"] = true
 L["Use 'Target' alpha for friendlies"] = true
+L["Use this for abilities that don't require a target to cast, but you only want to see them when you have a target"] = true
 L["Use your Dismiss Pet spell to dismiss a pet"] = true
 L["Usually CD bars will always display if they're set to 'When Ready' or 'Always' mode regardless of your other transparency settings. If you'd rather this bar show/hide as per normal transparency rules, then check this box."] = true
 L["Vertical position"] = true

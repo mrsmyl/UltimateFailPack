@@ -290,6 +290,7 @@ L["Height"] = "높이" -- Needs review
 L["Hide Blizzard Buffs"] = "기본 인터페이스 버프 숨기기" -- Needs review
 L["Hide Blizzard Frame"] = "기본 인터페이스 프레임 숨기기" -- Needs review
 L["Hide Blizzard Party"] = "기본 인터페이스 파티창 숨기기" -- Needs review
+L["Hide during pet battles"] = "Hide during pet battles" -- Requires localization
 L["Hides Blizzard Focus frame and disables all events related to it"] = "Hides Blizzard Focus frame and disables all events related to it" -- Requires localization
 L[ [=[Hides Blizzard frame and disables all events related to it.
 
@@ -461,6 +462,7 @@ L["Only show for my debuffs"] = "나의 디버프만 보여주기" -- Needs revi
 L["Only show if target uses mana"] = "대상이 마나를 소모할 때만 보여주기" -- Needs review
 L["Only show in groups"] = "Only show in groups" -- Requires localization
 L["Only show the threat bar if you are in a group or you have an active pet"] = "Only show the threat bar if you are in a group or you have an active pet" -- Requires localization
+L["Only show with a target selected"] = "Only show with a target selected" -- Requires localization
 L["Only track auras by me"] = "내가 사용한 오라만 보이기" -- Needs review
 L["Other"] = "기타" -- Needs review
 L["Outline"] = "Outline" -- Requires localization
@@ -651,6 +653,7 @@ L[ [=[This will fade the graphical representation from the min color specified t
 (e.g. if the min color is yellow, the color is red, and there are 3 total applications, then the first would be yellow, second orange, and third red)]=] ] = [=[This will fade the graphical representation from the min color specified to the regular color
 
 (e.g. if the min color is yellow, the color is red, and there are 3 total applications, then the first would be yellow, second orange, and third red)]=] -- Requires localization
+L["This will hide the entire mod during pet battles."] = "This will hide the entire mod during pet battles." -- Requires localization
 L["This will override the global bar texture setting for this bar."] = "This will override the global bar texture setting for this bar." -- Requires localization
 L["This will override the global bar texture setting for this bar with the one specified below."] = "This will override the global bar texture setting for this bar with the one specified below." -- Requires localization
 L["This will remove the marker selected in the 'edit marker' box. This action is irreversible."] = "This will remove the marker selected in the 'edit marker' box. This action is irreversible." -- Requires localization
@@ -700,6 +703,7 @@ L[ [=[Use class color as the bar color instead of reaction color
 L["Use Dog Tags"] = "Use Dog Tags" -- Requires localization
 L["Use normal alpha"] = "일반 알파 사용" -- Needs review
 L["Use 'Target' alpha for friendlies"] = "Use 'Target' alpha for friendlies" -- Requires localization
+L["Use this for abilities that don't require a target to cast, but you only want to see them when you have a target"] = "Use this for abilities that don't require a target to cast, but you only want to see them when you have a target" -- Requires localization
 L["Use your Dismiss Pet spell to dismiss a pet"] = "Use your Dismiss Pet spell to dismiss a pet" -- Requires localization
 L["Usually CD bars will always display if they're set to 'When Ready' or 'Always' mode regardless of your other transparency settings. If you'd rather this bar show/hide as per normal transparency rules, then check this box."] = "Usually CD bars will always display if they're set to 'When Ready' or 'Always' mode regardless of your other transparency settings. If you'd rather this bar show/hide as per normal transparency rules, then check this box." -- Requires localization
 L["Vertical position"] = "수직 위치" -- Needs review

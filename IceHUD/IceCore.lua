@@ -91,6 +91,8 @@ function IceCore.prototype:SetupDefaults()
 			minimap = {},
 
 			TextDecoration = "Shadow",
+
+			bHideDuringPetBattles = true,
 		},
 		global = {
 			lastRunVersion = 0,
@@ -136,14 +138,14 @@ StaticPopupDialogs["ICEHUD_UPDATE_PERIOD_MATTERS"] =
 function IceCore.prototype:CheckDisplayUpdateMessage()
 	local thisVersion
 --@non-debug@
-	thisVersion = 942
+	thisVersion = 951
 --@end-non-debug@
 --[===[@debug@
 	thisVersion = 9999
 --@end-debug@]===]
 	if self.accountSettings.lastRunVersion < thisVersion then
 		if self.accountSettings.lastRunVersion < 549 then
-			StaticPopup_Show("ICEHUD_CONVERTED_TO_ACE3")
+			--StaticPopup_Show("ICEHUD_CONVERTED_TO_ACE3")
 		end
 		if self.accountSettings.lastRunVersion < 707 and self.accountSettings.lastRunVersion > 0 then
 			-- update from the old default that may have been saved with the user's settings
@@ -151,7 +153,7 @@ function IceCore.prototype:CheckDisplayUpdateMessage()
 				self.settings.updatePeriod = 0.033
 			end
 
-			StaticPopup_Show("ICEHUD_UPDATE_PERIOD_MATTERS")
+			--StaticPopup_Show("ICEHUD_UPDATE_PERIOD_MATTERS")
 		end
 		if self.accountSettings.lastRunVersion < 710 then
 			if self.settings.modules["MaelstromCount"] == nil then
@@ -239,6 +241,20 @@ function IceCore.prototype:Enable(userToggle)
 	if IceHUD.optionsLoaded then
 		IceHUD_Options:GenerateModuleOptions()
 	end
+
+	self.IceHUDFrame:RegisterEvent("PET_BATTLE_OPENING_START")
+	self.IceHUDFrame:RegisterEvent("PET_BATTLE_OVER")
+	self.IceHUDFrame:SetScript("OnEvent", function(self, event, ...)
+		if (event == "PET_BATTLE_OPENING_START") then
+			if IceHUD.IceCore.settings.bHideDuringPetBattles then
+				self:Hide()
+			end
+		elseif (event == "PET_BATTLE_OVER") then
+			if IceHUD.IceCore.settings.bHideDuringPetBattles then
+				self:Show()
+			end
+		end
+	end)
 
 	self.enabled = true
 end
@@ -470,6 +486,10 @@ function IceCore.prototype:Disable(userToggle)
 			table.remove(self.elements, i)
 		end
 	end
+
+	self.IceHUDFrame:UnregisterEvent("PET_BATTLE_OPENING_START")
+	self.IceHUDFrame:UnregisterEvent("PET_BATTLE_OVER")
+	self.IceHUDFrame:SetScript("OnEvent", nil)
 
 	self.enabled = false
 end

@@ -68,7 +68,10 @@ Expand "|cffffdc42Module Settings|r", expand PlayerInfo (or TargetInfo for targe
 This isn't |cff9999ffIceHUD|r - it's Blizzard's new Spell Alerts they added in 4.0.1. Interface options => Combat => "Show Spell Alerts" to turn them off or search for a mod to tweak their positioning/size/etc.
 
 |cff9999ff13. I don't like where some of the bars are placed. How do I put the health/mana on the left/right?|r
-Expand "|cffffdc42Module Settings|r", expand whatever module you want to move (e.g. PlayerHealth, PlayerMana), and adjust the "Side" and "Offset" settings. "Side" controls whether it's on the left or the right and "Offset" controls how far from center it is.]]
+Expand "|cffffdc42Module Settings|r", expand whatever module you want to move (e.g. PlayerHealth, PlayerMana), and adjust the "Side" and "Offset" settings. "Side" controls whether it's on the left or the right and "Offset" controls how far from center it is.
+
+|cff9999ff14. Which module displays Monk Chi power?|r
+This module is called HarmonyPower. Harmony was the original name for Chi back when 5.0 was in beta, so I used Blizzard's name for it while I was developing for Cataclysm. I feel like it's too late to change now that many people are familiar with the Harmony name.]]
 				}
 			}
 		},
@@ -347,8 +350,25 @@ Expand "|cffffdc42Module Settings|r", expand whatever module you want to move (e
 						IceHUD.IceCore.settings.bTreatFriendlyAsTarget = value
 						IceHUD.IceCore:Redraw()
 					end,
-					order = 32
+					order = 33,
 				},
+
+				bHideDuringPetBattles = {
+					type = 'toggle',
+					name = L["Hide during pet battles"],
+					desc = L["This will hide the entire mod during pet battles."],
+					width = 'double',
+					get = function()
+						return IceHUD.IceCore.settings.bHideDuringPetBattles
+					end,
+					set = function(info, value)
+						IceHUD.IceCore.settings.bHideDuringPetBattles = value
+						if not value then
+							IceHUD.IceCore.IceHUDFrame:Show()
+						end
+					end,
+					order = 34,
+				}
 			}
 		},
 
