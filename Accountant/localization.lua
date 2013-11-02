@@ -30,6 +30,8 @@ ACCLOC_REPAIR		=	"Repair Costs";
 ACCLOC_AUC			=	"Auction House";
 ACCLOC_SYS			=	"Other System";
 ACCLOC_BMAH			=	"Black Market";
+ACCLOC_RFRG			=	"Reforging";
+ACCLOC_TMG			=	"Transmogrify";
 
 -- Buttons
 ACCLOC_RESET		=	"Clear Data";

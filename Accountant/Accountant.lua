@@ -842,7 +842,7 @@ function SC.RegisterEvents(self)
 
 	self:RegisterEvent("QUEST_COMPLETE");
 	self:RegisterEvent("QUEST_FINISHED");
-	
+		
 	self:RegisterEvent("LOOT_OPENED");
 	self:RegisterEvent("LOOT_CLOSED");
 	
@@ -875,6 +875,12 @@ function SC.RegisterEvents(self)
 		
 	self:RegisterEvent("UPDATE_INVENTORY_ALERTS");
 	self:RegisterEvent("UPDATE_INVENTORY_DURABILITY");
+
+	self:RegisterEvent("FORGE_MASTER_SET_ITEM"); --added to track reforging cost
+	self:RegisterEvent("FORGE_MASTER_ITEM_CHANGED");
+	
+	self:RegisterEvent("TRANSMOGRIFY_OPEN");  -- added to track transmoggin cost
+	self:RegisterEvent("TRANSMOGRIFY_CLOSE");
 end
 
 function SC.SetLabels()
@@ -1033,6 +1039,8 @@ function SC.LoadSavedData()
 	SC.data["REPAIRS"] = {Title = ACCLOC_REPAIR};
 	SC.data["OTHER"] = {Title = ACCLOC_OTHER};
 	SC.data["BMAH"] = {Title = ACCLOC_BMAH};
+	SC.data["TMG"] = {Title = ACCLOC_TMG};
+	SC.data["RFRG"] = {Title = ACCLOC_RFRG};	
 --	SC.data["SYSTEM"] = {Title = ACCLOC_SYS};
 
 	for key,value in next,SC.data do
@@ -1647,6 +1655,15 @@ function SC.OnEvent(event, arg1)
 		SC.mode = "AH";
 	elseif event == "AUCTION_HOUSE_CLOSED" then
 		SC.mode = "";
+	elseif event == "FORGE_MASTER_SET_ITEM" then
+		SC.mode = "RFRG";
+	elseif event == "FORGE_MASTER_ITEM_CHANGED " then
+		SC.mode = "";
+	elseif event == "TRANSMOGRIFY_OPEN" then
+		SC.mode = "TMG";
+	elseif event == "TRANSMOGRIFY_CLOSE" then
+		SC.mode = "";
+	
 	elseif event == "BLACK_MARKET_OPEN" then
 		SC.mode = "BMAH";
 		--debug
