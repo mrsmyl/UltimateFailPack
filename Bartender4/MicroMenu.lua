@@ -66,10 +66,10 @@ function MicroMenuMod:OnEnable()
 	end
 
 	self:SecureHook("UpdateMicroButtons", "MicroMenuBarShow")
-	self:HookScript(OverrideActionBar, "OnShow", "BlizzardBarShow")
-	self:HookScript(OverrideActionBar, "OnHide", "MicroMenuBarShow")
-	self:HookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnShow", "BlizzardBarShow")
-	self:HookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnHide", "MicroMenuBarShow")
+	self:SecureHookScript(OverrideActionBar, "OnShow", "BlizzardBarShow")
+	self:SecureHookScript(OverrideActionBar, "OnHide", "MicroMenuBarShow")
+	self:SecureHookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnShow", "BlizzardBarShow")
+	self:SecureHookScript(PetBattleFrame.BottomFrame.MicroButtonFrame, "OnHide", "MicroMenuBarShow")
 	self:MicroMenuBarShow()
 
 	self.bar:Enable()
@@ -90,7 +90,12 @@ function MicroMenuMod:MicroMenuBarShow()
 end
 
 function MicroMenuMod:BlizzardBarShow()
-	for i,v in pairs(self.bar.buttons) do v:ClearSetPoint(unpack(self.bar.anchors[i])) end
+	-- Only reset button positions not set in MoveMicroButtons()
+	for i,v in pairs(self.bar.buttons) do
+		if (((i-1)%6) > 0) then
+			v:ClearSetPoint(unpack(self.bar.anchors[i]))
+		end
+	end
 end
 
 MicroMenuBar.button_width = 28
