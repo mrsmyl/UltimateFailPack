@@ -20,10 +20,6 @@ L= DBM:GetModLocalization(849)
 ---------------------------
 L= DBM:GetModLocalization(866)
 
-L:SetOptionLocalization({
-	InfoFrame			= "Информационное окно для $journal:8252"
-})
-
 L:SetMiscLocalization({
 	wasteOfTime			= "Хорошо, я создам поле для удерживания порчи."
 })
@@ -34,7 +30,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(867)
 
 L:SetOptionLocalization({
-	InfoFrame			= "Информационное окно для $journal:8255"
+	SetIconOnFragment	= "Устанавливать метку на Оскверненный осколок"
 })
 
 --------------
@@ -42,12 +38,19 @@ L:SetOptionLocalization({
 --------------
 L= DBM:GetModLocalization(868)
 
+L:SetWarningLocalization({
+	warnTowerGrunt		= "Рубака у башни"
+})
+
 L:SetTimerLocalization({
-	timerTowerCD	= "След. башня"
+	timerTowerCD		= "След. башня",
+	timerTowerGruntCD	= "След. Рубака у башни"
 })
 
 L:SetOptionLocalization({
-	timerTowerCD	= "Отсчет времени до следующего нападения на башню"
+	warnTowerGrunt		= "Объявлять когда появляется новый Рубака у башни",
+	timerTowerCD		= "Отсчет времени до следующего нападения на башню",
+	timerTowerGruntCD	= "Отсчет времени до следующего Рубаки у башни"
 })
 
 L:SetMiscLocalization({
@@ -84,9 +87,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon		= "Обратный отсчет за 5 секунд до $spell:143593",
-	SetIconOnAdds				= "Устанавливать метки на $journal:7920",
-	InfoFrame					= "Информационное окно для $journal:7909"
+	warnDefensiveStanceSoon		= "Обратный отсчет за 5 секунд до $spell:143593"
 })
 
 L:SetMiscLocalization({
@@ -95,7 +96,8 @@ L:SetMiscLocalization({
 	newForces3					= "Сомкнуть ряды!",
 	newForces4					= "Кор'крон, ко мне!",
 	newForces5					= "Следующий отряд, вперед!",
-	allForces					= "Кор'кронцы... все, кто со мной! Убейте их!"
+	allForces					= "Кор'кронцы... все, кто со мной! Убейте их!",
+	nextAdds					= "След. адды: "
 })
 
 -----------------
@@ -109,8 +111,9 @@ L= DBM:GetModLocalization(846)
 L= DBM:GetModLocalization(870)
 
 L:SetMiscLocalization({
-	Module1 = "Первый модуль готов к перезагрузке системы.",
-	Victory	= "Второй модуль готов к перезагрузке системы."
+	wasteOfTime		= "Эй, записываем? Хорошо. Запускаю гоблинско-титанский блок управления. Все назад.",
+	Module1 		= "Первый модуль готов к перезагрузке системы.",
+	Victory			= "Второй модуль готов к перезагрузке системы."
 })
 
 ---------------------------
@@ -126,10 +129,6 @@ L:SetOptionLocalization({
 -- Siegecrafter Blackfuse --
 ----------------------------
 L= DBM:GetModLocalization(865)
-
-L:SetOptionLocalization({
-	InfoFrame			= "Информационное окно для $journal:8202"
-})
 
 L:SetMiscLocalization({
 	newWeapons	= "На сборочную линию начинает поступать незаконченное оружие.",
@@ -175,10 +174,6 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
-
-L:SetOptionLocalization({
-	SetIconOnShaman			= "Устанавливать метки на $journal:8294"
-})
 
 -------------
 --  Trash  --

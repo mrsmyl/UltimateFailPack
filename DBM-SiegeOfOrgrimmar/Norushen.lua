@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(866, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10390 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10669 $"):sub(12, -3))
 mod:SetCreatureID(72276)
 mod:SetZone()
 
@@ -44,7 +44,7 @@ local warnPiercingCorruption			= mod:NewSpellAnnounce(144657, 3)
 local specWarnUnleashedAnger			= mod:NewSpecialWarningSpell(145216, mod:IsTank())
 local specWarnBlindHatred				= mod:NewSpecialWarningSpell(145226, nil, nil, nil, 2)
 local specWarnManifestation				= mod:NewSpecialWarningSwitch("ej8232", not mod:IsHealer())--Unleashed Manifestation of Corruption
-local specWarnManifestationSoon			= mod:NewSpecialWarningSoon("ej8232", not mod:IsHealer())--WHen the ones die inside they don't spawn right away, there is like a 5-10 second lag, TODO, add a spawn timer for this once timing is figured out.
+local specWarnManifestationSoon			= mod:NewSpecialWarningSoon("ej8232", not mod:IsHealer(), nil, nil, nil)--WHen the ones die inside they don't spawn right away, there is like a 5 second lag.
 --Test of Serenity (DPS)
 local specWarnTearReality				= mod:NewSpecialWarningMove(144482)
 --Test of Reliance (Healer)
@@ -80,11 +80,18 @@ local countdownLookWithin				= mod:NewCountdownFades(59, "ej8220")
 local countdownLingeringCorruption		= mod:NewCountdown(15.5, 144514, nil, nil, nil, nil, true)
 local countdownHurlCorruption			= mod:NewCountdown(20, 144649, nil, nil, nil, nil, true)
 
-mod:AddBoolOption("InfoFrame", false)--May still be buggy but it's needed for heroic.
+mod:AddInfoFrameOption("ej8252", false)--May still be buggy but it's needed for heroic.
 
 local corruptionLevel = EJ_GetSectionInfo(8252)
 local unleashedAngerCast = 0
 local playerInside = false
+
+--May be buggy with two adds spawning at exact same time
+--Two different icon functions end up both marking same mob with 8 and 7 and other mob getting no mark.
+--Not sure if GUID table will be fast enough to prevent, we shall see!
+local function addsDelay()
+	specWarnManifestation:Show()
+end
 
 function mod:OnCombatStart(delay)
 	playerInside = false
@@ -194,8 +201,8 @@ function mod:UNIT_DIED(args)
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
-	if spellId == 146179 then--Frayed
-		specWarnManifestation:Show()
+	if spellId == 145769 then--Unleash Corruption
+		self:Schedule(5, addsDelay)
 	end
 end
 
@@ -205,7 +212,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	end
 end
 
-function mod:OnSync(msg)
+function mod:OnSync(msg, guid)
 	if msg == "BlindHatred" then
 		warnBlindHatred:Show()
 		if not playerInside then
@@ -219,6 +226,9 @@ function mod:OnSync(msg)
 		timerCombatStarts:Start()
 	elseif msg == "ManifestationDied" and not playerInside and self:AntiSpam(1) then
 		specWarnManifestationSoon:Show()
+		if not self:IsDifficulty("lfr25") then
+			self:Schedule(5, addsDelay)
+		end
 	end
 end
 

@@ -20,10 +20,6 @@ L= DBM:GetModLocalization(849)
 ---------------------------
 L= DBM:GetModLocalization(866)
 
-L:SetOptionLocalization({
-	InfoFrame			= "$journal:8252 정보를 정보 창으로 보기"
-})
-
 L:SetMiscLocalization({
 	wasteOfTime			= "그래, 좋다. 너희 타락을 가두어 둘 공간을 만들겠다."
 })
@@ -34,7 +30,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(867)
 
 L:SetOptionLocalization({
-	InfoFrame			= "$journal:8255 정보를 정보 창으로 보기"
+	SetIconOnFragment	= "타락한 조각 에게 전술 목표 아이콘 설정"
 })
 
 --------------
@@ -42,12 +38,19 @@ L:SetOptionLocalization({
 --------------
 L= DBM:GetModLocalization(868)
 
+L:SetWarningLocalization({
+	warnTowerGrunt	= "폭파조 등장"
+})
+
 L:SetTimerLocalization({
-	timerTowerCD	= "다음 포탑"
+	timerTowerCD		= "다음 포탑",
+	timerTowerGruntCD	= "다음 폭파조"
 })
 
 L:SetOptionLocalization({
-	timerTowerCD	= "다음 포탑 바 보기"--번역이 조금 다른데? 나중에 확인
+	warnTowerGrunt		= "폭파조 등장 알림 보기",
+	timerTowerCD		= "다음 포탑 바 보기",
+	timerTowerGruntCD	= "다음 폭파조 바 보기"
 })
 
 L:SetMiscLocalization({
@@ -57,7 +60,7 @@ L:SetMiscLocalization({
 	newForces2		= "용아귀 용사들아, 진격하라!",
 	newForces3		= "헬스크림 님을 위하여!",
 	newForces4		= "다음 분대, 진격!",
-	tower			= "문이 뚫렸습니다!"--The door barring the South/North Tower has been breached!
+	tower			= "문이 뚫렸습니다!"
 })
 
 --------------------
@@ -84,9 +87,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon		= "$spell:143593 이전에 초읽기 알림 보기(5초 전부터)",
-	SetIconOnAdds				= "$journal:7920에 전술 목표 아이콘 설정",
-	InfoFrame					= "$journal:7909 정보를 정보 창으로 보기"
+	warnDefensiveStanceSoon		= "$spell:143593 이전에 초읽기 알림 보기(5초 전부터)"
 })
 
 L:SetMiscLocalization({
@@ -95,7 +96,8 @@ L:SetMiscLocalization({
 	newForces3	= "병력 집결!",
 	newForces4	= "코르크론! 날 지원하라!",
 	newForces5	= "다음 분대, 앞으로!",
-	allForces	= "전 코르크론, 내 명령을 따르라. 모두 죽여!"
+	allForces	= "전 코르크론, 내 명령을 따르라. 모두 죽여!",
+	nextAdds	= "다음 병력: "
 })
 
 -----------------
@@ -109,8 +111,9 @@ L= DBM:GetModLocalization(846)
 L= DBM:GetModLocalization(870)
 
 L:SetMiscLocalization({
-	Module1 = "제1 모듈, 시스템 초기화 준비 완료.",
-	Victory	= "제2 모듈, 시스템 초기화 준비 완료."
+	wasteOfTime	= "녹음되고 있는 건가? 응? 좋아. 고블린 티탄 제어 모듈 시동 중. 물러서라고.",
+	Module1 	= "제1 모듈, 시스템 초기화 준비 완료.",
+	Victory		= "제2 모듈, 시스템 초기화 준비 완료."
 })
 
 ---------------------------
@@ -175,10 +178,6 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
-
-L:SetOptionLocalization({
-	SetIconOnShaman			= "$journal:8294에 전술 목표 아이콘 설정"
-})
 
 -------------
 --  Trash  --

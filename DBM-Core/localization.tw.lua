@@ -86,6 +86,7 @@ DBM_CORE_UPDATEREMINDER_FOOTER			= "按下" .. (IsMacClient() and "Cmd-C" or "Ct
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製網址到剪貼簿。"
 DBM_CORE_UPDATEREMINDER_NOTAGAIN		= "當有新版本時顯示彈出提示"
 DBM_CORE_UPDATEREMINDER_DISABLE			= "警告: 你的DBM版本已大幅度的過期(%d修訂版)，已被禁用了除非更新至最新版本。這是為了確保舊而不相容的程式碼不會對你而團隊夥伴造成低落的遊戲體驗。"
+DBM_CORE_UPDATEREMINDER_HOTFIX			= "你的DBM版本會在這首領戰鬥有不準確的計時器或警告。這問題已被修正在下次正式版更新或可以更新至最新的alpha版本立即修正此問題。"
 
 DBM_CORE_MOVABLE_BAR				= "拖動我!"
 
@@ -148,115 +149,101 @@ DBM_CORE_TIMER_BREAK				= "休息時間!"
 DBM_CORE_ANNOUNCE_BREAK_OVER		= "休息時間已經結束"
 
 DBM_CORE_TIMER_PULL					= "戰鬥準備"
-DBM_CORE_ANNOUNCE_PULL				= "%d秒後拉怪"
+DBM_CORE_ANNOUNCE_PULL				= "%d秒後拉怪 (%s發起)"
 DBM_CORE_ANNOUNCE_PULL_NOW			= "拉怪囉!"
 
 DBM_CORE_ACHIEVEMENT_TIMER_SPEED_KILL = "成就"
 
--- Auto-generated Warning Localizations
-DBM_CORE_AUTO_ANNOUNCE_TEXTS = {
-	target		= "%s:>%%s<",
-	targetcount	= "%s (%%d):>%%s<",
-	spell		= "%s",
-	ends 		= "%s結束",
-	fades		= "%s退去",
-	adds		= "%s還剩下:%%d",
-	cast		= "施放%s:%.1f秒",
-	soon		= "%s即將到來",
-	prewarn		= "%s在%s",
-	phase		= "第%s階段",
-	prephase	= "第%s階段即將到來",
-	count		= "%s(%%d)",
-	stack		= ">%%s<中了%s(%%d)"
-}
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.target			= "%s:>%%s<"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.targetcount	= "%s (%%d):>%%s<"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.spell			= "%s"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.ends 			= "%s結束"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.fades			= "%s退去"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.adds			= "%s還剩下:%%d"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.cast			= "施放%s:%.1f秒"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.soon			= "%s即將到來"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.prewarn		= "%s在%s"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.phase			= "第%s階段"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.prephase		= "第%s階段即將到來"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.count			= "%s (%%d)"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.stack			= ">%%s<中了%s (%%d)"
 
-local prewarnOption			= "為$spell:%s顯示預先警告"
-DBM_CORE_AUTO_ANNOUNCE_OPTIONS = {
-	target		= "提示$spell:%s的目標",
-	targetcount	= "提示$spell:%s的目標",
-	spell		= "為$spell:%s顯示警告",
-	ends		= "為$spell:%s結束顯示警告",
-	fades		= "為$spell:%s退去顯示警告",
-	adds		= "提示$spell:%s的剩餘數量",
-	cast		= "當$spell:%s施放時顯示警告",
-	soon		= prewarnOption,
-	prewarn		= prewarnOption,
-	phase		= "提示第%s階段",
-	prephase	= "為第%s階段顯示預先警告",
-	count		= "為$spell:%s顯示警告",
-	stack		= "提示$spell:%s的堆疊"
-}
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target		= "提示$spell:%s的目標"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.targetcount	= "提示$spell:%s的目標"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell		= "為$spell:%s顯示警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.ends			= "為$spell:%s結束顯示警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.fades		= "為$spell:%s退去顯示警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.adds			= "提示$spell:%s的剩餘數量"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast			= "當$spell:%s施放時顯示警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.soon			= "為$spell:%s顯示預先警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prewarn		= "為$spell:%s顯示預先警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.phase		= "提示第%s階段"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prephase		= "為第%s階段顯示預先警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.count		= "為$spell:%s顯示警告"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stack		= "提示$spell:%s的堆疊"
 
-DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
-	spell		= "%s!",
-	ends 		= "%s結束",
-	fades		= "%s退去",
-	soon		= "%s即將到來",
-	prewarn		= "%s在%s",
-	dispel		= ">%%s<中了%s - 現在驅散",
-	interrupt	= "%s - 快中斷>%%s< !",
-	you			= "你中了%s",
-	target		= ">%%s<中了%s",
-	close		= "你附近的>%%s<中了%s",
-	move		= "%s - 快移動",
-	run			= "%s - 快跑開",
-	cast		= "%s - 停止施法",
-	count		= "%s!(%%d)",
-	stack		= "你中了%%d層%s",
-	switch		= ">%s< - 快更換目標!"
-}
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.spell			= "%s!"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.ends 			= "%s結束"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.fades			= "%s退去"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.soon			= "%s即將到來"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.prewarn		= "%s在%s"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.dispel		= ">%%s<中了%s - 現在驅散"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.interrupt		= "%s - 快中斷>%%s< !"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.you			= "你中了%s"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.target		= ">%%s<中了%s"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.close			= "你附近的>%%s<中了%s"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.move			= "%s - 快移動"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.run			= "%s - 快跑開"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.cast			= "%s - 停止施法"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.reflect		= "%s - 停止攻擊"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.count			= "%s!(%%d)"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.stack			= "你中了%%d層%s"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.switch		= ">%s< - 快更換目標!"
 
--- Auto-generated Special Warning Localizations
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
-	spell		= "為$spell:%s顯示特別警告",
-	ends 		= "為$spell:%s結束顯示特別警告",
-	fades 		= "為$spell:%s退去顯示特別警告",
-	soon 		= "為$spell:%s顯示預先特別警告",
-	prewarn 	= "在%d秒前為$spell:%s顯示預先特別警告",
-	dispel		= "需對$spell:%s驅散/竊取時顯示特別警告",
-	interrupt	= "需對$spell:%s斷法時顯示特別警告",
-	you			= "當你中了$spell:%s時顯示特別警告",
-	target		= "當有人中了$spell:%s時顯示特別警告",
-	close		= "當你附近有人中了$spell:%s時顯示特別警告",
-	move		= "當你中了$spell:%s時顯示特別警告",
-	run			= "為$spell:%s顯示特別警告",
-	cast		= "為$spell:%s施放時顯示特別警告",
-	count 		= "為$spell:%s顯示特別警告",
-	stack		= "為中了>=%d層$spell:%s時顯示特別警告",
-	switch		= "需對$spell:%s更換目標時顯示特別警告"
-}
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell		= "為$spell:%s顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.ends 		= "為$spell:%s結束顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.fades 		= "為$spell:%s退去顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.soon 		= "為$spell:%s顯示預先特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.prewarn 	= "在%d秒前為$spell:%s顯示預先特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.dispel		= "需對$spell:%s驅散/竊取時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.interrupt	= "需對$spell:%s斷法時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.you			= "當你中了$spell:%s時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.target		= "當有人中了$spell:%s時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.close		= "當你附近有人中了$spell:%s時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.move		= "當你中了$spell:%s時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.run			= "為$spell:%s顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.cast		= "為$spell:%s施放時顯示停止施法的特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.reflect		= "為$spell:%s施放時顯示停止攻擊的特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.count 		= "為$spell:%s顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.stack		= "為中了>=%d層$spell:%s時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switch		= "需對$spell:%s更換目標時顯示特別警告"
 
--- Auto-generated Timer Localizations
-DBM_CORE_AUTO_TIMER_TEXTS = {
-	target		= "%s:>%%s<",
-	cast		= "%s",
-	active		= "%s結束",
-	fades		= "%s退去",
-	cd			= "%s冷卻",
-	cdcount		= "%s冷卻(%%d)",
-	cdsource	= "%s冷卻:>%%s<",
-	next 		= "下一次%s",
-	nextcount 	= "下一次%s(%%d)",
-	nextsource	= "下一次%s:>%%s<",
-	achievement = "%s"
-}
+DBM_CORE_AUTO_TIMER_TEXTS.target			= "%s:>%%s<"
+DBM_CORE_AUTO_TIMER_TEXTS.cast				= "%s"
+DBM_CORE_AUTO_TIMER_TEXTS.active			= "%s結束"
+DBM_CORE_AUTO_TIMER_TEXTS.fades				= "%s退去"
+DBM_CORE_AUTO_TIMER_TEXTS.cd				= "%s冷卻"
+DBM_CORE_AUTO_TIMER_TEXTS.cdcount			= "%s冷卻 (%%d)"
+DBM_CORE_AUTO_TIMER_TEXTS.cdsource			= "%s冷卻:>%%s<"
+DBM_CORE_AUTO_TIMER_TEXTS.next 				= "下一次%s"
+DBM_CORE_AUTO_TIMER_TEXTS.nextcount 		= "下一次%s (%%d)"
+DBM_CORE_AUTO_TIMER_TEXTS.nextsource		= "下一次%s:>%%s<"
+DBM_CORE_AUTO_TIMER_TEXTS.achievement		= "%s"
 
-DBM_CORE_AUTO_TIMER_OPTIONS = {
-	target		= "為$spell:%s顯示減益計時器",
-	cast		= "為$spell:%s顯示施法計時器",
-	active		= "為$spell:%s顯示持續時間計時器",
-	fades		= "當$spell:%s將從玩家退去顯示計時器",
-	cd			= "為$spell:%s顯示冷卻計時器",
-	cdcount		= "為$spell:%s顯示冷卻計時器",
-	cdsource	= "為$spell:%s顯示冷卻計時器",
-	next		= "為下一次$spell:%s顯示計時器",
-	nextcount	= "為下一次$spell:%s顯示計時器",
-	nextsource	= "為下一次$spell:%s顯示計時器",
-	achievement	= "為成就:%s顯示計時器"
-}
-
+DBM_CORE_AUTO_TIMER_OPTIONS.target			= "為$spell:%s顯示減益計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.cast			= "為$spell:%s顯示施法計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.active			= "為$spell:%s顯示持續時間計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.fades			= "當$spell:%s將從玩家退去顯示計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.cd				= "為$spell:%s顯示冷卻計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.cdcount			= "為$spell:%s顯示冷卻計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.cdsource		= "為$spell:%s顯示冷卻計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.next			= "為下一次$spell:%s顯示計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.nextcount		= "為下一次$spell:%s顯示計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.nextsource		= "為下一次$spell:%s顯示計時器"
+DBM_CORE_AUTO_TIMER_OPTIONS.achievement		= "為成就:%s顯示計時器"
 
 DBM_CORE_AUTO_ICONS_OPTION_TEXT			= "為$spell:%s的目標設置標記"
+DBM_CORE_AUTO_ICONS_OPTION_TEXT2		= "為$spell:%s設置標記"
 DBM_CORE_AUTO_SOUND_OPTION_TEXT			= "當你中了$spell:%s時播放音效"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "為$spell:%s的冷卻播放倒數計時音效"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "為$spell:%s的減益播放倒數計時音效"
@@ -265,7 +252,8 @@ DBM_CORE_AUTO_YELL_OPTION_TEXT			= "當你中了$spell:%s時大喊"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT		= "" .. UnitName("player") .. "中了%s!"
 DBM_CORE_AUTO_RANGE_OPTION_TEXT			= "為$spell:%2$s顯示距離框架(%1$s碼)"
 DBM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT	= "顯示距離框架(%s碼)"
-
+DBM_CORE_AUTO_INFO_FRAME_OPTION_TEXT	= "為$spell:%s顯示訊息框架"
+DBM_CORE_AUTO_READY_CHECK_OPTION_TEXT	= "當首領開打時撥放準備檢查的音效(即使沒有選定目標)"
 
 -- New special warnings
 DBM_CORE_MOVE_SPECIAL_WARNING_BAR	= "可拖動的特別警告"

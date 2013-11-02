@@ -1,22 +1,20 @@
 local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
 mod:SetCreatureID(60491)
+mod:SetReCombatTime(20)
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
+mod:SetMinSyncRevision(10466)
 mod:SetZone()
 
-mod:RegisterCombat("combat")
+mod:RegisterCombat("combat_yell", L.Pull)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_REMOVED",
 	"UNIT_AURA player"
-)
-
-mod:RegisterEvents(
-	"CHAT_MSG_MONSTER_YELL"
 )
 
 local warnUnleashedWrath		= mod:NewSpellAnnounce(119488, 3)--Big aoe damage aura when at 100 rage
@@ -33,9 +31,7 @@ local timerUnleashedWrath		= mod:NewBuffActiveTimer(24, 119488, nil, mod:IsTank(
 
 mod:AddBoolOption("RangeFrame", true)--For Mind control spreading.
 mod:AddBoolOption("SetIconOnMC", true)
-mod:AddBoolOption("ReadyCheck", false)
-
-local yellTriggered = false
+mod:AddReadyCheckOption(32099, false)
 
 local warnpreMCTargets = {}
 local warnMCTargets = {}
@@ -94,7 +90,7 @@ local function showMC()
 	end
 end
 
-function mod:OnCombatStart(delay)
+function mod:OnCombatStart(delay, yellTriggered)
 	playerMCed = false
 	table.wipe(warnpreMCTargets)
 	table.wipe(warnMCTargets)
@@ -112,7 +108,6 @@ function mod:OnCombatEnd()
 	playerMCed = false
 	table.wipe(warnpreMCTargets)
 	table.wipe(warnMCTargets)
-	yellTriggered = false
 end
 
 function mod:SPELL_CAST_START(args)
@@ -179,17 +174,5 @@ end
 function mod:UNIT_AURA(uId)
 	if UnitDebuff("player", bitterThought) and self:AntiSpam(2) and not playerMCed then
 		specWarnBitterThoughts:Show()
-	end
-end
-
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.Pull and not self:IsInCombat() then
-		if self:GetCIDFromGUID(UnitGUID("target")) == 60491 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 60491 then--Whole zone gets yell, so lets not engage combat off yell unless he is our target (or the target of our target for healers)
-			yellTriggered = true
-			DBM:StartCombat(self, 0)
-		end
-		if self.Options.ReadyCheck and not IsQuestFlaggedCompleted(32099) then
-			PlaySoundFile("Sound\\interface\\levelup2.ogg", "Master")
-		end
 	end
 end

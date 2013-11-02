@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(853, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10376 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10672 $"):sub(12, -3))
 mod:SetCreatureID(71152, 71153, 71154, 71155, 71156, 71157, 71158, 71160, 71161)
 mod:SetZone()
 mod:SetUsedIcons(1)
@@ -27,13 +27,11 @@ mod:RegisterEventsInCombat(
 --All
 local warnActivated					= mod:NewTargetAnnounce(118212, 3, 143542)
 --Kil'ruk the Wind-Reaver
-local warnExposedVeins				= mod:NewStackAnnounce(142931, 2, nil, false)
 local warnGouge						= mod:NewTargetAnnounce(143939, 3, nil, mod:IsTank() or mod:IsHealer())--Timing too variable for a CD
 local warnDeathFromAbove			= mod:NewTargetAnnounce(142232, 3)
 --Xaril the Poisoned-Mind
-local warnTenderizingStirkes		= mod:NewStackAnnounce(142929, 2, nil, false)
 local warnToxicInjection			= mod:NewSpellAnnounce(142528, 3)
-local warnCausticBlood				= mod:NewSpellAnnounce(142315, 4)
+local warnCausticBlood				= mod:NewSpellAnnounce(142315, 4, nil, mod:IsTank(), nil, nil, nil, nil, 2)
 mod:AddBoolOption("warnToxicCatalyst", true, "announce")
 local warnToxicCatalystBlue			= mod:NewCastAnnounce(142725, 4, nil, nil, nil, false)
 local warnToxicCatalystRed			= mod:NewCastAnnounce(142726, 4, nil, nil, nil, false)
@@ -54,13 +52,11 @@ local warnCalculated				= mod:NewTargetAnnounce(144095, 3)--Wild variation on ti
 local warnInsaneCalculationFire		= mod:NewCastAnnounce(142416, 4)--3 seconds after 144095
 --Ka'roz the Locust
 local warnFlash						= mod:NewCastAnnounce(143709, 3)--62-70
-local warnWhirling					= mod:NewTargetAnnounce(143701, 3)
+local warnWhirling					= mod:NewTargetAnnounce(143701, 3, nil, false, nil, nil, nil, nil, 2)--Spammy
 local warnHurlAmber					= mod:NewSpellAnnounce(143759, 3)
 --Skeer the Bloodseeker
-local warnHewn						= mod:NewStackAnnounce(143275, 2, nil, false)
 local warnBloodletting				= mod:NewSpellAnnounce(143280, 4)
 --Rik'kal the Dissector
-local warnGeneticAlteration			= mod:NewStackAnnounce(143279, 2, nil, false)
 local warnInjection					= mod:NewStackAnnounce(143339)
 local warnMutate					= mod:NewTargetAnnounce(143337, 3)
 --Hisek the Swarmkeeper
@@ -167,12 +163,10 @@ local berserkTimer					= mod:NewBerserkTimer(720)
 local countdownEncaseInAmber		= mod:NewCountdown(30, 142564)--Probably switch to secondary countdown if one of his other abilities proves to have priority
 local countdownInjection			= mod:NewCountdown(9.5, 143339, mod:IsTank(), nil, nil, nil, true)
 
-mod:AddBoolOption("RangeFrame")
-mod:AddBoolOption("SetIconOnAim", true)--multi boss fight, will use star and avoid moving skull off a kill target
+mod:AddRangeFrameOption("6/5")
+mod:AddSetIconOption("SetIconOnAim", 142948)--multi boss fight, will use star and avoid moving skull off a kill target
 
 local activatedTargets = {}--A table, for the 3 on pull
-local whirlingTargets = {}
-local mutateTargets = {}
 local activeBossGUIDS = {}
 local UnitDebuff = UnitDebuff
 local GetSpellInfo = GetSpellInfo
@@ -196,17 +190,6 @@ local function warnActivatedTargets(vulnerable)
 		end
 	end
 	table.wipe(activatedTargets)
-end
-
-local function warnWhirlingTargets()
-	warnWhirling:Show(table.concat(whirlingTargets, "<, >"))
-	table.wipe(whirlingTargets)
-end
-
-local function warnMutatedTargets()
-	warnMutate:Show(table.concat(mutateTargets, "<, >"))
-	timerMutateCD:Start()
-	table.wipe(mutateTargets)
 end
 
 local function hideRangeFrame()
@@ -292,8 +275,6 @@ end
 function mod:OnCombatStart(delay)
 	table.wipe(activeBossGUIDS)
 	table.wipe(activatedTargets)
-	table.wipe(whirlingTargets)
-	table.wipe(mutateTargets)
 	calculatedShape = nil
 	calculatedNumber = nil
 	calculatedColor = nil
@@ -413,11 +394,12 @@ function mod:SPELL_CAST_START(args)
 		warnShieldBash:Show()
 		timerShieldBashCD:Start()
 	elseif args.spellId == 142315 then
-		for i = 1, 3 do
+		for i = 1, 5 do
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				warnCausticBlood:Show()
 				specWarnCausticBlood:Show()--So show tank warning
+				break
 			end
 		end
 	elseif args.spellId == 143243 then
@@ -425,10 +407,16 @@ function mod:SPELL_CAST_START(args)
 		specWarnRapidFire:Show()
 		--timerRapidFireCD:Start()
 	elseif args.spellId == 143339 then
-		specWarnInjection:Show()
-		timerInjectionCD:Start()
-		countdownInjection:Cancel()--Sometimes boss stutter casts so need to do this
-		countdownInjection:Start()
+		for i = 1, 5 do
+			local bossUnitID = "boss"..i
+			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then
+				specWarnInjection:Show()
+				timerInjectionCD:Start()
+				countdownInjection:Cancel()--Sometimes boss stutter casts so need to do this
+				countdownInjection:Start()
+				break
+			end
+		end
 	end
 end
 
@@ -443,19 +431,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 142931 then
-		local amount = args.amount or 1
-		warnExposedVeins:Show(args.destName, amount)
-	elseif args.spellId == 142929 then
-		local amount = args.amount or 1
-		warnTenderizingStirkes:Show(args.destName, amount)
-	elseif args.spellId == 143275 then
-		local amount = args.amount or 1
-		warnHewn:Show(args.destName, amount)
-	elseif args.spellId == 143279 then
-		local amount = args.amount or 1
-		warnGeneticAlteration:Show(args.destName, amount)
-	elseif args.spellId == 143339 then
+	if args.spellId == 143339 then
 		local amount = args.amount or 1
 		warnInjection:Show(args.destName, amount)
 	elseif args.spellId == 142532 and args:IsPlayer() then
@@ -502,9 +478,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnShieldBashOther:Show(args.destName)
 		end
 	elseif args.spellId == 143701 then
-		whirlingTargets[#whirlingTargets + 1] = args.destName
-		self:Unschedule(warnWhirlingTargets)
-		self:Schedule(0.5, warnWhirlingTargets)
+		warnWhirling:CombinedShow(0.5, args.destName)
 		if args.IsPlayer() then
 			specWarnWhirling:Show()
 			yellWhirling:Yell()
@@ -528,13 +502,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnHurlAmber:Show()
 		timerHurlAmberCD:Start()
 	elseif args.spellId == 143337 then
-		mutateTargets[#mutateTargets + 1] = args.destName
 		if args.IsPlayer() then
 			specWarnMutate:Show()
 			timerMutate:Start()
 		end
-		self:Unschedule(warnMutatedTargets)
-		self:Schedule(0.5, warnMutatedTargets)
 	elseif args.spellId == 143358 then
 		if args.IsPlayer() then
 			specWarnParasiteFixate:Show()

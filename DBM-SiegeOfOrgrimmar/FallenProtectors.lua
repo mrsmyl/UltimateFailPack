@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(849, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10394 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10658 $"):sub(12, -3))
 mod:SetCreatureID(71479, 71475, 71480)--He-Softfoot, Rook Stonetoe, Sun Tenderheart
 mod:SetZone()
 mod:SetUsedIcons(7)
@@ -15,6 +15,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED",
 	"SPELL_DAMAGE",
 	"SPELL_MISSED",
+	"RAID_BOSS_WHISPER",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
 )
 
@@ -63,8 +64,8 @@ local specWarnCorruptedBrewNear		= mod:NewSpecialWarningClose(143019)
 local specWarnMiserySorrowGloom		= mod:NewSpecialWarningSpell(143955)
 local specWarnCorruptionShock		= mod:NewSpecialWarningInterrupt(143958, mod:IsMelee())
 local specWarnDefiledGround			= mod:NewSpecialWarningMove(143959)
-local specWarnInfernoStrike			= mod:NewSpecialWarningYou(143962)
-local yellInfernoStrike				= mod:NewYell(143962)
+--local specWarnInfernoStrike			= mod:NewSpecialWarningYou(143962)
+--local yellInfernoStrike				= mod:NewYell(143962)
 --He Softfoot
 local specWarnGouge					= mod:NewSpecialWarningMove(143330, mod:IsTank(), nil, nil, 3)--Maybe localize it as a "turn away" warning.
 local specWarnGougeStunOther		= mod:NewSpecialWarningTarget(143301, mod:IsTank())--Tank is stunned, other tank must taunt or he'll start killing people
@@ -75,6 +76,8 @@ local specWarnMarked				= mod:NewSpecialWarningYou(143840)
 local yellMarked					= mod:NewYell(143840, nil, false)
 --Sun Tenderheart
 local specWarnShaShear				= mod:NewSpecialWarningInterrupt(143423, false)
+local specWarnShaShearYou			= mod:NewSpecialWarningYou(143423)--some heroic player request.
+local yellShaShear					= mod:NewYell(143423)
 local specWarnCalamity				= mod:NewSpecialWarningSpell(143491, nil, nil, nil, 2)
 ----Sun Tenderheart's Desperate Measures
 local specWarnDarkMeditation		= mod:NewSpecialWarningSpell(143546)
@@ -88,20 +91,21 @@ local timerDefiledGroundCD			= mod:NewCDTimer(10.5, 143961, nil, mod:IsTank())
 local timerInfernoStrikeCD			= mod:NewNextTimer(9.5, 143962)
 --He Softfoot
 local timerGougeCD					= mod:NewCDTimer(30, 143330, nil, mod:IsTank())--30-41
-local timerGarroteCD				= mod:NewCDTimer(30, 143198, nil, mod:IsHealer())--30-46 (heroic 20-26)
+local timerGarroteCD				= mod:NewCDTimer(29, 143198, nil, mod:IsHealer())--30-46 (heroic 20-26)
 --Sun Tenderheart
 local timerBaneCD					= mod:NewCDTimer(17, 143446, nil, mod:IsHealer())--17-25 (heroic 13-20)
 local timerCalamityCD				= mod:NewCDTimer(40, 143491)--40-50 (when two can be cast in a row) Also affected by boss specials
 
 local berserkTimer					= mod:NewBerserkTimer(600)
 
-mod:AddBoolOption("SetIconOnStrike")
+mod:AddSetIconOption("SetIconOnStrike", 143962, false)
+mod:AddRangeFrameOption(5, 143423, false)--For heroic. Need to chage smart range frame?
 
 local UnitExists = UnitExists
 local UnitGUID = UnitGUID
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local strikeDebuff = GetSpellInfo(143962)--Cast spellid, Unconfirmed if debuff has same id or even name. Need to verify
-local previousStrike = nil
+local sorrowActive = false
 
 function mod:BrewTarget(targetname, uId)
 	if not targetname then return end
@@ -126,9 +130,13 @@ end
 
 function mod:InfernoStrikeTarget(targetname, uId)
 	if not targetname then return end
-	print("DBM DEBUG: Infero Strike on "..targetname.." ?")
+	warnInfernoStrike:Show(targetname)
+	if self.Options.SetIconOnStrike then
+		self:SetIcon(targetname, 7, 5)
+	end
 	if targetname == UnitName("player") then
-		
+		specWarnInfernoStrike:Show()
+		yellInfernoStrike:Yell()
 	end
 end
 
@@ -145,6 +153,15 @@ function mod:OnCombatStart(delay)
 	else
 		berserkTimer:Start(-delay)
 	end
+	if self.Options.RangeFrame then
+		DBM.RangeCheck:Show(5)
+	end
+end
+
+function mod:OnCombatEnd()
+	if self.Options.RangeFrame then
+		DBM.RangeCheck:Hide()
+	end
 end
 
 function mod:SPELL_CAST_START(args)
@@ -157,12 +174,6 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143330 then
 		warnGouge:Show()
 		timerGougeCD:Start()
-		for i = 1, 5 do
-			local bossUnitID = "boss"..i
-			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
-				specWarnGouge:Show()--So show tank warning
-			end
-		end
 	elseif args.spellId == 143446 then
 		warnBane:Show()
 		if self:IsDifficulty("heroic10", "heroic25") then
@@ -180,7 +191,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 143962 then
 		warnInfernoStrike:Show()
 		timerInfernoStrikeCD:Start()
---		self:BossTargetScanner(71481, "InfernoStrikeTarget", 0.5, 1)--This one is a pain, because boss looks at CORRECT target for a super split second, then stares at previous target for rest of time. Repeated scans don't fix it because you really can't tell good target from shit one
+--		self:BossTargetScanner(71481, "InfernoStrikeTarget", 0.5, 1)--Must be single scan with correct timing. mob changes target a lot and can grab many bad targets if timing not perfect.
 	elseif args.spellId == 143497 then
 		warnBondGoldenLotus:Show()
 	elseif args.spellId == 144396 then
@@ -220,11 +231,11 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnGougeStunOther:Show(args.destName)
 		end
 	elseif args.spellId == 143198 then
-		warnGarrote:Show(args.destName)
+		warnGarrote:CombinedShow(1, args.destName)
 		if self:IsDifficulty("heroic10", "heroic25") then
-			timerGarroteCD:Start(20)--TODO, see if it's cast more often on heroic only, or if normal was also changed to 20
+			timerGarroteCD:DelayedStart(1, 20)--TODO, see if it's cast more often on heroic only, or if normal was also changed to 20
 		else
-			timerGarroteCD:Start()
+			timerGarroteCD:DelayedStart(1)
 		end
 	elseif args.spellId == 143840 then
 		warnMarked:Show(args.destName)
@@ -239,6 +250,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerBaneCD:Cancel()
 		timerCalamityCD:Cancel()
 	elseif args.spellId == 143955 then--Misery, Sorrow, and Gloom
+		sorrowActive = true
 		warnMiserySorrowGloom:Show()
 		specWarnMiserySorrowGloom:Show()
 		timerVengefulStrikesCD:Cancel()
@@ -246,12 +258,18 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerCorruptedBrewCD:Cancel()
 		timerInfernoStrikeCD:Start(8)
 		timerDefiledGroundCD:Start(10)
+		self:RegisterShortTermEvents(
+			"UNIT_DIED"--We register here to make sure we wipe variables on pull
+		)
 	elseif args.spellId == 143812 then--Mark of Anguish
 		warnMarkOfAnguish:Show()
 		specWarnMarkOfAnquish:Show()
 		timerGougeCD:Cancel()
 		timerGarroteCD:Cancel()
 		timerCalamityCD:Cancel()--Can't be cast during THIS special
+	elseif args.spellId == 143423 and args:IsPlayer() and sorrowActive and not self:IsDifficulty("lfr25") then
+		specWarnShaShearYou:Show()
+		yellShaShear:Yell()
 	end
 end
 
@@ -261,15 +279,13 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerBaneCD:Start(10)
 		timerCalamityCD:Start(23)--Now back to not cast right away again.
 	elseif args.spellId == 143955 then--Misery, Sorrow, and Gloom
+		sorrowActive = false--Just in case UNIT_DIED doesn't fire.
 		timerDefiledGroundCD:Cancel()
 		timerInfernoStrikeCD:Cancel()
 		timerCorruptedBrewCD:Start(12)
 		timerVengefulStrikesCD:Start(18)
 		timerClashCD:Start(46)
-		if previousStrike and self.Options.SetIconOnStrike then
-			SetRaidTarget(previousStrike, 0)
-			previousStrike = nil
-		end
+		self:UnregisterShortTermEvents()
 	elseif args.spellId == 143812 then--Mark of Anguish
 		timerGarroteCD:Start(12)--TODO, verify consistency in all difficulties
 		timerGougeCD:Start(23)--Seems to be either be exactly 23 or exactly 35. Not sure what causes it to switch.
@@ -284,6 +300,19 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
+
+function mod:UNIT_DIED(args)
+	local cid = self:GetCIDFromGUID(args.destGUID)
+	if cid == 71481 then--Sorrow
+		sorrowActive = false
+	end
+end
+
+function mod:RAID_BOSS_WHISPER(msg)
+	if msg:find("spell:143330") then--Emote giving ONLY to the person tanking boss. Better than scanning boss 1-5 for this one which fails from time to time
+		specWarnGouge:Show()--So show tank warning
+	end
+end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 143019 then--Does not show in combat log on normal

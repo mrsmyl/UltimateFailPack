@@ -20,10 +20,6 @@ L= DBM:GetModLocalization(849)
 ---------------------------
 L= DBM:GetModLocalization(866)
 
-L:SetOptionLocalization({
-	InfoFrame			= "Zeige Infofenster für $journal:8252"
-})
-
 L:SetMiscLocalization({
 	wasteOfTime			= "Nun gut, ich werde ein Feld erschaffen, das Eure Verderbnis eindämmt."
 })
@@ -34,7 +30,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(867)
 
 L:SetOptionLocalization({
-	InfoFrame			= "Zeige Infofenster für $journal:8255"
+	SetIconOnFragment	= "Setze Zeichen auf Verderbtes Fragment"
 })
 
 --------------
@@ -42,12 +38,19 @@ L:SetOptionLocalization({
 --------------
 L= DBM:GetModLocalization(868)
 
+L:SetWarningLocalization({
+	warnTowerGrunt		= "Turmgrunzer"
+})
+
 L:SetTimerLocalization({
-	timerTowerCD	= "Nächster Turm"
+	timerTowerCD		= "Nächster Turm",
+	timerTowerGruntCD	= "Nächster Turmgrunzer"
 })
 
 L:SetOptionLocalization({
-	timerTowerCD	= "Zeige Zeit bis nächsten Turmangriff"
+	warnTowerGrunt		= "Verkünde das Erscheinen eines Turmgrunzers",
+	timerTowerCD		= "Zeige Zeit bis nächsten Turmangriff",
+	timerTowerGruntCD	= "Zeige Zeit bis nächster Turmgrunzer erscheint"
 })
 
 L:SetMiscLocalization({
@@ -84,9 +87,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon		= "Zeige Vorwarnungscountdown für $spell:143593 (5s zuvor)",
-	SetIconOnAdds				= "Setze Zeichen auf $journal:7920",
-	InfoFrame					= "Zeige Infofenster für $journal:7909"
+	warnDefensiveStanceSoon		= "Zeige Vorwarnungscountdown für $spell:143593 (5s zuvor)"
 })
 
 L:SetMiscLocalization({
@@ -95,7 +96,8 @@ L:SetMiscLocalization({
 	newForces3					= "Truppen, sammelt Euch!",
 	newForces4					= "Kor'kron, zu mir!",
 	newForces5					= "Nächste Staffel, nach vorn!",
-	allForces					= "Alle Kor'kron unter meinem Befehl, tötet sie! Jetzt!"
+	allForces					= "Alle Kor'kron unter meinem Befehl, tötet sie! Jetzt!",
+	nextAdds					= "Nächste Adds: "
 })
 
 -----------------
@@ -109,8 +111,9 @@ L= DBM:GetModLocalization(846)
 L= DBM:GetModLocalization(870)
 
 L:SetMiscLocalization({
-	Module1 = "Modul 1 bereit für den Systemneustart.",
-	Victory	= "Modul 2 bereit für den Systemneustart."
+	wasteOfTime		= "Hallo? Mikrofontest... 1, 2, 3 – ok. Goblinisch-titanisches Steuerungsmodul wird gestartet, bitte zurückbleiben.",
+	Module1 		= "Modul 1 bereit für den Systemneustart.",
+	Victory			= "Modul 2 bereit für den Systemneustart."
 })
 
 ---------------------------
@@ -127,13 +130,9 @@ L:SetOptionLocalization({
 ----------------------------
 L= DBM:GetModLocalization(865)
 
-L:SetOptionLocalization({
-	InfoFrame			= "Zeige Infofenster für $journal:8202"
-})
-
 L:SetMiscLocalization({
-	newWeapons	= "Unfertige Waffen werden auf das Fabrikationsband befördert.",--needs to be verified (video-captured translation)
-	newShredder	= "Ein automatisierter Schredder nähert sich!"--needs to be verified (video-captured translation)
+	newWeapons	= "Unfertige Waffen werden auf das Fabrikationsband befördert.",
+	newShredder	= "Ein automatisierter Schredder nähert sich!"
 })
 
 ----------------------------
@@ -175,10 +174,6 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
-
-L:SetOptionLocalization({
-	SetIconOnShaman			= "Setze Zeichen auf $journal:8294"
-})
 
 -------------
 --  Trash  --

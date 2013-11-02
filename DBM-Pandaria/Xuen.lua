@@ -1,12 +1,14 @@
-local mod	= DBM:NewMod(860, "DBM-Pandaria", nil, 322)
+local mod	= DBM:NewMod(860, "DBM-Pandaria", nil, 322, 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10283 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10505 $"):sub(12, -3))
 mod:SetCreatureID(71953)
+mod:SetReCombatTime(20)
 mod:SetZone()
-mod:SetMinSyncRevision(10162)
+mod:SetMinSyncRevision(10466)
 
-mod:RegisterCombat("combat")
+mod:RegisterCombat("combat_yell", L.Pull)
+mod:RegisterKill("yell", L.Victory)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -14,10 +16,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED",
 	"UNIT_SPELLCAST_SUCCEEDED target focus"
-)
-
-mod:RegisterEvents(
-	"CHAT_MSG_MONSTER_YELL"
 )
 
 local warnSpectralSwipe				= mod:NewStackAnnounce(144638, 2, nil, mod:IsTank() or mod:IsHealer())
@@ -38,10 +36,9 @@ local timerCracklingLightningCD		= mod:NewCDTimer(47, 144635)
 local timerChiBarrageCD				= mod:NewCDTimer(20, 144642)
 
 mod:AddBoolOption("RangeFrame", true)--This is for chi barrage spreading.
+mod:AddReadyCheckOption(33117, false)
 
-local yellTriggered = false
-
-function mod:OnCombatStart(delay)
+function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
 		timerChiBarrageCD:Start(20-delay)
 		timerCracklingLightningCD:Start(38-delay)
@@ -52,7 +49,6 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:OnCombatEnd()
-	yellTriggered = false
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
@@ -86,7 +82,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end
 		end
-	elseif args.spellId == 144631 and not args:IsDestTypePlayer() then
+	elseif args.spellId == 144631 and args:GetDestCreatureID() == 71953 then
 		warnAgility:Show(args.destName)
 		specWarnAgility:Show(args.destName)
 --		timerAgilityCD:Start()
@@ -97,18 +93,6 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 144638 then
 		timerSpectralSwipe:Cancel(args.destName)
-	end
-end
-
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	--Fails if curse of tongues is on boss
-	if (msg == L.Victory or msg:find(L.Victory)) and self:IsInCombat() then
-		DBM:EndCombat(self)
-	elseif msg == L.Pull and not self:IsInCombat() then
-		if self:GetCIDFromGUID(UnitGUID("target")) == 71953 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 71953 then
-			yellTriggered = true
-			DBM:StartCombat(self, 0)
-		end
 	end
 end
 

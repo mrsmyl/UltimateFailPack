@@ -1,11 +1,14 @@
-local mod	= DBM:NewMod(859, "DBM-Pandaria", nil, 322)
+local mod	= DBM:NewMod(859, "DBM-Pandaria", nil, 322, 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10283 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
 mod:SetCreatureID(71954)
-mod:SetMinSyncRevision(10162)
+mod:SetReCombatTime(20)
+mod:SetZone()
+mod:SetMinSyncRevision(10466)
 
-mod:RegisterCombat("combat")
+mod:RegisterCombat("combat_yell", L.Pull)
+mod:RegisterKill("yell", L.Victory, L.VictoryDem)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -14,34 +17,26 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED target focus"
 )
 
-mod:RegisterEvents(
-	"CHAT_MSG_MONSTER_YELL"
-)
-
 local warnHeadbutt				= mod:NewSpellAnnounce(144610, 3, nil, mod:IsTank())
 local warnOxenFortitude			= mod:NewStackAnnounce(144606, 2)--144607 player version, but better to just track boss and announce stacks
 local warnMassiveQuake			= mod:NewSpellAnnounce(144611, 3)
 local warnCharge				= mod:NewSpellAnnounce(144609, 4)
 
 local specWarnHeadbutt			= mod:NewSpecialWarningSpell(144610, mod:IsTank())
-local specWarnMassiveQuake		= mod:NewSpecialWarningCast(144611, mod:IsHealer())
+local specWarnMassiveQuake		= mod:NewSpecialWarningSpell(144611, mod:IsHealer())
 local specWarnCharge			= mod:NewSpecialWarningSpell(144609, nil, nil, nil, 2)--66 and 33%. Maybe add pre warns
 
 local timerHeadbuttCD			= mod:NewCDTimer(47, 144610, nil, mod:IsTank())
 local timerMassiveQuake			= mod:NewBuffActiveTimer(13, 144611)
 local timerMassiveQuakeCD		= mod:NewCDTimer(48, 144611)
 
-local yellTriggered = false
+mod:AddReadyCheckOption(33117, false)
 
-function mod:OnCombatStart(delay)
+function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
 		timerHeadbuttCD:Start(16-delay)
 		timerMassiveQuakeCD:Start(45-delay)
 	end
-end
-
-function mod:OnCombatEnd()
-	yellTriggered = false
 end
 
 function mod:SPELL_CAST_START(args)
@@ -66,17 +61,6 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
-
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.Victory or msg == L.VictoryDem then
-		self:SendSync("Victory")
-	elseif msg == L.Pull and not self:IsInCombat() then
-		if self:GetCIDFromGUID(UnitGUID("target")) == 71954 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 71954 then
-			yellTriggered = true
-			DBM:StartCombat(self, 0)
-		end
-	end
-end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 148318 or spellId == 148317 or spellId == 149304 and self:AntiSpam(3, 2) then--use all 3 because i'm not sure which ones fire on repeat kills

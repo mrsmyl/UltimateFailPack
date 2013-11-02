@@ -20,10 +20,6 @@ L= DBM:GetModLocalization(849)
 ---------------------------
 L= DBM:GetModLocalization(866)
 
-L:SetOptionLocalization({
-	InfoFrame	= "為$journal:8252顯示訊息框架"
-})
-
 L:SetMiscLocalization({
 	wasteOfTime	= "很好，我會創造一個力場隔離你們的腐化。"
 })
@@ -34,7 +30,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(867)
 
 L:SetOptionLocalization({
-	InfoFrame	= "為$journal:8255顯示訊息框架"
+	SetIconOnFragment	= "為腐化的碎片設置圖示"
 })
 
 --------------
@@ -42,12 +38,19 @@ L:SetOptionLocalization({
 --------------
 L= DBM:GetModLocalization(868)
 
+L:SetWarningLocalization({
+	warnTowerGrunt		= "塔防蠻兵"
+})
+
 L:SetTimerLocalization({
-	timerTowerCD	= "下一波塔攻"
+	timerTowerCD		= "下一波塔攻",
+	timerTowerGruntCD	= "下一次塔防蠻兵"
 })
 
 L:SetOptionLocalization({
-	timerTowerCD	= "為下一波塔攻顯示計時器"
+	warnTowerGrunt		= "提示新的塔防蠻兵重生",
+	timerTowerCD		= "為下一波塔攻顯示計時器",
+	timerTowerGruntCD	= "為下一次塔防蠻兵顯示計時器"
 })
 
 L:SetMiscLocalization({
@@ -84,18 +87,17 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnDefensiveStanceSoon	= "為$spell:143593(五秒前)顯示預先警告倒數",
-	SetIconOnAdds			= "設置團隊圖示在$journal:7920",
-	InfoFrame				= "為$journal:7909顯示訊息框架"
+	warnDefensiveStanceSoon	= "為$spell:143593(五秒前)顯示預先警告倒數"
 })
 
 L:SetMiscLocalization({
-	newForces1	= "戰士們，快點過來!",
-	newForces2	= "守住大門!",
-	newForces3	= "重整部隊!",
-	newForces4	= "柯爾克隆，來我身邊!",
-	newForces5	= "下一隊，來前線!",
-	allForces	= "所有柯爾克隆...聽我號令...殺死他們!"
+	newForces1			= "戰士們，快點過來!",
+	newForces2			= "守住大門!",
+	newForces3			= "重整部隊!",
+	newForces4			= "柯爾克隆，來我身邊!",
+	newForces5			= "下一隊，來前線!",
+	allForces			= "所有柯爾克隆...聽我號令...殺死他們!",
+	nextAdds			= "下一次小兵: "
 })
 
 -----------------
@@ -109,8 +111,9 @@ L= DBM:GetModLocalization(846)
 L= DBM:GetModLocalization(870)
 
 L:SetMiscLocalization({
-	Module1 = "模組一號已準備好系統重置。",
-	Victory	= "模組二號已準備好系統重置。"
+	wasteOfTime		= "我們在錄音嗎?有嗎?好。哥布林-泰坦控制模組開始運作，請後退。",
+	Module1 		= "模組一號已準備好系統重置。",
+	Victory			= "模組二號已準備好系統重置。"
 })
 
 ---------------------------
@@ -126,10 +129,6 @@ L:SetOptionLocalization({
 -- Siegecrafter Blackfuse --
 ----------------------------
 L= DBM:GetModLocalization(865)
-
-L:SetOptionLocalization({
-	InfoFrame	= "為$journal:8202顯示距離框架"
-})
 
 L:SetMiscLocalization({
 	newWeapons	= "尚未完成的武器開始從生產線上掉落。",
@@ -174,10 +173,6 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
-
-L:SetOptionLocalization({
-	SetIconOnShaman	= "設定團隊圖示在$journal:8294"
-})
 
 -------------
 --  Trash  --

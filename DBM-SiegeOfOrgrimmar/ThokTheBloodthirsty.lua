@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(851, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10305 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10666 $"):sub(12, -3))
 mod:SetCreatureID(71529)
 mod:SetZone()
 mod:SetUsedIcons(8)
@@ -19,6 +19,21 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
+--People who aren't affected by the bosses screech (so they don't need to track devotion aura up time.
+--Ret Paladins excluded because they do need to track devotion aura to use theirs properly
+local function immuneCaster(includeMeleePal)
+	local _, class = UnitClass("player")
+	return class == "ROGUE"
+	or class == "WARRIOR"
+	or class == "DEATHKNIGHT"
+	or class == "HUNTER"
+	or (class == "MONK" and (GetSpecialization() == 1 or GetSpecialization() == 3))
+    or (class == "SHAMAN" and (GetSpecialization() == 2))
+	or (class == "DRUID" and (GetSpecialization() == 2 or GetSpecialization() == 3))
+	or (class == "PALADIN" and includeMeleePal and (GetSpecialization() ~= 1))
+end
+
+local warnDevotionAura				= mod:NewTargetAnnounce(31821, 1, nil, not immuneCaster(), nil, nil, nil, nil, 2)
 --Stage 1: A Cry in the Darkness
 local warnFearsomeRoar				= mod:NewStackAnnounce(143766, 2, nil, mod:IsTank())--143426
 local warnAcceleration				= mod:NewStackAnnounce(143411, 3)--Staghelm 2.0
@@ -27,6 +42,7 @@ local warnTailLash					= mod:NewSpellAnnounce(143428, 3, nil, false)--Hey, someo
 local warnBloodFrenzy				= mod:NewStackAnnounce(143442, 3)
 local warnFixate					= mod:NewTargetAnnounce(143445, 4)
 local warnEnrage					= mod:NewTargetAnnounce(145974, 3, nil, mod:IsTank() or mod:CanRemoveEnrage())
+local warnKey						= mod:NewTargetAnnounce(146589, 2)
 --Infusion of Acid
 local warnAcidPustules				= mod:NewSpellAnnounce(143971, 2)
 local warnAcidBreath				= mod:NewStackAnnounce(143780, 2, nil, mod:IsTank())
@@ -38,12 +54,13 @@ local warnFrozenSolid				= mod:NewTargetAnnounce(143777, 4)--This only thing wor
 --Infusion of Fire
 local warnFirePustules				= mod:NewSpellAnnounce(143970, 2)
 local warnScorchingBreath			= mod:NewStackAnnounce(143767, 2, nil, mod:IsTank())
-local warnBurningBloodBlood			= mod:NewTargetAnnounce(143783, 3)
+local warnBurningBlood				= mod:NewTargetAnnounce(143783, 3, nil, false, nil, nil, nil, nil, 2)
 
+local specWarnDevotionAura			= mod:NewSpecialWarningFades(31821, not immuneCaster(), nil, nil, nil, 2)
 --Stage 1: A Cry in the Darkness
 local specWarnFearsomeRoar			= mod:NewSpecialWarningStack(143766, mod:IsTank(), 2)
 local specWarnFearsomeRoarOther		= mod:NewSpecialWarningTarget(143766, mod:IsTank())
-local specWarnDeafeningScreech		= mod:NewSpecialWarningSpell(143343, nil, nil, nil, 2)--Too late to give a stop casting warning, so it's spell now.
+local specWarnDeafeningScreech		= mod:NewSpecialWarningCast(143343, not immuneCaster(true), nil, nil, 2, 2)
 --Stage 2: Frenzy for Blood!
 local specWarnBloodFrenzy			= mod:NewSpecialWarningSpell(143440, nil, nil, nil, 2)
 local specWarnFixate				= mod:NewSpecialWarningRun(143445, nil, nil, nil, 3)
@@ -64,118 +81,69 @@ local specWarnBurningBlood			= mod:NewSpecialWarningYou(143783)
 local specWarnBurningBloodMove		= mod:NewSpecialWarningMove(143784)
 local yellBurningBlood				= mod:NewYell(143783, nil, false)
 
+
+local timerDevotionAura				= mod:NewBuffActiveTimer(6, 31821, nil, not immuneCaster(), nil, nil, nil, nil, nil, nil, 2)
 --Stage 1: A Cry in the Darkness
-local timerFearsomeRoar			= mod:NewTargetTimer(30, 143766, nil, mod:IsTank() or mod:IsHealer())
-local timerFearsomeRoarCD		= mod:NewCDTimer(11, 143766, nil, mod:IsTank())
-local timerDeafeningScreechCD	= mod:NewNextCountTimer(13, 143343)-- (143345 base power regen, 4 every half second)
-local timerTailLashCD			= mod:NewCDTimer(10, 143428, nil, false)
+local timerFearsomeRoar				= mod:NewTargetTimer(30, 143766, nil, mod:IsTank() or mod:IsHealer())
+local timerFearsomeRoarCD			= mod:NewCDTimer(11, 143766, nil, mod:IsTank())
+local timerDeafeningScreechCD		= mod:NewNextCountTimer(13, 143343)-- (143345 base power regen, 4 every half second)
+local timerTailLashCD				= mod:NewCDTimer(10, 143428, nil, false)
 --Stage 2: Frenzy for Blood!
-local timerBloodFrenzyCD		= mod:NewNextTimer(5, 143442)
-local timerFixate				= mod:NewTargetTimer(12, 143445)
+local timerBloodFrenzyCD			= mod:NewNextTimer(5, 143442)
+local timerFixate					= mod:NewTargetTimer(12, 143445)
 --Infusion of Acid
-local timerAcidBreath			= mod:NewTargetTimer(30, 143780, nil, mod:IsTank() or mod:IsHealer())
-local timerAcidBreathCD			= mod:NewCDTimer(11, 143780, nil, mod:IsTank())--Often 12, but sometimes 11
-local timerCorrosiveBloodCD		= mod:NewCDTimer(3.5, 143791, nil, false)--Cast often, so off by default
+local timerAcidBreath				= mod:NewTargetTimer(30, 143780, nil, mod:IsTank() or mod:IsHealer())
+local timerAcidBreathCD				= mod:NewCDTimer(11, 143780, nil, mod:IsTank())--Often 12, but sometimes 11
+local timerCorrosiveBloodCD			= mod:NewCDTimer(3.5, 143791, nil, false)--Cast often, so off by default
 --Infusion of Frost
-local timerFrostBreath			= mod:NewTargetTimer(30, 143773, nil, mod:IsTank() or mod:IsHealer())
-local timerFrostBreathCD		= mod:NewCDTimer(9.5, 143773, nil, mod:IsTank())
+local timerFrostBreath				= mod:NewTargetTimer(30, 143773, nil, mod:IsTank() or mod:IsHealer())
+local timerFrostBreathCD			= mod:NewCDTimer(9.5, 143773, nil, mod:IsTank())
 --Infusion of Fire
-local timerScorchingBreath		= mod:NewTargetTimer(30, 143767, nil, mod:IsTank() or mod:IsHealer())
-local timerScorchingBreathCD	= mod:NewCDTimer(11, 143767, nil, mod:IsTank())--Often 12, but sometimes 11
-local timerBurningBloodCD		= mod:NewCDTimer(3.5, 143783, nil, false)--cast often, but someone might want to show it
+local timerScorchingBreath			= mod:NewTargetTimer(30, 143767, nil, mod:IsTank() or mod:IsHealer())
+local timerScorchingBreathCD		= mod:NewCDTimer(11, 143767, nil, mod:IsTank())--Often 12, but sometimes 11
+local timerBurningBloodCD			= mod:NewCDTimer(3.5, 143783, nil, false)--cast often, but someone might want to show it
 
-local berserkTimer				= mod:NewBerserkTimer(600)
+local berserkTimer					= mod:NewBerserkTimer(600)
 
-local soundBloodFrenzy			= mod:NewSound(144067)
-local soundFixate				= mod:NewSound(143445)
+local soundBloodFrenzy				= mod:NewSound(144067)
+local soundFixate					= mod:NewSound(143445)
 
-mod:AddBoolOption("RangeFrame", true)
-mod:AddBoolOption("FixateIcon", true)
+mod:AddBoolOption("RangeFrame")
+mod:AddSetIconOption("FixateIcon", 143445)
 
 local screechCount = 0
-local corrosiveBloodTargets = {}
-local burningBloodTargets = {}
-local frozenTargets = {}
 local UnitGUID = UnitGUID
+local bloodTargets = {}
 
 --this boss works similar to staghelm
---[[Old values, keeping them for now cause they may be used in LFR
 local screechTimers = {
-	[0] = 25,
-	[1] = 13.2,
-	[2] = 8.5,
-	[3] = 7.2,
-	[4] = 4.8,
-	[5] = 4.8,--in rare flukes this is 6.1
-	[6] = 4.8,
-	[7] = 3.6,--In rare cases you get a 4th 4.8
-	[8] = 3.6,--If you get 4 4.8s then second 3.6 becomes a 2.5
-	[9] = 3.6,
-	[10]= 2.4,
-	[11]= 2.4,
-	[12]= 2.4,
-	[13]= 2.4,
-	[14]= 2.4,
-	[15]= 2.4,
-	[16]= 2.4,
-	[17]= 2.4,
-	[18]= 1.2,--Anything 18 and beyond is 1.2 with rare 2.4 fluke at 19 sometimes
-}
---]]
-
-local screechTimers = {
-	[0] = 13.2,
-	[1] = 8.5,
+	[0] = 13.5,
+	[1] = 11,
 	[2] = 7.2,
-	[3] = 7.2,
-	[4] = 6,--Not enough data, but this may pop 4.8 sometimes, if so i'll drop it to that
-	[5] = 4.8,
-	[6] = 4.8,--probably another 4.8 baseline but my data is actually 6
-	[7] = 4.8,--probably another 4.8 baseline but my data is actually 5.2
-	[8] = 3.6,
-	[9] = 3.6,--Can be a 4.8
-	[10]= 3.6,
-	[11]= 2.4,
-	[12]= 2.4,
-	[13]= 2.4,
-	[14]= 2.4,
-	[15]= 2.4,
-	[16]= 2.4,
-	[17]= 2.4,
-	[18]= 2.4,
-	[19]= 2.4,
-	[20]= 2.4,
-	[21]= 2.4,
-	[22]= 2.4,--TODO< see if 1.2 can occur earlier. my log show that blizz buffing energy regen rate somehow caused the 2.4 string to last longer
-	[23]= 1.2,--Anything 23 and beyond is 1.2 with rare 2.4 fluke sometimes
+	[3] = 5,
+	[4] = 3.5,--These 3.5s tend to variate a little. May be 3.8 or 3.9 even.
+	[5] = 3.5,
+	[6] = 3.5,
+	--Anything beyond this is 2.4 or lower, useless
 }
 
-
-local function warnCorrosiveBloodTargets()
-	warnCorrosiveBlood:Show(table.concat(corrosiveBloodTargets, "<, >"))
-	timerCorrosiveBloodCD:Start()
-	table.wipe(corrosiveBloodTargets)
-end
-
-local function warnBurningBloodTargets()
-	warnBurningBloodBlood:Show(table.concat(burningBloodTargets, "<, >"))
-	timerBurningBloodCD:Start()
-	table.wipe(burningBloodTargets)
-end
-
-local function warnFrozenargets()
-	warnFrozenSolid:Show(table.concat(frozenTargets, "<, >"))
-	table.wipe(frozenTargets)
+local function clearBloodTargets()
+	table.wipe(bloodTargets)
 end
 
 function mod:OnCombatStart(delay)
 	screechCount = 0
-	table.wipe(corrosiveBloodTargets)
-	table.wipe(burningBloodTargets)
+	table.wipe(bloodTargets)
 	timerFearsomeRoarCD:Start(-delay)
-	timerDeafeningScreechCD:Start(-delay, 1)
+	if self:IsDifficulty("lfr25") then
+		timerDeafeningScreechCD:Start(19-delay, 1)
+		specWarnDeafeningScreech:Schedule(17.5)
+	else
+		timerDeafeningScreechCD:Start(-delay, 1)
+		specWarnDeafeningScreech:Schedule(12)
+	end
 	berserkTimer:Start(-delay)
-	if self.Options.RangeFrame then
+	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
 		if self:IsDifficulty("normal10", "heroic10") then
 			DBM.RangeCheck:Show(10, nil, nil, 4)
 		else
@@ -192,14 +160,24 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 143343 then--Assumed, 2 second channel but "Instant" cast flagged, this generally means SPELL_AURA_APPLIED
-		if screechCount < 8 then--Don't spam special warning once cd is lower than 4.8 seconds.
-			specWarnDeafeningScreech:Show()
-		end
 		timerDeafeningScreechCD:Cancel()
-		timerDeafeningScreechCD:Start(screechTimers[screechCount] or 1.2, screechCount+1)
+		if self:IsDifficulty("lfr25") then
+			timerDeafeningScreechCD:Start(18, screechCount+1)
+			specWarnDeafeningScreech:Schedule(16.5)
+		else
+			if screechCount < 7 then--Don't spam special warning once cd is lower than 4.8 seconds.
+				timerDeafeningScreechCD:Start(screechTimers[screechCount], screechCount+1)
+				specWarnDeafeningScreech:Schedule(screechTimers[screechCount]-1.5)
+			end
+		end
 	elseif args.spellId == 143428 then
 		warnTailLash:Show()
 		timerTailLashCD:Start()
+	elseif args.spellId == 31821 and not self:IsDifficulty("lfr25") then
+		warnDevotionAura:Show(args.sourceName)
+		specWarnDevotionAura:Cancel()
+		specWarnDevotionAura:Schedule(6)--Use scheduling but cancel it if a recast happens, that way we don't falsely warn it's gone since REMOVED fires while buff still up from another person
+		timerDevotionAura:Start()
 	end
 end
 
@@ -208,59 +186,74 @@ function mod:SPELL_AURA_APPLIED(args)
 		screechCount = args.amount or 1
 		warnAcceleration:Show(args.destName, screechCount)
 	elseif args.spellId == 143766 then
-		local amount = args.amount or 1
-		warnFearsomeRoar:Show(args.destName, amount)
-		timerFearsomeRoar:Start(args.destName)
 		timerFearsomeRoarCD:Start()
-		if amount >= 2 then
-			if args:IsPlayer() then
-				specWarnFearsomeRoar:Show(args.amount)
-			else
-				specWarnFearsomeRoarOther:Show(args.destName)
+		local uId = DBM:GetRaidUnitId(args.destName)
+		if self:IsTanking(uId, "boss1") then
+			local amount = args.amount or 1
+			warnFearsomeRoar:Show(args.destName, amount)
+			timerFearsomeRoar:Start(args.destName)
+			if amount >= 2 then
+				if args:IsPlayer() then
+					specWarnFearsomeRoar:Show(args.amount)
+				else
+					specWarnFearsomeRoarOther:Show(args.destName)
+				end
 			end
 		end
 	elseif args.spellId == 143780 then
-		local amount = args.amount or 1
-		warnAcidBreath:Show(args.destName, amount)
-		timerAcidBreath:Start(args.destName)
 		timerAcidBreathCD:Start()
-		if amount >= 2 then
-			if args:IsPlayer() then
-				specWarnAcidBreath:Show(args.amount)
-			else
-				specWarnAcidBreathOther:Show(args.destName)
+		local amount = args.amount or 1
+		local uId = DBM:GetRaidUnitId(args.destName)
+		if self:IsTanking(uId, "boss1") then
+			warnAcidBreath:Show(args.destName, amount)
+			timerAcidBreath:Start(args.destName)
+			timerAcidBreathCD:Start()
+			if amount >= 2 then
+				if args:IsPlayer() then
+					specWarnAcidBreath:Show(args.amount)
+				else
+					specWarnAcidBreathOther:Show(args.destName)
+				end
 			end
 		end
 	elseif args.spellId == 143773 then
-		local amount = args.amount or 1
-		warnFrostBreath:Show(args.destName, amount)
-		timerFrostBreath:Start(args.destName)
 		timerFrostBreathCD:Start()
-		if amount >= 3 then
-			if args:IsPlayer() then
-				specWarnFrostBreath:Show(args.amount)
-			else
-				specWarnFrostBreathOther:Show(args.destName)
+		local amount = args.amount or 1
+		local uId = DBM:GetRaidUnitId(args.destName)
+		if self:IsTanking(uId, "boss1") then
+			warnFrostBreath:Show(args.destName, amount)
+			timerFrostBreath:Start(args.destName)
+			if amount >= 3 then
+				if args:IsPlayer() then
+					specWarnFrostBreath:Show(args.amount)
+				else
+					specWarnFrostBreathOther:Show(args.destName)
+				end
 			end
 		end
 	elseif args.spellId == 143767 then
-		local amount = args.amount or 1
-		warnScorchingBreath:Show(args.destName, amount)
-		timerScorchingBreath:Start(args.destName)
 		timerScorchingBreathCD:Start()
-		if amount >= 3 then
-			if args:IsPlayer() then
-				specWarnScorchingBreath:Show(args.amount)
-			else
-				specWarnScorchingBreathOther:Show(args.destName)
+		local amount = args.amount or 1
+		local uId = DBM:GetRaidUnitId(args.destName)
+		if self:IsTanking(uId, "boss1") then
+			warnScorchingBreath:Show(args.destName, amount)
+			timerScorchingBreath:Start(args.destName)
+			if amount >= 3 then
+				if args:IsPlayer() then
+					specWarnScorchingBreath:Show(args.amount)
+				else
+					specWarnScorchingBreathOther:Show(args.destName)
+				end
 			end
 		end
 	elseif args.spellId == 143440 then
 		timerBloodFrenzyCD:Start()
 	elseif args.spellId == 143442 then
 		local amount = args.amount or 1
-		warnBloodFrenzy:Show(args.destName, amount)
 		timerBloodFrenzyCD:Start()
+		if amount % 2 == 0 then
+			warnBloodFrenzy:Show(args.destName, amount)
+		end
 	elseif args.spellId == 143445 then
 		warnFixate:Show(args.destName)
 		timerFixate:Start(args.destName)
@@ -273,24 +266,23 @@ function mod:SPELL_AURA_APPLIED(args)
 			self:SetIcon(args.destName, 8)
 		end
 	elseif args.spellId == 143791 then
-		corrosiveBloodTargets[#corrosiveBloodTargets + 1] = args.destName
-		self:Unschedule(warnCorrosiveBloodTargets)
-		self:Schedule(0.5, warnCorrosiveBloodTargets)
+		warnCorrosiveBlood:CombinedShow(0.5, args.destName)
+		timerCorrosiveBloodCD:DelayedStart(0.5)
 	elseif args.spellId == 143800 and args:IsPlayer() then
 		local amount = args.amount or 1
 		if amount >= 3 then
 			specWarnIcyBlood:Show(amount)
 		end
 	elseif args.spellId == 143777 then
-		frozenTargets[#frozenTargets + 1] = args.destName
-		self:Unschedule(warnFrozenargets)
-		self:Schedule(1, warnFrozenargets)--On 25 man, many targets get frozen and often at/near the same time. try to batch em up a bit
+		warnFrozenSolid:CombinedShow(1, args.destName)--On 25 man, many targets get frozen and often at/near the same time. try to batch em up a bit
 		if self:AntiSpam(3, 1) then
 			specWarnFrozenSolid:Show(args.destName)
 		end
 	elseif args.spellId == 145974 then
 		warnEnrage:Show(args.destName)
 		specWarnEnrage:Show(args.destName)
+	elseif args.spellId == 146589 then
+		warnKey:Show(args.destName)
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -304,32 +296,39 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerFrostBreath:Cancel(args.destName)
 	elseif args.spellId == 143767 then
 		timerScorchingBreath:Cancel(args.destName)
-	elseif args.spellId == 143440  then
+	elseif args.spellId == 143440 then
 		timerBloodFrenzyCD:Cancel()
-	elseif args.spellId == 143445 then
-		timerFixate:Cancel(args.destName)
-		if self.Options.FixateIcon then
-			self:SetIcon(args.destName, 0)
-		end
-	elseif args.spellId == 143411 then
 		screechCount = 0
-		timerDeafeningScreechCD:Start(nil, 1)
-		if self.Options.RangeFrame then
+		if self:IsDifficulty("lfr25") then
+			timerDeafeningScreechCD:Start(19, 1)
+			specWarnDeafeningScreech:Schedule(17.5)
+		else
+			timerDeafeningScreechCD:Start(nil, 1)
+			specWarnDeafeningScreech:Schedule(11.5)
+		end
+		if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
 			if self:IsDifficulty("normal10", "heroic10") then
 				DBM.RangeCheck:Show(10, nil, nil, 4)
 			else
 				DBM.RangeCheck:Show(10, nil, nil, 14)
 			end
 		end
+	elseif args.spellId == 143445 then
+		timerFixate:Cancel(args.destName)
+		if self.Options.FixateIcon then
+			self:SetIcon(args.destName, 0)
+		end
 	end
 end
 
 --High performance detection of burningBlood targets
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
-	if spellId == 143783 then--The actual target of the fire, has no cast event, just initial damage using THIS ID
-		burningBloodTargets[#burningBloodTargets + 1] = destName
-		self:Unschedule(warnBurningBloodTargets)
-		self:Schedule(0.5, warnBurningBloodTargets)
+	if spellId == 143783 and not bloodTargets[destGUID] then--The actual target of the fire, has no cast event, just initial damage using THIS ID
+		bloodTargets[destGUID] = true
+		warnBurningBlood:CombinedShow(0.5, destName)
+		timerBurningBloodCD:DelayedStart(0.5)
+		self:Unschedule(clearBloodTargets)
+		self:Schedule(3, clearBloodTargets)
 		if destGUID == UnitGUID("player") then
 			specWarnBurningBlood:Show()
 			yellBurningBlood:Yell()
@@ -355,10 +354,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerAcidBreathCD:Cancel()
 		timerFrostBreathCD:Cancel()
 		timerScorchingBreathCD:Cancel()
+		timerDeafeningScreechCD:Cancel()
+		specWarnDeafeningScreech:Cancel()
 		timerTailLashCD:Cancel()
 		specWarnBloodFrenzy:Show()
 		soundBloodFrenzy:Play()
-		if self.Options.RangeFrame then
+		if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
 			DBM.RangeCheck:Hide()
 		end
 	--He retains/casts "blood" abilities through Blood frenzy, and only stops them when he changes to different Pustles

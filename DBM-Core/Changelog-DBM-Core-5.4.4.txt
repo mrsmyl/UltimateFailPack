@@ -1,0 +1,53 @@
+tag 5.4.4
+823d835eda1f1bd4fb3f91abad0075d3166d76d2
+subversion <svn@deadlybossmods.com>
+2013-10-27 17:36:55 +0100
+
+Tagging as 5.4.4
+
+
+--------------------
+
+subversion:
+	- increment version number to 5.4.4
+	- Omega via svn r10680: add some run away sounds
+	- Omega via svn r10679: Some world event optimize
+	- Omega via svn r10678: more siegecrafter stuff
+	- Omega via svn r10677: more countdown work
+	- Omega via svn r10676: make the assembly line warning smarter and auto disable if you have debuff and can't go
+	- Omega via svn r10675: sawblade yell off by default Added countdown for shredders Added countdown for assembly line
+	- alcortes via svn r10674: Spanish update
+	- Omega via svn r10673: small adjust, engineers stop spawning, but any engineer already out should still finish it's ironstar cast.
+	- nbluewiz via svn r10672: # Garrosh : various timer fix. # Small option default tweak.
+	- Omega via svn r10671: Optimize icon setting on nazgrim to stop when appropriate number of adds reached. Finish galakras stuff with 3 weeks/kills worth of yelling data verifying consistency.
+	- Omega via svn r10670: fix bad cid on sniper
+	- Omega via svn r10669: norushen fix
+	- alcortes via svn r10668: Spanish update
+	- Omega via svn r10667: Fix headless horseman mod not working
+	- Omega via svn r10666: fix timer option default, assuming i didn't miscount the number of nils
+	- Omega via svn r10665: up scan speed on mines, I found if i moused over them too fast, icon setting doesn't keep up.
+	- Omega via svn r10664: fix some of it now, but i don't have time to fix it right until after raid. Don't have time to look up how many nils need to go in a timer, very many of them
+	- Omega via svn r10663: kill first adds timer on galakras. leaving comment for now to explain reasoning.
+	- nbluewiz via svn r10662: # Core : typo
+	- Omega via svn r10661: up antispam and scan time for crawler mines, if you activate 2 at once, you need more time to mark them and prevent it bugging out
+	- Omega via svn r10660: Disable meteor warning, since it's causing lua errors since L.Meteor doesn't exist. I no longer have logs for this so I can't fix it so easier to disable to avoid errors.
+	- Omega via svn r10659: Fix typos ru update
+	- Omega via svn r10658: fix bugged sorrowActive
+	- nbluewiz via svn r10657: # Spoils : Fix Set To Blow stuff. More faster warns.
+	- Omega via svn r10656: improvements to immuneCaster
+	- Omega via svn r10655: Add reg announce too Change color of key warning to not match the semi spamy stack warning so it sticks out better.
+	- Omega via svn r10654: Enable "/dbm break 0" to cancel break timer Fix special warning or crimson wake not working Add warnings/timers for devotion aura on thok (disabled in LFR, they won't understand what it's for) Better option default for stop casting warning.
+	- nbluewiz via svn r10653: # Fallen Protectors : Fix Garrote warning spam.
+	- nbluewiz via svn r10652: # koKR update.
+	- nbluewiz via svn r10651: # Dark Shaman : Remain berserk CD.
+	- nbluewiz via svn r10650: # Do not check wipe and kill time on scenario mods.
+	- Omega via svn r10649: Disable dark shaman berserk timer. Damn thing is variable. i have seen it be exactly 9 minutes, 9:15, I'm also looking at logs right now where it's 9:45 and still no berserk. this fight clearly has a variable berserk timer. or blizz is hotfixing it every other day? either way, it's worthless if it's wrong so disabled. Fixed some norushen stuff
+	- nbluewiz via svn r10648: # Spoils : Fix lua error.
+	- ultrashining via svn r10647: zhTW update
+	- Omega via svn r10646: infernostrike warning just doesn't work right, the timing is variable and if you don't capture exact right time, you get wrong target since mob looks around a lot at previous target or highest threat
+	- Omega via svn r10645: re-add norushen icon marking with some additional debug and have it disabled in LFR
+	- ebmor via svn r10644: deDE update
+	- nbluewiz via svn r10643: # Core : fix L.name broken used by several mods.
+	- nbluewiz via svn r10642: # Spoils : Update berserk timer. Fully tested by test function.
+	- Omega via svn r10641: Add timer for first spoils of pandaria pull RP
+	- tandanu via svn r10640: increase version number

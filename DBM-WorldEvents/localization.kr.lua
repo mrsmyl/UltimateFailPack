@@ -170,6 +170,20 @@ L:SetGeneralLocalization({
 	name = "다크문 토끼"
 })
 
+-------------------------
+--  Darkmoon Moonfang  --
+-------------------------
+L = DBM:GetModLocalization("Moonfang")
+
+L:SetGeneralLocalization({
+	name = "달송곳니"
+})
+
+L:SetWarningLocalization({
+	specWarnCallPack		= "무리 소환 - 40미터 이상 떨어지세요!",
+	specWarnMoonfangCurse	= "달송곳니의 저주 - 10미터 이상 떨어지세요!"
+})
+
 --------------------------
 --  Plants Vs. Zombies  --
 --------------------------

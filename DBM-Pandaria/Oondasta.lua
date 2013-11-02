@@ -1,11 +1,13 @@
 local mod	= DBM:NewMod(826, "DBM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10106 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
 mod:SetCreatureID(69161)
+mod:SetReCombatTime(20)
 mod:SetZone()
+mod:SetMinSyncRevision(10466)
 
-mod:RegisterCombat("combat")
+mod:RegisterCombat("combat_yell", L.Pull)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -13,10 +15,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED"
-)
-
-mod:RegisterEvents(
-	"CHAT_MSG_MONSTER_YELL"
 )
 
 local warnCrush					= mod:NewStackAnnounce(137504, 2, nil, mod:IsTank() or mod:IsHealer())--Cast every 30 seconds roughly, lasts 1 minute. you need 3 tanks to be able to tank the boss without debuff. 2 tanks CAN do but they will always have 1 stack and take 25% more damage
@@ -35,11 +33,9 @@ local timerPiercingRoarCD		= mod:NewCDTimer(25, 137457)--25-60sec variation (i'm
 local timerFrillBlastCD			= mod:NewCDTimer(25, 137505)--25-30sec variation
 
 mod:AddBoolOption("RangeFrame", true)
-mod:AddBoolOption("ReadyCheck", false)
+mod:AddReadyCheckOption(32519, false)
 
-local yellTriggered = false
-
-function mod:OnCombatStart(delay)
+function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then--We know for sure this is an actual pull and not diving into in progress
 --		timerCrushCD:Start(-delay)--There was no tank, so he pretty much never cast this, just ran like a wild animal around area while corpse cannoned
 		timerPiercingRoarCD:Start(20-delay)
@@ -54,7 +50,6 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
-	yellTriggered = false
 end
 
 function mod:SPELL_CAST_START(args)
@@ -96,16 +91,3 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerCrush:Cancel(args.destName)
 	end
 end
-
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.Pull and not self:IsInCombat() then
-		if self:GetCIDFromGUID(UnitGUID("target")) == 69161 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 69161 then--Whole zone gets yell, so lets not engage combat off yell unless he is our target (or the target of our target for healers)
-			yellTriggered = true
-			DBM:StartCombat(self, 0)
-		end
-		if self.Options.ReadyCheck and not IsQuestFlaggedCompleted(32519) then
-			PlaySoundFile("Sound\\interface\\levelup2.ogg", "Master")
-		end
-	end
-end
-

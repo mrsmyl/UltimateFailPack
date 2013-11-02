@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(865, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10387 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10680 $"):sub(12, -3))
 mod:SetCreatureID(71504)--71591 Automated Shredder
 mod:SetZone()
+mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)--Not sure how many mines spawn on 25 man, even more of them on heroic 25, so maybe all 8 used?
 
 mod:RegisterCombat("combat")
 
@@ -26,20 +27,21 @@ local warnElectroStaticCharge			= mod:NewStackAnnounce(143385, 2, nil, mod:IsTan
 local warnOvercharge					= mod:NewTargetAnnounce(145774, 4)--Heroic. Probably doesn't show in combat log and will require emotes i'm sure.
 --Automated Shredders
 local warnAutomatedShredder				= mod:NewSpellAnnounce("ej8199", 3, 85914)
+local warnOverload						= mod:NewStackAnnounce(145444, 3)
 local warnDeathFromAbove				= mod:NewTargetAnnounce(144208, 4)--Player target, not vulnerable shredder target. (should always be cast on highest threat target, but i like it still being a "target" warning)
 --The Assembly Line
 local warnAssemblyLine					= mod:NewSpellAnnounce("ej8202", 3, 85914)
 local warnShockwaveMissileActivated		= mod:NewSpellAnnounce("ej8204", 3, 143639)--Unsure if this will even show in CLEU, may need UNIT event or emote
 local warnShockwaveMissile				= mod:NewCountAnnounce(143641, 3)
 --local warnLaserTurretActivated			= mod:NewSpellAnnounce("ej8208", 3, 143867, false)--No event to detect it
-local warnLaserFixate					= mod:NewTargetAnnounce(143828, 3, 143867)--Not in combat log, needs more debugging to find a way around blizz fail
+local warnLaserFixate					= mod:NewTargetAnnounce(143828, 3, 143867)
 local warnMagneticCrush					= mod:NewSpellAnnounce(144466, 3)--Unsure if correct ID, could be 143487 instead
 local warnCrawlerMine					= mod:NewSpellAnnounce("ej8212", 3, 144010)--Crawler Mine Spawning
 local warnReadyToGo						= mod:NewTargetAnnounce(145580, 4)--Crawler mine not dead fast enough
 
 --Siegecrafter Blackfuse
 local specWarnLaunchSawblade			= mod:NewSpecialWarningYou(143265)
-local yellLaunchSawblade				= mod:NewYell(143265)
+local yellLaunchSawblade				= mod:NewYell(143265, nil, false, nil, nil, 2)
 local specWarnProtectiveFrenzy			= mod:NewSpecialWarningTarget(145365, mod:IsTank())
 local specWarnOvercharge				= mod:NewSpecialWarningTarget(145774)
 --Automated Shredders
@@ -47,8 +49,8 @@ local specWarnAutomatedShredder			= mod:NewSpecialWarningSpell("ej8199", mod:IsT
 local specWarnDeathFromAbove			= mod:NewSpecialWarningYou(144208)
 local specWarnAutomatedShredderSwitch	= mod:NewSpecialWarningSwitch("ej8199", false)--Strat dependant, you may just ignore them and have tank kill them with laser pools
 --The Assembly Line
-local specWarnCrawlerMine				= mod:NewSpecialWarningSwitch("ej8212")
-local specWarnAssemblyLine				= mod:NewSpecialWarningSpell("ej8202", mod:IsDps())
+local specWarnCrawlerMine				= mod:NewSpecialWarningSwitch("ej8212", not mod:IsHealer(), nil, nil, nil, 2)
+local specWarnAssemblyLine				= mod:NewSpecialWarningSpell("ej8202", false, nil, nil, nil, 2)--Not all in raid need, just those assigned
 local specWarnShockwaveMissileActive	= mod:NewSpecialWarningSpell("ej8204", nil, nil, nil, 2)
 local specWarnReadyToGo					= mod:NewSpecialWarningTarget(145580)
 local specWarnLaserFixate				= mod:NewSpecialWarningRun(143828)
@@ -65,6 +67,7 @@ local timerElectroStaticChargeCD		= mod:NewCDTimer(17, 143385, nil, mod:IsTank()
 local timerLaunchSawbladeCD				= mod:NewCDTimer(10, 143265)--10-15sec cd
 --Automated Shredders
 local timerAutomatedShredderCD			= mod:NewNextTimer(60, "ej8199", nil, nil, nil, 85914)
+local timerOverloadCD					= mod:NewCDCountTimer(10, 145444)
 local timerDeathFromAboveDebuff			= mod:NewTargetTimer(5, 144210, nil, not mod:IsHealer())
 local timerDeathFromAboveCD				= mod:NewNextTimer(40, 144208, nil, not mod:IsHealer())
 --The Assembly Line
@@ -75,18 +78,28 @@ local timerPatternRecognition			= mod:NewBuffActiveTimer(60, 144236)
 local timerShockwaveMissileCD			= mod:NewNextCountTimer(15, 143641)
 local timerBreakinPeriod				= mod:NewTargetTimer(60, 145269, nil, false)--Many mines can be up at once so timer off by default do to spam
 
-mod:AddBoolOption("InfoFrame")
+local countdownAssemblyLine				= mod:NewCountdown(40, "ej8202", false)
+local countdownShredder					= mod:NewCountdown(60, "ej8199", mod:IsTank())
+local countdownElectroStatic			= mod:NewCountdown(17, 143385, mod:IsTank(), nil, nil, nil, true)
+
+local soundMineFixate					= mod:NewSound("ej8212", nil, mod:IsMelee())--No strat involves ranged moving for these, they should die before reaching ranged. But melee must run out.
+local soundLaserFixate					= mod:NewSound(143828, nil, false)
+
+mod:AddInfoFrameOption("ej8202")
+mod:AddSetIconOption("SetIconOnMines", "ej8212", false, true)
 
 local missileCount = 0
 --local laserCount = 0--Fires 3 times
 --local activeWeaponsGUIDS = {}
 local shockwaveOvercharged = false
 local weapon = 0
+--Names very long in english, makes frame HUGE, may switch to shorter localized names
 local assemblyLine = EJ_GetSectionInfo(8202)
 local crawlerMine = EJ_GetSectionInfo(8212)
 local shockwaveMissile = EJ_GetSectionInfo(8205)
 local laserTurret = EJ_GetSectionInfo(8208)
 local electroMagnet = EJ_GetSectionInfo(8210)
+local assemblyDebuff = false
 
 function mod:LaunchSawBladeTarget(targetname, uId)
 	warnLaunchSawblade:Show(targetname)
@@ -138,6 +151,7 @@ function mod:OnCombatStart(delay)
 	weapon = 0
 	shockwaveOvercharged = false
 	timerAutomatedShredderCD:Start(35-delay)
+	countdownShredder:Start(35-delay)
 end
 
 function mod:OnCombatEnd()
@@ -198,14 +212,23 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnElectroStaticCharge:Show(args.destName, amount)
 		timerElectroStaticCharge:Start(args.destName)
 		timerElectroStaticChargeCD:Start()
+		countdownElectroStatic:Start()
+	elseif args.spellId == 145444 then
+		local amount = args.amount or 1
+		warnOverload:Show(args.destName, amount)
+		timerOverloadCD:Start(nil, amount+1)
 	elseif args.spellId == 144210 and not args:IsDestTypePlayer() then
 		timerDeathFromAboveDebuff:Start(args.destName)
 	elseif args.spellId == 144236 and args:IsPlayer() then
 		timerPatternRecognition:Start()
+		assemblyDebuff = true
 	elseif args.spellId == 145269 then
-		if self:AntiSpam(10, 3) then
+		if self:AntiSpam(20, 3) then
 			warnCrawlerMine:Show()
 			specWarnCrawlerMine:Show()
+			if self.Options.SetIconOnMines then
+				self:ScanForMobs(71788, 0, 8, nil, 0.1, 20)
+			end
 		end
 		timerBreakinPeriod:Start(args.destName, args.destGUID)
 	elseif args.spellId == 145580 then
@@ -235,6 +258,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerElectroStaticCharge:Cancel(args.destName)
 	elseif args.spellId == 144236 and args:IsPlayer() then
 		timerPatternRecognition:Cancel()
+		assemblyDebuff = false
 	elseif args.spellId == 145269 then
 		timerBreakinPeriod:Cancel(args.destName, args.destGUID)
 	elseif args.spellId == 143639 then
@@ -246,6 +270,7 @@ function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 71591 then
 		timerDeathFromAboveCD:Cancel(args.destGUID)
+		timerOverloadCD:Cancel()
 	end
 end
 
@@ -257,9 +282,12 @@ function mod:RAID_BOSS_WHISPER(msg)
 	elseif msg:find("Ability_Siege_Engineer_Detonate") then--Doesn't show in combat log at all (what else is new)
 		specWarnCrawlerMineFixate:Show()
 		yellCrawlerMineFixate:Yell()
+		soundMineFixate:Play()
 	elseif msg:find("Ability_Siege_Engineer_Superheated") then
 		specWarnLaserFixate:Show()
 		yellLaserFixate:Yell()
+		soundLaserFixate:Play()
+		self:SendSync("LockedOnTarget", UnitGUID("player"))
 	end
 end
 
@@ -267,8 +295,11 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc, _, _, target)
 	if msg == L.newWeapons or msg:find(L.newWeapons) then
 		weapon = weapon + 1
 		warnAssemblyLine:Show()
-		specWarnAssemblyLine:Show()
+		if not assemblyDebuff then--Don't warn if you can't go
+			specWarnAssemblyLine:Show()
+		end
 		timerAssemblyLineCD:Start()
+		countdownAssemblyLine:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(assemblyLine.."("..weapon..")")
 			DBM.InfoFrame:Show(1, "function", showWeaponInfo, true)
@@ -278,5 +309,13 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc, _, _, target)
 		specWarnAutomatedShredder:Show()
 		timerDeathFromAboveCD:Start(17)
 		timerAutomatedShredderCD:Start()
+		countdownShredder:Start()
+	end
+end
+
+function mod:OnSync(msg, guid)
+	if msg == "LockedOnTarget" and guid then
+		local targetName = DBM:GetFullPlayerNameByGUID(guid)
+		warnLaserFixate:Show(targetName)
 	end
 end

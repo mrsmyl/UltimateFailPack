@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(829, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10267 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10408 $"):sub(12, -3))
 mod:SetCreatureID(68905, 68904)--Lu'lin 68905, Suen 68904
 mod:SetZone()
 mod:SetBossHPInfoToHighest()
@@ -20,8 +20,8 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2"
 )
 
-local Lulin = EJ_GetSectionInfo(7629)
-local Suen = EJ_GetSectionInfo(7642)
+local Lulin = select(2, EJ_GetCreatureInfo(1, 829))
+local Suen = select(2, EJ_GetCreatureInfo(2, 829))
 
 mod:SetBossHealthInfo(
 	68905, Lulin,

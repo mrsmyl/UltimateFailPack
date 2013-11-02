@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10387 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10465 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
 mod:SetZone()
 
@@ -85,10 +85,12 @@ end
 local function updateInfoFrame()
 	local lines = {}
 	for i = 1, 5 do
-		lines[UnitName("boss"..i)] = UnitPower("boss"..i)
+		if UnitExists("boss"..i) then
+			lines[UnitName("boss"..i)] = UnitPower("boss"..i)
+		end
 	end
 	lines[UnitName("player")] = UnitPower("player", ALTERNATE_POWER_INDEX)
-	
+
 	return lines
 end
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(832, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10248 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10406 $"):sub(12, -3))
 mod:SetCreatureID(68397)--Diffusion Chain Conduit 68696, Static Shock Conduit 68398, Bouncing Bolt conduit 68698, Overcharge conduit 68697
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)--All icons can be used, because if a pillar is level 3, it puts out 4 debuffs on 25 man (if both are level 3, then you will have 8)
@@ -546,15 +546,13 @@ local function LoopIntermission()
 end
 
 function mod:UNIT_HEALTH_FREQUENT(uId)
-	if UnitName(uId) == L.name then
-		local hp = UnitHealth(uId) / UnitHealthMax(uId) * 100
-		if hp > 65 and hp < 66.5 and warnedCount == 0 then
-			warnedCount = 1
-			specWarnIntermissionSoon:Show()
-		elseif hp > 30 and hp < 31.5 and warnedCount == 1 then
-			warnedCount = 2
-			specWarnIntermissionSoon:Show()
-		end
+	local hp = UnitHealth(uId) / UnitHealthMax(uId) * 100
+	if hp > 65 and hp < 67.5 and warnedCount == 0 then
+		warnedCount = 1
+		specWarnIntermissionSoon:Show()
+	elseif hp > 30 and hp < 32.5 and warnedCount == 1 then
+		warnedCount = 2
+		specWarnIntermissionSoon:Show()
 	end
 end
 

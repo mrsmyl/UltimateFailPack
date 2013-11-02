@@ -1,12 +1,14 @@
-local mod	= DBM:NewMod(861, "DBM-Pandaria", nil, 322)
+local mod	= DBM:NewMod(861, "DBM-Pandaria", nil, 322, 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10329 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10609 $"):sub(12, -3))
 mod:SetCreatureID(72057)
+mod:SetReCombatTime(20)
 mod:SetZone()
+mod:SetMinSyncRevision(10466)
 mod:SetUsedIcons(8, 7, 6)
 
-mod:RegisterCombat("combat")
+mod:RegisterCombat("combat_yell", L.Pull)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
@@ -14,11 +16,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED"
 )
 
-mod:RegisterEvents(
-	"CHAT_MSG_MONSTER_YELL"
-)
-
 local warnAncientFlame			= mod:NewSpellAnnounce(144695, 2)--probably add a move warning with right DAMAGE event
+local warnMagmaCrush			= mod:NewSpellAnnounce(144688, 3)
 local warnBurningSoul			= mod:NewTargetAnnounce(144689, 3)
 local warnEternalAgony			= mod:NewSpellAnnounce(144696, 4)
 
@@ -34,8 +33,8 @@ local berserkTimer				= mod:NewBerserkTimer(300)
 
 mod:AddBoolOption("SetIconOnBurningSoul")
 mod:AddBoolOption("RangeFrame", true)
+mod:AddReadyCheckOption(33118, false)
 
-local yellTriggered = false
 local DebuffTargets = {}
 local DebuffIcons = {}
 local DebuffIcon = 8
@@ -60,7 +59,7 @@ do
 	end
 end
 
-function mod:OnCombatStart(delay)
+function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then--We know for sure this is an actual pull and not diving into in progress
 		berserkTimer:Start()
 	end
@@ -70,13 +69,14 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
-	yellTriggered = false
 end
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 144696 then
 		warnEternalAgony:Show()
 		specWarnEternalAgony:Show()
+	elseif args.spellId == 144688 then
+		warnMagmaCrush:Show()
 	elseif args.spellId == 144695 then
 		warnAncientFlame:Show()
 --		timerAncientFlameCD:Start()
@@ -129,15 +129,6 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 		if args:IsPlayer() and self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
-		end
-	end
-end
-
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.Pull and not self:IsInCombat() then
-		if self:GetCIDFromGUID(UnitGUID("target")) == 72057 or self:GetCIDFromGUID(UnitGUID("targettarget")) == 72057 then
-			yellTriggered = true
-			DBM:StartCombat(self, 0)
 		end
 	end
 end
