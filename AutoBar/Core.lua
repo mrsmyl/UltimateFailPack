@@ -231,7 +231,7 @@ function AutoBar:OnInitialize()
 		},
 	}
 
-	AutoBar.currentPlayer = UnitName("player") .. " - " .. GetCVar("realmName");
+	AutoBar.currentPlayer = UnitName("player") .. " - " .. GetRealmName();
 	_, AutoBar.CLASS = UnitClass("player")
 	AutoBar.CLASSPROFILE = "_" .. AutoBar.CLASS;
 
