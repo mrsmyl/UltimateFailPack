@@ -37,6 +37,18 @@ local tostring = tostring
 local tinsert = table.insert
 local tsort = table.sort
 
+local Gradients = {
+    [""] = L["None"],
+    ["HORIZONTAL"] = L["Horizontal"],
+    ["VERTICAL"] = L["Vertical"],
+}
+
+local Gradients = {
+    [""] = L["None"],
+    ["HORIZONTAL"] = L["Horizontal"],
+    ["VERTICAL"] = L["Vertical"],
+}
+
 local FontOutlines = {
     [""] = L["None"],
     ["OUTLINE"] = L["Normal"],
@@ -278,6 +290,20 @@ local barOptionArgs = {
         step = 1,
         order = 120,
     },
+    pluginOpacity = {
+        type = 'range',
+        name = L["Opacity"],
+        order = 123,
+        min = 0,
+        max = 1.0,
+        isPercent = true,
+        step = 0.01,
+    },
+    fontShadow = {
+        type = 'toggle',
+        name = L['Font shadow'],
+        order = 126,
+    },
 
     labelColor = {
         type = 'color',
@@ -299,15 +325,6 @@ local barOptionArgs = {
         order = 150,
         get = "getColorOption",
         set = "setColorOption",
-    },
-    pluginOpacity = {
-        type = 'range',
-        name = L["Opacity"],
-        order = 155,
-        min = 0,
-        max = 1.0,
-        isPercent = true,
-        step = 0.01,
     },
 
     bgHeader = {
@@ -379,9 +396,15 @@ local barOptionArgs = {
                 name = L["Border thickness"],
                 min = 1, max = 64, step = 1,
             },
+            bgInset = {
+                type = "range",
+                order = 18,
+                name = L["Border inset"],
+                min = 0, max = 32, step = 1,
+            },
             bgColor = {
                 type = "color",
-                order = 18,
+                order = 19,
                 name = L["Background color"],
                 hasAlpha = true,
                 get = "getColorOption",
@@ -389,8 +412,22 @@ local barOptionArgs = {
             },
             bgBorderColor = {
                 type = "color",
-                order = 19,
+                order = 20,
                 name = L["Border color"],
+                hasAlpha = true,
+                get = "getColorOption",
+                set = "setColorOption",
+            },
+            bgGradient = {
+                type = "select",
+                order = 30,
+                name = L["Gradient"],
+                values = Gradients,
+            },
+            bgGradientColor = {
+                type = "color",
+                order = 31,
+                name = L["Gradient color"],
                 hasAlpha = true,
                 get = "getColorOption",
                 set = "setColorOption",
@@ -525,6 +562,11 @@ function Bar:setOption(info, value)
         return
     end
     local origAttach = self.db.attach
+    if name == 'bgEdgeSize' then
+        if self.db.bgInset and self.db.bgInset == Bazooka:getInsetForEdgeSize(self.db.bgEdgeSize) then
+            self.db.bgInset = Bazooka:getInsetForEdgeSize(value)
+        end
+    end
     self.db[name] = value
     if AttachOptions[name] then
         if origAttach ~= self.db.attach then
@@ -612,13 +654,18 @@ local pluginOptions = {
 local pluginOptionArgs = {
     enabled = {
         type = 'toggle',
-        width = 'full',
+--        width = 'full',
         name = L["Enabled"],
         order = 10,
         disabled = function()
             lastConfiguredOpts = Bazooka.pluginOpts
             return false
         end,
+    },
+    useLabelAsTitle = {
+        type = 'toggle',
+        name = L["Use label as title"],
+        order = 15,
     },
     alignment = {
         type = 'select',
@@ -788,7 +835,7 @@ function Plugin:getColoredTitle()
     return ("|T%s:0|t %s%s"):format(
         self.dataobj.staticIcon or (self.dataobj.icon and not self.dataobj.iconCoords) and self.dataobj.icon or "",
         self.db.enabled and "" or "|cffed1100",
-        self.title
+        self:getTitle()
     )
 end
 
@@ -811,16 +858,19 @@ function Plugin:setOption(info, value)
     end
     self.db[name] = value
     self:applySettings()
-    if name == 'enabled' then
+    if name == 'enabled' or name == 'useLabelAsTitle' then
         self:updateColoredTitle()
-        if Bazooka.db.global.sortDisabledLast then
-            Bazooka:updatePluginOrder()
-        end
+        Bazooka:updatePluginOrder()
     end
 end
 
 function Plugin:getOption(info)
-    return self.db[info[#info]]
+    local name = info[#info]
+    local value = self.db[name]
+    if name == 'maxTextWidth' and value then
+        value = tostring(value)
+    end
+    return value
 end
 
 function Plugin:isDisabled()
@@ -846,14 +896,14 @@ end
 local sortedPlugins = {}
 
 local function comparePluginsByTitle(p1, p2)
-    return p1.title < p2.title
+    return p1:getTitle() < p2:getTitle()
 end
 
 local function comparePluginsByTitleDisabledLast(p1, p2)
     if p1.db.enabled then
-        return not p2.db.enabled or p1.title < p2.title
+        return not p2.db.enabled or p1:getTitle() < p2:getTitle()
     else 
-        return not p2.db.enabled and p1.title < p2.title
+        return not p2.db.enabled and p1:getTitle() < p2:getTitle()
     end
 end
 

@@ -1,6 +1,6 @@
 --[[
 Name: Bazooka
-Revision: $Revision: 245 $
+Revision: $Revision: 259 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/bazooka/
 SVN: svn://svn.wowace.com/wow/bazooka/mainline/trunk
@@ -10,9 +10,9 @@ License: Public Domain
 
 local AppName, Bazooka = ...
 local OptionsAppName = AppName .. "_Options"
-local VERSION = AppName .. "-v2.2.7"
+local VERSION = AppName .. "-v2.4.0"
 --[===[@debug@
-local VERSION = AppName .. "-r" .. ("$Revision: 245 $"):match("%d+")
+local VERSION = AppName .. "-r" .. ("$Revision: 259 $"):match("%d+")
 --@end-debug@]===]
 
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
@@ -24,7 +24,10 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AppName)
 -- internal vars
 
 -- Remove all related ifs when the opacity setting for embedded icons gets fixed
-local EnableOpacityWorkaround = true
+local EnableOpacityWorkaround = false -- loaded from global options
+-- Remove all related ifs when the setting for gradient background gets fixed
+local EnableGradientWorkaround = true
+
 local _ -- throwaway
 local uiScale = 1.0 -- just to be safe...
 
@@ -34,6 +37,16 @@ end
 
 local function colorToHex(color)
     return ("%02x%02x%02x%02x"):format((color.a and color.a * 255 or 255), color.r*255, color.g*255, color.b*255)   
+end
+
+local function getTexture(textureName, region, ...)
+    if not region then
+        return
+    end
+    if region.GetTexture and region:GetTexture() == textureName then
+        return region
+    end
+    return getTexture(textureName, ...)
 end
 
 -- cached stuff
@@ -112,6 +125,7 @@ local BarDefaults = {
     font = Defaults.fontName,
     fontSize = 12,
     fontOutline = "",
+    fontShadow = true,
 
     iconSize = 16,
 
@@ -136,6 +150,7 @@ local BarDefaults = {
     bgTileSize = 32,
     bgEdgeSize = 16,
     bgColor = makeColor(0, 0, 0, 1.0),
+    bgGradientColor = makeColor(0, 0, 0, 0),
     bgBorderColor = makeColor(0.8, 0.6, 0.0, 1.0),
 }
 local PluginDefaults = {
@@ -155,6 +170,7 @@ local PluginDefaults = {
     showText = true,
     showValue = false,
     showSuffix = false,
+    useLabelAsTitle = false,
     shrinkThreshold = 5,
     overrideTooltipScale = false,
     tooltipScale = 1.0,
@@ -514,7 +530,7 @@ end
 Bar.OnMouseDown = function(frame, button, ...)
     local self = frame.bzkBar
     if button == 'RightButton' and not IsAltKeyDown() then
-        Bazooka:loadOptions()
+        Bazooka:openConfigDialog()
         if Bazooka.barOpts then
             Bazooka:openConfigDialog(Bazooka.barOpts, Bazooka:getSubAppName("bars"), self:getOptionsName())
         end
@@ -527,7 +543,11 @@ Bar.setAlphaByParts = function(frame, alpha)
     frame.bzkAlpha = alpha
     local self = frame.bzkBar
     if self.db.bgEnabled then
-        self.frame:SetBackdropColor(self.db.bgColor.r, self.db.bgColor.g, self.db.bgColor.b, self.db.bgColor.a * alpha)
+        if self.bgt then
+            self:setGradientBg()
+        else
+            self.frame:SetBackdropColor(self.db.bgColor.r, self.db.bgColor.g, self.db.bgColor.b, self.db.bgColor.a * alpha)
+        end
         self.frame:SetBackdropBorderColor(self.db.bgBorderColor.r, self.db.bgBorderColor.g, self.db.bgBorderColor.b, self.db.bgBorderColor.a * alpha)
     end
     for name, plugin in pairs(self.allPlugins) do
@@ -539,6 +559,20 @@ Bar.getAlphaByParts = function(frame)
     return frame.bzkAlpha
 end
 -- END EnableOpacityWorkaround 
+
+-- BEGIN EnableGradientWorkaround 
+Bar.fixGradientOnSizeChanged = function(frame, w, h)
+    local self = frame.bzkBar
+    self:setGradientBg()
+end
+-- END EnableGradientWorkaround 
+
+Bar.initialOnUpdateFixFontMetricHack = function(frame)
+    -- fix miscalculated font metrics
+    local self = frame.bzkBar
+    self:globalSettingsChanged()
+    frame:SetScript("OnUpdate", nil)
+end
 
 function Bar:New(id, db)
     local bar = setmetatable({}, Bar)
@@ -567,11 +601,10 @@ function Bar:createFadeAnim()
     end
 end
 
-function Bar:fadeIn()
-    if self.fadeAnim then
-        self.fadeAnimGrp:Stop()
-    end
-    if self.isHidden then
+function Bar:setFullyHidden(flag)
+    if flag then
+        self.isHidden = true
+    elseif self.isHidden then
         -- force text update on plugins, the updates were disabled
         self.isHidden = nil
         for name, plugin in pairs(self.allPlugins) do
@@ -580,6 +613,13 @@ function Bar:fadeIn()
             end
         end
     end
+end
+
+function Bar:fadeIn()
+    if self.fadeAnim then
+        self.fadeAnimGrp:Stop()
+    end
+    self:setFullyHidden(false)
     local alpha = self.frame:GetAlpha()
     local change = 1.0 - alpha
     if change < 0.05 then
@@ -616,7 +656,9 @@ function Bar:fadeOut(delay, fadeAlpha)
     fadeAlpha = fadeAlpha or self.db.fadeAlpha
     if fadeAlpha < 0.05 then
         fadeAlpha = 0
-        self.isHidden = true -- this will disable text updates (see Plugin:setText() and Bar:fadeIn()), partial fix for ticket-37
+        self:setFullyHidden(true) -- this will disable text updates (see Plugin:setText() and Bar:fadeIn()), partial fix for ticket-37
+    else
+        self:setFullyHidden(false)
     end
     local alpha = self.frame:GetAlpha()
     local change = alpha - fadeAlpha
@@ -650,12 +692,14 @@ function Bar:enable(id, db)
     if not self.frame then
         self.frame = CreateFrame("Frame", "BazookaBar_" .. id, UIParent)
         self.frame.bzkBar = self
+        self.frame:SetScript("OnUpdate", Bar.initialOnUpdateFixFontMetricHack)
         if EnableOpacityWorkaround then
+            self.frame.bzkAlpha = self.frame:GetAlpha()
             self.frame.SetAlpha = Bar.setAlphaByParts
             self.frame.GetAlpha = Bar.getAlphaByParts
         end
         self.frame:EnableMouse(true)
-        self.frame:SetClampedToScreen(true)
+        self.frame:SetClampedToScreen(false)
         self.frame:SetClampRectInsets(MaxTweakPts, -MaxTweakPts, -MaxTweakPts, MaxTweakPts)
         self.frame:RegisterForDrag("LeftButton", "RightButton")
         self.frame:SetScript("OnEnter", Bar.OnEnter)
@@ -1118,6 +1162,17 @@ function Bar:toggleMouse(flag)
     end
 end
 
+function Bar:setGradientBg()
+    if self.bgt then
+        if EnableOpacityWorkaround then
+            local alpha = self.frame.bzkAlpha
+            self.bgt:SetGradientAlpha(self.db.bgGradient, self.db.bgColor.r, self.db.bgColor.g, self.db.bgColor.b, self.db.bgColor.a * alpha, self.db.bgGradientColor.r, self.db.bgGradientColor.g, self.db.bgGradientColor.b, self.db.bgGradientColor.a * alpha)
+        else
+            self.bgt:SetGradientAlpha(self.db.bgGradient, self.db.bgColor.r, self.db.bgColor.g, self.db.bgColor.b, self.db.bgColor.a, self.db.bgGradientColor.r, self.db.bgGradientColor.g, self.db.bgGradientColor.b, self.db.bgGradientColor.a)
+        end
+    end
+end
+
 function Bar:applyBGSettings()
     if not self.db.bgEnabled then
         self.frame:SetBackdrop(nil)
@@ -1147,7 +1202,10 @@ function Bar:applyBGSettings()
     bg.tile = self.db.bgTile
     bg.tileSize = self.db.bgTileSize
     bg.edgeSize = (bg.edgeFile and bg.edgeFile ~= [[Interface\None]]) and self.db.bgEdgeSize or 0
-    local inset = math.floor(bg.edgeSize / 4)
+    if not self.db.bgInset then
+        self.db.bgInset = Bazooka:getInsetForEdgeSize(self.db.bgEdgeSize)
+    end
+    local inset = math.min(bg.edgeSize, self.db.bgInset)
     if inset ~= self.inset then
         self.inset = inset
         self:updateLayout()
@@ -1159,6 +1217,18 @@ function Bar:applyBGSettings()
     self.frame:SetBackdrop(bg)
     self.frame:SetBackdropColor(self.db.bgColor.r, self.db.bgColor.g, self.db.bgColor.b, self.db.bgColor.a)
     self.frame:SetBackdropBorderColor(self.db.bgBorderColor.r, self.db.bgBorderColor.g, self.db.bgBorderColor.b, self.db.bgBorderColor.a)
+    if self.db.bgGradient and self.db.bgGradient ~= "" and self.db.bgGradientColor then
+        self.bgt = getTexture(bg.bgFile, self.frame:GetRegions())
+        self:setGradientBg()
+        if EnableGradientWorkaround then
+            self.frame:SetScript("OnSizeChanged", Bar.fixGradientOnSizeChanged)
+        end
+    else
+        self.bgt = nil
+        if EnableGradientWorkaround then
+            self.frame:SetScript("OnSizeChanged", nil)
+        end
+    end
 end
 
 function Bar:applyFontSettings()
@@ -1350,7 +1420,7 @@ Plugin.OnDragStop = function(frame)
         Bazooka:updatePluginOptions()
     else
         self:reattach()
-        Bazooka:openStaticDialog(BzkDialogDisablePlugin, self, self.title)
+        Bazooka:openStaticDialog(BzkDialogDisablePlugin, self, self:getTitle())
     end
 end
 
@@ -1388,6 +1458,16 @@ function Plugin:New(name, dataobj, db)
     plugin.db = db
     plugin:applySettings()
     return plugin
+end
+
+function Plugin:getTitle()
+    if self.db.useLabelAsTitle and self.dataobj.label then
+        local title = stripColors(self.dataobj.label)
+        if title ~= "" then
+            return title
+        end
+    end
+    return self.title
 end
 
 function Plugin:setTipScale(tt)
@@ -1432,7 +1512,7 @@ function Plugin:showTip(modifierKey, modifierState)
     if Bazooka.db.profile.simpleTip and IsAltKeyDown() and not modifierKey then
         self.tipType = 'simple'
         local tt = setupTooltip(self.frame)
-        tt:SetText(self.title)
+        tt:SetText(self:getTitle())
         tt:Show()
         return
     end
@@ -1457,7 +1537,7 @@ function Plugin:showTip(modifierKey, modifierState)
         self.tipType = 'simple'
         local tt = setupTooltip(self.frame)
         self:setTipScale(tt)
-        tt:SetText(self.title)
+        tt:SetText(self:getTitle())
         tt:Show()
     end
 end
@@ -1565,6 +1645,11 @@ function Plugin:globalSettingsChanged()
         if dbFontPath ~= fontPath or bdb.fontSize ~= fontSize or bdb.fontOutline ~= fontOutline then
             self.text:SetFont(dbFontPath, self.fontSize, bdb.fontOutline)
         end
+        if bdb.fontShadow then
+            self.text:SetShadowOffset(1, -1)
+        else
+            self.text:SetShadowOffset(0, 0)
+        end
         self.text:SetTextColor(bdb.textColor.r, bdb.textColor.g, bdb.textColor.b, bdb.textColor.a)
         self:setText()
     end
@@ -1647,6 +1732,7 @@ function Plugin:enable()
         self.frame = CreateFrame("Button", "BazookaPlugin_" .. self.name, UIParent)
         self.frame.bzkPlugin = self
         if EnableOpacityWorkaround then
+            self.frame.bzkAlpha = self.frame:GetAlpha()
             self.frame.SetAlpha = Plugin.setAlphaByParts
             self.frame.GetAlpha = Plugin.getAlphaByParts
         end
@@ -2163,6 +2249,8 @@ function Bazooka:attachBar(bar, attach, pos)
         pos = self:attachBarImpl(bar, attach, pos, "attachBottom")
     else
         pos = 0
+        bar.frame:SetWidth(bar.db.frameWidth)
+        bar.frame:SetHeight(bar.db.frameHeight)
         bar.frame:SetPoint(bar.db.point, UIParent, bar.db.relPoint, bar.db.x, bar.db.y)
     end
     bar.db.pos = pos
@@ -2415,6 +2503,10 @@ function Bazooka:highlight(bar, area, pos)
     end
 end
 
+function Bazooka:getInsetForEdgeSize(edgeSize)
+    return math.floor(edgeSize / 4)
+end
+
 -- BEGIN LoD Options muckery
 
 function Bazooka:getSubAppName(name)
@@ -2426,6 +2518,7 @@ function Bazooka:setupDummyOptions()
         return
     end
     self.dummyOpts = CreateFrame("Frame")
+    self.dummyOpts:Hide()
     self.dummyOpts.name = AppName
     self.dummyOpts:SetScript("OnShow", function(frame)
         if not self.optionsLoaded then
@@ -2454,6 +2547,7 @@ function Bazooka:openConfigDialog(opts, ...)
     -- this function will be overwritten by the Options module when loaded
     if not self.optionsLoaded then
         self:loadOptions()
+        InterfaceAddOnsList_Update()
         return self:openConfigDialog(opts, ...)
     end
     InterfaceOptionsFrame_OpenToCategory(self.dummyOpts)

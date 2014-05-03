@@ -1,7 +1,7 @@
 ## Interface: 50400
 ## Title: Bazooka
 ## Author: mitch0
-## Version: v2.2.7
+## Version: v2.4.0
 ## Notes: Data Broker Display similar to FuBar
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: true
@@ -11,7 +11,7 @@
 ## X-License: Public Domain
 ## X-RelSite-WoWI: 14767
 ## X-Credits: ckknight for the original FuBar design
-## X-Curse-Packaged-Version: v2.2.7
+## X-Curse-Packaged-Version: v2.4.0
 ## X-Curse-Project-Name: Bazooka
 ## X-Curse-Project-ID: bazooka
 ## X-Curse-Repository-ID: wow/bazooka/mainline
