@@ -25,8 +25,8 @@ L["Allow click-targeting"] = "允许点击目标"
 L["Allow click-targeting in combat"] = "战门内允许点击目标"
 L["Allow mouse interaction"] = "允许鼠标交互"
 L["Alpha in combat"] = "战斗内透明度"
-L["Alpha OOC and not full"] = "透明度 OCC 及不充满"
-L["Alpha OOC and Target"] = "透明度 OOC 及目标"
+L["Alpha OOC and not full"] = "战斗外且未充满透明度"
+L["Alpha OOC and Target"] = "战斗外且有目标透明度"
 L["Alpha out of combat"] = "战斗外透明度"
 L["Also show numeric"] = "Also show numeric" -- Requires localization
 L["Always display bar"] = "永远显示条列"
@@ -43,16 +43,16 @@ L["Aura settings"] = "光环设定"
 L["Aura to track"] = "光环追踪"
 L["Automatically size this module to the addon's 'gap' setting"] = "自动调整 gap 插件设定模块的大小"
 L["Background Alpha"] = "背景透明度"
-L["Background alpha for bars IC"] = "背景透明度为条列 IC"
-L["Background alpha for bars OOC and bar not full (Target takes precedence over this)"] = "Background alpha for bars OOC and bar not full (Target takes precedence over this)" -- Requires localization
-L["Background alpha for bars OOC and target accuired (takes precedence over Not Full)"] = "Background alpha for bars OOC and target acquired (takes precedence over Not Full)" -- Requires localization
-L["Background alpha for bars OOC without target"] = "背景透明度条列 OOC 无目标"
+L["Background alpha for bars IC"] = "在战斗中的条列背景透明度"
+L["Background alpha for bars OOC and bar not full (Target takes precedence over this)"] = "战斗之外且条不满时的条背景透明度(有目标的设置优先级高于此项)"
+L["Background alpha for bars OOC and target accuired (takes precedence over Not Full)"] = "战斗之外且有目标时的条背景透明度(此项设置优先级高于条不满)"
+L["Background alpha for bars OOC without target"] = "战斗外且无目标背景透明度"
 L["Background Color"] = "背景颜色"
 L["Bar Alpha"] = "条列透明度"
 L["Bar alpha In Combat"] = "战斗内条列透明度"
-L["Bar alpha Out Of Combat without target"] = "条列透明度战斗外无目标"
-L["Bar alpha Out Of Combat with target accuired or bar not full (Target takes precedence over this)"] = "Bar alpha Out Of Combat with target accuired or bar not full (Target takes precedence over this)" -- Requires localization
-L["Bar alpha Out Of Combat with target accuired (takes precedence over Not Full)"] = "Bar alpha Out Of Combat with target accuired (takes precedence over Not Full)" -- Requires localization
+L["Bar alpha Out Of Combat without target"] = "战斗外且无目标的条列透明度"
+L["Bar alpha Out Of Combat with target accuired or bar not full (Target takes precedence over this)"] = "战斗之外且有目标或条不满时的条透明度(有目标的设置优先级高于此项)"
+L["Bar alpha Out Of Combat with target accuired (takes precedence over Not Full)"] = "战斗之外且有目标时的条透明度(此项设置优先级高于条不满)"
 L["Bar Background Blend Mode"] = "条列背景混合模式"
 L["Bar background visible"] = "条列背景可见"
 L["Bar Blend Mode"] = "条列混合模式"
@@ -72,21 +72,21 @@ L["Bar texture width (not the actual bar!)"] = "条列材质宽度(不是真实�
 L["Bar vertical offset"] = "条列垂直位移"
 L["Bar visible"] = "条列可见"
 L["Bar Width"] = "条列宽度"
-L["Bar width modifier"] = "条列宽度修改者"
+L["Bar width modifier"] = "条列宽度调整"
 L["BG Alpha in combat"] = "战斗内背景透明度"
-L["BG Alpha OOC and not Full"] = "背景透明度 OCC 及不充满"
-L["BG Alpha OOC and Target"] = "背景透明度 OCC 及目标"
+L["BG Alpha OOC and not Full"] = "战斗外且未充满背景透明度" -- Needs review
+L["BG Alpha OOC and Target"] = "战斗外且有目标背景透明度" -- Needs review
 L["BG Alpha out of combat"] = "战斗外背景透明度"
 L["Blizzard currently does not provide a proper way to right-click dismiss a pet with custom unit frames."] = "Blizzard currently does not provide a proper way to right-click dismiss a pet with custom unit frames." -- Requires localization
 L["Blizzard currently does not provide a proper way to right-click focus with custom unit frames."] = "Blizzard currently does not provide a proper way to right-click focus with custom unit frames." -- Requires localization
 L["Blizzard currently does not provide a proper way to right-click report someone AFK with custom unit frames."] = "Blizzard currently does not provide a proper way to right-click report someone AFK with custom unit frames." -- Requires localization
-L["Broadcasts crowd control effects you apply to your target via the party chat channel"] = "Broadcasts crowd control effects you apply to your target via the party chat channel" -- Requires localization
+L["Broadcasts crowd control effects you apply to your target via the party chat channel"] = "通过小队频道广播你施放的群体控制"
 L["Buff anchor to"] = "增益锚点至"
 L["Buff/debuff icon size"] = "增益/减益图示尺寸"
 L["Buff/debuff icon zoom"] = "增益/减益图示缩放"
 L["Buff/Debuff Settings"] = "增益/减益设定"
-L["Buff/debuff size for buffs/debuffs that were applied by you, the player"] = "Buff/debuff size for buffs/debuffs that were applied by you, the player" -- Requires localization
-L["Buff grow direction"] = "增益增大的方向"
+L["Buff/debuff size for buffs/debuffs that were applied by you, the player"] = "由你施加的Buff/debuff大小."
+L["Buff grow direction"] = "增益增长方向"
 L["Buff horizontal offset"] = "增益水平位移"
 L["Buff or debuff?"] = "增益或减益?"
 L["Buff placement settings"] = "增益位置设定"
@@ -100,7 +100,7 @@ L["Cannot report AFK from addons"] = "Cannot report AFK from addons" -- Requires
 L["|cff8888ffIceHUD|r: Combat lockdown restriction. Leave combat and try again."] = "|cff8888ffIceHUD|r: 战斗锁住状态限制。脱离战斗然后再试一次。"
 L["Change color"] = "改变颜色"
 L["Change color when not in range"] = "不在范围内时改变颜色"
-L["Changes the bar color to the CastNotInRange color when the target goes out of range for the current spell."] = "Changes the bar color to the CastNotInRange color when the target goes out of range for the current spell." -- Requires localization
+L["Changes the bar color to the CastNotInRange color when the target goes out of range for the current spell."] = "当目标不在施法范围内时改变条颜色为'不在施法范围内'选项所设的颜色."
 L[ [=[Changes the color of this bar to be the minimum health or mana color when it's below the low threshold. See the 'MinHealthColor' and 'MinManaColor' colors in the 'Colors' option page.
 
 This option only applies to health and mana bars.]=] ] = [=[Changes the color of this bar to be the minimum health or mana color when it's below the low threshold. See the 'MinHealthColor' and 'MinManaColor' colors in the 'Colors' option page.
@@ -108,13 +108,13 @@ This option only applies to health and mana bars.]=] ] = [=[Changes the color of
 This option only applies to health and mana bars.]=] -- Requires localization
 L["Checking this means that only buffs or debuffs that the player applied will trigger this bar"] = "Checking this means that only buffs or debuffs that the player applied will trigger this bar" -- Requires localization
 L["Choose a marker to edit. This will place the marker's settings in the fields above here."] = "Choose a marker to edit. This will place the marker's settings in the fields above here." -- Requires localization
-L["Choose whether the runes use a cooldown-style wipe, simply an alpha fade to show availability or both."] = "Choose whether the runes use a cooldown-style wipe, simply an alpha fade to show availability or both." -- Requires localization
-L["Choose whether the totems use a cooldown-style wipe or simply an alpha fade to show availability."] = "Choose whether the totems use a cooldown-style wipe or simply an alpha fade to show availability." -- Requires localization
+L["Choose whether the runes use a cooldown-style wipe, simply an alpha fade to show availability or both."] = "选择使用冷却风格还是仅用透明度淡出方式显示符文的可用状态,亦或者两种方式同时使用."
+L["Choose whether the totems use a cooldown-style wipe or simply an alpha fade to show availability."] = "选择使用冷却风格还是仅用透明度淡出方式来显示图腾的可用状态."
 L[ [=[Choose whether you'd like a graphical or numeric representation of the runes.
 
-NOTE: The color of 'Numeric' mode can be controlled by the HolyPowerNumeric color.]=] ] = [=[Choose whether you'd like a graphical or numeric representation of the runes.
+NOTE: The color of 'Numeric' mode can be controlled by the HolyPowerNumeric color.]=] ] = [=[为符文选择图形或数字显示模式.
 
-NOTE: The color of 'Numeric' mode can be controlled by the HolyPowerNumeric color.]=] -- Requires localization
+注意: '数字'模式的颜色可通过神圣能量的数字颜色设定.]=] -- Needs review
 L[ [=[Choose whether you'd like a graphical or numeric representation of the runes.
 
 NOTE: The color of 'Numeric' mode can be controlled by the ShardCounterNumeric color.]=] ] = [=[Choose whether you'd like a graphical or numeric representation of the runes.
@@ -136,16 +136,16 @@ L["Colors"] = "颜色"
 L["Colors the health bar from MaxHealthColor to MinHealthColor based on current health %"] = "从最高血量颜色到最低血量颜色, 根据当前血量百分比改变生命条颜色"
 L[ [=[Colors the health bar from MaxHealthColor to MinHealthColor based on current health %
 
-(Note: This overrides the 'class color bar' setting. Disable this to use class coloring)]=] ] = [=[Colors the health bar from MaxHealthColor to MinHealthColor based on current health %
+(Note: This overrides the 'class color bar' setting. Disable this to use class coloring)]=] ] = [=[根据当前血量百分比着色血量条, 颜色通过最大血量颜色和最小血量颜色选项设定
 
-(Note: This overrides the 'class color bar' setting. Disable this to use class coloring)]=] -- Requires localization
-L["Colors the mana bar from MaxManaColor to MinManaColor based on current mana %"] = "Colors the mana bar from MaxManaColor to MinManaColor based on current mana %" -- Requires localization
+(注意: 这会覆盖'职业颜色条' 的设定. 禁用此项会使用职业颜色)]=] -- Needs review
+L["Colors the mana bar from MaxManaColor to MinManaColor based on current mana %"] = "通过当前法力值百分比着色法力条, 颜色可由最大法力值和最小法力值选项设定." -- Needs review
 L["Combo gap"] = "连续间隙"
 L["Combo Points Font Size"] = "连续点字型尺寸"
 L["Configuration Mode"] = "配置模式"
 L["Contextual Background"] = "上下文的背景"
-L["Controls what it means for the bar to be filled. A normal bar will grow larger as the value grows from 0% to 100%. A reversed bar will shrink as the value grows from 0% to 100%."] = "Controls what it means for the bar to be filled. A normal bar will grow larger as the value grows from 0% to 100%. A reversed bar will shrink as the value grows from 0% to 100%." -- Requires localization
-L["Controls which direction the bar fills up. With this checked, the bar will fill opposite from normal (e.g. for health: 0% at the top, 100% at the bottom)."] = "Controls which direction the bar fills up. With this checked, the bar will fill opposite from normal (e.g. for health: 0% at the top, 100% at the bottom)." -- Requires localization
+L["Controls what it means for the bar to be filled. A normal bar will grow larger as the value grows from 0% to 100%. A reversed bar will shrink as the value grows from 0% to 100%."] = "控制条的填充方式. 正常条是从0%到100%增长. 反向条是从100%到0%缩减." -- Needs review
+L["Controls which direction the bar fills up. With this checked, the bar will fill opposite from normal (e.g. for health: 0% at the top, 100% at the bottom)."] = "控制条的填充方向. " -- Needs review
 L["Cooldown"] = "冷却"
 L["Cooldown timer display"] = "冷却定时器显示"
 L["Count color"] = "计数颜色"
@@ -176,7 +176,7 @@ L["Debugging"] = "除错"
 L["Defines when cast bar should flash on failed spells"] = "Defines when cast bar should flash on failed spells" -- Requires localization
 L["Defines when cast bar should flash on instant spells"] = "Defines when cast bar should flash on instant spells" -- Requires localization
 L["Delete me"] = "删除我"
-L["Deletes this custom module and all associated settings. Cannot be undone!"] = "Deletes this custom module and all associated settings. Cannot be undone!" -- Requires localization
+L["Deletes this custom module and all associated settings. Cannot be undone!"] = "删除此自定模组和相关设置. 无法恢复!" -- Needs review
 L["Determines the bar width compared to the whole texture width"] = "Determines the bar width compared to the whole texture width" -- Requires localization
 L["Display aura icon"] = "显示光环图标"
 L["Display mode"] = "显示模式"
@@ -187,16 +187,16 @@ L["Display target guild"] = "显示目标公会"
 L["Display target name"] = "显示目标名称"
 L["Display when empty"] = "显示当空的时"
 L["Display when targeting"] = "目标时显示"
-L["Distance between the left and right bars"] = "Distance between the left and right bars" -- Requires localization
+L["Distance between the left and right bars"] = "左边条列和右边条列之间的距离" -- Needs review
 L[ [=[DogTag-formatted string to use for the bottom text line (leave blank to revert to old behavior)
 
 Type /dogtag for a list of available tags.
 
-Remember to press Accept after filling out this box or it will not save.]=] ] = [=[DogTag-formatted string to use for the bottom text line (leave blank to revert to old behavior)
+Remember to press Accept after filling out this box or it will not save.]=] ] = [=[下面文本行可用DogTag格式串 (留空会恢复为旧特性)
 
-Type /dogtag for a list of available tags.
+输入 /dogtag 查看可用的tags.
 
-Remember to press Accept after filling out this box or it will not save.]=] -- Requires localization
+记得添加完毕点接受或回车确认修改, 否则设置不会保存.]=] -- Needs review
 L[ [=[DogTag-formatted string to use for the left side of the bar.
 
 Type /dogtag for a list of available tags.
@@ -291,12 +291,12 @@ L["Hide Blizzard Buffs"] = "隐藏暴雪增益"
 L["Hide Blizzard Frame"] = "隐藏暴雪框架"
 L["Hide Blizzard Party"] = "隐藏暴雪队伍"
 L["Hide during pet battles"] = "Hide during pet battles" -- Requires localization
-L["Hides Blizzard Focus frame and disables all events related to it"] = "Hides Blizzard Focus frame and disables all events related to it" -- Requires localization
+L["Hides Blizzard Focus frame and disables all events related to it"] = "隐藏暴雪焦点框体并且禁用所有相关事件" -- Needs review
 L[ [=[Hides Blizzard frame and disables all events related to it.
 
-NOTE: Blizzard attaches this UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] ] = [=[Hides Blizzard frame and disables all events related to it.
+NOTE: Blizzard attaches this UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] ] = [=[隐藏暴雪框体并且禁用所有相关事件.
 
-NOTE: Blizzard attaches this UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] -- Requires localization
+NOTE: Blizzard attaches this UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] -- Needs review
 L[ [=[Hides Blizzard Harmony Power frame and disables all events related to it.
 
 NOTE: Blizzard attaches the harmony power UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] ] = [=[Hides Blizzard Harmony Power frame and disables all events related to it.
@@ -307,10 +307,10 @@ L[ [=[Hides Blizzard Holy Power frame and disables all events related to it.
 NOTE: Blizzard attaches the holy power UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] ] = [=[Hides Blizzard Holy Power frame and disables all events related to it.
 
 NOTE: Blizzard attaches the holy power UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] -- Requires localization
-L["Hides Blizzard Player frame and disables all events related to it"] = "Hides Blizzard Player frame and disables all events related to it" -- Requires localization
-L["Hides Blizzard Rune frame and disables all events related to it"] = "Hides Blizzard Rune frame and disables all events related to it" -- Requires localization
-L["Hides Blizzard's default buffs frame and disables all events related to it"] = "Hides Blizzard's default buffs frame and disables all events related to it" -- Requires localization
-L["Hides Blizzard's default party frame and disables all events related to them"] = "Hides Blizzard's default party frame and disables all events related to them" -- Requires localization
+L["Hides Blizzard Player frame and disables all events related to it"] = "隐藏暴雪玩家框体并且禁用所有相关事件"
+L["Hides Blizzard Rune frame and disables all events related to it"] = "隐藏暴雪符文框体并且禁用所有相关事件"
+L["Hides Blizzard's default buffs frame and disables all events related to it"] = "隐藏暴雪默认buffs框体并且禁用所有相关事件"
+L["Hides Blizzard's default party frame and disables all events related to them"] = "隐藏暴雪默认小队框体并且禁用所有相关事件"
 L[ [=[Hides Blizzard Shadow Orb frame and disables all events related to it.
 
 NOTE: Blizzard attaches the shadow orb UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] ] = [=[Hides Blizzard Shadow Orb frame and disables all events related to it.
@@ -321,37 +321,37 @@ L[ [=[Hides Blizzard shard frame and disables all events related to it.
 NOTE: Blizzard attaches the shard UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] ] = [=[Hides Blizzard shard frame and disables all events related to it.
 
 NOTE: Blizzard attaches the shard UI to the player's unitframe, so if you have that hidden in PlayerHealth, then this won't do anything.]=] -- Requires localization
-L["Hides Blizzard Target frame and disables all events related to it"] = "Hides Blizzard Target frame and disables all events related to it" -- Requires localization
+L["Hides Blizzard Target frame and disables all events related to it"] = "隐藏暴雪目标框体并且禁用所有相关事件"
 L["Horizontal position"] = "水平位置"
 L["Horizontal Position"] = "水平位置"
 L["Horizontal position (for you dual screen freaks)"] = "水平位置 (for you dual screen freaks)"
-L["How far horizontally the buff frame should be offset from the anchor"] = "How far horizontally the buff frame should be offset from the anchor" -- Requires localization
-L["How far horizontally the debuff frame should be offset from the anchor"] = "How far horizontally the debuff frame should be offset from the anchor" -- Requires localization
+L["How far horizontally the buff frame should be offset from the anchor"] = "buff框体距锚点的水平位移距离" -- Needs review
+L["How far horizontally the debuff frame should be offset from the anchor"] = "debuff框体距锚点的水平位移距离" -- Needs review
 L["How far to offset the numeric display up or down."] = "How far to offset the numeric display up or down." -- Requires localization
-L["How far to push the elite icon right or left"] = "多远推精英图示右或左"
-L["How far to push the elite icon up or down"] = "多远推精英图示上或下"
-L["How far to push the raid icon right or left"] = "多远推团队图示右或左"
-L["How far to push the raid icon up or down"] = "多远推团队图示上或下"
-L["How far vertically the buff frame should be offset from the anchor"] = "How far vertically the buff frame should be offset from the anchor" -- Requires localization
-L["How far vertically the debuff frame should be offset from the anchor"] = "How far vertically the debuff frame should be offset from the anchor" -- Requires localization
+L["How far to push the elite icon right or left"] = "向左或向右移动精英图标的距离" -- Needs review
+L["How far to push the elite icon up or down"] = "向上或向下移动精英图标的距离" -- Needs review
+L["How far to push the raid icon right or left"] = "向左或向右移动团队图标的距离" -- Needs review
+L["How far to push the raid icon up or down"] = "向上或向下移动团队图标的距离" -- Needs review
+L["How far vertically the buff frame should be offset from the anchor"] = "buff框体距锚点的垂直位移距离" -- Needs review
+L["How far vertically the debuff frame should be offset from the anchor"] = "debuff框体距锚点的垂直位移距离" -- Needs review
 L["How long the animation should take to play"] = "How long the animation should take to play" -- Requires localization
-L["How many buffs/debuffs is shown on each row"] = "How many buffs/debuffs are shown on each row" -- Requires localization
+L["How many buffs/debuffs is shown on each row"] = "每行显示多少个buffs/debuffs" -- Needs review
 L[ [=[How many total applications of this buff/debuff can be applied. For example, only 5 sunders can ever be on a target, so this would be set to 5 for tracking Sunder.
 
 Remember to press ENTER after filling out this box with the name you want or it will not save.]=] ] = [=[How many total applications of this buff/debuff can be applied. For example, only 5 sunders can ever be on a target, so this would be set to 5 for tracking Sunder.
 
 Remember to press ENTER after filling out this box with the name you want or it will not save.]=] -- Requires localization
 L["How much space should be between each buff or debuff icon."] = "How much space should be between each buff or debuff icon." -- Requires localization
-L["How much to offset the leader icon from the bar horizontally"] = "How much to offset the leader icon from the bar horizontally" -- Requires localization
-L["How much to offset the leader icon from the bar vertically"] = "How much to offset the leader icon from the bar vertically" -- Requires localization
-L["How much to offset the loot master icon from the bar horizontally"] = "How much to offset the loot master icon from the bar horizontally" -- Requires localization
-L["How much to offset the loot master icon from the bar vertically"] = "How much to offset the loot master icon from the bar vertically" -- Requires localization
-L["How much to offset the Party Role icon from the bar horizontally"] = "How much to offset the Party Role icon from the bar horizontally" -- Requires localization
-L["How much to offset the Party Role icon from the bar vertically"] = "How much to offset the Party Role icon from the bar vertically" -- Requires localization
-L["How much to offset the PvP icon from the bar horizontally"] = "How much to offset the PvP icon from the bar horizontally" -- Requires localization
-L["How much to offset the PvP icon from the bar vertically"] = "How much to offset the PvP icon from the bar vertically" -- Requires localization
-L["How much to offset the status icon (resting/combat) from the bar horizontally"] = "How much to offset the status icon (resting/combat) from the bar horizontally" -- Requires localization
-L["How much to offset the status icon (resting/combat) from the bar vertically"] = "How much to offset the status icon (resting/combat) from the bar vertically" -- Requires localization
+L["How much to offset the leader icon from the bar horizontally"] = "团长图标距条列的水平位移距离" -- Needs review
+L["How much to offset the leader icon from the bar vertically"] = "团长图标距条列的垂直位移距离" -- Needs review
+L["How much to offset the loot master icon from the bar horizontally"] = "拾取分配者图标距条列的水平位移距离" -- Needs review
+L["How much to offset the loot master icon from the bar vertically"] = "拾取分配者图标距条列的垂直位移距离" -- Needs review
+L["How much to offset the Party Role icon from the bar horizontally"] = "队伍角色图标距条列的水平位移距离" -- Needs review
+L["How much to offset the Party Role icon from the bar vertically"] = "队伍角色图标距条列的垂直位移距离" -- Needs review
+L["How much to offset the PvP icon from the bar horizontally"] = "PVP图标距条列的水平位移距离" -- Needs review
+L["How much to offset the PvP icon from the bar vertically"] = "PVP图标距条列的垂直位移距离" -- Needs review
+L["How much to offset the status icon (resting/combat) from the bar horizontally"] = "状态(休息/战斗)图标距条列的水平位移距离" -- Needs review
+L["How much to offset the status icon (resting/combat) from the bar vertically"] = "状态(休息/战斗)图标距条列的垂直位移距离" -- Needs review
 L["How much to scale the elite icon"] = "多少刻度的精英图示"
 L["How much to scale the leader icon"] = "多少刻度的领导者图示"
 L["How much to scale the loot master icon"] = "多少刻度的物品拾取助手图示"
@@ -359,7 +359,7 @@ L["How much to scale the Party Role icon"] = "多少刻度的队伍角色图示"
 L["How much to scale the PvP icon"] = "多少刻度的 PvP 图示"
 L["How much to scale the raid icon"] = "多少刻度的团队图示"
 L["How much to scale the status icon"] = "多少刻度的状态图示"
-L["How the graphical combo points should be displayed"] = "How the graphical combo points should be displayed" -- Requires localization
+L["How the graphical combo points should be displayed"] = "图形连击点显示方式" -- Needs review
 L["How the graphical counter should be displayed"] = "How the graphical counter should be displayed" -- Requires localization
 L["How to display the buff timer next to the name of the buff on the bar"] = "How to display the buff timer next to the name of the buff on the bar" -- Requires localization
 L["HUD scale"] = "HUD 刻度"
@@ -375,12 +375,12 @@ L["Icon Settings"] = "图示设定"
 L["Icon size"] = "图示尺寸"
 L["Icon size for auras that were applied by you, the player"] = "Icon size for auras that were applied by you, the player" -- Requires localization
 L["If the selected ability has a max range or only works on friendly units, this will ignore that check. Meaning you can use a CD bar for buff spells and it will display when you have an enemy targeted."] = "If the selected ability has a max range or only works on friendly units, this will ignore that check. Meaning you can use a CD bar for buff spells and it will display when you have an enemy targeted." -- Requires localization
-L["If this is checked, then a health value of 1100 will display as 1.1k, otherwise it shows the number"] = "If this is checked, then a health value of 1100 will display as 1.1k, otherwise it shows the number" -- Requires localization
+L["If this is checked, then a health value of 1100 will display as 1.1k, otherwise it shows the number"] = "如果选择此项, 则血量值1100会显示为1.1k. 否则直接显示数值." -- Needs review
 L[ [=[If this is checked, then a health value of 1100 will display as 1.1k, otherwise it shows the number
 
-Note: this only applies if you are NOT using DogTag]=] ] = [=[If this is checked, then a health value of 1100 will display as 1.1k, otherwise it shows the number
+Note: this only applies if you are NOT using DogTag]=] ] = [=[如果选择此项, 则血量值1100会显示为1.1k. 否则直接显示数值.
 
-Note: this only applies if you are NOT using DogTag]=] -- Requires localization
+注意: 这仅适用于没有使用DogTag的情况]=] -- Needs review
 L["If this is checked, then the buff name must be entered exactly as the full buff name. Otherwise, you can use only a portion of the name such as 'Sting' to track all stings."] = "If this is checked, then the buff name must be entered exactly as the full buff name. Otherwise, you can use only a portion of the name such as 'Sting' to track all stings." -- Requires localization
 L["If this is checked, then the counter will use your 'out of target' alpha when targeting someone who is friendly."] = "If this is checked, then the counter will use your 'out of target' alpha when targeting someone who is friendly." -- Requires localization
 L["If this is checked, then the SnD buff time shows as a percent of the maximum attainable (taking set bonuses and talents into account). Otherwise, the bar always goes from full to empty when applying SnD no matter the duration."] = "If this is checked, then the SnD buff time shows as a percent of the maximum attainable (taking set bonuses and talents into account). Otherwise, the bar always goes from full to empty when applying SnD no matter the duration." -- Requires localization
@@ -392,7 +392,7 @@ L["If you have game default font selected, this option has no effect"] = "If you
 L["If your class power is not full (or not empty in the case of Holy Power) then the module will always be displayed on your screen using the In Combat alpha setting. Otherwise it will fade to the OOC alpha when you leave combat."] = "If your class power is not full (or not empty in the case of Holy Power) then the module will always be displayed on your screen using the In Combat alpha setting. Otherwise it will fade to the OOC alpha when you leave combat." -- Requires localization
 L["Ignore range"] = "忽略范围"
 L["Import profile"] = "汇入设定档"
-L["Imports a profile as exported from another user's IceHUD."] = "Imports a profile as exported from another user's IceHUD." -- Requires localization
+L["Imports a profile as exported from another user's IceHUD."] = "从其他用户的IcdHUD导出的配置文件导入." -- Needs review
 L["Inactive mode"] = "不活动模式"
 L["Incoming heal bar alpha"] = "收入治疗条列透明度"
 L["Invert bar"] = "颠倒条列"
@@ -430,8 +430,8 @@ L["Low Threshold"] = "低门限"
 L["Low Threshold color"] = "低门限颜色"
 L["Maelstrom Count Font Size"] = "气漩计数字型尺寸"
 L["Maelstrom gap"] = "气漩间隙"
-L["Makes all modules visible so you can see where they're placed and find any that are overlapping."] = "Makes all modules visible so you can see where they're placed and find any that are overlapping." -- Requires localization
-L["Make this bar wider or thinner than others"] = "Make this bar wider or thinner than others" -- Requires localization
+L["Makes all modules visible so you can see where they're placed and find any that are overlapping."] = "使所有的模块可见, 这样你就可以看到它们的位置和发现任何重叠" -- Needs review
+L["Make this bar wider or thinner than others"] = "使此条列比其他的更宽或更窄" -- Needs review
 L["Marker Settings"] = "标记设定"
 L["Maximum applications"] = "最大应用"
 L["Maximum duration"] = "最大持续时间"
@@ -461,7 +461,7 @@ L["Only show debuffs by me"] = "只有显示减益由我"
 L["Only show for my debuffs"] = "只有显示我的减益"
 L["Only show if target uses mana"] = "只有显示如果目标使用法力"
 L["Only show in groups"] = "只有显示组群"
-L["Only show the threat bar if you are in a group or you have an active pet"] = "Only show the threat bar if you are in a group or you have an active pet" -- Requires localization
+L["Only show the threat bar if you are in a group or you have an active pet"] = "只在队伍中或有宠物时显示威胁条" -- Needs review
 L["Only show with a target selected"] = "Only show with a target selected" -- Requires localization
 L["Only track auras by me"] = "只有追踪光环由我"
 L["Other"] = "其它"
@@ -490,7 +490,7 @@ L["Raid Icon X Offset"] = "团队图示 X 位移"
 L["Raid Icon Y Offset"] = "团队图示 Y 位移"
 L["Range string"] = "范围字符串"
 L["Remove"] = "移除"
-L["Reverse channeling"] = "Reverse channeling" -- Requires localization
+L["Reverse channeling"] = "翻转通道" -- Needs review
 L["Reverse direction"] = "颠倒方向"
 L["Right Tag"] = "右标签"
 L["Rotate 90 degrees"] = "旋转 90 度"
@@ -514,6 +514,7 @@ L["Settings related to icons"] = "设定相关的图示"
 L["Settings related to positioning and alpha"] = "设定相关的位置和透明度"
 L["Settings related to texts"] = "设定相关的文本"
 L["Shadow"] = "Shadow" -- Requires localization
+L["Show Anticipation"] = "Show Anticipation" -- Requires localization
 L["Show bar as % of maximum"] = "Show bar as % of maximum" -- Requires localization
 L["Show buffs"] = "显示增益"
 L["Show combat status"] = "显示战斗状态"
@@ -530,6 +531,7 @@ L["Show leader icon"] = "显示领袖者图标"
 L["Show loot master icon"] = "显示物品拾取助手图标"
 L["Show Minimap Icon"] = "显示小地图图标"
 L["Show Party Role icon"] = "显示队伍角色图标"
+L["Show points stored by the Anticipation talent"] = "Show points stored by the Anticipation talent" -- Requires localization
 L["Show PvP icon"] = "显示 PvP 图标"
 L["Show Raid Icon"] = "显示团队图标"
 L["Show resting status"] = "显示休息状态"
@@ -543,6 +545,8 @@ L["Show spell rank"] = "显示法术等级"
 L["Show stacking debuffs"] = "显示堆栈减益"
 L["Show stacking debuffs in ToT info"] = "显示在 ToT 信息堆栈减益"
 L["Show status icon"] = "显示状态图标"
+L["Shows the name of the threat holder colorized by his or her role"] = "Shows the name of the threat holder colorized by his or her role" -- Requires localization
+L["Show tank name"] = "Show tank name" -- Requires localization
 L["Show the tooltip for this unit when the mouse is hovering over it."] = "Show the tooltip for this unit when the mouse is hovering over it." -- Requires localization
 L["Show tooltip"] = "Show tooltip" -- Requires localization
 L["Side"] = "侧面"

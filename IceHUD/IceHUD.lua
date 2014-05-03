@@ -297,7 +297,7 @@ function IceHUD:InitLDB()
 
 		if ldbButton then
 			function ldbButton:OnTooltipShow()
-				self:AddLine(L["IceHUD"] .. " 1.8.17")
+				self:AddLine(L["IceHUD"] .. " 1.8.18.1")
 				self:AddLine(L["Click to open IceHUD options."], 1, 1, 1)
 			end
 		end
