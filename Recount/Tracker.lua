@@ -4,7 +4,7 @@ local BossIDs = LibStub("LibBossIDs-1.0")
 
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1248 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1251 $", 12, -3))
 if Recount.Version < revision then Recount.Version = revision end
 
 local dbCombatants
@@ -384,7 +384,7 @@ local AbsorbSpellDuration =
 local bossIDs = BossIDs.BossIDs
 
 function Recount.IsBoss(GUID)
-   return GUID and bossIDs[tonumber(GUID:sub(7, 10), 16)]
+   return GUID and bossIDs[tonumber(GUID:sub(-13, -9), 16)]
 end
 
 	
@@ -1503,7 +1503,7 @@ end
 
 -- Elsia: Borrowed shamelessly from Threat-2.0
 function Recount:NPCID(guid)
-	return tonumber(guid:sub(-12,-7),16)
+	return tonumber(guid:sub(-13,-7),16)
 end
 
 function Recount:DetectPet(name, nGUID, nFlags)
