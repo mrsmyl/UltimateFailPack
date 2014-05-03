@@ -3,7 +3,7 @@
 --
 -- Main module of MobInfo-2 AddOn
 
-miVersionNo = 'r71'
+miVersionNo = 'r73'
 --
 -- MobInfo-2 is a World of Warcraft AddOn that provides you with useful
 -- additional information about Mobs (ie. opponents/monsters). It adds
@@ -17,7 +17,7 @@ miVersionNo = 'r71'
 -- I have "inhereted" MobInfo from Dizzarian and MobHealth-2 from Wyv
 -- and now continue to update and improve the united result.
 --
--- $header: MobInfo2.lua r71 2012-08-30T11:55:08Z speedwaystar ext $
+-- $header: MobInfo2.lua r73 2013-11-01T11:25:30Z speedwaystar ext $
 
 -- library pointers
 local libPeriodicTable = LibStub("LibPeriodicTable-3.1")
@@ -797,7 +797,7 @@ end  -- MI2_DeleteItemFromDB()
 -- name of the player is stored.
 --
 function MI2_SetPlayerName()
-	local charName = GetCVar( "realmName" )..':'..UnitName("player")
+	local charName = GetRealmName()..':'..UnitName("player")
 	if not MI2_CharTable[charName] then
 		MI2_CharTable.charCount = MI2_CharTable.charCount + 1
 		MI2_CharTable[charName] = "c"..MI2_CharTable.charCount
