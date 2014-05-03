@@ -1,12 +1,12 @@
-## Interface: 50200
+## Interface: 50400
 ## Title: Reforgenator
 ## Notes: Figure out what to reforge
-## Author: ducky12432, gunboat, gnerfed
-## URL: 
-## Version: v2.4
+## Author: ducky12432
+## URL: http://www.curse.com/addons/wow/reforgenator
+## Version: v2.4.2
 ## SavedVariables: ReforgenatorDB
 ## OptionalDeps: Ace3, tekDebug
-## X-Curse-Packaged-Version: v2.4
+## X-Curse-Packaged-Version: v2.4.2
 ## X-Curse-Project-Name: Reforgenator
 ## X-Curse-Project-ID: reforgenator
 ## X-Curse-Repository-ID: wow/reforgenator/mainline

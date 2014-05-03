@@ -1013,19 +1013,19 @@ function Reforgenator:AffWarlockModel()
     return model
 end
 
---updated 9/8 for 5.04
+--updated 3/9 for 5.2
 function Reforgenator:DestroWarlockModel()
     local model = ReforgeModel:new()
     model.readOnly = true
     model.statWeights = 
 	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 2.83,
-		["ITEM_MOD_MASTERY_RATING_SHORT"] = 2.08,
-		["ITEM_MOD_CRIT_RATING_SHORT"] = 1.40,
-        ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.40,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 2.1,
+        ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.1,
+		["ITEM_MOD_MASTERY_RATING_SHORT"] = 1.75,
         }
 
-    model.notes = 'http://www.noxxic.com/wow/pve/warlock/destruction/dps-stat-priority-and-details'
+    model.notes = 'http://www.noxxic.com/wow/pve/warlock/destruction/stat-priority'
 
     model.reforgeOrder = 
 	{
@@ -1034,7 +1034,7 @@ function Reforgenator:DestroWarlockModel()
             cap = "SpellHitCap"
         },
 		{
-            rating = CR_MASTERY,
+            rating = CR_HASTE_SPELL,
             cap = "MaximumPossible"
         },
 		{
@@ -1042,9 +1042,10 @@ function Reforgenator:DestroWarlockModel()
             cap = "MaximumPossible"
         },
         {
-            rating = CR_HASTE_SPELL,
+            rating = CR_MASTERY,
             cap = "MaximumPossible"
         },
+		
         
     }
 
@@ -1057,8 +1058,8 @@ function Reforgenator:DemoWarlockModel()
     model.statWeights = 
 	{
         ["ITEM_MOD_HIT_RATING_SHORT"] = 3.74,
-		["ITEM_MOD_MASTERY_RATING_SHORT"] = 2.97,
-        ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.37,
+		["ITEM_MOD_CRIT_RATING_SHORT"] = 2.97,
+		["ITEM_MOD_MASTERY_RATING_SHORT"] = 2.34,
         ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.05,
         
     }
@@ -1072,14 +1073,14 @@ function Reforgenator:DemoWarlockModel()
             cap = "SpellHitCap"
         },
 		{
+            rating = CR_CRIT_SPELL,
+            cap = "MaximumPossible"
+        },
+		{
             rating = CR_MASTERY,
             cap = "MaximumPossible"
         },
 		{
-            rating = CR_CRIT_SPELL,
-            cap = "MaximumPossible"
-        },
-                {
             rating = CR_HASTE_SPELL,
             cap = "MaximumPossible"
         },

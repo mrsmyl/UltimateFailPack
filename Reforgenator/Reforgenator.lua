@@ -1,7 +1,7 @@
 Reforgenator = LibStub("AceAddon-3.0"):NewAddon("Reforgenator", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Reforgenator", false)
 local RI = LibStub("LibReforgingInfo-1.0")
-local version = "2.4"
+local version = "2.4.2"
 
 -- There isn't really a "spirit" combat rating, but it will simplify
 -- some things if we pretend there is one
@@ -1816,7 +1816,7 @@ function Reforgenator:GetPlayerModel()
 	self:Explain("expHitConversionRate=" .. to_string(playerModel.expHitConversionRate))
     if playerModel.expHitConversionRate then
         playerModel.statEffectMap["ITEM_MOD_EXPERTISE_RATING_SHORT"] = {
-            CR_EXPERTISE, CR_HIT_SPELL, CR_HIT_MELEE, CR_HIT_RANGED
+            CR_EXPERTISE, CR_HIT_SPELL, --CR_HIT_MELEE, CR_HIT_RANGED
         }
     end
 
@@ -1915,10 +1915,15 @@ end
 function Reforgenator:CalculateSpellHitCap(playerModel)
     local c = Reforgenator.constants
     local K = c.RATING_CONVERSIONS.spellHit
-    local db = Reforgenator.db
+	local E = c.RATING_CONVERSIONS.expertise
+    local D = (K - E)
+	local db = Reforgenator.db
     local cap = c.SPELL_HIT_CAP_BY_TARGET_LEVEL[db.char.targetLevelSelection[playerModel.talentGroup] or 2]
 
-    local hitCap = (cap * K)
+	self:Explain("spellhit="..K)
+	self:Explain("epertise=".. E)
+	self:Explain("difference=" .. D)
+    local hitCap = (cap * (K))
     self:Explain("base spell hit rating = " .. hitCap)
 
     -- Mods to hit: Draenei get 1% bonus
@@ -2079,7 +2084,7 @@ function Reforgenator:HasteTo1SecGCD(playerModel)
 end
 
 function Reforgenator:CalculateMaximumValue(playerModel)
-    return 9999
+    return 999999
 end
 
 function Reforgenator:CalculateFrostSoftCritCap(playerModel)
@@ -2618,11 +2623,13 @@ function Reforgenator:ReforgeItem(playerModel, suggestion, excessRating)
                         and playerModel.spiritHitConversionRate then
                     delta = math.floor(delta * playerModel.spiritHitConversionRate)
                 end
+				
 				if sf == "ITEM_MOD_EXPERTISE_RATING_SHORT"
                         and v == CR_HIT_SPELL
                         and playerModel.expHitConversionRate then
                     delta = math.floor(delta * playerModel.expHitConversionRate)
                 end
+				
                 excessRating[v] = excessRating[v] - delta
             end
         end
@@ -2746,6 +2753,7 @@ function Reforgenator:OptimizeSolution(playerModel, rating, desiredValue, statWe
     self:Explain("reforging for " .. c.RATING_NAMES[rating] .. ", starting at " .. playerModel.playerStats[rating])
     if rating == CR_HIT_SPELL then
         self:Explain("prefer spirit = " .. to_string(preferSpirit))
+		self:Explain("Convert expertise = " .. to_string(preferExpertise))
     end
 
     soln = SolutionContext:new()

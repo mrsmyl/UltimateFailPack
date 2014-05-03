@@ -1,0 +1,12 @@
+tag v2.4.2
+6a2df5c1aeed841a7fcf66c60b33eae59237ef9c
+dnewell <newell.donald@gmail.com>
+2014-03-07 10:36:05 -0500
+
+Tagging as v2.4.2
+
+
+--------------------
+
+dnewell:
+	- bumping rev to 2.4.2
