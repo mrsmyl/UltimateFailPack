@@ -2292,7 +2292,11 @@ function PawnUI_OnQuestInfo_ShowRewards()
 		local ItemButton = _G["QuestInfoItem" .. Reward.Index]
 		local TextureName
 		if ItemButton then
-			if not ItemButton.PawnQuestAdvisor then ItemButton.PawnQuestAdvisor = ItemButton:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture") end
+			if not ItemButton.PawnQuestAdvisor then
+				ItemButton.PawnQuestAdvisor = ItemButton:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture")
+				-- Mod compatibility: ElvUI
+				ItemButton.PawnQuestAdvisor:SetDrawLayer("OVERLAY", 7)
+			end
 			if Reward.Result == "upgrade" then
 				ItemButton.PawnQuestAdvisor:SetTexture("Interface\\AddOns\\Pawn\\Textures\\UpgradeArrowBig")
 				ItemButton.PawnQuestAdvisor:SetTexCoord(0, .5, 0, .5)

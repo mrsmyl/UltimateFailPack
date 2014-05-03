@@ -294,11 +294,11 @@ Weitere Informationen zur Anpassung von Pawn findet ihr in der Hilfedatei (Readm
 		Plans = "Pläne:",
 		Plate = "^Platte$",
 		Polearm = "^Stangenwaffe$",
-		PvPPower = "^%+?([%d%.,]+) PvP-Macht$",
+		PvPPower = "^%+?([%d%.,]+) P[vV]P[- ]Macht$", -- Needs review
 		RaidFinder = "^Schlachtzugsbrowser$",
 		Recipe = "Rezept:",
 		Requires2 = "^Benötigt",
-		Resilience = "^%+?([%d%.,]+) P[vV]P[- ]Abhärtung$",
+		Resilience = "^%+?([%d%.,]+) P[vV]P[- ]Abhärtung$", -- Needs review
 		Resilience2 = "^UNUSED$",
 		Schematic = "Vorlage:",
 		Scope = "^Zielfernrohr %(%+([%d%.,]+) Schaden%)$",
