@@ -1,11 +1,11 @@
 ﻿--[[
 Name: LibStatLogic-1.2
 Description: A Library for stat conversion, calculation and summarization.
-Revision: $Revision: 192 $
+Revision: $Revision: 195 $
 Author: Whitetooth
 Email: hotdogee [at] gmail [dot] com
 WoW 5.0 Contribuiter: Gathirer
-Last Update: $Date: 2013-06-16 03:41:30 +0000 (Sun, 16 Jun 2013) $
+Last Update: $Date: 2013-10-30 01:40:57 +0000 (Wed, 30 Oct 2013) $
 Website:
 Documentation:
 SVN: $URL $
@@ -33,7 +33,7 @@ Debug:
 ]]
 
 local MAJOR = "LibStatLogic-1.2";
-local MINOR = "$Revision: 192 $";
+local MINOR = "$Revision: 195 $";
 
 local StatLogic = LibStub:NewLibrary(MAJOR, MINOR)
 if not StatLogic then return end
@@ -101,7 +101,8 @@ StatLogic.ItemsNotRecognized = {}; --list of all text that we were unable to par
 	5.2.0       16709  --The Thunder King   GetBuildInfo() -> "5.2.0", "16709", "Mar 14 2013",  50200  Released to live 3/12/2013
 	5.2.0		16826  --The Thunder King   GetBuildInfo() -> "5.2.0", "16826", "Apr 8 2013",   50200
 	5.3.0		16977  --Escalation			GetBuildInfo() -> "5.3.0", "16977", "May 20 2013",  50300
-
+	5.3.0		17116  --Escalation			GetBuildInfo() -> "5.3.0", "17116", "Jun 21 2013",  50300
+	5.4.1		17538  --Siege of Orgrimmar GetBuildInfo() -> "5.4.1", "17538", "Oct 25 2013",  50400  Released to live 10/29/2013
 --]]
 
 -- Our localization information
@@ -7702,8 +7703,33 @@ function StatLogic:ParseLine(table, text, r,g,b)
 								-- Pattern scan
 								for _, pattern in ipairs(L.DeepScanPatterns) do
 									local _, _, statText1, value, statText2 = strfind(lowered, pattern)
+
 									if value then
-										local statText = statText1..statText2
+										local statText;
+
+										--[[
+											e.g. Inscription of the Earth Prince (SpellID 86402)
+									
+											Tearing apart an double enchant line, e.g.:
+												Enchanted: +195 Stamina and +25 Dodge
+											the deep scan will split it into:
+												Enchanted: +300 Stamina
+												+120 Strength
+											and then further into process the first line into
+												Enchanted:Stamina
+
+											Strip off the word "Enchanted:" from statText1 if it actually is "Enchanted:"
+										
+											The first thing to do is get the string "Enchanted:" from the localized globalstring 
+												ENCHANTED_TOOLTIP_LINE = "Enchanted: %s"
+										--]]
+										local SEnchantedTooltipPrefix = ENCHANTED_TOOLTIP_LINE:gsub("(%%s)", ""):lower():trim(); --"Enchanted:"
+										if (statText1 == SEnchantedTooltipPrefix) then
+											statText = statText2;
+										else
+											statText = statText1..statText2;
+										end;
+											
 										local idTable = L.StatIDLookup[statText]
 										--print(statText.."/"..pattern)
 										if idTable == false then
@@ -8745,19 +8771,19 @@ local LibStatLogicTests = {
 
 			if (stat1) then
 				if (table[stat1] == nil) then dumper(table); end;
-				checkEquals(value1, table[stat1], "Stat1 "..stat1);
+				checkEquals(value1, table[stat1], "In \""..text.."\". Stat1="..stat1);
 			end
 			if (stat2) then
 				if (table[stat2] == nil) then dumper(table); end;
-				checkEquals(value2, table[stat2], "Stat2 "..stat2);
+				checkEquals(value2, table[stat2], "In \""..text.."\". Stat2="..stat2);
 			end
 			if (stat3) then
 				if (table[stat3] == nil) then dumper(table); end;
-				checkEquals(value3, table[stat3], "Stat3 "..stat3);
+				checkEquals(value3, table[stat3], "In \""..text.."\". Stat3="..stat3);
 			end
 			if (stat4) then
 				if (table[stat4] == nil) then dumper(table); end;
-				checkEquals(value4, table[stat4], "Stat4 "..stat4);
+				checkEquals(value4, table[stat4], "In \""..text.."\". Stat4="..stat4);
 			end
 		end;		
 
@@ -8788,17 +8814,33 @@ local LibStatLogicTests = {
 		testStats("+1,234 Stamina (Reforged from Dodge)", "STA", 1234);
 		testStats("+140 Expertise (Reforged from Parry)", "EXPERTISE_RATING", 140);
 		testStats("+210 Critical Strike (Reforged from Hit Chance)", "MELEE_CRIT_RATING", 210);		
+		
+		--5.1 Landfall - Enchants with multiple stats
+		testStats("Enchanted: +300 Stamina", "STA", 300); --e.g. Spell 104397 Enchant Chest - Superior Stamina
+		testStats("Enchanted: +180 Strength", "STR", 180); --e.g. Spell=104390 Enchant Bracer - Excpetional Strength
+		testStats("Enchanted: +300 Stamina and +180 Strength", "STA", 300, "STR", 180); --TODO: Find an example of an actual enchant; so i can actually test it. Or at least document it
+		
+		--Areko found the actual exchants to have dual effects
+		testStats("Enchanted: +130 Intellect and +25 Haste", "INT", 130, "MELEE_HASTE_RATING", 25, "SPELL_HASTE_RATING", 25); --Felfire Inscription, SpellID=86403, EffectID=4196
+		testStats("Enchanted: +195 Stamina and +25 Dodge", "STA", 195, "DODGE_RATING", 25); --Inscription of the Earth Prince, spellID=86402, effectID=4195
+		testStats("Enchanted: +130 Strength and +25 Critical Strike", "STR", 130, "MELEE_CRIT_RATING", 25); --Lionsmane Inscription, spellID=86401, effectID=4194
+		testStats("Enchanted: +130 Agility and +25 Mastery", "AGI", 130, "MASTERY_RATING", 25); --Swiftsteel Inscription, spellID=86375, effectID=4193
+		testStats("Enchanted: +285 Intellect and +165 Spirit", "INT", 285, "SPI", 165); --Greater Pearlescent Spellthread, itemID=82444
+		testStats("Enchanted: +285 Intellect and +165 Critical Strike", "INT", 285, "MELEE_CRIT_RATING", 165); --Greater Cerulean Spellthread, itemID=82445
+		testStats("Enchanted: +285 Agility and +165 Critical Strike", "AGI", 285, "MELEE_CRIT_RATING", 165); --Shadowleather Leg Armor, itemID=83764
+		testStats("Enchanted: +430 Stamina and +165 Dodge", "STA", 430, "DODGE_RATING", 165); --Ironscale Leg Armor, itemID=83763
+		testStats("Enchanted: +285 Strength and +165 Critical Strike", "STR", 285, "MELEE_CRIT_RATING", 165); --Angerhide Leg Armor, itemID=83765
 	end;
 	
 	testGetStrPerParry = function()
 		local Qs = StatLogic:GetStrPerParry();
 		
-		print("GetStrPerParry: Qs="..Qs or 'nil');
+		print("GetStrPerParry: Qs="..(Qs or 'nil').."  (exact value 951.158596 for Warriors/Paladins at level 90");
 	end;
 	
 	testGetAgiPerDodge = function()
 		local Qa = StatLogic:GetAgiPerDodge();
-		print("GetAgiPerDodge: Qa="..Qa or 'nil');
+		print("GetAgiPerDodge: Qa="..(Qa or 'nil').."  (theory craft is 10,000 at level 90)");
 	end;	
 
 };	

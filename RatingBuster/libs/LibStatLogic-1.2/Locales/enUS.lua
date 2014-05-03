@@ -421,7 +421,8 @@ PatternLocale.enUS = { -- {{{
 	-- 5.1 Landfall added "(Reforged from Xxx)" next to the +Stat items, e.g.:
 	--		+384 Strength (Reforged from Parry)
 	--		+1,234 Stamina (Reforged from Critical Strike)
-	-- 5.1 also changed enchantments to "Enchanted: %s" (e.g. "Enchanted: +170 Strength"),
+	-- 5.1 also changed enchantments to "Enchanted: %s" (e.g. "Enchanted: +170 Strength")
+	-- Can also be Enchanted: %s and %s (e.g. "Enchanted: +120 Stamina and +80 Strength")
 	-- therefore this pattern should not be limited to the start of the line (start with "^") to also match enchants.
 	--["SinglePlusStatCheck"] = "(([%+%-][%d]+)%s([%s%a]+[%a]+)%s*(%(?[%a%s]*%)?))%s?",  --from http://stackoverflow.com/questions/13619193/greed-non-greedy-pattern-matching-and-optional-suffixes-in-lua#13619193
 	--["SinglePlusStatCheck"] = "(([%+%-]"..patNumber..")%s([%s%a]+[%a]+)%s*(%(?[%a%s]*%)?))%s?",
