@@ -1396,6 +1396,21 @@
                   </Frame>
                 </Frames>
               </Frame>
+				<Button name="HealBot_Options_FAQAnswerButton" inherits="UIPanelButtonTemplate" text="HEALBOT_OPTIONS_BUTTONLOADSKIN">
+					<Size>
+					  <AbsDimension x="250" y="25"/>
+					</Size>
+				  <Anchors>
+					<Anchor point="TOP" relativeTo="HealBot_Options_FAQ" relativePoint="BOTTOM">
+					  <Offset>
+						<AbsDimension x="0" y="-225" />
+					  </Offset>
+					</Anchor>
+				  </Anchors>
+					<Scripts>
+					  <OnClick>HealBot_Options_FAQAnswerButton_OnClick()</OnClick>
+					</Scripts>
+				</Button>
               <Frame name="HealBot_Options_Panel0_3">
                 <Size>
                   <AbsDimension y="400"/>
@@ -1537,7 +1552,7 @@
                     <Anchors>
                       <Anchor point="TOPLEFT">
                         <Offset>
-                          <AbsDimension x="30" y="-30" />
+                          <AbsDimension x="45" y="-15" />
                         </Offset>
                       </Anchor>
                     </Anchors>
@@ -1561,7 +1576,7 @@
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="HealBot_Options_HideOptions" relativePoint="BOTTOMLEFT">
                         <Offset>
-                          <AbsDimension x="0" y="-15" />
+                          <AbsDimension x="0" y="-12" />
                         </Offset>
                       </Anchor>
                     </Anchors>
@@ -1585,7 +1600,7 @@
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="HealBot_Options_ShowMinimapButton" relativePoint="BOTTOMLEFT">
                         <Offset>
-                          <AbsDimension x="135" y="-25" />
+                          <AbsDimension x="135" y="-18" />
                         </Offset>
                       </Anchor>
                     </Anchors>
@@ -1593,11 +1608,23 @@
                       <OnClick>HealBot_Options_EnableLibQuickHealth_OnClick(self)</OnClick>
                     </Scripts>
                   </CheckButton>
-                  <CheckButton name="HealBot_Options_NoAuraWhenRested" inherits="OptionsCheckButtonTemplate">
+                  <CheckButton name="HealBot_Options_EnableAutoCombat" inherits="OptionsCheckButtonTemplate">
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="HealBot_Options_EnableLibQuickHealth" relativePoint="BOTTOMLEFT">>
                         <Offset>
-                          <AbsDimension x="0" y="-15" />
+                          <AbsDimension x="0" y="-12" />
+                        </Offset>
+                      </Anchor>
+                    </Anchors>
+                    <Scripts>
+                      <OnClick>HealBot_Options_EnableAutoCombat_OnClick(self)</OnClick>
+                    </Scripts>
+                  </CheckButton>
+                  <CheckButton name="HealBot_Options_NoAuraWhenRested" inherits="OptionsCheckButtonTemplate">
+                    <Anchors>
+                      <Anchor point="TOPLEFT" relativeTo="HealBot_Options_EnableAutoCombat" relativePoint="BOTTOMLEFT">>
+                        <Offset>
+                          <AbsDimension x="0" y="-12" />
                         </Offset>
                       </Anchor>
                     </Anchors>
@@ -1609,7 +1636,7 @@
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="HealBot_Options_NoAuraWhenRested" relativePoint="BOTTOMLEFT">>
                         <Offset>
-                          <AbsDimension x="0" y="-15" />
+                          <AbsDimension x="0" y="-12" />
                         </Offset>
                       </Anchor>
                     </Anchors>
@@ -1636,7 +1663,7 @@
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="HealBot_Options_DisableHealBotOpt" relativePoint="BOTTOMLEFT">>
                         <Offset>
-                          <AbsDimension x="-32" y="-60" />
+                          <AbsDimension x="-58" y="-58" />
                         </Offset>
                       </Anchor>
                     </Anchors>

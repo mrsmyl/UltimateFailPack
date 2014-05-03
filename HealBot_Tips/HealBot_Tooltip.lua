@@ -71,9 +71,9 @@ function HealBot_Action_RefreshTooltip()
     local maxhlth=UnitHealthMax(xUnit)
     local mana,maxmana=HealBot_UnitMana(xUnit)
     
-    if hbhlth~=hlth or hbmaxhlth~=maxhlth then
-        HealBot_HealthCheck(xUnit)
-    end
+    --if hbhlth~=hlth or hbmaxhlth~=maxhlth then
+    --    HealBot_HealthCheck(xUnit)
+    --end
 
     if hlth>maxhlth then
         maxhlth=HealBot_CorrectPetHealth(xUnit,hlth,maxhlth,xGUID)
@@ -107,17 +107,44 @@ function HealBot_Action_RefreshTooltip()
     if spellRight=="" then spellRight=nil; end
     if spellButton4=="" then spellButton4=nil; end
     if spellButton5=="" then spellButton5=nil; end
-    local LeftN, LeftR, LeftG = HealBot_Tooltip_setspellName(xUnit, spellLeft, uName)
-    local MiddleN, MiddleR, MiddleG = HealBot_Tooltip_setspellName(xUnit, spellMiddle, uName)
-    local RightN, RightR, RightG = HealBot_Tooltip_setspellName(xUnit, spellRight, uName)
-    local Button4N, Button4R, Button4G = HealBot_Tooltip_setspellName(xUnit, spellButton4, uName)
-    local Button5N, Button5R, Button5G = HealBot_Tooltip_setspellName(xUnit, spellButton5, uName)
+    local LeftN, LeftR, LeftG = HealBot_Tooltip_setspellName(xUnit, spellLeft, xGUID)
+    local MiddleN, MiddleR, MiddleG = HealBot_Tooltip_setspellName(xUnit, spellMiddle, xGUID)
+    local RightN, RightR, RightG = HealBot_Tooltip_setspellName(xUnit, spellRight, xGUID)
+    local Button4N, Button4R, Button4G = HealBot_Tooltip_setspellName(xUnit, spellButton4, xGUID)
+    local Button5N, Button5R, Button5G = HealBot_Tooltip_setspellName(xUnit, spellButton5, xGUID)
 
     HealBot_Tooltip_ClearLines();
     
     if HealBot_Globals.Tooltip_ShowTarget==1 then
         if uName then
             local r,g,b=HealBot_Action_ClassColour(xUnit)
+            local uLvl=UnitLevel(xUnit)
+            if uLvl<1 then 
+                uLvl=nil
+            else
+                uLvl="Level "..uLvl
+            end
+            local uClassify=UnitClassification(xUnit) or " "
+            if uClassify=="worldboss" then 
+                uClassify="Boss"
+            elseif uClassify=="rareelite" then 
+                uClassify="Rare Elite"
+            elseif uClassify=="elite" then 
+                uClassify="Elite"
+            elseif uClassify=="rare" then 
+                uClassify="Rare"
+            else
+                uClassify=nil
+            end
+            if uClassify then
+                if uLvl then
+                    uLvl=uClassify.." "..uLvl
+                else
+                    uLvl="Boss"
+                end
+            elseif not uLvl then
+                uLvl=""
+            end
             if UnitClass(xUnit) and UnitIsPlayer(xUnit) then
                 local unitSpec = " "
                 if HealBot_UnitData[xGUID] then
@@ -129,15 +156,13 @@ function HealBot_Action_RefreshTooltip()
                     end
                     unitSpec=HealBot_UnitData[xGUID]["SPEC"]
                 end
-                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,"Level "..UnitLevel(xUnit).." "..unitSpec..UnitClass(xUnit),r,g,b,1)                
-            elseif UnitLevel(xUnit) then
-                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,"Level "..UnitLevel(xUnit),r,g,b,1)    
+                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,uLvl.." "..unitSpec..UnitClass(xUnit),r,g,b,1)                
             else
-                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1)     
+                HealBot_Tooltip_SetLine(linenum,uName,r,g,b,1,uLvl,r,g,b,1)      
             end      
       
             local zone=nil;
-            if HealBot_Data["PNAME"]==uName or UnitIsVisible(xUnit) then
+            if HealBot_Data["PGUID"]==xGUID or UnitIsVisible(xUnit) then
                 zone=GetRealZoneText();
             elseif IsInRaid() and xUnit~="target" and xUnit~="focus" then
                 if strsub(xUnit,1,4)~="raid" then
@@ -190,17 +215,30 @@ function HealBot_Action_RefreshTooltip()
                     end
                 end
             end
-            local tp,_ = HealBot_CalcThreat(xUnit)
-            if tp>0 or mana then
+            local tp=0
+            if UnitIsPlayer(xUnit) then tp=HealBot_CalcThreat(xUnit) end
+            local uGroup=nil
+            if IsInRaid() then 
+                uGroup=HealBot_RetUnitGroups(xUnit)
+            end
+            if tp>0 or mana or uGroup then
                 linenum=linenum+1
                 if not mana then
-                    HealBot_Tooltip_SetLine(linenum,HEALBOT_WORD_THREAT.." "..tp.."%",1,0.1,0.1,1," ",0,0,0,0)
+                    if tp>0 then
+                        HealBot_Tooltip_SetLine(linenum,HEALBOT_WORD_THREAT.." "..tp.."%",1,0.1,0.1,1," ",0,0,0,0)
+                    else
+                        HealBot_Tooltip_SetLine(linenum,HEALBOT_OPTIONS_GROUPHEALS.." "..uGroup,1,1,1,1," ",0,0,0,0)
+                    end
                 else
                     local mPct=floor((mana/maxmana)*100)
                     mana=HealBot_Tooltip_readNumber(mana)
                     maxmana=HealBot_Tooltip_readNumber(maxmana)
-                    if tp==0 then
-                        HealBot_Tooltip_SetLine(linenum," ",0,0,0,0,mana.."/"..maxmana.." ("..mPct.."%)",0.4,0.4,1,1)
+                    if tp<1 then
+                        if uGroup then
+                            HealBot_Tooltip_SetLine(linenum,HEALBOT_OPTIONS_GROUPHEALS.." "..uGroup,1,1,1,1,mana.."/"..maxmana.." ("..mPct.."%)",0.4,0.4,1,1)
+                        else
+                            HealBot_Tooltip_SetLine(linenum," ",0,0,0,0,mana.."/"..maxmana.." ("..mPct.."%)",0.4,0.4,1,1)
+                        end
                     else
                         HealBot_Tooltip_SetLine(linenum,HEALBOT_WORD_THREAT.." "..tp.."%",1,0.1,0.1,1,mana.."/"..maxmana.." ("..mPct.."%)",0.4,0.4,1,1)
                     end
@@ -378,10 +416,16 @@ function HealBot_Action_RefreshTooltip()
 end
 
 function HealBot_Tooltip_readNumber(n)
-    if n>999999 then
+    if n>99999999 then
         n=tostring(HealBot_Comm_round(n/1000000,0)).."M"
-    elseif n>999 then
+    elseif n>9999999 then
+        n=tostring(HealBot_Comm_round(n/1000000,1)).."M"
+    elseif n>999999 then
+        n=tostring(HealBot_Comm_round(n/1000000,2)).."M"
+    elseif n>99999 then
         n=tostring(HealBot_Comm_round(n/1000,0)).."K"
+    elseif n>9999 then
+        n=tostring(HealBot_Comm_round(n/1000,1)).."K"
     else
         n=tostring(n)
     end
@@ -418,7 +462,7 @@ function HealBot_Tooltip_SpellPattern(click)
     return hbCombos[x]
 end
 
-function HealBot_Tooltip_setspellName(unit, spellName, uName)
+function HealBot_Tooltip_setspellName(unit, spellName, hbGUID)
     local validSpellName=spellName
     local spellAR,spellAG=1,0
     if spellName then
@@ -426,7 +470,7 @@ function HealBot_Tooltip_setspellName(unit, spellName, uName)
         if not hbCommands[strlower(spellName)] then
             local mIdx=GetMacroIndexByName(spellName)
             if mIdx==0 then 
-                validSpellName, spellAR, spellAG = HealBot_Tooltip_GetHealSpell(unit,spellName,uName) 
+                validSpellName, spellAR, spellAG = HealBot_Tooltip_GetHealSpell(unit,spellName,hbGUID) 
                 if validSpellName then
                     local z, x, _ = GetSpellCooldown(spellName);
                     if x and x>1 then 
@@ -701,7 +745,7 @@ function HealBot_Action_RefreshTargetTooltip(button)
     HealBot_Tooltip_Show()
 end
 
-function HealBot_Tooltip_GetHealSpell(unit,pattern,unitName)
+function HealBot_Tooltip_GetHealSpell(unit,pattern,hbGUID)
     local id=HealBot_GetSpellId(pattern);
     local sName = HealBot_GetSpellName(id)
     if not sName then 
@@ -710,7 +754,7 @@ function HealBot_Tooltip_GetHealSpell(unit,pattern,unitName)
             if not w then
                 return nil, 1, 0
             else
-                if unitName~=HealBot_Data["PNAME"] then
+                if HealBot_Data["PGUID"]==hbGUID then
                     if IsItemInRange(pattern,unit)~=1 then
                         return pattern, 1, 0
                     else

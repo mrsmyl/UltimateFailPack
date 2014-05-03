@@ -3,6 +3,10 @@ local hbAbsorbs={}
 local _
 
 function HealBot_IncHeals_retHealsIn(unit, hbFrame)
+    if UnitIsEnemy(unit,"player") then
+        if hbHealsIn[unit] then hbHealsIn[unit]=nil end
+        if hbAbsorbs[unit] then hbAbsorbs[unit]=nil end
+    end
     local x=hbHealsIn[unit] or 0
     local y=hbAbsorbs[unit] or 0
     if Healbot_Config_Skins.BarIACol[Healbot_Config_Skins.Current_Skin][hbFrame]["AC"]<2 then y=0 end
@@ -14,6 +18,7 @@ function HealBot_IncHeals_updHealsIn(unit)
     local xUnit,_ = HealBot_UnitID(unit)
     if xUnit then
         HealBot_IncHeals_HealsInUpdate(xUnit)
+        HealBot_Action_ResetUnitStatus(xUnit)
     end
 end
 

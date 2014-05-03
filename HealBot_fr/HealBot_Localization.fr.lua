@@ -1,4 +1,4 @@
-ï»¿-- French version (by Kubik of Vol'Jin) 2013-10-08 / V. 5.3.0.8
+ï»¿-- French version (by Kubik of Vol'Jin) 2014-03-29 / V. 5.4.7.1
 -- à = \195\160
 -- â = \195\162
 -- ç = \195\167
@@ -543,6 +543,9 @@ HEALBOT_INFO_CPUSECS                = "CPU Sec."
     HEALBOT_OPTIONS_MOUSEUP             = "Vers le haut"
     HEALBOT_OPTIONS_MOUSEDOWN           = "Vers le bas"
     HEALBOT_CMD_DELCUSTOMDEBUFF10       = "Effacer les d\195\169buffs personnalis\195\169s de priorit\195\169 10"
+    HEALBOT_CMD_DELCUSTOMDEBUFF9        = "Effacer les debuffs perso. en priorit\195\169 9"
+    HEALBOT_CMD_DELCUSTOMDEBUFF11       = "Effacer les debuffs perso. en priorit\195\169  11"
+    HEALBOT_CMD_DELCUSTOMDEBUFF12       = "Effacer les debuffs perso. en priorit\195\169  12"
     HEALBOT_ACCEPTSKINS                 = "Accepter les Skins"
     HEALBOT_SUPPRESSSOUND               = "Auto Trinket : Suppr. son"
     HEALBOT_SUPPRESSERROR               = "Auto Trinket : Suppr. erreurs"
@@ -663,7 +666,7 @@ HEALBOT_CUSTOM_CAT_14                   = "Y - Z"   -- *************************
     HEALBOT_CUSTOM_CAT_CUSTOM_MISC          = "Debuffs divers"
 
 HEALBOT_CUSTOM_DEBUFF_CATS = {
-        [HEALBOT_DEBUFF_ACID_DRENCHED_MANDIBLES] = 8,  --Mandibules trempees d'acide
+        --[[[HEALBOT_DEBUFF_ACID_DRENCHED_MANDIBLES] = 8,  --Mandibules trempees d'acide
         [HEALBOT_DEBUFF_AGONIZING_FLAMES]      = 4,  --Flammes agonisantes
         [HEALBOT_DEBUFF_BOILING_BLOOD]         = 11, --Sang bouillonant
         [HEALBOT_DEBUFF_BURN]                  = 2,  --Brulure (?) 
@@ -747,7 +750,7 @@ HEALBOT_CUSTOM_DEBUFF_CATS = {
         [HEALBOT_DEBUFF_VILE_GAS]              = 5,  --Gaz abominable
         [HEALBOT_DEBUFF_VOLATILE_OOZE]         = 2,  --Adhesif de limon volatile
         [HEALBOT_DEBUFF_WATERLOGGED]           = 11,  --Trempe
-        [HEALBOT_DEBUFF_WEB_WRAP]              = 4,  --Entoilage
+        [HEALBOT_DEBUFF_WEB_WRAP]              = 4,  --Entoilage]]--
     }
 
     HEALBOT_ABOUT_DESC1                    = "Ajoute un panneau param\195\169trable de barres pour soigner, buff, debuff, rez et suivi d\'aggro"
@@ -1011,6 +1014,8 @@ HEALBOT_ABOUT_FAQ_ANSWERS = {     [1]   = "Vous surveillez les buffs manquants \
     HEALBOT_OPTIONS_INCOMBATALERTLEVEL      = "Niveau d\'alerte - En combat";
     HEALBOT_OPTIONS_OUTCOMBATALERTLEVEL     = "Niveau d\'alerte - Hors combat";
     HEALBOT_OPTION_NUMENEMYS                = "Nombre d\'ennemis"
+    HEALBOT_WORD_AUTO                       = "Auto"
+	HEALBOT_OPTIONS_ENABLEAUTOCOMBAT        = "Activer autoCombat HealBot"
 end
 
 if (GetLocale() == "frFR") then
