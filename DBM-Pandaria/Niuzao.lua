@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(859, "DBM-Pandaria", nil, 322, 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10978 $"):sub(12, -3))
 mod:SetCreatureID(71954)
 mod:SetReCombatTime(20)
 mod:SetZone()
@@ -11,9 +11,9 @@ mod:RegisterCombat("combat_yell", L.Pull)
 mod:RegisterKill("yell", L.Victory, L.VictoryDem)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START",
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_APPLIED_DOSE",
+	"SPELL_CAST_START 144610 144611 144608",
+	"SPELL_AURA_APPLIED 144606",
+	"SPELL_AURA_APPLIED_DOSE 144606",
 	"UNIT_SPELLCAST_SUCCEEDED target focus"
 )
 
@@ -40,23 +40,25 @@ function mod:OnCombatStart(delay, yellTriggered)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 144610 then
+	local spellId = args.spellId
+	if spellId == 144610 then
 		warnHeadbutt:Show()
 		specWarnHeadbutt:Show()
 		timerHeadbuttCD:Start()
-	elseif args.spellId == 144611 then
+	elseif spellId == 144611 then
 		warnMassiveQuake:Show()
 		specWarnMassiveQuake:Show()
 		timerMassiveQuake:Start()
 		timerMassiveQuakeCD:Start()
-	elseif args.spellId == 144608 then
+	elseif spellId == 144608 then
 		warnCharge:Show()
 		specWarnCharge:Show()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 144606 then
+	local spellId = args.spellId
+	if spellId == 144606 then
 		warnOxenFortitude:Show(args.destName, args.amount or 1)
 	end
 end

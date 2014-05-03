@@ -1,18 +1,19 @@
 local mod	= DBM:NewMod(825, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10516 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11193 $"):sub(12, -3))
 mod:SetCreatureID(67977)
+mod:SetEncounterID(1565)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_REMOVED",
-	"SPELL_CAST_START",
-	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_START 133939 136294 135251 134920",
+	"SPELL_AURA_APPLIED 133971 133974",
+	"SPELL_AURA_REMOVED 137633",
+	"SPELL_CAST_SUCCESS 134476 134031",
 	"UNIT_AURA boss1",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
@@ -36,14 +37,14 @@ local specWarnSummonBats			= mod:NewSpecialWarningSwitch("ej7140", mod:IsTank())
 local timerBiteCD					= mod:NewCDTimer(8, 135251, nil, mod:IsTank())
 local timerRockfallCD				= mod:NewCDTimer(10, 134476)
 local timerCallTortosCD				= mod:NewNextTimer(60.5, 136294)
-local timerStompCD					= mod:NewNextCountTimer(49, 134920)
+local timerStompCD					= mod:NewCDCountTimer(47, 134920)
 local timerBreathCD					= mod:NewCDTimer(46, 133939)--TODO, adjust timer when Growing Anger is cast, so we can use a Next bar more accurately
 local timerSummonBatsCD				= mod:NewCDTimer(45, "ej7140", nil, nil, nil, 136685)--45-47. This doesn't always sync up to furious stone breath. Longer fight goes on more out of sync they get. So both bars needed I suppose
 local timerStompActive				= mod:NewBuffActiveTimer(10.8, 134920)--Duration of the rapid caveins
 local timerShellConcussion			= mod:NewBuffFadesTimer(20, 136431)
 
-local countdownStomp				= mod:NewCountdown(49, 134920, mod:IsHealer())
-local countdownBreath				= mod:NewCountdown(46, 133939, false, nil, nil, nil, true) -- Coundown for the kicker. mod:IsRanged() and mod:IsDps()
+local countdownStomp				= mod:NewCountdown(47, 134920, mod:IsHealer())
+local countdownBreath				= mod:NewCountdown("Alt46", 133939, false) -- Coundown for the kicker. mod:IsRanged() and mod:IsDps()
 
 local berserkTimer					= mod:NewBerserkTimer(780)
 
@@ -97,11 +98,11 @@ function mod:OnCombatStart(delay)
 	table.wipe(kickedShells)
 	timerRockfallCD:Start(15-delay)
 	timerCallTortosCD:Start(21-delay)
-	timerStompCD:Start(29-delay, 1)
-	countdownStomp:Start(29-delay)
+	timerStompCD:Start(27-delay, 1)
+	countdownStomp:Start(27-delay)
 	timerBreathCD:Start(-delay)
 	countdownBreath:Start(-delay)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsHeroic() then
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(L.WrongDebuff:format(shelldName))
 			DBM.InfoFrame:Show(5, "playergooddebuff", 137633)
@@ -120,23 +121,24 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 133939 then
+	local spellId = args.spellId
+	if spellId == 133939 then
 		warnStoneBreath:Show()
 		if not self:IsDifficulty("lfr25") then
 			specWarnStoneBreath:Show(args.sourceName)
 		end
 		timerBreathCD:Start()
 		countdownBreath:Start()
-	elseif args.spellId == 136294 then
+	elseif spellId == 136294 then
 		warnCallofTortos:Show()
 		specWarnCallofTortos:Show()
 		if self:AntiSpam(59, 3) then -- On below 10%, he casts Call of Tortos always. This cast ignores cooldown, so filter below 10% cast.
 			timerCallTortosCD:Start()
 		end
-	elseif args.spellId == 135251 then
+	elseif spellId == 135251 then
 		warnBite:Show()
 		timerBiteCD:Start()
-	elseif args.spellId == 134920 then
+	elseif spellId == 134920 then
 		stompActive = true
 		stompCount = stompCount + 1
 		warnQuakeStomp:Show(stompCount)
@@ -152,7 +154,8 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 133971 then--Shell Block (turtles dying and becoming kickable)
+	local spellId = args.spellId
+	if spellId == 133971 then--Shell Block (turtles dying and becoming kickable)
 		shellsRemaining = shellsRemaining + 1
 		addsActivated = addsActivated - 1
 		if DBM:GetRaidRank() > 0 and self.Options.ClearIconOnTurtles then
@@ -164,7 +167,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end
 		end
-	elseif args.spellId == 133974 and self.Options.SetIconOnTurtles then--Spinning Shell
+	elseif spellId == 133974 and self.Options.SetIconOnTurtles then--Spinning Shell
 		if self:AntiSpam(5, 6) then
 			if addsActivated >= 1 then--1 or more add is up from last set
 				if alternateSet then--We check whether we started with skull last time or moon
@@ -185,13 +188,15 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 137633 and args:IsPlayer() then
+	local spellId = args.spellId
+	if spellId == 137633 and args:IsPlayer() then
 		checkCrystalShell()
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args.spellId == 134476 then
+	local spellId = args.spellId
+	if spellId == 134476 then
 		if stompActive then--10 second cd normally, but cd is disabled when stomp active
 			if not firstRockfall then--Announce first one only and ignore the next ones spammed for about 9-10 seconds
 				firstRockfall = true
@@ -206,7 +211,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 				timerRockfallCD:Start()
 			end
 		end
-	elseif args.spellId == 134031 and not kickedShells[args.destGUID] then--Kick Shell
+	elseif spellId == 134031 and not kickedShells[args.destGUID] then--Kick Shell
 		kickedShells[args.destGUID] = true
 		shellsRemaining = shellsRemaining - 1
 		warnKickShell:Show(args.spellName, args.sourceName, shellsRemaining)

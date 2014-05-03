@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(725, "DBM-Pandaria", nil, 322, 1) -- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10491 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11017 $"):sub(12, -3))
 mod:SetCreatureID(62346)--Salyis not die. Only Galleon attackable and dies.
 mod:SetReCombatTime(20)
 mod:SetZone()
@@ -26,12 +26,15 @@ local timerStompCD				= mod:NewNextTimer(60, 121787)
 local timerStomp				= mod:NewCastTimer(3, 121787)
 local timerWarmongerCD			= mod:NewNextTimer(10, "ej6200", nil, nil, nil, 121747)--Comes after Stomp. (Also every 60 sec.)
 
+local berserkTimer				= mod:NewBerserkTimer(900)
+
 mod:AddReadyCheckOption(32098, false)
 
 function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
 		timerCannonBarrageCD:Start(24-delay)
 		timerStompCD:Start(50-delay)
+		berserkTimer:Start(-delay)
 	end
 end
 

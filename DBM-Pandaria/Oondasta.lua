@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(826, "DBM-Pandaria", nil, 322)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10978 $"):sub(12, -3))
 mod:SetCreatureID(69161)
 mod:SetReCombatTime(20)
 mod:SetZone()
@@ -10,11 +10,11 @@ mod:SetMinSyncRevision(10466)
 mod:RegisterCombat("combat_yell", L.Pull)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START",
-	"SPELL_CAST_SUCCESS",
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_APPLIED_DOSE",
-	"SPELL_AURA_REMOVED"
+	"SPELL_CAST_START 137457 137505",
+	"SPELL_CAST_SUCCESS 137508 137511",
+	"SPELL_AURA_APPLIED 137504",
+	"SPELL_AURA_APPLIED_DOSE 137504",
+	"SPELL_AURA_REMOVED 137504"
 )
 
 local warnCrush					= mod:NewStackAnnounce(137504, 2, nil, mod:IsTank() or mod:IsHealer())--Cast every 30 seconds roughly, lasts 1 minute. you need 3 tanks to be able to tank the boss without debuff. 2 tanks CAN do but they will always have 1 stack and take 25% more damage
@@ -53,11 +53,12 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 137457 then
+	local spellId = args.spellId
+	if spellId == 137457 then
 		warnPiercingRoar:Show()
 		specWarnPiercingRoar:Show()
 		timerPiercingRoarCD:Start()
-	elseif args.spellId == 137505 then
+	elseif spellId == 137505 then
 		warnFrillBlast:Show()
 		specWarnFrillBlast:Show()
 		timerFrillBlastCD:Start()
@@ -71,7 +72,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 137504 then
+	local spellId = args.spellId
+	if spellId == 137504 then
 		warnCrush:Show(args.destName, args.amount or 1)
 		timerCrush:Start(args.destName)
 		timerCrushCD:Start()
@@ -87,7 +89,8 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 137504 then
+	local spellId = args.spellId
+	if spellId == 137504 then
 		timerCrush:Cancel(args.destName)
 	end
 end

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(858, "DBM-Pandaria", nil, 322, 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10466 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 10978 $"):sub(12, -3))
 mod:SetCreatureID(71955)
 mod:SetReCombatTime(20)
 mod:SetZone()
@@ -11,9 +11,9 @@ mod:RegisterCombat("combat_yell", L.Pull)
 mod:RegisterKill("yell", L.Victory)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START",
-	"SPELL_DAMAGE",
-	"SPELL_MISSED",
+	"SPELL_CAST_START 144530",
+	"SPELL_DAMAGE 144538",
+	"SPELL_MISSED 144538",
 	"CHAT_MSG_MONSTER_YELL",
 	"UNIT_SPELLCAST_SUCCEEDED target focus"
 )
@@ -47,7 +47,8 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 144530 then
+	local spellId = args.spellId
+	if spellId == 144530 then
 		warnJadefireBreath:Show()
 		specWarnJadefireBreath:Show()
 		timerJadefireBreathCD:Start()

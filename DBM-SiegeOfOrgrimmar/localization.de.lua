@@ -15,6 +15,12 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(849)
 
+L:SetWarningLocalization({
+	warnCalamity		= "%s",
+	specWarnCalamity	= "%s",
+	specWarnMeasures	= "Verzweifelte Maßnahmen bald (%s)!"
+})
+
 ---------------------------
 -- Norushen --
 ---------------------------
@@ -39,6 +45,7 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetWarningLocalization({
+	warnTowerOpen		= "Turm offen",
 	warnTowerGrunt		= "Turmgrunzer"
 })
 
@@ -48,19 +55,22 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	warnTowerOpen		= "Verkünde, wenn ein Turm geöffnet wurde",
 	warnTowerGrunt		= "Verkünde das Erscheinen eines Turmgrunzers",
 	timerTowerCD		= "Zeige Zeit bis nächsten Turmangriff",
 	timerTowerGruntCD	= "Zeige Zeit bis nächster Turmgrunzer erscheint"
 })
 
 L:SetMiscLocalization({
-	Pull		= "Drachenmalklan, nehmt den Hafen wieder ein und treibt sie ins Meer! Im Namen Höllschreis und der wahren Horde!",
-	newForces1	= "Da kommen sie!",--needs to be verified (PTR screenshot-captured translation) (alliance)
-	newForces1H	= "Holt sie schnell vom Himmel, damit ich sie erwürgen kann.",
-	newForces2	= "Drachenmalklan, ausrücken!",
-	newForces3	= "Für Höllschrei!",
-	newForces4	= "Nächster Trupp, vorwärts!",
-	tower		= "Das Tor zum"--"Das Tor zum Nordturm ist durchbrochen!"/"Das Tor zum Südturm ist durchbrochen!"
+	wasteOfTime		= "Well done! Landing parties, form up! Footmen to the front!",--translate (alliance trigger)
+	wasteOfTime2	= "Gute Arbeit. Die erste Kompanie ist an Land.",
+	Pull			= "Drachenmalklan, nehmt den Hafen wieder ein und treibt sie ins Meer! Im Namen Höllschreis und der wahren Horde!",
+	newForces1		= "Da kommen sie!",--needs to be verified (wowhead-captured translation) (alliance)
+	newForces1H		= "Holt sie schnell vom Himmel, damit ich sie erwürgen kann.",
+	newForces2		= "Drachenmalklan, ausrücken!",
+	newForces3		= "Für Höllschrei!",
+	newForces4		= "Nächster Trupp, vorwärts!",
+	tower			= "Das Tor zum"--"Das Tor zum Nordturm ist durchbrochen!"/"Das Tor zum Südturm ist durchbrochen!"
 })
 
 --------------------
@@ -142,38 +152,48 @@ L= DBM:GetModLocalization(853)
 
 L:SetWarningLocalization({
 	specWarnActivatedVulnerable		= "%s wird dir erhöhten Schaden zufügen - Meiden!",
-	specWarnCriteriaLinked			= "Du bist verbunden mit %s!"
+	specWarnMoreParasites			= "Es werden mehr Parasiten benötigt - NICHT blocken!"
 })
 
 L:SetOptionLocalization({
 	specWarnActivatedVulnerable		= "Spezialwarnung, wenn dir ein neuer Getreuer erhöhten Schaden zufügen wird",
-	specWarnCriteriaLinked			= "Spezialwarnung, wenn du mit einem anderen Spieler verbunden bist ($spell:144095)"
+	specWarnMoreParasites			= "Spezialwarnung, wenn mehr Parasiten benötigt werden"
 })
 
 L:SetMiscLocalization({
-	--translate later (triggers)
-	one					= "One",
-	two					= "Two",
-	three				= "Three",
-	four				= "Four",
-	five				= "Five",
-	hisekFlavor			= "Look who's quiet now",--http://ptr.wowhead.com/quest=31510
-	KilrukFlavor		= "Just another day, culling the swarm",--http://ptr.wowhead.com/quest=31109
-	XarilFlavor			= "I see only dark skies in your future",--http://ptr.wowhead.com/quest=31216
-	KaztikFlavor		= "Reduced to mere kunchong treats",--http://ptr.wowhead.com/quest=31024
-	KaztikFlavor2		= "1 Mantid down, only 199 to go",--http://ptr.wowhead.com/quest=31808
-	KorvenFlavor		= "The end of an ancient empire",--http://ptr.wowhead.com/quest=31232
-	KorvenFlavor2		= "Take your Gurthani Tablets and choke on them",--http://ptr.wowhead.com/quest=31232
-	IyyokukFlavor		= "See opportunities. Exploit them!",--Does not have quests, http://ptr.wowhead.com/npc=65305
-	KarozFlavor			= "You won't be leaping anymore!",---Does not have questst, http://ptr.wowhead.com/npc=65303
-	SkeerFlavor			= "A bloody delight!",--http://ptr.wowhead.com/quest=31178
-	RikkalFlavor		= "Specimen request fulfilled"--http://ptr.wowhead.com/quest=31508
+	one					= "Eins",
+	two					= "Zwei",
+	three				= "Drei",
+	four				= "Vier",--needs to be verified (guessed)
+	five				= "Fünf",--needs to be verified (guessed)
+	hisekFlavor			= "Na, wer wurde jetzt zum Schweigen gebracht?",
+	KilrukFlavor		= "Ein weiterer Tag der Vernichtung des Schwarms!",
+	XarilFlavor			= "I sehe nur finstere Himmel in deiner Zukunft!",
+	KaztikFlavor		= "Zerkleinert zu bloßen Kunchong-Leckereien!",
+	KaztikFlavor2		= "1 Mantis tot, nur noch 199 weitere verbleibend!",
+	KorvenFlavor		= "Das Ende eines uralten Reiches!",
+	KorvenFlavor2		= "Nimm deine Gurthanitafeln und ersticke daran!",
+	IyyokukFlavor		= "Erkennt die Möglichkeiten. Nutzt sie aus!",
+	KarozFlavor			= "Du wirst nicht mehr herumspringen!",
+	SkeerFlavor			= "Ein blutiges Vergnügen!",
+	RikkalFlavor		= "Probenanforderung abgeschlossen!"
 })
 
 ------------------------
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	RangeFrame			= "Zeige dynamisches Abstandsfenster (8m)<br/>(mit Indikator für den $spell:147088 Schwellwert)",
+	InfoFrame			= "Zeige Infofenster für Spieler ohne Schadensreduzierung während der Unterbrechungsphasen",
+	yellMaliceFading	= "Schreie, wenn $spell:147209 bald ausläuft"
+})
+
+L:SetMiscLocalization({
+	NoReduce			= "Keine Schadensreduzierung",
+	MaliceFadeYell		= "Bösartigkeit schwindet auf %s (%d)"
+})
 
 -------------
 --  Trash  --

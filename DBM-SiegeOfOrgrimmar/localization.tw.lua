@@ -15,6 +15,10 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(849)
 
+L:SetWarningLocalization({
+	specWarnMeasures	= "絕處求生即將到來(%s)!"
+})
+
 ---------------------------
 -- Norushen --
 ---------------------------
@@ -39,6 +43,7 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetWarningLocalization({
+	warnTowerOpen		= "砲塔門被打開了",
 	warnTowerGrunt		= "塔防蠻兵"
 })
 
@@ -48,19 +53,22 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	warnTowerOpen		= "提示砲塔門被打開",
 	warnTowerGrunt		= "提示新的塔防蠻兵重生",
 	timerTowerCD		= "為下一波塔攻顯示計時器",
 	timerTowerGruntCD	= "為下一次塔防蠻兵顯示計時器"
 })
 
 L:SetMiscLocalization({
-	Pull		= "龍喉氏族，奪回碼頭，把他們推進海裡!以地獄吼及正統部落之名!",
-	newForces1	= "他們來了!",
-	newForces1H	= "趕快把她弄下來，讓我用手掐死她。",
-	newForces2	= "龍喉氏族，前進!",
-	newForces3	= "為了地獄吼!",
-	newForces4	= "下一隊，前進!",
-	tower		= "的門已經遭到破壞!"
+	wasteOfTime		= "做得好!登陸小隊，集合!步兵打前鋒!",
+	wasteOfTime2	= "很好，第一梯隊已經登陸。",
+	Pull			= "龍喉氏族，奪回碼頭，把他們推進海裡!以地獄吼及正統部落之名!",
+	newForces1		= "他們來了!",
+	newForces1H		= "趕快把她弄下來，讓我用手掐死她。",
+	newForces2		= "龍喉氏族，前進!",
+	newForces3		= "為了地獄吼!",
+	newForces4		= "下一隊，前進!",
+	tower			= "的門已經遭到破壞!"
 })
 
 --------------------
@@ -142,12 +150,12 @@ L= DBM:GetModLocalization(853)
 
 L:SetWarningLocalization({
 	specWarnActivatedVulnerable	= "你虛弱於%s - 換坦!",
-	specWarnCriteriaLinked		= "你被%s連線了!"
+	specWarnMoreParasites		= "你需要更多的寄生蟲 - 不要開招!"
 })
 
 L:SetOptionLocalization({
 	specWarnActivatedVulnerable	= "當你虛弱於活動的議會成員時顯示特別警告",
-	specWarnCriteriaLinked		= "當你被$spell:144095連線時顯示特別警告"
+	specWarnMoreParasites		= "當你需要更多寄生蟲時顯示特別警告"
 })
 
 L:SetMiscLocalization({
@@ -173,6 +181,17 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	RangeFrame			= "顯示動態距離框架(10碼)<br/>(這是智慧距離框架，當到達$spell:147126門檻時自動切換)",
+	InfoFrame			= "為玩家在中場階段時沒有傷害減免顯示訊息框架",
+	yellMaliceFading	= "當$spell:147209將要退去時大喊"
+})
+
+L:SetMiscLocalization({
+	NoReduce			= "無傷害減免",
+	MaliceFadeYell		= "%s的惡意消退中(%d)"
+})
 
 -------------
 --  Trash  --

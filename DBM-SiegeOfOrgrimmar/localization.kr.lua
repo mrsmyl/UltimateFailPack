@@ -15,6 +15,12 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(849)
 
+L:SetWarningLocalization({
+	warnCalamity		= "%s",
+	specWarnCalamity	= "%s",
+	specWarnMeasures	= "곧 궁책 (%s)!"
+})
+
 ---------------------------
 -- Norushen --
 ---------------------------
@@ -39,21 +45,25 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetWarningLocalization({
+	warnTowerOpen	= "탑문 열림",
 	warnTowerGrunt	= "폭파조 등장"
 })
 
 L:SetTimerLocalization({
-	timerTowerCD		= "다음 포탑",
+	timerTowerCD		= "다음 탑문 열림",
 	timerTowerGruntCD	= "다음 폭파조"
 })
 
 L:SetOptionLocalization({
+	warnTowerOpen		= "탑문 열림 알림 보기",
 	warnTowerGrunt		= "폭파조 등장 알림 보기",
-	timerTowerCD		= "다음 포탑 바 보기",
+	timerTowerCD		= "다음 탑문 열림 바 보기",
 	timerTowerGruntCD	= "다음 폭파조 바 보기"
 })
 
 L:SetMiscLocalization({
+	wasteOfTime		= "잘했다! 상륙 부대, 정렬! 보병대, 앞으로!",--Alliance Version
+	wasteOfTime2	= "잘 했소. 선봉대가 성공적으로 상륙했군.",--Horde Version
 	Pull			= "용아귀 부족 용사들이여! 항구를 탈환하고 적을 바다로 몰아내라! 헬스크림 님과 진정한 호드를 위하여!",
 	newForces1		= "놈들이 와요!",--제이나 대사
 	newForces1H		= "저 계집을 당장 끌어내려라. 내가 친히 그녀의 목을 죌 것이다.",--실바나스 대사 (확인 필요)
@@ -74,7 +84,7 @@ L= DBM:GetModLocalization(864)
 L= DBM:GetModLocalization(856)
 
 L:SetMiscLocalization({
-	PrisonYell		= "%s의 강철 감옥 사라지기 직전! (%d초 남음)"
+	PrisonYell		= "%s의 강철 감옥 %d초 남음!"
 })
 
 ---------------------
@@ -146,12 +156,12 @@ L= DBM:GetModLocalization(853)
 
 L:SetWarningLocalization({
 	specWarnActivatedVulnerable		= "%s에게 취약함 - 주의!",
-	specWarnCriteriaLinked			= "계산 완료 대상과 연결됨 : %s!"
+	specWarnMoreParasites			= "기생충이 더 필요합니다 - 막지마세요!"
 })
 
 L:SetOptionLocalization({
 	specWarnActivatedVulnerable		= "활성화된 용장중 주의해야 할 용장이 있을 경우 특수 경고 보기",
-	specWarnCriteriaLinked			= "$spell:144095 대상과 연결된 경우 특수 경고 보기"
+	specWarnMoreParasites			= "기생충이 더 필요할 때 특수 경고 보기"
 })
 
 L:SetMiscLocalization({
@@ -178,6 +188,17 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	RangeFrame			= "거리 창 보기(8m)($spell:147126 주문의 경고 수치에 도달한 경우에만 보임)",
+	InfoFrame			= "사잇단계에서 피해 감소가 없는 대상을 정보 창으로 보기",
+	yellMaliceFading	= "$spell:147209 가 사라지기 전에 대화로 알리기"
+})
+
+L:SetMiscLocalization({
+	NoReduce			= "피해 감소 없음",
+	MaliceFadeYell		= "%s의 악의 %d초 남음!"
+})
 
 -------------
 --  Trash  --

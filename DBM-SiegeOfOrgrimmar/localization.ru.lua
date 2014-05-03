@@ -15,6 +15,12 @@ L:SetMiscLocalization({
 ---------------------------
 L= DBM:GetModLocalization(849)
 
+L:SetWarningLocalization({
+	warnCalamity		= "%s",
+	specWarnCalamity	= "%s",
+	specWarnMeasures	= "Скоро Крайние меры (%s)!"
+})
+
 ---------------------------
 -- Norushen --
 ---------------------------
@@ -39,6 +45,7 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(868)
 
 L:SetWarningLocalization({
+	warnTowerOpen		= "Башня открылась",
 	warnTowerGrunt		= "Рубака у башни"
 })
 
@@ -48,19 +55,22 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
+	warnTowerOpen		= "Объявлять когда башня открывается",
 	warnTowerGrunt		= "Объявлять когда появляется новый Рубака у башни",
 	timerTowerCD		= "Отсчет времени до следующего нападения на башню",
 	timerTowerGruntCD	= "Отсчет времени до следующего Рубаки у башни"
 })
 
 L:SetMiscLocalization({
-	Pull		= "Воины Драконьей Пасти! Отбейте пристань и сбросьте врага в море! Во имя Истинной Орды!",
-	newForces1	= "Вот и они!",--Jaina's line, horde may not be same
-	newForces1H	= "Сбейте ее скорее, не терпится взять ее за глотку.",--Sylva's line, horde
-	newForces2	= "Драконья Пасть, вперед!",
-	newForces3	= "За Гарроша!",
-	newForces4	= "Следующий отряд!",
-	tower		= "Дверь "--Дверь южной/северной башни разбита!
+	wasteOfTime		= "Отлично! Десант, стройся! Пехота – впереди.",--Alliance Version
+	wasteOfTime2	= "Отлично, первый отряд высадился.",--Horde Version
+	Pull			= "Воины Драконьей Пасти! Отбейте пристань и сбросьте врага в море! Во имя Истинной Орды!",
+	newForces1		= "Вот и они!",--Jaina's line, horde may not be same
+	newForces1H		= "Сбейте ее скорее, не терпится взять ее за глотку.",--Sylva's line, horde
+	newForces2		= "Драконья Пасть, вперед!",
+	newForces3		= "За Гарроша!",
+	newForces4		= "Следующий отряд!",
+	tower			= "Дверь "--Дверь южной/северной башни разбита!
 })
 
 --------------------
@@ -142,12 +152,12 @@ L= DBM:GetModLocalization(853)
 
 L:SetWarningLocalization({
 	specWarnActivatedVulnerable		= "Вы уязвимы к %s - Избегайте!",
-	specWarnCriteriaLinked			= "Вы слинкованы с %s!"
+	specWarnMoreParasites			= "Вам нужно больше паразитов - Не блокируйте!"
 })
 
 L:SetOptionLocalization({
 	specWarnActivatedVulnerable		= "Спец-предупреждение когда вы уязвимы к активирующимся идеалам",
-	specWarnCriteriaLinked			= "Спец-предупреждение когда вы слинкованы с $spell:144095"
+	specWarnMoreParasites			= "Спец-предупреждение когда вам нужно больше паразитов"
 })
 
 L:SetMiscLocalization({
@@ -165,7 +175,7 @@ L:SetMiscLocalization({
 	KorvenFlavor		= "Конец древней империи",--http://ptr.wowhead.com/quest=31232
 	KorvenFlavor2		= "Забери свои гуртанские таблички и подавись ими",--http://ptr.wowhead.com/quest=31232
 	IyyokukFlavor		= "Видишь возможности. Используй их!",--Does not have quests, http://ptr.wowhead.com/npc=65305
-	KarozFlavor			= "Ты больше не будешь прыгать!",---Does not have questst, http://ptr.wowhead.com/npc=65303
+	KarozFlavor			= "Ты больше не будешь прыгать!",---Does not have quests, http://ptr.wowhead.com/npc=65303
 	SkeerFlavor			= "Кровавое удовольствие!",--http://ptr.wowhead.com/quest=31178
 	RikkalFlavor		= "Запрос образцов выполнен"--http://ptr.wowhead.com/quest=31508
 })
@@ -174,6 +184,17 @@ L:SetMiscLocalization({
 -- Garrosh Hellscream --
 ------------------------
 L= DBM:GetModLocalization(869)
+
+L:SetOptionLocalization({
+	RangeFrame			= "Показывать динамическое окно проверки дистанции (8)<br/>(Это умное окно проверки дистанции, которое появляется когда вы достигаете порога $spell:147126)",
+	InfoFrame			= "Информационное окно для игроков без снижения урона на переходной фазе",
+	yellMaliceFading	= "Кричать когда $spell:147209 спадает"
+})
+
+L:SetMiscLocalization({
+	NoReduce			= "Нет снижения урона",
+	MaliceFadeYell		= "Злоба спадает с %s (%d)"
+})
 
 -------------
 --  Trash  --

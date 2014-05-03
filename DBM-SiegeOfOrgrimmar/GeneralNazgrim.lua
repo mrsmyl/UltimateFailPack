@@ -1,28 +1,29 @@
 local mod	= DBM:NewMod(850, "DBM-SiegeOfOrgrimmar", nil, 369)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10671 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11192 $"):sub(12, -3))
 mod:SetCreatureID(71515)
+mod:SetEncounterID(1603)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 4, 2, 1)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START",
-	"SPELL_CAST_SUCCESS",
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_APPLIED_DOSE",
-	"SPELL_AURA_REMOVED",
-	"SPELL_DAMAGE",
+	"SPELL_CAST_START 143872 143503 143420 143431 143432 143473 143502",
+	"SPELL_CAST_SUCCESS 143589 143594 143593 143536 143474 143494",
+	"SPELL_AURA_APPLIED 143494 143484 143480 143475 143638 143882",
+	"SPELL_AURA_APPLIED_DOSE 143494",
+	"SPELL_AURA_REMOVED 143494",
+	"SPELL_DAMAGE 143873",
 	"UNIT_DIED",
 	"CHAT_MSG_MONSTER_YELL",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
 --Nazgrim Core Abilities
-local warnSunder					= mod:NewStackAnnounce(143494, 2, nil, mod:IsTank() or mod:IsHealer(), nil, nil, nil, nil, 2)--Will add special warnings and such when know cd and stack count needed for swaps
-local warnBonecracker				= mod:NewTargetAnnounce(143638, 2, nil, false, nil, nil, nil, nil, 2)
+local warnSunder					= mod:NewStackAnnounce("OptionVersion2", 143494, 2, nil, mod:IsTank() or mod:IsHealer())--Will add special warnings and such when know cd and stack count needed for swaps
+local warnBonecracker				= mod:NewTargetAnnounce("OptionVersion2", 143638, 2, nil, false)
 local warnBattleStance				= mod:NewSpellAnnounce(143589, 2)
 local warnBerserkerStance			= mod:NewSpellAnnounce(143594, 3)
 local warnDefensiveStanceSoon		= mod:NewAnnounce("warnDefensiveStanceSoon", 4, 143593, nil, nil, true)
@@ -34,7 +35,7 @@ local warnHeroicShockwave			= mod:NewTargetAnnounce(143500, 2)
 local warnKorkronBanner				= mod:NewSpellAnnounce(143536, 3)
 local warnRavager					= mod:NewSpellAnnounce(143872, 3)
 local warnWarSong					= mod:NewSpellAnnounce(143503, 4)
-local warnCoolingOff				= mod:NewTargetAnnounce(143484, 1, nil, false, nil, nil, nil, nil, 2)
+local warnCoolingOff				= mod:NewTargetAnnounce("OptionVersion2", 143484, 1, nil, false)
 --Kor'kron Adds
 local warnIronstorm					= mod:NewSpellAnnounce(143420, 3, nil, mod:IsMelee())
 local warnArcaneShock				= mod:NewSpellAnnounce(143432, 3, nil, false)--Spammy
@@ -43,11 +44,12 @@ local warnAssasinsMark				= mod:NewTargetAnnounce(143480, 3)
 local warnEarthShield				= mod:NewTargetAnnounce(143475, 4, nil, mod:IsMagicDispeller())
 local warnEmpoweredChainHeal		= mod:NewCastAnnounce(143473, 4)
 local warnHealingTideTotem			= mod:NewSpellAnnounce(143474, 4)
+local warnHuntersMark				= mod:NewTargetAnnounce(143882, 3)
 
 --Nazgrim Core Abilities
 local specWarnAdds					= mod:NewSpecialWarningCount("ej7920", not mod:IsHealer())
 local specWarnSunder				= mod:NewSpecialWarningStack(143494, mod:IsTank(), 4)
-local specWarnSunderOther			= mod:NewSpecialWarningTarget(143494, mod:IsTank())
+local specWarnSunderOther			= mod:NewSpecialWarningTaunt(143494, mod:IsTank())
 local specWarnExecute				= mod:NewSpecialWarningSpell(143502, mod:IsTank(), nil, nil, 3)
 local specWarnBerserkerStance		= mod:NewSpecialWarningSpell(143594, mod:IsDps())--In case you want to throttle damage some
 local specWarnDefensiveStance		= mod:NewSpecialWarningSpell(143593, nil, nil, nil, 3)--Definitely OFF DPS
@@ -66,19 +68,22 @@ local specWarnWarSong				= mod:NewSpecialWarningSpell(143503, nil, nil, nil, 2)
 local specWarnIronstorm				= mod:NewSpecialWarningInterrupt(143420, mod:IsMelee())--Only needs to be interrupted if melee are near it
 local specWarnArcaneShock			= mod:NewSpecialWarningInterrupt(143432, false)--Spamy as all fuck, so off by default unless maybe heroic
 local specWarnMagistrike			= mod:NewSpecialWarningInterrupt(143431, false)--Spamy as all fuck, so off by default unless maybe heroic
-local specWarnEmpoweredChainHeal	= mod:NewSpecialWarningInterrupt(143473, not mod:IsHealer(), nil, nil, 1, 2)--Concerns everyone, if not interrupted will heal boss for a TON
+local specWarnEmpoweredChainHeal	= mod:NewSpecialWarningInterrupt("OptionVersion3", 143473, not mod:IsHealer())--Concerns everyone, if not interrupted will heal boss for a TON
 local specWarnAssassinsMark			= mod:NewSpecialWarningYou(143480)
 local yellAssassinsMark				= mod:NewYell(143480)
 local specWarnAssassinsMarkOther	= mod:NewSpecialWarningTarget(143480, false)
 local specWarnEarthShield			= mod:NewSpecialWarningDispel(143475, mod:IsMagicDispeller())
 local specWarnHealingTideTotem		= mod:NewSpecialWarningSwitch(143474, false)--Not everyone needs to switch, should be turned on by assigned totem mashing people.
+local specWarnHuntersMark			= mod:NewSpecialWarningYou(143882)
+local yellHuntersMark				= mod:NewYell(143882)
+local specWarnHuntersMarkOther		= mod:NewSpecialWarningTarget(143882, false)
 
 --Nazgrim Core Abilities
 local timerAddsCD					= mod:NewNextCountTimer(45, "ej7920", nil, nil, nil, 2457)
 local timerSunder					= mod:NewTargetTimer(30, 143494, nil, mod:IsTank() or mod:IsHealer())
 local timerSunderCD					= mod:NewCDTimer(8, 143494, nil, mod:IsTank())
 local timerExecuteCD				= mod:NewCDTimer(18, 143502, nil, mod:IsTank())
-local timerBoneCD					= mod:NewCDTimer(30, 143638, nil, false, nil, nil, nil, nil, nil, nil, 2)
+local timerBoneCD					= mod:NewCDTimer("OptionVersion2", 30, 143638, nil, false)
 local timerBattleStanceCD			= mod:NewNextTimer(60, 143589)
 local timerBerserkerStanceCD		= mod:NewNextTimer(60, 143594)
 local timerDefensiveStanceCD		= mod:NewNextTimer(60, 143593)
@@ -87,20 +92,23 @@ local timerCoolingOff				= mod:NewBuffFadesTimer(15, 143484)
 --Kor'kron Adds
 local timerEmpoweredChainHealCD		= mod:NewNextSourceTimer(6, 143473)
 
-local countdownAdds					= mod:NewCountdown(45, "ej7920", not mod:IsHealer(), nil, nil, nil, nil, 2)
-local countdownCoolingOff			= mod:NewCountdownFades(15, 143484, nil, nil, nil, nil, true)
+local countdownAdds					= mod:NewCountdown("OptionVersion2", 45, "ej7920", not mod:IsHealer())
+local countdownCoolingOff			= mod:NewCountdownFades("Alt15", 143484)
 
 local berserkTimer					= mod:NewBerserkTimer(600)
 
 mod:AddSetIconOption("SetIconOnAdds", "ej7920", false, true)
 mod:AddInfoFrameOption("ej7909")
 
-local addsCount = 0
+--Upvales, don't need variables
 local UnitName, UnitExists, UnitGUID, UnitDetailedThreatSituation = UnitName, UnitExists, UnitGUID, UnitDetailedThreatSituation
-local dotWarned = {}
-local defensiveActive = false
-local allForcesReleased = false
 local sunder = GetSpellInfo(143494)
+--Tables, can't recover
+local dotWarned = {}
+--Important, needs recover
+mod.vb.addsCount = 0
+mod.vb.defensiveActive = false
+mod.vb.allForcesReleased = false
 
 local addsTable = {
 	[71519] = 7,--Shaman
@@ -147,50 +155,50 @@ local function updateInfoFrame()
 		lines[GetSpellInfo(143503)] = 70
 		lines["|cFFFF0000"..GetSpellInfo(143872).."|r"] = bossPower--Red (definitely work making this one red, it's really the only critically bad one)
 	end
-	if mod:IsDifficulty("heroic10", "heroic25") then--Same on 10 heroic? TODO, get normal LFR and flex adds info verified
-		if addsCount == 0 then
+	if mod:IsHeroic() then--Same on 10 heroic? TODO, get normal LFR and flex adds info verified
+		if mod.vb.addsCount == 0 then
 			lines[L.nextAdds] = L.mage..", "..L.rogue..", "..L.warrior
-		elseif addsCount == 1 then
+		elseif mod.vb.addsCount == 1 then
 			lines[L.nextAdds] = L.shaman..", "..L.rogue..", "..L.hunter
-		elseif addsCount == 2 then
+		elseif mod.vb.addsCount == 2 then
 			lines[L.nextAdds] = L.mage..", "..L.shaman..", "..L.warrior
-		elseif addsCount == 3 then
+		elseif mod.vb.addsCount == 3 then
 			lines[L.nextAdds] = L.mage..", "..L.rogue..", "..L.hunter
-		elseif addsCount == 4 then
+		elseif mod.vb.addsCount == 4 then
 			lines[L.nextAdds] = L.shaman..", "..L.rogue..", "..L.warrior
-		elseif addsCount == 5 then
+		elseif mod.vb.addsCount == 5 then
 			lines[L.nextAdds] = L.mage..", "..L.shaman..", "..L.hunter
-		elseif addsCount == 6 then
+		elseif mod.vb.addsCount == 6 then
 			lines[L.nextAdds] = L.rogue..", "..L.hunter..", "..L.warrior
-		elseif addsCount == 7 then
+		elseif mod.vb.addsCount == 7 then
 			lines[L.nextAdds] = L.mage..", "..L.shaman..", "..L.rogue
-		elseif addsCount == 8 then
+		elseif mod.vb.addsCount == 8 then
 			lines[L.nextAdds] = L.shaman..", "..L.hunter..", "..L.warrior
-		elseif addsCount == 9 then
+		elseif mod.vb.addsCount == 9 then
 			lines[L.nextAdds] = L.mage..", "..L.hunter..", "..L.warrior
 		else--Already had all 10 adds sets now we're just going to get no more adds (except for 10%)
 			lines[""] = ""
 		end
 	else--Not heroic
-		if addsCount == 0 then
+		if mod.vb.addsCount == 0 then
 			lines[L.nextAdds] = L.mage..", "..L.warrior
-		elseif addsCount == 1 then
+		elseif mod.vb.addsCount == 1 then
 			lines[L.nextAdds] = L.shaman..", "..L.rogue
-		elseif addsCount == 2 then
+		elseif mod.vb.addsCount == 2 then
 			lines[L.nextAdds] = L.rogue..", "..L.warrior
-		elseif addsCount == 3 then
+		elseif mod.vb.addsCount == 3 then
 			lines[L.nextAdds] = L.mage..", "..L.shaman
-		elseif addsCount == 4 then
+		elseif mod.vb.addsCount == 4 then
 			lines[L.nextAdds] = L.shaman..", "..L.warrior
-		elseif addsCount == 5 then
+		elseif mod.vb.addsCount == 5 then
 			lines[L.nextAdds] = L.mage..", "..L.rogue
-		elseif addsCount == 6 then
+		elseif mod.vb.addsCount == 6 then
 			lines[L.nextAdds] = L.mage..", "..L.shaman..", "..L.rogue
-		elseif addsCount == 7 then
+		elseif mod.vb.addsCount == 7 then
 			lines[L.nextAdds] = L.shaman..", "..L.rogue..", "..L.warrior
-		elseif addsCount == 8 then
+		elseif mod.vb.addsCount == 8 then
 			lines[L.nextAdds] = L.mage..", "..L.shaman..", "..L.warrior
-		elseif addsCount == 9 then
+		elseif mod.vb.addsCount == 9 then
 			lines[L.nextAdds] = L.mage..", "..L.rogue..", "..L.warrior
 		else--Already had all 10 adds sets now we're just going to get no more adds (except for 10%)
 			lines[""] = ""
@@ -199,45 +207,24 @@ local function updateInfoFrame()
 	return lines
 end
 
---Temp test function
---/script DBM:GetModByName("850"):TestInfo(1, 33)
-function mod:TestInfo(wave, power)
-	addsCount = wave--Fake current adds wave
-	bossPower = power--Fake current boss power
-	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(GetSpellInfo(143589))
-		DBM.InfoFrame:Show(5, "function", updateInfoFrame, sortInfoFrame)
-	end
-end
-
 function mod:LeapTarget(targetname, uId)
 	if not targetname then return end
 	warnHeroicShockwave:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnHeroicShockwave:Show()
 		yellHeroicShockwave:Yell()
+	elseif self:CheckNearby(8, targetname) then
+		specWarnHeroicShockwaveNear:Show(targetname)
 	else
-		if uId then
-			local x, y = GetPlayerMapPosition(uId)
-			if x == 0 and y == 0 then
-				SetMapToCurrentZone()
-				x, y = GetPlayerMapPosition(uId)
-			end
-			local inRange = DBM.RangeCheck:GetDistance("player", x, y)
-			if inRange and inRange < 8 then--Range guesswork
-				specWarnHeroicShockwaveNear:Show(targetname)
-			else
-				specWarnHeroicShockwaveAll:Show()
-			end
-		end
+		specWarnHeroicShockwaveAll:Show()
 	end
 end
 
 function mod:OnCombatStart(delay)
-	addsCount = 0
 	table.wipe(dotWarned)
-	defensiveActive = false
-	allForcesReleased = false
+	self.vb.addsCount = 0
+	self.vb.defensiveActive = false
+	self.vb.allForcesReleased = false
 	timerAddsCD:Start(-delay, 1)
 	countdownAdds:Start()
 	berserkTimer:Start(-delay)
@@ -251,36 +238,37 @@ function mod:OnCombatEnd()
 end 
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 143872 then
+	local spellId = args.spellId
+	if spellId == 143872 then
 		warnRavager:Show()
 		specWarnRavager:Show()
-	elseif args.spellId == 143503 then
+	elseif spellId == 143503 then
 		warnWarSong:Show()
 		specWarnWarSong:Show()
-	elseif args.spellId == 143420 then
+	elseif spellId == 143420 then
 		local source = args.sourceName
 		warnIronstorm:Show()
 		if source == UnitName("target") or source == UnitName("focus") then 
 			specWarnIronstorm:Show(source)
 		end
-	elseif args.spellId == 143431 then
+	elseif spellId == 143431 then
 		local source = args.sourceName
 		if source == UnitName("target") or source == UnitName("focus") then
 			warnMagistrike:Show()
 			specWarnMagistrike:Show(source)
 		end
-	elseif args.spellId == 143432 then
+	elseif spellId == 143432 then
 		local source = args.sourceName
 		if source == UnitName("target") or source == UnitName("focus") then 
 			warnArcaneShock:Show()
 			specWarnArcaneShock:Show(source)
 		end
-	elseif args.spellId == 143473 then
+	elseif spellId == 143473 then
 		local source = args.sourceName
 		warnEmpoweredChainHeal:Show()
 		specWarnEmpoweredChainHeal:Show(source)
 		timerEmpoweredChainHealCD:Start(source, args.sourceGUID)
-	elseif args.spellId == 143502 then
+	elseif spellId == 143502 then
 		warnExecute:Show()
 		timerExecuteCD:Start()
 		if UnitExists("boss1") and UnitGUID("boss1") == args.sourceGUID and UnitDetailedThreatSituation("player", "boss1") then--threat check instead of target because we may be helping dps adds
@@ -290,9 +278,10 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args.spellId == 143589 then
-		if defensiveActive then
-			defensiveActive = false
+	local spellId = args.spellId
+	if spellId == 143589 then
+		if self.vb.defensiveActive then
+			self.vb.defensiveActive = false
 			specWarnDefensiveStanceEnd:Show()
 		end
 		self:UnregisterShortTermEvents()
@@ -302,7 +291,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 			DBM.InfoFrame:SetHeader(GetSpellInfo(143589))
 			DBM.InfoFrame:Show(5, "function", updateInfoFrame, sortInfoFrame)
 		end
-	elseif args.spellId == 143594 then
+	elseif spellId == 143594 then
 		warnBerserkerStance:Show()
 		specWarnBerserkerStance:Show()
 		timerDefensiveStanceCD:Start()
@@ -315,11 +304,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 			DBM.InfoFrame:SetHeader(GetSpellInfo(143594))
 			DBM.InfoFrame:Show(5, "function", updateInfoFrame, sortInfoFrame)
 		end
-	elseif args.spellId == 143593 then
-		if not allForcesReleased then
-			defensiveActive = true
+	elseif spellId == 143593 then
+		if not self.vb.allForcesReleased then
+			self.vb.defensiveActive = true
 			self:RegisterShortTermEvents(
 				"SWING_DAMAGE",
+				"SPELL_DAMAGE",
 				"RANGE_DAMAGE",
 				"SPELL_PERIODIC_DAMAGE"
 			)
@@ -332,22 +322,23 @@ function mod:SPELL_CAST_SUCCESS(args)
 			DBM.InfoFrame:SetHeader(GetSpellInfo(143593))
 			DBM.InfoFrame:Show(5, "function", updateInfoFrame, sortInfoFrame)
 		end
-	elseif args.spellId == 143536 then
+	elseif spellId == 143536 then
 		warnKorkronBanner:Show()
 		specWarnKorkronBanner:Show()
 		if self.Options.SetIconOnAdds then
 			self:ScanForMobs(71626, 2, 8, 1, 0.2, 4)--banner
 		end
-	elseif args.spellId == 143474 then
+	elseif spellId == 143474 then
 		warnHealingTideTotem:Show()
 		specWarnHealingTideTotem:Show()
-	elseif args.spellId == 143494 then--Because it can miss, we start CD here instead of APPLIED
+	elseif spellId == 143494 then--Because it can miss, we start CD here instead of APPLIED
 		timerSunderCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 143494 then
+	local spellId = args.spellId
+	if spellId == 143494 then
 		local amount = args.amount or 1
 		warnSunder:Show(args.destName, amount)
 		timerSunder:Start(args.destName)
@@ -360,11 +351,11 @@ function mod:SPELL_AURA_APPLIED(args)
 				specWarnSunderOther:Show(args.destName)
 			end
 		end
-	elseif args.spellId == 143484 then
+	elseif spellId == 143484 then
 		warnCoolingOff:Show(args.destName)
 		timerCoolingOff:Start()
 		countdownCoolingOff:Start()
-	elseif args.spellId == 143480 then
+	elseif spellId == 143480 then
 		warnAssasinsMark:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnAssassinsMark:Show()
@@ -372,19 +363,49 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			specWarnAssassinsMarkOther:Show(args.destName)
 		end
-	elseif args.spellId == 143475 and not args:IsDestTypePlayer() then
+	elseif spellId == 143475 and not args:IsDestTypePlayer() then
 		warnEarthShield:Show(args.destName)
 		specWarnEarthShield:Show(args.destName)
-	elseif args.spellId == 143638 then
+	elseif spellId == 143638 then
 		warnBonecracker:CombinedShow(1.5, args.destName)
 		timerBoneCD:DelayedStart(1.5)--Takes a while to get on all targets. 1.5 seconds in 10 man, not sure about 25 man yet
+	elseif spellId == 143882 then
+		warnHuntersMark:Show(args.destName)
+		if args:IsPlayer() then
+			specWarnHuntersMark:Show()
+			yellHuntersMark:Yell()
+		else
+			specWarnHuntersMarkOther:Show(args.destName)
+		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 143494 then
+	local spellId = args.spellId
+	if spellId == 143494 then
 		timerSunder:Cancel(args.destName)
+	end
+end
+
+function mod:SPELL_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)
+	if spellId == 143873 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
+		specWarnRavagerMove:Show()
+	elseif sourceGUID == UnitGUID("player") and destGUID == UnitGUID("boss1") and self:AntiSpam(3, 1) then--If you've been in LFR at all, you'll see that even 3 is generous. 8 is WAY too leaniant.
+		if not UnitDebuff("player", sunder) and self.vb.defensiveActive then
+			specWarnDefensiveStanceAttack:Show()
+		end
+	end
+end
+mod.RANGE_DAMAGE = mod.SPELL_DAMAGE
+mod.SWING_DAMAGE = mod.SPELL_DAMAGE
+
+function mod:SPELL_PERIODIC_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)--Prevent spam on DoT
+	if sourceGUID == UnitGUID("player") and destGUID == UnitGUID("boss1") and self:AntiSpam(3, 1) then
+		if not UnitDebuff("player", sunder) and self.vb.defensiveActive and not dotWarned[spellId] then
+			dotWarned[spellId] = true
+			specWarnDefensiveStanceAttack:Show()
+		end
 	end
 end
 
@@ -395,17 +416,32 @@ function mod:UNIT_DIED(args)
 	end
 end
 
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+	if spellId == 143500 then--Faster than combat log by 0.3-0.5 seconds
+		self:BossTargetScanner(71515, "LeapTarget", 0.05, 16)
+	end
+end
+
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.newForces1 or msg == L.newForces2 or msg == L.newForces3 or msg == L.newForces4 or msg == L.newForces5 then
-		addsCount = addsCount + 1
-		warnAdds:Show(addsCount)
-		specWarnAdds:Show(addsCount)
-		if addsCount < 10 then
-			timerAddsCD:Start(nil, addsCount+1)
+		self:SendSync("Adds")
+	elseif msg == L.allForces then
+		self:SendSync("AllAdds")
+	end
+end
+
+function mod:OnSync(msg)
+	if not self:IsInCombat() then return end
+	if msg == "Adds" and self:AntiSpam(10, 3) then
+		self.vb.addsCount = self.vb.addsCount + 1
+		warnAdds:Show(self.vb.addsCount)
+		specWarnAdds:Show(self.vb.addsCount)
+		if self.vb.addsCount < 10 then
+			timerAddsCD:Start(nil, self.vb.addsCount+1)
 			countdownAdds:Start()
 		end
 		if self.Options.SetIconOnAdds then
-			if self:IsDifficulty("heroic10", "heroic25") or addsCount > 6 then--3 Adds
+			if self:IsHeroic() or self.vb.addsCount > 6 then--3 Adds
 				self:ScanForMobs(addsTable, 2, 7, 3, 0.2, 15)
 			else
 				self:ScanForMobs(addsTable, 2, 7, 2, 0.2, 15)--2 adds
@@ -414,38 +450,10 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:Show(5, "function", updateInfoFrame, sortInfoFrame)
 		end
-	elseif msg == L.allForces then
-		allForcesReleased = true
-		defensiveActive = false
+	elseif msg == "AllAdds" and self:AntiSpam(10, 4) then
+		self.vb.allForcesReleased = true
+		self.vb.defensiveActive = false
 		self:UnregisterShortTermEvents()--Do not warn defensive stance below 10%
 		--Icon setting not put here on purpose, so as not ot mess with existing adds (it's burn boss phase anyawys)
-		specWarnAdds:Show(0)
-	end
-end
-
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
-	if spellId == 143500 then--Faster than combat log by 0.3-0.5 seconds
-		self:BossTargetScanner(71515, "LeapTarget", 0.05, 16)
-	end
-end
-
-function mod:SPELL_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 143873 and destGUID == UnitGUID("player") and self:AntiSpam(3, 2) then
-		specWarnRavagerMove:Show()
-	elseif sourceGUID == UnitGUID("player") and destGUID == UnitGUID("boss1") and self:AntiSpam(3, 1) then--If you've been in LFR at all, you'll see that even 3 is generous. 8 is WAY too leaniant.
-		if not UnitDebuff("player", sunder) and defensiveActive then
-			specWarnDefensiveStanceAttack:Show()
-		end
-	end
-end
-mod.RANGE_DAMAGE = mod.SPELL_DAMAGE
-mod.SWING_DAMAGE = mod.SPELL_DAMAGE
-
-function mod:SPELL_PERIODIC_DAMAGE(sourceGUID, _, _, _, destGUID, _, _, _, spellId)--Prevent spam on DoT
-	if sourceGUID == UnitGUID("player") and destGUID == UnitGUID("boss1") and self:AntiSpam(3, 1) then
-		if not UnitDebuff("player", sunder) and defensiveActive and not dotWarned[spellId] then
-			dotWarned[spellId] = true
-			specWarnDefensiveStanceAttack:Show()
-		end
 	end
 end

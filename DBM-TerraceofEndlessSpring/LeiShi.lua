@@ -1,18 +1,19 @@
 local mod	= DBM:NewMod(729, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 10514 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 11193 $"):sub(12, -3))
 mod:SetCreatureID(62983)--62995 Animated Protector
+mod:SetEncounterID(1506)
 
 mod:RegisterCombat("combat")
 mod:RegisterKill("yell", L.Victory)--Kill detection is aweful. No death, no special cast. yell is like 40 seconds AFTER victory. terrible.
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3) -- on 25 heroic 6 guards spawn.
 
 mod:RegisterEventsInCombat(
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_APPLIED_DOSE",
-	"SPELL_AURA_REMOVED",
-	"SPELL_CAST_START",
+	"SPELL_AURA_APPLIED 123250 123505 123461 123121 123705",
+	"SPELL_AURA_APPLIED_DOSE 123121 123705",
+	"SPELL_AURA_REMOVED 123250 123121 123461",
+	"SPELL_CAST_START 123244 123705",
 	"UNIT_HEALTH boss1",--UNIT_HEALTH_FREQUENT maybe not needed. It's too high cpu usage.
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
@@ -48,52 +49,12 @@ local lastProtect = 0
 local specialRemaining = 0
 local lostHealth = 0
 local prevlostHealth = 0
-local hideDebug = 0
-local damageDebug = 0
-local timeDebug = 0
 local hideTime = 0
 
 local bossTank
 do
 	bossTank = function(uId)
 		return mod:IsTanking(uId, "boss1")
-	end
-end
-
-local showDamagedHealthBar, hideDamagedHealthBar
-do
-	local frame = CreateFrame("Frame") -- using a separate frame avoids the overhead of the DBM event handlers which are not meant to be used with frequently occuring events like all damage events...
-	local damagedMob
-	local hpRemaining = 0
-	local maxhp = 0
-	local function getDamagedHP()
-		return math.max(1, math.floor(hpRemaining / maxhp * 100))
-	end
-	frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	frame:SetScript("OnEvent", function(self, event, timestamp, subEvent, _, _, _, _, _, destGUID, _, _, _, ...)
-		if damagedMob == destGUID then
-			local damage
-			if subEvent == "SWING_DAMAGE" then 
-				damage = select( 1, ... ) 
-			elseif subEvent == "RANGE_DAMAGE" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then 
-				damage = select( 4, ... )
-			end
-			if damage then
-				hpRemaining = hpRemaining - damage
-			end
-		end
-	end)
-	
-	function showDamagedHealthBar(self, mob, spellName, health)
-		damagedMob = mob
-		hpRemaining = health
-		maxhp = health
-		DBM.BossHealth:RemoveBoss(getDamagedHP)
-		DBM.BossHealth:AddBoss(getDamagedHP, spellName)
-	end
-	
-	function hideDamagedHealthBar()
-		DBM.BossHealth:RemoveBoss(getDamagedHP)
 	end
 end
 
@@ -109,9 +70,6 @@ function mod:OnCombatStart(delay)
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(3, bossTank)
 	end
-	hideDebug = 0
-	damageDebug = 0
-	timeDebug = 0
 	hideTime = 0
 	getAwayHP = 0
 	specialsCast = 0
@@ -121,7 +79,7 @@ function mod:OnCombatStart(delay)
 	lostHealth = 0
 	prevlostHealth = 0
 	timerSpecialCD:Start(30.5-delay, 1)--Variable, 30.5-37 (or aborted if 80% protect happens first)
-	if self:IsDifficulty("heroic10", "heroic25") then
+	if self:IsHeroic() then
 		berserkTimer:Start(420-delay)
 	else
 		berserkTimer:Start(-delay)
@@ -136,7 +94,8 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 123250 then
+	local spellId = args.spellId
+	if spellId == 123250 then
 		local elapsed, total = timerSpecialCD:GetTime(specialsCast+1)
 		specialRemaining = total - elapsed
 		lastProtect = GetTime()	
@@ -145,23 +104,23 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Schedule(0.2, function()
 			timerSpecialCD:Cancel()
 		end)
-	elseif args.spellId == 123505 and self.Options.SetIconOnProtector then
+	elseif spellId == 123505 and self.Options.SetIconOnProtector then
 		self:ScanForMobs(args.destGUID, 0, 8, nil, 0.05, 6)
-	elseif args.spellId == 123461 then
+	elseif spellId == 123461 then
 		specialsCast = specialsCast + 1
 		warnGetAway:Show(specialsCast)
 		specWarnGetAway:Show()
 		timerSpecialCD:Start(nil, specialsCast+1)
-		if self:IsDifficulty("heroic10", "heroic25") then
+		if self:IsHeroic() then
 			timerGetAway:Start(45)
 		else
 			timerGetAway:Start()
 		end
 		if DBM.BossHealth:IsShown() and self.Options.GWHealthFrame then
 			local getAwayHealth = math.floor(UnitHealthMax("boss1") * 0.04)
-			showDamagedHealthBar(self, args.sourceGUID, args.spellName, getAwayHealth)
+			self:ShowDamagedHealthBar(args.sourceGUID, args.spellName, getAwayHealth)
 		end
-	elseif args.spellId == 123121 then
+	elseif spellId == 123121 then
 		local uId = DBM:GetRaidUnitId(args.destName)
 		if self:IsTanking(uId, "boss1") then--Only want sprays that are on tanks, not bads standing on tanks.
 			local amount = args.amount or 1
@@ -177,14 +136,15 @@ function mod:SPELL_AURA_APPLIED(args)
 				end
 			end
 		end
-	elseif args.spellId == 123705 and self:AntiSpam(2.5, 1) then
+	elseif spellId == 123705 and self:AntiSpam(2.5, 1) then
 		self:ScaryFogRepeat()
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 123250 then
+	local spellId = args.spellId
+	if spellId == 123250 then
 		if timerSpecialCD:GetTime(specialsCast+1) == 0 then -- failsafe. (i.e : 79.8% hide -> protect... bar remains)
 			local protectElapsed = GetTime() - lastProtect
 			local specialCD = specialRemaining - protectElapsed
@@ -194,20 +154,19 @@ function mod:SPELL_AURA_REMOVED(args)
 				timerSpecialCD:Start(specialCD, specialsCast+1)
 			end
 		end
-	elseif args.spellId == 123121 then
+	elseif spellId == 123121 then
 		timerSpray:Cancel(args.destName)
-	elseif args.spellId == 123461 then
+	elseif spellId == 123461 then
 		timerGetAway:Cancel()
 		if DBM.BossHealth:IsShown() and self.Options.GWHealthFrame then
-			hideDamagedHealthBar()
+			self:RemoveDamagedHealthBar()
 		end
 	end
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 123244 then
-		hideDebug = 0
-		damageDebug = 0
+	local spellId = args.spellId
+	if spellId == 123244 then
 		hideTime = GetTime()
 		specialsCast = specialsCast + 1
 		hideActive = true
@@ -223,7 +182,7 @@ function mod:SPELL_CAST_START(args)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(3)--Show everyone during hide
 		end
-	elseif args.spellId == 123705 then
+	elseif spellId == 123705 then
 		self:ScaryFogRepeat()
 	end
 end
