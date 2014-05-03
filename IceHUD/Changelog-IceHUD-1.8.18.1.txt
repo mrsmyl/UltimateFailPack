@@ -1,0 +1,50 @@
+------------------------------------------------------------------------
+r962 | parnic | 2013-12-25 07:02:12 +0000 (Wed, 25 Dec 2013) | 1 line
+Changed paths:
+   A /tags/1.8.18.1 (from /trunk:961)
+
+Tagging as 1.8.18.1
+------------------------------------------------------------------------
+r961 | parnic | 2013-12-25 07:01:44 +0000 (Wed, 25 Dec 2013) | 1 line
+Changed paths:
+   M /trunk/modules/ComboPoints.lua
+
+- Fixed a bug causing combo points to always display in Numeric mode for any class instead of hiding when the player has 0 combo points and 0 anticipation stacks.
+------------------------------------------------------------------------
+r959 | parnic | 2013-12-23 06:21:33 +0000 (Mon, 23 Dec 2013) | 1 line
+Changed paths:
+   M /trunk/modules/Threat.lua
+
+- Integrated a feature by slippycheeze that enables the current threat target's name to be displayed in the "lower text" portion of the Threat bar. http://www.wowace.com/addons/ice-hud/tickets/176-show-name-of-threat-holder-and-color-based-on-their/
+------------------------------------------------------------------------
+r958 | parnic | 2013-12-23 06:03:37 +0000 (Mon, 23 Dec 2013) | 1 line
+Changed paths:
+   M /trunk/modules/PlayerHealth.lua
+   M /trunk/modules/TargetOfTarget.lua
+
+- Possibly fixed some NaN/divide-by-zero errors that have been cropping up sporadically lately.
+------------------------------------------------------------------------
+r957 | parnic | 2013-12-21 02:25:28 +0000 (Sat, 21 Dec 2013) | 1 line
+Changed paths:
+   M /trunk/modules/ComboPoints.lua
+
+- Minor cleanup.
+------------------------------------------------------------------------
+r956 | parnic | 2013-12-21 02:12:43 +0000 (Sat, 21 Dec 2013) | 1 line
+Changed paths:
+   M /trunk/modules/ComboPoints.lua
+
+- Merged support for displaying Anticipation on the ComboPoints module (thanks MSaint!) http://www.wowace.com/addons/ice-hud/tickets/154-anticipation-enhancement/
+------------------------------------------------------------------------
+r955 | parnic | 2013-11-27 06:38:36 +0000 (Wed, 27 Nov 2013) | 1 line
+Changed paths:
+   M /trunk/modules/CustomBar.lua
+
+- Fixed a bug where buff/debuff watchers were not removing themselves from the central Update list when deleted.
+------------------------------------------------------------------------
+r954 | parnic | 2013-11-17 05:12:55 +0000 (Sun, 17 Nov 2013) | 1 line
+Changed paths:
+   M /trunk/modules/CustomCDBar.lua
+
+- r953 broke the "Only show with a target selected" option for self-castable spells set to "when ready" on a cooldown module. Obviously I have too many options in this mod.
+------------------------------------------------------------------------

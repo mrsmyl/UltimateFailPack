@@ -1,0 +1,29 @@
+------------------------------------------------------------------------
+r260 | mitch0 | 2014-03-26 11:29:31 +0000 (Wed, 26 Mar 2014) | 1 line
+Changed paths:
+   A /tags/v2.4.0 (from /trunk:259)
+
+Tagging as v2.4.0
+------------------------------------------------------------------------
+r259 | mitch0 | 2014-03-25 22:49:07 +0000 (Tue, 25 Mar 2014) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+
+add hack to recalculate font metrics on first render [fix overlapping text issue reported on wowi]
+------------------------------------------------------------------------
+r258 | mitch0 | 2014-03-25 21:12:51 +0000 (Tue, 25 Mar 2014) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+   M /trunk/Bazooka_Options/Options.lua
+   M /trunk/Bazooka_Options/localizations.lua
+
+added option to use gradient background for bars [ticket-12]
+------------------------------------------------------------------------
+r257 | mitch0 | 2014-03-21 18:46:06 +0000 (Fri, 21 Mar 2014) | 1 line
+Changed paths:
+   M /trunk/Bazooka.lua
+   M /trunk/Bazooka_Options/Options.lua
+   M /trunk/Bazooka_Options/localizations.lua
+
+add 'Font shadow' option for Phanx [ticket-41]
+------------------------------------------------------------------------

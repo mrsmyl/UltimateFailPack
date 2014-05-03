@@ -1,0 +1,70 @@
+tag 5.4.13
+a53fc4611bf51f10342116f13069d9b78c94413a
+subversion <svn@deadlybossmods.com>
+2014-04-15 21:02:15 +0200
+
+Tagging as 5.4.13
+
+
+--------------------
+
+subversion:
+	- increment version number to 5.4.13
+	- Omega via svn r11193: More mods
+	- Omega via svn r11192: Use self:IsHeroic() when distinction between 10 and 25 isn't needed, it's slightly more efficient.
+	- Omega via svn r11191: Make IsMythic stand apart from Isheroic
+	- Omega via svn r11190: Some notes
+	- Omega via svn r11189: Some changes to where 6.0 raids will save stats for more simplicity. Note, if SoO does change to new format like anticipated, will have to code in a TOC check and if 6.0, wipe stats on first run so things don't get all screwed up (good to wipe anyways since diff wont be same). Added GUI work for stats, barring any fuckups of course.
+	- Omega via svn r11188: Make range frame on dark shaman only show when stream is cast, only time it's really useful
+	- Omega via svn r11187: oops, unbreak that. blizz renaming conventions confusing
+	- Omega via svn r11186: missed one
+	- Omega via svn r11185: Add support for difficulties 15-17. Will record pulls/kills and such.
+	- Omega via svn r11184: Small cocde refactoring on finddebuff in a couple mods
+	- Omega via svn r11183: I think i finally cracked it. seems working. will find out tomorrow. heh
+	- Omega via svn r11182: completely disable all cpu saving hacks, the only time the timers worked right is when they used really high cpu, so go back to doing it that way for now.
+	- Omega via svn r11181: NOtes
+	- Omega via svn r11180: I think two onupdates is required, however this is much smarter and more accurate. My tests are showing this even has the lowest cpu usage of all, still 0 cpu usage when no timers active (since both onupdate will do nothing) And still uses gettime so it SHOULD in theory fix the desyncing issue.
+	- Omega via svn r11179: slightly better and cleaner, also shows even more reduced cpu
+	- Omega via svn r11178: oops, works better when I don't comment wrong line
+	- Omega via svn r11177: Tandanu's method wasn't throttling ANYTHING. with prints in place i determined it was flat out ignoring the 0.04, in fact, i could change it to 5.0 and it changed NOTHING. logic fail was causing it to straight up be worthless and unthrottled. This fixes throttling Also removed the redundant show on login, apply style seems to show it when needed even on reloadui.
+	- Omega via svn r11176: Went back to tandanu's method now that I got it to properly disable when no timers. It still uses more cpu than double onpudate so that still needs work. but it should be easier to fix one onupdate vs two now that it consumes 0 cpu when idle.
+	- Omega via svn r11175: small note
+	- Omega via svn r11174: Add chat notes about the break timer being unreliable.
+	- Omega via svn r11173: I give up, just reverting it back to old way with desyncing timers that don't use 3x the cpu as unit frames.
+	- Omega via svn r11172: More attempts at trying to fix timer idle cpu usage. it's very hit or miss if it hides frame
+	- Omega via svn r11171: didn't mean to leave that print
+	- Omega via svn r11170: Not sure why this fixes it, but it does.
+	- Omega via svn r11169: add a space, because spaces are good (and cause i want to try and get curse to see file)
+	- tandanu via svn r11168: typo. i really should run my own analysis tools before committing ;)
+	- tandanu via svn r11167: hide frame update handler frame if no bars are shown
+	- tandanu via svn r11166: use a single OnUpdate handler for all bars
+	- Omega via svn r11165: Send break recovery only to the person requesting it, not entire raid, oops
+	- Omega via svn r11164: fix break timer recovery
+	- nbluewiz via svn r11163: #koKR update.
+	- Omega via svn r11162: make break timers recoverable. It will still lose chat announces if raid leader reloads ui though. I'll probably redo BT to work like PT but i'll do that for 6.0 and not break things now.
+	- Omega via svn r11161: re-enable the localizers help message.
+	- Omega via svn r11160: Ru update
+	- Omega via svn r11159: Small text change.
+	- Omega via svn r11158: ##Remove option to disable auto role setting. There is absolutely no good reason to disable that, therefor the user should not be able to disable it as it functionally improves both DBM and BW functional accuracy. ##Added in options to auto accept party invites.
+	- Omega via svn r11157: Add instant deaths to AFK warning
+	- Omega via svn r11156: missed one
+	- Omega via svn r11155: RU update
+	- Omega via svn r11154: While at it, fix a bug with protodrake warnings firing in phase 2
+	- Omega via svn r11153: add optional special warnings a road tank might wand to consider turning on if they are having this problem: http://us.battle.net/wow/en/forum/topic/10487298692?page=2#24
+	- Omega via svn r11152: slight grammer tweak
+	- Omega via svn r11151: more option clarity adding
+	- Omega via svn r11150: Put right command though, since /pull own't do anything :)
+	- Omega via svn r11149: This method works
+	- Omega via svn r11148: Oops, didn't push my latest EN file
+	- Omega via svn r11147: Add in more user control. Getting warcraftlogs link to work (actually in general adding support for clickable links in options) is a work in progress.
+	- Omega via svn r11146: GUI refactoring
+	- Omega via svn r11145: Mobid method fails on bosses that don't have global translations, so restore functional alerts for cata/BC, darkmoon rabbit world bosses. Also made more robust too so it won't error if for some reason we simply can't figure out bosses name (shouldn't happen though)
+	- Omega via svn r11144: extra nil check, since gettooninfo may return bad info if user is on 2 or more games at once (ie wow client was true, but tooninfo doesn't grab correct client)
+	- Omega via svn r11143: never noticed niuzao was still missing yell victory fallback until Kuni's solo. This should fix that. Normally win detection works off loot generation which only works if you are targeting boss at correct moment.
+	- Omega via svn r11142: Improvement
+	- Omega via svn r11141: add sync version tagging to make it easy to block older versions
+	- Omega via svn r11140: update local
+	- Omega via svn r11139: Re-impliment realid syncing using much stricter timing thresholds and greatly reduced comm traffic (it'll no longer pass on anything not of own realm, and it also will now check realm of all bnet friends and not pass information to anyone that isn't of same realm, basically, should now use next to no traffic)
+	- Omega via svn r11138: fix more fail
+	- Omega via svn r11137: fix fail on trash infusion warning (wrong spellid, no, you don't have disintegration laser, oops)
+	- tandanu via svn r11136: increment alpha version numbers

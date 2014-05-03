@@ -1,0 +1,12 @@
+tag v1.5.36
+1999cbf0227c7a2132b09683fcf6d0e4a897d3fd
+Dorwido <darkz@gmx.de>
+2013-11-18 19:51:21 +0100
+
+v1.5.36 release
+
+
+--------------------
+
+Dorwido:
+	- v1.5.36 -added flight locations/times and updated toc

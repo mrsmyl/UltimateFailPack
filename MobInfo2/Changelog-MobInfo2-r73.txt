@@ -1,0 +1,26 @@
+------------------------------------------------------------------------
+r73 | speedwaystar | 2013-11-08 07:00:41 +0000 (Fri, 08 Nov 2013) | 1 line
+Changed paths:
+   M /trunk
+   A /trunk/Localization/localization.pt.lua
+
+added placeholder ptBR localization
+------------------------------------------------------------------------
+r72 | speedwaystar | 2013-11-01 11:25:30 +0000 (Fri, 01 Nov 2013) | 2 lines
+Changed paths:
+   M /trunk
+   M /trunk/MobInfo2.lua
+   M /trunk/MobInfo2.toc
+
+* bump TOC version for patch 4.3.1
+* fix nil pointer error introduced by deprecation of CVAR("realmname")
+------------------------------------------------------------------------
+r71 | speedwaystar | 2013-05-22 02:21:48 +0000 (Wed, 22 May 2013) | 2 lines
+Changed paths:
+   M /trunk
+   M /trunk/MI2_Events.lua
+   M /trunk/MobInfo2.toc
+
+* squelch tainted loot warning
+* bump TOC to 5.3
+------------------------------------------------------------------------
