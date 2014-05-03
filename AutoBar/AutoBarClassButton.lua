@@ -271,6 +271,8 @@ function AutoBar.Class.Button.prototype:CreateButtonFrame()
 
 	frame:SetScript("OnEnter", funcOnEnter)
 	frame:SetScript("OnLeave", funcOnLeave)
+	
+	RegisterStateDriver(frame, "visibility", "[vehicleui] hide; [petbattle] hide; [possessbar] hide; show")
 
 ---	frame:SetScript("OnAttributeChanged", onAttributeChangedFunc)
 	frame:SetScript("OnDragStart", onDragStartFunc)
