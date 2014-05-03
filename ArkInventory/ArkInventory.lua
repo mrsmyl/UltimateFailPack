@@ -1,6 +1,6 @@
--- (c) 2006-2012, all rights reserved.
--- $Revision: 1112 $
--- $Date: 2013-09-11 08:31:49 +1000 (Wed, 11 Sep 2013) $
+-- (c) 2006-2014, all rights reserved.
+-- $Revision: 1132 $
+-- $Date: 2014-03-19 08:12:46 +1100 (Wed, 19 Mar 2014) $
 
 
 local _G = _G
@@ -1105,7 +1105,7 @@ ArkInventory.Global = { -- globals
 			Internal = "bag",
 			Name = ArkInventory.Localise["LOCATION_BAG"],
 			Texture = [[Interface\Icons\INV_Misc_Bag_07_Green]],
-			bagCount = 1, -- actual value set in OnInitialize
+			bagCount = 1, -- actual value set in OnLoad
 			Bags = { },
 			canRestack = true,
 			hasChanger = true,
@@ -1128,7 +1128,7 @@ ArkInventory.Global = { -- globals
 			Internal = "bank",
 			Name = ArkInventory.Localise["LOCATION_BANK"],
 			Texture = [[Interface\Icons\INV_Box_02]], --Interface\Minimap\Tracking\Banker
-			bagCount = 1, -- actual value set in OnInitialize
+			bagCount = 1, -- actual value set in OnLoad
 			Bags = { },
 			canRestack = true,
 			hasChanger = true,
@@ -1152,7 +1152,7 @@ ArkInventory.Global = { -- globals
 			Internal = "vault",
 			Name = GUILD_BANK,
 			Texture = [[Interface\Icons\INV_Misc_Coin_02]],
-			bagCount = 1, -- actual value set in OnInitialize
+			bagCount = 1, -- actual value set in OnLoad
 			Bags = { },
 			canRestack = true,
 			hasChanger = true,
@@ -1447,7 +1447,7 @@ BINDING_NAME_ARKINV_RESTACK = ArkInventory.Localise["RESTACK"]
 BINDING_NAME_ARKINV_MENU = ArkInventory.Localise["MENU"]
 BINDING_NAME_ARKINV_CONFIG = ArkInventory.Localise["CONFIG_TEXT"]
 BINDING_NAME_ARKINV_LDB_PETS_SUMMON = ArkInventory.Localise["LDB_PETS_SUMMON"]
-BINDING_NAME_ARKINV_LDB_MOUNTS_SUMMON = ArkInventory.Localise["LDB_MOUNTS_SUMMON"]
+_G["BINDING_NAME_CLICK ARKINV_MountToggle:LeftButton"] = ArkInventory.Localise["LDB_MOUNTS_SUMMON"]
 
 
 ArkInventory.Const.DatabaseDefaults.global = {
@@ -2183,6 +2183,29 @@ function ArkInventory.OnInitialize( )
 --			end
 		end
 	end
+	
+	
+	-- secure mount button to be able to cancel shapeshift forms
+	local btn = CreateFrame( "Button", "ARKINV_MountToggle", UIParent, "SecureActionButtonTemplate" )
+	
+	local macrotext = "/stopmacro [combat]" -- abort if in combat
+	if ( ArkInventory.Global.Me.info.class == "DRUID" ) then
+		if GetSpellInfo( ( GetSpellInfo( 24858 ) ) ) then -- moonkin spell
+			macrotext = macrotext .. "\n/cancelform [form:1/3/4/5]" -- cancel bear/cat/travel/moonkin forms
+		else
+			macrotext = macrotext .. "\n/cancelform [form:1/3/4]" -- cancel bear/cat/travel forms
+		end
+	elseif ( ArkInventory.Global.Me.info.class == "WARLOCK" ) or ( ArkInventory.Global.Me.info.class == "SHAMAN" ) then
+		macrotext = macrotext .. "\n/cancelform [noform:0]" -- cancel any form
+	end
+	macrotext = macrotext .. "\n/run ArkInventory.LDB.Mounts:OnClick( )"
+	--ArkInventory.Output( macrotext )
+	
+	btn:SetAttribute( "type", "macro" )
+	btn:SetAttribute( "macrotext", macrotext )
+	
+	btn:SetPoint( "CENTER" )
+	btn:Hide( )
 	
 end
 
@@ -3047,7 +3070,7 @@ function ArkInventory.CategoryBarGet( loc_id, cat_id )
 	local bar = ArkInventory.LocationOptionGet( loc_id, "category", cat_id )
 		
 	-- if it's the default category and the default is not on a bar then put it on bar 1
-	if bar == nil and cat_id == cat_def then
+	if ( bar == nil ) and ( cat_id == cat_def ) then
 		bar = 1
 	end
 	
@@ -3061,7 +3084,7 @@ function ArkInventory.CategoryLocationSet( loc_id, cat_id, bar_id )
 
 	local cat_def = ArkInventory.CategoryGetSystemID( "SYSTEM_DEFAULT" )
 	
-	if cat_id ~= cat_def or bar_id ~= nil then
+	if ( cat_id ~= cat_def ) or ( bar_id ~= nil ) then
 		ArkInventory.LocationOptionSet( loc_id, "category", cat_id, bar_id )
 	end
 	
@@ -3408,7 +3431,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		end
 	end
 	
-	-- items only
+	-- items only from here on
 	if class ~= "item" then
 		return
 	end
@@ -3417,7 +3440,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	
 	-- no item info
 	if ( itemName == nil ) then
-		return nil
+		return
 	end
 	
 	-- trash
@@ -3436,7 +3459,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	-- equipable items
-	if ( equipSlot ~= "" ) then -- or ( itemType == ArkInventory.Localise["WOW_AH_WEAPON"] ) or ( itemType == ArkInventory.Localise["WOW_AH_ARMOR"] )
+	if ( equipSlot ~= "" ) or ( itemType == ArkInventory.Localise["WOW_AH_WEAPON"] ) or ( itemType == ArkInventory.Localise["WOW_AH_ARMOR"] ) then
 		if i.ab then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_ACCOUNTBOUND" )
 		elseif i.sb then
@@ -6282,6 +6305,11 @@ function ArkInventory.Frame_Bar_OnLoad( frame )
 	
 	frame:SetID( bar_id )
 	
+	local newItemTexture = _G[frame:GetName( ) .. "NewItemTexture"]
+	if newItemTexture then
+		newItemTexture:Hide( )
+	end
+	
 	ArkInventory.MediaSetFontFrame( frame )
 
 end
@@ -7117,9 +7145,9 @@ function ArkInventory.Frame_Item_OnLoad( frame )
 		tainted = false,
 	}
 	
-	local newItemTexture = _G[frame:GetName().."NewItemTexture"]
+	local newItemTexture = _G[frame:GetName( ) .. "NewItemTexture"]
 	if newItemTexture then
-		newItemTexture:Hide()
+		newItemTexture:Hide( )
 	end
 
 	

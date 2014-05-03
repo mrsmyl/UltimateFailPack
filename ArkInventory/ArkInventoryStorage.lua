@@ -1432,13 +1432,13 @@ function ArkInventory.ScanBag( blizzard_id )
 	local h = nil
 	local rarity = 0
 	
-	if loc_id == ArkInventory.Const.Location.Bag then
+	if ( loc_id == ArkInventory.Const.Location.Bag ) then
 		
 		count = GetContainerNumSlots( blizzard_id )
 		
-		if blizzard_id == BACKPACK_CONTAINER then
+		if ( blizzard_id == BACKPACK_CONTAINER ) then
 			
-			if not count or count == 0 then
+			if ( not count ) or ( count == 0 ) then
 				if ArkInventory.db.global.option.bugfix.zerosizebag.alert then
 					ArkInventory.OutputWarning( "Aborted scan of bag ", blizzard_id, ", location ", loc_id, " [", ArkInventory.Global.Location[loc_id].Name, "] size returned was ", count, ", rescan has been scheduled for 10 seconds.  This warning can be disabled in the config menu" )
 				end
@@ -1460,7 +1460,7 @@ function ArkInventory.ScanBag( blizzard_id )
 				
 			else
 				
-				if not count or count == 0 then
+				if ( not count ) or ( count == 0 ) then
 					if ArkInventory.db.global.option.bugfix.zerosizebag.alert then
 						ArkInventory.OutputWarning( "Aborted scan of bag ", blizzard_id, ", location ", loc_id, " [", ArkInventory.Global.Location[loc_id].Name, "] size returned was ", count, ", rescan has been scheduled for 10 seconds.  This warning can be disabled in the config menu" )
 					end
@@ -1534,7 +1534,6 @@ function ArkInventory.ScanBag( blizzard_id )
 
 	end
 	
-	
 	local bag = cp.location[loc_id].bag[bag_id]
 	
 	local old_bag_count = bag.count
@@ -1583,7 +1582,7 @@ function ArkInventory.ScanBag( blizzard_id )
 				end
 			end
 			
-			if ( not sb ) then
+			if ( not ab ) then
 				for _, v in pairs( ArkInventory.Const.Soulbound ) do
 					if ( v and ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, string.format( "^%s$", v ) ) ) then
 						--ArkInventory.Output( loc_id, ".", bag_id, ".", slot_id, " = ", h, " - ", v )
@@ -3408,7 +3407,7 @@ function ArkInventory.ObjectCountClear( search_id, loc_id, player_id )
 	
 	local search_id = ArkInventory.ObjectIDTooltip( search_id )
 	
---	ArkInventory.Output( "ObjectCountClear( ", search_id, ", ", loc_id, ", ", player_id, " )" )
+	--ArkInventory.Output( "ObjectCountClear( ", search_id, ", ", loc_id, ", ", player_id, " )" )
 	
 	if ( search_id ) and ( loc_id ) and ( player_id ) then
 		
@@ -3512,10 +3511,12 @@ function ArkInventory.ObjectCountGet( search_id, just_me, ignore_vaults, ignore_
 	-- build raw
 	for pn, pd in pairs( ArkInventory.db.realm.player.data ) do
 		
-		if ( ( pd.info.name ) and ( not d[pn] ) ) or ( pd.info.class == "ACCOUNT" ) or ( cp.info.guild_id and ( cp.info.guild_id == pd.info.guild_id ) ) then
+		if ( ( pd.info.name ) and ( not d[pn] ) ) then -- or ( pd.info.class == "ACCOUNT" ) or ( pd.info.class == "GUILD" and cp.info.guild_id and ( cp.info.guild_id == pd.info.guild_id ) ) then
+			
+			--ArkInventory.Output( pn, " = ", ( ( pd.info.name ) and ( not d[pn] ) ), " or ", ( pd.info.class == "ACCOUNT" ), " or ", ( pd.info.class == "GUILD" and cp.info.guild_id and ( cp.info.guild_id == pd.info.guild_id ) ) )
+			--ArkInventory.Output( "rebuild ", search_id, " for ", pn )
 			
 			-- rebuild if missing, is account, or is users guild
-			
 			for l in pairs( ArkInventory.Global.Location ) do
 				
 				local ld = pd.location[l]

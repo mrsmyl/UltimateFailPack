@@ -52,7 +52,7 @@
 	<Binding name="ARKINV_LDB_PETS_SUMMON">
 		ArkInventory.LDB.Pets.OnClick( )
 	</Binding>
-	<Binding name="ARKINV_LDB_MOUNTS_SUMMON">
-		ArkInventory.LDB.Mounts.OnClick( )
+	<Binding name="CLICK ARKINV_MountToggle:LeftButton">
+		--ArkInventory.LDB.Mounts.OnClick( )
 	</Binding>
 </Bindings>

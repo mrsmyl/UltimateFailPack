@@ -2966,6 +2966,7 @@ end
 function ArkInventory.MenuBattlePet( frame, petID )
 	
 	assert( frame, "code error: frame argument is missing" )
+	assert( petID, "code error: petID argument is missing" )
 
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 	
@@ -2990,8 +2991,12 @@ function ArkInventory.MenuBattlePet( frame, petID )
 				
 				local pd = ArkInventory.PetJournal.GetPetInfo( petID )
 				
-				--ArkInventory.Output( pd.fullName, " / ", pd.rarity, " / ", pd.link )
+				--ArkInventory.Output( petID )
 				
+				if pd then
+					
+					--ArkInventory.Output( pd.fullName, " / ", pd.rarity, " / ", pd.link )
+
 				if ( level == 1 ) then
 					
 					--name = string.format( "%s%s|r", select( 5, ArkInventory.GetItemQualityColor( pd.rarity ) ), pd.fullName )
@@ -3102,8 +3107,18 @@ function ArkInventory.MenuBattlePet( frame, petID )
 					
 				end
 				
+				else
+					
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", "pet data not found",
+						"tooltipTitle", "error",
+						"tooltipText", "pet data not found",
+						"disabled", true
+					)
+
+				end
 				
-				if level == 1 then
+				if ( level == 1 ) then
 					
 					ArkInventory.Lib.Dewdrop:AddLine( )
 					

@@ -1,0 +1,69 @@
+------------------------------------------------------------------------
+r421 | arkayenro | 2014-03-19 10:38:59 +0000 (Wed, 19 Mar 2014) | 4 lines
+Changed paths:
+   A /tags/3.03.33 (from /trunk:420)
+
+*3.03.33 (19-MAR-2013)*
+ * fixed - mount availability code when zoning
+ * added - locales for itIT and ptBR
+
+------------------------------------------------------------------------
+r420 | arkayenro | 2014-03-19 10:34:32 +0000 (Wed, 19 Mar 2014) | 4 lines
+Changed paths:
+   A /trunk/Locale/itIT.lua
+   A /trunk/Locale/ptBR.lua
+   D /trunk/Modules/ArkInventoryRulesExample
+
+*3.03.33 (19-MAR-2013)*
+ * fixed - mount availability code when zoning
+ * added - locales for itIT and ptBR
+
+------------------------------------------------------------------------
+r419 | arkayenro | 2014-03-19 10:27:41 +0000 (Wed, 19 Mar 2014) | 4 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/Locale/deDE.lua
+   M /trunk/Locale/enUS.lua
+   M /trunk/Locale/esES.lua
+   M /trunk/Locale/esMX.lua
+   M /trunk/Locale/frFR.lua
+   M /trunk/Locale/koKR.lua
+   M /trunk/Locale/locale.xml
+   M /trunk/Locale/ruRU.lua
+   M /trunk/Locale/zhCN.lua
+   M /trunk/Locale/zhTW.lua
+   M /trunk/Modules/ArkInventoryRules/ArkInventoryRules.lua
+   M /trunk/VersionHistory.txt
+
+*3.03.33 (19-MAR-2013)*
+ * fixed - mount availability code when zoning
+ * added - locales for itIT and ptBR
+
+------------------------------------------------------------------------
+r418 | arkayenro | 2014-02-28 04:29:39 +0000 (Fri, 28 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/ArkInventory.toc
+
+ArkInventory:
+- 
+------------------------------------------------------------------------
+r417 | arkayenro | 2014-02-28 00:52:47 +0000 (Fri, 28 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/ArkInventory.toc
+
+ArkInventory:
+- alpha 20140228
+------------------------------------------------------------------------
+r416 | arkayenro | 2014-02-28 00:49:26 +0000 (Fri, 28 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/ArkInventory.lua
+   M /trunk/ArkInventory.toc
+   M /trunk/ArkInventoryLDB.lua
+   M /trunk/ArkInventoryStorage.lua
+   M /trunk/VersionHistory.txt
+
+ArkInventory:
+- alpha commit to fix issue with mounts
+------------------------------------------------------------------------

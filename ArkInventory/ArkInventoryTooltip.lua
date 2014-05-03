@@ -327,15 +327,20 @@ function ArkInventory.TooltipCanUse( tooltip )
 	
 	local n = ArkInventory.TooltipNumLines( tooltip )
 	
+	local t1 = tooltip:GetItem( )
+	local line1 = _G[string.format( "%sTextLeft1", tooltip:GetName( ) )]:GetText( )
+	
 	for i = 2, n do
 		for _, v in pairs( l ) do
+			
 			local obj = _G[string.format( "%s%s%s", tooltip:GetName( ), v, i )]
 			if obj and obj:IsShown( ) then
 				
 				local txt = obj:GetText( )
 				
-				if string.match( txt, "^%s+$" ) then
+				if string.match( txt, "^%s+$" ) or string.match( txt, "^\n" ) then
 					-- recipies and patterns have a blank line between the item and what it creates so check from the last line upwards now
+					-- techniques have a newline character to break them up
 					return ArkInventory.TooltipCanUseBackwards( tooltip )
 				end
 				
@@ -369,8 +374,9 @@ function ArkInventory.TooltipCanUseBackwards( tooltip )
 				
 				local txt = obj:GetText( )
 				
-				if string.match( txt, "^%s+$" ) then
+				if string.match( txt, "^%s+$" ) or string.match( txt, "^\n" ) then
 					-- recipies and patterns have a blank line between the pattern and the item it created, stop when we hit a blank line
+					-- techniques have a newline character to break them up
 					return true
 				end
 				
@@ -394,21 +400,21 @@ end
 
 function ArkInventory.TooltipHook( ... )
 	
+	if ArkInventory.Global.Mode.Combat then return end
+
 	local tooltip, arg1, arg2, arg3, arg4 = ...
 	
 	if not tooltip then return end
-	
-	tooltip.ARK_Data[1] = arg1
-	tooltip.ARK_Data[2] = arg2
-	tooltip.ARK_Data[3] = arg3
-	tooltip.ARK_Data[4] = arg4
-	
-	if ArkInventory.Global.Mode.Combat then return end
 	
 	if not tooltip:IsVisible( ) then
 		-- dont add stuff to tooltips until after they become visible for the first time
 		return
 	end
+	
+	tooltip.ARK_Data[1] = arg1
+	tooltip.ARK_Data[2] = arg2
+	tooltip.ARK_Data[3] = arg3
+	tooltip.ARK_Data[4] = arg4
 	
 	local h = nil
 	

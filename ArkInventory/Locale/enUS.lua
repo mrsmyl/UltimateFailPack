@@ -484,7 +484,8 @@ if not L then return end
 	L["RULE_FAILED_FORMULA_NIL"] = "formula is missing"
 	L["RULE_FAILED_FORMULA_BAD"] = "invalid formula"
 	L["RULE_FAILED_ARGUMENT_IS_NIL"] = "%1$s( ... ), argument %2$i is nil"
-	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), argument %2$i is not %3$s"
+	L["RULE_FAILED_ARGUMENT_IS_NOT"] = "%1$s( ... ), argument %2$i is not %3$s"
+	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), argument %2$i is invalid"
 	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = "%1$s( ... ), no arguments specified"
 	
 	

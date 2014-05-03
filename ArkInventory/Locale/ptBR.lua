@@ -1,11 +1,11 @@
-local L = LibStub( "AceLocale-3.0" ):NewLocale( "ArkInventory", "esES" )
+local L = LibStub( "AceLocale-3.0" ):NewLocale( "ArkInventory", "ptBR" )
 if not L then return end
 
 -- post updated translations at http://groups.google.com/group/wow-arkinventory (modify this file and include as an attachment)
 -- note: when creating a new locale do not leave any english translations in your file, comment them out by placing -- at the start of the line
 
 
--- Translated by: <insert your name here>
+
 
 
 
@@ -20,23 +20,23 @@ if not L then return end
 --	wow zone names - must match exactly what is in game
 --	L["WOW_ZONE_AHNQIRAJ"] = ""
 --	L["WOW_ZONE_VASHJIR"] = ""
-	L["WOW_ZONE_KELPTHAR_FOREST"] = "Bosque Kelp'thar"
-	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Extensión Bruñida"
-	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Profundidades Abisales"
+--	L["WOW_ZONE_KELPTHAR_FOREST"] = ""
+--	L["WOW_ZONE_SHIMMERING_EXPANSE"] = ""
+--	L["WOW_ZONE_ABYSSAL_DEPTHS"] = ""
 	
 	
 --	wow tooltip text - must match exactly what is in game
-	L["WOW_ITEM_TOOLTIP_FOOD"] = "Debes permanecer sentado mientras comes"
-	L["WOW_ITEM_TOOLTIP_DRINK"] = "Debes permanecer sentado mientras bebes"
-	L["WOW_ITEM_TOOLTIP_POTION_HEAL"] = "Restaura %d+ a %d+ p. de salud"
-	L["WOW_ITEM_TOOLTIP_POTION_MANA"] = "Restaura %d+ a %d+ p. de man\195\161"
+--	L["WOW_ITEM_TOOLTIP_FOOD"] = ""
+--	L["WOW_ITEM_TOOLTIP_DRINK"] = ""
+--	L["WOW_ITEM_TOOLTIP_POTION_HEAL"] = ""
+--	L["WOW_ITEM_TOOLTIP_POTION_MANA"] = ""
 --	L["WOW_ITEM_TOOLTIP_ELIXIR_BATTLE"] = ""
 --	L["WOW_ITEM_TOOLTIP_ELIXIR_GUARDIAN"] = ""
 	
 	
 --	location names
 --	L["LOCATION_ACCOUNT"] = ""
-	L["LOCATION_BANK"] = "Banco"
+--	L["LOCATION_BANK"] = ""
 --	L["LOCATION_WEARING"] = ""
 	
 	
@@ -46,8 +46,8 @@ if not L then return end
 	
 	
 --	status bar/bag text
-	L["STATUS_NO_DATA"] = "SIN DATOS"
-	L["STATUS_FULL"] = "LLENO"
+--	L["STATUS_NO_DATA"] = ""
+--	L["STATUS_FULL"] = ""
 --	L["STATUS_PURCHASE"] = ""
 	
 	
@@ -58,7 +58,7 @@ if not L then return end
 --	L["RESTACK_FAIL_ACCESS"] = ""
 	
 	
---	vault tab tooltips
+--	vault tooltip text
 --	L["VAULT_TAB_ACCESS_NONE"] = ""
 --	L["VAULT_TAB_NAME"] = ""
 --	L["VAULT_TAB_ACCESS"] = ""
@@ -70,36 +70,36 @@ if not L then return end
 	
 	
 --	system category descriptions
-	L["CATEGORY_SYSTEM_CORE_MATS"] = "MATERIAS PRIMAS"
+--	L["CATEGORY_SYSTEM_CORE_MATS"] = ""
 	
 	
 --	consumable category descriptions
-	L["CATEGORY_CONSUMABLE_FOOD_PET"] = "COMIDA (SOLO MASCOTA)"
-	L["CATEGORY_CONSUMABLE_POTION_MANA"] = "MAN\195\129 (POCI\195\147N/GEMA)"
-	L["CATEGORY_CONSUMABLE_POTION_HEAL"] = "SALUD (POCI\195\147N/PIEDRA)"
+--	L["CATEGORY_CONSUMABLE_FOOD_PET"] = ""
+--	L["CATEGORY_CONSUMABLE_POTION_HEAL"] = ""
+--	L["CATEGORY_CONSUMABLE_POTION_MANA"] = ""
 --	L["CATEGORY_CONSUMABLE_ELIXIR_BATTLE"] = ""
 --	L["CATEGORY_CONSUMABLE_ELIXIR_GUARDIAN"] = ""
 	
 	
 --	bag names - used to name the empty slots in the status frame
-	L["STATUS_NAME_BAG"] = "Bolsa"
+--	L["STATUS_NAME_BAG"] = ""
 --	L["STATUS_NAME_CRITTER"] = ""
-	L["STATUS_NAME_ENCHANTING"] = "Encant"
-	L["STATUS_NAME_ENGINEERING"] = "Ing"
+--	L["STATUS_NAME_ENCHANTING"] = ""
+--	L["STATUS_NAME_ENGINEERING"] = ""
 --	L["STATUS_NAME_GEAR"] = ""
 --	L["STATUS_NAME_GEM"] = ""
-	L["STATUS_NAME_HERB"] = "Hierba"
+--	L["STATUS_NAME_HERB"] = ""
 --	L["STATUS_NAME_INSCRIPTION"] = ""
-	L["STATUS_NAME_KEY"] = "Llave"
+--	L["STATUS_NAME_KEY"] = ""
 --	L["STATUS_NAME_LEATHERWORKING"] = ""
 --	L["STATUS_NAME_MAIL"] = ""
 --	L["STATUS_NAME_MINING"] = ""
 --	L["STATUS_NAME_MOUNT"] = ""
 --	L["STATUS_NAME_TOKEN"] = ""
---	L["STATUS_NAME_TACKLE"] = ""	
+--	L["STATUS_NAME_TACKLE"] = ""
 --	L["STATUS_NAME_COOKING"] = ""
-	
-	
+
+
 --	main menu
 --	L["MENU"] = ""
 	
@@ -119,14 +119,14 @@ if not L then return end
 --	L["MENU_ACTION_REFRESH"] = ""
 --	L["MENU_ACTION_REFRESH_TEXT"] = ""
 --	L["MENU_ACTION_RELOAD_TEXT"] = ""
-	L["MENU_ACTION_EDITMODE"] = "Activar Modo de Edici\195\179n"
+--	L["MENU_ACTION_EDITMODE"] = ""
 --	L["MENU_ACTION_EDITMODE_TEXT"] = ""
 --	L["MENU_ACTION_BAGCHANGER"] = ""
 --	L["MENU_ACTION_BAGCHANGER_TEXT"] = ""
 	
 	
 --	item menu
-	L["MENU_ITEM_TITLE"] = "OPCIONES DE OBJETO"
+--	L["MENU_ITEM_TITLE"] = ""
 --	L["MENU_ITEM_ITEM"] = ""
 --	L["MENU_ITEM_DEFAULT_RESET"] = ""
 --	L["MENU_ITEM_DEFAULT_RESET_TEXT"] = ""
@@ -215,8 +215,8 @@ if not L then return end
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_COLOUR_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_ITEMCOUNT_VAULT_TABS_TEXT"] = ""
---	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = "scales the game, reference and comparison tooltips"
---	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = "use class colours to colour player names"
+--	L["CONFIG_SYSTEM_TOOLTIP_SCALE_TEXT"] = ""
+--	L["CONFIG_SYSTEM_TOOLTIP_CLASSCOLOUR_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_SELF_ONLY_TEXT"] = ""
 --	L["CONFIG_SYSTEM_TOOLTIP_FACTION_ONLY"] = ""
@@ -318,8 +318,8 @@ if not L then return end
 --	L["CONFIG_SETTINGS_FRAME_BORDER_COLOUR_TEXT"] = ""
 	
 --	L["CONFIG_SETTINGS_FRAME_CHANGER_HIGHLIGHT"] = ""
---	L["CONFIG_SETTINGS_FRAME_CHANGER_HIGHLIGHT_COLOUR_TEXT"] = ""
 --	L["CONFIG_SETTINGS_FRAME_CHANGER_HIGHLIGHT_TEXT"] = ""
+--	L["CONFIG_SETTINGS_FRAME_CHANGER_HIGHLIGHT_COLOUR_TEXT"] = ""
 --	L["CONFIG_SETTINGS_FRAME_CHANGER_FREE"] = ""
 --	L["CONFIG_SETTINGS_FRAME_CHANGER_FREE_TEXT"] = ""
 --	L["CONFIG_SETTINGS_FRAME_CHANGER_FREE_COLOUR_TEXT"] = ""
@@ -385,12 +385,12 @@ if not L then return end
 --	L["CONFIG_SETTINGS_EMPTY"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_ICON"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_ICON_TEXT"] = ""
---	L["CONFIG_SETTINGS_EMPTY_CLUMP"] = ""
---	L["CONFIG_SETTINGS_EMPTY_CLUMP_TEXT"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_BORDER"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_BORDER_TEXT"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_COLOUR"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_COLOUR_TEXT"] = ""
+--	L["CONFIG_SETTINGS_EMPTY_CLUMP"] = ""
+--	L["CONFIG_SETTINGS_EMPTY_CLUMP_TEXT"] = ""
 --	L["CONFIG_SETTINGS_EMPTY_STATUS"] = ""
 	
 	
@@ -433,7 +433,7 @@ if not L then return end
 --	L["CONFIG_SORTMETHOD_MOVE_UP_TEXT"] = ""
 --	L["CONFIG_SORTMETHOD_MOVE_DOWN_TEXT"] = ""
 --	L["CONFIG_SORTMETHOD_NOT_INCLUDED"] = ""
-	
+
 --	L["CONFIG_SORTMETHOD_ADD"] = ""
 --	L["CONFIG_SORTMETHOD_ADD_TEXT"] = ""
 --	L["CONFIG_SORTMETHOD_RENAME_TEXT"] = ""
@@ -487,7 +487,7 @@ if not L then return end
 --	L["RULE_FAILED_ARGUMENT_IS_NOT"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
-
+	
 	
 --	new item indicators
 --	L["NEW_ITEM_INCREASE"] = ""
@@ -546,7 +546,7 @@ if not L then return end
 --	L["TOOLTIP_GOLD_AMOUNT"] = ""
 	
 	
---	generic text
+--	generic menu text
 --	L["AUTOMATIC"] = ""
 --	L["BOTTOMLEFT"] = ""
 --	L["BOTTOMRIGHT"] = ""
@@ -584,10 +584,10 @@ if not L then return end
 --	L["ASCENDING"] = ""
 --	L["DECENDING"] = ""
 --	L["LOCATION"] = ""
---	L["CLEAR"] = "Clear"
+--	L["CLEAR"] = ""
 --	L["DHMS"] = ""
---	L["OPEN"] = "Open"
---	L["RANDOM"] = "Random"
+--	L["OPEN"] = ""
+--	L["RANDOM"] = ""
 --	L["RELOAD"] = ""
 --	L["MOVE_UP"] = ""
 --	L["MOVE_DOWN"] = ""
@@ -605,7 +605,7 @@ if not L then return end
 --	L["FRAMES"] = ""
 --	L["CLICK_TO_SELECT"] = ""
 --	L["CLICK_TO_DESELECT"] = ""
---	L["CLICK_TO_IGNORE"] = ""	
+--	L["CLICK_TO_IGNORE"] = ""
 --	L["ORDER"] = ""
 --	L["MOUSEOVER"] = ""
 	
@@ -617,7 +617,7 @@ if not L then return end
 --	L["LDB_BAGS_STYLE"] = ""
 --	L["LDB_BAGS_STYLE_TEXT"] = ""
 --	L["LDB_BAGS_INCLUDE_TYPE"] = ""
---	L["LDB_BAGS_INCLUDE_TYPE-TEXT"] = ""
+--	L["LDB_BAGS_INCLUDE_TYPE_TEXT"] = ""
 --	L["LDB_TRACKING_CURRENCY"] = ""
 --	L["LDB_PETS_SUMMON"] = ""
 --	L["LDB_MOUNTS_NOT_HERE"] = ""

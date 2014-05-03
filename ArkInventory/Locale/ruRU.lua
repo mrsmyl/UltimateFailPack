@@ -484,6 +484,7 @@ if not L then return end
 	L["RULE_FAILED_FORMULA_NIL"] = "отсутствует формула"
 --	L["RULE_FAILED_FORMULA_BAD"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_NIL"] = ""
+--	L["RULE_FAILED_ARGUMENT_IS_NOT"] = ""
 --	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
 	
@@ -546,7 +547,7 @@ if not L then return end
 	
 	
 --	generic menu text
---	L["AUTOMATIC"] = ""
+	L["AUTOMATIC"] = "непроизвольный"
 	L["BOTTOMLEFT"] = "Снизу слева"
 	L["BOTTOMRIGHT"] = "Снизу справа"
 	L["TOPLEFT"] = "Сверху слева"

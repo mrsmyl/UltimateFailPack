@@ -490,20 +490,27 @@ function ArkInventory.LDB.Mounts:OnClick( button )
 		
 		local companionType = "MOUNT"
 		
+		if UnitInVehicle( "player" ) then
+			return
+		end
+		
 		if IsMounted( ) then
 			
 			if IsFlying( ) then
-				if not ArkInventory.db.char.option.ldb.mounts.a.dismount then
+				if ( not ArkInventory.db.char.option.ldb.mounts.a.dismount ) then
 					ArkInventory.OutputWarning( ArkInventory.Localise["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] )
-				else
-					DismissCompanion( companionType )
+					return
 				end
-			else
-				DismissCompanion( companionType )
 			end
 			
+			DismissCompanion( companionType )
 			return
 			
+		end
+		
+		if IsFlying( ) then
+			-- in flight but not mounted, most likely is druid flight form
+			return
 		end
 		
 		if ArkInventory.Global.Mode.Combat then return end
@@ -758,11 +765,11 @@ function ArkInventory.LDB.Mounts:GetAvailable( companionType, ignoreActive, moun
 		
 		local companionID, name, spellID, texture, active = GetCompanionInfo( companionType, idx )
 		
-		if ( not active or ignoreActive ) and ( ( selectedCount == 0 and selected[spellID] ~= false ) or ( selectedCount > 0 and selected[spellID] == true ) ) then
+		local mountEntry = mountData[spellID]
+		
+		if ( mountEntry ) and ( not active or ignoreActive ) and ( ( selectedCount == 0 and selected[spellID] ~= false ) or ( selectedCount > 0 and selected[spellID] == true ) ) then
 			
 			--ArkInventory.Output( idx, " / ", name, " / ", limitZone )
-			
-			local mountEntry = mountData[spellID]
 			
 			local ok = IsUsableSpell( spellID )
 			

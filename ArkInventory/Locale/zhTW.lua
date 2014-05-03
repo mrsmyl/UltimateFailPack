@@ -484,7 +484,8 @@ if not L then return end
 	L["RULE_FAILED_FORMULA_NIL"] = "缺少公式"
 	L["RULE_FAILED_FORMULA_BAD"] = "無效的公式"
 	L["RULE_FAILED_ARGUMENT_IS_NIL"] = "%1$s( ... ), 參數 %2$i 為零"
-	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = "%1$s( ... ), 參數 %2$i 不是 %3$s"
+	L["RULE_FAILED_ARGUMENT_IS_NOT"] = "%1$s( ... ), 參數 %2$i 不是 %3$s"
+--	L["RULE_FAILED_ARGUMENT_IS_INVALID"] = ""
 --	L["RULE_FAILED_ARGUMENT_NONE_SPECIFIED"] = ""
 	
 	
