@@ -3,7 +3,7 @@
 ## Notes: A library for drawing icons on the Minimap and World Maps.
 ## Version: 1.0
 ## Author: Esamynn (James Carrothers)
-## X-Curse-Packaged-Version: v1.5.35
+## X-Curse-Packaged-Version: v1.5.36
 ## X-Curse-Project-Name: Flight Map Enhanced
 ## X-Curse-Project-ID: flight-map-enhanced
 ## X-Curse-Repository-ID: wow/flight-map-enhanced/mainline
